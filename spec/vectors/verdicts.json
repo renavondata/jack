@@ -1,0 +1,162 @@
+{
+ "about": "verdict each log in logs/ must produce (SPEC.md \u00a713), detail omitted",
+ "verdicts": {
+  "00_genesis_only.jsonl": {
+   "ok": true,
+   "entries": 1,
+   "lapse": []
+  },
+  "01_every_type_and_lapse.jsonl": {
+   "ok": true,
+   "entries": 9,
+   "lapse": [
+    [
+     5,
+     "r1"
+    ]
+   ]
+  },
+  "02_revoked_key_no_power.jsonl": {
+   "ok": false,
+   "seq": 9,
+   "rule": null,
+   "reason": "no_power"
+  },
+  "03_violation.jsonl": {
+   "ok": false,
+   "seq": 9,
+   "rule": "r1",
+   "reason": "violation"
+  },
+  "04_replacements.jsonl": {
+   "ok": true,
+   "entries": 3,
+   "lapse": []
+  },
+  "05_orphans_rule.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "rule": null,
+   "reason": "orphans_rule"
+  },
+  "06_vacuous_rule.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "vacuous_rule"
+  },
+  "07_impossible_rule.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "impossible_rule"
+  },
+  "08_rule_malformed.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "rule_malformed"
+  },
+  "09_unstratifiable.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "unstratifiable"
+  },
+  "10_duplicate_rule.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "rule": null,
+   "reason": "duplicate_rule"
+  },
+  "11_unknown_rule.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "unknown_rule"
+  },
+  "12_no_power.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "no_power"
+  },
+  "13_unknown_key.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "unknown_key"
+  },
+  "14_proposer_mismatch.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "proposer_mismatch"
+  },
+  "15_no_proposer.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "no_proposer"
+  },
+  "16_bad_signature_tampered.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "bad_signature"
+  },
+  "17_bad_signature_s_plus_L.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "bad_signature"
+  },
+  "18_bad_signature_namespace.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "bad_signature"
+  },
+  "19_bad_seq.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "rule": null,
+   "reason": "bad_seq"
+  },
+  "20_parent_mismatch_fork.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "rule": null,
+   "reason": "parent_mismatch"
+  },
+  "21_genesis_misplaced.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "rule": null,
+   "reason": "genesis_misplaced"
+  },
+  "22_schema.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "rule": null,
+   "reason": "schema"
+  },
+  "23_not_canonical.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "not_canonical"
+  },
+  "24_malformed_json.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "rule": null,
+   "reason": "malformed_json"
+  },
+  "25_empty.jsonl": {
+   "ok": true,
+   "entries": 0,
+   "lapse": []
+  }
+ }
+}
