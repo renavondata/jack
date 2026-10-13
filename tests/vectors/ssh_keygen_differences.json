@@ -1,0 +1,11 @@
+{
+ "about": "Signatures the kernel refuses that ssh-keygen -Y verify may accept. Each is intentional and has its own test in tests/test_sig.py. Any disagreement not listed here fails the differential test.",
+ "differences": [
+  {
+   "name": "s_plus_L",
+   "kernel": "refuse (bad_signature): S >= L",
+   "ssh_keygen": "may accept: OpenSSH's ref10-derived verifier checks only the top three bits of S, so S + L (< 2^253) passes its bound and satisfies the group equation",
+   "test": "tests/test_sig.py::Differential::test_named_difference_s_plus_L"
+  }
+ ]
+}
