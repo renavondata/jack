@@ -31,7 +31,7 @@ produce that disagreement.
 
 | what | count |
 |---|---|
-| commits on `c0-founding`, each with `Proposer: founder claude-fable-5-1 <session>` | 16 |
+| commits on `c0-founding`, each with `Proposer: founder claude-fable-5-1 <session>` (this one included) | 18 |
 | kernel physical lines (criterion 3) | 658 |
 | tests | 147 (local run under Python 3.12.8 / OpenSSH 10.5: 146 pass, 1 skipped by design (`test_named_difference_s_plus_L`: this OpenSSH build also rejects S ≥ L, so the tolerated difference is absent here; on GitHub's ubuntu-latest image the test *passes*: that build's `ssh-keygen` accepts S+L, so the named difference is real there) |
 | pins / mutants | 13 pins; 15 mutants KILLED, 0 SURVIVED, 0 STALE, 0 twin failures; 1 PENDING |
