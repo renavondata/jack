@@ -167,3 +167,13 @@ class Facts(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ParseOrder(unittest.TestCase):
+    """malformed_json (lone surrogate) outranks not_canonical (numbers) whatever the field order."""
+
+    def test_surrogate_wins_over_float(self):
+        for line in ('{"a":1.5,"b":"\\ud800"}', '{"a":"\\ud800","b":1.5}', '{"a":99999999999999999,"b":"\\udfff"}'):
+            with self.assertRaises(Refuse) as cm:
+                log.parse_line(line)
+            self.assertEqual(cm.exception.reason, "malformed_json", line)

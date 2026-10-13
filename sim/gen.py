@@ -18,6 +18,7 @@ KINDS = ("benign", "retroactive", "vacuous", "impossible", "orphaning", "forged"
          "unstratifiable", "malformed_rule", "duplicate_rule", "unknown_repeal", "schema", "structure")
 TITLES = ("alpha", "beta", "gamma", "delta", "epsilon", "zeta")
 SAT = "ok"          # the satisfying title no benign rule ever forbids
+SPARE = "spare"     # a proposal title no benign rule ever forbids, so a free title always exists
 CHECKER = "33" * 32  # the checker digest genesis records in simulated logs
 
 
@@ -82,7 +83,7 @@ class Sim:
         return rid
 
     def free_title(self):
-        return self.rng.choice([t for t in TITLES if t not in self.model.forbidden()])
+        return self.rng.choice([t for t in TITLES + (SPARE,) if t not in self.model.forbidden()])
 
     # --- benign steps -------------------------------------------------------
     def step_proposal(self, who="ann"):

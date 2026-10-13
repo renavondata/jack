@@ -37,26 +37,36 @@ def line_hash(line):
     return hashlib.sha256(line.encode("utf-8")).hexdigest()
 
 
-def _walk(value, on_key=None):
-    """Visit every scalar; refuse floats, out-of-range ints and lone surrogates."""
+def _scan(value, on_key=None, found=None):
+    """Visit every scalar; collect defects: lone surrogates (malformed) and bad numbers (not canonical)."""
+    found = {} if found is None else found
     if isinstance(value, dict):
         for k, v in value.items():
-            _walk(k, on_key)
+            _scan(k, on_key, found)
             if on_key:
                 on_key(k)
-            _walk(v, on_key)
+            _scan(v, on_key, found)
     elif isinstance(value, list):
         for v in value:
-            _walk(v, on_key)
+            _scan(v, on_key, found)
     elif isinstance(value, float):
-        raise Refuse("not_canonical", "non-integer number")
+        found["number"] = "non-integer number"
     elif isinstance(value, int) and not isinstance(value, bool) and abs(value) > MAX_INT:
-        raise Refuse("not_canonical", "integer beyond 2^53-1")
+        found["number"] = "integer beyond 2^53-1"
     elif isinstance(value, str):
         try:
             value.encode("utf-8")
         except UnicodeEncodeError:
-            raise Refuse("malformed_json", "lone surrogate") from None
+            found["surrogate"] = "lone surrogate"
+    return found
+
+
+def _walk(value, on_key=None):
+    found = _scan(value, on_key)
+    if "surrogate" in found:
+        raise Refuse("malformed_json", found["surrogate"])
+    if "number" in found:
+        raise Refuse("not_canonical", found["number"])
 
 
 def parse_line(line):

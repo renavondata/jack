@@ -60,8 +60,11 @@ def _init():
 
 
 def _one(seed):
-    case = gen.generate(seed, POOL)
-    return seed, case.kind, evaluate(case, POOL)
+    try:
+        case = gen.generate(seed, POOL)
+        return seed, case.kind, evaluate(case, POOL)
+    except Exception as x:  # a generator defect is a finding, recorded against its seed, never a dead run
+        return seed, "error", [("generator", f"{type(x).__name__}: {x}")]
 
 
 def main(argv=None):

@@ -95,3 +95,21 @@ class Runner(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Robustness(unittest.TestCase):
+    def test_free_title_exists_when_every_vocabulary_title_is_forbidden(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            pool = gen.KeyPool(tmp)
+            s = gen.Sim(random.Random(3), pool)
+            s.step_rule(list(gen.TITLES))
+            self.assertEqual(s.free_title(), gen.SPARE)
+            self.assertNotIn(gen.SPARE, gen.TITLES)
+            s.step_proposal()
+            self.assertEqual(strip(check.check(s.lg.lines)), s.ok())
+
+    def test_worker_reports_a_generator_error_instead_of_dying(self):
+        run._init()
+        seed, kind, failures = run._one("not-hex")
+        self.assertEqual((seed, kind), ("not-hex", "error"))
+        self.assertEqual(failures[0][0], "generator")
