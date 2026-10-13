@@ -2,7 +2,7 @@ pin                         mutant                       status
 -------------------------------------------------------------------
 trusted_path_unguarded      guard_removed                KILLED  (AssertionError: ('kernel/check.py', {'appended': 0, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal':)
 trusted_path_unguarded      judge_dir_untrusted          KILLED  (AssertionError: ('judge/judge.py', {'appended': 0, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': )
-judge_from_proposal         digest_unchecked             KILLED  (AssertionError: {'appended': 2, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'cf204c9be8f259c760)
+judge_from_proposal         digest_unchecked             KILLED  (AssertionError: {'appended': 2, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '99ca566b511614a717)
 final_law_for_all           latest_law_reaches_back      KILLED  (AssertionError: {'detail': '', 'ok': False, 'reason': 'violation', 'rule': 'r1', 'seq': 3})
 vacuous_rule_admitted       violating_witness_unchecked  KILLED  (AssertionError: expected (2, None, 'vacuous_rule'), got {'entries': 3, 'lapse': [[2, 'r1']], 'ok': True})
 vacuous_rule_admitted       any_violation_counts         KILLED  (AssertionError: expected (2, None, 'vacuous_rule'), got {'entries': 3, 'lapse': [[2, 'r1']], 'ok': True})
