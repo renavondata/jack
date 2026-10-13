@@ -118,6 +118,9 @@ test_self_judging_is_a_judge_level_attack_but_valid_in_the_log (tests.test_sim.G
 test_properties_hold_on_generated_cases (tests.test_sim.Properties.test_properties_hold_on_generated_cases) ... ok
 test_property_names (tests.test_sim.Properties.test_property_names) ... ok
 test_sticky_refusal_detects_a_bad_checker (tests.test_sim.Properties.test_sticky_refusal_detects_a_bad_checker) ... ok
+test_retroactive_never_forbids_the_spare_title (tests.test_sim.Regressions.test_retroactive_never_forbids_the_spare_title) ... ok
+test_seed_c35942cde0736065_generates (tests.test_sim.Regressions.test_seed_c35942cde0736065_generates)
+First full run: retroactive forbade the spare title, leaving later proposals no free title. ... ok
 test_free_title_exists_when_every_vocabulary_title_is_forbidden (tests.test_sim.Robustness.test_free_title_exists_when_every_vocabulary_title_is_forbidden) ... ok
 test_worker_reports_a_generator_error_instead_of_dying (tests.test_sim.Robustness.test_worker_reports_a_generator_error_instead_of_dying) ... ok
 test_run_writes_transcript_and_respects_limit (tests.test_sim.Runner.test_run_writes_transcript_and_respects_limit) ... ok
@@ -147,7 +150,7 @@ test_witness_sees_prefix_and_candidate (tests.test_witness_lapse.Witnesses.test_
 test_witness_ts_fact (tests.test_witness_lapse.Witnesses.test_witness_ts_fact) ... ok
 
 ----------------------------------------------------------------------
-Ran 145 tests in 19.698s
+Ran 147 tests in 10.266s
 
 OK (skipped=1)
-10 seeds in 0.8s, 0 property failures → /tmp/tmp6fv9ytlo/20261013T174640Z-10.json
+10 seeds in 0.3s, 0 property failures → /tmp/tmpyipzi414/20261013T180052Z-10.json

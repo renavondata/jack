@@ -1,0 +1,44 @@
+{
+ "started": "2026-10-13T17:50:38.971609+00:00",
+ "elapsed_s": 570.8,
+ "budget_s": 570.0,
+ "jobs": 12,
+ "seeds_file": "sim/seeds.txt",
+ "seeds_run": 36352,
+ "seeds": [
+  "4178ee380b3a2c0a",
+  "7664ac1ff75e364f"
+ ],
+ "by_kind": {
+  "benign": 1729,
+  "breach": 1678,
+  "duplicate_rule": 1814,
+  "flooding": 1671,
+  "forged": 1697,
+  "forking": 1719,
+  "impossible": 1680,
+  "lapse": 1773,
+  "malformed_rule": 1745,
+  "orphaning": 1747,
+  "retroactive": 1768,
+  "rewriting": 1765,
+  "schema": 1742,
+  "self_judging": 1756,
+  "stalling": 1695,
+  "structure": 1680,
+  "unattributed": 1771,
+  "unknown_repeal": 1688,
+  "unsigned_change": 1740,
+  "unstratifiable": 1752,
+  "vacuous": 1742
+ },
+ "properties": [
+  "oracle",
+  "prefix",
+  "sticky_refusal",
+  "deterministic"
+ ],
+ "failures": [],
+ "python": "3.12.8",
+ "openssh": "OpenSSH_10.5p1, OpenSSL 3.6.4 25 Aug 2026"
+}
