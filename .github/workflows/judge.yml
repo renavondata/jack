@@ -1,0 +1,26 @@
+# The judge (CHARTER §9.6): trunk's checker over the proposal's appended log
+# entries, as data. Runs on pull_request_target so the workflow and every file
+# it executes come from main, never from the proposal. Holds no secret; the
+# token is read-only. The proposal's code is never checked out or executed:
+# its commit is fetched as git objects and read with `git show`.
+name: judge
+on:
+  pull_request_target:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  judge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out trunk (the base branch, not the proposal)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Fetch the proposal as git objects only
+        run: git fetch --no-tags origin "+refs/pull/${{ github.event.pull_request.number }}/head:refs/remotes/proposal/head"
+      - name: Judge the proposal with trunk's kernel
+        run: python3 judge/judge.py --trunk "$(git rev-parse HEAD)" --proposal "${{ github.event.pull_request.head.sha }}"
