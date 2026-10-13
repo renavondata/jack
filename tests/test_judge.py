@@ -3,36 +3,18 @@ import base64
 import hashlib
 import json
 import os
-import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
 
-from harness import build
+from harness import build, gitfix
 from harness.build import proposal
+from harness.gitfix import commit_all, git, write
 from judge import judge
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.executable
-
-
-def git(repo, *args):
-    return subprocess.run(["git", "-C", repo, *args], check=True, capture_output=True, text=True).stdout.strip()
-
-
-def write(repo, rel, data):
-    path = os.path.join(repo, rel)
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    mode = "wb" if isinstance(data, bytes) else "w"
-    with open(path, mode) as f:
-        f.write(data)
-
-
-def commit_all(repo, msg):
-    git(repo, "add", "-A")
-    git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--allow-empty", "-m", msg)
-    return git(repo, "rev-parse", "HEAD")
 
 
 class Fixture(unittest.TestCase):
@@ -48,20 +30,9 @@ class Fixture(unittest.TestCase):
         cls.tmp.cleanup()
 
     def repo(self, with_log=True):
-        repo = tempfile.mkdtemp(dir=self.tmp.name)
-        git(repo, "init", "-q", "-b", "main")
-        shutil.copytree(os.path.join(ROOT, "kernel"), os.path.join(repo, "kernel"), ignore=shutil.ignore_patterns("__pycache__"))
-        shutil.copytree(os.path.join(ROOT, "judge"), os.path.join(repo, "judge"), ignore=shutil.ignore_patterns("__pycache__"))
-        write(repo, ".github/workflows/judge.yml", "name: judge\n")
-        write(repo, "SPEC.md", "spec\n")
-        write(repo, "CHARTER.md", "charter\n")
-        write(repo, "README.md", "readme\n")
-        self.lg = self.w.log()
-        if with_log:
-            write(repo, "log.jsonl", self.lg.text())
-        self.main = commit_all(repo, "trunk")
-        git(repo, "checkout", "-q", "-b", "pr")
-        return repo
+        fx = gitfix.make_repo(self.w, with_log=with_log, tmpdir=self.tmp.name)
+        self.lg, self.main = fx.log, fx.main
+        return fx.repo
 
     def judge(self, repo, trunk=None, head=None):
         return judge.judge(repo, trunk or "main", head or "pr")

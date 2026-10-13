@@ -1,0 +1,20 @@
+pin                         mutant                       status
+-------------------------------------------------------------------
+trusted_path_unguarded      guard_removed                KILLED  (AssertionError: ('kernel/check.py', {'appended': 0, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal':)
+trusted_path_unguarded      judge_dir_untrusted          KILLED  (AssertionError: ('judge/judge.py', {'appended': 0, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': )
+judge_from_proposal         digest_unchecked             KILLED  (AssertionError: {'appended': 2, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'cf204c9be8f259c760)
+final_law_for_all           latest_law_reaches_back      KILLED  (AssertionError: {'detail': '', 'ok': False, 'reason': 'violation', 'rule': 'r1', 'seq': 3})
+vacuous_rule_admitted       violating_witness_unchecked  KILLED  (AssertionError: expected (2, None, 'vacuous_rule'), got {'entries': 3, 'lapse': [[2, 'r1']], 'ok': True})
+vacuous_rule_admitted       any_violation_counts         KILLED  (AssertionError: expected (2, None, 'vacuous_rule'), got {'entries': 3, 'lapse': [[2, 'r1']], 'ok': True})
+impossible_rule_admitted    satisfying_witness_unchecked KILLED  (AssertionError: expected (1, None, 'impossible_rule'), got {'detail': 'no satisfying witness of r1 passes the )
+unsigned_change             power_unchecked              KILLED  (AssertionError: expected (1, None, 'no_power'), got {'entries': 2, 'lapse': [], 'ok': True})
+history_rewritten           signature_always_valid       KILLED  (AssertionError: expected (1, None, 'bad_signature'), got {'detail': '', 'ok': False, 'reason': 'parent_mismatc)
+fork_admitted               parent_unchecked             KILLED  (AssertionError: expected (3, None, 'parent_mismatch'), got {'entries': 4, 'lapse': [], 'ok': True})
+redundancy_unreported       lapse_never_reported         KILLED  (AssertionError: {'entries': 3, 'lapse': [], 'ok': True})
+unattributed_entry          empty_proposer_admitted      KILLED  (AssertionError: expected (1, None, 'no_proposer'), got {'detail': 'key ann-1 belongs to ann', 'ok': False, 're)
+unattributed_entry          unknown_key_trusted          KILLED  (AssertionError: expected (1, None, 'unknown_key'), got {'entries': 2, 'lapse': [], 'ok': True})
+forged_signature_admitted   s_bound_unchecked            KILLED  (AssertionError: expected (1, None, 'bad_signature'), got {'entries': 2, 'lapse': [], 'ok': True})
+orphaned_rule_admitted      orphan_recheck_skipped       KILLED  (AssertionError: expected (2, None, 'orphans_rule'), got {'entries': 3, 'lapse': [], 'ok': True})
+checker_drift               reason_code_flipped          PENDING  (kernel2/check does not exist yet)
+
+KILLED 15, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 1
