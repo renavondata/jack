@@ -18,7 +18,8 @@ KINDS = ("benign", "retroactive", "vacuous", "impossible", "orphaning", "forged"
          "unstratifiable", "malformed_rule", "duplicate_rule", "unknown_repeal", "schema", "structure")
 TITLES = ("alpha", "beta", "gamma", "delta", "epsilon", "zeta")
 SAT = "ok"          # the satisfying title no benign rule ever forbids
-SPARE = "spare"     # a proposal title no benign rule ever forbids, so a free title always exists
+SPARE = "spare"     # a proposal title no rule ever forbids, so a free title always exists
+RETRO = "retro"     # the title the retroactive case proposes and then forbids
 CHECKER = "33" * 32  # the checker digest genesis records in simulated logs
 
 
@@ -147,10 +148,9 @@ def generate_kind(kind, rng, pool):
         s.step()
         return Case(None, kind, lg.lines, s.ok())
     if kind == "retroactive":
-        t = s.free_title()
-        s.add("proposal", "ann", proposal(t), pool.ann)
+        s.add("proposal", "ann", proposal(RETRO), pool.ann)
         m.proposals.append(s.n - 1)
-        s.step_rule([t])
+        s.step_rule([RETRO])
         s.step_proposal()
         return Case(None, kind, lg.lines, s.ok())
     if kind == "vacuous":

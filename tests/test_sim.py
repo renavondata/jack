@@ -113,3 +113,23 @@ class Robustness(unittest.TestCase):
         seed, kind, failures = run._one("not-hex")
         self.assertEqual((seed, kind), ("not-hex", "error"))
         self.assertEqual(failures[0][0], "generator")
+
+
+class Regressions(unittest.TestCase):
+    def test_seed_c35942cde0736065_generates(self):
+        """First full run: retroactive forbade the spare title, leaving later proposals no free title."""
+        with tempfile.TemporaryDirectory() as tmp:
+            pool = gen.KeyPool(tmp)
+            case = gen.generate("c35942cde0736065", pool)
+            self.assertEqual(strip(check.check(case.lines)), case.expected)
+            self.assertEqual(run.evaluate(case, pool), [])
+
+    def test_retroactive_never_forbids_the_spare_title(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            pool = gen.KeyPool(tmp)
+            for seed in range(6):
+                s = gen.Sim(random.Random(seed), pool)
+                s.step_rule(list(gen.TITLES))
+                case = gen.generate_kind("retroactive", random.Random(seed), pool)
+                self.assertNotIn(gen.SPARE, {t for l in case.lines for t in json.dumps(json.loads(l)["body"]).split('"')
+                                             if t == gen.SPARE and json.loads(l)["type"] == "rule"})
