@@ -28,7 +28,7 @@ class Registry(unittest.TestCase):
         for gone in ("final_law_for_all", "vacuous_rule_admitted", "impossible_rule_admitted", "redundancy_unreported",
                      "orphaned_rule_admitted"):
             self.assertNotIn(gone, names, "rule pins return with the law language in C1")
-        self.assertEqual(len(names), 16)
+        self.assertEqual(len(names), 17)
         for p in pins.PINS:
             self.assertTrue(p.mutants, p.name)
             for m in p.mutants:

@@ -92,12 +92,16 @@ def split_lines(data):
 
 
 def extract(repo, sha, prefix, into):
-    for path in files(repo, sha):
+    """Write the files under `prefix` at `sha` into `into`, honouring git's executable bit (mode 100755)."""
+    for line in git(repo, "ls-tree", "-r", sha).splitlines():
+        meta, path = line.split("\t", 1)
         if path.startswith(prefix):
             dest = os.path.join(into, path)
             os.makedirs(os.path.dirname(dest), exist_ok=True)
             with open(dest, "wb") as f:
                 f.write(show(repo, sha, path))
+            if meta.split()[0] == "100755":
+                os.chmod(dest, 0o755)
 
 
 def run_json(cmd, cwd):

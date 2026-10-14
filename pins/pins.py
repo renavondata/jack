@@ -219,6 +219,19 @@ def t_key_decl_members(root):
     admitted(runner.check_with(root, lg.lines), 2)
 
 
+def t_kernel2_runnable(root):
+    """The judge runs trunk's kernel2 with git's file modes, so its launcher may call its own scripts."""
+    fx = gitfix.make_repo(world())
+    gitfix.git(fx.repo, "checkout", "-q", "main")
+    gitfix.write(fx.repo, "kernel2/check", '#!/bin/sh\nexec "$(dirname "$0")/helper.sh" "$@"\n')
+    gitfix.write(fx.repo, "kernel2/helper.sh", "#!/bin/sh\necho '{\"ok\":true,\"entries\":1}'\n")
+    for name in ("check", "helper.sh"):
+        os.chmod(os.path.join(fx.repo, "kernel2", name), 0o755)
+    gitfix.commit_all(fx.repo, "kernel2 whose launcher calls a helper")
+    r = runner.judge_with(root, fx.repo, "main", "main")
+    assert r.get("ok") is True and r.get("kernel2") == {"ok": True, "entries": 1}, r
+
+
 def t_checker_drift(root):
     """Both checkers agree, verdict by verdict, on the pin fixtures (runs once kernel2/check exists)."""
     w = world()
@@ -305,6 +318,8 @@ PINS = [
     Pin("key_decl_extra_member", t_key_decl_members, [
         Mutant("extra_members_allowed", "kernel/log.py",
                "        if set(d) != KEY_FIELDS:", "        if False:")]),
+    Pin("kernel2_unrunnable", t_kernel2_runnable, [
+        Mutant("modes_ignored", "judge/judge.py", "                os.chmod(dest, 0o755)", "                pass")]),
     Pin("checker_drift", t_checker_drift, [
         Mutant("reason_code_flipped", "kernel2/check", "bad_signature", "bad_signatur3")]),
 ]
