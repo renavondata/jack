@@ -28,7 +28,7 @@ class Registry(unittest.TestCase):
         for gone in ("final_law_for_all", "vacuous_rule_admitted", "impossible_rule_admitted", "redundancy_unreported",
                      "orphaned_rule_admitted"):
             self.assertNotIn(gone, names, "rule pins return with the law language in C1")
-        self.assertEqual(len(names), 12)
+        self.assertEqual(len(names), 16)
         for p in pins.PINS:
             self.assertTrue(p.mutants, p.name)
             for m in p.mutants:
@@ -46,7 +46,7 @@ class Runner(unittest.TestCase):
         killed = toy_pin("k", "def canonical(obj):", "def canonical(obj):  # mutated")
         survived = toy_pin("s", "def canonical(obj):", "def canonical(obj):  # mutated", fails_on_mutant=False)
         stale = toy_pin("st", "no such text anywhere", "x")
-        pending = toy_pin("p", "x", "y", path="kernel2/check")
+        pending = toy_pin("p", "x", "y", path="kernel2/no-such-file")
         results = run.run_pins([killed, survived, stale, pending], ROOT)
         by = {(r.pin, r.mutant): r.status for r in results}
         self.assertEqual(by[("k", "m")], "KILLED")

@@ -74,6 +74,16 @@ def logs(w):
     out["21_not_canonical"] = [lg.lines[0], lg.lines[1].replace(',"ts"', ', "ts"', 1)]
     out["22_malformed_json"] = [lg.lines[0], lg.lines[1][:-2]]
     out["23_empty"] = []
+    lg = w.log(); lg.add("proposal", "ann", proposal(), w.ann, ts="\uff12\uff10\uff12\uff16-10-14T00:00:00Z"); out["24_ts_unicode_digits"] = lg.lines
+    lg = w.log(); lg.add("proposal", "ann", proposal(), w.ann, ts="2026-02-29T00:00:00Z"); out["25_ts_impossible_date"] = lg.lines
+    lg = w.log(); lg.add("proposal", "ann", proposal(), w.ann, ts="2028-02-29T23:59:59Z"); out["26_ts_leap_day_ok"] = lg.lines
+    out["27_nesting_33_deep"] = ['{"a":' * 33 + "1" + "}" * 33]
+    out["28_long_integer"] = ['{"a":' + "9" * 5000 + "}"]
+    lg = w.log(); lg.add("key", "guy", build.decl("ann-1", "ann", bob, ["proposal"]), w.guy)
+    lg.add("key", "guy", build.decl("eve-1", "eve", w.ann, ["proposal"]), w.guy); out["29_pubkey_reused_after_rotation"] = lg.lines
+    lg = w.log(); lg.add("key", "guy", dict(build.decl("eve-1", "eve", bob, ["proposal"]), note="x"), w.guy); out["30_key_decl_extra_member"] = lg.lines
+    lg = build.Log(); lg.add("genesis", "guy", build.genesis_body([dict(w.decls[0], note="x")] + w.decls[1:]), w.guy)
+    out["31_genesis_key_extra_member"] = lg.lines
     return out
 
 

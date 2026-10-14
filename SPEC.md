@@ -50,8 +50,14 @@ denotes; otherwise **not_canonical**. The canonical serialisation is:
   a valid pair) is **malformed_json**, not merely non-canonical.
 - Duplicate keys in an object are **not_canonical** (the canonical form has none).
 
-Order of these checks within one line: not valid JSON, or not an object, or any
-lone surrogate anywhere → **malformed_json**; then any non-integer or
+- Objects and arrays nest **at most 32 deep** (the line's own object is depth 1); deeper nesting is
+  **malformed_json**, whatever else the line contains. A checker must return this verdict, never
+  crash or run out of stack, for any depth.
+- An integer token longer than 20 characters is out of range (**not_canonical**), however many digits
+  it has; a checker must never fail to read a long number.
+
+Order of these checks within one line: not valid JSON, or not an object, or nesting deeper than 32,
+or any lone surrogate anywhere → **malformed_json**; then any non-integer or
 out-of-range number → **not_canonical**; then re-serialise and compare with the
 line → **not_canonical**. Vectors: `spec/vectors/canonical.json`.
 
@@ -91,11 +97,15 @@ including keys containing `.`); a required member with the wrong shape is
 
 hex64 = `[0-9a-f]{64}`, hex40 = `[0-9a-f]{40}`. "integer ≥ 0" excludes booleans.
 
-A **key declaration** is an object with `key_id`: `[a-z0-9_-]{1,64}`;
+A **key declaration** (the body of a `key` entry, and each element of `genesis.keys`) is an object with
+**exactly** these four members, and no others (else **schema**): `key_id`: `[a-z0-9_-]{1,64}`;
 `principal`: non-empty string; `powers`: array of entry-type names (any of the
-four, possibly empty, repetition allowed); `pubkey`: a string of exactly two
-space-separated fields, the first `ssh-ed25519`, the second standard base64
-(with padding) decoding to exactly 51 bytes `string("ssh-ed25519") ‖ string(32 bytes)`.
+four, possibly empty, repetition allowed); `pubkey`: a string of exactly two fields
+separated by exactly one ASCII space (U+0020; no other whitespace, no leading or trailing space), the first `ssh-ed25519`, the second standard base64
+(with padding) decoding to exactly 51 bytes. 51 is a multiple of 3, so a correct encoding has no `=`
+padding and no unused bits; any other encoding fails the length test (**schema**). Likewise a
+`sig` whose decoded container is not exactly the 180 bytes of §6 is **bad_signature**. No base64 input
+is undecidable. The 51 bytes are `string("ssh-ed25519") ‖ string(32 bytes)`.
 The 32 bytes are the public key A (§6); whether A is usable is checked at
 declaration (§7), not here.
 
@@ -172,8 +182,8 @@ is what entries 0..*i*−1 established:
   of the same key_id replaces the earlier (so empty `powers` revokes, and a
   re-declaration may change principal and powers).
 - A declaration is refused with **bad_key** if its public key is weak (§6), or
-  if its pubkey blob equals that of a *different* key_id already declared
-  (one key, one identity). Weakness is tested first; the detail is free text.
+  if its pubkey blob has **ever** been declared for a *different* key_id, even one since rotated
+  or revoked (one key, one identity, for the life of the log). Weakness is tested first; the detail is free text.
 - Genesis is self-certifying: for entry 0 the keys are those its own body
   declares, registered in array order before its signature is checked.
 - A `key` entry at *i* governs entries > *i*, never itself.
@@ -213,7 +223,9 @@ one JSON object on stdout:
 {"ok":false,"seq":n,"reason":"<code>","detail":"<free text>"}
 ```
 
-Exit status 0 if ok, 1 if refused, 2 on usage or I/O error (no JSON required).
+Exit status 0 if ok, 1 if refused, 2 on usage or I/O error (no JSON required). Every log has a
+verdict: a checker that cannot decide an input (a crash, a timeout, an unanswered question) is
+defective, and the judge treats its silence as a refusal of the proposal.
 Key order in the output is irrelevant; the differential harness compares the
 parsed objects **minus `detail`**. The Python kernel is `python3 -m kernel.check <log>`;
 the second checker is `kernel2/check <log>` (kernel2/README.md).

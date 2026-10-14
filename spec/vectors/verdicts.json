@@ -116,6 +116,45 @@
   "23_empty.jsonl": {
    "ok": true,
    "entries": 0
+  },
+  "24_ts_unicode_digits.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "schema"
+  },
+  "25_ts_impossible_date.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "schema"
+  },
+  "26_ts_leap_day_ok.jsonl": {
+   "ok": true,
+   "entries": 2
+  },
+  "27_nesting_33_deep.jsonl": {
+   "ok": false,
+   "seq": 0,
+   "reason": "malformed_json"
+  },
+  "28_long_integer.jsonl": {
+   "ok": false,
+   "seq": 0,
+   "reason": "not_canonical"
+  },
+  "29_pubkey_reused_after_rotation.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "reason": "bad_key"
+  },
+  "30_key_decl_extra_member.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "schema"
+  },
+  "31_genesis_key_extra_member.jsonl": {
+   "ok": false,
+   "seq": 0,
+   "reason": "schema"
   }
  }
 }

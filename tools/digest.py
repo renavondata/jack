@@ -3,6 +3,7 @@
 .github/workflows/ and SPEC.md, sorted by path — the same function judge.py computes from git."""
 import hashlib
 import os
+import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -11,14 +12,9 @@ from judge.judge import TRUSTED, is_under  # noqa: E402
 
 
 def working_tree_files():
-    out = []
-    for dirpath, dirnames, filenames in os.walk(ROOT):
-        dirnames[:] = [d for d in dirnames if d not in (".git", "__pycache__")]
-        for name in filenames:
-            rel = os.path.relpath(os.path.join(dirpath, name), ROOT)
-            if is_under(rel, TRUSTED) and not name.endswith(".pyc"):
-                out.append(rel)
-    return sorted(out)
+    """Tracked trusted-base files only, as the judge sees them (build output such as kernel2/.cache is not law)."""
+    tracked = subprocess.run(["git", "-C", ROOT, "ls-files", "-z"], capture_output=True, check=True).stdout
+    return sorted(p for p in tracked.decode().split("\0") if p and is_under(p, TRUSTED))
 
 
 def digest():

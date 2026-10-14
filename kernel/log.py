@@ -12,6 +12,8 @@ TYPES = ("genesis", "key", "proposal", "merge")
 TOP_KEYS = frozenset({"seq", "parent", "ts", "type", "proposer", "body", "sig"})
 GENESIS_PARENT = "0" * 64
 MAX_INT = 2**53 - 1
+MAX_DEPTH = 32
+KEY_FIELDS = frozenset({"key_id", "principal", "pubkey", "powers"})
 HEX64 = re.compile(r"[0-9a-f]{64}")
 HEX40 = re.compile(r"[0-9a-f]{40}")
 TS = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z")
@@ -38,16 +40,19 @@ def line_hash(line):
     return hashlib.sha256(line.encode("utf-8")).hexdigest()
 
 
-def _defects(value, found=None):
-    """Visit every scalar; collect defects: lone surrogates (malformed) and bad numbers (not canonical)."""
+def _defects(value, found=None, depth=1):
+    """Visit every scalar; collect defects: nesting beyond MAX_DEPTH and lone surrogates (malformed),
+    bad numbers (not canonical)."""
     found = {} if found is None else found
-    if isinstance(value, dict):
+    if isinstance(value, (dict, list)) and depth > MAX_DEPTH:
+        found["depth"] = f"nested deeper than {MAX_DEPTH}"
+    elif isinstance(value, dict):
         for k, v in value.items():
-            _defects(k, found)
-            _defects(v, found)
+            _defects(k, found, depth + 1)
+            _defects(v, found, depth + 1)
     elif isinstance(value, list):
         for v in value:
-            _defects(v, found)
+            _defects(v, found, depth + 1)
     elif isinstance(value, float):
         found["number"] = "non-integer number"
     elif isinstance(value, int) and not isinstance(value, bool) and abs(value) > MAX_INT:
@@ -63,14 +68,14 @@ def _defects(value, found=None):
 def parse_line(line):
     """Parse one log line; it must be a canonical JSON object."""
     try:
-        obj = json.loads(line)
-    except ValueError:
+        obj = json.loads(line, parse_int=lambda s: int(s) if len(s) <= 20 else float("inf"))
+    except (ValueError, RecursionError):
         raise Refuse("malformed_json") from None
     if not isinstance(obj, dict):
         raise Refuse("malformed_json", "not an object")
     found = _defects(obj)
-    if "surrogate" in found:
-        raise Refuse("malformed_json", found["surrogate"])
+    if "depth" in found or "surrogate" in found:
+        raise Refuse("malformed_json", found.get("depth", found.get("surrogate")))
     if "number" in found or canonical(obj) != line:
         raise Refuse("not_canonical", found.get("number", ""))
     return obj
@@ -154,3 +159,6 @@ BODY = {
 def check_body(type_, body):
     """Per-type required members; extra members are allowed."""
     _match(BODY[type_], body, type_)
+    for d in body["keys"] if type_ == "genesis" else [body] if type_ == "key" else []:
+        if set(d) != KEY_FIELDS:
+            raise Refuse("schema", "a key declaration has exactly key_id, principal, pubkey, powers")

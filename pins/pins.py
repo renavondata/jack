@@ -187,6 +187,38 @@ def t_ts_instant(root):
     admitted(runner.check_with(root, lg.lines), 2)
 
 
+def t_deep_nesting(root):
+    """Nesting beyond 32 is malformed_json at any depth, never a crash."""
+    for depth in (33, 100000):
+        refused(runner.check_with(root, ['{"a":' * depth + "1" + "}" * depth]), 0, "malformed_json")
+    refused(runner.check_with(root, ['{"a":' * 32 + "1" + "}" * 32]), 0, "schema")
+
+
+def t_big_integer(root):
+    """A very long integer is not_canonical, never unreadable."""
+    refused(runner.check_with(root, ['{"a":' + "9" * 5000 + "}"]), 0, "not_canonical")
+
+
+def t_pubkey_reused(root):
+    """A public key belongs to one key_id for the life of the log, even after rotation."""
+    w = world()
+    lg = w.log(); lg.add("key", "guy", build.decl("ann-1", "ann", w.stranger, ["proposal"]), w.guy)
+    base = list(lg.lines)
+    lg.add("key", "guy", build.decl("eve-1", "eve", w.ann, ["proposal"]), w.guy)
+    refused(runner.check_with(root, lg.lines), 2, "bad_key")
+    lg = build.Log(base); lg.add("key", "guy", build.decl("ann-1", "ann", w.ann, ["proposal"]), w.guy)
+    admitted(runner.check_with(root, lg.lines), 3)
+
+
+def t_key_decl_members(root):
+    """A key declaration has exactly four members."""
+    w = world()
+    lg = w.log(); lg.add("key", "guy", dict(build.decl("eve-1", "eve", w.stranger, ["proposal"]), note="x"), w.guy)
+    refused(runner.check_with(root, lg.lines), 1, "schema")
+    lg = w.log(); lg.add("key", "guy", build.decl("eve-1", "eve", w.stranger, ["proposal"]), w.guy)
+    admitted(runner.check_with(root, lg.lines), 2)
+
+
 def t_checker_drift(root):
     """Both checkers agree, verdict by verdict, on the pin fixtures (runs once kernel2/check exists)."""
     w = world()
@@ -258,6 +290,21 @@ PINS = [
         Mutant("calendar_unchecked", "kernel/log.py",
                "        datetime.datetime(int(v[0:4]), int(v[5:7]), int(v[8:10]), int(v[11:13]), int(v[14:16]), int(v[17:19]))\n",
                "        pass\n")]),
+    Pin("deep_nesting_crashes", t_deep_nesting, [
+        Mutant("depth_unbounded", "kernel/log.py",
+               "    if isinstance(value, (dict, list)) and depth > MAX_DEPTH:", "    if False:"),
+        Mutant("recursion_uncaught", "kernel/log.py",
+               "    except (ValueError, RecursionError):", "    except ValueError:")]),
+    Pin("big_integer_unreadable", t_big_integer, [
+        Mutant("int_digits_limited", "kernel/log.py",
+               'obj = json.loads(line, parse_int=lambda s: int(s) if len(s) <= 20 else float("inf"))',
+               "obj = json.loads(line)")]),
+    Pin("pubkey_reused", t_pubkey_reused, [
+        Mutant("ownership_forgotten", "kernel/check.py",
+               '    if owners.get(blob, d["key_id"]) != d["key_id"]:', "    if False:")]),
+    Pin("key_decl_extra_member", t_key_decl_members, [
+        Mutant("extra_members_allowed", "kernel/log.py",
+               "        if set(d) != KEY_FIELDS:", "        if False:")]),
     Pin("checker_drift", t_checker_drift, [
         Mutant("reason_code_flipped", "kernel2/check", "bad_signature", "bad_signatur3")]),
 ]

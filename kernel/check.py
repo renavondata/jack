@@ -13,8 +13,8 @@ from . import log, sig
 from .log import Refuse
 
 Key = namedtuple("Key", "principal blob powers")
-State = namedtuple("State", "head keys")
-EMPTY = State(log.GENESIS_PARENT, {})
+State = namedtuple("State", "head keys owners")  # owners: pubkey blob -> the one key_id it may ever belong to
+EMPTY = State(log.GENESIS_PARENT, {}, {})
 
 
 def signer(e, keys):
@@ -36,15 +36,14 @@ def signer(e, keys):
     return key_id
 
 
-def declare(keys, d):
+def declare(keys, owners, d):
     """Change: a declaration enters the law; the latest for a key_id wins, empty powers revoke."""
     blob = log.pubkey_blob(d["pubkey"])
     if sig.weak_key(blob[-32:]):
         raise Refuse("bad_key", f"{d['key_id']}: non-canonical or small-order public key")
-    for kid, k in keys.items():
-        if k.blob == blob and kid != d["key_id"]:
-            raise Refuse("bad_key", f"pubkey already declared as {kid}")
-    return {**keys, d["key_id"]: Key(d["principal"], blob, frozenset(d["powers"]))}
+    if owners.get(blob, d["key_id"]) != d["key_id"]:
+        raise Refuse("bad_key", f"pubkey belongs to {owners[blob]} for the life of the log")
+    return {**keys, d["key_id"]: Key(d["principal"], blob, frozenset(d["powers"]))}, {**owners, blob: d["key_id"]}
 
 
 def check_entry(state, i, line):
@@ -60,14 +59,14 @@ def check_entry(state, i, line):
     if e["proposer"] == "":
         raise Refuse("no_proposer")
     log.check_body(e["type"], e["body"])
-    keys = state.keys
+    keys, owners = state.keys, state.owners
     if e["type"] == "genesis":
         for d in e["body"]["keys"]:
-            keys = declare(keys, d)
+            keys, owners = declare(keys, owners, d)
     signer(e, keys)
     if e["type"] == "key":
-        keys = declare(keys, e["body"])
-    return State(log.line_hash(line), keys)
+        keys, owners = declare(keys, owners, e["body"])
+    return State(log.line_hash(line), keys, owners)
 
 
 def check(lines):
