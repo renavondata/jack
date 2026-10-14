@@ -1,0 +1,121 @@
+{
+ "about": "verdict each log in logs/ must produce (SPEC.md \u00a710), detail omitted",
+ "verdicts": {
+  "00_genesis_only.jsonl": {
+   "ok": true,
+   "entries": 1
+  },
+  "01_every_type_grant_revoke.jsonl": {
+   "ok": true,
+   "entries": 7
+  },
+  "02_revoked_key_no_power.jsonl": {
+   "ok": false,
+   "seq": 7,
+   "reason": "no_power"
+  },
+  "03_redeclared_powers.jsonl": {
+   "ok": true,
+   "entries": 9
+  },
+  "04_duplicate_pubkey_bad_key.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "bad_key"
+  },
+  "05_small_order_key_bad_key.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "bad_key"
+  },
+  "06_noncanonical_key_bad_key.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "bad_key"
+  },
+  "07_genesis_weak_key_bad_key.jsonl": {
+   "ok": false,
+   "seq": 0,
+   "reason": "bad_key"
+  },
+  "08_no_power.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "no_power"
+  },
+  "09_unknown_key.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "unknown_key"
+  },
+  "10_proposer_mismatch.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "proposer_mismatch"
+  },
+  "11_no_proposer.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "no_proposer"
+  },
+  "12_bad_signature_tampered.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "bad_signature"
+  },
+  "13_bad_signature_s_plus_L.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "bad_signature"
+  },
+  "14_bad_signature_namespace.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "bad_signature"
+  },
+  "15_bad_signature_reserved.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "bad_signature"
+  },
+  "16_bad_seq.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "reason": "bad_seq"
+  },
+  "17_parent_mismatch_fork.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "reason": "parent_mismatch"
+  },
+  "18_genesis_misplaced.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "reason": "genesis_misplaced"
+  },
+  "19_schema.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "reason": "schema"
+  },
+  "20_schema_rule_type_gone.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "reason": "schema"
+  },
+  "21_not_canonical.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "not_canonical"
+  },
+  "22_malformed_json.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "malformed_json"
+  },
+  "23_empty.jsonl": {
+   "ok": true,
+   "entries": 0
+  }
+ }
+}

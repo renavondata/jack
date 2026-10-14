@@ -1,0 +1,109 @@
+{
+ "canonical": [
+  {
+   "value": {
+    "b": 1,
+    "a": "x"
+   },
+   "canonical": "{\"a\":\"x\",\"b\":1}",
+   "sha256": "cdab067e9f3beb32d1252cfd63e492592fecbf591b0d08cadb24bb17f3864246"
+  },
+  {
+   "value": {
+    "z": [
+     1,
+     {
+      "y": null,
+      "x": true
+     }
+    ]
+   },
+   "canonical": "{\"z\":[1,{\"x\":true,\"y\":null}]}",
+   "sha256": "dd4b906ee8790b3aa208eb672e5c13a9cd87f8da43717a7c6bd4f5794ee2fd72"
+  },
+  {
+   "value": {
+    "s": "é\n\u0001/\"\\😀"
+   },
+   "canonical": "{\"s\":\"\\u00e9\\n\\u0001/\\\"\\\\\\ud83d\\ude00\\u007f\"}",
+   "sha256": "abb2762b4777fef1d4309e471da6ebdcaab6966fd4bf52b7dfe40e07246cf0bd"
+  },
+  {
+   "value": {
+    "n": [
+     0,
+     -1,
+     9007199254740991
+    ]
+   },
+   "canonical": "{\"n\":[0,-1,9007199254740991]}",
+   "sha256": "5f4d20409785b53d917593d9ffbeb55ed9e0e3a7b37e98e09fec4c80df37b857"
+  },
+  {
+   "value": {
+    "empty": {},
+    "list": []
+   },
+   "canonical": "{\"empty\":{},\"list\":[]}",
+   "sha256": "5be8b92bdb087c1005c506a9c388e6bd2e44963ba609f6a8de9f8ae9e4440ec2"
+  },
+  {
+   "value": {
+    "kéy": "v"
+   },
+   "canonical": "{\"k\\u00e9y\":\"v\"}",
+   "sha256": "0d0e25603848153a79d8dfb3e9d92965f1d0ce251d4f3bba5d0eebadd50f6840"
+  }
+ ],
+ "refused_lines": [
+  {
+   "line": "{\"a\": 1}",
+   "reason": "not_canonical"
+  },
+  {
+   "line": "{\"b\":1,\"a\":2}",
+   "reason": "not_canonical"
+  },
+  {
+   "line": "{\"a\":1.0}",
+   "reason": "not_canonical"
+  },
+  {
+   "line": "{\"a\":-0}",
+   "reason": "not_canonical"
+  },
+  {
+   "line": "{\"a\":1e2}",
+   "reason": "not_canonical"
+  },
+  {
+   "line": "{\"a\":9007199254740992}",
+   "reason": "not_canonical"
+  },
+  {
+   "line": "{\"a\":1,\"a\":2}",
+   "reason": "not_canonical"
+  },
+  {
+   "line": "{\"a\":\"\\ud800\"}",
+   "reason": "malformed_json"
+  },
+  {
+   "line": "{\"a\":\"é\"}",
+   "reason": "not_canonical"
+  },
+  {
+   "line": "[1]",
+   "reason": "malformed_json"
+  },
+  {
+   "line": "{",
+   "reason": "malformed_json"
+  },
+  {
+   "line": "{\"a\":1.5,\"b\":\"\\ud800\"}",
+   "reason": "malformed_json"
+  }
+ ],
+ "genesis_parent": "0000000000000000000000000000000000000000000000000000000000000000"
+}

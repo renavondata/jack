@@ -1,0 +1,18 @@
+pin                         mutant                       status
+-------------------------------------------------------------------
+trusted_path_unguarded      guard_removed                KILLED  (AssertionError: ('kernel/check.py', {'appended': 0, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal':)
+trusted_path_unguarded      judge_dir_untrusted          KILLED  (AssertionError: ('judge/judge.py', {'appended': 0, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': )
+trusted_rename_admitted     path_guard_only              KILLED  (AssertionError: ('SPEC.md', 'docs/SPEC.md', {'appended': 0, 'detail': '', 'kernel2': 'absent', 'ok': True, 'pr)
+judge_from_proposal         digest_unchecked             KILLED  (AssertionError: {'appended': 2, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '17bc62c4b9cbd59d7b)
+unsigned_change             power_unchecked              KILLED  (AssertionError: expected (1, 'no_power'), got {'entries': 2, 'ok': True})
+history_rewritten           signature_always_valid       KILLED  (AssertionError: expected (1, 'bad_signature'), got {'detail': '', 'ok': False, 'reason': 'parent_mismatch', 's)
+fork_admitted               parent_unchecked             KILLED  (AssertionError: expected (3, 'parent_mismatch'), got {'entries': 4, 'ok': True})
+unattributed_entry          empty_proposer_admitted      KILLED  (AssertionError: expected (1, 'no_proposer'), got {'detail': 'key ann-1 belongs to ann', 'ok': False, 'reason':)
+unattributed_entry          unknown_key_trusted          KILLED  (AssertionError: expected (1, 'unknown_key'), got {'entries': 2, 'ok': True})
+forged_signature_admitted   s_bound_unchecked            KILLED  (AssertionError: expected (1, 'bad_signature'), got {'entries': 2, 'ok': True})
+weak_key_admitted           noncanonical_key_admitted    KILLED  (AssertionError: expected (1, 'bad_key'), got {'entries': 2, 'ok': True})
+weak_key_admitted           small_order_key_admitted     KILLED  (AssertionError: expected (1, 'bad_key'), got {'entries': 2, 'ok': True})
+reserved_bytes_admitted     reserved_unchecked           KILLED  (AssertionError: expected (1, 'bad_signature'), got {'entries': 2, 'ok': True})
+checker_drift               reason_code_flipped          PENDING  (kernel2/check does not exist yet)
+
+KILLED 13, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 1

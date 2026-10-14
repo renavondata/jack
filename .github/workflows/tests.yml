@@ -1,0 +1,25 @@
+# Tests, pins and the kernel line count. On pull_request this is the proposal's
+# own run (informational: the accused's test, CHARTER F1); the run that counts
+# for §9 criterion 1 is the one on push to main, from trunk.
+name: tests
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -t . -v
+      - name: Pins (every mutant KILLED, twin passing; checker_drift PENDING until kernel2 exists)
+        run: python3 pins/run.py
+      - name: Kernel line count (CHARTER §9 criterion 3)
+        run: python3 tools/count_kernel.py
