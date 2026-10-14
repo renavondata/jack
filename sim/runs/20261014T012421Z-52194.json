@@ -1,0 +1,38 @@
+{
+ "started": "2026-10-14T01:24:21.816691+00:00",
+ "elapsed_s": 600.1,
+ "budget_s": 600.0,
+ "jobs": 12,
+ "seeds_file": "sim/seeds.txt",
+ "seeds_run": 52194,
+ "seeds": [
+  "4178ee380b3a2c0a",
+  "1f8a38aa276bb6a4"
+ ],
+ "by_kind": {
+  "benign": 3512,
+  "duplicate_key": 3435,
+  "flooding": 3517,
+  "forged": 3499,
+  "forking": 3494,
+  "retroactive": 3428,
+  "revoked": 3463,
+  "rewriting": 3510,
+  "schema": 3399,
+  "self_judging": 3475,
+  "stalling": 3521,
+  "structure": 3497,
+  "unattributed": 3496,
+  "unsigned_change": 3423,
+  "weak_key": 3525
+ },
+ "properties": [
+  "oracle",
+  "prefix",
+  "sticky_refusal",
+  "deterministic"
+ ],
+ "failures": [],
+ "python": "3.12.8",
+ "openssh": "OpenSSH_10.5p1, OpenSSL 3.6.4 25 Aug 2026"
+}
