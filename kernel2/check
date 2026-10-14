@@ -5,5 +5,19 @@ if [ "$#" -ne 1 ]; then
     printf '%s\n' 'usage: kernel2/check <path-to-log.jsonl>' >&2
     exit 2
 fi
-"$dir/build.sh" bad_signature || exit 2
+rebuild=false
+if [ ! -x "$dir/.cache/check" ]; then
+    rebuild=true
+else
+    for source in "$0" "$dir/build.sh" "$dir/main.go" "$dir/canonical.go" \
+        "$dir/ed25519.go" "$dir/signature.go" "$dir/checker.go"; do
+        if [ "$source" -nt "$dir/.cache/check" ]; then
+            rebuild=true
+            break
+        fi
+    done
+fi
+if [ "$rebuild" = true ]; then
+    "$dir/build.sh" bad_signature || exit 2
+fi
 exec "$dir/.cache/check" "$@"

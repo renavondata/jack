@@ -18,6 +18,7 @@ type object map[string]any
 type jsonParser struct {
 	b            []byte
 	i            int
+	depth        int
 	noncanonical bool
 }
 
@@ -150,9 +151,14 @@ func (p *jsonParser) number() (any, error) {
 			return nil, fmt.Errorf("empty exponent")
 		}
 	}
+	// Scan the whole token for JSON syntax, but never convert long numbers.
+	if !integer || p.i-start > 20 {
+		p.noncanonical = true
+		return jsonInteger(0), nil
+	}
 	s := string(p.b[start:p.i])
 	n, err := strconv.ParseInt(s, 10, 64)
-	if !integer || err != nil || n < -9007199254740991 || n > 9007199254740991 || s == "-0" {
+	if err != nil || n < -9007199254740991 || n > 9007199254740991 || s == "-0" {
 		p.noncanonical = true
 		return jsonInteger(0), nil
 	}
@@ -163,6 +169,13 @@ func (p *jsonParser) value() (any, error) {
 	p.space()
 	if p.i == len(p.b) {
 		return nil, fmt.Errorf("missing value")
+	}
+	if p.b[p.i] == '{' || p.b[p.i] == '[' {
+		if p.depth == 32 {
+			return nil, fmt.Errorf("nesting exceeds 32")
+		}
+		p.depth++
+		defer func() { p.depth-- }()
 	}
 	switch p.b[p.i] {
 	case '"':

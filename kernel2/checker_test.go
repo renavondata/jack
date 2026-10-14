@@ -11,8 +11,10 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestCanonicalBoundaries(t *testing.T) {
@@ -46,9 +48,29 @@ func TestCanonicalBoundaries(t *testing.T) {
 			t.Errorf("%q: got %q want %q", c.line, got, c.reason)
 		}
 	}
-	deep := `{"a":` + strings.Repeat("[", 10001) + "0" + strings.Repeat("]", 10001) + "}"
-	if _, reason := parseCanonical([]byte(deep)); reason != "" {
-		t.Fatalf("unbounded body depth: %s", reason)
+	for _, depth := range []int{31, 32, 33, 100001} {
+		for _, container := range []struct{ open, close string }{{"[", "]"}, {`{"a":`, "}"}} {
+			line := `{"a":` + strings.Repeat(container.open, depth-1) + "0" + strings.Repeat(container.close, depth-1) + "}"
+			want := ""
+			if depth > 32 {
+				want = "malformed_json"
+			}
+			if _, reason := parseCanonical([]byte(line)); reason != want {
+				t.Fatalf("depth %d: got %s want %s", depth, reason, want)
+			}
+		}
+	}
+	long := strings.Repeat("9", 100000)
+	for _, c := range []struct{ line, reason string }{
+		{`{"a":` + long + `}`, "not_canonical"},
+		{`{"a":-` + long + `}`, "not_canonical"},
+		{`{"a":` + long + `,"b":"\ud800"}`, "malformed_json"},
+		{`{"a":` + long + `,"b":` + strings.Repeat("[", 32) + `0` + strings.Repeat("]", 32) + `}`, "malformed_json"},
+		{`{"a":` + long + `e}`, "malformed_json"},
+	} {
+		if _, reason := parseCanonical([]byte(c.line)); reason != c.reason {
+			t.Fatalf("long-number precedence: got %s want %s", reason, c.reason)
+		}
 	}
 }
 
@@ -157,13 +179,16 @@ func TestKeyRotationAndFutureEffect(t *testing.T) {
 	proposal := object{"title": "rotation", "commit": strings.Repeat("0", 40)}
 	testReason(t, appendEntry(rotated, 2, "proposal", proposal, old), "unknown_key", 2)
 	testReason(t, appendEntry(rotated, 2, "proposal", proposal, replacement), "", 0)
-	// The replaced blob is no longer assigned in the current key map.
+	// Ownership survives rotation, but the same identity may restore its key.
 	reused := appendEntry(rotated, 2, "key", testDeclaration("old_id", old, "proposal"), replacement)
-	testReason(t, appendEntry(reused, 3, "proposal", proposal, old), "", 0)
+	testReason(t, reused, "bad_key", 2)
+	restored := appendEntry(rotated, 2, "key", testDeclaration("root", old, "proposal"), replacement)
+	testReason(t, appendEntry(restored, 3, "proposal", proposal, old), "", 0)
 	// Removing one's own powers is allowed under the previous state.
 	revoked := appendEntry(rotated, 2, "key", testDeclaration("root", replacement), replacement)
 	testReason(t, revoked, "", 0)
 	testReason(t, appendEntry(revoked, 3, "proposal", proposal, replacement), "no_power", 3)
+	testReason(t, appendEntry(revoked, 3, "proposal", proposal, old), "unknown_key", 3)
 }
 
 func TestContainerBoundaries(t *testing.T) {
@@ -173,22 +198,22 @@ func TestContainerBoundaries(t *testing.T) {
 		t.Fatal(err)
 	}
 	for i := 0; i < len(b); i++ {
-		if _, ok, err := parseSignature(base64.StdEncoding.EncodeToString(b[:i])); ok || err != nil {
-			t.Fatalf("truncation %d: valid=%v err=%v", i, ok, err)
+		if _, ok := parseSignature(base64.StdEncoding.EncodeToString(b[:i])); ok {
+			t.Fatalf("truncation %d accepted", i)
 		}
 	}
 	bad := append(append([]byte(nil), b...), 0)
-	if _, ok, _ := parseSignature(base64.StdEncoding.EncodeToString(bad)); ok {
+	if _, ok := parseSignature(base64.StdEncoding.EncodeToString(bad)); ok {
 		t.Fatal("trailing byte accepted")
 	}
 	bad = append([]byte(nil), b...)
 	binary.BigEndian.PutUint32(bad[10:14], ^uint32(0))
-	if _, ok, _ := parseSignature(base64.StdEncoding.EncodeToString(bad)); ok {
+	if _, ok := parseSignature(base64.StdEncoding.EncodeToString(bad)); ok {
 		t.Fatal("oversized wire length accepted")
 	}
-	for _, text := range []string{"A", "AAA", "AA=", "AA===", "AA==\n", "AA==\r", "AA-A", "AA_A", "AA==AA=="} {
-		if _, ok, err := decodeBase64(text); ok || err != nil {
-			t.Fatalf("bad base64 %q: valid=%v err=%v", text, ok, err)
+	for _, text := range []string{"A", "AAA", "AA=", "AA===", "AA==\n", "AA==\r", "AA-A", "AA_A", "AA==AA==", "AB==", strings.Repeat("A", 238) + "=="} {
+		if _, ok := parseSignature(text); ok {
+			t.Fatalf("bad base64 %q accepted", text)
 		}
 	}
 }
@@ -222,17 +247,38 @@ func TestLineBoundaries(t *testing.T) {
 	testReason(t, canonical(m), "", 0)
 }
 
-func TestOpenQuestions(t *testing.T) {
-	for _, timestamp := range []string{"2026-02-30T00:00:00Z", "2026-12-31T23:59:60Z", "0000-01-01T00:00:00Z", "٢٠٢٦-10-14T00:00:00Z"} {
-		m := testGenesis(testPrivate("questions"))
+func TestTimestamps(t *testing.T) {
+	private := testPrivate("timestamps")
+	for _, timestamp := range []string{"2026-02-30T00:00:00Z", "1900-02-29T00:00:00Z", "2026-12-31T23:59:60Z", "0000-01-01T00:00:00Z", "٢٠٢٦-10-14T00:00:00Z", "2026-00-01T00:00:00Z", "2026-13-01T00:00:00Z", "2026-01-00T00:00:00Z", "2026-01-01T24:00:00Z", "2026-01-01T00:60:00Z"} {
+		m := testGenesis(private)
 		m["ts"] = timestamp
-		v, err := checkLog(bytes.NewReader(canonical(m)))
-		if v != nil || err == nil || !strings.Contains(err.Error(), "Q1") {
-			t.Fatalf("Q1 was decided: %v %v", v, err)
-		}
+		testReason(t, canonical(m), "schema", 0)
 	}
-	if _, ok, err := decodeBase64("AB=="); ok || err == nil || !strings.Contains(err.Error(), "Q2") {
-		t.Fatalf("Q2 was decided: %v %v", ok, err)
+	for _, timestamp := range []string{"0001-01-01T00:00:00Z", "9999-12-31T23:59:59Z", "2000-02-29T00:00:00Z", "2024-02-29T00:00:00Z"} {
+		m := testGenesis(private)
+		m["ts"] = timestamp
+		testSign(m, private)
+		testReason(t, canonical(m), "", 0)
+	}
+}
+
+func TestKeyDeclarationText(t *testing.T) {
+	private := testPrivate("public text")
+	valid := testDeclaration("root", private)["pubkey"].(string)
+	for _, text := range []string{
+		" " + valid, valid + " ", strings.Replace(valid, " ", "  ", 1),
+		strings.Replace(valid, " ", "\t", 1), strings.Replace(valid, " ", "\u00a0", 1),
+		valid + "\n", valid + "=", "ssh-ed25519 AB==",
+		valid[:len(valid)-2] + "==", valid + "AAAA",
+	} {
+		m := testGenesis(private)
+		m["body"].(object)["keys"].([]any)[0].(object)["pubkey"] = text
+		testReason(t, canonical(m), "schema", 0)
+	}
+	for _, text := range []string{"AB==", "AA==", strings.Repeat("A", 238) + "=="} {
+		m := testGenesis(private)
+		m["sig"] = text
+		testReason(t, canonical(m), "bad_signature", 0)
 	}
 }
 
@@ -276,6 +322,14 @@ func TestLauncherReasonMutation(t *testing.T) {
 	if err := os.WriteFile(path, mutated, 0700); err != nil {
 		t.Fatal(err)
 	}
+	info, err := os.Stat(".cache/check")
+	if err != nil {
+		t.Fatal(err)
+	}
+	newer := info.ModTime().Add(time.Second)
+	if err := os.Chtimes(path, newer, newer); err != nil {
+		t.Fatal(err)
+	}
 	t.Cleanup(func() {
 		if b, err := exec.Command("./build.sh").CombinedOutput(); err != nil {
 			t.Errorf("restore normal binary: %v %s", err, b)
@@ -293,6 +347,79 @@ func TestLauncherReasonMutation(t *testing.T) {
 	}
 	if v["reason"] != "mutation_detected" {
 		t.Fatalf("launcher mutation did not affect verdict: %s", b)
+	}
+}
+
+func TestLauncherBuildFreshness(t *testing.T) {
+	dir := t.TempDir()
+	sources := []string{"check", "build.sh", "main.go", "canonical.go", "ed25519.go", "signature.go", "checker.go"}
+	for _, name := range sources {
+		b, err := os.ReadFile(name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, name), b, 0700); err != nil {
+			t.Fatal(err)
+		}
+	}
+	log := filepath.Join(dir, "empty.jsonl")
+	if err := os.WriteFile(log, nil, 0600); err != nil {
+		t.Fatal(err)
+	}
+	launch := func() {
+		t.Helper()
+		b, err := exec.Command(filepath.Join(dir, "check"), log).CombinedOutput()
+		if err != nil || string(b) != "{\"entries\":0,\"ok\":true}\n" {
+			t.Fatalf("launcher: %v %s", err, b)
+		}
+	}
+	binary := filepath.Join(dir, ".cache/check")
+	mtime := func() time.Time {
+		t.Helper()
+		info, err := os.Stat(binary)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return info.ModTime()
+	}
+	launch() // Missing binary must build.
+	built := mtime()
+	launch()
+	if !mtime().Equal(built) {
+		t.Fatal("unchanged sources rebuilt")
+	}
+	// Equal timestamps are not newer. A test file is not a binary source.
+	for _, name := range sources {
+		if err := os.Chtimes(filepath.Join(dir, name), built, built); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := os.WriteFile(filepath.Join(dir, "ignored_test.go"), []byte("package main\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	launch()
+	if !mtime().Equal(built) {
+		t.Fatal("equal timestamps or unrelated test file triggered rebuild")
+	}
+	// Keep all sources older than the binary except one, in turn.
+	for _, changed := range sources {
+		for _, name := range sources {
+			old := built.Add(-2 * time.Hour)
+			if err := os.Chtimes(filepath.Join(dir, name), old, old); err != nil {
+				t.Fatal(err)
+			}
+		}
+		stale := built.Add(-time.Hour)
+		if err := os.Chtimes(binary, stale, stale); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Chtimes(filepath.Join(dir, changed), built, built); err != nil {
+			t.Fatal(err)
+		}
+		launch()
+		if mtime().Equal(stale) {
+			t.Fatalf("newer %s did not trigger rebuild", changed)
+		}
 	}
 }
 

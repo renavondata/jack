@@ -5,30 +5,22 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"encoding/binary"
-	"fmt"
 	"strings"
 )
 
-func question(id, detail string) error {
-	return fmt.Errorf("unresolved SPEC question %s: %s (see kernel2/QUESTIONS.md)", id, detail)
-}
-
-// Alphabet, padding count/position and length are checked independently of
-// unused pad bits. The latter are deliberately undecided pending Q2.
-func decodeBase64(s string) ([]byte, bool, error) {
+// Both specified containers have lengths divisible by three: their standard
+// base64 encodings have no padding or unused bits.
+func decodeBase64(s string, size int) ([]byte, bool) {
+	if len(s) != base64.StdEncoding.EncodedLen(size) {
+		return nil, false
+	}
 	for _, c := range s {
-		if !(c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' || c >= '0' && c <= '9' || c == '+' || c == '/' || c == '=') {
-			return nil, false, nil
+		if !(c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' || c >= '0' && c <= '9' || c == '+' || c == '/') {
+			return nil, false
 		}
 	}
 	b, err := base64.StdEncoding.DecodeString(s)
-	if err != nil {
-		return nil, false, nil
-	}
-	if base64.StdEncoding.EncodeToString(b) != s {
-		return nil, false, question("Q2", "nonzero unused base64 padding bits")
-	}
-	return b, true, nil
+	return b, err == nil && len(b) == size
 }
 
 type wireReader struct {
@@ -78,43 +70,43 @@ func publicFromBlob(blob []byte) ([]byte, bool) {
 	return public, r.done() && string(typ) == "ssh-ed25519" && len(public) == 32
 }
 
-func parsePublicText(s string) (blob, public []byte, valid bool, err error) {
+func parsePublicText(s string) (blob, public []byte, valid bool) {
 	fields := strings.Split(s, " ")
 	if len(fields) != 2 || fields[0] != "ssh-ed25519" {
-		return nil, nil, false, nil
+		return nil, nil, false
 	}
-	blob, valid, err = decodeBase64(fields[1])
-	if err != nil || !valid {
-		return nil, nil, false, err
+	blob, valid = decodeBase64(fields[1], 51)
+	if !valid {
+		return nil, nil, false
 	}
 	public, valid = publicFromBlob(blob)
-	return blob, public, valid, nil
+	return blob, public, valid
 }
 
 type signatureContainer struct{ blob, public, signature []byte }
 
-func parseSignature(s string) (signatureContainer, bool, error) {
-	b, ok, err := decodeBase64(s)
-	if err != nil || !ok {
-		return signatureContainer{}, false, err
+func parseSignature(s string) (signatureContainer, bool) {
+	b, ok := decodeBase64(s, 180)
+	if !ok {
+		return signatureContainer{}, false
 	}
 	r := wireReader{b: b}
 	magic := r.raw(6)
 	version := r.uint32()
 	blob, namespace, reserved, hash, inner := r.text(), r.text(), r.text(), r.text(), r.text()
 	if !r.done() || !bytes.Equal(magic, []byte("SSHSIG")) || version != 1 || string(namespace) != "core-entry" || len(reserved) != 0 || string(hash) != "sha512" {
-		return signatureContainer{}, false, nil
+		return signatureContainer{}, false
 	}
 	public, ok := publicFromBlob(blob)
 	if !ok {
-		return signatureContainer{}, false, nil
+		return signatureContainer{}, false
 	}
 	ir := wireReader{b: inner}
 	typ, signature := ir.text(), ir.text()
 	if !ir.done() || string(typ) != "ssh-ed25519" || len(signature) != 64 {
-		return signatureContainer{}, false, nil
+		return signatureContainer{}, false
 	}
-	return signatureContainer{blob, public, signature}, true, nil
+	return signatureContainer{blob, public, signature}, true
 }
 
 func signedData(message []byte) []byte {
