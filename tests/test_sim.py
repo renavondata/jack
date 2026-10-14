@@ -2,6 +2,7 @@
 import json
 import os
 import random
+import sys
 import tempfile
 import unittest
 
@@ -38,6 +39,14 @@ class Generators(unittest.TestCase):
                 case = gen.generate_kind(kind, random.Random(seed), self.pool)
                 self.assertEqual(case.kind, kind)
                 self.assertEqual(strip(check.check(case.lines)), case.expected, f"{kind} seed {seed}: {case.lines[-1][:120]}")
+
+    def test_rewriting_a_key_entry_is_not_a_schema_refusal(self):
+        """Seeds on which `rewriting` hits a key entry; the oracle said schema-valid tampering, the entry was not."""
+        for s in ("abe4598310936905", "807cfd4db6b58b69", "cb54abe4a7a01c36", "5f09da6ff7544a65",
+                  "dcf96225d14ce404", "7f5d392118fff56c", "38cc2874cb07b5a8", "27d1519a7b5c64af"):
+            case = gen.generate(s, self.pool)
+            self.assertEqual(case.kind, "rewriting")
+            self.assertEqual(strip(check.check(case.lines)), case.expected, s)
 
     def test_generate_is_deterministic_in_the_seed(self):
         a, b = gen.generate("4178ee380b3a2c0a", self.pool), gen.generate("4178ee380b3a2c0a", self.pool)
@@ -85,6 +94,46 @@ class Properties(unittest.TestCase):
         flaky = lambda lines: {"ok": False, "seq": len(lines), "reason": "x"}  # noqa: E731
         failures = run.evaluate(case, self.pool, checker=flaky)
         self.assertIn("sticky_refusal", [f[0] for f in failures])
+
+
+class Second(unittest.TestCase):
+    """--second: the kernel as its own twin never disagrees; a second checker that accepts everything is caught."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.pool = gen.KeyPool(cls.tmp.name)
+        cls.twin = [sys.executable, "-E", "-s", "-m", "kernel.check"]  # as harness/diff.py; run from the repo root
+        cls.mutant = os.path.join(cls.tmp.name, "accept_all")
+        with open(cls.mutant, "w") as f:
+            f.write("#!/bin/sh\necho '{\"ok\": true, \"entries\": 0}'\n")
+        os.chmod(cls.mutant, 0o755)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_twin_agrees_on_every_kind(self):
+        for kind in gen.KINDS:
+            case = gen.generate_kind(kind, random.Random(3), self.pool)
+            self.assertNotIn("agree", [f[0] for f in run.evaluate(case, self.pool, second=self.twin)], kind)
+
+    def test_mutant_second_checker_is_caught(self):
+        case = gen.generate_kind("forking", random.Random(7), self.pool)
+        self.assertFalse(case.expected["ok"])
+        failures = run.evaluate(case, self.pool, second=[self.mutant])
+        self.assertIn("agree", [f[0] for f in failures])
+
+    def test_transcript_names_the_second_checker(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            rc = run.main(["--budget", "60", "--jobs", "2", "--limit", "6", "--out", tmp,
+                           "--second", " ".join(self.twin)])
+            self.assertEqual(rc, 0)
+            with open(os.path.join(tmp, os.listdir(tmp)[0])) as f:
+                t = json.load(f)
+            self.assertEqual((t["seeds_run"], t["failures"], t["second"]), (6, [], " ".join(self.twin)))
+            self.assertIn("agree", t["properties"])
+            self.assertEqual(len(t["commit"]), 40)
 
 
 class Runner(unittest.TestCase):
