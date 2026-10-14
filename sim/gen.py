@@ -133,7 +133,10 @@ def generate_kind(kind, rng, pool):
     if kind == "rewriting":
         i = rng.randrange(s.n)
         e = log.parse_line(lg.lines[i])
-        e["body"]["charter" if e["type"] == "genesis" else "note"] = "ab" * 32 if e["type"] == "genesis" else "edited"
+        if e["type"] == "key":  # a key declaration has exactly four members (SPEC §5): tamper a valid field instead
+            e["ts"] = "2025-06-15T12:34:56Z"  # never generated (Sim.ts: 2026, :00:00)
+        else:
+            e["body"]["charter" if e["type"] == "genesis" else "note"] = "ab" * 32 if e["type"] == "genesis" else "edited"
         if i < s.n - 1 and rng.random() < 0.5:
             del e["sig"]
             lg.lines[i] = build.make_entry(i, e["parent"], e["type"], e["proposer"], e["body"], m.signers[i], ts=e["ts"])
