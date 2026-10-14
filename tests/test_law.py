@@ -11,7 +11,7 @@ class Citations(unittest.TestCase):
         with open(os.path.join(ROOT, "LAW.md")) as f:
             text = f.read()
         cites = set(re.findall(r"`((?:kernel|judge|harness|tools)/[a-z_]+\.py):([A-Za-z_]+)`", text))
-        self.assertGreater(len(cites), 25)
+        self.assertGreater(len(cites), 18)
         for path, name in sorted(cites):
             full = os.path.join(ROOT, path)
             self.assertTrue(os.path.exists(full), path)

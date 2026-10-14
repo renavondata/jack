@@ -1,10 +1,9 @@
 # kernel2 — the second checker (not yet written)
 
-CHARTER §3 Adjudication and §9.4: *an independent implementation of the log,
-the Datalog engine and the validity predicate, in another language, written
-from the spec text alone by an author from a different model family.* Until it
-exists, the pin `checker_drift` is reported **PENDING** and §9 criteria 1 and 2
-cannot be met.
+CHARTER §3 Adjudication and §9.4: *an independent implementation of the log and
+the validity predicate, in another language, written from the spec text alone
+by an author from a different model family.* Until it exists, the pin
+`checker_drift` is reported **PENDING** and §9 criteria 1 and 2 cannot be met.
 
 ## Rules for its author
 
@@ -19,18 +18,19 @@ cannot be met.
 - The author must be a model from a family other than Anthropic's (the kernel's
   author was `claude-fable-5-1`). Record model and session in every commit's
   `Proposer:` trailer, as the founding commits do.
-- Deliver into this directory only. Changes to it arrive as proposals; the
-  judge refuses proposals that touch the trusted base, and `kernel2/` is not in
-  it until Guy adds it (REPORT.md).
+- Deliver into this directory only. `kernel2/` is part of the trusted base, so
+  the judge refuses any proposal that touches it (`trusted_path`); like every
+  trusted-base change until C1, it enters `main` by a commit Guy makes himself
+  (he fetches the author's branch and pushes it), after reading it.
 
-## Interface (the CLI contract, SPEC.md §13)
+## Interface (the CLI contract, SPEC.md §9)
 
 - `kernel2/check <path-to-log.jsonl>` — an executable file (a script with a
   shebang, or a tiny launcher that runs your binary). Build steps, if any, go
   in `kernel2/build.sh`; the judge and the harness run `kernel2/check` directly
   on ubuntu-latest, so prefer something that needs no build.
-- stdout: exactly one JSON object, `{"ok":true,"entries":N,"lapse":[[seq,"id"],...]}`
-  or `{"ok":false,"seq":n,"rule":"id"|null,"reason":"code","detail":"..."}`.
+- stdout: exactly one JSON object, `{"ok":true,"entries":N}` or
+  `{"ok":false,"seq":n,"reason":"code","detail":"..."}`.
 - exit 0 if ok, 1 if refused, 2 on usage or I/O error.
 
 ## How it will be exercised
