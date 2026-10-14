@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+if [ "$#" -ne 1 ]; then
+    printf '%s\n' 'usage: kernel2/check <path-to-log.jsonl>' >&2
+    exit 2
+fi
+"$dir/build.sh" bad_signature || exit 2
+exec "$dir/.cache/check" "$@"
