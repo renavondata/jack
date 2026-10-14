@@ -39,6 +39,8 @@ def signer(e, keys):
 def declare(keys, d):
     """Change: a declaration enters the law; the latest for a key_id wins, empty powers revoke."""
     blob = log.pubkey_blob(d["pubkey"])
+    if sig.weak_key(blob[-32:]):
+        raise Refuse("bad_key", f"{d['key_id']}: non-canonical or small-order public key")
     for kid, k in keys.items():
         if k.blob == blob and kid != d["key_id"]:
             raise Refuse("bad_key", f"pubkey already declared as {kid}")

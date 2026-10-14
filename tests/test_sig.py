@@ -59,6 +59,12 @@ class SshSig(unittest.TestCase):
             with self.assertRaises(ValueError, msg=b[:40]):
                 sig.parse_sshsig(b)
 
+    def test_reserved_field_must_be_empty(self):
+        for reserved in (b"\x00", b"pad", b"\x00" * 4):
+            with self.assertRaises(ValueError, msg=reserved):
+                sig.parse_sshsig(keys.rewrap(self.b64, reserved=reserved))
+        sig.parse_sshsig(keys.rewrap(self.b64, reserved=b""))
+
     def test_rsa_signature_rejected(self):
         rsa = keys.make_key(self.tmp.name, "rsa", "rsa")
         with self.assertRaises(ValueError):
@@ -122,6 +128,24 @@ class Ed25519(unittest.TestCase):
         self.assertIsNotNone(sig.decode_point((1).to_bytes(32, "little")), "y = 1, x = 0, sign 0 is canonical")
 
 
+class WeakKeys(unittest.TestCase):
+    def test_small_order_and_noncanonical_keys_are_weak(self):
+        for name, pub32 in keys.weak_keys():
+            self.assertTrue(sig.weak_key(pub32), name)
+        self.assertEqual(len(keys.weak_keys()), 12)
+
+    def test_real_keys_are_not_weak(self):
+        for v in load("rfc8032.json"):
+            self.assertFalse(sig.weak_key(bytes.fromhex(v["public_key"])), v["name"])
+        with tempfile.TemporaryDirectory() as tmp:
+            k = keys.make_key(tmp, "k")
+            self.assertFalse(sig.weak_key(log.pubkey_blob(k.pubkey)[-32:]))
+
+    def test_weak_key_text_round_trips_through_pubkey_blob(self):
+        for name, pub32 in keys.weak_keys():
+            self.assertEqual(log.pubkey_blob(keys.fake_key(pub32).pubkey)[-32:], pub32, name)
+
+
 class Differential(unittest.TestCase):
     """Kernel vs ssh-keygen on random and mutated signatures; disagreements must be named."""
 
@@ -157,6 +181,15 @@ class Differential(unittest.TestCase):
             k, o = self.kernel(msg, mb64), keys.ssh_keygen_verify(self.key.pubkey, "p", msg, mb64)
             self.assertEqual(k, o, f"unnamed disagreement on mutation {i}")
             self.assertFalse(k)
+
+    def test_named_difference_reserved_bytes(self):
+        self.assertIn("reserved_nonempty", self.allowed)
+        msg = b"malleable line"
+        b64 = keys.sign(self.key, msg)
+        mb64 = keys.rewrap(b64, reserved=b"\x00")
+        self.assertFalse(self.kernel(msg, mb64), "kernel must refuse a non-empty reserved field")
+        self.assertTrue(keys.ssh_keygen_verify(self.key.pubkey, "p", msg, mb64),
+                        "ssh-keygen was expected to accept; if this OpenSSH build rejects, the difference is absent and may be dropped")
 
     def test_named_difference_s_plus_L(self):
         self.assertIn("s_plus_L", self.allowed)

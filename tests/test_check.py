@@ -6,7 +6,7 @@ import sys
 import tempfile
 import unittest
 
-from harness import build
+from harness import build, keys
 from harness.build import proposal
 from kernel import check, log
 
@@ -139,6 +139,11 @@ class Signatures(Base):
         resigned = build.make_entry(1, log.line_hash(lg.lines[0]), "proposal", "ann", e["body"], self.w.ann)
         self.refused([lg.lines[0], resigned, lg.lines[2]], 2, "parent_mismatch")
 
+    def test_reserved_bytes_are_bad_signature(self):
+        lg = self.w.log(); lg.add("proposal", "ann", proposal("a"), self.w.ann)
+        e = log.parse_line(lg.lines[1]); e["sig"] = keys.rewrap(e["sig"], reserved=b"\x00")
+        self.refused([lg.lines[0], log.canonical(e)], 1, "bad_signature")
+
     def test_genesis_must_be_signed_by_its_own_key_with_genesis_power(self):
         decls = [build.decl("ann-1", "ann", self.w.ann, ["proposal"])]
         lg = build.Log(); lg.add("genesis", "ann", build.genesis_body(decls), self.w.ann)
@@ -182,6 +187,22 @@ class Change(Base):
         lg.add("key", "guy", build.decl("ann-1", "ann", self.w.ann, ["proposal", "merge"]), self.w.guy)
         lg.add("merge", "ann", build.merge(0), self.w.ann)
         self.ok(lg)
+
+    def test_weak_key_is_bad_key_at_declaration(self):
+        for name, pub32 in keys.weak_keys():
+            lg = self.w.log()
+            lg.add("key", "guy", build.decl("eve-1", "eve", keys.fake_key(pub32), ["proposal"]), self.w.guy)
+            v = self.refused(lg.lines, 1, "bad_key")
+            self.assertIn("eve-1", v["detail"], name)
+            decls = self.w.decls + [build.decl("eve-1", "eve", keys.fake_key(pub32), [])]
+            lg = build.Log(); lg.add("genesis", "guy", build.genesis_body(decls), self.w.guy)
+            self.refused(lg.lines, 0, "bad_key")
+
+    def test_weak_key_without_power_is_no_power_first(self):
+        name, pub32 = keys.weak_keys()[0]
+        lg = self.w.log()
+        lg.add("key", "ann", build.decl("eve-1", "eve", keys.fake_key(pub32), []), self.w.ann)
+        self.refused(lg.lines, 1, "no_power")
 
     def test_duplicate_pubkey_is_bad_key(self):
         lg = self.w.log()

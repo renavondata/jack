@@ -1,0 +1,19 @@
+{
+ "about": "Public keys the checker refuses at declaration (bad_key): the eight points of small order (the torsion subgroup of order 8, as listed in ed25519-speccheck and in Chalkias, Garillot & Nikolaenko 2020, 'Taming the many EdDSAs', Table 1) and encodings that RFC 8032 §5.1.3 does not decode (y >= p, or x = 0 with the sign bit set). Hex, little-endian point encodings.",
+ "small_order": [
+  {"name": "identity (order 1)", "pub_key": "0100000000000000000000000000000000000000000000000000000000000000"},
+  {"name": "order 2", "pub_key": "ecffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f"},
+  {"name": "order 4, sign 0", "pub_key": "0000000000000000000000000000000000000000000000000000000000000000"},
+  {"name": "order 4, sign 1", "pub_key": "0000000000000000000000000000000000000000000000000000000000000080"},
+  {"name": "order 8 (a)", "pub_key": "c7176a703d4dd84fba3c0b760d10670f2a2053fa2c39ccc64ec7fd7792ac037a"},
+  {"name": "order 8 (b)", "pub_key": "c7176a703d4dd84fba3c0b760d10670f2a2053fa2c39ccc64ec7fd7792ac03fa"},
+  {"name": "order 8 (c)", "pub_key": "26e8958fc2b227b045c3f489f2ef98f0d5dfac05d3c63339b13802886d53fc05"},
+  {"name": "order 8 (d)", "pub_key": "26e8958fc2b227b045c3f489f2ef98f0d5dfac05d3c63339b13802886d53fc85"}
+ ],
+ "non_canonical": [
+  {"name": "y = p", "pub_key": "edffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f"},
+  {"name": "y = p + 1", "pub_key": "eeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f"},
+  {"name": "y = 2^255 - 1", "pub_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f"},
+  {"name": "x = 0 with sign bit", "pub_key": "0100000000000000000000000000000000000000000000000000000000000080"}
+ ]
+}

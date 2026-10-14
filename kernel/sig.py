@@ -4,7 +4,9 @@ CHARTER §9.1 (`ssh-keygen -Y sign`, namespace core-entry). Verification follows
 RFC 8032 §5.1.7 with the strict choices fixed in SPEC.md: S < L, canonical
 encodings of A and R, cofactorless equation [S]B == R + [k]A with k = SHA-512
 (R ‖ A ‖ M) reduced modulo L, as every deployed verifier and the published
-edge-case vectors assume. Only ssh-ed25519 keys and sha512 SSHSIG payloads.
+edge-case vectors assume. Only ssh-ed25519 keys and sha512 SSHSIG payloads with
+an empty reserved field (so one signature has one encoding). A public key of
+small order or in a non-canonical encoding is weak and may not be declared.
 """
 import base64
 import hashlib
@@ -17,6 +19,7 @@ D = (-121665 * pow(121666, -1, P)) % P
 SQRT_M1 = pow(2, (P - 1) // 4, P)
 BASE = (15112221349535400772501151409588531511454012693041857206046113283949847762202,
         46316835694926478169428394003475163141307993866256225615783033603165251855960)
+IDENTITY = (1).to_bytes(32, "little")
 
 
 def sshstr(buf, off):
@@ -43,11 +46,11 @@ def parse_sshsig(b64):
         raise ValueError("magic or version")
     pub, off = sshstr(raw, 10)
     namespace, off = sshstr(raw, off)
-    _reserved, off = sshstr(raw, off)
+    reserved, off = sshstr(raw, off)
     hash_alg, off = sshstr(raw, off)
     inner, off = sshstr(raw, off)
-    if off != len(raw) or namespace != NAMESPACE or hash_alg != b"sha512":
-        raise ValueError("trailing bytes, namespace or hash algorithm")
+    if off != len(raw) or namespace != NAMESPACE or hash_alg != b"sha512" or reserved != b"":
+        raise ValueError("trailing bytes, namespace, hash algorithm or reserved field")
     sig_type, ioff = sshstr(inner, 0)
     sig64, ioff = sshstr(inner, ioff)
     if ioff != len(inner) or sig_type != b"ssh-ed25519" or len(sig64) != 64:
@@ -117,6 +120,12 @@ def _encode(p):
     zi = pow(z, P - 2, P)
     x, y = x * zi % P, y * zi % P
     return (y | ((x & 1) << 255)).to_bytes(32, "little")
+
+
+def weak_key(pub32):
+    """A public key no entry may be attributed to: non-canonical encoding, or a point of small order."""
+    a = decode_point(pub32)
+    return a is None or _encode(_mul(8, _ext(a))) == IDENTITY
 
 
 def ed25519_verify(pub32, sig64, msg):
