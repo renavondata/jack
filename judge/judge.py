@@ -3,9 +3,12 @@
 
 CHARTER §9.6. Facts about the proposal (paths touched, signing keys) come from
 git objects, never from the proposal's claims; the proposal's code is never
-executed; the trusted base (kernel/, judge/, .github/workflows/, SPEC.md) and
-CHARTER.md may not be touched by a proposal at all (maxim 1). Standard library
-only; the only side effects are git reads and a temporary directory.
+executed; the trusted base (kernel/, kernel2/, judge/, .github/workflows/,
+SPEC.md) and CHARTER.md must be byte-identical between trunk and the proposal
+(maxim 1): compared by content, so a rename or deletion is caught as surely as
+an edit. Trunk's genesis must record the SHA-256 of trunk's CHARTER.md.
+Standard library only; the only side effects are git reads and a temporary
+directory.
 """
 import argparse
 import base64
@@ -17,8 +20,8 @@ import subprocess
 import sys
 import tempfile
 
-TRUSTED = ("kernel/", "judge/", ".github/workflows/", "SPEC.md")
-GUARDED = TRUSTED + ("CHARTER.md",)
+TRUSTED = ("kernel/", "kernel2/", "judge/", ".github/workflows/", "SPEC.md")
+CHARTER = "CHARTER.md"
 LOG = "log.jsonl"
 
 
@@ -64,8 +67,23 @@ def digest(repo, sha):
 
 
 def touched(repo, trunk, head):
+    """Paths git reports as changed since the merge base (informative: renames appear under the new name only)."""
     base = git(repo, "merge-base", trunk, head)
     return sorted(p for p in git(repo, "diff", "--name-only", base, head).splitlines() if p)
+
+
+def differing(repo, trunk, head):
+    """Trusted-base files and CHARTER.md whose bytes differ between two commits: edits, renames, deletions, additions."""
+    paths = set(trusted_files(repo, trunk)) | set(trusted_files(repo, head)) | {CHARTER}
+    return sorted(p for p in paths if show(repo, trunk, p) != show(repo, head, p))
+
+
+def genesis_charter(line):
+    """The charter hash entry 0 records, or None if the line does not carry one."""
+    try:
+        return json.loads(line)["body"]["charter"]
+    except (ValueError, KeyError, TypeError):
+        return None
 
 
 def split_lines(data):
@@ -129,13 +147,14 @@ def judge(repo, trunk_ref, proposal_ref):
     def refuse(reason, detail=""):
         return dict(report, reason=reason, detail=detail)
 
-    guarded = [p for p in report["touched"] if is_under(p, GUARDED)]
-    if guarded:
-        return refuse("trusted_path", f"proposal touches {', '.join(guarded)}")
+    if digest(repo, head) != report["trusted_digest"] or show(repo, head, CHARTER) != show(repo, trunk, CHARTER):
+        return refuse("trusted_path", f"differs from trunk: {', '.join(differing(repo, trunk, head))}")
     trunk_log, head_log = show(repo, trunk, LOG) or b"", show(repo, head, LOG) or b""
+    old, new = split_lines(trunk_log), split_lines(head_log)
+    if old and genesis_charter(old[0]) != hashlib.sha256(show(repo, trunk, CHARTER) or b"").hexdigest():
+        return refuse("charter_mismatch", "trunk's genesis does not record the SHA-256 of trunk's CHARTER.md")
     if not head_log.startswith(trunk_log):
         return refuse("prefix_broken", "trunk's log is not a byte prefix of the proposal's")
-    old, new = split_lines(trunk_log), split_lines(head_log)
     appended = new[len(old):]
     report["appended"] = len(appended)
     if appended and not old:

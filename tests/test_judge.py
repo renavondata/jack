@@ -18,7 +18,7 @@ PY = sys.executable
 
 
 class Fixture(unittest.TestCase):
-    """A temp repo: main has the real kernel, judge, a workflow, SPEC.md and a genesis log."""
+    """A temp repo: main has the real kernel, judge, a workflow, SPEC.md, CHARTER.md and a genesis log."""
 
     @classmethod
     def setUpClass(cls):
@@ -37,13 +37,16 @@ class Fixture(unittest.TestCase):
     def judge(self, repo, trunk=None, head=None):
         return judge.judge(repo, trunk or "main", head or "pr")
 
+    def append(self, repo, msg="append"):
+        write(repo, "log.jsonl", self.lg.text())
+        commit_all(repo, msg)
+
 
 class Verdicts(Fixture):
     def test_valid_appended_entry_is_accepted(self):
         repo = self.repo()
         line = self.lg.add("proposal", "ann", proposal("a"), self.w.ann)
-        write(repo, "log.jsonl", self.lg.text())
-        commit_all(repo, "append")
+        self.append(repo)
         r = self.judge(repo)
         self.assertTrue(r["ok"], r)
         self.assertEqual((r["reason"], r["touched"], r["appended"]), (None, ["log.jsonl"], 1))
@@ -51,7 +54,7 @@ class Verdicts(Fixture):
         n = int.from_bytes(blob[10:14], "big")
         fp = "SHA256:" + base64.b64encode(hashlib.sha256(blob[14:14 + n]).digest()).decode().rstrip("=")
         self.assertEqual(r["signers"], [fp])
-        self.assertEqual(r["verdict"], {"ok": True, "entries": 2, "lapse": []})
+        self.assertEqual(r["verdict"], {"ok": True, "entries": 2})
         self.assertEqual(r["trusted_digest"], judge.digest(repo, self.main))
         self.assertEqual(r["kernel2"], "absent")
 
@@ -68,15 +71,6 @@ class Verdicts(Fixture):
         commit_all(repo, "docs")
         self.assertTrue(self.judge(repo)["ok"])
 
-    def test_trusted_paths_refused(self):
-        for path in ("kernel/check.py", "judge/judge.py", ".github/workflows/judge.yml", "SPEC.md", "CHARTER.md", "kernel/new.py"):
-            repo = self.repo()
-            write(repo, path, "import sys; print('{\"ok\": true, \"entries\": 0, \"lapse\": []}')\n")
-            commit_all(repo, "edit")
-            r = self.judge(repo)
-            self.assertEqual((r["ok"], r["reason"]), (False, "trusted_path"), path)
-            self.assertIn(path, r["touched"])
-
     def test_prefix_broken(self):
         repo = self.repo()
         self.lg.add("proposal", "ann", proposal("a"), self.w.ann)
@@ -91,18 +85,14 @@ class Verdicts(Fixture):
 
     def test_genesis_by_proposal(self):
         repo = self.repo(with_log=False)
-        write(repo, "log.jsonl", self.lg.text())
-        commit_all(repo, "genesis")
+        self.append(repo, "genesis")
         r = self.judge(repo)
         self.assertEqual((r["ok"], r["reason"]), (False, "genesis_by_proposal"))
 
     def test_kernel_refusal_propagates(self):
         repo = self.repo()
-        self.lg.add("rule", "ann", build.rule_body("r1", build.forbid_title("r1", "x"),
-                                                  [build.witness("proposal", "p", proposal("x"))],
-                                                  [build.witness("proposal", "p", proposal("y"))]), self.w.ann)
-        write(repo, "log.jsonl", self.lg.text())
-        commit_all(repo, "bad")
+        self.lg.add("key", "ann", build.decl("x", "ann", self.w.stranger, ["proposal"]), self.w.ann)
+        self.append(repo, "unsigned change")
         r = self.judge(repo)
         self.assertEqual((r["ok"], r["reason"], r["verdict"]["seq"]), (False, "no_power", 1))
 
@@ -110,27 +100,70 @@ class Verdicts(Fixture):
         repo = self.repo()
         self.lg.add("proposal", "ann", proposal("a"), self.w.ann)
         self.lg.add("merge", "guy", build.merge(1, "ab" * 32), self.w.guy)
-        write(repo, "log.jsonl", self.lg.text())
-        commit_all(repo, "merge")
+        self.append(repo, "merge")
         r = self.judge(repo)
         self.assertEqual((r["ok"], r["reason"]), (False, "judge_from_proposal"))
         self.lg.lines.pop()
         self.lg.add("merge", "guy", build.merge(1, judge.digest(repo, self.main)), self.w.guy)
-        write(repo, "log.jsonl", self.lg.text())
-        commit_all(repo, "merge ok")
+        self.append(repo, "merge ok")
         self.assertTrue(self.judge(repo)["ok"])
 
     def test_diff_is_against_merge_base(self):
         repo = self.repo()
         self.lg.add("proposal", "ann", proposal("a"), self.w.ann)
-        write(repo, "log.jsonl", self.lg.text())
-        commit_all(repo, "append")
+        self.append(repo)
         git(repo, "checkout", "-q", "main")
         write(repo, "README.md", "trunk moved on\n")
         commit_all(repo, "trunk change")
         git(repo, "checkout", "-q", "pr")
         r = self.judge(repo)
         self.assertEqual(r["touched"], ["log.jsonl"])
+        self.assertTrue(r["ok"], r)
+
+
+class TrustedBase(Fixture):
+    def test_trusted_paths_refused(self):
+        for path in ("kernel/check.py", "kernel/new.py", "kernel2/check", "judge/judge.py",
+                     ".github/workflows/judge.yml", ".github/workflows/new.yml", "SPEC.md", "CHARTER.md"):
+            repo = self.repo()
+            write(repo, path, "import sys; print('{\"ok\": true, \"entries\": 0}')\n")
+            commit_all(repo, "edit")
+            r = self.judge(repo)
+            self.assertEqual((r["ok"], r["reason"]), (False, "trusted_path"), path)
+            self.assertIn(path, r["detail"])
+
+    def test_renames_are_refused_although_the_diff_hides_them(self):
+        for old, new in (("SPEC.md", "docs/SPEC.md"), ("CHARTER.md", "CHARTER.old.md"), ("kernel/check.py", "kernel/x.py")):
+            repo = self.repo()
+            gitfix.move(repo, old, new)
+            commit_all(repo, "rename")
+            r = self.judge(repo)
+            self.assertNotIn(old, r["touched"], "git reports the rename under its new name only; the guard must not rely on paths")
+            self.assertEqual((r["ok"], r["reason"]), (False, "trusted_path"), (old, new))
+            self.assertIn(old, r["detail"])
+        repo = self.repo()
+        gitfix.move(repo, "README.md", "docs/README.md")
+        commit_all(repo, "rename docs")
+        self.assertTrue(self.judge(repo)["ok"])
+
+    def test_deletion_is_refused(self):
+        repo = self.repo()
+        git(repo, "rm", "-q", "SPEC.md")
+        commit_all(repo, "delete")
+        r = self.judge(repo)
+        self.assertEqual((r["ok"], r["reason"]), (False, "trusted_path"))
+
+    def test_trunk_moving_its_trusted_base_requires_a_rebase(self):
+        repo = self.repo()
+        write(repo, "README.md", "proposal\n")
+        commit_all(repo, "docs")
+        git(repo, "checkout", "-q", "main")
+        write(repo, "kernel/check.py", "# Guy's own change\n")
+        commit_all(repo, "trunk kernel change")
+        git(repo, "checkout", "-q", "pr")
+        r = self.judge(repo)
+        self.assertEqual((r["ok"], r["reason"], r["touched"]), (False, "trusted_path", ["README.md"]))
+        self.assertIn("kernel/check.py", r["detail"])
 
     def test_digest_covers_trusted_base_only(self):
         repo = self.repo()
@@ -138,21 +171,62 @@ class Verdicts(Fixture):
         files = {"kernel/check.py", "kernel/log.py", "judge/judge.py", ".github/workflows/judge.yml", "SPEC.md"}
         self.assertTrue(files <= set(judge.trusted_files(repo, self.main)))
         self.assertNotIn("README.md", judge.trusted_files(repo, self.main))
+        self.assertNotIn("CHARTER.md", judge.trusted_files(repo, self.main))
         write(repo, "README.md", "x\n"); sha = commit_all(repo, "readme")
         self.assertEqual(judge.digest(repo, sha), d0)
+        write(repo, "kernel2/check", "#!/bin/sh\n"); sha = commit_all(repo, "kernel2")
+        self.assertNotEqual(judge.digest(repo, sha), d0)
+        self.assertIn("kernel2/check", judge.trusted_files(repo, sha))
         write(repo, "SPEC.md", "y\n"); sha = commit_all(repo, "spec")
         self.assertNotEqual(judge.digest(repo, sha), d0)
         expected = hashlib.sha256()
         for path in sorted(judge.trusted_files(repo, self.main)):
             expected.update(path.encode() + b"\0" + judge.show(repo, self.main, path) + b"\0")
         self.assertEqual(d0, expected.hexdigest())
+        self.assertEqual(judge.TRUSTED, ("kernel/", "kernel2/", "judge/", ".github/workflows/", "SPEC.md"))
+
+
+class Charter(Fixture):
+    def test_genesis_charter_hash_must_match_trunks_charter(self):
+        repo = self.repo()
+        git(repo, "checkout", "-q", "main")
+        write(repo, "CHARTER.md", gitfix.CHARTER_TEXT + "\namended by Guy\n")
+        commit_all(repo, "Guy edits the charter after genesis")
+        git(repo, "checkout", "-q", "pr")
+        git(repo, "reset", "-q", "--hard", "main")
+        self.lg.add("proposal", "ann", proposal("a"), self.w.ann)
+        self.append(repo)
+        r = self.judge(repo)
+        self.assertEqual((r["ok"], r["reason"], r["touched"]), (False, "charter_mismatch", ["log.jsonl"]))
+
+    def test_no_genesis_no_charter_check(self):
+        repo = self.repo(with_log=False)
+        git(repo, "checkout", "-q", "main")
+        write(repo, "CHARTER.md", "a different charter\n")
+        commit_all(repo, "charter before genesis")
+        git(repo, "checkout", "-q", "pr")
+        git(repo, "reset", "-q", "--hard", "main")
+        write(repo, "README.md", "x\n")
+        commit_all(repo, "docs")
+        self.assertTrue(self.judge(repo)["ok"])
+
+    def test_charter_check_precedes_the_kernel(self):
+        repo = self.repo()
+        git(repo, "checkout", "-q", "main")
+        write(repo, "CHARTER.md", "changed\n")
+        commit_all(repo, "charter")
+        git(repo, "checkout", "-q", "pr")
+        git(repo, "reset", "-q", "--hard", "main")
+        self.lg.add("proposal", "guy", proposal("a"), self.w.stranger)
+        self.append(repo)
+        self.assertEqual(self.judge(repo)["reason"], "charter_mismatch")
 
 
 class TrunkKernelRuns(Fixture):
     def test_the_kernel_that_runs_is_trunks(self):
         repo = self.repo()
         git(repo, "checkout", "-q", "main")
-        stub = 'import json, sys\nprint(json.dumps({"ok": False, "seq": 0, "rule": None, "reason": "stub", "detail": ""}))\nsys.exit(1)\n'
+        stub = 'import json, sys\nprint(json.dumps({"ok": False, "seq": 0, "reason": "stub", "detail": ""}))\nsys.exit(1)\n'
         write(repo, "kernel/check.py", stub)
         trunk = commit_all(repo, "stub trunk")
         git(repo, "checkout", "-q", "pr")
@@ -166,8 +240,7 @@ class Cli(Fixture):
     def test_cli_exit_codes_and_json(self):
         repo = self.repo()
         self.lg.add("proposal", "ann", proposal("a"), self.w.ann)
-        write(repo, "log.jsonl", self.lg.text())
-        commit_all(repo, "append")
+        self.append(repo)
         r = subprocess.run([PY, os.path.join(ROOT, "judge", "judge.py"), "--repo", repo, "--trunk", "main", "--proposal", "pr"],
                            capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stderr)

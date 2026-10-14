@@ -1,4 +1,5 @@
 """Temporary git repositories for judge tests and pins. Not kernel."""
+import hashlib
 import os
 import shutil
 import subprocess
@@ -7,6 +8,8 @@ from collections import namedtuple
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 Fixture = namedtuple("Fixture", "repo log main")
+CHARTER_TEXT = "# charter\n"
+CHARTER_SHA256 = hashlib.sha256(CHARTER_TEXT.encode()).hexdigest()
 
 
 def git(repo, *args):
@@ -20,6 +23,12 @@ def write(repo, rel, data):
         f.write(data)
 
 
+def move(repo, old, new):
+    """git mv, creating the destination directory (git mv will not)."""
+    os.makedirs(os.path.dirname(os.path.join(repo, new)) or repo, exist_ok=True)
+    git(repo, "mv", old, new)
+
+
 def commit_all(repo, msg):
     git(repo, "add", "-A")
     git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--allow-empty", "-m", msg)
@@ -28,16 +37,17 @@ def commit_all(repo, msg):
 
 def make_repo(world, with_log=True, root=ROOT, tmpdir=None):
     """main: pristine kernel/ and judge/ from `root`, a workflow, SPEC.md, CHARTER.md, README and a
-    genesis log; the branch `pr` is checked out, ready for the proposal's commits."""
+    genesis log bound to that CHARTER.md; the branch `pr` is checked out, ready for the proposal's commits."""
     repo = tempfile.mkdtemp(dir=tmpdir, prefix="repo-")
     git(repo, "init", "-q", "-b", "main")
+    git(repo, "config", "diff.renames", "true")  # git's default since 2.9, pinned so rename fixtures behave alike everywhere
     for d in ("kernel", "judge"):
         shutil.copytree(os.path.join(root, d), os.path.join(repo, d), ignore=shutil.ignore_patterns("__pycache__"))
     write(repo, ".github/workflows/judge.yml", "name: judge\n")
     write(repo, "SPEC.md", "spec\n")
-    write(repo, "CHARTER.md", "charter\n")
+    write(repo, "CHARTER.md", CHARTER_TEXT)
     write(repo, "README.md", "readme\n")
-    lg = world.log()
+    lg = world.log(charter=CHARTER_SHA256)
     if with_log:
         write(repo, "log.jsonl", lg.text())
     main = commit_all(repo, "trunk")
