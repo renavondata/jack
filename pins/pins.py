@@ -9,6 +9,7 @@ impossible_rule_admitted, redundancy_unreported) return with the law language
 in C1; unsigned_change reads over `key` entries, the change entries of C0.
 """
 import functools
+import glob
 import os
 import sys
 import tempfile
@@ -183,8 +184,10 @@ def t_checker_drift(root):
     lg = w.log(); lg.add("key", "guy", build.decl("stranger-1", "stranger", w.stranger, ["proposal"]), w.guy)
     lg.add("proposal", "stranger", proposal(), w.stranger); logs.append(list(lg.lines))
     lg = w.log(); lg.add("proposal", "guy", proposal(), w.stranger); logs.append(lg.lines)
+    lg = w.log(); lg.add("proposal", "guy", proposal(), w.guy)            # body altered after signing
+    e = log.parse_line(lg.lines[1]); e["body"]["title"] += "x"; logs.append([lg.lines[0], log.canonical(e)])
     with tempfile.TemporaryDirectory() as tmp:
-        paths = []
+        paths = sorted(glob.glob(os.path.join(root, "spec", "vectors", "logs", "*.jsonl")))  # every reason code
         for i, lines in enumerate(logs):
             paths.append(os.path.join(tmp, f"{i}.jsonl"))
             with open(paths[-1], "w") as f:
