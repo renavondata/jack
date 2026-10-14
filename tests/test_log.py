@@ -1,4 +1,4 @@
-"""Log format: canonical JSON, hashing, parsing, schemas, fact extraction."""
+"""Log format: canonical JSON, hashing, parsing, schemas."""
 import hashlib
 import unittest
 
@@ -9,7 +9,7 @@ PUB = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIRevXM6fDuOfjLwMr+gzX8x8aToFjGndWTh0
 HEX64 = "ab" * 32
 HEX40 = "cd" * 20
 KEY = {"key_id": "guy-master", "principal": "guy", "pubkey": PUB,
-       "powers": ["genesis", "key", "rule", "repeal", "proposal", "merge"]}
+       "powers": ["genesis", "key", "proposal", "merge"]}
 
 
 def entry(**over):
@@ -133,36 +133,22 @@ class Body(unittest.TestCase):
         self.assertEqual(self.refused("key", dict(KEY, pubkey="ssh-ed25519 AAAA")), "schema")
         self.assertEqual(self.refused("key", dict(KEY, powers="rule")), "schema")
 
-    def test_rule_repeal_proposal_merge(self):
-        rule = {"rule_id": "r1", "clauses": [], "witnesses": {"violating": [], "satisfying": []}}
-        self.assertIsNone(log.check_body("rule", rule))
-        self.assertIsNone(log.check_body("rule", dict(rule, replacements={})))
-        self.assertEqual(self.refused("rule", dict(rule, rule_id="R.1")), "schema")
-        self.assertEqual(self.refused("rule", dict(rule, witnesses={"violating": []})), "schema")
-        self.assertEqual(self.refused("rule", dict(rule, replacements=[])), "schema")
-        self.assertIsNone(log.check_body("repeal", {"rule_id": "r1"}))
-        self.assertEqual(self.refused("repeal", {}), "schema")
+    def test_proposal_and_merge(self):
         self.assertIsNone(log.check_body("proposal", {"title": "t", "commit": HEX40, "extra": [1]}))
         self.assertEqual(self.refused("proposal", {"title": "t"}), "schema")
+        self.assertEqual(self.refused("proposal", {"title": 1, "commit": HEX40}), "schema")
         self.assertIsNone(log.check_body("merge", {"proposal": 3, "commit": HEX40, "checker": HEX64}))
         self.assertEqual(self.refused("merge", {"proposal": True, "commit": HEX40, "checker": HEX64}), "schema")
+        self.assertEqual(self.refused("merge", {"proposal": -1, "commit": HEX40, "checker": HEX64}), "schema")
 
-    def test_dotted_keys_forbidden_anywhere(self):
-        self.assertEqual(self.refused("proposal", {"title": "t", "commit": HEX40, "a.b": 1}), "schema")
-        self.assertEqual(self.refused("proposal", {"title": "t", "commit": HEX40, "a": {"b.c": 1}}), "schema")
+    def test_no_rule_or_repeal_bodies(self):
+        for type_ in ("rule", "repeal"):
+            self.assertNotIn(type_, log.BODY)
+            self.assertNotIn(type_, log.TYPES)
 
-
-class Facts(unittest.TestCase):
-    def test_flatten(self):
-        body = {"a": 1, "b": {"c": "x"}, "d": [1, 2], "e": [{"f": True}], "g": {}, "h": None, "i": []}
-        self.assertEqual(log.flatten(body), [("a", 1), ("b.c", "x"), ("d", 1), ("d", 2), ("e.0.f", True), ("h", None)])
-
-    def test_atoms_are_type_aware(self):
-        self.assertNotEqual(log.atom(1), log.atom(True))
-        self.assertNotEqual(log.atom("1"), log.atom(1))
-        self.assertNotEqual(log.atom(0), log.atom(None))
-        self.assertEqual(log.atom(1), log.atom(1))
-        self.assertEqual(log.untag(log.atom("x")), "x")
+    def test_extra_members_allowed_including_dotted_keys(self):
+        self.assertIsNone(log.check_body("proposal", {"title": "t", "commit": HEX40, "a.b": 1, "n": {"c.d": []}}))
+        self.assertEqual(self.refused("key", dict(KEY, powers=["rule"])), "schema")
 
 
 if __name__ == "__main__":

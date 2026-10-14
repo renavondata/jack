@@ -23,29 +23,12 @@ def genesis_body(decls, charter=HEX64, checker=HEX64):
     return {"charter": charter, "checker": checker, "keys": list(decls)}
 
 
-def witness(type_, proposer, body, ts=None):
-    w = {"type": type_, "proposer": proposer, "body": body}
-    return dict(w, ts=ts) if ts else w
-
-
 def proposal(title="t", **extra):
     return dict({"title": title, "commit": HEX40}, **extra)
 
 
 def merge(proposal_seq, checker=HEX64):
     return {"proposal": proposal_seq, "commit": HEX40, "checker": checker}
-
-
-def rule_body(rule_id, clauses, violating, satisfying, replacements=None):
-    body = {"rule_id": rule_id, "clauses": clauses,
-            "witnesses": {"violating": list(violating), "satisfying": list(satisfying)}}
-    return dict(body, replacements=replacements) if replacements is not None else body
-
-
-def forbid_title(rule_id, *titles):
-    """Clauses: a proposal whose title is one of `titles` violates rule_id."""
-    return [{"head": ["violation", "?S", rule_id],
-             "body": [["entry", "?S", "proposal", "?_"], ["field", "?S", "title", t]]} for t in titles]
 
 
 class Log:

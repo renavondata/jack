@@ -1,4 +1,4 @@
-"""Log format: canonical JSON, line hashes, entry shape, body schemas, facts.
+"""Log format: canonical JSON, line hashes, entry shape, body schemas.
 
 CHARTER §9.1. Pure functions; no I/O, no clock.
 """
@@ -7,14 +7,14 @@ import hashlib
 import json
 import re
 
-TYPES = ("genesis", "key", "rule", "repeal", "proposal", "merge")
+TYPES = ("genesis", "key", "proposal", "merge")
 TOP_KEYS = frozenset({"seq", "parent", "ts", "type", "proposer", "body", "sig"})
 GENESIS_PARENT = "0" * 64
 MAX_INT = 2**53 - 1
 HEX64 = re.compile(r"[0-9a-f]{64}")
 HEX40 = re.compile(r"[0-9a-f]{40}")
 TS = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z")
-RULE_ID = re.compile(r"[a-z0-9_-]{1,64}")
+IDENT = re.compile(r"[a-z0-9_-]{1,64}")
 TYPE = re.compile("|".join(TYPES))
 NONEMPTY = re.compile(r".+", re.S)
 BASE64 = re.compile(r"[A-Za-z0-9+/]+={0,2}")
@@ -23,9 +23,9 @@ BASE64 = re.compile(r"[A-Za-z0-9+/]+={0,2}")
 class Refuse(Exception):
     """A refusal: reason code (closed set, SPEC.md) plus free-text detail."""
 
-    def __init__(self, reason, detail="", rule=None):
+    def __init__(self, reason, detail=""):
         super().__init__(reason, detail)
-        self.reason, self.detail, self.rule = reason, detail, rule
+        self.reason, self.detail = reason, detail
 
 
 def canonical(obj):
@@ -37,18 +37,16 @@ def line_hash(line):
     return hashlib.sha256(line.encode("utf-8")).hexdigest()
 
 
-def _scan(value, on_key=None, found=None):
+def _defects(value, found=None):
     """Visit every scalar; collect defects: lone surrogates (malformed) and bad numbers (not canonical)."""
     found = {} if found is None else found
     if isinstance(value, dict):
         for k, v in value.items():
-            _scan(k, on_key, found)
-            if on_key:
-                on_key(k)
-            _scan(v, on_key, found)
+            _defects(k, found)
+            _defects(v, found)
     elif isinstance(value, list):
         for v in value:
-            _scan(v, on_key, found)
+            _defects(v, found)
     elif isinstance(value, float):
         found["number"] = "non-integer number"
     elif isinstance(value, int) and not isinstance(value, bool) and abs(value) > MAX_INT:
@@ -61,14 +59,6 @@ def _scan(value, on_key=None, found=None):
     return found
 
 
-def _walk(value, on_key=None):
-    found = _scan(value, on_key)
-    if "surrogate" in found:
-        raise Refuse("malformed_json", found["surrogate"])
-    if "number" in found:
-        raise Refuse("not_canonical", found["number"])
-
-
 def parse_line(line):
     """Parse one log line; it must be a canonical JSON object."""
     try:
@@ -77,9 +67,11 @@ def parse_line(line):
         raise Refuse("malformed_json") from None
     if not isinstance(obj, dict):
         raise Refuse("malformed_json", "not an object")
-    _walk(obj)
-    if canonical(obj) != line:
-        raise Refuse("not_canonical")
+    found = _defects(obj)
+    if "surrogate" in found:
+        raise Refuse("malformed_json", found["surrogate"])
+    if "number" in found or canonical(obj) != line:
+        raise Refuse("not_canonical", found.get("number", ""))
     return obj
 
 
@@ -137,50 +129,16 @@ def pubkey_blob(text):
     return blob if ok else None
 
 
-KEY_DECL = {"key_id": RULE_ID, "principal": NONEMPTY, "powers": (TYPE,),
+KEY_DECL = {"key_id": IDENT, "principal": NONEMPTY, "powers": (TYPE,),
             "pubkey": lambda v: pubkey_blob(v) is not None}
 BODY = {
     "genesis": {"charter": HEX64, "checker": HEX64, "keys": (KEY_DECL,)},
     "key": KEY_DECL,
-    "rule": {"rule_id": RULE_ID, "clauses": list, "witnesses": {"violating": list, "satisfying": list}},
-    "repeal": {"rule_id": RULE_ID},
     "proposal": {"title": str, "commit": HEX40},
     "merge": {"proposal": int, "commit": HEX40, "checker": HEX64},
 }
 
 
-def _no_dots(key):
-    if "." in key:
-        raise Refuse("schema", f"body key contains '.': {key}")
-
-
 def check_body(type_, body):
-    """Per-type required fields; extra fields allowed; no dotted keys."""
+    """Per-type required members; extra members are allowed."""
     _match(BODY[type_], body, type_)
-    if type_ == "rule" and "replacements" in body:
-        _match(dict, body["replacements"], "rule.replacements")
-    _walk(body, _no_dots)
-
-
-def _flat(path, v):
-    if isinstance(v, dict):
-        return [f for k, x in v.items() for f in _flat(f"{path}.{k}", x)]
-    if isinstance(v, list):
-        return [f for i, x in enumerate(v)
-                for f in (_flat(f"{path}.{i}", x) if isinstance(x, (dict, list)) else [(path, x)])]
-    return [(path, v)]
-
-
-def flatten(body):
-    """Body → [(path, scalar)]: dotted paths; list atoms at the list's own path."""
-    return [f for k, v in body.items() for f in _flat(k, v)]
-
-
-def atom(v):
-    """Tag a JSON scalar so that 1, true and "1" are distinct Datalog constants."""
-    tag = "b" if isinstance(v, bool) else "i" if isinstance(v, int) else "s" if isinstance(v, str) else "n"
-    return (tag, v)
-
-
-def untag(a):
-    return a[1]
