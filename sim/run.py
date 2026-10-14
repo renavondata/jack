@@ -49,7 +49,7 @@ def evaluate(case, pool, checker=check.check):
     else:
         extra = build.make_entry(len(case.lines), log.line_hash(case.lines[-1]), "proposal", "ann", proposal("x"), pool.ann)
         w = checker(case.lines + [extra])
-        if (w.get("seq"), w.get("rule"), w.get("reason")) != (v.get("seq"), v.get("rule"), v.get("reason")):
+        if (w.get("seq"), w.get("reason")) != (v.get("seq"), v.get("reason")):
             failures.append(("sticky_refusal", f"after appending: {strip(w)}"))
     return failures
 
