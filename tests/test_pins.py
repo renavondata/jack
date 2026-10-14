@@ -21,11 +21,14 @@ class Registry(unittest.TestCase):
     def test_pins_are_well_formed(self):
         names = [p.name for p in pins.PINS]
         self.assertEqual(len(names), len(set(names)))
-        for required in ("judge_from_proposal", "final_law_for_all", "vacuous_rule_admitted", "impossible_rule_admitted",
-                         "unsigned_change", "history_rewritten", "fork_admitted", "redundancy_unreported",
-                         "unattributed_entry", "checker_drift", "forged_signature_admitted", "orphaned_rule_admitted",
-                         "trusted_path_unguarded"):
+        for required in ("judge_from_proposal", "unsigned_change", "history_rewritten", "fork_admitted",
+                         "unattributed_entry", "checker_drift", "forged_signature_admitted", "trusted_path_unguarded",
+                         "trusted_rename_admitted", "weak_key_admitted", "reserved_bytes_admitted"):
             self.assertIn(required, names)
+        for gone in ("final_law_for_all", "vacuous_rule_admitted", "impossible_rule_admitted", "redundancy_unreported",
+                     "orphaned_rule_admitted"):
+            self.assertNotIn(gone, names, "rule pins return with the law language in C1")
+        self.assertEqual(len(names), 11)
         for p in pins.PINS:
             self.assertTrue(p.mutants, p.name)
             for m in p.mutants:

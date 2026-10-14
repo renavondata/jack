@@ -2,8 +2,11 @@
 
 Each test takes the root of the tree under test and runs that tree's checker or
 judge as a subprocess, so the same fixtures run unchanged against the second
-checker. Expectations are exact (seq, rule, reason) or exact lapse lists, so a
-mutant cannot survive by failing for a different reason.
+checker. Expectations are exact (seq, reason) or exact acceptance, so a mutant
+cannot survive by failing for a different reason. C0 is the record only: the
+rule pins of §9 (final_law_for_all, vacuous_rule_admitted,
+impossible_rule_admitted, redundancy_unreported) return with the law language
+in C1; unsigned_change reads over `key` entries, the change entries of C0.
 """
 import functools
 import os
@@ -12,7 +15,7 @@ import tempfile
 from collections import namedtuple
 
 from harness import build, diff, gitfix, keys, runner
-from harness.build import forbid_title, proposal, rule_body, witness
+from harness.build import proposal
 from kernel import log, sig
 
 Pin = namedtuple("Pin", "name test mutants")
@@ -25,45 +28,48 @@ def world():
     return build.World(tempfile.mkdtemp(prefix="pins-"))
 
 
-def W(title):
-    return witness("proposal", "p", proposal(title))
+def refused(v, seq, reason):
+    got = (v.get("ok"), v.get("seq"), v.get("reason"))
+    assert got == (False, seq, reason), f"expected {(seq, reason)}, got {v}"
 
 
-def R(rid, forbid, viol, sat, **kw):
-    return rule_body(rid, forbid_title(rid, *forbid), [W(t) for t in viol], [W(t) for t in sat], **kw)
+def admitted(v, entries):
+    assert v == {"ok": True, "entries": entries}, v
 
 
-def refused(v, seq, reason, rule=None):
-    got = (v.get("ok"), v.get("seq"), v.get("rule"), v.get("reason"))
-    assert got == (False, seq, rule, reason), f"expected {(seq, rule, reason)}, got {v}"
-
-
-def admitted(v, entries, lapse=()):
-    assert v == {"ok": True, "entries": entries, "lapse": [list(x) for x in lapse]}, v
-
-
-def rules_log(*bodies):
-    lg = world().log()
-    for b in bodies:
-        lg.add("rule", "guy", b, world().guy)
-    return lg
+def judged(root, fx):
+    return runner.judge_with(root, fx.repo, "main", "pr")
 
 
 # --- judge pins -------------------------------------------------------------
 
 def t_trusted_path(root):
     w = world()
-    for path in ("kernel/check.py", "judge/judge.py"):
+    for path in ("kernel/check.py", "judge/judge.py", "kernel2/check"):
         fx = gitfix.make_repo(w)
-        gitfix.write(fx.repo, path, 'print(\'{"ok": true, "entries": 0, "lapse": []}\')\n')
+        gitfix.write(fx.repo, path, 'print(\'{"ok": true, "entries": 0}\')\n')
         gitfix.commit_all(fx.repo, "edit trusted file")
-        r = runner.judge_with(root, fx.repo, "main", "pr")
+        r = judged(root, fx)
         assert (r.get("ok"), r.get("reason")) == (False, "trusted_path"), (path, r)
     fx = gitfix.make_repo(w)
     gitfix.write(fx.repo, "README.md", "docs only\n")
     gitfix.commit_all(fx.repo, "docs")
-    r = runner.judge_with(root, fx.repo, "main", "pr")
-    assert r.get("ok") is True, r
+    assert judged(root, fx).get("ok") is True
+
+
+def t_trusted_rename(root):
+    w = world()
+    for old, new in (("SPEC.md", "docs/SPEC.md"), ("CHARTER.md", "CHARTER.old.md"), ("kernel/sig.py", "kernel/sig_.py")):
+        fx = gitfix.make_repo(w)
+        gitfix.move(fx.repo, old, new)
+        gitfix.commit_all(fx.repo, "rename")
+        r = judged(root, fx)
+        assert old not in r.get("touched", [old]), f"fixture: git must report the rename under its new name only: {r}"
+        assert (r.get("ok"), r.get("reason")) == (False, "trusted_path"), (old, new, r)
+    fx = gitfix.make_repo(w)
+    gitfix.move(fx.repo, "README.md", "docs/README.md")
+    gitfix.commit_all(fx.repo, "rename docs")
+    assert judged(root, fx).get("ok") is True
 
 
 def t_judge_from_proposal(root):
@@ -74,53 +80,30 @@ def t_judge_from_proposal(root):
     fx.log.add("merge", "guy", build.merge(1, "ab" * 32), w.guy)
     gitfix.write(fx.repo, "log.jsonl", fx.log.text())
     gitfix.commit_all(fx.repo, "merge judged by a checker the proposal supplied")
-    r = runner.judge_with(root, fx.repo, "main", "pr")
+    r = judged(root, fx)
     assert (r.get("ok"), r.get("reason")) == (False, "judge_from_proposal"), r
     fx.log.lines.pop()
     fx.log.add("merge", "guy", build.merge(1, trunk_judge.digest(fx.repo, fx.main)), w.guy)
     gitfix.write(fx.repo, "log.jsonl", fx.log.text())
     gitfix.commit_all(fx.repo, "merge judged by trunk")
-    assert runner.judge_with(root, fx.repo, "main", "pr").get("ok") is True
+    assert judged(root, fx).get("ok") is True
     fx = gitfix.make_repo(w)
     fx.log.add("proposal", "ann", proposal("b"), w.ann)
     gitfix.write(fx.repo, "log.jsonl", fx.log.text())
     gitfix.commit_all(fx.repo, "proposal")
-    assert runner.judge_with(root, fx.repo, "main", "pr").get("ok") is True
+    assert judged(root, fx).get("ok") is True
 
 
 # --- kernel pins ------------------------------------------------------------
 
-def t_final_law_for_all(root):
-    w = world()
-    lg = w.log()
-    lg.add("proposal", "ann", proposal("forbidden"), w.ann)
-    clauses = forbid_title("r1", "forbidden") + [{"head": ["violation", "?S", "r1"], "body": [["entry", "?S", "rule", "?_"]]}]
-    lg.add("rule", "guy", rule_body("r1", clauses, [W("forbidden")], [W("fine")]), w.guy)
-    lg.add("proposal", "ann", proposal("fine"), w.ann)
-    admitted(runner.check_with(root, lg.lines), 4)
-    lg.add("proposal", "ann", proposal("forbidden"), w.ann)
-    refused(runner.check_with(root, lg.lines), 4, "violation", "r1")
-
-
-def t_vacuous(root):
-    refused(runner.check_with(root, rules_log(R("r0", ["x"], ["x"], ["y"]), R("r1", ["w"], ["x"], ["y"])).lines), 2, "vacuous_rule")
-    refused(runner.check_with(root, rules_log(R("r1", ["w"], ["x"], ["y"])).lines), 1, "vacuous_rule")
-    admitted(runner.check_with(root, rules_log(R("r0", ["x"], ["x"], ["y"]), R("r1", ["w"], ["w"], ["y"])).lines), 3)
-
-
-def t_impossible(root):
-    refused(runner.check_with(root, rules_log(R("r1", ["x"], ["x"], ["x"])).lines), 1, "impossible_rule")
-    refused(runner.check_with(root, rules_log(R("r0", ["y"], ["y"], ["w"]), R("r1", ["x"], ["x"], ["y"])).lines), 2, "impossible_rule")
-    admitted(runner.check_with(root, rules_log(R("r0", ["y"], ["y"], ["w"]), R("r1", ["x"], ["x"], ["w"])).lines), 3)
-
-
 def t_unsigned_change(root):
     w = world()
-    lg = w.log(); lg.add("rule", "ann", R("r1", ["x"], ["x"], ["y"]), w.ann)
+    lg = w.log(); lg.add("key", "ann", build.decl("x", "ann", w.stranger, ["proposal"]), w.ann)
     refused(runner.check_with(root, lg.lines), 1, "no_power")
-    lg = w.log(); lg.add("repeal", "ann", {"rule_id": "r1"}, w.ann)
+    lg = w.log(); lg.add("key", "ann", build.decl("ann-1", "ann", w.ann, ["proposal", "key"]), w.ann)
     refused(runner.check_with(root, lg.lines), 1, "no_power")
-    lg = w.log(); lg.add("rule", "guy", R("r1", ["x"], ["x"], ["y"]), w.guy); lg.add("repeal", "guy", {"rule_id": "r1"}, w.guy)
+    lg = w.log(); lg.add("key", "guy", build.decl("x", "stranger", w.stranger, ["proposal"]), w.guy)
+    lg.add("proposal", "stranger", proposal(), w.stranger)
     admitted(runner.check_with(root, lg.lines), 3)
 
 
@@ -147,11 +130,6 @@ def t_fork(root):
     refused(runner.check_with(root, lg.lines + [fork]), 3, "parent_mismatch")
 
 
-def t_redundancy(root):
-    admitted(runner.check_with(root, rules_log(R("r1", ["x"], ["x"], ["y"]), R("r2", ["x", "z"], ["z"], ["y"])).lines), 3, [[2, "r1"]])
-    admitted(runner.check_with(root, rules_log(R("r1", ["x"], ["x"], ["y"]), R("r3", ["w"], ["w"], ["y"])).lines), 3, [])
-
-
 def t_unattributed(root):
     w = world()
     lg = w.log(); lg.add("proposal", "", proposal(), w.ann)
@@ -176,16 +154,34 @@ def t_forged_signature(root):
     refused(runner.check_with(root, [lg.lines[0], log.canonical(e)]), 1, "bad_signature")
 
 
-def t_orphaned_rule(root):
-    refused(runner.check_with(root, rules_log(R("r1", ["x"], ["x"], ["y"]), R("r2", ["y"], ["y"], ["z"])).lines), 2, "orphans_rule")
-    twin = rules_log(R("r1", ["x"], ["x"], ["y"]), R("r2", ["y"], ["y"], ["z"], replacements={"r1": [W("z")]}))
-    admitted(runner.check_with(root, twin.lines), 3)
+def t_weak_key(root):
+    w = world()
+    for name, pub32 in keys.weak_keys():
+        lg = w.log(); lg.add("key", "guy", build.decl("eve-1", "eve", keys.fake_key(pub32), ["proposal"]), w.guy)
+        refused(runner.check_with(root, lg.lines), 1, "bad_key")
+    name, pub32 = keys.weak_keys()[0]
+    lg = build.Log(); lg.add("genesis", "guy", build.genesis_body(w.decls + [build.decl("eve-1", "eve", keys.fake_key(pub32), [])]), w.guy)
+    refused(runner.check_with(root, lg.lines), 0, "bad_key")
+    lg = w.log(); lg.add("key", "guy", build.decl("stranger-1", "stranger", w.stranger, ["proposal"]), w.guy)
+    admitted(runner.check_with(root, lg.lines), 2)
+
+
+def t_reserved_bytes(root):
+    w = world()
+    lg = w.log()
+    lg.add("proposal", "ann", proposal("a"), w.ann)
+    admitted(runner.check_with(root, lg.lines), 2)
+    e = log.parse_line(lg.lines[1])
+    e["sig"] = keys.rewrap(e["sig"], reserved=b"\x00")
+    refused(runner.check_with(root, [lg.lines[0], log.canonical(e)]), 1, "bad_signature")
 
 
 def t_checker_drift(root):
     """Both checkers agree, verdict by verdict, on the pin fixtures (runs once kernel2/check exists)."""
     w = world()
-    logs = [w.log().lines, rules_log(R("r1", ["x"], ["x"], ["y"])).lines]
+    logs = [w.log().lines]
+    lg = w.log(); lg.add("key", "guy", build.decl("stranger-1", "stranger", w.stranger, ["proposal"]), w.guy)
+    lg.add("proposal", "stranger", proposal(), w.stranger); logs.append(list(lg.lines))
     lg = w.log(); lg.add("proposal", "guy", proposal(), w.stranger); logs.append(lg.lines)
     with tempfile.TemporaryDirectory() as tmp:
         paths = []
@@ -197,31 +193,21 @@ def t_checker_drift(root):
     assert not bad, bad
 
 
+GUARD = 'if digest(repo, head) != report["trusted_digest"] or show(repo, head, CHARTER) != show(repo, trunk, CHARTER):'
+
 PINS = [
     Pin("trusted_path_unguarded", t_trusted_path, [
-        Mutant("guard_removed", "judge/judge.py",
-               '    if guarded:\n        return refuse("trusted_path"', '    if False:\n        return refuse("trusted_path"'),
+        Mutant("guard_removed", "judge/judge.py", GUARD, "if False:"),
         Mutant("judge_dir_untrusted", "judge/judge.py",
-               'TRUSTED = ("kernel/", "judge/", ".github/workflows/", "SPEC.md")',
-               'TRUSTED = ("kernel/", ".github/workflows/", "SPEC.md")')]),
+               'TRUSTED = ("kernel/", "kernel2/", "judge/", ".github/workflows/", "SPEC.md")',
+               'TRUSTED = ("kernel/", "kernel2/", ".github/workflows/", "SPEC.md")')]),
+    Pin("trusted_rename_admitted", t_trusted_rename, [
+        Mutant("path_guard_only", "judge/judge.py", GUARD,
+               'if any(is_under(p, TRUSTED + (CHARTER,)) for p in report["touched"]):')]),
     Pin("judge_from_proposal", t_judge_from_proposal, [
         Mutant("digest_unchecked", "judge/judge.py",
                'if e["type"] == "merge" and e["body"]["checker"] != report["trusted_digest"]:',
                'if e["type"] == "merge" and False:')]),
-    Pin("final_law_for_all", t_final_law_for_all, [
-        Mutant("latest_law_reaches_back", "kernel/check.py",
-               'hits = {r for s, r in violations(in_force(state), law_facts(state, own, i)) if s == i}',
-               'hits = {r for s, r in violations(in_force(state), law_facts(state, own, i)) if True}')]),
-    Pin("vacuous_rule_admitted", t_vacuous, [
-        Mutant("violating_witness_unchecked", "kernel/check.py",
-               '        if (m, rid) not in violations(law, facts):', '        if False:'),
-        Mutant("any_violation_counts", "kernel/check.py",
-               '        if (m, rid) not in violations(law, facts):',
-               '        if not any(s == m for s, _ in violations(law, facts)):')]),
-    Pin("impossible_rule_admitted", t_impossible, [
-        Mutant("satisfying_witness_unchecked", "kernel/check.py",
-               '        if not passes(state, law, m, w):\n            raise Refuse("impossible_rule", "a satisfying witness is violated")',
-               '        if False:\n            raise Refuse("impossible_rule", "a satisfying witness is violated")')]),
     Pin("unsigned_change", t_unsigned_change, [
         Mutant("power_unchecked", "kernel/check.py",
                '    if e["type"] not in keys[key_id].powers:', '    if False:')]),
@@ -233,10 +219,6 @@ PINS = [
         Mutant("parent_unchecked", "kernel/check.py",
                '    if e["parent"] != state.head:\n        raise Refuse("parent_mismatch")',
                '    if False:\n        raise Refuse("parent_mismatch")')]),
-    Pin("redundancy_unreported", t_redundancy, [
-        Mutant("lapse_never_reported", "kernel/check.py",
-               '    remaining, out, m = in_force(state), [], n + 1',
-               '    return []\n    remaining, out, m = in_force(state), [], n + 1')]),
     Pin("unattributed_entry", t_unattributed, [
         Mutant("empty_proposer_admitted", "kernel/check.py",
                '    if e["proposer"] == "":\n        raise Refuse("no_proposer")', '    if False:\n        raise Refuse("no_proposer")'),
@@ -246,10 +228,16 @@ PINS = [
     Pin("forged_signature_admitted", t_forged_signature, [
         Mutant("s_bound_unchecked", "kernel/sig.py",
                '    if a is None or r is None or s >= L:', '    if a is None or r is None:')]),
-    Pin("orphaned_rule_admitted", t_orphaned_rule, [
-        Mutant("orphan_recheck_skipped", "kernel/check.py",
-               '        if not any(passes(state, law, m, w) for w in q.satisfying):\n            raise Refuse("orphans_rule"',
-               '        if False:\n            raise Refuse("orphans_rule"')]),
+    Pin("weak_key_admitted", t_weak_key, [
+        Mutant("noncanonical_key_admitted", "kernel/sig.py",
+               '    return a is None or _encode(_mul(8, _ext(a))) == IDENTITY',
+               '    return a is not None and _encode(_mul(8, _ext(a))) == IDENTITY'),
+        Mutant("small_order_key_admitted", "kernel/sig.py",
+               '    return a is None or _encode(_mul(8, _ext(a))) == IDENTITY',
+               '    return a is None')]),
+    Pin("reserved_bytes_admitted", t_reserved_bytes, [
+        Mutant("reserved_unchecked", "kernel/sig.py",
+               'or hash_alg != b"sha512" or reserved != b"":', 'or hash_alg != b"sha512":')]),
     Pin("checker_drift", t_checker_drift, [
         Mutant("reason_code_flipped", "kernel2/check", "bad_signature", "bad_signatur3")]),
 ]
