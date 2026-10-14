@@ -3,6 +3,7 @@
 CHARTER §9.1. Pure functions; no I/O, no clock.
 """
 import base64
+import datetime
 import hashlib
 import json
 import re
@@ -13,7 +14,7 @@ GENESIS_PARENT = "0" * 64
 MAX_INT = 2**53 - 1
 HEX64 = re.compile(r"[0-9a-f]{64}")
 HEX40 = re.compile(r"[0-9a-f]{40}")
-TS = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z")
+TS = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z")
 IDENT = re.compile(r"[a-z0-9_-]{1,64}")
 TYPE = re.compile("|".join(TYPES))
 NONEMPTY = re.compile(r".+", re.S)
@@ -109,11 +110,22 @@ def _match(spec, value, where):
         raise Refuse("schema", f"{where}: bad value")
 
 
+def instant(v):
+    """A UTC instant that exists: ASCII digits, a real Gregorian date, seconds 00-59 (SPEC.md §4)."""
+    if not (isinstance(v, str) and TS.fullmatch(v)):
+        return False
+    try:
+        datetime.datetime(int(v[0:4]), int(v[5:7]), int(v[8:10]), int(v[11:13]), int(v[14:16]), int(v[17:19]))
+    except ValueError:
+        return False
+    return True
+
+
 def check_shape(e):
     """Top-level shape of an entry (CHARTER §9.1)."""
     if set(e) != TOP_KEYS:
         raise Refuse("schema", "top-level keys")
-    _match({"seq": int, "parent": HEX64, "ts": TS, "type": TYPE, "proposer": str,
+    _match({"seq": int, "parent": HEX64, "ts": instant, "type": TYPE, "proposer": str,
             "body": dict, "sig": BASE64}, e, "entry")
 
 

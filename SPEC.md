@@ -70,7 +70,7 @@ An entry object has **exactly** the keys `seq, parent, ts, type, proposer, body,
 |---|---|
 | `seq` | integer ≥ 0 (not a boolean) |
 | `parent` | `[0-9a-f]{64}` |
-| `ts` | `\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z` (a UTC timestamp; the checker never reads a clock and does not order timestamps at C0) |
+| `ts` | `YYYY-MM-DDTHH:MM:SSZ` in **ASCII digits only** (`[0-9]`, never other Unicode digits), naming an instant that exists: year 0001–9999, a real Gregorian date (leap years included), hour 00–23, minute 00–59, second 00–59 (no leap seconds). The checker never reads a clock and does not order timestamps at C0. |
 | `type` | one of `genesis key proposal merge` |
 | `proposer` | a string (emptiness is checked later, §8 step 6) |
 | `body` | an object |

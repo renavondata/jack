@@ -28,7 +28,7 @@ def prepare(a):
     if log.pubkey_blob(pubkey) is None:
         print("the public key does not decode as ssh-ed25519", file=sys.stderr)
         return 2
-    if not log.TS.fullmatch(a.ts):
+    if not log.instant(a.ts):
         print("--ts must look like 2026-10-14T09:00:00Z (UTC)", file=sys.stderr)
         return 2
     with open(os.path.join(ROOT, "genesis.template.json")) as f:

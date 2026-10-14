@@ -177,6 +177,16 @@ def t_reserved_bytes(root):
     refused(runner.check_with(root, [lg.lines[0], log.canonical(e)]), 1, "bad_signature")
 
 
+def t_ts_instant(root):
+    """A timestamp must be an existing UTC instant in ASCII digits."""
+    w = world()
+    for ts in ("\uff12\uff10\uff12\uff16-10-14T00:00:00Z", "2026-13-14T00:00:00Z", "2026-02-29T00:00:00Z", "2026-10-14T00:00:60Z"):
+        lg = w.log(); lg.add("proposal", "ann", proposal("a"), w.ann, ts=ts)
+        refused(runner.check_with(root, lg.lines), 1, "schema")
+    lg = w.log(); lg.add("proposal", "ann", proposal("a"), w.ann, ts="2028-02-29T23:59:59Z")
+    admitted(runner.check_with(root, lg.lines), 2)
+
+
 def t_checker_drift(root):
     """Both checkers agree, verdict by verdict, on the pin fixtures (runs once kernel2/check exists)."""
     w = world()
@@ -241,6 +251,13 @@ PINS = [
     Pin("reserved_bytes_admitted", t_reserved_bytes, [
         Mutant("reserved_unchecked", "kernel/sig.py",
                'or hash_alg != b"sha512" or reserved != b"":', 'or hash_alg != b"sha512":')]),
+    Pin("ts_not_an_instant", t_ts_instant, [
+        Mutant("unicode_digits_admitted", "kernel/log.py",
+               'TS = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z")',
+               'TS = re.compile(r"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z")'),
+        Mutant("calendar_unchecked", "kernel/log.py",
+               "        datetime.datetime(int(v[0:4]), int(v[5:7]), int(v[8:10]), int(v[11:13]), int(v[14:16]), int(v[17:19]))\n",
+               "        pass\n")]),
     Pin("checker_drift", t_checker_drift, [
         Mutant("reason_code_flipped", "kernel2/check", "bad_signature", "bad_signatur3")]),
 ]
