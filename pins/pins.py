@@ -232,6 +232,25 @@ def t_kernel2_runnable(root):
     assert r.get("ok") is True and r.get("kernel2") == {"ok": True, "entries": 1}, r
 
 
+def t_selfcheck_blind(root):
+    """The CI self-check fails when the judge cannot run kernel2, and passes when it can."""
+    def repo(helper_mode):
+        fx = gitfix.make_repo(world())
+        gitfix.git(fx.repo, "checkout", "-q", "main")
+        gitfix.write(fx.repo, "kernel2/check", '#!/bin/sh\nexec "$(dirname "$0")/helper.sh" "$@"\n')
+        gitfix.write(fx.repo, "kernel2/helper.sh", "#!/bin/sh\necho '{\"ok\":true,\"entries\":1}'\n")
+        os.chmod(os.path.join(fx.repo, "kernel2", "check"), 0o755)
+        os.chmod(os.path.join(fx.repo, "kernel2", "helper.sh"), helper_mode)
+        gitfix.commit_all(fx.repo, "kernel2")
+        return fx.repo
+    def run(r):
+        import subprocess
+        return subprocess.run([sys.executable, os.path.join(root, "judge", "selfcheck.py"), "--repo", r],
+                              capture_output=True, text=True).returncode
+    assert run(repo(0o644)) == 1, "self-check passed a trunk whose kernel2 cannot run"
+    assert run(repo(0o755)) == 0, "self-check failed a healthy trunk"
+
+
 def t_checker_drift(root):
     """Both checkers agree, verdict by verdict, on the pin fixtures (runs once kernel2/check exists)."""
     w = world()
@@ -320,6 +339,9 @@ PINS = [
                "        if set(d) != KEY_FIELDS:", "        if False:")]),
     Pin("kernel2_unrunnable", t_kernel2_runnable, [
         Mutant("modes_ignored", "judge/judge.py", "                os.chmod(dest, 0o755)", "                pass")]),
+    Pin("selfcheck_blind", t_selfcheck_blind, [
+        Mutant("judge_errors_ignored", "judge/selfcheck.py",
+               "        return 1  # selfcheck: judge refused or failed", "        return 0")]),
     Pin("checker_drift", t_checker_drift, [
         Mutant("reason_code_flipped", "kernel2/check", "bad_signature", "bad_signatur3")]),
 ]

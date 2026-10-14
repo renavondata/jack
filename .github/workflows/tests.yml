@@ -21,5 +21,7 @@ jobs:
         run: python3 -m unittest discover -s tests -t . -v
       - name: Pins (every mutant KILLED, twin passing; checker_drift PENDING until kernel2 exists)
         run: python3 pins/run.py
+      - name: Judge self-check (the production path, trunk against itself; kernel2 must run)
+        run: python3 judge/selfcheck.py
       - name: Kernel line count (CHARTER §9 criterion 3)
         run: python3 tools/count_kernel.py
