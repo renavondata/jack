@@ -226,3 +226,23 @@ Scored by log-loss. They enter a ledger only if Guy files them (assize A1.11(b))
 - Thompson, K. (1984). Reflections on trusting trust. *Communications of the ACM* 27(8), 761–763.
 - Ville, J. (1939). *Étude critique de la notion de collectif.* Gauthier-Villars.
 - Wheeler, D. A. (2005). Countering trusting trust through diverse double-compiling. *Proceedings of the 21st Annual Computer Security Applications Conference (ACSAC).*
+
+## Amendment A1: C0 is the record (14 October 2026)
+
+Guy's decision on counsel's review of PR #1 (head fe5c2f2). Appended; overrides earlier text where they conflict.
+
+1. **C0 holds no language for primary rules.** Entry types at C0: `genesis`, `key`, `proposal`, `merge`. The three secondary rules are code:
+   - *recognition*: a canonical line, its `seq`, its parent in the chain, and a signature by a declared key whose powers include the entry's type. Keys are `ssh-ed25519`, canonical and not of small order. The SSHSIG reserved field is empty.
+   - *change*: `key` entries signed by a key holding the `key` power declare, re-declare or revoke keys.
+   - *adjudication*: trunk's kernel, by digest. The judge refuses any proposal whose trusted-base digest differs from trunk's, or that changes `CHARTER.md` (`trusted_path`). The trusted base is `kernel/`, `kernel2/`, `judge/`, `.github/workflows/` and `SPEC.md`.
+2. **Signatures are verified in the kernel**, standard library only, by SPEC.md's strict rule. `ssh-keygen` is the signing tool and a test oracle, never part of the kernel.
+3. **The law language moves to C1**: §3's rules as data, their witnesses and lapse, and §4's Fuller rows on rules. C1 builds the smallest language that expresses the first real case. When rules come:
+   - they judge conduct entries only, and never bind entries of change (`genesis`, `key`, `rule`, `repeal`), so no rule can entrench itself or make the log unusable (Hart's distinction);
+   - a repeal that leaves any rule without a passing satisfying witness is refused, exactly as an admission is;
+   - negation does not depend on the order of literals.
+4. **Genesis** is committed to `main` by Guy himself, and its charter hash is checked against `CHARTER.md`. Only then are `judge` and `tests` made required checks.
+5. **§9's criteria stand for this scope**, with criterion 3's bound at 450 lines. The pins are:
+   - those of §9 that concern the record and the judge;
+   - `trusted_path_unguarded`, `trusted_rename_admitted`, `forged_signature_admitted`, `weak_key_declared` and `checker_drift`.
+6. **Timestamps do not decrease along the log**: C1.
+7. **Recorded lesson.** The first draft's defects lay in machinery C0 did not yet need. The builder's own mutants did not find them; cold probes by another party did. Every layer is reviewed by a party that did not write it.
