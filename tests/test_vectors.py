@@ -39,9 +39,9 @@ class SpecVectors(unittest.TestCase):
             self.assertEqual({k: x for k, x in v.items() if k != "detail"}, verdicts[os.path.basename(p)], p)
             reasons.add(v.get("reason"))
         self.assertEqual(reasons - {None}, {"malformed_json", "not_canonical", "schema", "bad_seq", "parent_mismatch",
-                                            "genesis_misplaced", "no_proposer", "unknown_key", "proposer_mismatch",
-                                            "no_power", "bad_signature", "violation", "rule_malformed", "duplicate_rule",
-                                            "unstratifiable", "vacuous_rule", "impossible_rule", "orphans_rule", "unknown_rule"})
+                                            "genesis_misplaced", "no_proposer", "bad_key", "unknown_key",
+                                            "proposer_mismatch", "no_power", "bad_signature"})
+        self.assertTrue(any(v["ok"] for v in verdicts.values()))
 
     def test_differential_harness_against_itself(self):
         cmd = [sys.executable, "-E", "-s", "-m", "kernel.check"]

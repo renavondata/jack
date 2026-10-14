@@ -24,7 +24,7 @@ class Digest(unittest.TestCase):
         r = tool("digest.py")
         self.assertEqual(r.returncode, 0, r.stderr)
         head = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT).stdout.strip()
-        clean = subprocess.run(["git", "status", "--porcelain", "--", "kernel", "judge", ".github/workflows", "SPEC.md"],
+        clean = subprocess.run(["git", "status", "--porcelain", "--", "kernel", "kernel2", "judge", ".github/workflows", "SPEC.md"],
                                capture_output=True, text=True, cwd=ROOT).stdout.strip()
         if clean:
             self.skipTest("trusted base has uncommitted changes; cannot compare with the judge's git-derived digest")
@@ -55,7 +55,8 @@ class Genesis(unittest.TestCase):
             r = tool("genesis.py", "assemble", unsigned, unsigned + ".sig")
             self.assertEqual(r.returncode, 0, r.stderr)
             line = r.stdout.rstrip("\n")
-            self.assertEqual(check.check([line]), {"ok": True, "entries": 1, "lapse": []})
+            self.assertEqual(check.check([line]), {"ok": True, "entries": 1})
+            self.assertEqual(e["body"]["keys"][0]["powers"], ["genesis", "key", "proposal", "merge"])
 
     def test_hardware_key_stops(self):
         with tempfile.TemporaryDirectory() as tmp:

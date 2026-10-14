@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Trusted-base digest of the working tree: sha256 over path\\0content\\0 for kernel/, judge/,
+"""Trusted-base digest of the working tree: sha256 over path\\0content\\0 for kernel/, kernel2/, judge/,
 .github/workflows/ and SPEC.md, sorted by path — the same function judge.py computes from git."""
 import hashlib
 import os

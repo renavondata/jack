@@ -1,5 +1,5 @@
 {
-  "_about": "Template for entry 0 of log.jsonl. tools/genesis.py prepare fills the placeholders and writes the canonical unsigned message; Guy signs it with the exact command below; tools/genesis.py assemble attaches the signature. CHARTER.md §§2-3 is the genesis text; its SHA-256 and the trusted-base digest are recorded in the body. Only a plain ssh-ed25519 key may sign at C0; a hardware key (sk-ssh-ed25519@openssh.com) signs a different message and must stop the procedure.",
+  "_about": "Template for entry 0 of log.jsonl. tools/genesis.py prepare fills the placeholders and writes the canonical unsigned message; Guy signs it with the exact command below; tools/genesis.py assemble attaches the signature. CHARTER.md §§2-3 is the genesis text; its SHA-256 and the trusted-base digest are recorded in the body, and the judge refuses every proposal while trunk's CHARTER.md does not hash to the recorded value. Only a plain ssh-ed25519 key may sign at C0; a hardware key (sk-ssh-ed25519@openssh.com) signs a different message and must stop the procedure.",
   "_sign_command": "ssh-keygen -Y sign -f ~/.ssh/id_ed25519 -n core-entry genesis.unsigned",
   "seq": 0,
   "parent": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -14,7 +14,7 @@
         "key_id": "guy-master",
         "principal": "guy",
         "pubkey": "<<GUY_SSH_PUBLIC_KEY>>",
-        "powers": ["genesis", "key", "rule", "repeal", "proposal", "merge"]
+        "powers": ["genesis", "key", "proposal", "merge"]
       }
     ]
   }

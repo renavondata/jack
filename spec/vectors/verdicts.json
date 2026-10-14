@@ -1,162 +1,121 @@
 {
- "about": "verdict each log in logs/ must produce (SPEC.md \u00a713), detail omitted",
+ "about": "verdict each log in logs/ must produce (SPEC.md \u00a710), detail omitted",
  "verdicts": {
   "00_genesis_only.jsonl": {
    "ok": true,
-   "entries": 1,
-   "lapse": []
+   "entries": 1
   },
-  "01_every_type_and_lapse.jsonl": {
+  "01_every_type_grant_revoke.jsonl": {
    "ok": true,
-   "entries": 9,
-   "lapse": [
-    [
-     5,
-     "r1"
-    ]
-   ]
+   "entries": 7
   },
   "02_revoked_key_no_power.jsonl": {
    "ok": false,
-   "seq": 9,
-   "rule": null,
+   "seq": 7,
    "reason": "no_power"
   },
-  "03_violation.jsonl": {
-   "ok": false,
-   "seq": 9,
-   "rule": "r1",
-   "reason": "violation"
-  },
-  "04_replacements.jsonl": {
+  "03_redeclared_powers.jsonl": {
    "ok": true,
-   "entries": 3,
-   "lapse": []
+   "entries": 9
   },
-  "05_orphans_rule.jsonl": {
-   "ok": false,
-   "seq": 2,
-   "rule": null,
-   "reason": "orphans_rule"
-  },
-  "06_vacuous_rule.jsonl": {
+  "04_duplicate_pubkey_bad_key.jsonl": {
    "ok": false,
    "seq": 1,
-   "rule": null,
-   "reason": "vacuous_rule"
+   "reason": "bad_key"
   },
-  "07_impossible_rule.jsonl": {
+  "05_small_order_key_bad_key.jsonl": {
    "ok": false,
    "seq": 1,
-   "rule": null,
-   "reason": "impossible_rule"
+   "reason": "bad_key"
   },
-  "08_rule_malformed.jsonl": {
+  "06_noncanonical_key_bad_key.jsonl": {
    "ok": false,
    "seq": 1,
-   "rule": null,
-   "reason": "rule_malformed"
+   "reason": "bad_key"
   },
-  "09_unstratifiable.jsonl": {
+  "07_genesis_weak_key_bad_key.jsonl": {
+   "ok": false,
+   "seq": 0,
+   "reason": "bad_key"
+  },
+  "08_no_power.jsonl": {
    "ok": false,
    "seq": 1,
-   "rule": null,
-   "reason": "unstratifiable"
-  },
-  "10_duplicate_rule.jsonl": {
-   "ok": false,
-   "seq": 2,
-   "rule": null,
-   "reason": "duplicate_rule"
-  },
-  "11_unknown_rule.jsonl": {
-   "ok": false,
-   "seq": 1,
-   "rule": null,
-   "reason": "unknown_rule"
-  },
-  "12_no_power.jsonl": {
-   "ok": false,
-   "seq": 1,
-   "rule": null,
    "reason": "no_power"
   },
-  "13_unknown_key.jsonl": {
+  "09_unknown_key.jsonl": {
    "ok": false,
    "seq": 1,
-   "rule": null,
    "reason": "unknown_key"
   },
-  "14_proposer_mismatch.jsonl": {
+  "10_proposer_mismatch.jsonl": {
    "ok": false,
    "seq": 1,
-   "rule": null,
    "reason": "proposer_mismatch"
   },
-  "15_no_proposer.jsonl": {
+  "11_no_proposer.jsonl": {
    "ok": false,
    "seq": 1,
-   "rule": null,
    "reason": "no_proposer"
   },
-  "16_bad_signature_tampered.jsonl": {
+  "12_bad_signature_tampered.jsonl": {
    "ok": false,
    "seq": 1,
-   "rule": null,
    "reason": "bad_signature"
   },
-  "17_bad_signature_s_plus_L.jsonl": {
+  "13_bad_signature_s_plus_L.jsonl": {
    "ok": false,
    "seq": 1,
-   "rule": null,
    "reason": "bad_signature"
   },
-  "18_bad_signature_namespace.jsonl": {
+  "14_bad_signature_namespace.jsonl": {
    "ok": false,
    "seq": 1,
-   "rule": null,
    "reason": "bad_signature"
   },
-  "19_bad_seq.jsonl": {
+  "15_bad_signature_reserved.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "bad_signature"
+  },
+  "16_bad_seq.jsonl": {
    "ok": false,
    "seq": 2,
-   "rule": null,
    "reason": "bad_seq"
   },
-  "20_parent_mismatch_fork.jsonl": {
+  "17_parent_mismatch_fork.jsonl": {
    "ok": false,
    "seq": 2,
-   "rule": null,
    "reason": "parent_mismatch"
   },
-  "21_genesis_misplaced.jsonl": {
+  "18_genesis_misplaced.jsonl": {
    "ok": false,
    "seq": 2,
-   "rule": null,
    "reason": "genesis_misplaced"
   },
-  "22_schema.jsonl": {
+  "19_schema.jsonl": {
    "ok": false,
    "seq": 2,
-   "rule": null,
    "reason": "schema"
   },
-  "23_not_canonical.jsonl": {
+  "20_schema_rule_type_gone.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "reason": "schema"
+  },
+  "21_not_canonical.jsonl": {
    "ok": false,
    "seq": 1,
-   "rule": null,
    "reason": "not_canonical"
   },
-  "24_malformed_json.jsonl": {
+  "22_malformed_json.jsonl": {
    "ok": false,
    "seq": 1,
-   "rule": null,
    "reason": "malformed_json"
   },
-  "25_empty.jsonl": {
+  "23_empty.jsonl": {
    "ok": true,
-   "entries": 0,
-   "lapse": []
+   "entries": 0
   }
  }
 }
