@@ -102,3 +102,30 @@ answer); then E_t ≥ 20 against p₀ (assize's weekly `guy_acts.py` series)
 within 14 days live; windows, α = 0.05, p₀ and the attack list committed
 before the window opens; zero checker disagreements throughout; Guy has not
 vetoed.
+
+## Lessons from C0 for this brief (counsel, 15 October 2026)
+
+Each is a pre-stated criterion or a scope item for C1 unless Guy strikes it.
+
+1. **A byte-level simulator kind.** Every checker disagreement in C0 came from reviews and byte probes,
+   none from the simulator (REPORT.md §8.3.3). Add a kind that mutates lines at the byte level: the
+   edge cases of counsel's probes (empty, CRLF, BOM, NUL, invalid UTF-8, `1e2`, `-0`, 2^53, duplicate
+   keys, lone surrogates, upper-case `\u` hex, `\/`, raw DEL, top-level array, depth 32/33/5,000/100,000,
+   5,000-digit integers, non-ASCII digits in `ts`) and random byte flips, with the oracle's verdict where
+   SPEC.md decides it and checker agreement alone where it does not.
+2. **Full line coverage of the trusted base** (`kernel/`, `judge/`; stdlib `trace`), reported in CI, as a
+   pre-stated criterion: a line no test reaches is a line no test defends.
+3. **Test the production path, not a proxy.** The judge-modes defect passed every test that ran the
+   checker directly. Every C1 component is tested as it runs in production (the clerk as the scheduled
+   workflow runs it).
+4. **A spec change carries a simulator run.** The `rewriting` oracle went stale when SPEC round 2 changed
+   what a valid key entry is. The CI sample (2,000 seeds, both checkers, every push) now catches this;
+   a SPEC change also reruns the full 10⁵ before merge.
+5. **A charter-amendment entry type.** After genesis any edit to CHARTER.md makes the judge refuse every
+   PR (`charter_mismatch`). C1 adds an entry, signed with the change power, that records the new
+   charter hash, and the judge checks trunk's CHARTER.md against the latest one.
+6. **Attribution is checked, not conventional.** Two C0 commits carry unfilled `Proposer:` placeholders
+   (REPORT.md §8.3.4). When proposals become entries, a missing or placeholder proposer is refused
+   (`unattributed_entry` already does this for log entries).
+7. **Cold review by another party, per layer**, stays: in C0 the builders' own tests and mutants found
+   none of the defects that reviews, probes and counsel's runs found (REPORT.md §8.2).

@@ -1,0 +1,46 @@
+{
+ "started": "2026-10-14T17:31Z",
+ "finished": "2026-10-14T20:00:40Z",
+ "elapsed_s": null,
+ "note": "17 resumable chunks of about 560 s on 2 workers, each calling sim/run.py's _init and _one unchanged; one line per seed appended to disk; the container restarted between turns. Not sim/run.py main(), so elapsed is not comparable with a single run.",
+ "jobs": 2,
+ "seeds_file": "sim/seeds.txt",
+ "seeds_run": 100000,
+ "seeds_in_file_order": true,
+ "seeds": [
+  "4178ee380b3a2c0a",
+  "59d8a84fde3ceb17"
+ ],
+ "by_kind": {
+  "benign": 6665,
+  "duplicate_key": 6576,
+  "flooding": 6659,
+  "forged": 6716,
+  "forking": 6705,
+  "retroactive": 6678,
+  "revoked": 6679,
+  "rewriting": 6748,
+  "schema": 6576,
+  "self_judging": 6672,
+  "stalling": 6638,
+  "structure": 6660,
+  "unattributed": 6746,
+  "unsigned_change": 6558,
+  "weak_key": 6724
+ },
+ "properties": [
+  "oracle",
+  "prefix",
+  "sticky_refusal",
+  "deterministic",
+  "agree"
+ ],
+ "second": "kernel2/check",
+ "tree": "5e91f94a660b2b2be749b8b0dd77e5cbe0cd94c7",
+ "tree_of": "main at 44dd144 (and e9edef5)",
+ "dirty": false,
+ "failures": [],
+ "python": "3.12.3",
+ "openssh": "OpenSSH_9.6p1 Ubuntu-3ubuntu13.20",
+ "proposer": "counsel claude-opus-5-5 session_01GMQpCypjVueCfEEkLaPiSm"
+}

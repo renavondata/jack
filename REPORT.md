@@ -1,5 +1,8 @@
 # C0 report — the record and the checker
 
+> §8, counsel's exit report of 15 October 2026, supersedes §2 (verdict) and §7 (what C0 still
+> needs). §§1–6 are the founding session's report, unchanged.
+
 Founding session, 13–14 October 2026. Proposer: founder `claude-fable-5-1`,
 session `743dd139-c951-42b5-8e20-14cce485acab`. Branch `c0-founding`, pull
 request [#1](https://github.com/renavondata/jack/pull/1) against `main`.
@@ -206,3 +209,86 @@ For Guy to sign or decline; nothing here edits the charter.
    `kernel2/` is trusted; then `checker_drift` KILLED, 10⁵ seeds through both.
 2. Guy's reading of the 392 lines and his signature on genesis, committed to
    `main` by him; then `judge` and `tests` as required checks.
+
+## 8. Exit report (counsel, 15 October 2026)
+
+Proposer: counsel `claude-opus-5-5`, session `session_01GMQpCypjVueCfEEkLaPiSm`. State of `main` at
+`44dd144` plus PR #3 (`sim-progress`) and the CI simulator sample (`fix_ci_sim.py`).
+
+### 8.1 Verdict against §9's criteria (as amended by A1.5)
+
+| # | criterion | state | evidence |
+|---|---|---|---|
+| 1 | every pin KILLED and its twin passes, in CI, from trunk | **MET** | `tests` on `push: main` is green on every push since genesis (`95679e7`, `08e7335`, `bd0a003`, `44dd144`: run 38584388118). 23 mutants across 18 pins KILLED, 0 SURVIVED, 0 STALE, 0 twin failures, 0 PENDING; `checker_drift` is KILLED now that kernel2 exists. Every pin A1.5 names is present (A1's `weak_key_declared` is the pin `weak_key_admitted`). |
+| 2 | both checkers agree, entry by entry and reason by reason, on the real log and 10⁵ simulated logs from a pre-committed seed list | **MET** | Real log: the judge self-check runs both checkers over `log.jsonl` on every push to `main`; they agree (genesis, one entry). Simulated: all 10⁵ seeds of `sim/seeds.txt` (committed at `3a53b5a`, 13 Oct, before any run; unchanged since) through both checkers, five properties (oracle, prefix, sticky refusal, determinism, agreement), **0 failures**, twice: Guy's run of record (`sim/runs/20261014T153928Z-100000.json`, 12 workers, 1,886 s) and counsel's replica (`sim/runs/counsel-20261014T1731Z-100000.json`). Their per-kind counts are identical. See 8.3 for what each run was run on. |
+| 3 | kernel within 450 lines (A1.5) | **MET** | 411 physical lines: `log.py` 164, `sig.py` 140, `check.py` 107. CI counts it on every push. |
+| 4 | Guy has read the kernel and signed genesis | **MET** | Genesis `95679e7`, committed by Guy, ts `2026-10-14T05:41:39Z`; one key, `guy-master`, with all four powers; charter hash `383867d0…` matches `CHARTER.md` with A1; checker digest `d3ac5ef5…` matched the code at genesis. Branch protection on `main`: required checks `judge` and `tests`, strict, no force-push, no deletion, `enforce_admins` off so the trusted base changes by Guy's own push (A1.4); ruleset "append-only branches" active. |
+
+No stop condition of §9 fired. **Counsel recommends promotion**: C0 needs safety alone (§6), and safety
+held with zero disagreements on the real log and on 2 × 10⁵ simulated logs. Promotion, or a veto, is
+Guy's act and is not recorded here.
+
+### 8.2 What happened between the founding report and exit
+
+| when (14 Oct) | commit | what | found by |
+|---|---|---|---|
+| | `da2a744` | Amendment A1: C0 is the record | counsel's review of PR #1 |
+| 05:41 UTC | `95679e7` | genesis, by Guy | — |
+| | `738b20a` | pin `checker_drift` compares both checkers on every reason code | counsel |
+| | `0610a74`, `a6f36b4` | kernel2, by a fresh Codex session from SPEC.md alone; Gemini's cold review | — |
+| | `0fecdf5`, `2d7e9a9` | SPEC round 2: timestamps are real instants in ASCII digits; nesting depth ≤ 32; integers > 20 characters `not_canonical`; key declarations have exactly four members; a public key belongs to one `key_id` for life; every log has one verdict | Gemini's review (findings 1, 2, 4, 5, 6), Codex's questions (Q1–Q3), counsel's byte probes |
+| | `12fc4ee` | kernel2 revised to round 2 by a fresh OpenCode session in the isolated room | — |
+| | `08e7335` | the judge honours git's executable bit for `kernel2/`; pin `kernel2_unrunnable` | counsel's final review: without it every PR after kernel2's merge would have failed with a judge error |
+| | `bd0a003` | CI judge self-check on the production path; pin `selfcheck_blind` | counsel |
+| | `e9edef5` (PR #2) | `sim/run.py --second`; the stale `rewriting` oracle fixed (8.3) | counsel's first run with `--second` |
+| | PR #3 | progress line on stderr; display only | Guy's session |
+| | `fix_ci_sim.py` | 2,000 seeds through both checkers on every push; `--complete` | counsel |
+
+The builders' own tests and mutants found none of these. Every defect was found by a party that did not
+write the code, as A1.7 recorded of the first draft. The lesson holds a second time.
+
+### 8.3 Disclosures
+
+1. **What each 10⁵ run ran on.** Guy's run is at `aea698f`, the head of PR #3, which is `44dd144` plus a
+   progress line: the diff touches only `sim/run.py`'s printing, never `evaluate`, `_one`, the generator
+   or either checker. Counsel's replica ran on tree `5e91f94`, which is exactly `main`'s tree at
+   `44dd144`. Between them the two runs cover what is on `main`. Counsel's replica did not go through
+   `sim/run.py`'s `main()`: the session's container restarts when idle, so it ran in 17 resumable chunks
+   calling the same worker functions; its file is a summary, and the per-seed lines are with Guy.
+2. **The generator changed after the seed list was committed.** The seed list is what §9 pre-commits,
+   and it is unchanged. The generator was changed once, in `e9edef5`: since round 2, a key declaration
+   has exactly four members, and the `rewriting` attack still tampered with a `key` entry by adding a
+   `note` member, so the entry failed `schema` before its signature or chain was read. Both checkers
+   said `schema`; the oracle expected `bad_signature` or `parent_mismatch` (8 of the first 300 seeds).
+   The checkers were right; the oracle was stale. A `key` entry is now tampered in its `ts`. No other
+   seed's case changed. CI missed it because the per-kind unit tests use seeds 0–2 and the full
+   simulator was not rerun after round 2; the CI sample now runs on every push.
+3. **The simulator found no disagreement between the checkers.** Every disagreement found during C0 (the
+   timestamp digits, the deep-nesting crash, the long integer) came from reviews and byte probes, not
+   from simulated logs. The simulator's kinds tamper at the level of entries and keys; they do not reach
+   the byte-level parser (malformed JSON, depth, long integers, non-ASCII digits, BOM, CRLF). Criterion 2
+   is met, but it was not the test that found the defects. C1's brief takes this up (BRIEF-C1.md).
+4. **Two commits carry placeholder attribution**: `0fecdf5` and `2d7e9a9` have
+   `Proposer: reviewer <gemini model id> <session id>` with the placeholders unfilled. Under the
+   charter's corollary (§2.4) Gemini's influence on those commits is unattributed. The trailer is a
+   convention at C0 (§4.11); the gap is recorded, not repaired, since history is not rewritten.
+
+### 8.4 Counsel's forecasts (§11)
+
+| id | p | resolution | note |
+|---|---:|---|---|
+| K5 | 0.75 | **true** | 411 ≤ 1,000 |
+| K6 | 0.65 | **false, on its wording**, for Guy to rule | "disagree on at least one *simulated* log". The disagreements were found by reviews and byte probes (8.3.3); on simulated logs, two 10⁵ runs and counsel's 300-case differential found none. The predecessor counsel session recorded K6 as true; reading it that way would be counsel resolving its own forecast in its favour. |
+| K7 | 0.50 | true if Guy promotes by 27 October | founding session began 13 October |
+| K1, K2 | 0.60, 0.35 | 21 October | the weekly measurement task |
+| K3, K4 | 0.20, 0.35 | 30 November | |
+| K8 | 0.40 | C1's first live window | |
+
+### 8.5 After promotion
+
+C0's trusted base (`kernel/`, `kernel2/`, `judge/`, `.github/workflows/`, `SPEC.md`) then changes only
+for a defect, by Guy's own push, each defect recorded as a precedent case, until C1's `merge.installs`
+makes such changes entries. A CHARTER.md edit makes the judge refuse every PR (`charter_mismatch`) until
+C1 gives the charter an amendment entry; §5's proposed charter changes wait for it. Do not issue `key`
+entries until C1 refuses a `key` entry that leaves no key with the `key` power (§4.16): with one key,
+revoking its own `key` power is irreversible.
