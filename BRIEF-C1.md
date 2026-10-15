@@ -76,8 +76,10 @@ in whichever language is chosen, and it decides which: candidate 1 needs a
 5. **Merge authorship.** The judge holds no secret, so C0 cannot sign `merge`
    entries; the clerk's herald key (`accept`, `wish`, and `merge`?) is Guy's
    decision. The herald key must not hold `key`, nor the change power.
-6. **Second checker in CI.** `sim/run.py --second kernel2/check`; the judge
-   already refuses `checker_drift`.
+6. **Second checker in CI.** Done in C0: `tests` runs the first 2,000
+   committed seeds through both checkers on every push (`--second`,
+   `--complete`); the judge already refuses `checker_drift`. C1 adds the rule
+   attacks to the simulator and keeps the sample green.
 
 ## Questions C0 raised for C1 (see REPORT.md)
 

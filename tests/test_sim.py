@@ -151,6 +151,12 @@ class Runner(unittest.TestCase):
             self.assertEqual(t["seeds"][0], "4178ee380b3a2c0a")
             self.assertIn("properties", t)
 
+    def test_complete_fails_a_run_the_budget_cut_short(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            args = ["--jobs", "2", "--limit", "10", "--out", tmp, "--complete"]
+            self.assertEqual(run.main(args + ["--budget", "0"]), 1)
+            self.assertEqual(run.main(args + ["--budget", "60"]), 0)
+
     def test_worker_reports_a_generator_error_instead_of_dying(self):
         run._init()
         seed, kind, failures = run._one("not-hex")

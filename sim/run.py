@@ -101,6 +101,7 @@ def main(argv=None):
     ap.add_argument("--limit", type=int, default=None, help="at most this many seeds")
     ap.add_argument("--out", default=os.path.join(os.path.dirname(__file__), "runs"))
     ap.add_argument("--second", default=None, help="second checker command, e.g. kernel2/check")
+    ap.add_argument("--complete", action="store_true", help="fail if the budget stops the run before every seed")
     ap.add_argument("--quiet", action="store_true", help="no progress line on stderr")
     a = ap.parse_args(argv)
     second = a.second.split() if a.second else None
@@ -142,6 +143,9 @@ def main(argv=None):
     with open(path, "w") as f:
         json.dump(transcript, f, indent=1)
     print(f"{len(done)} seeds in {elapsed:.1f}s, {len(failures)} property failures → {path}")
+    if a.complete and len(done) < len(seeds):
+        print(f"incomplete: {len(done)} of {len(seeds)} seeds within the {a.budget:.0f}s budget")
+        return 1
     return 1 if failures else 0
 
 
