@@ -292,6 +292,24 @@ class Scope(Fixture):
         commit_all(repo, "Proposer: builder m s mentioned in the subject only", None)
         self.assertEqual(self.judge(repo)["reason"], "unattributed_proposal")
 
+    def test_self_check_skips_items_7_to_10(self):
+        repo = self.repo()
+        write(repo, "README.md", "proposal\n")
+        commit_all(repo, "docs")
+        git(repo, "checkout", "-q", "main")
+        write(repo, "REPORT.md", "trunk moved on\n")
+        before = commit_all(repo, "trunk change")
+        git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "merge", "-q", "--no-ff", "pr", "-m", "Merge pull request #1")
+        self.assertEqual(len(git(repo, "rev-list", "--parents", "-1", "main").split()), 3)
+        r = self.judge(repo, "main", "main")
+        self.assertEqual((r["ok"], r["reason"], r["proposer"]), (True, None, None), r)
+        r = self.judge(repo, before, "main")
+        self.assertEqual((r["ok"], r["reason"], r["proposer"]), (False, "unattributed_proposal", None))
+        git(repo, "checkout", "-q", "-b", "pr2", "main")
+        write(repo, "README.md", "again\n")
+        commit_all(repo, "no trailer", None)
+        self.assertEqual(self.judge(repo, "main", "pr2")["reason"], "unattributed_proposal")
+
     def test_attribution_follows_the_kernel(self):
         repo = self.repo()
         self.lg.add("proposal", "guy", proposal("a"), self.w.stranger)

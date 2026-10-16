@@ -191,6 +191,8 @@ def judge(repo, trunk_ref, proposal_ref):
         e = json.loads(line)
         if e["type"] == "merge" and e["body"]["checker"] != report["trusted_digest"]:
             return refuse("judge_from_proposal", f"merge at seq {e['seq']} claims a checker trunk does not have")
+    if head == trunk:  # the self-check: items 7-10 concern proposals, and trunk against itself is none
+        return dict(report, ok=True)
     scope, report["proposer"] = json.loads(show(repo, trunk, SCOPE) or b""), party(repo, head)
     if report["proposer"] not in PARTIES:
         return refuse("unattributed_proposal", f"head commit's Proposer trailer names no party of {', '.join(PARTIES)}")
