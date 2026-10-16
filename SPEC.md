@@ -310,6 +310,8 @@ order, each a refusal of the whole proposal:
     a prefix in `judge/scope.json`'s `counted`, counted as
     `tools/count_kernel.py` counts, exceed `judge/scope.json`'s `cap`.
 
+Items 7–10 apply only to a proposal whose head differs from trunk; the self-check, which judges trunk against itself, skips them.
+
 `judge/scope.json` is under `judge/`, so it is trusted base and changes only
 by Guy's own push. Its members are `layer` (a string), `paths`, `documents`
 and `counted` (lists of path prefixes; a prefix ending in `/` matches a
