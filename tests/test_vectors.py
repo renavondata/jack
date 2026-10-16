@@ -47,7 +47,7 @@ class SpecVectors(unittest.TestCase):
         cmd = [sys.executable, "-E", "-s", "-m", "kernel.check"]
         paths = sorted(glob.glob(os.path.join(VEC, "logs", "*.jsonl")))[:4]
         self.assertEqual(diff.compare(cmd, cmd, paths), [])
-        self.assertEqual(len(diff.compare(cmd, ["/bin/false"], paths)), 4)
+        self.assertEqual({d[0] for d in diff.compare(cmd, ["/bin/false"], paths)}, set(paths))
 
 
 if __name__ == "__main__":

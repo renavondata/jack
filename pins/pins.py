@@ -6,11 +6,14 @@ checker. Expectations are exact (seq, reason) or exact acceptance, so a mutant
 cannot survive by failing for a different reason. C0 is the record only: the
 rule pins of §9 (final_law_for_all, vacuous_rule_admitted,
 impossible_rule_admitted, redundancy_unreported) return with the law language
-in C1; unsigned_change reads over `key` entries, the change entries of C0.
+in C1; unsigned_change reads over `key` entries, the change entries of C0. The
+differential pins of SPEC §9a.7 run the tree's harness/diff.py over shell-script checkers.
 """
 import functools
 import glob
+import json
 import os
+import subprocess
 import sys
 import tempfile
 from collections import namedtuple
@@ -321,6 +324,58 @@ def t_checker_drift(root):
     assert not bad, bad
 
 
+# --- differential pins (SPEC §9a.7) ----------------------------------------------
+
+def toy(body='echo "{\\"ok\\":true,\\"entries\\":$n}"', wrong_at=-1):
+    """A shell checker that accepts every log of n lines, but claims 9 entries at length wrong_at."""
+    return f'n=$(($(wc -l < "$1"))); [ $n -eq {wrong_at} ] && n=9; {body}\n'
+
+
+def differential(root, b, a=toy(), timeout=60):
+    """(exit status, report) of root's harness/diff.py over a three-line log; a checker given as None does not exist."""
+    with tempfile.TemporaryDirectory() as tmp:
+        path = lambda body: os.path.join(tmp, "missing" if body is None else "a" if body == a else "b")  # noqa: E731
+        for name, body in [(path(c), "#!/bin/sh\n" + c) for c in {a, b} - {None}] + [(os.path.join(tmp, "log"), "x\ny\nz\n")]:
+            with open(name, "w") as f:
+                f.write(body)
+            os.chmod(name, 0o755)
+        r = subprocess.run([sys.executable, os.path.join(root, "harness", "diff.py"), "--a", path(a), "--b", path(b),
+                            "--timeout", str(timeout), os.path.join(tmp, "log")], capture_output=True, text=True)
+    return r.returncode, json.loads(r.stdout)
+
+
+def lengths(rc, report):
+    return rc, [d["length"] for d in report["disagreements"]]
+
+
+def t_whole_log_only(root):
+    """A second checker wrong only on a proper prefix is caught."""
+    assert lengths(*differential(root, toy(wrong_at=1))) == (1, [1])
+    assert lengths(*differential(root, toy())) == (0, [])
+
+
+def t_loose_parse(root):
+    """{"ok":1,...}, or a correct object with the wrong exit status, is no verdict; a respaced object is one."""
+    for b in (toy('echo "{\\"ok\\":1,\\"entries\\":$n}"'), toy('echo "{\\"ok\\":true,\\"entries\\":$n}"; exit 1')):
+        assert lengths(*differential(root, b)) == (1, [0, 1, 2, 3]), b
+    assert lengths(*differential(root, toy('echo "{ \\"entries\\": $n, \\"ok\\": true }"'))) == (0, [])
+
+
+def t_crash_as_agreement(root):
+    """A crash, a missing checker or a timeout disagrees, even with the same failure from the other checker."""
+    for bad in ("exit 3\n", "exec sleep 30\n", None):
+        assert lengths(*differential(root, bad, bad, timeout=0.3)) == (1, [0, 1, 2, 3]), bad
+    assert lengths(*differential(root, toy(), toy())) == (0, [])
+
+
+def t_prefix_skipped(root):
+    """Every proper prefix is compared, the empty log and the longest included."""
+    for k in (0, 2):
+        assert lengths(*differential(root, toy(wrong_at=k))) == (1, [k]), k
+    rc, report = differential(root, toy())
+    assert (rc, report["logs"], report["prefixes"]) == (0, 1, 3), report
+
+
 GUARD = 'if digest(repo, head) != report["trusted_digest"] or show(repo, head, CHARTER) != show(repo, trunk, CHARTER):'
 
 PINS = [
@@ -409,4 +464,14 @@ PINS = [
                "        return 1  # selfcheck: judge refused or failed", "        return 0")]),
     Pin("checker_drift", t_checker_drift, [
         Mutant("reason_code_flipped", "kernel2/check", "bad_signature", "bad_signatur3")]),
+    Pin("whole_log_only", t_whole_log_only, [
+        Mutant("prefixes_uncompared", "harness/diff.py", "for k in range(len(lines) + 1):", "for k in [len(lines)]:")]),
+    Pin("loose_parse", t_loose_parse, [
+        Mutant("ok_not_boolean", "harness/diff.py", 'type(v.get("ok")) is bool', '"ok" in v'),
+        Mutant("exit_status_ignored", "harness/diff.py", ' and r.returncode == (not v["ok"])', "")]),
+    Pin("crash_as_agreement", t_crash_as_agreement, [
+        Mutant("like_failures_agree", "harness/diff.py", ' and "ok" in a else', " else")]),
+    Pin("prefix_skipped", t_prefix_skipped, [
+        Mutant("empty_prefix_skipped", "harness/diff.py", "for k in range(len(lines) + 1):", "for k in range(1, len(lines) + 1):"),
+        Mutant("prefix_off_by_one", "harness/diff.py", "lines[:k])", "lines[:k + 1])")]),
 ]
