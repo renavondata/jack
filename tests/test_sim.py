@@ -104,10 +104,24 @@ class Second(unittest.TestCase):
         cls.tmp = tempfile.TemporaryDirectory()
         cls.pool = gen.KeyPool(cls.tmp.name)
         cls.twin = [sys.executable, "-E", "-s", "-m", "kernel.check"]  # as harness/diff.py; run from the repo root
-        cls.mutant = os.path.join(cls.tmp.name, "accept_all")
-        with open(cls.mutant, "w") as f:
-            f.write("#!/bin/sh\necho '{\"ok\": true, \"entries\": 0}'\n")
-        os.chmod(cls.mutant, 0o755)
+        kernel = " ".join(cls.twin) + ' "$1"'
+        cls.mutants = {}
+        for name, script in {
+            "accept_all": "echo '{\"ok\": true, \"entries\": 0}'",
+            # right on every log of two or more lines, wrong on the one-line prefix (the review's counterexample)
+            "prefix_divergent": 'if [ "$(wc -l < "$1")" -eq 1 ]; then echo \'{"ok": false, "seq": 0, "reason": "bad_signature"}\'; exit 1; fi; exec '
+                                + kernel,
+            "ok_as_integer": kernel + " | sed 's/true/1/'",
+            "wrong_exit": kernel + "; exit 1",
+            "duplicate_member": kernel + " | sed 's/{/{\"ok\": true, /'",
+            "sleeper": "sleep 5; " + kernel,
+        }.items():
+            path = os.path.join(cls.tmp.name, name)
+            with open(path, "w") as f:
+                f.write("#!/bin/sh\n" + script + "\n")
+            os.chmod(path, 0o755)
+            cls.mutants[name] = [path]
+        cls.mutant = cls.mutants["accept_all"]
 
     @classmethod
     def tearDownClass(cls):
@@ -116,13 +130,43 @@ class Second(unittest.TestCase):
     def test_twin_agrees_on_every_kind(self):
         for kind in gen.KINDS:
             case = gen.generate_kind(kind, random.Random(3), self.pool)
-            self.assertNotIn("agree", [f[0] for f in run.evaluate(case, self.pool, second=self.twin)], kind)
+            self.assertEqual(run.evaluate(case, self.pool, second=self.twin), [], kind)
 
     def test_mutant_second_checker_is_caught(self):
         case = gen.generate_kind("forking", random.Random(7), self.pool)
         self.assertFalse(case.expected["ok"])
-        failures = run.evaluate(case, self.pool, second=[self.mutant])
+        failures = run.evaluate(case, self.pool, second=self.mutant)
         self.assertIn("agree", [f[0] for f in failures])
+
+    def test_second_checker_wrong_only_on_a_prefix_is_caught(self):
+        case = gen.generate_kind("benign", random.Random(5), self.pool)
+        self.assertTrue(case.expected["ok"] and len(case.lines) >= 2)
+        failures = run.evaluate(case, self.pool, second=self.mutants["prefix_divergent"])
+        self.assertEqual([f[0] for f in failures], ["agree"])
+        self.assertIn("prefix of length 1", failures[0][1])
+
+    def test_malformed_verdicts_never_agree(self):
+        case = gen.generate_kind("benign", random.Random(5), self.pool)
+        for name in ("ok_as_integer", "wrong_exit", "duplicate_member"):
+            failures = run.evaluate(case, self.pool, second=self.mutants[name])
+            self.assertEqual([f[0] for f in failures], ["agree"], name)
+            self.assertIn("malformed", failures[0][1], name)
+
+    def test_timeout_is_malformed_not_agreement(self):
+        case = gen.generate_kind("benign", random.Random(5), self.pool)
+        v = run.second_verdict(self.mutants["sleeper"], case.lines, timeout=1)
+        self.assertIn("timeout", v.get("malformed", ""))
+        self.assertNotEqual(v, run.strip(check.check(case.lines)))
+
+    def test_complete_refuses_short_empty_or_duplicated_seed_lists(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for name, text in (("short", "4178ee380b3a2c0a\na6c1a31696521e5b\n"), ("empty", "\n"),
+                               ("dup", "4178ee380b3a2c0a\n4178ee380b3a2c0a\n")):
+                path = os.path.join(tmp, name)
+                with open(path, "w") as f:
+                    f.write(text)
+                rc = run.main(["--jobs", "1", "--limit", "10", "--budget", "60", "--complete", "--out", tmp, "--seeds", path])
+                self.assertEqual(rc, 2, name)
 
     def test_transcript_names_the_second_checker(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -134,6 +178,7 @@ class Second(unittest.TestCase):
             self.assertEqual((t["seeds_run"], t["failures"], t["second"]), (6, [], " ".join(self.twin)))
             self.assertIn("agree", t["properties"])
             self.assertEqual(len(t["commit"]), 40)
+            self.assertEqual((len(t["seeds_sha256"]), t["seeds_selected"], t["complete"]), (64, 6, True))
 
 
 class Runner(unittest.TestCase):
