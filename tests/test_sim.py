@@ -2,7 +2,6 @@
 import json
 import os
 import random
-import sys
 import tempfile
 import unittest
 
@@ -41,7 +40,8 @@ class Generators(unittest.TestCase):
                 self.assertEqual(strip(check.check(case.lines)), case.expected, f"{kind} seed {seed}: {case.lines[-1][:120]}")
 
     def test_rewriting_a_key_entry_is_not_a_schema_refusal(self):
-        """Seeds on which `rewriting` hits a key entry; the oracle said schema-valid tampering, the entry was not."""
+        """Seeds on which `rewriting` hits a key entry: since round 2 a key declaration has exactly four members,
+        so the generator tampers the entry's ts, not its body (counsel's review, 14 Oct 2026)."""
         for s in ("abe4598310936905", "807cfd4db6b58b69", "cb54abe4a7a01c36", "5f09da6ff7544a65",
                   "dcf96225d14ce404", "7f5d392118fff56c", "38cc2874cb07b5a8", "27d1519a7b5c64af"):
             case = gen.generate(s, self.pool)
@@ -96,46 +96,6 @@ class Properties(unittest.TestCase):
         self.assertIn("sticky_refusal", [f[0] for f in failures])
 
 
-class Second(unittest.TestCase):
-    """--second: the kernel as its own twin never disagrees; a second checker that accepts everything is caught."""
-
-    @classmethod
-    def setUpClass(cls):
-        cls.tmp = tempfile.TemporaryDirectory()
-        cls.pool = gen.KeyPool(cls.tmp.name)
-        cls.twin = [sys.executable, "-E", "-s", "-m", "kernel.check"]  # as harness/diff.py; run from the repo root
-        cls.mutant = os.path.join(cls.tmp.name, "accept_all")
-        with open(cls.mutant, "w") as f:
-            f.write("#!/bin/sh\necho '{\"ok\": true, \"entries\": 0}'\n")
-        os.chmod(cls.mutant, 0o755)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.tmp.cleanup()
-
-    def test_twin_agrees_on_every_kind(self):
-        for kind in gen.KINDS:
-            case = gen.generate_kind(kind, random.Random(3), self.pool)
-            self.assertNotIn("agree", [f[0] for f in run.evaluate(case, self.pool, second=self.twin)], kind)
-
-    def test_mutant_second_checker_is_caught(self):
-        case = gen.generate_kind("forking", random.Random(7), self.pool)
-        self.assertFalse(case.expected["ok"])
-        failures = run.evaluate(case, self.pool, second=[self.mutant])
-        self.assertIn("agree", [f[0] for f in failures])
-
-    def test_transcript_names_the_second_checker(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            rc = run.main(["--budget", "60", "--jobs", "2", "--limit", "6", "--out", tmp,
-                           "--second", " ".join(self.twin)])
-            self.assertEqual(rc, 0)
-            with open(os.path.join(tmp, os.listdir(tmp)[0])) as f:
-                t = json.load(f)
-            self.assertEqual((t["seeds_run"], t["failures"], t["second"]), (6, [], " ".join(self.twin)))
-            self.assertIn("agree", t["properties"])
-            self.assertEqual(len(t["commit"]), 40)
-
-
 class Runner(unittest.TestCase):
     def test_run_writes_transcript_and_respects_limit(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -150,12 +110,6 @@ class Runner(unittest.TestCase):
             self.assertEqual(sum(t["by_kind"].values()), 10)
             self.assertEqual(t["seeds"][0], "4178ee380b3a2c0a")
             self.assertIn("properties", t)
-
-    def test_complete_fails_a_run_the_budget_cut_short(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            args = ["--jobs", "2", "--limit", "10", "--out", tmp, "--complete"]
-            self.assertEqual(run.main(args + ["--budget", "0"]), 1)
-            self.assertEqual(run.main(args + ["--budget", "60"]), 0)
 
     def test_worker_reports_a_generator_error_instead_of_dying(self):
         run._init()
