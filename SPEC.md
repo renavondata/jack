@@ -234,6 +234,45 @@ Reason codes (closed set, twelve): `malformed_json not_canonical schema bad_seq
 parent_mismatch genesis_misplaced no_proposer bad_key unknown_key
 proposer_mismatch no_power bad_signature`.
 
+## 9a. The differential (binding for `harness/diff.py`)
+
+The evidence for CHARTER §9 criterion 2 is produced by `harness/diff.py` and
+by nothing else. Its behaviour is this text; an implementation that does more
+or less is wrong.
+
+1. **Inputs.** `--seeds N` takes the first N lines of `sim/seeds.txt`, in
+   order; each seed produces one log through `sim/gen.py`'s generator. Log
+   files given on the command line are compared as they are. `--a` and `--b`
+   name the two checkers' commands; the defaults are §9's.
+2. **What is compared.** For each log, the whole log and every proper prefix
+   of it (lengths 0 to n−1), each written to a file and given to both
+   checkers by their command lines.
+3. **What counts as a verdict.** An output is a verdict only if it is exactly
+   one of §9's two objects: `ok` a JSON boolean; on acceptance exactly the
+   members `ok` and `entries`, `entries` a non-negative integer (not a
+   boolean), and exit status 0; on refusal exactly the members `ok`, `seq`,
+   `reason` and `detail`, `seq` a non-negative integer (not a boolean),
+   `reason` one of §9's twelve codes, `detail` a string, and exit status 1;
+   the output is UTF-8 without a byte-order mark, one JSON object with no
+   duplicate members and no `NaN` or `Infinity`.
+4. **Agreement.** Two outputs agree iff both are verdicts and they are equal
+   after removing `detail`. Anything else — a non-verdict, any other exit
+   status, a crash, a checker that cannot be run, or no output within the
+   timeout (default 120 s per call) — is a disagreement.
+5. **Report.** The number of logs and of prefixes compared; every
+   disagreement with its seed (or path), the prefix length, and both
+   outputs; the commit of the working tree (or null if git cannot answer),
+   and the SHA-256 of the seed file. Exit 0 iff there was no disagreement
+   and every requested log was compared.
+6. **Bound.** `harness/diff.py` is within sixty lines, counted as
+   `tools/count_kernel.py` counts the kernel.
+7. **Pins** (each with its mutant and a passing twin, run by `pins/run.py`):
+   `whole_log_only` — a second checker wrong only on a proper prefix passes;
+   `loose_parse` — `{"ok":1,"entries":n}`, or a correct object with the
+   wrong exit status, passes;
+   `crash_as_agreement` — a crash, a missing checker or a timeout passes;
+   `prefix_skipped` — some proper prefix is not compared.
+
 ## 10. Outside the checker (informative)
 
 `judge/judge.py` enforces what the log alone cannot (CHARTER §9.6), in this
@@ -256,6 +295,39 @@ order, each a refusal of the whole proposal:
    trunk and disagrees (minus `detail`).
 6. **judge_from_proposal** — an appended `merge` whose `checker` is not trunk's
    trusted-base digest.
+7. **unattributed_proposal** — the proposal's head commit message carries no
+   `Proposer: <party> …` trailer. The party is the first word after
+   `Proposer:`; at C0 it is one of `guy`, `founder`, `builder`, `counsel`,
+   `reviewer`. The trailer is a claim; the judge checks that it is made.
+8. **counsel_builds** — the party is `counsel` and the proposal touches any
+   path not under a prefix in `judge/scope.json`'s `documents`. Counsel
+   writes text and reviews; code enters only from a builder, written to a
+   text Guy has read.
+9. **out_of_scope** — the proposal touches a path not under a prefix in
+   `judge/scope.json`'s `paths`. (Trusted paths are refused by item 1
+   whatever the list says.)
+10. **code_cap** — at the proposal's head, the lines of every `.py` file under
+    a prefix in `judge/scope.json`'s `counted`, counted as
+    `tools/count_kernel.py` counts, exceed `judge/scope.json`'s `cap`.
+
+`judge/scope.json` is under `judge/`, so it is trusted base and changes only
+by Guy's own push. Its members are `layer` (a string), `paths`, `documents`
+and `counted` (lists of path prefixes; a prefix ending in `/` matches a
+directory, otherwise exactly one file) and `cap` (an integer). At C0 it is:
+
+```
+{"layer": "C0",
+ "paths": ["sim/", "harness/", "tests/", "pins/", "tools/", "transcripts/",
+           "REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md", "log.jsonl"],
+ "documents": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",
+               "transcripts/", "sim/runs/"],
+ "counted": ["sim/", "harness/", "tests/", "pins/", "tools/"],
+ "cap": 3000}
+```
+
+Pins for items 7–10, each with its mutant and a passing twin:
+`unattributed_proposal_admitted`, `counsel_build_admitted`, `scope_unguarded`,
+`cap_unguarded`.
 
 ## 11. Vectors
 
