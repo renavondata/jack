@@ -10,11 +10,15 @@ import unittest
 
 from harness import build, gitfix
 from harness.build import proposal
-from harness.gitfix import commit_all, git, write
+from harness.gitfix import git, write
 from judge import judge
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.executable
+
+
+def commit_all(repo, msg, proposer="builder test-model test-session"):
+    return gitfix.commit_all(repo, msg + (f"\n\nProposer: {proposer}" if proposer else ""))
 
 
 class Fixture(unittest.TestCase):
@@ -142,7 +146,7 @@ class TrustedBase(Fixture):
             self.assertEqual((r["ok"], r["reason"]), (False, "trusted_path"), (old, new))
             self.assertIn(old, r["detail"])
         repo = self.repo()
-        gitfix.move(repo, "README.md", "docs/README.md")
+        gitfix.move(repo, "README.md", "transcripts/README.md")
         commit_all(repo, "rename docs")
         self.assertTrue(self.judge(repo)["ok"])
 
@@ -253,6 +257,99 @@ class Cli(Fixture):
         r = subprocess.run([PY, os.path.join(ROOT, "judge", "judge.py"), "--repo", repo, "--trunk", "nosuch", "--proposal", "pr"],
                            capture_output=True, text=True)
         self.assertEqual(r.returncode, 2)
+
+
+class Scope(Fixture):
+    """SPEC §10 items 7-10: attribution, counsel does not build, scope, size cap."""
+
+    def proposal_touching(self, path, proposer="builder m s", data="x\n"):
+        repo = self.repo()
+        write(repo, path, data)
+        commit_all(repo, "change", proposer)
+        return self.judge(repo)
+
+    def test_scope_json_is_the_specs(self):
+        with open(os.path.join(ROOT, "judge", "scope.json")) as f:
+            scope = json.load(f)
+        self.assertEqual(scope, {"layer": "C0", "cap": 3000,
+            "paths": ["sim/", "harness/", "tests/", "pins/", "tools/", "transcripts/",
+                      "REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md", "log.jsonl"],
+            "documents": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md", "transcripts/", "sim/runs/"],
+            "counted": ["sim/", "harness/", "tests/", "pins/", "tools/"]})
+
+    def test_unattributed_proposal(self):
+        for proposer in (None, "martian x", " ", "Builder x"):
+            r = self.proposal_touching("README.md", proposer)
+            self.assertEqual((r["ok"], r["reason"]), (False, "unattributed_proposal"), proposer)
+        for p in judge.PARTIES:
+            r = self.proposal_touching("REPORT.md", f"{p} model session")
+            self.assertEqual((r["ok"], r["proposer"]), (True, p), r)
+
+    def test_trailer_is_read_from_the_commit_never_from_files(self):
+        r = self.proposal_touching("README.md", None, "Proposer: builder m s\n")
+        self.assertEqual(r["reason"], "unattributed_proposal")
+        repo = self.repo()
+        commit_all(repo, "Proposer: builder m s mentioned in the subject only", None)
+        self.assertEqual(self.judge(repo)["reason"], "unattributed_proposal")
+
+    def test_attribution_follows_the_kernel(self):
+        repo = self.repo()
+        self.lg.add("proposal", "guy", proposal("a"), self.w.stranger)
+        write(repo, "log.jsonl", self.lg.text())
+        commit_all(repo, "bad entry", None)
+        self.assertEqual(self.judge(repo)["reason"], "unknown_key")
+
+    def test_counsel_builds(self):
+        for path in ("sim/gen.py", "tests/test_x.py", "sim/runsx.txt"):
+            r = self.proposal_touching(path, "counsel m s")
+            self.assertEqual((r["ok"], r["reason"]), (False, "counsel_builds"), path)
+        repo = self.repo()
+        self.lg.add("proposal", "ann", proposal("a"), self.w.ann)
+        write(repo, "log.jsonl", self.lg.text())
+        commit_all(repo, "a valid entry, by counsel", "counsel m s")
+        self.assertEqual(self.judge(repo)["reason"], "counsel_builds")
+        for path in ("REPORT.md", "transcripts/t.txt", "sim/runs/r.txt", "LAW.md"):
+            self.assertTrue(self.proposal_touching(path, "counsel m s")["ok"], path)
+        self.assertTrue(self.proposal_touching("sim/gen.py", "builder m s")["ok"])
+
+    def test_out_of_scope(self):
+        for path in ("docs/x.md", "REPORT.md.bak", "sim", "x.py", "spec/vectors/v.json"):
+            r = self.proposal_touching(path)
+            self.assertEqual((r["ok"], r["reason"]), (False, "out_of_scope"), path)
+            self.assertIn(path, r["detail"])
+        for path in ("sim/x.py", "harness/x.py", "RUNBOOK.md", "transcripts/a/b.txt"):
+            self.assertTrue(self.proposal_touching(path)["ok"], path)
+
+    def test_rename_out_of_scope_touches_both_paths(self):
+        repo = self.repo()
+        git(repo, "checkout", "-q", "main")
+        write(repo, "notes.txt", "trunk's\n")
+        commit_all(repo, "trunk note")
+        git(repo, "checkout", "-q", "pr")
+        git(repo, "reset", "-q", "--hard", "main")
+        gitfix.move(repo, "notes.txt", "transcripts/notes.txt")
+        commit_all(repo, "move")
+        r = self.judge(repo)
+        self.assertEqual((r["ok"], r["reason"], r["touched"]), (False, "out_of_scope", ["transcripts/notes.txt"]))
+        self.assertIn("notes.txt", r["detail"])
+
+    def test_code_cap(self):
+        r = self.proposal_touching("sim/big.py", data="x = 1\n" * 3001)
+        self.assertEqual((r["ok"], r["reason"]), (False, "code_cap"))
+        self.assertTrue(self.proposal_touching("sim/big.py", data="x = 1\n" * 3000)["ok"])
+        self.assertTrue(self.proposal_touching("sim/big.py", data="x = 1\n" * 2999 + "y = 2")["ok"])
+        self.assertTrue(self.proposal_touching("sim/runs/big.txt", data="x\n" * 4000)["ok"])
+
+    def test_code_cap_counts_the_whole_head_not_the_diff(self):
+        repo = self.repo()
+        git(repo, "checkout", "-q", "main")
+        write(repo, "tools/a.py", "a = 1\n" * 2000)
+        commit_all(repo, "trunk code")
+        git(repo, "checkout", "-q", "pr")
+        git(repo, "reset", "-q", "--hard", "main")
+        write(repo, "pins/b.py", "b = 1\n" * 1001)
+        commit_all(repo, "more code")
+        self.assertEqual(self.judge(repo)["reason"], "code_cap")
 
 
 if __name__ == "__main__":

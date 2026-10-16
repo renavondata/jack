@@ -23,6 +23,8 @@ import tempfile
 TRUSTED = ("kernel/", "kernel2/", "judge/", ".github/workflows/", "SPEC.md")
 CHARTER = "CHARTER.md"
 LOG = "log.jsonl"
+SCOPE = "judge/scope.json"
+PARTIES = ("guy", "founder", "builder", "counsel", "reviewer")
 
 
 class JudgeError(Exception):
@@ -66,10 +68,21 @@ def digest(repo, sha):
     return h.hexdigest()
 
 
-def touched(repo, trunk, head):
-    """Paths git reports as changed since the merge base (informative: renames appear under the new name only)."""
+def touched(repo, trunk, head, *flags):
+    """Paths git reports as changed since the merge base (by default renames appear under the new name only)."""
     base = git(repo, "merge-base", trunk, head)
-    return sorted(p for p in git(repo, "diff", "--name-only", base, head).splitlines() if p)
+    return sorted(p for p in git(repo, "diff", "--name-only", *flags, base, head).splitlines() if p)
+
+
+def party(repo, sha):
+    """First word of the head commit's first `Proposer:` trailer, parsed by git from the message, or None."""
+    values = git(repo, "log", "-1", "--format=%(trailers:key=Proposer,valueonly)", sha).split("\n")
+    return (values[0].split() or [None])[0]
+
+
+def counted_lines(repo, sha, prefixes):
+    """Physical lines of every .py file under `prefixes` at `sha`, as tools/count_kernel.py counts them."""
+    return sum(len(split_lines(show(repo, sha, p))) for p in files(repo, sha) if p.endswith(".py") and is_under(p, prefixes))
 
 
 def differing(repo, trunk, head):
@@ -146,7 +159,7 @@ def judge(repo, trunk_ref, proposal_ref):
     trunk, head = rev(repo, trunk_ref), rev(repo, proposal_ref)
     report = {"trunk": trunk, "proposal": head, "touched": touched(repo, trunk, head),
               "trusted_digest": digest(repo, trunk), "appended": 0, "signers": [], "verdict": None,
-              "kernel2": "absent", "ok": False, "reason": None, "detail": ""}
+              "kernel2": "absent", "proposer": None, "ok": False, "reason": None, "detail": ""}
 
     def refuse(reason, detail=""):
         return dict(report, reason=reason, detail=detail)
@@ -178,6 +191,16 @@ def judge(repo, trunk_ref, proposal_ref):
         e = json.loads(line)
         if e["type"] == "merge" and e["body"]["checker"] != report["trusted_digest"]:
             return refuse("judge_from_proposal", f"merge at seq {e['seq']} claims a checker trunk does not have")
+    scope, report["proposer"] = json.loads(show(repo, trunk, SCOPE) or b""), party(repo, head)
+    if report["proposer"] not in PARTIES:
+        return refuse("unattributed_proposal", f"head commit's Proposer trailer names no party of {', '.join(PARTIES)}")
+    changed = touched(repo, trunk, head, "--no-renames")  # a rename touches both its paths
+    if report["proposer"] == "counsel" and any(not is_under(p, scope["documents"]) for p in changed):
+        return refuse("counsel_builds", f"counsel touches code: {', '.join(p for p in changed if not is_under(p, scope['documents']))}")
+    if any(not is_under(p, scope["paths"]) for p in changed):
+        return refuse("out_of_scope", f"outside {scope['layer']}'s paths: {', '.join(p for p in changed if not is_under(p, scope['paths']))}")
+    if counted_lines(repo, head, scope["counted"]) > scope["cap"]:
+        return refuse("code_cap", f"{counted_lines(repo, head, scope['counted'])} counted lines exceed the cap of {scope['cap']}")
     return dict(report, ok=True)
 
 

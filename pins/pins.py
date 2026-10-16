@@ -42,6 +42,21 @@ def judged(root, fx):
     return runner.judge_with(root, fx.repo, "main", "pr")
 
 
+def commit(repo, msg, proposer="builder pin-model pin-session"):
+    return gitfix.commit_all(repo, msg + (f"\n\nProposer: {proposer}" if proposer else ""))
+
+
+def proposal_touching(root, path, proposer="builder m s", data="x\n"):
+    fx = gitfix.make_repo(world())
+    gitfix.write(fx.repo, path, data)
+    commit(fx.repo, "change", proposer)
+    return judged(root, fx)
+
+
+def judge_refuses(r, reason):
+    assert (r.get("ok"), r.get("reason")) == (False, reason), r
+
+
 # --- judge pins -------------------------------------------------------------
 
 def t_trusted_path(root):
@@ -49,12 +64,12 @@ def t_trusted_path(root):
     for path in ("kernel/check.py", "judge/judge.py", "kernel2/check"):
         fx = gitfix.make_repo(w)
         gitfix.write(fx.repo, path, 'print(\'{"ok": true, "entries": 0}\')\n')
-        gitfix.commit_all(fx.repo, "edit trusted file")
+        commit(fx.repo, "edit trusted file")
         r = judged(root, fx)
         assert (r.get("ok"), r.get("reason")) == (False, "trusted_path"), (path, r)
     fx = gitfix.make_repo(w)
     gitfix.write(fx.repo, "README.md", "docs only\n")
-    gitfix.commit_all(fx.repo, "docs")
+    commit(fx.repo, "docs")
     assert judged(root, fx).get("ok") is True
 
 
@@ -63,13 +78,13 @@ def t_trusted_rename(root):
     for old, new in (("SPEC.md", "docs/SPEC.md"), ("CHARTER.md", "CHARTER.old.md"), ("kernel/sig.py", "kernel/sig_.py")):
         fx = gitfix.make_repo(w)
         gitfix.move(fx.repo, old, new)
-        gitfix.commit_all(fx.repo, "rename")
+        commit(fx.repo, "rename")
         r = judged(root, fx)
         assert old not in r.get("touched", [old]), f"fixture: git must report the rename under its new name only: {r}"
         assert (r.get("ok"), r.get("reason")) == (False, "trusted_path"), (old, new, r)
     fx = gitfix.make_repo(w)
-    gitfix.move(fx.repo, "README.md", "docs/README.md")
-    gitfix.commit_all(fx.repo, "rename docs")
+    gitfix.move(fx.repo, "README.md", "transcripts/README.md")
+    commit(fx.repo, "rename docs")
     assert judged(root, fx).get("ok") is True
 
 
@@ -80,19 +95,55 @@ def t_judge_from_proposal(root):
     fx.log.add("proposal", "ann", proposal("a"), w.ann)
     fx.log.add("merge", "guy", build.merge(1, "ab" * 32), w.guy)
     gitfix.write(fx.repo, "log.jsonl", fx.log.text())
-    gitfix.commit_all(fx.repo, "merge judged by a checker the proposal supplied")
+    commit(fx.repo, "merge judged by a checker the proposal supplied")
     r = judged(root, fx)
     assert (r.get("ok"), r.get("reason")) == (False, "judge_from_proposal"), r
     fx.log.lines.pop()
     fx.log.add("merge", "guy", build.merge(1, trunk_judge.digest(fx.repo, fx.main)), w.guy)
     gitfix.write(fx.repo, "log.jsonl", fx.log.text())
-    gitfix.commit_all(fx.repo, "merge judged by trunk")
+    commit(fx.repo, "merge judged by trunk")
     assert judged(root, fx).get("ok") is True
     fx = gitfix.make_repo(w)
     fx.log.add("proposal", "ann", proposal("b"), w.ann)
     gitfix.write(fx.repo, "log.jsonl", fx.log.text())
-    gitfix.commit_all(fx.repo, "proposal")
+    commit(fx.repo, "proposal")
     assert judged(root, fx).get("ok") is True
+
+
+def t_unattributed_proposal(root):
+    """SPEC §10.7: the head commit names its party in a Proposer trailer, read by git from the message."""
+    for proposer in (None, "martian m s"):
+        judge_refuses(proposal_touching(root, "README.md", proposer), "unattributed_proposal")
+    judge_refuses(proposal_touching(root, "README.md", None, "Proposer: builder m s\n"), "unattributed_proposal")
+    assert proposal_touching(root, "README.md").get("ok") is True
+
+
+def t_counsel_builds(root):
+    """SPEC §10.8: counsel's proposal touches only documents."""
+    judge_refuses(proposal_touching(root, "sim/gen.py", "counsel m s"), "counsel_builds")
+    assert proposal_touching(root, "transcripts/t.txt", "counsel m s").get("ok") is True
+    assert proposal_touching(root, "sim/gen.py", "builder m s").get("ok") is True
+
+
+def t_scope(root):
+    """SPEC §10.9: every touched path, both sides of a rename included, is under judge/scope.json's paths."""
+    judge_refuses(proposal_touching(root, "docs/x.md"), "out_of_scope")
+    fx = gitfix.make_repo(world())
+    gitfix.git(fx.repo, "checkout", "-q", "main")
+    gitfix.write(fx.repo, "notes.txt", "trunk's\n")
+    commit(fx.repo, "trunk note")
+    gitfix.git(fx.repo, "checkout", "-q", "pr")
+    gitfix.git(fx.repo, "reset", "-q", "--hard", "main")
+    gitfix.move(fx.repo, "notes.txt", "transcripts/notes.txt")
+    commit(fx.repo, "move a file into scope")
+    judge_refuses(judged(root, fx), "out_of_scope")
+    assert proposal_touching(root, "transcripts/notes.txt").get("ok") is True
+
+
+def t_code_cap(root):
+    """SPEC §10.10: counted .py lines at the head stay within the cap."""
+    judge_refuses(proposal_touching(root, "sim/big.py", data="x = 1\n" * 3001), "code_cap")
+    assert proposal_touching(root, "sim/big.py", data="x = 1\n" * 3000).get("ok") is True
 
 
 # --- kernel pins ------------------------------------------------------------
@@ -227,7 +278,7 @@ def t_kernel2_runnable(root):
     gitfix.write(fx.repo, "kernel2/helper.sh", "#!/bin/sh\necho '{\"ok\":true,\"entries\":1}'\n")
     for name in ("check", "helper.sh"):
         os.chmod(os.path.join(fx.repo, "kernel2", name), 0o755)
-    gitfix.commit_all(fx.repo, "kernel2 whose launcher calls a helper")
+    commit(fx.repo, "kernel2 whose launcher calls a helper")
     r = runner.judge_with(root, fx.repo, "main", "main")
     assert r.get("ok") is True and r.get("kernel2") == {"ok": True, "entries": 1}, r
 
@@ -241,7 +292,7 @@ def t_selfcheck_blind(root):
         gitfix.write(fx.repo, "kernel2/helper.sh", "#!/bin/sh\necho '{\"ok\":true,\"entries\":1}'\n")
         os.chmod(os.path.join(fx.repo, "kernel2", "check"), 0o755)
         os.chmod(os.path.join(fx.repo, "kernel2", "helper.sh"), helper_mode)
-        gitfix.commit_all(fx.repo, "kernel2")
+        commit(fx.repo, "kernel2")
         return fx.repo
     def run(r):
         import subprocess
@@ -285,6 +336,20 @@ PINS = [
         Mutant("digest_unchecked", "judge/judge.py",
                'if e["type"] == "merge" and e["body"]["checker"] != report["trusted_digest"]:',
                'if e["type"] == "merge" and False:')]),
+    Pin("unattributed_proposal_admitted", t_unattributed_proposal, [
+        Mutant("trailer_unchecked", "judge/judge.py",
+               '    if report["proposer"] not in PARTIES:', '    if False:')]),
+    Pin("counsel_build_admitted", t_counsel_builds, [
+        Mutant("counsel_unchecked", "judge/judge.py",
+               '    if report["proposer"] == "counsel" and', '    if False and')]),
+    Pin("scope_unguarded", t_scope, [
+        Mutant("scope_unchecked", "judge/judge.py",
+               '    if any(not is_under(p, scope["paths"]) for p in changed):', '    if False:'),
+        Mutant("rename_hides_source", "judge/judge.py",
+               'changed = touched(repo, trunk, head, "--no-renames")', 'changed = touched(repo, trunk, head)')]),
+    Pin("cap_unguarded", t_code_cap, [
+        Mutant("cap_unchecked", "judge/judge.py",
+               '    if counted_lines(repo, head, scope["counted"]) > scope["cap"]:', '    if False:')]),
     Pin("unsigned_change", t_unsigned_change, [
         Mutant("power_unchecked", "kernel/check.py",
                '    if e["type"] not in keys[key_id].powers:', '    if False:')]),
