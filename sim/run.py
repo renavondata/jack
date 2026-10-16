@@ -4,18 +4,24 @@
 Properties checked per case: oracle (the kernel's verdict equals the generator's
 intent), prefix (every proper prefix of an accepted log is accepted),
 sticky_refusal (appending any entry to a refused log leaves the verdict
-identical), deterministic (a second check agrees with the first); with --second CMD, agree (the second
-checker's verdict equals the kernel's on every input the kernel is tested on: the whole log, twice;
-every sampled prefix; the sticky-refusal extension; §9 criterion 2, entry by entry). A verdict that
-is not exactly SPEC §9's contract (shape, types, exit status), a crash or a timeout equals nothing.
+identical), deterministic (a second check agrees with the first). Prefixes: of an accepted log, every
+proper prefix (up to ten lines; beyond that, lengths 0, 1, n-1 and three more) is accepted; of a log
+refused at seq s, every prefix of length 0..s is accepted (sampled the same way) and every longer
+prefix (up to three) carries the same refusal. With --second CMD, agree: the second checker gives the
+kernel's verdict on every input above, the whole log twice; that is how §9 criterion 2's entry-by-entry
+agreement is tested. A verdict that is not exactly SPEC §9's contract (shape, types, reason code,
+encoding, exit status), a crash or a timeout equals nothing.
 """
 import argparse
 import datetime
 import json
 import multiprocessing
 import os
+import hashlib
 import random
+import re
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -31,6 +37,9 @@ PROPERTIES = ("oracle", "prefix", "sticky_refusal", "deterministic")
 POOL = None
 SECOND = None
 TIMEOUT = 120.0  # seconds per second-checker call
+REASONS = frozenset("malformed_json not_canonical schema bad_seq parent_mismatch genesis_misplaced no_proposer "
+                    "bad_key unknown_key proposer_mismatch no_power bad_signature".split())  # SPEC §9, closed set
+SEED = re.compile(r"[0-9a-f]{16}\Z")  # the committed seed format
 
 
 def strip(v):
@@ -46,20 +55,35 @@ def _no_duplicates(pairs):
     return d
 
 
+def _no_constants(name):
+    raise ValueError(f"{name} is not JSON")
+
+
+def _utf8(s):
+    try:
+        s.encode("utf-8")
+        return True
+    except UnicodeEncodeError:  # a lone surrogate
+        return False
+
+
 def parse_verdict(stdout, rc):
     """SPEC §9's CLI contract, strictly: the verdict without detail, or {"malformed": why} which equals no verdict."""
+    shown = stdout.decode(errors='replace')[:200]
     try:
-        v = json.loads(stdout, object_pairs_hook=_no_duplicates)
-    except ValueError as x:
-        return {"malformed": f"not JSON: {x}", "stdout": stdout.decode(errors='replace')[:200]}
+        if stdout.startswith(b"\xef\xbb\xbf"):
+            raise ValueError("byte-order mark")
+        v = json.loads(stdout.decode("utf-8"), object_pairs_hook=_no_duplicates, parse_constant=_no_constants)
+    except (ValueError, UnicodeDecodeError) as x:
+        return {"malformed": f"not JSON: {x}", "stdout": shown}
     if not isinstance(v, dict) or not isinstance(v.get("ok"), bool):
-        return {"malformed": "no boolean ok", "stdout": stdout.decode(errors='replace')[:200]}
+        return {"malformed": "no boolean ok", "stdout": shown}
     if v["ok"]:
         good = set(v) == {"ok", "entries"} and type(v["entries"]) is int and v["entries"] >= 0 and rc == 0
     else:
-        good = ({"ok", "seq", "reason"} <= set(v) <= {"ok", "seq", "reason", "detail"} and type(v["seq"]) is int
-                and v["seq"] >= 0 and isinstance(v["reason"], str) and rc == 1)
-    return strip(v) if good else {"malformed": f"verdict {strip(v)} with exit {rc}"}
+        good = (set(v) == {"ok", "seq", "reason", "detail"} and type(v["seq"]) is int and v["seq"] >= 0
+                and v["reason"] in REASONS and isinstance(v["detail"], str) and _utf8(v["detail"]) and rc == 1)
+    return strip(v) if good else {"malformed": f"verdict {strip(v)} with exit {rc}", "stdout": shown}
 
 
 def second_verdict(cmd, lines, timeout=None):
@@ -69,9 +93,10 @@ def second_verdict(cmd, lines, timeout=None):
         with os.fdopen(fd, "w") as f:
             f.write("".join(l + "\n" for l in lines))
         try:
-            r = subprocess.run(list(cmd) + [path], capture_output=True, timeout=timeout or TIMEOUT)
+            t = TIMEOUT if timeout is None else timeout
+            r = subprocess.run(list(cmd) + [path], capture_output=True, timeout=t)
         except subprocess.TimeoutExpired:
-            return {"malformed": f"timeout after {timeout or TIMEOUT}s"}
+            return {"malformed": f"timeout after {t}s"}
         except OSError as x:
             return {"malformed": f"cannot run: {x}"}
         if r.returncode not in (0, 1):
@@ -99,27 +124,37 @@ def evaluate(case, pool, checker=check.check, second=None):
     agree(case.lines, "the log again", v)  # the second checker's own determinism
     if strip(checker(case.lines)) != strip(v):
         failures.append(("deterministic", "second check differs"))
-    if v.get("ok"):
-        n = len(case.lines)
-        cuts = range(n) if n <= 10 else random.Random(case.seed or 0).sample(range(n), 3)
-        for k in cuts:
+    n = len(case.lines)
+    rng = random.Random(case.seed or 0)
+    accepted_to = n if v.get("ok") else v["seq"]  # every prefix of this length or less is a valid log
+    lengths = range(accepted_to + 1) if accepted_to < 10 else sorted({0, 1, accepted_to, *rng.sample(range(accepted_to + 1), 3)})
+    for k in lengths:
+        if k == n:
+            continue  # the whole log, already compared
+        p = checker(case.lines[:k])
+        agree(case.lines[:k], f"the prefix of length {k}", p)
+        if not p.get("ok"):
+            failures.append(("prefix", f"prefix of length {k} refused: {strip(p)}"))
+            break
+    if not v.get("ok"):
+        longer = range(accepted_to + 1, n)
+        for k in (longer if len(longer) <= 3 else sorted(rng.sample(longer, 3))):
             p = checker(case.lines[:k])
             agree(case.lines[:k], f"the prefix of length {k}", p)
-            if not p.get("ok"):
-                failures.append(("prefix", f"prefix of length {k} refused"))
+            if strip(p) != strip(v):
+                failures.append(("sticky_refusal", f"prefix of length {k} gives {strip(p)}"))
                 break
-    else:
-        extra = build.make_entry(len(case.lines), log.line_hash(case.lines[-1]), "proposal", "ann", proposal("x"), pool.ann)
+        extra = build.make_entry(n, log.line_hash(case.lines[-1]), "proposal", "ann", proposal("x"), pool.ann)
         w = checker(case.lines + [extra])
         agree(case.lines + [extra], "the log with one entry appended", w)
-        if (w.get("seq"), w.get("reason")) != (v.get("seq"), v.get("reason")):
+        if strip(w) != strip(v):
             failures.append(("sticky_refusal", f"after appending: {strip(w)}"))
     return failures
 
 
 def _init(second=None, timeout=None):
     global POOL, SECOND, TIMEOUT
-    SECOND, TIMEOUT = second, timeout or TIMEOUT
+    SECOND, TIMEOUT = second, TIMEOUT if timeout is None else timeout
     POOL = gen.KeyPool(tempfile.mkdtemp(prefix="sim-"))
 
 
@@ -139,18 +174,27 @@ def progress(n, total, elapsed, budget, failures):
             f"{elapsed / 60:.1f}m elapsed, ~{max(left, 0) / 60:.1f}m left  ")
 
 
+def positive(kind):
+    def convert(s):
+        x = kind(s)
+        if x <= 0:
+            raise argparse.ArgumentTypeError(f"must be positive: {s}")
+        return x
+    return convert
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--seeds", default=os.path.join(os.path.dirname(__file__), "seeds.txt"))
     ap.add_argument("--budget", type=float, default=600, help="seconds")
     ap.add_argument("--jobs", type=int, default=os.cpu_count())
-    ap.add_argument("--limit", type=int, default=None, help="at most this many seeds")
+    ap.add_argument("--limit", type=positive(int), default=None, help="at most this many seeds")
     ap.add_argument("--out", default=os.path.join(os.path.dirname(__file__), "runs"))
     ap.add_argument("--second", default=None, help="second checker command, e.g. kernel2/check")
     ap.add_argument("--complete", action="store_true",
-                    help="fail unless every selected seed (after --limit) completed within the budget; refuse to start "
-                         "on an empty, duplicated or too-short seed list")
-    ap.add_argument("--second-timeout", type=float, default=TIMEOUT, help="seconds per second-checker call")
+                    help="fail unless every selected seed (after --limit) completed, so a run the budget cuts short "
+                         "fails; refuse to start on an empty, duplicated, malformed or too-short seed list")
+    ap.add_argument("--second-timeout", type=positive(float), default=TIMEOUT, help="seconds per second-checker call")
     ap.add_argument("--quiet", action="store_true", help="no progress line on stderr")
     a = ap.parse_args(argv)
     second = shlex.split(a.second) if a.second else None
@@ -161,11 +205,12 @@ def main(argv=None):
             return 2
     with open(a.seeds, "rb") as f:
         raw = f.read()
-    seeds_sha256 = __import__("hashlib").sha256(raw).hexdigest()
+    seeds_sha256 = hashlib.sha256(raw).hexdigest()
     all_seeds = [l.strip() for l in raw.decode().splitlines() if l.strip()]
     seeds = all_seeds[:a.limit]
     if a.complete:
         why = ("no seeds" if not seeds else "duplicate seeds" if len(set(all_seeds)) != len(all_seeds)
+               else "a seed is not 16 lowercase hex digits" if not all(SEED.match(s) for s in all_seeds)
                else f"{len(all_seeds)} seeds, fewer than --limit {a.limit}" if a.limit and len(all_seeds) < a.limit else None)
         if why:
             print(f"refusing to start: {why}")
@@ -195,12 +240,18 @@ def main(argv=None):
         r = subprocess.run(["git", "-C", root, *x], capture_output=True, text=True)
         return r.stdout.strip() if r.returncode == 0 else None
     commit, status = git("rev-parse", "HEAD"), git("status", "--porcelain", "--untracked-files=no")
+    exe = shutil.which(second[0]) if second else None
+    second_sha256 = None
+    if exe and os.path.isfile(exe):
+        with open(exe, "rb") as f:
+            second_sha256 = hashlib.sha256(f.read()).hexdigest()
     transcript = {"started": started.isoformat(), "elapsed_s": round(elapsed, 1), "budget_s": a.budget, "jobs": a.jobs,
                   "seeds_file": os.path.relpath(a.seeds), "seeds_sha256": seeds_sha256, "seeds_selected": len(seeds),
                   "seeds_run": len(done), "complete": len(done) == len(seeds),
                   "seeds": [done[0], done[-1]] if done else [], "by_kind": dict(sorted(by_kind.items())),
                   "properties": list(PROPERTIES) + (["agree"] if second else []), "second": a.second,
-                  "second_timeout_s": a.second_timeout if second else None,
+                  "second_timeout_s": a.second_timeout if second else None, "second_path": exe, "second_sha256": second_sha256,
+                  "limit": a.limit, "complete_required": a.complete,
                   "commit": commit, "dirty": None if status is None else bool(status),
                   "failures": failures,
                   "python": sys.version.split()[0], "openssh": ssh}
