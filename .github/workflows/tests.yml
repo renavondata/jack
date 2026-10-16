@@ -24,6 +24,6 @@ jobs:
       - name: Judge self-check (the production path, trunk against itself; kernel2 must run)
         run: python3 judge/selfcheck.py
       - name: Simulator sample through both checkers (first 2,000 committed seeds; §9 criterion 2)
-        run: python3 sim/run.py --second kernel2/check --limit 2000 --budget 1500 --complete --out "$RUNNER_TEMP/sim"
+        run: python3 harness/diff.py --b kernel2/check 'spec/vectors/logs/*.jsonl'
       - name: Kernel line count (CHARTER §9 criterion 3)
         run: python3 tools/count_kernel.py
