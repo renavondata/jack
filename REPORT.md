@@ -1,5 +1,8 @@
 # C0 report — the record and the checker
 
+> §8, counsel's exit report of 17 October 2026, supersedes §2 (verdict) and §7 (what C0 still
+> needs). §§1–6 are the founding session's report, unchanged.
+
 Founding session, 13–14 October 2026. Proposer: founder `claude-fable-5-1`,
 session `743dd139-c951-42b5-8e20-14cce485acab`. Branch `c0-founding`, pull
 request [#1](https://github.com/renavondata/jack/pull/1) against `main`.
@@ -206,3 +209,95 @@ For Guy to sign or decline; nothing here edits the charter.
    `kernel2/` is trusted; then `checker_drift` KILLED, 10⁵ seeds through both.
 2. Guy's reading of the 392 lines and his signature on genesis, committed to
    `main` by him; then `judge` and `tests` as required checks.
+
+## 8. Exit report (counsel, 17 October 2026)
+
+Proposer: counsel `claude-fable-5-1`, session `session_01GMQpCypjVueCfEEkLaPiSm`. State of `main` at
+`46543de`. Everything cited is on `main` or under `transcripts/`.
+
+### 8.1 Verdict against §9's criteria, as amended by A1.5
+
+| # | criterion | state | evidence |
+|---|---|---|---|
+| 1 | every pin KILLED and its twin passes, in CI, from trunk | **MET** | `tests` on `push: main` is green on every push since genesis; latest on `46543de`. 34 mutants across 22 pins KILLED, 0 SURVIVED, 0 STALE, 0 twin failures, 0 PENDING. Every pin A1.5 names is present (`weak_key_declared` is the pin `weak_key_admitted`); `checker_drift` KILLED against kernel2; four pins for the differential (SPEC §9a.7) and four for the judge's new grounds (§10.7–10). |
+| 2 | both checkers agree, entry by entry and reason by reason, on the real log and 10⁵ simulated logs from a pre-committed seed list | **MET** | Real log: the CI self-check runs both checkers over `log.jsonl` (one entry, genesis) on every push; they agree. Simulated: `harness/diff.py`, built to SPEC §9a, compared **every proper prefix and the whole log** of all 10⁵ seeds of `sim/seeds.txt` (committed at `3a53b5a` on 13 Oct, before any run; SHA-256 `011b2ee0…`, recorded in each report), in both checkers, verdicts parsed strictly: **100,000 logs, 658,885 prefixes, 0 disagreements, 0 uncompared**, in twelve ranges covering 0–100000 without gap, all on commit `46543de` (`transcripts/diff-100000-20261017T1001Z-part00.json` … `part11.json`). The 32 spec vectors and their 81 prefixes: 0 disagreements. |
+| 3 | kernel within 450 lines (A1.5) | **MET** | 411 physical lines: `log.py` 164, `sig.py` 140, `check.py` 107. CI counts it on every push. |
+| 4 | Guy has read the kernel and signed genesis | **MET, with a note** | Genesis `95679e7`, committed by Guy, ts `2026-10-14T05:41:39Z`; one key, `guy-master`, all four powers; charter hash `383867d0…` equals `CHARTER.md` with A1. The kernel was 392 lines at genesis and is 411 now, the difference being SPEC round 2 (`0fecdf5`, `2d7e9a9`); whether Guy has read those nineteen lines is his to say. Branch protection on `main`: required checks `judge` and `tests`, strict; no force-push, no deletion; `enforce_admins` off (A1.4); ruleset "append-only branches" active. |
+
+No stop condition of §9 fired. **Counsel recommends promotion.** Promotion is Guy's act (§7); C0 has no
+entry type for it, so it is recorded outside the log, as a signed tag on the merge commit of this report
+(8.5). That gap is C1's (BRIEF-C1.md).
+
+### 8.2 What happened between the founding report and exit
+
+| commit | what | found by |
+|---|---|---|
+| `da2a744` | Amendment A1: C0 is the record | counsel's review of PR #1 |
+| `95679e7` | genesis, by Guy | — |
+| `738b20a` | pin `checker_drift` | counsel |
+| `0610a74`, `a6f36b4` | kernel2 from SPEC.md alone (Codex); Gemini's cold review | — |
+| `0fecdf5`, `2d7e9a9` | SPEC round 2: timestamps as real instants in ASCII digits; nesting depth; long integers; key declarations with exactly four members; one pubkey, one key_id; every log has one verdict | Gemini's review, Codex's questions, counsel's byte probes |
+| `12fc4ee` | kernel2 revised to round 2 (fresh OpenCode session) | — |
+| `08e7335` | the judge honours git's executable bit; pin `kernel2_unrunnable` | counsel: without it every PR after kernel2 would have failed with a judge error |
+| `bd0a003` | CI judge self-check on the production path; pin `selfcheck_blind` | counsel |
+| PR #2 | `sim/run.py --second` (whole-log); the stale `rewriting` oracle fixed | counsel's first run with `--second` |
+| PR #3 | a progress line | Guy's session |
+| `6ce3ab8` | a CI simulator sample | counsel |
+| reviews 1–3 | counsel's harness found short of criterion 2 three times (8.3) | Codex, Gemini, GPT, cold |
+| `04ad395` | SPEC §9a (the differential as text) and §10.7–10 (attribution, counsel does not build, scope, size cap) | counsel's text, Guy's push |
+| `judge-rules` | the judge's new grounds, four pins (Claude Code builder; counsel's cold read; Guy's push) | — |
+| `947e192`, `62aabe6` | the CI sample moved to the differential | Guy |
+| PR #5 | `sim/run.py` back to the founder's runner plus the progress line; counsel's harness and its transcript removed | Guy |
+| PR #6 | `harness/diff.py` built to §9a, 60 lines, four pins (Claude Code builder; Gemini's cold read: "implements §9a") | — |
+| PR #7 | `--seeds A:B` so the run of record splits across processes; bound 65 | Guy's amendment to §9a |
+
+### 8.3 Disclosures
+
+1. **Counsel's harness was wrong three times, and the reviews said so.** Counsel wrote a differential
+   into `sim/run.py` (PR #2) and twice more on an unmerged branch. Cold reviews by three families
+   (`transcripts/REVIEW-sim.md`, `-2.md`, `-3.md`) found: whole-log comparison where the criterion says
+   entry by entry; loose verdict parsing (`{"ok":1}` equal to `{"ok":true}`, a wrong exit status
+   ignored); a sampling regression counsel introduced while fixing the first. The branch was discarded.
+   The differential was then specified as text (SPEC §9a), built by a builder session, read cold by
+   another family, and is what criterion 2 rests on. The earlier 10⁵ runs under `--second` are
+   superseded and their transcript removed (PR #5); the run of record is 8.1's.
+2. **The record has one entry.** No proposal appended a `proposal` entry and no `merge` entry exists;
+   the four entry types are built and tested but, bar genesis, unused. Appending entries is the clerk's
+   work and the clerk is C1. Criterion 2's real-log leg is therefore met on one line.
+3. **The generator changed after the seed list was committed**, once, in PR #2: SPEC round 2 made a
+   key declaration exactly four members, and the `rewriting` attack still added one, so its expected
+   verdict was stale. The seed list is unchanged; the fix is a regression test; every run cited is after
+   it. The CI sample (300 seeds and the vectors on every push) exists so that this is caught next time.
+4. **No window was stated for C0**, and the layer was patched in place throughout. §6 asks for both. C1
+   states its window before it opens, and a trusted-base defect inside the window restarts it.
+5. **Two commits carry placeholder attribution**: `0fecdf5` and `2d7e9a9` have
+   `Proposer: reviewer <gemini model id> <session id>` unfilled. Recorded, not rewritten. Since
+   `judge-rules`, a proposal with no party is refused (`unattributed_proposal`); the party is still a
+   claim until keys exist (C1).
+6. **The trusted base changed after genesis.** Genesis records digest `d3ac5ef5…`; trunk's is now
+   `13ea4b40…` (kernel2, the judge's fixes and grounds, the CI). A1 does not compare them; `merge.installs`
+   (C1) makes such changes entries. `judge/scope.json` caps counted code at 3,000 lines and C0 exits at
+   2,936; C1 sets its own number.
+7. **Not provable by the differential:** that kernel2 is an independent implementation. That rests on
+   the trusted-base rule, its provenance (`kernel2/NOTES.md`, `REVIEW-gemini.md`) and Guy's reading.
+
+### 8.4 Counsel's forecasts (§11)
+
+| id | p | resolution | note |
+|---|---:|---|---|
+| K5 | 0.75 | true | 411 ≤ 1,000 |
+| K6 | 0.65 | **Guy's ruling** | "disagree on at least one *simulated* log". For true: three disagreements were found and fixed during C0 (timestamp digits, deep nesting, a long integer). For false: all three came from reviews and byte probes, none from a simulated log; on simulated logs no run, before or after the fixes, found one. Counsel does not resolve its own forecast (§2.1). |
+| K7 | 0.50 | true iff promoted by 27 Oct | founding began 13 Oct |
+| K1, K2 | 0.60, 0.35 | 21 Oct | the weekly measurement |
+| K3, K4, K8 | 0.20, 0.35, 0.40 | later | |
+
+Counsel's in-session forecasts on its own harness (p = 0.3, 0.75, 0.7 that reviews would come back clean)
+all missed; the record of that is in the reviews.
+
+### 8.5 After promotion
+
+Promotion: a tag `c0-exit` signed by Guy on the merge commit of this report, its message carrying the
+decision and the K6 ruling. C0 is then frozen: the trusted base changes only for a defect, by Guy's push,
+each recorded as a precedent, until C1's `merge.installs`. No `key` entries until C1 guards the master key
+against revoking its own `key` power. A CHARTER.md edit makes the judge refuse every proposal
+(`charter_mismatch`) until C1's charter-amendment entry.
