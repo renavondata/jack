@@ -42,18 +42,20 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--a", default=f"{sys.executable} -E -s -m kernel.check", help="first checker command")
     ap.add_argument("--b", default="kernel2/check", help="second checker command")
-    ap.add_argument("--seeds", type=int, default=0, help="also the logs of the first N seeds in sim/seeds.txt")
+    ap.add_argument("--seeds", default="0", help="also the logs of the first N (or A:B) seeds in sim/seeds.txt")
     ap.add_argument("--timeout", type=float, default=120, help="seconds per checker call")
     ap.add_argument("logs", nargs="*", help="log files or globs")
     a, stats = ap.parse_args(argv), {"logs": 0, "prefixes": 0, "uncompared": []}
-    seeds = (raw := pathlib.Path(ROOT, "sim", "seeds.txt").read_bytes()).decode().splitlines()[:a.seeds]
+    lo, hi = (int(x) for x in a.seeds.split(":")) if ":" in a.seeds else (0, int(a.seeds))
+    seeds = (raw := pathlib.Path(ROOT, "sim", "seeds.txt").read_bytes()).decode().splitlines()[lo:hi]
     logs = [p for g in a.logs for p in sorted(glob.glob(g)) or [g]]
-    requested, pool = len(logs) + a.seeds, gen.KeyPool(tempfile.mkdtemp(prefix="diff-keys-")) if seeds else None
+    requested, pool = len(logs) + hi - lo, gen.KeyPool(tempfile.mkdtemp(prefix="diff-keys-")) if seeds else None
     logs += [(s, lambda s=s: "".join(l + "\n" for l in gen.generate(s, pool).lines).encode()) for s in seeds]
     bad = compare(a.a.split(), a.b.split(), logs, a.timeout, stats)
     git = run(["git", "-C", ROOT, "rev-parse"], "HEAD")  # the commit of the working tree, or null if git cannot answer
-    print(json.dumps(dict(stats, requested=requested, commit=git["out"].strip() if git.get("rc") == 0 else None, seeds_sha256=
-                          hashlib.sha256(raw).hexdigest(), disagreements=[dict(zip("log length a b".split(), d)) for d in bad]), indent=1))
+    print(json.dumps(dict(stats, requested=requested, seeds=[lo, hi], commit=git["out"].strip() if git.get("rc") == 0 else None,
+                          seeds_sha256=hashlib.sha256(raw).hexdigest(),
+                          disagreements=[dict(zip("log length a b".split(), d)) for d in bad]), indent=1))
     return 1 if bad or stats["logs"] < requested else 0
 
 if __name__ == "__main__":

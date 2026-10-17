@@ -1,4 +1,7 @@
 """harness/diff.py (SPEC §9a): shell scripts stand in for wrong checkers, one test per pin of §9a.7."""
+import contextlib
+import io
+import json
 import os
 import tempfile
 import unittest
@@ -58,6 +61,15 @@ class Differential(unittest.TestCase):
         for a in (self.checker("exit 3"), self.checker("exec sleep 30"), missing):
             self.assertEqual(self.lengths(a, a, timeout=0.3), [0, 1, 2, 3])
         self.assertEqual(self.lengths(self.checker()), [])
+
+    def test_seed_range(self):
+        with open(os.path.join(diff.ROOT, "sim", "seeds.txt")) as f:
+            seeds = f.read().splitlines()
+        with contextlib.redirect_stdout(out := io.StringIO()):
+            rc = diff.main(["--a", *self.checker(), "--b", *self.checker(wrong_at=0), "--seeds", "3:5"])
+        r = json.loads(out.getvalue())
+        self.assertEqual((rc, r["seeds"], r["requested"], r["logs"]), (1, [3, 5], 2, 2))
+        self.assertEqual([d["log"] for d in r["disagreements"]], [seeds[3], seeds[4]])
 
 
 if __name__ == "__main__":
