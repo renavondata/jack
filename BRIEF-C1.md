@@ -76,10 +76,9 @@ in whichever language is chosen, and it decides which: candidate 1 needs a
 5. **Merge authorship.** The judge holds no secret, so C0 cannot sign `merge`
    entries; the clerk's herald key (`accept`, `wish`, and `merge`?) is Guy's
    decision. The herald key must not hold `key`, nor the change power.
-6. **Second checker in CI.** Done in C0: `tests` runs the first 2,000
-   committed seeds through both checkers on every push (`--second`,
-   `--complete`); the judge already refuses `checker_drift`. C1 adds the rule
-   attacks to the simulator and keeps the sample green.
+6. **Second checker in CI.** Done in C0: `harness/diff.py` (SPEC §9a) runs 300 seeds
+   and the vectors through both checkers on every push to main and every pull
+   request; the judge refuses `checker_drift`. C1 adds its attack kinds and keeps it green.
 
 ## Questions C0 raised for C1 (see REPORT.md)
 
@@ -102,3 +101,31 @@ answer); then E_t ≥ 20 against p₀ (assize's weekly `guy_acts.py` series)
 within 14 days live; windows, α = 0.05, p₀ and the attack list committed
 before the window opens; zero checker disagreements throughout; Guy has not
 vetoed.
+
+## From C0's exit (counsel, 17 October 2026)
+
+Scope for C1, each from a witnessed case; Guy strikes what he does not want.
+
+0. **Already law.** SPEC §10.7–10 (a proposal names its party; counsel does not build; scope by path;
+   a size cap) entered C0 after two witnessed cases of proposals beyond their authority (the founder's
+   first draft; counsel's harness). C1's `judge/scope.json` sets its own paths, documents and cap.
+1. **Keys for every party.** Items 7–8 check a claim. C1 declares a key per party (builder, reviewer,
+   counsel, herald) by `key` entries with `proposal` power only, once the kernel refuses a `key` entry
+   that leaves no key with the `key` power; a proposal is then signed, not labelled.
+2. **A window, stated before it opens**, and a trusted-base defect inside it restarts it (CHARTER §6).
+   C0 had neither.
+3. **A charter-amendment entry type.** After genesis any edit to CHARTER.md makes the judge refuse every
+   proposal. §5 of this report's proposed charter changes wait for it.
+4. **`merge.installs`** (scope item 4): the digest in force becomes an entry, so the trusted base can
+   change lawfully and the record can say which checker judged what.
+5. **A byte-level simulator kind.** Every checker disagreement found in C0 came from reviews and byte
+   probes, none from the simulator; the differential now compares every prefix, but the generator still
+   never produces malformed lines, non-ASCII digits, a BOM, CRLF or deep nesting.
+6. **Habits, not scope:** a spec change reruns the full differential before merge; the production path is
+   what is tested; every layer is read cold by a party of another family; counsel writes text and reads
+   verdicts, never code.
+
+**A question for the brief's opening.** It assumes the first real case needs a rule language in the
+kernel. C0's first two cases were judge-level, about paths and parties, and were met by data the judge
+reads. Whether C1's first rule is a kernel rule (non-decreasing timestamps has no witnessed case yet) or
+another judge-level one is for Guy to decide before the language is chosen.
