@@ -241,7 +241,9 @@ by nothing else. Its behaviour is this text; an implementation that does more
 or less is wrong.
 
 1. **Inputs.** `--seeds N` takes the first N lines of `sim/seeds.txt`, in
-   order; each seed produces one log through `sim/gen.py`'s generator. Log
+   order, and `--seeds A:B` seeds A to B−1 (zero-based), so that a run may be
+   split across processes; the report then carries `seeds: [A, B]`. Each
+   seed produces one log through `sim/gen.py`'s generator. Log
    files given on the command line are compared as they are. `--a` and `--b`
    name the two checkers' commands; the defaults are §9's.
 2. **What is compared.** For each log, the whole log and every proper prefix
@@ -264,7 +266,7 @@ or less is wrong.
    outputs; the commit of the working tree (or null if git cannot answer),
    and the SHA-256 of the seed file. Exit 0 iff there was no disagreement
    and every requested log was compared.
-6. **Bound.** `harness/diff.py` is within sixty lines, counted as
+6. **Bound.** `harness/diff.py` is within sixty-five lines, counted as
    `tools/count_kernel.py` counts the kernel.
 7. **Pins** (each with its mutant and a passing twin, run by `pins/run.py`):
    `whole_log_only` — a second checker wrong only on a proper prefix passes;
