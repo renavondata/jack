@@ -8,7 +8,7 @@
   session identifier. No commits were made.
 - Sources consulted: the current `SPEC.md` in full first, then the existing
   implementation, tests and documentation in `kernel2/`, and the supplied vector
-  files under `spec/vectors/` (including `spec/vectors/c1/`) and `tests/vectors/`.
+  files under `spec/vectors/` (including `spec/vectors/logs/34_*.jsonl` through `39_*.jsonl`) and `tests/vectors/`.
   This revision read no files outside `/home/g/git/kernel2-room` and no
   first-checker implementation.
 - Implementation: Go standard library only. Production verification uses
@@ -56,8 +56,8 @@
   accepts an otherwise valid untransmuted amendment, a push during a pending
   amendment, or a decision signed by an empowered key declared after genesis.
   Digest values are claims here; only their shape is checked.
-- The vector runner checks every file in both supplied log directories against
-  its verdict manifest, in-process and through the launcher, as well as the
+- The vector runner checks every file in `spec/vectors/logs/` against
+  `spec/vectors/verdicts.json`, in-process and through the launcher, as well as the
   cryptographic and canonical-JSON vector files under `spec/vectors/` and
   `tests/vectors/`.
 
@@ -122,8 +122,7 @@ by `-vet=all` and every vector file in `spec/vectors/` and `tests/vectors/`.
 
 | Input | Result |
 |---|---|
-| `spec/vectors/logs/*.jsonl` against `spec/vectors/verdicts.json` | **34/34 verdicts match**, excluding only `detail`; verified both in-process and through `kernel2/check`, including exit status |
-| `spec/vectors/c1/logs/*.jsonl` against `spec/vectors/c1/verdicts.json` | **6/6 verdicts match**, in-process and through `kernel2/check`, including exit status |
+| `spec/vectors/logs/*.jsonl` against `spec/vectors/verdicts.json` | **40/40 verdicts match**, excluding only `detail`; verified both in-process and through `kernel2/check`, including exit status |
 | `spec/vectors/canonical.json` | **6/6** canonical serializations and SHA-256 hashes; **12/12** refusal reasons; genesis-parent constant matches |
 | `tests/vectors/rfc8032.json` | **5/5** signature verdicts match |
 | `tests/vectors/speccheck.json` | **12/12** signature verdicts match (cases 0–3 valid, 4–11 invalid) |

@@ -162,9 +162,7 @@ func normalizeVerdict(t *testing.T, v map[string]any) map[string]any {
 }
 
 func TestLogVectors(t *testing.T) {
-	for _, directory := range []string{"../spec/vectors", "../spec/vectors/c1"} {
-		t.Run(directory, func(t *testing.T) { testLogVectors(t, directory) })
-	}
+	testLogVectors(t, "../spec/vectors")
 }
 
 func testLogVectors(t *testing.T, directory string) {
