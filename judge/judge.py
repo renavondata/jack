@@ -6,7 +6,7 @@ git objects, never from the proposal's claims; the proposal's code is never
 executed; the trusted base (kernel/, kernel2/, judge/, .github/workflows/,
 SPEC.md) and CHARTER.md must be byte-identical between trunk and the proposal
 (maxim 1): compared by content, so a rename or deletion is caught as surely as
-an edit. Trunk's genesis must record the SHA-256 of trunk's CHARTER.md.
+an edit. Trunk's promulgated charter must record the SHA-256 of CHARTER.md.
 Standard library only; the only side effects are git reads and a temporary
 directory.
 """
@@ -92,11 +92,24 @@ def differing(repo, trunk, head):
 
 
 def genesis_charter(line):
-    """The charter hash entry 0 records, or None if the line does not carry one."""
+    """The charter claim in a genesis (or amendment) line, if present."""
     try:
         return json.loads(line)["body"]["charter"]
     except (ValueError, KeyError, TypeError):
         return None
+
+
+def promulgated_charter(repo, trunk, data):
+    """Latest valid charter claim, including amendments not yet in force."""
+    with tempfile.TemporaryDirectory() as tmp:
+        path = os.path.join(tmp, LOG)
+        with open(path, "wb") as f:
+            f.write(data)
+        verdict = run_kernel(repo, trunk, path)
+    lines = split_lines(data)
+    valid = lines if verdict["ok"] else lines[:verdict["seq"]]
+    return next((genesis_charter(l) for l in reversed(valid)
+                 if json.loads(l)["type"] in ("genesis", "amend")), None)
 
 
 def split_lines(data):
@@ -168,8 +181,8 @@ def judge(repo, trunk_ref, proposal_ref):
         return refuse("trusted_path", f"differs from trunk: {', '.join(differing(repo, trunk, head))}")
     trunk_log, head_log = show(repo, trunk, LOG) or b"", show(repo, head, LOG) or b""
     old, new = split_lines(trunk_log), split_lines(head_log)
-    if old and genesis_charter(old[0]) != hashlib.sha256(show(repo, trunk, CHARTER) or b"").hexdigest():
-        return refuse("charter_mismatch", "trunk's genesis does not record the SHA-256 of trunk's CHARTER.md")
+    if old and promulgated_charter(repo, trunk, trunk_log) != hashlib.sha256(show(repo, trunk, CHARTER) or b"").hexdigest():
+        return refuse("charter_mismatch", "trunk's promulgated charter does not record the SHA-256 of trunk's CHARTER.md")
     if not head_log.startswith(trunk_log):
         return refuse("prefix_broken", "trunk's log is not a byte prefix of the proposal's")
     appended = new[len(old):]
@@ -191,19 +204,45 @@ def judge(repo, trunk_ref, proposal_ref):
         e = json.loads(line)
         if e["type"] == "merge" and e["body"]["checker"] != report["trusted_digest"]:
             return refuse("judge_from_proposal", f"merge at seq {e['seq']} claims a checker trunk does not have")
-    if head == trunk:  # the self-check: items 7-10 concern proposals, and trunk against itself is none
-        return dict(report, ok=True)
+    if head != trunk:
+        failure = proposal_checks(repo, trunk, head, report)
+        if failure:
+            return refuse(*failure)
+    entries = [json.loads(line) for line in new]
+    trusted = next((e["body"]["digest"] for e in reversed([json.loads(l) for l in old]) if e["type"] == "push"),
+                   entries[0]["body"]["checker"] if entries else None)
+    if old and trusted != report["trusted_digest"]:
+        return refuse("trusted_base_unrecorded", "trunk's digest is not the trusted base in force")
+    amendments = [e for e in entries if e["type"] == "amend"]
+    if any(a["seq"] < e["seq"] < a["body"]["activate_at"] for e in entries if e["type"] == "push" for a in amendments):
+        return refuse("push_during_amendment", "push strictly between amendment and activation")
+    transmuted = set()
+    for e in entries:
+        if e["type"] == "amend" and e["body"]["id"] not in transmuted:
+            return refuse("amend_untransmuted", f"amendment at seq {e['seq']} has not been transmuted")
+        if e["type"] == "decision" and e["body"]["kind"] == "transmute":
+            transmuted.add(e["body"]["subject"])
+    founders = {d["pubkey"].split(" ")[1] for d in entries[0]["body"]["keys"]} if entries else set()
+    for e in entries:
+        blob = base64.b64decode(e["sig"])
+        n = int.from_bytes(blob[10:14], "big")
+        if e["type"] == "decision" and base64.b64encode(blob[14:14 + n]).decode() not in founders:
+            return refuse("decision_by_other", f"decision at seq {e['seq']} is not signed by a genesis key")
+    return dict(report, ok=True)
+
+
+def proposal_checks(repo, trunk, head, report):
+    """Items 7-10 apply only when head differs from trunk."""
     scope, report["proposer"] = json.loads(show(repo, trunk, SCOPE) or b""), party(repo, head)
     if report["proposer"] not in PARTIES:
-        return refuse("unattributed_proposal", f"head commit's Proposer trailer names no party of {', '.join(PARTIES)}")
+        return "unattributed_proposal", f"head commit's Proposer trailer names no party of {', '.join(PARTIES)}"
     changed = touched(repo, trunk, head, "--no-renames")  # a rename touches both its paths
     if report["proposer"] == "counsel" and any(not is_under(p, scope["documents"]) for p in changed):
-        return refuse("counsel_builds", f"counsel touches code: {', '.join(p for p in changed if not is_under(p, scope['documents']))}")
+        return "counsel_builds", f"counsel touches code: {', '.join(p for p in changed if not is_under(p, scope['documents']))}"
     if any(not is_under(p, scope["paths"]) for p in changed):
-        return refuse("out_of_scope", f"outside {scope['layer']}'s paths: {', '.join(p for p in changed if not is_under(p, scope['paths']))}")
+        return "out_of_scope", f"outside {scope['layer']}'s paths: {', '.join(p for p in changed if not is_under(p, scope['paths']))}"
     if counted_lines(repo, head, scope["counted"]) > scope["cap"]:
-        return refuse("code_cap", f"{counted_lines(repo, head, scope['counted'])} counted lines exceed the cap of {scope['cap']}")
-    return dict(report, ok=True)
+        return "code_cap", f"{counted_lines(repo, head, scope['counted'])} counted lines exceed the cap of {scope['cap']}"
 
 
 def main(argv=None):

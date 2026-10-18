@@ -56,12 +56,12 @@ class Structure(Base):
         e = log.parse_line(lg.lines[0]); e["extra"] = 1
         self.refused([log.canonical(e)], 0, "schema")
 
-    def test_only_four_types(self):
+    def test_only_eight_types(self):
         lg = self.w.log()
         for type_ in ("rule", "repeal", "wish"):
             lg2 = self.w.log(); lg2.add(type_, "guy", {"rule_id": "r1"}, self.w.guy)
             self.refused(lg2.lines, 1, "schema")
-        self.assertEqual(log.TYPES, ("genesis", "key", "proposal", "merge"))
+        self.assertEqual(log.TYPES, ("genesis", "key", "proposal", "merge", "amend", "push", "decision", "spec_conflict"))
         self.assertEqual(len(lg.lines), 1)
 
     def test_bad_seq(self):
@@ -211,6 +211,78 @@ class Change(Base):
         decls = self.w.decls + [build.decl("guy-2", "guy", self.w.guy, ["merge"])]
         lg = build.Log(); lg.add("genesis", "guy", build.genesis_body(decls), self.w.guy)
         self.refused(lg.lines, 0, "bad_key")
+
+
+class OpeningState(Base):
+    def fold(self, lg):
+        state = check.EMPTY
+        for i, line in enumerate(lg.lines):
+            state = check.check_entry(state, i, line)
+        return state
+
+    def test_genesis_state_and_forward_amendments(self):
+        lg = self.w.log()
+        founding = self.fold(lg)
+        self.assertEqual((founding.charter, founding.charter_at(0), founding.trusted_base, founding.transmuted),
+                         (build.HEX64, build.HEX64, build.HEX64, frozenset()))
+        lg.add("amend", "guy", {"id": "A2", "charter": "aa" * 32, "activate_at": 5}, self.w.guy)
+        first = self.fold(lg)
+        self.assertEqual(first.charter, "aa" * 32)
+        self.assertEqual([first.charter_at(i) for i in (0, 1, 4, 5, 6)], [build.HEX64] * 3 + ["aa" * 32] * 2)
+        lg.add("amend", "guy", {"id": "A3", "charter": "bb" * 32, "activate_at": 4}, self.w.guy)
+        second = self.fold(lg)
+        self.assertEqual([second.charter_at(i) for i in (3, 4, 5, 6)], [build.HEX64] + ["bb" * 32] * 3)
+        self.assertEqual(second.charter, "bb" * 32)
+        self.assertEqual(founding.charter, build.HEX64)
+        self.assertEqual(first.charter_at(5), "aa" * 32)
+        self.ok(lg)  # transmutation is enforced by the judge, not the kernel
+
+    def test_activation_and_unique_id_are_schema_before_signature(self):
+        for height in (-1, 0, 1, True, "2"):
+            lg = self.w.log()
+            lg.add("amend", "ann", {"id": "A2", "charter": build.HEX64, "activate_at": height}, self.w.ann)
+            self.refused(lg.lines, 1, "schema")
+        lg = self.w.log()
+        lg.add("amend", "guy", {"id": "A2", "charter": build.HEX64, "activate_at": 2}, self.w.guy)
+        lg.add("amend", "ann", {"id": "A2", "charter": build.HEX64, "activate_at": 9}, self.w.ann)
+        self.refused(lg.lines, 2, "schema")
+
+    def test_new_types_require_power_and_allow_later_grants(self):
+        bodies = {
+            "amend": {"id": "A2", "charter": build.HEX64, "activate_at": 10},
+            "push": {"digest": "aa" * 32, "review": "0" * 64},
+            "decision": {"kind": "transmute", "subject": "A2"},
+            "spec_conflict": {"section": "5", "text": "conflict"},
+        }
+        for type_, body in bodies.items():
+            lg = self.w.log(); lg.add(type_, "ann", body, self.w.ann)
+            self.refused(lg.lines, 1, "no_power")
+            lg = self.w.log()
+            lg.add("key", "guy", build.decl("ann-1", "ann", self.w.ann, [type_]), self.w.guy)
+            lg.add(type_, "ann", body, self.w.ann)
+            self.ok(lg)
+
+    def test_push_transmute_and_no_effect_types(self):
+        lg = self.w.log()
+        lg.add("push", "guy", {"digest": "ab" * 32, "review": "0" * 64}, self.w.guy)
+        state = self.fold(lg)
+        self.assertEqual(state.trusted_base, "ab" * 32)
+        lg.add("push", "guy", {"digest": "cd" * 32, "review": "ef" * 32}, self.w.guy)
+        lg.add("decision", "guy", {"kind": "transmute", "subject": "A2"}, self.w.guy)
+        lg.add("decision", "guy", {"kind": "transmute", "subject": "A2"}, self.w.guy)
+        lg.add("decision", "guy", {"kind": "transmute", "subject": "A3"}, self.w.guy)
+        state = self.fold(lg)
+        self.assertEqual(state.transmuted, {"A2", "A3"})
+        self.assertEqual(state.trusted_base, "cd" * 32)
+        for kind in ("veto", "promote", "budget", "grant", "fix"):
+            lg.add("decision", "guy", {"kind": kind, "subject": "A4"}, self.w.guy)
+        lg.add("spec_conflict", "guy", {"section": "8", "text": "conflict"}, self.w.guy)
+        lg.add("proposal", "guy", proposal(), self.w.guy)
+        lg.add("merge", "guy", build.merge(1), self.w.guy)
+        after = self.fold(lg)
+        self.assertEqual(after._replace(head=state.head), state)
+        self.assertEqual(after.head, lg.head)
+        self.assertEqual(check.EMPTY.transmuted, frozenset())
 
 
 class Cli(Base):

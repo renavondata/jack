@@ -21,6 +21,7 @@ from collections import namedtuple
 from harness import build, diff, gitfix, keys, runner
 from harness.build import proposal
 from kernel import log, sig
+from pins.fixtures import bind_genesis, make_repo
 
 Pin = namedtuple("Pin", "name test mutants")
 Mutant = namedtuple("Mutant", "name path find replace")
@@ -50,7 +51,7 @@ def commit(repo, msg, proposer="builder pin-model pin-session"):
 
 
 def proposal_touching(root, path, proposer="builder m s", data="x\n"):
-    fx = gitfix.make_repo(world())
+    fx = make_repo(world())
     gitfix.write(fx.repo, path, data)
     commit(fx.repo, "change", proposer)
     return judged(root, fx)
@@ -65,12 +66,12 @@ def judge_refuses(r, reason):
 def t_trusted_path(root):
     w = world()
     for path in ("kernel/check.py", "judge/judge.py", "kernel2/check"):
-        fx = gitfix.make_repo(w)
+        fx = make_repo(w)
         gitfix.write(fx.repo, path, 'print(\'{"ok": true, "entries": 0}\')\n')
         commit(fx.repo, "edit trusted file")
         r = judged(root, fx)
         assert (r.get("ok"), r.get("reason")) == (False, "trusted_path"), (path, r)
-    fx = gitfix.make_repo(w)
+    fx = make_repo(w)
     gitfix.write(fx.repo, "README.md", "docs only\n")
     commit(fx.repo, "docs")
     assert judged(root, fx).get("ok") is True
@@ -79,13 +80,13 @@ def t_trusted_path(root):
 def t_trusted_rename(root):
     w = world()
     for old, new in (("SPEC.md", "docs/SPEC.md"), ("CHARTER.md", "CHARTER.old.md"), ("kernel/sig.py", "kernel/sig_.py")):
-        fx = gitfix.make_repo(w)
+        fx = make_repo(w)
         gitfix.move(fx.repo, old, new)
         commit(fx.repo, "rename")
         r = judged(root, fx)
         assert old not in r.get("touched", [old]), f"fixture: git must report the rename under its new name only: {r}"
         assert (r.get("ok"), r.get("reason")) == (False, "trusted_path"), (old, new, r)
-    fx = gitfix.make_repo(w)
+    fx = make_repo(w)
     gitfix.move(fx.repo, "README.md", "transcripts/README.md")
     commit(fx.repo, "rename docs")
     assert judged(root, fx).get("ok") is True
@@ -94,7 +95,7 @@ def t_trusted_rename(root):
 def t_judge_from_proposal(root):
     from judge import judge as trunk_judge  # pristine, only to compute the fixture trunk's digest
     w = world()
-    fx = gitfix.make_repo(w)
+    fx = make_repo(w)
     fx.log.add("proposal", "ann", proposal("a"), w.ann)
     fx.log.add("merge", "guy", build.merge(1, "ab" * 32), w.guy)
     gitfix.write(fx.repo, "log.jsonl", fx.log.text())
@@ -106,7 +107,7 @@ def t_judge_from_proposal(root):
     gitfix.write(fx.repo, "log.jsonl", fx.log.text())
     commit(fx.repo, "merge judged by trunk")
     assert judged(root, fx).get("ok") is True
-    fx = gitfix.make_repo(w)
+    fx = make_repo(w)
     fx.log.add("proposal", "ann", proposal("b"), w.ann)
     gitfix.write(fx.repo, "log.jsonl", fx.log.text())
     commit(fx.repo, "proposal")
@@ -131,7 +132,7 @@ def t_counsel_builds(root):
 def t_scope(root):
     """SPEC §10.9: every touched path, both sides of a rename included, is under judge/scope.json's paths."""
     judge_refuses(proposal_touching(root, "docs/x.md"), "out_of_scope")
-    fx = gitfix.make_repo(world())
+    fx = make_repo(world())
     gitfix.git(fx.repo, "checkout", "-q", "main")
     gitfix.write(fx.repo, "notes.txt", "trunk's\n")
     commit(fx.repo, "trunk note")
@@ -147,6 +148,80 @@ def t_code_cap(root):
     """SPEC §10.10: counted .py lines at the head stay within the cap."""
     judge_refuses(proposal_touching(root, "sim/big.py", data="x = 1\n" * 3001), "code_cap")
     assert proposal_touching(root, "sim/big.py", data="x = 1\n" * 3000).get("ok") is True
+
+
+def t_push_unrecorded(root):
+    """A trusted-base change must be recorded, on proposals and the self-check."""
+    from judge import judge as trusted_judge
+    fx = make_repo(world())
+    gitfix.git(fx.repo, "checkout", "-q", "main")
+    gitfix.write(fx.repo, "SPEC.md", "changed trusted text\n")
+    commit(fx.repo, "Guy changes the trusted base")
+    for head in ("main", "pr"):
+        if head == "pr":
+            gitfix.git(fx.repo, "checkout", "-q", "pr")
+            gitfix.git(fx.repo, "reset", "-q", "--hard", "main")
+            gitfix.write(fx.repo, "README.md", "docs\n")
+            commit(fx.repo, "docs")
+        judge_refuses(runner.judge_with(root, fx.repo, "main", head), "trusted_base_unrecorded")
+    gitfix.git(fx.repo, "checkout", "-q", "main")
+    fx.log.add("push", "guy", {"digest": trusted_judge.digest(fx.repo, "main"), "review": "0" * 64}, world().guy)
+    gitfix.write(fx.repo, "log.jsonl", fx.log.text())
+    commit(fx.repo, "Record the trusted base")
+    assert runner.judge_with(root, fx.repo, "main", "main").get("ok") is True
+
+
+def t_freeze_ignored(root):
+    w = world()
+    for height, reason in ((4, "push_during_amendment"), (3, None)):
+        fx = make_repo(w)
+        fx.log.add("decision", "guy", {"kind": "transmute", "subject": "A2"}, w.guy)
+        fx.log.add("amend", "guy", {"id": "A2", "charter": gitfix.CHARTER_SHA256, "activate_at": height}, w.guy)
+        fx.log.add("push", "guy", {"digest": json.loads(fx.log.lines[0])["body"]["checker"], "review": "0" * 64}, w.guy)
+        gitfix.write(fx.repo, "log.jsonl", fx.log.text())
+        commit(fx.repo, "Amend then push")
+        r = judged(root, fx)
+        if reason:
+            judge_refuses(r, reason)
+        else:
+            assert r.get("ok") is True, r
+
+
+def t_one_act_amendment(root):
+    w = world()
+    for transmute in (False, True):
+        fx = make_repo(w)
+        if transmute:
+            fx.log.add("decision", "guy", {"kind": "transmute", "subject": "A2"}, w.guy)
+        fx.log.add("amend", "guy", {"id": "A2", "charter": gitfix.CHARTER_SHA256, "activate_at": 9}, w.guy)
+        gitfix.write(fx.repo, "log.jsonl", fx.log.text())
+        commit(fx.repo, "Amend")
+        r = judged(root, fx)
+        if transmute:
+            assert r.get("ok") is True, r
+        else:
+            judge_refuses(r, "amend_untransmuted")
+
+
+def t_decision_forged(root):
+    w = world()
+    for sovereign in (False, True):
+        fx = make_repo(w)
+        fx.log.add("key", "guy", build.decl("stranger-1", "guy", w.stranger, ["decision"]), w.guy)
+        fx.log.add("decision", "guy", {"kind": "fix", "subject": "x"}, w.guy if sovereign else w.stranger)
+        gitfix.write(fx.repo, "log.jsonl", fx.log.text())
+        commit(fx.repo, "Decision")
+        r = judged(root, fx)
+        if sovereign:
+            assert r.get("ok") is True, r
+        else:
+            judge_refuses(r, "decision_by_other")
+        gitfix.git(fx.repo, "branch", "-f", "main", "pr")
+        r = runner.judge_with(root, fx.repo, "main", "main")
+        if sovereign:
+            assert r.get("ok") is True, r
+        else:
+            judge_refuses(r, "decision_by_other")
 
 
 # --- kernel pins ------------------------------------------------------------
@@ -275,13 +350,14 @@ def t_key_decl_members(root):
 
 def t_kernel2_runnable(root):
     """The judge runs trunk's kernel2 with git's file modes, so its launcher may call its own scripts."""
-    fx = gitfix.make_repo(world())
+    fx = make_repo(world())
     gitfix.git(fx.repo, "checkout", "-q", "main")
     gitfix.write(fx.repo, "kernel2/check", '#!/bin/sh\nexec "$(dirname "$0")/helper.sh" "$@"\n')
     gitfix.write(fx.repo, "kernel2/helper.sh", "#!/bin/sh\necho '{\"ok\":true,\"entries\":1}'\n")
     for name in ("check", "helper.sh"):
         os.chmod(os.path.join(fx.repo, "kernel2", name), 0o755)
     commit(fx.repo, "kernel2 whose launcher calls a helper")
+    bind_genesis(fx.repo, fx.log, world())
     r = runner.judge_with(root, fx.repo, "main", "main")
     assert r.get("ok") is True and r.get("kernel2") == {"ok": True, "entries": 1}, r
 
@@ -289,13 +365,14 @@ def t_kernel2_runnable(root):
 def t_selfcheck_blind(root):
     """The CI self-check fails when the judge cannot run kernel2, and passes when it can."""
     def repo(helper_mode):
-        fx = gitfix.make_repo(world())
+        fx = make_repo(world())
         gitfix.git(fx.repo, "checkout", "-q", "main")
         gitfix.write(fx.repo, "kernel2/check", '#!/bin/sh\nexec "$(dirname "$0")/helper.sh" "$@"\n')
         gitfix.write(fx.repo, "kernel2/helper.sh", "#!/bin/sh\necho '{\"ok\":true,\"entries\":1}'\n")
         os.chmod(os.path.join(fx.repo, "kernel2", "check"), 0o755)
         os.chmod(os.path.join(fx.repo, "kernel2", "helper.sh"), helper_mode)
         commit(fx.repo, "kernel2")
+        bind_genesis(fx.repo, fx.log, world())
         return fx.repo
     def run(r):
         import subprocess
@@ -306,13 +383,18 @@ def t_selfcheck_blind(root):
 
 
 def t_checker_drift(root):
-    """Both checkers agree, verdict by verdict, on the pin fixtures (runs once kernel2/check exists)."""
+    """The C0 second checker agrees on C0 pin fixtures and vectors (C1 vectors live in c1/)."""
     w = world()
-    logs = [w.log().lines]
-    lg = w.log(); lg.add("key", "guy", build.decl("stranger-1", "stranger", w.stranger, ["proposal"]), w.guy)
+    def founding():
+        declarations = [dict(d, powers=[p for p in d["powers"] if p in ("genesis", "key", "proposal", "merge")]) for d in w.decls]
+        lg = build.Log()
+        lg.add("genesis", "guy", build.genesis_body(declarations), w.guy)
+        return lg
+    logs = [founding().lines]
+    lg = founding(); lg.add("key", "guy", build.decl("stranger-1", "stranger", w.stranger, ["proposal"]), w.guy)
     lg.add("proposal", "stranger", proposal(), w.stranger); logs.append(list(lg.lines))
-    lg = w.log(); lg.add("proposal", "guy", proposal(), w.stranger); logs.append(lg.lines)
-    lg = w.log(); lg.add("proposal", "guy", proposal(), w.guy)            # body altered after signing
+    lg = founding(); lg.add("proposal", "guy", proposal(), w.stranger); logs.append(lg.lines)
+    lg = founding(); lg.add("proposal", "guy", proposal(), w.guy)            # body altered after signing
     e = log.parse_line(lg.lines[1]); e["body"]["title"] += "x"; logs.append([lg.lines[0], log.canonical(e)])
     with tempfile.TemporaryDirectory() as tmp:
         paths = sorted(glob.glob(os.path.join(root, "spec", "vectors", "logs", "*.jsonl")))  # every reason code
@@ -379,6 +461,14 @@ def t_prefix_skipped(root):
 GUARD = 'if digest(repo, head) != report["trusted_digest"] or show(repo, head, CHARTER) != show(repo, trunk, CHARTER):'
 
 PINS = [
+    Pin("push_unrecorded", t_push_unrecorded, [
+        Mutant("trusted_base_unchecked", "judge/judge.py", '    if old and trusted != report["trusted_digest"]:', '    if False:')]),
+    Pin("freeze_ignored", t_freeze_ignored, [
+        Mutant("amendment_freeze_unchecked", "judge/judge.py", '    if any(a["seq"] < e["seq"] < a["body"]["activate_at"]', '    if any(False and a["seq"] < e["seq"] < a["body"]["activate_at"]')]),
+    Pin("one_act_amendment", t_one_act_amendment, [
+        Mutant("transmutation_unchecked", "judge/judge.py", '        if e["type"] == "amend" and e["body"]["id"] not in transmuted:', '        if False:')]),
+    Pin("decision_forged", t_decision_forged, [
+        Mutant("sovereign_unchecked", "judge/judge.py", '        if e["type"] == "decision" and base64.b64encode(blob[14:14 + n]).decode() not in founders:', '        if False:')]),
     Pin("trusted_path_unguarded", t_trusted_path, [
         Mutant("guard_removed", "judge/judge.py", GUARD, "if False:"),
         Mutant("judge_dir_untrusted", "judge/judge.py",

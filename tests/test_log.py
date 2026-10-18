@@ -146,6 +146,43 @@ class Body(unittest.TestCase):
             self.assertNotIn(type_, log.BODY)
             self.assertNotIn(type_, log.TYPES)
 
+    def test_new_body_schemas(self):
+        bodies = {
+            "amend": {"id": "A2", "charter": HEX64, "activate_at": 2},
+            "push": {"digest": HEX64, "review": "0" * 64},
+            "decision": {"kind": "transmute", "subject": "A2"},
+            "spec_conflict": {"section": "5", "text": "conflict"},
+        }
+        for type_, body in bodies.items():
+            with self.subTest(type=type_):
+                self.assertIsNone(log.check_body(type_, dict(body, **{"extra.key": {"a.b": []}})))
+                for field in body:
+                    missing = {k: v for k, v in body.items() if k != field}
+                    self.assertEqual(self.refused(type_, missing), "schema")
+                    for bad in (None, True, [], {}):
+                        self.assertEqual(self.refused(type_, dict(body, **{field: bad})), "schema")
+        for id_ in ("A2", "Z0", "A000", "B999"):
+            self.assertIsNone(log.check_body("amend", dict(bodies["amend"], id=id_)))
+        for id_ in ("a2", "A", "A1234", "AA2", "A٢", "A2\n"):
+            self.assertEqual(self.refused("amend", dict(bodies["amend"], id=id_)), "schema")
+        for kind in ("veto", "promote", "budget", "grant", "transmute", "fix"):
+            self.assertIsNone(log.check_body("decision", {"kind": kind, "subject": "\n"}))
+        for kind in ("", "Transmute", "transmute\n", "other"):
+            self.assertEqual(self.refused("decision", dict(bodies["decision"], kind=kind)), "schema")
+        for type_, field in (("decision", "subject"), ("spec_conflict", "section"), ("spec_conflict", "text")):
+            self.assertEqual(self.refused(type_, dict(bodies[type_], **{field: ""})), "schema")
+        for type_, field in (("amend", "charter"), ("push", "digest"), ("push", "review")):
+            for bad in ("F" * 64, "0" * 63, "0" * 65):
+                self.assertEqual(self.refused(type_, dict(bodies[type_], **{field: bad})), "schema")
+        for bad in ("2", 2.0):
+            self.assertEqual(self.refused("amend", dict(bodies["amend"], activate_at=bad)), "schema")
+
+    def test_eight_names_in_key_declarations(self):
+        for powers in (list(log.TYPES), [], ["push", "push"]):
+            declaration = dict(KEY, powers=powers)
+            self.assertIsNone(log.check_body("key", declaration))
+            self.assertIsNone(log.check_body("genesis", {"charter": HEX64, "checker": HEX64, "keys": [declaration]}))
+
     def test_extra_members_allowed_including_dotted_keys(self):
         self.assertIsNone(log.check_body("proposal", {"title": "t", "commit": HEX40, "a.b": 1, "n": {"c.d": []}}))
         self.assertEqual(self.refused("key", dict(KEY, powers=["rule"])), "schema")

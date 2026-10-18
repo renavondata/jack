@@ -13,8 +13,13 @@ from . import log, sig
 from .log import Refuse
 
 Key = namedtuple("Key", "principal blob powers")
-State = namedtuple("State", "head keys owners")  # owners: pubkey blob -> the one key_id it may ever belong to
-EMPTY = State(log.GENESIS_PARENT, {}, {})
+class State(namedtuple("State", "head keys owners charter amendments trusted_base transmuted")):
+    """Charter is promulgated; amendments retain log order for position-dependent force."""
+    def charter_at(self, position):
+        return next((c for _, height, c in reversed(self.amendments) if height <= position), self.charter)
+
+
+EMPTY = State(log.GENESIS_PARENT, {}, {}, None, (), None, frozenset())
 
 
 def signer(e, keys):
@@ -59,6 +64,9 @@ def check_entry(state, i, line):
     if e["proposer"] == "":
         raise Refuse("no_proposer")
     log.check_body(e["type"], e["body"])
+    body = e["body"]
+    if e["type"] == "amend" and (body["activate_at"] <= i or any(a == body["id"] for a, _, _ in state.amendments)):
+        raise Refuse("schema", "amendment id reused or activation not above seq")
     keys, owners = state.keys, state.owners
     if e["type"] == "genesis":
         for d in e["body"]["keys"]:
@@ -66,7 +74,17 @@ def check_entry(state, i, line):
     signer(e, keys)
     if e["type"] == "key":
         keys, owners = declare(keys, owners, e["body"])
-    return State(log.line_hash(line), keys, owners)
+    charter, amendments, trusted, transmuted = state.charter, state.amendments, state.trusted_base, state.transmuted
+    if e["type"] == "genesis":
+        charter, trusted = body["charter"], body["checker"]
+        amendments = ((None, 0, charter),)
+    elif e["type"] == "amend":
+        charter, amendments = body["charter"], amendments + ((body["id"], body["activate_at"], body["charter"]),)
+    elif e["type"] == "push":
+        trusted = body["digest"]
+    elif e["type"] == "decision" and body["kind"] == "transmute":
+        transmuted = transmuted | {body["subject"]}
+    return State(log.line_hash(line), keys, owners, charter, amendments, trusted, transmuted)
 
 
 def check(lines):

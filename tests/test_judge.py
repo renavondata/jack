@@ -12,6 +12,7 @@ from harness import build, gitfix
 from harness.build import proposal
 from harness.gitfix import git, write
 from judge import judge
+from pins.fixtures import make_repo
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.executable
@@ -34,7 +35,7 @@ class Fixture(unittest.TestCase):
         cls.tmp.cleanup()
 
     def repo(self, with_log=True):
-        fx = gitfix.make_repo(self.w, with_log=with_log, tmpdir=self.tmp.name)
+        fx = make_repo(self.w, with_log=with_log, tmpdir=self.tmp.name)
         self.lg, self.main = fx.log, fx.main
         return fx.repo
 
@@ -224,6 +225,130 @@ class Charter(Fixture):
         self.lg.add("proposal", "guy", proposal("a"), self.w.stranger)
         self.append(repo)
         self.assertEqual(self.judge(repo)["reason"], "charter_mismatch")
+
+
+class OpeningGrounds(Fixture):
+    def publish(self, repo):
+        git(repo, "checkout", "-q", "main")
+        write(repo, "log.jsonl", self.lg.text())
+        commit_all(repo, "Guy records acts")
+        git(repo, "checkout", "-q", "pr")
+        git(repo, "reset", "-q", "--hard", "main")
+
+    def amend(self, id_="A2", height=20, charter=gitfix.CHARTER_SHA256):
+        self.lg.add("amend", "guy", {"id": id_, "charter": charter, "activate_at": height}, self.w.guy)
+
+    def decision(self, subject="A2", kind="transmute", key=None, proposer="guy"):
+        self.lg.add("decision", proposer, {"kind": kind, "subject": subject}, key or self.w.guy)
+
+    def test_promulgated_charter_even_before_activation(self):
+        repo = self.repo()
+        text = gitfix.CHARTER_TEXT + "\nA2\n"
+        self.decision()
+        self.amend(charter=hashlib.sha256(text.encode()).hexdigest())
+        git(repo, "checkout", "-q", "main")
+        write(repo, "CHARTER.md", text)
+        self.publish(repo)
+        self.assertTrue(self.judge(repo, "main", "main")["ok"])
+        write(repo, "README.md", "docs\n")
+        commit_all(repo, "docs")
+        self.assertTrue(self.judge(repo)["ok"])
+
+    def test_stale_or_invalid_amendment_does_not_bind_charter(self):
+        for invalid in (False, True):
+            repo = self.repo()
+            self.decision()
+            self.amend(charter="ff" * 32, height=2 if invalid else 20)
+            self.publish(repo)
+            r = self.judge(repo, "main", "main")
+            self.assertEqual(r["reason"], "schema" if invalid else "charter_mismatch", r)
+
+    def test_trusted_base_recording(self):
+        for selfcheck in (False, True):
+            repo = self.repo()
+            git(repo, "checkout", "-q", "main")
+            write(repo, "SPEC.md", "new trusted text\n")
+            commit_all(repo, "Guy changes trusted base")
+            git(repo, "checkout", "-q", "pr")
+            git(repo, "reset", "-q", "--hard", "main")
+            write(repo, "README.md", "proposal\n")
+            commit_all(repo, "docs")
+            head = "main" if selfcheck else "pr"
+            self.assertEqual(self.judge(repo, "main", head)["reason"], "trusted_base_unrecorded")
+            self.lg.add("push", "guy", {"digest": judge.digest(repo, "main"), "review": "0" * 64}, self.w.guy)
+            self.publish(repo)
+            self.assertTrue(self.judge(repo, "main", "main")["ok"])
+
+    def test_proposal_push_does_not_repair_unrecorded_trunk(self):
+        repo = self.repo()
+        git(repo, "checkout", "-q", "main")
+        write(repo, "SPEC.md", "new trusted text\n")
+        commit_all(repo, "trusted base changes")
+        git(repo, "checkout", "-q", "pr")
+        git(repo, "reset", "-q", "--hard", "main")
+        self.lg.add("push", "guy", {"digest": judge.digest(repo, "main"), "review": "0" * 64}, self.w.guy)
+        self.append(repo)
+        self.assertEqual(self.judge(repo)["reason"], "trusted_base_unrecorded")
+
+    def test_freeze_is_strict_and_checks_all_amendments(self):
+        for selfcheck in (False, True):
+            for height in (3, 4):
+                repo = self.repo()
+                self.decision()
+                self.amend(height=height)
+                self.lg.add("push", "guy", {"digest": judge.digest(repo, "main"), "review": "0" * 64}, self.w.guy)
+                if selfcheck:
+                    self.publish(repo)
+                else:
+                    self.append(repo)
+                r = self.judge(repo, "main", "main" if selfcheck else "pr")
+                self.assertEqual((r["ok"], r["reason"]), (height == 3, None if height == 3 else "push_during_amendment"))
+        repo = self.repo()
+        self.decision()
+        self.amend(height=10)
+        self.decision("A3")
+        self.amend("A3", height=5)
+        self.lg.add("push", "guy", {"digest": judge.digest(repo, "main"), "review": "0" * 64}, self.w.guy)
+        self.append(repo)
+        self.assertEqual(self.judge(repo)["reason"], "push_during_amendment")
+
+    def test_transmutation_is_prior_and_names_the_amendment(self):
+        for selfcheck in (False, True):
+            for earlier in ("none", "wrong_subject", "wrong_kind", "after", "correct"):
+                repo = self.repo()
+                if earlier == "wrong_subject":
+                    self.decision("A3")
+                if earlier == "wrong_kind":
+                    self.decision(kind="fix")
+                if earlier == "correct":
+                    self.decision()
+                self.amend()
+                if earlier == "after":
+                    self.decision()
+                if selfcheck:
+                    self.publish(repo)
+                else:
+                    self.append(repo)
+                r = self.judge(repo, "main", "main" if selfcheck else "pr")
+                self.assertEqual((r["ok"], r["reason"]), (earlier == "correct", None if earlier == "correct" else "amend_untransmuted"), r)
+
+    def test_decision_requires_original_genesis_blob_not_principal_or_id(self):
+        for selfcheck in (False, True):
+            for kind in ("veto", "promote", "budget", "grant", "transmute", "fix"):
+                repo = self.repo()
+                self.lg.add("key", "guy", build.decl("guy-master", "guy", self.w.stranger, build.ALL), self.w.guy)
+                self.decision(kind=kind, key=self.w.stranger)
+                if selfcheck:
+                    self.publish(repo)
+                else:
+                    self.append(repo)
+                r = self.judge(repo, "main", "main" if selfcheck else "pr")
+                self.assertEqual(r["reason"], "decision_by_other", r)
+        repo = self.repo()
+        self.lg.add("key", "guy", build.decl("ann-1", "renamed", self.w.ann, ["decision"]), self.w.guy)
+        self.decision(key=self.w.ann, proposer="renamed")
+        self.append(repo)
+        self.assertTrue(self.judge(repo)["ok"])  # any genesis-declared key, even after a new principal
 
 
 class TrunkKernelRuns(Fixture):
