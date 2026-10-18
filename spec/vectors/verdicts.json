@@ -155,6 +155,15 @@
    "ok": false,
    "seq": 0,
    "reason": "schema"
+  },
+  "32_last_key_power_lost_bad_key.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "bad_key"
+  },
+  "33_last_key_power_kept.jsonl": {
+   "ok": true,
+   "entries": 2
   }
  }
 }

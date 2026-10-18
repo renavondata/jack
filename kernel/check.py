@@ -74,6 +74,8 @@ def check_entry(state, i, line):
     signer(e, keys)
     if e["type"] == "key":
         keys, owners = declare(keys, owners, e["body"])
+        if not any("key" in k.powers for k in keys.values()):
+            raise Refuse("bad_key", "no declared key would keep the power to declare keys")
     charter, amendments, trusted, transmuted = state.charter, state.amendments, state.trusted_base, state.transmuted
     if e["type"] == "genesis":
         charter, trusted = body["charter"], body["checker"]

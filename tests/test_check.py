@@ -204,6 +204,34 @@ class Change(Base):
         lg.add("key", "ann", build.decl("eve-1", "eve", keys.fake_key(pub32), []), self.w.ann)
         self.refused(lg.lines, 1, "no_power")
 
+    def test_last_key_power_cannot_be_lost(self):
+        without_key = [t for t in build.ALL if t != "key"]
+        lg = self.w.log()
+        lg.add("key", "guy", build.decl("guy-master", "guy", self.w.guy, without_key), self.w.guy)
+        self.refused(lg.lines, 1, "bad_key")
+        lg = self.w.log()
+        lg.add("key", "guy", build.decl("guy-master", "guy", self.w.guy, build.ALL), self.w.guy)
+        self.ok(lg)
+        # Another holder first: then the original holder may drop it, and the last one may not.
+        lg = self.w.log()
+        lg.add("key", "guy", build.decl("ann-1", "ann", self.w.ann, ["proposal", "key"]), self.w.guy)
+        lg.add("key", "guy", build.decl("guy-master", "guy", self.w.guy, without_key), self.w.guy)
+        self.ok(lg)
+        lg.add("key", "ann", build.decl("ann-1", "ann", self.w.ann, []), self.w.ann)
+        self.refused(lg.lines, 3, "bad_key")
+        # Genesis is untouched: it may found a log in which no key holds `key`.
+        lg = build.Log(); lg.add("genesis", "guy", build.genesis_body([build.decl("guy-master", "guy", self.w.guy, without_key)]), self.w.guy)
+        self.ok(lg)
+
+    def test_last_key_rule_after_weakness_and_ownership(self):
+        name, pub32 = keys.weak_keys()[0]
+        lg = self.w.log()
+        lg.add("key", "guy", build.decl("guy-master", "guy", keys.fake_key(pub32), []), self.w.guy)
+        self.assertIn("non-canonical or small-order", self.refused(lg.lines, 1, "bad_key")["detail"])
+        lg = self.w.log()
+        lg.add("key", "guy", build.decl("guy-master", "guy", self.w.ann, []), self.w.guy)
+        self.assertIn("belongs to ann-1", self.refused(lg.lines, 1, "bad_key")["detail"])
+
     def test_duplicate_pubkey_is_bad_key(self):
         lg = self.w.log()
         lg.add("key", "guy", build.decl("ann-2", "ann", self.w.ann, ["proposal"]), self.w.guy)

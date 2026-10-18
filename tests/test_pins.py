@@ -25,12 +25,12 @@ class Registry(unittest.TestCase):
                          "unattributed_entry", "checker_drift", "forged_signature_admitted", "trusted_path_unguarded",
                          "trusted_rename_admitted", "weak_key_admitted", "reserved_bytes_admitted",
                          "unattributed_proposal_admitted", "counsel_build_admitted", "scope_unguarded", "cap_unguarded",
-                         "push_unrecorded", "freeze_ignored", "one_act_amendment", "decision_forged"):
+                         "push_unrecorded", "freeze_ignored", "one_act_amendment", "decision_forged", "last_key_revocable"):
             self.assertIn(required, names)
         for gone in ("final_law_for_all", "vacuous_rule_admitted", "impossible_rule_admitted", "redundancy_unreported",
                      "orphaned_rule_admitted"):
             self.assertNotIn(gone, names, "rule pins return with the law language in C1")
-        self.assertEqual(len(names), 30)
+        self.assertEqual(len(names), 31)
         for p in pins.PINS:
             self.assertTrue(p.mutants, p.name)
             for m in p.mutants:

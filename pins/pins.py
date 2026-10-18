@@ -348,6 +348,15 @@ def t_key_decl_members(root):
     admitted(runner.check_with(root, lg.lines), 2)
 
 
+def t_last_key_revocable(root):
+    """The power to declare keys, once lost, can be regained by no entry: its last holder cannot drop it."""
+    w = world()
+    lg = w.log(); lg.add("key", "guy", build.decl("guy-master", "guy", w.guy, [t for t in build.ALL if t != "key"]), w.guy)
+    refused(runner.check_with(root, lg.lines), 1, "bad_key")
+    lg = w.log(); lg.add("key", "guy", build.decl("guy-master", "guy", w.guy, build.ALL), w.guy)
+    admitted(runner.check_with(root, lg.lines), 2)
+
+
 def t_kernel2_runnable(root):
     """The judge runs trunk's kernel2 with git's file modes, so its launcher may call its own scripts."""
     fx = make_repo(world())
@@ -547,6 +556,9 @@ PINS = [
     Pin("key_decl_extra_member", t_key_decl_members, [
         Mutant("extra_members_allowed", "kernel/log.py",
                "        if set(d) != KEY_FIELDS:", "        if False:")]),
+    Pin("last_key_revocable", t_last_key_revocable, [
+        Mutant("last_key_unguarded", "kernel/check.py",
+               '        if not any("key" in k.powers for k in keys.values()):', "        if False:")]),
     Pin("kernel2_unrunnable", t_kernel2_runnable, [
         Mutant("modes_ignored", "judge/judge.py", "                os.chmod(dest, 0o755)", "                pass")]),
     Pin("selfcheck_blind", t_selfcheck_blind, [
