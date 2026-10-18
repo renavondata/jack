@@ -203,12 +203,13 @@ is what entries 0..*i*−1 established:
   of genesis if there is none. **The charter in force** at position *i* is the
   `charter` of the latest valid `amend` with `activate_at` ≤ *i*, or of genesis if
   there is none (CHARTER §3: a change binds forward; an amendment decides now and
-  takes effect at its height). An `amend`'s `id` must not equal any earlier
-  `amend`'s `id`, and its `activate_at` must exceed its own `seq` (**schema**).
+  takes effect at its height). "Latest" is by position in the log, never by
+  height. An `amend`'s `id` must not equal any earlier `amend`'s `id`, and its
+  `activate_at` must exceed its own `seq` (**schema**, tested at §8 step 7).
 - **The trusted base in force** is the `digest` of the latest valid `push` entry, or
   genesis's `checker` if there is none.
 - **Transmuted amendments** are the `subject`s of valid `decision` entries of kind
-  `transmute`. The kernel records them; the judge enforces them (§10.11).
+  `transmute`. The kernel records them; the judge enforces them (§10.13).
 
 Nothing else is state at C1's opening. Recognition (c) of CHARTER §3 ("every rule in force
 at its parent accepts it") holds vacuously: no rule can be admitted.
@@ -224,7 +225,9 @@ For entry *i* with line text T, in this order; the first failure refuses:
 5. `type` is `genesis` and *i* ≠ 0, or `type` is not `genesis` and *i* = 0 → **genesis_misplaced**.
 6. `proposer` = `""` → **no_proposer**.
 7. §5 body schema → **schema**. For `genesis`, its key declarations are then
-   registered in order (§7; a weak or duplicate pubkey → **bad_key**).
+   registered in order (§7; a weak or duplicate pubkey → **bad_key**). For
+   `amend`, §7's two constraints (an unused `id`; `activate_at` above its `seq`)
+   are tested here, before the signature → **schema**.
 8. Signature: §6 container parse fails → **bad_signature**; the embedded pubkey
    blob equals no declared key's blob → **unknown_key**; that key's principal ≠
    `proposer` → **proposer_mismatch**; `type` ∉ that key's powers →
