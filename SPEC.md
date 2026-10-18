@@ -77,7 +77,7 @@ An entry object has **exactly** the keys `seq, parent, ts, type, proposer, body,
 | `seq` | integer ≥ 0 (not a boolean) |
 | `parent` | `[0-9a-f]{64}` |
 | `ts` | `YYYY-MM-DDTHH:MM:SSZ` in **ASCII digits only** (`[0-9]`, never other Unicode digits), naming an instant that exists: year 0001–9999, a real Gregorian date (leap years included), hour 00–23, minute 00–59, second 00–59 (no leap seconds). The checker never reads a clock and does not order timestamps at C0. |
-| `type` | one of `genesis key proposal merge amend` |
+| `type` | one of `genesis key proposal merge amend push decision spec_conflict` |
 | `proposer` | a string (emptiness is checked later, §8 step 6) |
 | `body` | an object |
 | `sig` | `[A-Za-z0-9+/]+={0,2}` (decoded in §6) |
@@ -94,14 +94,17 @@ including keys containing `.`); a required member with the wrong shape is
 | `key` | a key declaration (the body itself) |
 | `proposal` | `title`: string; `commit`: hex40 |
 | `merge` | `proposal`: integer ≥ 0; `commit`: hex40; `checker`: hex64 |
-| `amend` | `id`: `[A-Z][0-9]{1,3}` (A2, A3, …); `charter`: hex64, the SHA-256 of `CHARTER.md` with the amendment appended |
+| `amend` | `id`: `[A-Z][0-9]{1,3}` (A2, A3, …); `charter`: hex64, the SHA-256 of `CHARTER.md` with the amendment appended; `activate_at`: integer, the seq from which it is in force |
+| `push` | `digest`: hex64, the trusted-base digest (§10.1) of the trunk this entry authorises; `review`: hex64, the SHA-256 of the cold review the push was read against, or 64 zeros if none |
+| `decision` | `kind`: one of `veto promote budget grant transmute fix`; `subject`: non-empty string (for `transmute`, the `id` of the amendment it unlocks) |
+| `spec_conflict` | `section`: non-empty string; `text`: non-empty string (what the builder could not reconcile) |
 
 hex64 = `[0-9a-f]{64}`, hex40 = `[0-9a-f]{40}`. "integer ≥ 0" excludes booleans.
 
 A **key declaration** (the body of a `key` entry, and each element of `genesis.keys`) is an object with
 **exactly** these four members, and no others (else **schema**): `key_id`: `[a-z0-9_-]{1,64}`;
 `principal`: non-empty string; `powers`: array of entry-type names (any of the
-five, possibly empty, repetition allowed); `pubkey`: a string of exactly two fields
+eight, possibly empty, repetition allowed); `pubkey`: a string of exactly two fields
 separated by exactly one ASCII space (U+0020; no other whitespace, no leading or trailing space), the first `ssh-ed25519`, the second standard base64
 (with padding) decoding to exactly 51 bytes. 51 is a multiple of 3, so a correct encoding has no `=`
 padding and no unused bits; any other encoding fails the length test (**schema**). Likewise a
@@ -189,10 +192,16 @@ is what entries 0..*i*−1 established:
   declares, registered in array order before its signature is checked.
 - A `key` entry at *i* governs entries > *i*, never itself.
 
-- **The charter in force** is the `charter` of the latest valid `amend` entry, or of
-  genesis if there is none. An `amend` entry replaces it from the next entry on
-  (CHARTER §3: a change binds from the next entry). Its `id` must not equal any
-  earlier `amend`'s `id` (**schema**).
+- **The promulgated charter** is the `charter` of the latest valid `amend` entry, or
+  of genesis if there is none. **The charter in force** at position *i* is the
+  `charter` of the latest valid `amend` with `activate_at` ≤ *i*, or of genesis if
+  there is none (CHARTER §3: a change binds forward; an amendment decides now and
+  takes effect at its height). An `amend`'s `id` must not equal any earlier
+  `amend`'s `id`, and its `activate_at` must exceed its own `seq` (**schema**).
+- **The trusted base in force** is the `digest` of the latest valid `push` entry, or
+  genesis's `checker` if there is none.
+- **Transmuted amendments** are the `subject`s of valid `decision` entries of kind
+  `transmute`. The kernel records them; the judge enforces them (§10.11).
 
 Nothing else is state at C1's opening. Recognition (c) of CHARTER §3 ("every rule in force
 at its parent accepts it") holds vacuously: no rule can be admitted.
@@ -214,8 +223,11 @@ For entry *i* with line text T, in this order; the first failure refuses:
    `proposer` → **proposer_mismatch**; `type` ∉ that key's powers →
    **no_power**; Ed25519 fails → **bad_signature**.
 9. Effect: for `key`, register the declaration (§7; → **bad_key**); for `amend`,
-   the charter in force becomes its `charter` (§7; a repeated `id` → **schema**).
-   `proposal` and `merge` have no effect on the state beyond the head hash.
+   the promulgated charter becomes its `charter` and it is in force from
+   `activate_at` (§7); for `push`, the trusted base in force becomes its `digest`;
+   for `decision` of kind `transmute`, its `subject` joins the transmuted set.
+   `proposal`, `merge`, `spec_conflict` and the other decisions have no effect on the
+   state beyond the head hash.
 10. The head becomes the hash of T.
 
 `detail` is free text and is not compared between checkers.
@@ -295,8 +307,8 @@ order, each a refusal of the whole proposal:
    under those paths is refused alike; and a proposal must rebase after trunk's
    trusted base moves. Until C1 brings a lawful change path, these files change
    only by a commit Guy makes himself.
-2. **charter_mismatch** — the SHA-256 of trunk's `CHARTER.md` is not the charter
-   in force at the end of trunk's log (§7: the latest valid `amend`, else genesis).
+2. **charter_mismatch** — the SHA-256 of trunk's `CHARTER.md` is not the promulgated
+   charter at the end of trunk's log (§7: the latest valid `amend`, else genesis).
    (Checked only when trunk's log has a line.) An amendment therefore lands as one
    push by Guy: the text appended to `CHARTER.md` and the `amend` entry appended to
    `log.jsonl`, together. Pins: `charter_edit_unrecorded` (an edited `CHARTER.md`
@@ -325,6 +337,23 @@ order, each a refusal of the whole proposal:
     `tools/count_kernel.py` counts, exceed `judge/scope.json`'s `cap`.
 
 Items 7–10 apply only to a proposal whose head differs from trunk; the self-check, which judges trunk against itself, skips them.
+
+11. **trusted_base_unrecorded** — trunk's trusted-base digest (item 1) is not the
+    trusted base in force at the end of trunk's log (§7). Applies to the self-check
+    too: a push to `main` that changes the trusted base without a `push` entry
+    naming the new digest turns `main` red (CHARTER §7: every act of Guy's is an
+    entry). Pin `push_unrecorded`.
+12. **push_during_amendment** — a `push` entry whose `seq` lies strictly between an
+    `amend`'s `seq` and its `activate_at`: the law changes first, the code waits
+    for the height. Pin `freeze_ignored`.
+13. **amend_untransmuted** — an `amend` whose `id` is not in the transmuted set at
+    its position: every amendment is two acts, a `decision` of kind `transmute`
+    naming it and then the `amend` (Suber: an entrenched rule is first made
+    mutable, as a separate move). Pin `one_act_amendment`.
+14. **decision_by_other** — a `decision` entry not signed by a key declared in
+    genesis (the sovereign's acts are his own; CHARTER §7). Pin `decision_forged`.
+
+Items 11–14 apply to every judged log, the self-check included.
 
 `judge/scope.json` is under `judge/`, so it is trusted base and changes only
 by Guy's own push. Its members are `layer` (a string), `paths`, `documents`
