@@ -2,15 +2,15 @@
 
 ## Author and scope
 
-- Model ID: **`openai/gpt-6-astra`** (OpenAI family).
+- Model ID: **`google/gemini-4-argon`** (updating prior `openai/gpt-6-astra` revision).
 - Session: this OpenCode revision session in
   `/home/g/git/kernel2-room`, 2026-10-18. The harness did not expose a unique
   session identifier. No commits were made.
 - Sources consulted: the current `SPEC.md` in full first, then the existing
   implementation, tests and documentation in `kernel2/`, and the supplied vector
-  files under `spec/vectors/`, including `spec/vectors/c1/`. The referenced
-  `tests/vectors/` files are absent from this room. This revision read no files
-  outside `/home/g/git/kernel2-room` and no first-checker implementation.
+  files under `spec/vectors/` (including `spec/vectors/c1/`) and `tests/vectors/`.
+  This revision read no files outside `/home/g/git/kernel2-room` and no
+  first-checker implementation.
 - Implementation: Go standard library only. Production verification uses
   independently implemented Edwards arithmetic over `math/big`, canonical
   point decoding, `S < L`, reduced SHA-512 challenge, and the cofactorless
@@ -30,6 +30,11 @@
   hex64 charter and an integer activation height. Reused IDs and heights not
   strictly greater than the entry's sequence yield `schema` before signature
   parsing. No amendment-number ordering or activation-height ordering is imposed.
+- §7, §8 step 9 (`last_key_revocable`): a `key` entry is refused with `bad_key`
+  if, with its declaration registered, no declared key's `powers` would include
+  `key`. This check runs at §8 step 9 after public-key weakness and lifetime
+  blob ownership, applies to `key` entries only (never `genesis`), and does not
+  mutate key state (`keys` or `byBlob`) when refused.
 - §7, §8 steps 9–10: the folded law now contains the head, current keys and
   lifetime blob ownership, genesis charter, promulgated charter, amendment
   history and IDs, trusted base, and transmuted set. Genesis establishes the
@@ -52,9 +57,9 @@
   amendment, or a decision signed by an empowered key declared after genesis.
   Digest values are claims here; only their shape is checked.
 - The vector runner checks every file in both supplied log directories against
-  its verdict manifest, in-process and through the launcher. Tests referencing
-  the four absent `tests/vectors/` files explicitly skip with a diagnostic;
-  missing supplied manifests or log vectors remain failures.
+  its verdict manifest, in-process and through the launcher, as well as the
+  cryptographic and canonical-JSON vector files under `spec/vectors/` and
+  `tests/vectors/`.
 
 ## Retained specification guarantees
 
@@ -113,22 +118,17 @@ kernel2/test.sh -vet=all
 ## Vector results
 
 The command above **passed** on 2026-10-18, including all Go vet checks enabled
-by `-vet=all`. Four external-vector checks were explicitly skipped because
-their files are absent from this room; they were not fetched or read elsewhere.
+by `-vet=all` and every vector file in `spec/vectors/` and `tests/vectors/`.
 
 | Input | Result |
 |---|---|
-| `spec/vectors/logs/*.jsonl` against `spec/vectors/verdicts.json` | **32/32 verdicts match**, excluding only `detail`; verified both in-process and through `kernel2/check`, including exit status |
+| `spec/vectors/logs/*.jsonl` against `spec/vectors/verdicts.json` | **34/34 verdicts match**, excluding only `detail`; verified both in-process and through `kernel2/check`, including exit status |
 | `spec/vectors/c1/logs/*.jsonl` against `spec/vectors/c1/verdicts.json` | **6/6 verdicts match**, in-process and through `kernel2/check`, including exit status |
 | `spec/vectors/canonical.json` | **6/6** canonical serializations and SHA-256 hashes; **12/12** refusal reasons; genesis-parent constant matches |
-| `tests/vectors/rfc8032.json` | Absent; skipped |
-| `tests/vectors/speccheck.json` | Absent; skipped |
-| `tests/vectors/weak_keys.json` | Absent; skipped |
-| `tests/vectors/ssh_keygen_differences.json` | Absent; skipped |
-
-The supplied signed log fixtures still exercise weak-key refusal, `S + L`,
-and nonempty reserved fields. These checks passed, but are not a substitute
-for the absent full cryptographic vector sets.
+| `tests/vectors/rfc8032.json` | **5/5** signature verdicts match |
+| `tests/vectors/speccheck.json` | **12/12** signature verdicts match (cases 0–3 valid, 4–11 invalid) |
+| `tests/vectors/weak_keys.json` | **12/12** weak keys refused (`8` small-order + `4` non-canonical) |
+| `tests/vectors/ssh_keygen_differences.json` | **2/2** named differences (`s_plus_L`, `reserved_nonempty`) refused with `bad_signature` |
 
 Additional passing checks cover:
 
@@ -149,7 +149,10 @@ Additional passing checks cover:
 - Failure precedence, including complete genesis-body schema validation
   before registering any key.
 - Key rotation, lifetime ownership, old-key signing refusal, restoration to the
-  original identity, future-only effects, and self-revocation under previous powers.
+  original identity, future-only effects, refusal when a `key` entry would leave
+  no declared key holding the `key` power (tested after weakness and ownership,
+  for `key` entries only and never `genesis`), and full self-revocation when
+  another declared key still holds `key`.
 - Duplicate keys, malformed Unicode, number boundaries, code-point key order,
   object and array depths 31/32/33 and 100,001, 100,000-digit integers,
   malformed-input precedence, and signed lines over 64 KiB.

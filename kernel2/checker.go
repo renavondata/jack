@@ -199,12 +199,33 @@ func (s law) charterAt(position int64) string {
 	return s.genesisCharter
 }
 
-func (s *law) declare(d declaration) string {
+func hasPower(powers []string, power string) bool {
+	for _, p := range powers {
+		if p == power {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *law) declare(d declaration, requireKeyPower bool) string {
 	if weakKey(d.public) {
 		return "weak public key"
 	}
 	if id, ok := s.byBlob[string(d.blob)]; ok && id != d.id {
 		return "public key already declared under another key_id"
+	}
+	if requireKeyPower && !hasPower(d.powers, "key") {
+		kept := false
+		for id, k := range s.keys {
+			if id != d.id && hasPower(k.powers, "key") {
+				kept = true
+				break
+			}
+		}
+		if !kept {
+			return "no declared key would hold key power"
+		}
 	}
 	s.keys[d.id] = d
 	s.byBlob[string(d.blob)] = d.id
@@ -257,7 +278,7 @@ func checkEntry(line []byte, seq int64, state *law) map[string]any {
 	}
 	if typ == "genesis" {
 		for _, d := range decls {
-			if detail := state.declare(d); detail != "" {
+			if detail := state.declare(d, false); detail != "" {
 				return fail("bad_key", detail)
 			}
 		}
@@ -274,14 +295,7 @@ func checkEntry(line []byte, seq int64, state *law) map[string]any {
 	if key.principal != proposer {
 		return fail("proposer_mismatch", "signing key belongs to another principal")
 	}
-	powered := false
-	for _, power := range key.powers {
-		if power == typ {
-			powered = true
-			break
-		}
-	}
-	if !powered {
+	if !hasPower(key.powers, typ) {
 		return fail("no_power", "signing key lacks entry-type power")
 	}
 	unsigned := make(object, len(m)-1)
@@ -299,7 +313,7 @@ func checkEntry(line []byte, seq int64, state *law) map[string]any {
 		state.promulgatedCharter = state.genesisCharter
 		state.trustedBase = body["checker"].(string)
 	case "key":
-		if detail := state.declare(decls[0]); detail != "" {
+		if detail := state.declare(decls[0], true); detail != "" {
 			return fail("bad_key", detail)
 		}
 	case "amend":

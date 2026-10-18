@@ -182,13 +182,59 @@ func TestKeyRotationAndFutureEffect(t *testing.T) {
 	// Ownership survives rotation, but the same identity may restore its key.
 	reused := appendEntry(rotated, 2, "key", testDeclaration("old_id", old, "proposal"), replacement)
 	testReason(t, reused, "bad_key", 2)
-	restored := appendEntry(rotated, 2, "key", testDeclaration("root", old, "proposal"), replacement)
+	lostOnRestore := appendEntry(rotated, 2, "key", testDeclaration("root", old, "proposal"), replacement)
+	testReason(t, lostOnRestore, "bad_key", 2)
+	restored := appendEntry(rotated, 2, "key", testDeclaration("root", old, "key", "proposal"), replacement)
 	testReason(t, appendEntry(restored, 3, "proposal", proposal, old), "", 0)
-	// Removing one's own powers is allowed under the previous state.
-	revoked := appendEntry(rotated, 2, "key", testDeclaration("root", replacement), replacement)
+	// Losing the last key power is refused for key entries, while dropping other powers is allowed.
+	testReason(t, appendEntry(rotated, 2, "key", testDeclaration("root", replacement), replacement), "bad_key", 2)
+	testReason(t, appendEntry(rotated, 2, "key", testDeclaration("root", replacement, "proposal"), replacement), "bad_key", 2)
+	narrowed := appendEntry(rotated, 2, "key", testDeclaration("root", replacement, "key"), replacement)
+	testReason(t, narrowed, "", 0)
+	testReason(t, appendEntry(narrowed, 3, "proposal", proposal, replacement), "no_power", 3)
+	testReason(t, appendEntry(narrowed, 3, "proposal", proposal, old), "unknown_key", 3)
+	// Full self-revocation is allowed once another declared key holds key power.
+	backup := testPrivate("backup")
+	withBackup := appendEntry(rotated, 2, "key", testDeclaration("backup", backup, "key"), replacement)
+	revoked := appendEntry(withBackup, 3, "key", testDeclaration("root", replacement), replacement)
 	testReason(t, revoked, "", 0)
-	testReason(t, appendEntry(revoked, 3, "proposal", proposal, replacement), "no_power", 3)
-	testReason(t, appendEntry(revoked, 3, "proposal", proposal, old), "unknown_key", 3)
+	testReason(t, appendEntry(revoked, 4, "key", testDeclaration("root", replacement, "key"), replacement), "no_power", 4)
+	testReason(t, appendEntry(revoked, 4, "key", testDeclaration("backup", backup), backup), "bad_key", 4)
+	// Genesis is never refused for declaring no key with the key power.
+	noKeyPowerGenesis := testEntry("genesis", object{"charter": strings.Repeat("0", 64), "checker": strings.Repeat("0", 64), "keys": []any{testDeclaration("root", old, "genesis")}})
+	testSign(noKeyPowerGenesis, old)
+	testReason(t, canonical(noKeyPowerGenesis), "", 0)
+	// Within §7 / §8 step 9, weakness is tested first, then ownership, then last key power;
+	// refusing a key entry leaves keys and byBlob unchanged.
+	state := foundingLaw(t, old)
+	weakDecl := declaration{id: "root", principal: "tester", blob: append(wireString([]byte("ssh-ed25519")), wireString(encodePoint(identity()))...), public: encodePoint(identity()), powers: nil}
+	if got := state.declare(weakDecl, true); got != "weak public key" {
+		t.Fatalf("weakness precedence: got %q", got)
+	}
+	otherDecl, ok := keyShape(testDeclaration("other", replacement, "key"))
+	if !ok || state.declare(otherDecl, true) != "" {
+		t.Fatal("failed to register second key")
+	}
+	dupAndLose := declaration{id: "other", principal: "tester", blob: state.keys["root"].blob, public: state.keys["root"].public, powers: nil}
+	if got := state.declare(dupAndLose, true); got != "public key already declared under another key_id" {
+		t.Fatalf("ownership precedence: got %q", got)
+	}
+	unowned := testPrivate("unowned")
+	unownedDecl, ok := keyShape(testDeclaration("other", unowned))
+	if !ok || state.declare(unownedDecl, true) != "" {
+		t.Fatal("failed to drop key power from second key while root still holds key")
+	}
+	fresh := testPrivate("fresh")
+	loseLast, ok := keyShape(testDeclaration("root", fresh))
+	if !ok {
+		t.Fatal("bad test declaration")
+	}
+	if got := state.declare(loseLast, true); got != "no declared key would hold key power" {
+		t.Fatalf("last key power check: got %q", got)
+	}
+	if _, owned := state.byBlob[string(loseLast.blob)]; owned || !bytes.Equal(state.keys["root"].blob, testPublicBlob(old)) {
+		t.Fatal("refused declaration mutated key state")
+	}
 }
 
 func TestContainerBoundaries(t *testing.T) {
