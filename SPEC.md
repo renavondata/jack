@@ -188,6 +188,13 @@ is what entries 0..*i*−1 established:
 - A declaration is refused with **bad_key** if its public key is weak (§6), or
   if its pubkey blob has **ever** been declared for a *different* key_id, even one since rotated
   or revoked (one key, one identity, for the life of the log). Weakness is tested first; the detail is free text.
+- A `key` entry is refused with **bad_key** if, with its declaration registered, no
+  declared key's `powers` would include `key`: the power to declare keys, once lost,
+  can be regained by no entry (CHARTER §2.4: forbid only the irreversible). Tested
+  after weakness and ownership; for `key` entries only, never for genesis. Pin
+  `last_key_revocable`: a re-declaration of the only key holding `key` without it is
+  refused at its seq with bad_key; its twin, the same re-declaration keeping `key`, is
+  admitted.
 - Genesis is self-certifying: for entry 0 the keys are those its own body
   declares, registered in array order before its signature is checked.
 - A `key` entry at *i* governs entries > *i*, never itself.
@@ -222,7 +229,8 @@ For entry *i* with line text T, in this order; the first failure refuses:
    blob equals no declared key's blob → **unknown_key**; that key's principal ≠
    `proposer` → **proposer_mismatch**; `type` ∉ that key's powers →
    **no_power**; Ed25519 fails → **bad_signature**.
-9. Effect: for `key`, register the declaration (§7; → **bad_key**); for `amend`,
+9. Effect: for `key`, register the declaration (§7; a weak or owned pubkey, or the
+   last `key` power lost → **bad_key**); for `amend`,
    the promulgated charter becomes its `charter` and it is in force from
    `activate_at` (§7); for `push`, the trusted base in force becomes its `digest`;
    for `decision` of kind `transmute`, its `subject` joins the transmuted set.
@@ -384,7 +392,7 @@ Pins for items 7–10, each with its mutant and a passing twin:
 - `spec/vectors/logs/*.jsonl` with `spec/vectors/verdicts.json` — signed logs
   (throwaway public keys embedded in their genesis) and the verdict each must
   produce: one per reason code, plus valid logs exercising every entry type,
-  grant, revocation and re-declaration.
+  grant, revocation and re-declaration, and the last `key` power lost.
 
 ## 12. Decisions and resolved ambiguities
 

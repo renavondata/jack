@@ -54,9 +54,10 @@ Then the sum over the parts: logs 100000, disagreements 0, uncompared 0, ranges 
 ## promote — a layer boundary (CHARTER §6, §7)
 ```
 git switch main && git pull --ff-only
-git -c gpg.format=ssh -c user.signingkey=~/.ssh/id_ed25519.pub tag -s <layer>-exit -m "<decision and rulings>" && git push origin <layer>-exit
+git -c gpg.format=ssh -c user.signingkey=~/.ssh/id_ed25519.pub tag -s <layer>-exit -m "<decision and rulings>" && git push origin refs/tags/<layer>-exit
 ```
-Until C1, a tag outside the log; afterwards an entry.
+Until C1, a tag outside the log; afterwards an entry. Push and verify by `refs/tags/<name>`:
+a tag that shares a branch's name is ambiguous to git otherwise.
 
 ## Never
 `--admin`; force-push; deleting a remote branch; editing a builder's branch by hand; `key` entries before
