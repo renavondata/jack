@@ -49,24 +49,6 @@ class SpecVectors(unittest.TestCase):
         self.assertEqual(diff.compare(cmd, cmd, paths), [])
         self.assertEqual({d[0] for d in diff.compare(cmd, ["/bin/false"], paths)}, set(paths))
 
-    def test_c1_log_vectors(self):
-        directory = os.path.join(VEC, "c1")
-        with open(os.path.join(directory, "verdicts.json")) as f:
-            verdicts = json.load(f)["verdicts"]
-        paths = sorted(glob.glob(os.path.join(directory, "logs", "*.jsonl")))
-        self.assertEqual({os.path.basename(p) for p in paths}, set(verdicts))
-        expected = {"valid_amend.jsonl": {"ok": True, "entries": 3},
-                    **{f"valid_{t}.jsonl": {"ok": True, "entries": 2} for t in ("push", "decision", "spec_conflict")},
-                    "amend_activation_not_above_seq.jsonl": {"ok": False, "seq": 1, "reason": "schema"},
-                    "push_without_power.jsonl": {"ok": False, "seq": 1, "reason": "no_power"}}
-        self.assertEqual(verdicts, expected)
-        for path in paths:
-            with open(path, "rb") as f:
-                lines = check.read_lines(f.read())
-            self.assertEqual({k: v for k, v in check.check(lines).items() if k != "detail"}, verdicts[os.path.basename(path)])
-            for length in range(len(lines)):
-                self.assertEqual(check.check(lines[:length]), {"ok": True, "entries": length})
-
 
 if __name__ == "__main__":
     unittest.main()

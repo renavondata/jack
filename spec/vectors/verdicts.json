@@ -164,6 +164,32 @@
   "33_last_key_power_kept.jsonl": {
    "ok": true,
    "entries": 2
+  },
+  "34_valid_amend.jsonl": {
+   "ok": true,
+   "entries": 3
+  },
+  "35_valid_push.jsonl": {
+   "ok": true,
+   "entries": 2
+  },
+  "36_valid_decision.jsonl": {
+   "ok": true,
+   "entries": 2
+  },
+  "37_valid_spec_conflict.jsonl": {
+   "ok": true,
+   "entries": 2
+  },
+  "38_amend_activation_not_above_seq.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "schema"
+  },
+  "39_push_without_power.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "no_power"
   }
  }
 }

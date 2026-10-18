@@ -85,50 +85,42 @@ def logs(w):
     lg = w.log(); lg.add("key", "guy", dict(build.decl("eve-1", "eve", bob, ["proposal"]), note="x"), w.guy); out["30_key_decl_extra_member"] = lg.lines
     lg = build.Log(); lg.add("genesis", "guy", build.genesis_body([dict(w.decls[0], note="x")] + w.decls[1:]), w.guy)
     out["31_genesis_key_extra_member"] = lg.lines
-    return out
-
-
-def c1_logs(w):
-    out = {}
     bodies = {
         "amend": {"id": "A2", "charter": "aa" * 32, "activate_at": 3},
         "push": {"digest": "bb" * 32, "review": "0" * 64},
         "decision": {"kind": "transmute", "subject": "A2"},
         "spec_conflict": {"section": "5", "text": "A recorded conflict"},
     }
-    for type_, body in bodies.items():
+    for n, (type_, body) in enumerate(bodies.items(), 34):
         lg = w.log()
         if type_ == "amend":
             lg.add("decision", "guy", bodies["decision"], w.guy)
         lg.add(type_, "guy", body, w.guy)
-        out["valid_" + type_] = lg.lines
+        out[f"{n}_valid_{type_}"] = lg.lines
     lg = w.log()
     lg.add("amend", "guy", dict(bodies["amend"], activate_at=1), w.guy)
-    out["amend_activation_not_above_seq"] = lg.lines
+    out["38_amend_activation_not_above_seq"] = lg.lines
     lg = w.log(); lg.add("push", "ann", bodies["push"], w.ann)
-    out["push_without_power"] = lg.lines
+    out["39_push_without_power"] = lg.lines
     return out
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--c1", action="store_true", help="generate the C1 opening vectors in c1/")
-    c1 = ap.parse_args().c1
-    out = os.path.join(OUT, "c1") if c1 else OUT
+    argparse.ArgumentParser(description=__doc__).parse_args()
+    out = OUT
     os.makedirs(os.path.join(out, "logs"), exist_ok=True)
     for old in glob.glob(os.path.join(out, "logs", "*.jsonl")):
         os.remove(old)
     with tempfile.TemporaryDirectory() as tmp:
         w = build.World(tmp)
         verdicts = {}
-        for name, lines in (c1_logs(w) if c1 else logs(w)).items():
+        for name, lines in logs(w).items():
             with open(os.path.join(out, "logs", name + ".jsonl"), "w") as f:
                 f.write("".join(l + "\n" for l in lines))
             v = check.check(lines)
             verdicts[name + ".jsonl"] = {k: x for k, x in v.items() if k != "detail"}
-    if not c1:
-        with open(os.path.join(out, "canonical.json"), "w") as f:
-            json.dump(canonical_vectors(), f, indent=1, ensure_ascii=False)
+    with open(os.path.join(out, "canonical.json"), "w") as f:
+        json.dump(canonical_vectors(), f, indent=1, ensure_ascii=False)
     with open(os.path.join(out, "verdicts.json"), "w") as f:
         json.dump({"about": "verdict each log in logs/ must produce (SPEC.md §10), detail omitted", "verdicts": verdicts}, f, indent=1)
     print(f"{len(verdicts)} logs → {out}")
