@@ -77,7 +77,7 @@ An entry object has **exactly** the keys `seq, parent, ts, type, proposer, body,
 | `seq` | integer ≥ 0 (not a boolean) |
 | `parent` | `[0-9a-f]{64}` |
 | `ts` | `YYYY-MM-DDTHH:MM:SSZ` in **ASCII digits only** (`[0-9]`, never other Unicode digits), naming an instant that exists: year 0001–9999, a real Gregorian date (leap years included), hour 00–23, minute 00–59, second 00–59 (no leap seconds). The checker never reads a clock and does not order timestamps at C0. |
-| `type` | one of `genesis key proposal merge` |
+| `type` | one of `genesis key proposal merge amend` |
 | `proposer` | a string (emptiness is checked later, §8 step 6) |
 | `body` | an object |
 | `sig` | `[A-Za-z0-9+/]+={0,2}` (decoded in §6) |
@@ -94,13 +94,14 @@ including keys containing `.`); a required member with the wrong shape is
 | `key` | a key declaration (the body itself) |
 | `proposal` | `title`: string; `commit`: hex40 |
 | `merge` | `proposal`: integer ≥ 0; `commit`: hex40; `checker`: hex64 |
+| `amend` | `id`: `[A-Z][0-9]{1,3}` (A2, A3, …); `charter`: hex64, the SHA-256 of `CHARTER.md` with the amendment appended |
 
 hex64 = `[0-9a-f]{64}`, hex40 = `[0-9a-f]{40}`. "integer ≥ 0" excludes booleans.
 
 A **key declaration** (the body of a `key` entry, and each element of `genesis.keys`) is an object with
 **exactly** these four members, and no others (else **schema**): `key_id`: `[a-z0-9_-]{1,64}`;
 `principal`: non-empty string; `powers`: array of entry-type names (any of the
-four, possibly empty, repetition allowed); `pubkey`: a string of exactly two fields
+five, possibly empty, repetition allowed); `pubkey`: a string of exactly two fields
 separated by exactly one ASCII space (U+0020; no other whitespace, no leading or trailing space), the first `ssh-ed25519`, the second standard base64
 (with padding) decoding to exactly 51 bytes. 51 is a multiple of 3, so a correct encoding has no `=`
 padding and no unused bits; any other encoding fails the length test (**schema**). Likewise a
@@ -188,7 +189,12 @@ is what entries 0..*i*−1 established:
   declares, registered in array order before its signature is checked.
 - A `key` entry at *i* governs entries > *i*, never itself.
 
-Nothing else is state at C0. Recognition (c) of CHARTER §3 ("every rule in force
+- **The charter in force** is the `charter` of the latest valid `amend` entry, or of
+  genesis if there is none. An `amend` entry replaces it from the next entry on
+  (CHARTER §3: a change binds from the next entry). Its `id` must not equal any
+  earlier `amend`'s `id` (**schema**).
+
+Nothing else is state at C1's opening. Recognition (c) of CHARTER §3 ("every rule in force
 at its parent accepts it") holds vacuously: no rule can be admitted.
 
 ## 8. The validity predicate
@@ -207,8 +213,9 @@ For entry *i* with line text T, in this order; the first failure refuses:
    blob equals no declared key's blob → **unknown_key**; that key's principal ≠
    `proposer` → **proposer_mismatch**; `type` ∉ that key's powers →
    **no_power**; Ed25519 fails → **bad_signature**.
-9. Effect: for `key`, register the declaration (§7; → **bad_key**). `proposal`
-   and `merge` have no effect on the state beyond the head hash.
+9. Effect: for `key`, register the declaration (§7; → **bad_key**); for `amend`,
+   the charter in force becomes its `charter` (§7; a repeated `id` → **schema**).
+   `proposal` and `merge` have no effect on the state beyond the head hash.
 10. The head becomes the hash of T.
 
 `detail` is free text and is not compared between checkers.
@@ -288,8 +295,13 @@ order, each a refusal of the whole proposal:
    under those paths is refused alike; and a proposal must rebase after trunk's
    trusted base moves. Until C1 brings a lawful change path, these files change
    only by a commit Guy makes himself.
-2. **charter_mismatch** — trunk has a genesis whose `body.charter` is not the
-   SHA-256 of trunk's `CHARTER.md`. (Checked only when trunk's log has a line.)
+2. **charter_mismatch** — the SHA-256 of trunk's `CHARTER.md` is not the charter
+   in force at the end of trunk's log (§7: the latest valid `amend`, else genesis).
+   (Checked only when trunk's log has a line.) An amendment therefore lands as one
+   push by Guy: the text appended to `CHARTER.md` and the `amend` entry appended to
+   `log.jsonl`, together. Pins: `charter_edit_unrecorded` (an edited `CHARTER.md`
+   with no `amend` is refused), `amend_stale` (an `amend` whose `charter` is not
+   trunk's `CHARTER.md` is refused).
 3. **prefix_broken** — trunk's log is not a byte prefix of the proposal's.
 4. **genesis_by_proposal** — the proposal supplies entry 0.
 5. The kernel's verdict, trunk's kernel extracted from git and run over the
