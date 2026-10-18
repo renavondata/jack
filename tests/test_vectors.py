@@ -3,11 +3,13 @@ import glob
 import json
 import os
 import sys
+import tempfile
 import unittest
 
-from harness import diff
+from harness import build, diff
 from kernel import check, log
 from kernel.log import Refuse
+from tools import vectors
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VEC = os.path.join(ROOT, "spec", "vectors")
@@ -42,6 +44,18 @@ class SpecVectors(unittest.TestCase):
                                             "genesis_misplaced", "no_proposer", "bad_key", "unknown_key",
                                             "proposer_mismatch", "no_power", "bad_signature"})
         self.assertTrue(any(v["ok"] for v in verdicts.values()))
+
+    def test_generator_produces_every_log(self):
+        """tools/vectors.py yields every committed log, each with its recorded verdict, from fresh keys."""
+        with open(os.path.join(VEC, "verdicts.json")) as f:
+            verdicts = json.load(f)["verdicts"]
+        with tempfile.TemporaryDirectory() as tmp:
+            generated = vectors.logs(build.World(tmp))
+        self.assertEqual({name + ".jsonl" for name in generated}, set(verdicts))
+        self.assertEqual(len(generated), 40)
+        for name, lines in generated.items():
+            v = check.check(lines)
+            self.assertEqual({k: x for k, x in v.items() if k != "detail"}, verdicts[name + ".jsonl"], name)
 
     def test_differential_harness_against_itself(self):
         cmd = [sys.executable, "-E", "-s", "-m", "kernel.check"]

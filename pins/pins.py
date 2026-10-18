@@ -11,6 +11,7 @@ differential pins of SPEC §9a.7 run the tree's harness/diff.py over shell-scrip
 """
 import functools
 import glob
+import hashlib
 import json
 import os
 import subprocess
@@ -169,6 +170,42 @@ def t_push_unrecorded(root):
     gitfix.write(fx.repo, "log.jsonl", fx.log.text())
     commit(fx.repo, "Record the trusted base")
     assert runner.judge_with(root, fx.repo, "main", "main").get("ok") is True
+
+
+def charter_judged(root, charter=None, amend=None):
+    """Verdicts on main against itself and on a docs proposal, after Guy's trunk commit editing CHARTER.md, amending, or both."""
+    w = world()
+    fx = make_repo(w)
+    gitfix.git(fx.repo, "checkout", "-q", "main")
+    if charter is not None:
+        gitfix.write(fx.repo, "CHARTER.md", charter)
+    if amend is not None:
+        fx.log.add("decision", "guy", {"kind": "transmute", "subject": "A2"}, w.guy)
+        fx.log.add("amend", "guy", {"id": "A2", "charter": amend, "activate_at": 9}, w.guy)
+        gitfix.write(fx.repo, "log.jsonl", fx.log.text())
+    commit(fx.repo, "Guy changes the charter")
+    gitfix.git(fx.repo, "checkout", "-q", "pr")
+    gitfix.git(fx.repo, "reset", "-q", "--hard", "main")
+    gitfix.write(fx.repo, "README.md", "docs\n")
+    commit(fx.repo, "docs")
+    return [runner.judge_with(root, fx.repo, "main", head) for head in ("main", "pr")]
+
+
+def t_charter_edit_unrecorded(root):
+    """SPEC §10.2: an edit to trunk's CHARTER.md lands only with the amend recording its SHA-256."""
+    edited = gitfix.CHARTER_TEXT + "A2. An amendment.\n"
+    for r in charter_judged(root, charter=edited):
+        judge_refuses(r, "charter_mismatch")
+    for r in charter_judged(root, charter=edited, amend=hashlib.sha256(edited.encode()).hexdigest()):
+        assert r.get("ok") is True, r
+
+
+def t_amend_stale(root):
+    """SPEC §10.2: the promulgated charter is the latest amend's, not genesis's, and must be trunk's CHARTER.md."""
+    for r in charter_judged(root, amend="ff" * 32):
+        judge_refuses(r, "charter_mismatch")
+    for r in charter_judged(root, amend=gitfix.CHARTER_SHA256):
+        assert r.get("ok") is True, r
 
 
 def t_freeze_ignored(root):
@@ -469,7 +506,14 @@ def t_prefix_skipped(root):
 
 GUARD = 'if digest(repo, head) != report["trusted_digest"] or show(repo, head, CHARTER) != show(repo, trunk, CHARTER):'
 
+CHARTER_MISMATCH = '    if old and promulgated_charter(repo, trunk, trunk_log) != hashlib.sha256(show(repo, trunk, CHARTER) or b"").hexdigest():'
+
 PINS = [
+    Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
+        Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
+    Pin("amend_stale", t_amend_stale, [
+        Mutant("genesis_charter_compared", "judge/judge.py", CHARTER_MISMATCH,
+               CHARTER_MISMATCH.replace("promulgated_charter(repo, trunk, trunk_log)", "genesis_charter(old[0])"))]),
     Pin("push_unrecorded", t_push_unrecorded, [
         Mutant("trusted_base_unchecked", "judge/judge.py", '    if old and trusted != report["trusted_digest"]:', '    if False:')]),
     Pin("freeze_ignored", t_freeze_ignored, [

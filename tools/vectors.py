@@ -85,6 +85,10 @@ def logs(w):
     lg = w.log(); lg.add("key", "guy", dict(build.decl("eve-1", "eve", bob, ["proposal"]), note="x"), w.guy); out["30_key_decl_extra_member"] = lg.lines
     lg = build.Log(); lg.add("genesis", "guy", build.genesis_body([dict(w.decls[0], note="x")] + w.decls[1:]), w.guy)
     out["31_genesis_key_extra_member"] = lg.lines
+    lg = w.log(); lg.add("key", "guy", build.decl("guy-master", "guy", w.guy, [t for t in build.ALL if t != "key"]), w.guy)
+    out["32_last_key_power_lost_bad_key"] = lg.lines
+    lg = w.log(); lg.add("key", "guy", build.decl("guy-master", "guy", w.guy, build.ALL), w.guy)
+    out["33_last_key_power_kept"] = lg.lines
     bodies = {
         "amend": {"id": "A2", "charter": "aa" * 32, "activate_at": 3},
         "push": {"digest": "bb" * 32, "review": "0" * 64},
