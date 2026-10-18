@@ -4,11 +4,12 @@
 
 - Model ID: **`openai/gpt-6-astra`** (OpenAI family).
 - Session: this OpenCode revision session in
-  `/home/g/git/kernel2-room`, 2026-10-14. The harness did not expose a unique
+  `/home/g/git/kernel2-room`, 2026-10-18. The harness did not expose a unique
   session identifier. No commits were made.
 - Sources consulted: the current `SPEC.md` in full first, then the existing
-  implementation, tests and documentation in `kernel2/`, and the named vector
-  files under `spec/vectors/` and `tests/vectors/`. This revision read no files
+  implementation, tests and documentation in `kernel2/`, and the supplied vector
+  files under `spec/vectors/`, including `spec/vectors/c1/`. The referenced
+  `tests/vectors/` files are absent from this room. This revision read no files
   outside `/home/g/git/kernel2-room` and no first-checker implementation.
 - Implementation: Go standard library only. Production verification uses
   independently implemented Edwards arithmetic over `math/big`, canonical
@@ -19,9 +20,43 @@
   the log bytes. The launcher disables Go downloads and telemetry; build
   cache, temporary files, and the executable are confined to `kernel2/.cache/`.
 
-One revision attempt ran outside the room (in the jack checkout) on 14 Oct and was discarded; it listed directory names but read no file of the first checker.
-
 ## Changes for the current specification
+
+- §4–5: entry types and key powers accept all eight names: `genesis`, `key`,
+  `proposal`, `merge`, `amend`, `push`, `decision`, `spec_conflict`. Empty and
+  repeated powers remain valid. The four new body schemas enforce their exact
+  required shapes while permitting extra members, including dotted keys.
+- §5, §7, §8 step 7: amendments require an ID matching `[A-Z][0-9]{1,3}`, a
+  hex64 charter and an integer activation height. Reused IDs and heights not
+  strictly greater than the entry's sequence yield `schema` before signature
+  parsing. No amendment-number ordering or activation-height ordering is imposed.
+- §7, §8 steps 9–10: the folded law now contains the head, current keys and
+  lifetime blob ownership, genesis charter, promulgated charter, amendment
+  history and IDs, trusted base, and transmuted set. Genesis establishes the
+  initial charter and trusted base. A valid amendment immediately updates the
+  promulgated charter; `charterAt(position)` selects the latest amendment in
+  **log order** with `activate_at <= position`, falling back to genesis.
+  Pending amendments cannot displace the active charter, and an older amendment
+  activating later cannot override a newer already-active amendment.
+- A valid push updates the trusted base immediately. A valid `transmute`
+  decision adds its nonempty subject to a set, with repetition harmless; the
+  subject need not match an amendment ID or refer to an existing amendment.
+  Other decision kinds (`veto`, `promote`, `budget`, `grant`, `fix`), proposals,
+  merges and specification conflicts change only the head. In particular,
+  a `grant` decision is not a key declaration.
+- All new entries use the existing strict SSHSIG/Ed25519 path and current-key
+  powers. Effects occur after successful signature verification. The twelve
+  reason codes and CLI verdict format are preserved.
+- §10's judge-only checks remain outside the validity predicate: the kernel
+  accepts an otherwise valid untransmuted amendment, a push during a pending
+  amendment, or a decision signed by an empowered key declared after genesis.
+  Digest values are claims here; only their shape is checked.
+- The vector runner checks every file in both supplied log directories against
+  its verdict manifest, in-process and through the launcher. Tests referencing
+  the four absent `tests/vectors/` files explicitly skip with a diagnostic;
+  missing supplied manifests or log vectors remain failures.
+
+## Retained specification guarantees
 
 - §2: object/array nesting is capped at 32, counting the line object as depth 1.
   The parser refuses before descending into depth 33, bounding recursion even
@@ -68,7 +103,7 @@ For every log, stdout is exactly one JSON verdict; status 0 means valid,
 1 means refused. Usage and I/O errors write a diagnostic to stderr and return
 2. There are no question exits.
 
-Run the complete test suite, including every permitted vector file and actual
+Run the test suite, including every supplied vector file and actual
 launcher invocations:
 
 ```sh
@@ -77,24 +112,38 @@ kernel2/test.sh -vet=all
 
 ## Vector results
 
-The command above **passed**, including all Go vet checks enabled by
-`-vet=all`.
+The command above **passed** on 2026-10-18, including all Go vet checks enabled
+by `-vet=all`. Four external-vector checks were explicitly skipped because
+their files are absent from this room; they were not fetched or read elsewhere.
 
 | Input | Result |
 |---|---|
 | `spec/vectors/logs/*.jsonl` against `spec/vectors/verdicts.json` | **32/32 verdicts match**, excluding only `detail`; verified both in-process and through `kernel2/check`, including exit status |
+| `spec/vectors/c1/logs/*.jsonl` against `spec/vectors/c1/verdicts.json` | **6/6 verdicts match**, in-process and through `kernel2/check`, including exit status |
 | `spec/vectors/canonical.json` | **6/6** canonical serializations and SHA-256 hashes; **12/12** refusal reasons; genesis-parent constant matches |
-| `tests/vectors/rfc8032.json` | **5/5** valid signatures accepted |
-| `tests/vectors/speccheck.json` | **12/12** outcomes match: cases 0–3 accepted, 4–11 refused |
-| `tests/vectors/weak_keys.json` | **12/12** public keys classified weak |
-| `tests/vectors/ssh_keygen_differences.json` | **2/2** named differences exercised through the corresponding signed log fixtures: `S + L` and nonempty reserved field both yield `bad_signature` |
+| `tests/vectors/rfc8032.json` | Absent; skipped |
+| `tests/vectors/speccheck.json` | Absent; skipped |
+| `tests/vectors/weak_keys.json` | Absent; skipped |
+| `tests/vectors/ssh_keygen_differences.json` | Absent; skipped |
 
-The last file contains descriptions and references rather than signature
-bytes. Tests consume it and map its two names to supplied log fixtures 13 and
-15; they do not inspect its referenced Python tests or invoke ssh-keygen.
+The supplied signed log fixtures still exercise weak-key refusal, `S + L`,
+and nonempty reserved fields. These checks passed, but are not a substitute
+for the absent full cryptographic vector sets.
 
 Additional passing checks cover:
 
+- Missing/wrong-shaped required fields for the four new types; amendment ID
+  boundaries, booleans excluded from activation heights, extra body fields,
+  nonempty strings without unstated trimming, and all six decision kinds.
+- Duplicate amendment IDs and past/current activation heights rejected before
+  malformed signature containers; immediate-next-position and maximum canonical
+  activation heights accepted.
+- Genesis charter/base initialization, separate promulgation and activation,
+  exact activation boundaries, out-of-order heights, historical charter queries,
+  latest push replacement, and idempotent transmutation recording.
+- Each new type's signature/identity/power failures and absence of governance
+  effects on refusal; head updates and inert-entry effects; later-declared
+  decision signers and the checker/judge boundary.
 - 32 deterministic ordinary signatures compared with `crypto/ed25519`, plus
   32 tampered signatures refused by both implementations.
 - Failure precedence, including complete genesis-body schema validation
@@ -119,8 +168,12 @@ Additional passing checks cover:
 
 ## Questions and verification scope
 
-`kernel2/QUESTIONS.md` now records **none**. The current specification resolves
-Q1–Q3, and no remaining validity ambiguity was identified during this revision.
+`kernel2/QUESTIONS.md` records **none**. No remaining validity ambiguity was
+identified during this revision. The historical "four entry types" summary in
+§12 item 1 does not override the explicit eight-type list and schemas in §4–5
+or the user's instruction to implement them. The §7 transmutation cross-reference
+points to §10.11, while the actual judge requirement appears in §10 item 13;
+the checker's recording obligation is explicit in §8 step 9.
 
 The emoji illustration in §2 is resolved by the explicit surrogate-pair rule
 and `canonical.json`: the canonical bytes use `\ud83d\ude00`.

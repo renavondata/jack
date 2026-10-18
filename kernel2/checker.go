@@ -15,11 +15,28 @@ var (
 	hex64          = regexp.MustCompile(`^[0-9a-f]{64}$`)
 	hex40          = regexp.MustCompile(`^[0-9a-f]{40}$`)
 	keyID          = regexp.MustCompile(`^[a-z0-9_-]{1,64}$`)
+	amendID        = regexp.MustCompile(`^[A-Z][0-9]{1,3}$`)
 	sigShape       = regexp.MustCompile(`^[A-Za-z0-9+/]+={0,2}$`)
 	asciiTimestamp = regexp.MustCompile(`^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$`)
 )
 
-func isType(s string) bool                  { return s == "genesis" || s == "key" || s == "proposal" || s == "merge" }
+func isType(s string) bool {
+	switch s {
+	case "genesis", "key", "proposal", "merge", "amend", "push", "decision", "spec_conflict":
+		return true
+	}
+	return false
+}
+
+func isDecisionKind(v any) bool {
+	switch v {
+	case "veto", "promote", "budget", "grant", "transmute", "fix":
+		return true
+	}
+	return false
+}
+
+func nonempty(v any) bool                   { s, ok := v.(string); return ok && s != "" }
 func matches(v any, re *regexp.Regexp) bool { s, ok := v.(string); return ok && re.MatchString(s) }
 func nonnegative(v any) bool                { n, ok := v.(jsonInteger); return ok && n >= 0 }
 
@@ -133,18 +150,56 @@ func bodyShape(typ string, m object) ([]declaration, bool) {
 		return nil, ok && matches(m["commit"], hex40)
 	case "merge":
 		return nil, nonnegative(m["proposal"]) && matches(m["commit"], hex40) && matches(m["checker"], hex64)
+	case "amend":
+		_, integer := m["activate_at"].(jsonInteger)
+		return nil, matches(m["id"], amendID) && matches(m["charter"], hex64) && integer
+	case "push":
+		return nil, matches(m["digest"], hex64) && matches(m["review"], hex64)
+	case "decision":
+		return nil, isDecisionKind(m["kind"]) && nonempty(m["subject"])
+	case "spec_conflict":
+		return nil, nonempty(m["section"]) && nonempty(m["text"])
 	}
 	panic("entry shape admitted unknown type")
 }
 
-type law struct {
-	keys   map[string]declaration
-	byBlob map[string]string // Lifetime ownership; includes rotated-out blobs.
+type amendment struct {
+	seq, activateAt int64
+	charter         string
 }
 
-func newLaw() law { return law{map[string]declaration{}, map[string]string{}} }
+type law struct {
+	head               string
+	keys               map[string]declaration
+	byBlob             map[string]string // Lifetime ownership; includes rotated-out blobs.
+	genesisCharter     string
+	promulgatedCharter string
+	trustedBase        string
+	amendments         []amendment // Log order, not activation-height order.
+	amendIDs           map[string]bool
+	transmuted         map[string]bool
+}
 
-func (s law) declare(d declaration) string {
+func newLaw() law {
+	return law{
+		head: strings.Repeat("0", 64), keys: map[string]declaration{},
+		byBlob: map[string]string{}, amendIDs: map[string]bool{}, transmuted: map[string]bool{},
+	}
+}
+
+// Only earlier entries establish the law at a position. Among eligible
+// amendments, the latest in log order wins, even if heights are out of order.
+func (s law) charterAt(position int64) string {
+	for i := len(s.amendments) - 1; i >= 0; i-- {
+		a := s.amendments[i]
+		if a.seq < position && a.activateAt <= position {
+			return a.charter
+		}
+	}
+	return s.genesisCharter
+}
+
+func (s *law) declare(d declaration) string {
 	if weakKey(d.public) {
 		return "weak public key"
 	}
@@ -167,7 +222,7 @@ func refused(seq int64, reason, detail string) map[string]any {
 	return map[string]any{"ok": false, "seq": seq, "reason": reason, "detail": detail}
 }
 
-func checkEntry(line []byte, seq int64, parent string, state law) map[string]any {
+func checkEntry(line []byte, seq int64, state *law) map[string]any {
 	fail := func(reason, detail string) map[string]any { return refused(seq, reason, detail) }
 	m, reason := parseCanonical(line)
 	if reason != "" {
@@ -179,7 +234,7 @@ func checkEntry(line []byte, seq int64, parent string, state law) map[string]any
 	if int64(m["seq"].(jsonInteger)) != seq {
 		return fail("bad_seq", "seq differs from line index")
 	}
-	if m["parent"].(string) != parent {
+	if m["parent"].(string) != state.head {
 		return fail("parent_mismatch", "parent differs from previous line hash")
 	}
 	typ := m["type"].(string)
@@ -190,9 +245,15 @@ func checkEntry(line []byte, seq int64, parent string, state law) map[string]any
 	if proposer == "" {
 		return fail("no_proposer", "empty proposer")
 	}
-	decls, ok := bodyShape(typ, m["body"].(object))
+	body := m["body"].(object)
+	decls, ok := bodyShape(typ, body)
 	if !ok {
 		return fail("schema", "body shape")
+	}
+	if typ == "amend" {
+		if state.amendIDs[body["id"].(string)] || int64(body["activate_at"].(jsonInteger)) <= seq {
+			return fail("schema", "amendment id repeated or activation does not exceed seq")
+		}
 	}
 	if typ == "genesis" {
 		for _, d := range decls {
@@ -232,17 +293,33 @@ func checkEntry(line []byte, seq int64, parent string, state law) map[string]any
 	if !verifyEd25519(container.public, signedData(canonical(unsigned)), container.signature) {
 		return fail("bad_signature", "strict Ed25519 verification failed")
 	}
-	if typ == "key" {
+	switch typ {
+	case "genesis":
+		state.genesisCharter = body["charter"].(string)
+		state.promulgatedCharter = state.genesisCharter
+		state.trustedBase = body["checker"].(string)
+	case "key":
 		if detail := state.declare(decls[0]); detail != "" {
 			return fail("bad_key", detail)
 		}
+	case "amend":
+		state.promulgatedCharter = body["charter"].(string)
+		state.amendments = append(state.amendments, amendment{seq, int64(body["activate_at"].(jsonInteger)), state.promulgatedCharter})
+		state.amendIDs[body["id"].(string)] = true
+	case "push":
+		state.trustedBase = body["digest"].(string)
+	case "decision":
+		if body["kind"] == "transmute" {
+			state.transmuted[body["subject"].(string)] = true
+		}
 	}
+	state.head = fmt.Sprintf("%x", sha256.Sum256(line))
 	return nil
 }
 
 func checkLog(input io.Reader) (map[string]any, error) {
 	r := bufio.NewReader(input)
-	state, parent := newLaw(), strings.Repeat("0", 64)
+	state := newLaw()
 	var seq int64
 	for {
 		line, err := r.ReadBytes('\n')
@@ -253,11 +330,10 @@ func checkLog(input io.Reader) (map[string]any, error) {
 			return map[string]any{"ok": true, "entries": seq}, nil
 		}
 		line = bytes.TrimSuffix(line, []byte{'\n'})
-		verdict := checkEntry(line, seq, parent, state)
+		verdict := checkEntry(line, seq, &state)
 		if verdict != nil {
 			return verdict, nil
 		}
-		parent = fmt.Sprintf("%x", sha256.Sum256(line))
 		seq++
 	}
 }

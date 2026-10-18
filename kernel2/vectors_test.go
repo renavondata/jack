@@ -18,6 +18,9 @@ import (
 func vectorJSON(t *testing.T, path string, dst any) {
 	t.Helper()
 	b, err := os.ReadFile(path)
+	if os.IsNotExist(err) && strings.HasPrefix(path, "../tests/vectors/") {
+		t.Skipf("optional referenced vector file is absent from this room: %s", path)
+	}
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -137,10 +140,10 @@ func TestWeakKeyVectors(t *testing.T) {
 	t.Logf("weak keys: %d/%d refused", count, count)
 }
 
-func loadVerdicts(t *testing.T) map[string]map[string]any {
+func loadVerdicts(t *testing.T, directory string) map[string]map[string]any {
 	t.Helper()
 	var data struct{ Verdicts map[string]map[string]any }
-	vectorJSON(t, "../spec/vectors/verdicts.json", &data)
+	vectorJSON(t, filepath.Join(directory, "verdicts.json"), &data)
 	return data.Verdicts
 }
 
@@ -159,8 +162,15 @@ func normalizeVerdict(t *testing.T, v map[string]any) map[string]any {
 }
 
 func TestLogVectors(t *testing.T) {
-	wants := loadVerdicts(t)
-	files, err := filepath.Glob("../spec/vectors/logs/*.jsonl")
+	for _, directory := range []string{"../spec/vectors", "../spec/vectors/c1"} {
+		t.Run(directory, func(t *testing.T) { testLogVectors(t, directory) })
+	}
+}
+
+func testLogVectors(t *testing.T, directory string) {
+	t.Helper()
+	wants := loadVerdicts(t, directory)
+	files, err := filepath.Glob(filepath.Join(directory, "logs", "*"))
 	if err != nil {
 		t.Fatal(err)
 	}
