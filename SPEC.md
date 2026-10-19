@@ -322,8 +322,11 @@ order, each a refusal of the whole proposal:
    `kernel2/`, `judge/`, `.github/workflows/` and the file `SPEC.md`, sorted by
    path. Compared by content, so an edit, a rename, a deletion or an addition
    under those paths is refused alike; and a proposal must rebase after trunk's
-   trusted base moves. Until C1 brings a lawful change path, these files change
-   only by a commit Guy makes himself.
+   trusted base moves. The trusted base is regular files only: an object under
+   those paths that is not one (a symbolic link or a submodule, git modes 120000
+   and 160000) is refused as **trusted_path** at either commit, before any digest
+   is taken, and `tools/digest.py` refuses to digest a tree holding one. These
+   files change only by Guy's `jack push`, recorded by a `push` entry (item 11).
 2. **charter_mismatch** — the SHA-256 of trunk's `CHARTER.md` is not the promulgated
    charter at the end of trunk's log (§7: the latest valid `amend`, else genesis).
    (Checked only when trunk's log has a line.) An amendment therefore lands as one
@@ -415,7 +418,8 @@ with a commit after it that touches more than `log.jsonl`, is admitted),
 three the mutant removes that party's list from `judge/scope.json`, and nothing else),
 `scope_unguarded`, `cap_unguarded`, `shebang_uncounted` (a python file without `.py`
 under `counted` is not counted), `foreign_object_admitted` (a symbolic link, or a
-submodule whose commit is present or absent, under `paths` is admitted).
+submodule whose commit is present or absent, under `paths` is admitted, or under a
+trusted path is digested rather than refused).
 
 ## 11. Vectors
 
