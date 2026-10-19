@@ -219,7 +219,9 @@ def t_shebang_counted(root):
 
 def t_foreign_object(root):
     """SPEC §10.9: a symbolic link, or a submodule whose commit is present or absent, under paths is refused out_of_scope
-    and named, whatever it points to; a regular file at the same path is admitted."""
+    and named, whatever it points to; a regular file at the same path is admitted. SPEC §10.1: under a trusted path,
+    a submodule is trusted_path at either commit, before any digest: trunk holding one fails its own self-check (a regular
+    file there passes it), and a proposal adding one whose commit is absent is refused, not crashed on."""
     def place(repo, kind, rel):
         if kind == "link":
             gitfix.write(repo, "transcripts/long", "#!/usr/bin/env python3\n" + "x = 1\n" * 9000)
@@ -239,6 +241,24 @@ def t_foreign_object(root):
             else:
                 judge_refuses(r, "out_of_scope")
                 assert rel in r["detail"], r
+    for kind in ("present", "file"):
+        fx = make_repo(world(), root=root)
+        gitfix.git(fx.repo, "checkout", "-q", "main")
+        gitfix.place(fx.repo, kind, "kernel/vendor")
+        commit(fx.repo, "trunk's trusted base")  # bind_genesis digests HEAD, so the object is committed first
+        bind_genesis(fx.repo, fx.log, world())
+        r = runner.judge_with(root, fx.repo, "main", "main")
+        if kind == "file":
+            assert r.get("ok") is True, r
+        else:
+            judge_refuses(r, "trusted_path")
+            assert "kernel/vendor" in r["detail"], r
+    fx = make_repo(world(), root=root)
+    gitfix.place(fx.repo, "absent", "kernel/vendor")
+    propose(fx.repo, fx.log, world())
+    r = judged(root, fx)
+    judge_refuses(r, "trusted_path")
+    assert "kernel/vendor" in r["detail"], r
 
 
 def t_push_unrecorded(root):
@@ -656,7 +676,8 @@ PINS = [
         Mutant("py_suffix_only", "judge/judge.py",
                'return path.endswith(".py") or (first.startswith(b"#!") and b"python" in first)', 'return path.endswith(".py")')]),
     Pin("foreign_object_admitted", t_foreign_object, [
-        Mutant("mode_unchecked", "judge/judge.py", "    if objects:\n", "    if False:\n")]),
+        Mutant("mode_unchecked", "judge/judge.py", "    if objects:\n", "    if False:\n"),
+        Mutant("trusted_mode_unchecked", "judge/judge.py", "    if foreign_base:\n", "    if False:\n")]),
     Pin("unsigned_change", t_unsigned_change, [
         Mutant("power_unchecked", "kernel/check.py",
                '    if e["type"] not in keys[key_id].powers:', '    if False:')]),

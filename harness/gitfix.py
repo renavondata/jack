@@ -40,6 +40,20 @@ def gitlink(repo, rel, commit=None):
     return commit
 
 
+def place(repo, kind, rel, target=None):
+    """At `rel`, in place of any file there: a symbolic link to `target` ("link"), a submodule whose commit is
+    "present" or "absent", or a regular "file"."""
+    path = os.path.join(repo, rel)
+    if os.path.lexists(path):
+        os.remove(path)
+    if kind == "link":
+        link(repo, rel, target)
+    elif kind == "file":
+        write(repo, rel, "x = 1\n")
+    else:
+        gitlink(repo, rel, None if kind == "present" else "12" * 20)
+
+
 def move(repo, old, new):
     """git mv, creating the destination directory (git mv will not)."""
     os.makedirs(os.path.dirname(os.path.join(repo, new)) or repo, exist_ok=True)

@@ -121,7 +121,7 @@ def counted_lines(repo, sha, prefixes):
 
 
 def foreign(repo, sha, prefixes):
-    """Objects under `prefixes` at `sha` that are not regular files, symbolic links and submodules alike (SPEC §10.9)."""
+    """Objects under `prefixes` at `sha` that are not regular files, symbolic links and submodules alike (SPEC §10.1, §10.9)."""
     return sorted(p for mode, p in modes(repo, sha) if mode not in REGULAR and is_under(p, prefixes))
 
 
@@ -211,12 +211,17 @@ def strip(v):
 def judge(repo, trunk_ref, proposal_ref):
     trunk, head = rev(repo, trunk_ref), rev(repo, proposal_ref)
     report = {"trunk": trunk, "proposal": head, "touched": touched(repo, trunk, head),
-              "trusted_digest": digest(repo, trunk), "appended": 0, "signers": [], "verdict": None,
+              "trusted_digest": None, "appended": 0, "signers": [], "verdict": None,
               "kernel2": "absent", "proposer": None, "ok": False, "reason": None, "detail": ""}
 
     def refuse(reason, detail=""):
         return dict(report, reason=reason, detail=detail)
 
+    foreign_base = sorted(set(foreign(repo, trunk, TRUSTED)) | set(foreign(repo, head, TRUSTED)))
+    # SPEC §10.1: the trusted base is regular files only, at either commit, refused before any digest is taken
+    if foreign_base:
+        return refuse("trusted_path", f"not regular files in the trusted base: {', '.join(foreign_base)}")
+    report["trusted_digest"] = digest(repo, trunk)
     if digest(repo, head) != report["trusted_digest"] or show(repo, head, CHARTER) != show(repo, trunk, CHARTER):
         return refuse("trusted_path", f"differs from trunk: {', '.join(differing(repo, trunk, head))}")
     trunk_log, head_log = show(repo, trunk, LOG) or b"", show(repo, head, LOG) or b""

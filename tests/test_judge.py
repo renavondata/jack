@@ -12,7 +12,7 @@ from harness import build, gitfix
 from harness.build import proposal
 from harness.gitfix import git, write
 from judge import judge
-from pins.fixtures import make_repo, propose
+from pins.fixtures import bind_genesis, make_repo, propose
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.executable
@@ -173,6 +173,48 @@ class TrustedBase(Fixture):
         r = self.judge(repo)
         self.assertEqual((r["ok"], r["reason"], r["touched"]), (False, "trusted_path", ["README.md"]))
         self.assertIn("kernel/check.py", r["detail"])
+
+    FOREIGN = [("link", "SPEC.md", "README.md"), ("link", "kernel/extra.py", "check.py"), ("present", "kernel/vendor", None),
+               ("absent", "kernel/vendor", None), ("absent", "judge/sub", None), ("present", ".github/workflows/w", None)]
+
+    def trunk_holding(self, kind, rel, target=None):
+        """A repo whose trunk holds `kind` at `rel`, its genesis bound to that trunk unless it cannot be digested
+        (an absent submodule commit); pr at trunk."""
+        repo = self.repo()
+        git(repo, "checkout", "-q", "main")
+        gitfix.place(repo, kind, rel, target)
+        self.main = commit_all(repo, "trunk's trusted base")  # bind_genesis digests HEAD, so the object is committed first
+        if kind != "absent":
+            self.main = bind_genesis(repo, self.lg, self.w)
+        git(repo, "checkout", "-q", "pr")
+        git(repo, "reset", "-q", "--hard", "main")
+        return repo
+
+    def test_a_foreign_object_in_the_proposals_trusted_base_is_refused(self):
+        """SPEC §10.1: a symbolic link or submodule under a trusted path at the head is trusted_path, named,
+        before any digest; an absent submodule commit is no crash."""
+        for kind, rel, target in self.FOREIGN:
+            repo = self.repo()
+            gitfix.place(repo, kind, rel, target)
+            self.propose(repo)
+            r = self.judge(repo)
+            self.assertEqual((r["ok"], r["reason"]), (False, "trusted_path"), (kind, rel))
+            self.assertIn(rel, r["detail"])
+
+    def test_a_foreign_object_in_trunks_trusted_base_is_refused_on_the_self_check_too(self):
+        """SPEC §10.1: at either commit; a trunk holding one turns its own self-check red, and every proposal on it;
+        a regular file at the same path is its twin."""
+        for kind, rel, target in self.FOREIGN:
+            repo = self.trunk_holding(kind, rel, target)
+            for head in ("main", "pr"):
+                if head == "pr":
+                    write(repo, "README.md", "proposal\n")
+                    self.propose(repo, party="counsel")
+                r = self.judge(repo, "main", head)
+                self.assertEqual((r["ok"], r["reason"]), (False, "trusted_path"), (kind, rel, head))
+                self.assertIn(rel, r["detail"])
+            repo = self.trunk_holding("file", rel)
+            self.assertTrue(self.judge(repo, "main", "main")["ok"], rel)
 
     def test_digest_covers_trusted_base_only(self):
         repo = self.repo()
