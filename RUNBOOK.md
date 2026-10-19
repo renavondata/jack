@@ -1,18 +1,19 @@
 # Runbook — the verbs of jack
 
 An act on the record is a verb of `tools/jack`, one verb per entry type, seven in all. Each verb validates its
-arguments, prepares the entry on the head of `log.jsonl`, signs it with the caller's key, appends it only if the
-kernel admits it, and then performs the git and GitHub effects the entry authorises — and nothing else. What is
-not a verb is not done; a new verb needs a new entry type, which needs SPEC text and an `amend`. The vocabulary
-is the same for every party, cut down by the powers its key holds: the kernel refuses an entry the key may not
-sign (`no_power`), so the CLI decides nothing. `tools/jack` is outside the trusted base: an entry written by
-hand gets the same verdict. (Authority: CHARTER §5, §7; A2 clauses 6 and 10; the research of 18 October, (d).)
+arguments, prepares the entry on the head of the log it acts on, signs it with the caller's key, appends it
+only if the kernel admits it, and then performs the git and GitHub effects the entry authorises — and nothing
+else. What is not a verb is not done; a new verb needs a new entry type, which needs SPEC text and an `amend`.
+The vocabulary is the same for every party, cut down by the powers its key holds: the kernel refuses an entry
+the key may not sign (`no_power`), so the CLI decides nothing. `tools/jack` is outside the trusted base: an
+entry written by hand gets the same verdict. (Authority: CHARTER §5, §7; SPEC §10.6; A2 clauses 6, 7, 9 and
+10; the research of 18 October, (d).)
 
 ## Common to every verb
 
-- **Root and log.** The repository root is the directory above `tools/`; the log is `log.jsonl` there. Verbs
-  run inside the working copy they act on (a branch's worktree for branch verbs, the `main` checkout for main
-  verbs).
+- **Root and log.** The repository root is the directory above `tools/`; the log is `log.jsonl` there. A verb
+  acts on the log of the working copy it runs in, or of a temporary worktree it makes and removes (`merge`,
+  `push`).
 - **Key and party.** `--key PATH` names the private key; default `$JACK_KEY`, else `~/.ssh/id_ed25519`. The
   party is never an argument: the verb reads the matching `pubkey` from the keys declared in the log and takes
   its `principal` as the entry's `proposer` and as the `Proposer:` trailer's party. A key the log does not
@@ -21,24 +22,33 @@ hand gets the same verdict. (Authority: CHARTER §5, §7; A2 clauses 6 and 10; t
 - **Signing.** `ssh-keygen -Y sign -f KEY -n core-entry` over the canonical message (SPEC §6); the master key
   prompts for its passphrase, party keys do not. Assembly is `tools/entry.py`'s: the line is appended only if
   `kernel.check` admits the log with it.
-- **Commits.** A verb's commit message is `<type>: <summary>`, an optional body, and as its **last paragraph**
-  `Proposer: <party> <key_id>`. A trailer containing `<` is refused.
+- **Commits.** A verb's commit message is `<type>: <summary>` — `key: <KEY_ID>`, `proposal: <title>`,
+  `spec_conflict: <section>`, `merge: #<N>`, `push: <BRANCH>`, `decision: <KIND> <SUBJECT>`, `amend: <ID>` — an
+  optional body, and as its **last paragraph** `Proposer: <party> <key_id>`. A trailer containing `<` is refused.
+- **Up to date.** Every verb begins with `git fetch origin`. Main verbs require HEAD to equal `origin/main`;
+  branch verbs require the branch to contain `origin/main`.
 - **Clean tree.** Every verb refuses if `git status --porcelain` lists anything but the files the verb itself
-  stages; refuses on a detached HEAD; refuses on `main` for branch verbs and off `main` for main verbs.
-- **`--dry-run`** prints the entry it would sign and the effects it would perform, and does nothing.
+  stages; refuses on a detached HEAD in the working copy it is run in (its own temporary worktrees are
+  detached by design); refuses on `main` for branch verbs and off `main` for `merge` and the main verbs.
+- **`--dry-run`** prints the entry it would sign and the effects it would perform, and does nothing; for `merge`
+  and `push` it prints the preconditions it would evaluate and makes no worktree.
 - **Refused in code, always:** `--admin`; `--force` or `+` refspecs; deleting any remote branch; creating a tag;
-  rewriting any commit (a verb only appends commits, and only to the branch it runs on); running on a tree
-  whose `judge/selfcheck.py` fails after the commit (the commits are undone with `git reset --hard
-  origin/main` and the refusal printed).
-- **Main verbs** (`key`, `push`, `decision`, `amend`, `merge`) run on `main`, up to date with `origin/main`,
-  and end the same way: commit, `judge/selfcheck.py`, `git push origin main`, then `gh run watch` of the run
-  the push started, printing its result. A refused self-check means nothing was pushed. Where a verb's effect
-  precedes its entry (`merge`, `push`), the effect and the entry are two local commits sent in one push, so
-  the remote never shows the one without the other.
-- **The ledger.** Every act is an entry; every piece of evidence is referenced from an entry by hash
-  (`push.digest`, `push.review`); files under `transcripts/` are evidence, never the record. A builder's
-  objection is a `spec_conflict` entry, not a note.
-- **Branch verbs** (`proposal`, `spec_conflict`) never touch `main`.
+  rewriting any commit — a verb only appends commits, and a push that is not a fast-forward is a refusal, never
+  a retry with force.
+- **Main verbs** (`key`, `decision`, `amend`, `push`) run on `main` and end the same way: commit,
+  `judge/selfcheck.py`, `git push origin main`, then `gh run watch` of the run the push started, printing its
+  result. A failed self-check undoes the verb's commits with `git reset --hard origin/main` and prints the
+  refusal; nothing was pushed. Where the effect precedes the entry (`push`: the fast-forward, then the entry),
+  both commits go up in one push, so the remote never shows one without the other.
+- **`merge`** runs on `main` but appends its entry to the proposal's branch, as SPEC §10.6 has it, and its
+  effect is GitHub's merge, performed only after the judge has admitted the entry; it has no self-check and
+  no undo, because nothing it does reaches `main` except through the judge.
+- **Branch verbs** (`proposal`, `spec_conflict`) never touch `main` and run no self-check. If the push or the
+  pull request fails after their commit, the verb prints the two commands that finish the act and undoes
+  nothing; the commit is lawful as it stands.
+- **The ledger.** Every act is an entry; every piece of evidence an entry relies on is referenced from it by
+  hash (`push.digest`, `push.review`, `push.record`); files under `transcripts/` are evidence, never the record.
+  A builder's objection is a `spec_conflict` entry, not a note.
 
 ## `jack key KEY_ID --principal P --powers a,b,c --pubkey FILE`
 
@@ -55,33 +65,35 @@ On a branch other than `main`, with every change committed and the branch contai
 "Proposer: <party> <key_id>"`). Runs the check first — `python3 -m unittest discover -s tests -t .`,
 `python3 pins/run.py`, `python3 tools/count_kernel.py` — and refuses on any failure. Entry: `proposal` with
 `title` (default: the head commit's subject) and `commit` = the head's SHA (the work). Effect: commits
-`log.jsonl` on top of the work with message `proposal: <title>` and the trailer, pushes the branch
-(`git push -u origin <branch>`, never forced), and opens the pull request (`gh pr create --base main`) or,
-if one exists for the branch, does nothing more. A proposal re-made after `main` moved (prefix broken)
-appends a new entry; the earlier one stands as history.
+`log.jsonl` on top of the work, pushes the branch (`git push -u origin <branch>`), and opens the pull request
+(`gh pr create --base main`) or, if one exists for the branch, does nothing more. A proposal re-made after
+`main` moved (prefix broken) appends a new entry on top of a merge of `main`; the earlier one stands as history.
 
 ## `jack spec_conflict --section S --text T`
 
-On a branch, as `proposal`. Entry: `spec_conflict` {section, text}. Effect: commits `log.jsonl` with message
-`spec_conflict: <section>`, pushes the branch, opens a pull request titled `spec_conflict: <section>`, and
-prints "stopped: the specification cannot be implemented as written; see PR #n". The builder stops here; it
-does not make the tests pass (A2 clause 9).
+On a branch, with the branch preconditions of `proposal` and no check: a conflict is filed exactly when the
+tests cannot be made to pass (A2 clause 9). Entry: `spec_conflict` {section, text}. Effect: commits
+`log.jsonl`, pushes the branch, opens a pull request titled `spec_conflict: <section>`, and prints "stopped:
+the specification cannot be implemented as written; see PR #n". The builder stops here.
 
 ## `jack merge N`
 
-On `main`, up to date with `origin/main`. Preconditions: PR N is open against `main`, its required checks
-are green and it is mergeable (`gh pr view`, `gh pr checks`); the PR's head commit is the `commit` of a valid
-`proposal` entry in the PR's log plus one commit (the entry's own), or — until the judge checks it — carries a
-`Proposer:` trailer. Effect, in this order: `gh pr merge N --merge`; `git pull --ff-only`; entry `merge`
-{proposal: N, commit: the new head's SHA, checker: the trusted-base digest of the tree (`tools/digest.py`)};
-the main-verb ending. The merge precedes its entry by one commit because a `merge` entry on `main` would
-break the prefix of every open proposal; the entry is the record of the act, appended at once.
+On `main`, up to date. Preconditions, read with `gh pr view` and `gh pr checks`: PR N is open against `main`,
+mergeable, its required checks green on its current head; its head commit is one commit past the `commit` of
+a valid `proposal` entry in the PR's log, or — until the judge checks it — carries a filled `Proposer:`
+trailer. Act: in a temporary worktree of the PR's head branch, entry `merge` {proposal: N, commit: the PR's
+head SHA, checker: the trusted-base digest of `main`'s tree (`tools/digest.py`; SPEC §10.6 refuses any other)},
+committed with message `merge: #N` and the trailer, pushed to the PR's branch as a fast-forward (a rejected
+push means the proposal moved: refused, run again). Effect: `gh pr checks N --watch` until the judge and the
+tests have admitted the head that carries the entry, then `gh pr merge N --merge`, which GitHub performs only
+if they did; then `git pull --ff-only` on `main` and `gh run watch` of `main`'s run. The merge commit GitHub
+makes is the effect of the entry that precedes it. When the clerk holds `merge`, this verb is unchanged.
 
 ## `jack push BRANCH --review FILE | --review none`
 
-The only way a change to the trusted base reaches `main`. On `main`, up to date with `origin/main`;
-BRANCH is a local branch another party built, and the verb never commits to it. Preconditions, each a
-refusal with its reason, evaluated on BRANCH's tree (a temporary `git worktree` of BRANCH, removed after):
+The only way a change to the trusted base reaches `main`, and the only verb that pushes to `main` anything
+but an entry. On `main`, up to date; BRANCH is a local branch another party built, and the verb never commits
+to it. Preconditions, each a refusal with its reason, evaluated on BRANCH's tree in a temporary worktree:
 BRANCH contains `origin/main`; BRANCH's trusted-base digest differs from `main`'s (otherwise "nothing to
 push: propose and merge"); every commit on BRANCH not on `main` carries a filled `Proposer:` trailer; the
 check passes (as `proposal`); if `kernel/` or any kernel2 production source (`checker.go canonical.go
@@ -90,11 +102,14 @@ ed25519.go signature.go main.go`) differs from `main`'s, the run of record exist
 --b kernel2/check` twelve ways into `transcripts/diff-100000-<T>-part00..11.json`, and the sum must be
 100,000 logs, 0 disagreements, 0 uncompared, ranges without a gap; a complete run already under
 `transcripts/` on BRANCH counts if the checker sources at its commit equal BRANCH's. `--review FILE` is
-copied to `transcripts/` and its SHA-256 is the entry's `review`; `--review none` records 64 zeros and
-prints a warning that this push was not read. Effect, in this order: `git merge --ff-only BRANCH` (never a
-merge commit, never a rebase); the run's parts and the review copied into `transcripts/`; entry `push`
-{digest: `tools/digest.py` of the tree now on `main`, review}; the main-verb ending, whose self-check runs
-with the new trusted base and the entry both in place. `--remove` removes BRANCH's own worktree afterwards.
+copied to `transcripts/` and its SHA-256 is the entry's `review`; `--review none` records 64 zeros and prints
+a warning that this push was not read. Effect, in this order: `git merge --ff-only BRANCH` on `main` (never a
+merge commit, never a rebase); the run's parts and the review placed under `transcripts/`; entry `push`
+{digest: `tools/digest.py` of the tree now on `main`; review; record: the SHA-256 of the twelve parts' bytes
+concatenated in name order, or 64 zeros when no run was required — an extra member until SPEC §5 names it};
+committed with message `push: BRANCH`; the main-verb ending, whose self-check runs with the new trusted base
+and the entry both in place and whose undo returns `main` to `origin/main`, BRANCH untouched. `--remove`
+removes BRANCH's own worktree afterwards.
 
 ## `jack decision KIND SUBJECT`
 
@@ -109,7 +124,7 @@ On `main`. Preconditions: a valid `decision` of kind `transmute` with subject ID
 refused: "transmute first"); FILE's first line is `## Amendment ID:`; ID is not already an amendment.
 Effect before the entry: a blank line and FILE appended to `CHARTER.md`. Entry: `amend` {id, charter: the
 SHA-256 of the new `CHARTER.md`, activate_at: N, default the entry's seq + 1}. Effect: commits `CHARTER.md`
-and `log.jsonl` with message `amend: ID`; the main-verb ending (judge items 2, 12, 13 on the way in).
+and `log.jsonl`; the main-verb ending (judge items 2, 12, 13 on the way in).
 
 **Order of an amendment (A2 clause 7, the research's protocol):** `jack decision transmute ID` → the pushes
 that build the amendment's mechanisms, each by `jack push` → `jack amend ID FILE` last, so the charter never
