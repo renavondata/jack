@@ -139,14 +139,25 @@ and `log.jsonl`; the main-verb ending (judge items 2, 12, 13 on the way in).
 that build the amendment's mechanisms, each by `jack push` → `jack amend ID FILE` last, so the charter never
 says what the code does not enforce. A2 was recorded before its mechanisms and is the one exception.
 
+**Text lands with its mechanism.** A change to `SPEC.md` that needs code is the first commit of the builder's
+branch — counsel's patch, applied and read by Guy there, with counsel's trailer — and reaches `main` in the
+same `jack push` as the code built to it. `main` never carries a text its judge and checkers do not
+implement, and is never red by design. A change to `SPEC.md` that needs no code (wording, a recorded
+decision) is pushed to `main` on its own, with its `push` entry.
+
 ## Working copies (no verbs; nothing here touches the record)
 
-- A builder works in a worktree cut from a pulled `main`: `git worktree add ~/git/jack-build-<name> -b <branch>
-  main`, with `JACK_KEY=~/.ssh/jack-builder` in its environment. It reads the text it builds to, touches only
-  the paths that text names, and ends with `jack proposal` or `jack spec_conflict`.
-- A reviewer reads cold in a copy with no history: `git archive <ref> | tar -x -C <room>`, `git diff
-  <merge-base> <ref> > <room>/DIFF.patch`, `git init` there. Its findings are pins, proposed under
-  `~/.ssh/jack-reviewer` with `jack proposal`; a round that adds no pin ends the review (A2 clause 9).
+Working copies live under `~/git/worktrees/jack/`: a branch's worktree at `~/git/worktrees/jack/<branch>`, a
+room at `~/git/worktrees/jack/<name>-room`. Nothing else goes there, and nothing of jack's goes anywhere else
+but `~/git/jack`.
+
+- A builder works in a worktree cut from a pulled `main`: `git worktree add ~/git/worktrees/jack/<branch> -b
+  <branch> main`, with `JACK_KEY=~/.ssh/jack-builder` in its environment. It reads the text it builds to,
+  touches only the paths that text names, and ends with `jack proposal` or `jack spec_conflict`.
+- A reviewer reads cold in a copy with no history: `R=~/git/worktrees/jack/<name>-room`, `git archive <ref> |
+  tar -x -C $R`, `git diff <merge-base> <ref> > $R/DIFF.patch`, `git init` there. Its findings are pins,
+  proposed under `~/.ssh/jack-reviewer` with `jack proposal`; a round that adds no pin ends the review (A2
+  clause 9).
 - The kernel2 author works in a room holding only `SPEC.md`, `spec/`, `tests/vectors/` and `kernel2/`, reads
   nothing else, and leaves `QUESTIONS.md` saying `none`; its work enters by `jack push`.
 
