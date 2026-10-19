@@ -25,15 +25,19 @@ hand gets the same verdict. (Authority: CHARTER §5, §7; A2 clauses 6 and 10; t
   `Proposer: <party> <key_id>`. A trailer containing `<` is refused.
 - **Clean tree.** Every verb refuses if `git status --porcelain` lists anything but the files the verb itself
   stages; refuses on a detached HEAD; refuses on `main` for branch verbs and off `main` for main verbs.
-  `push` is neither: it runs in its branch's worktree and ends on `main`, as its section says.
 - **`--dry-run`** prints the entry it would sign and the effects it would perform, and does nothing.
 - **Refused in code, always:** `--admin`; `--force` or `+` refspecs; deleting any remote branch; creating a tag;
-  rewriting any commit (a verb only appends commits; `push`'s entry commit on another party's branch is the
-  one such append); running on a tree whose `judge/selfcheck.py` fails after the commit (the commit is undone
-  with `git reset --soft HEAD~1` and the refusal printed).
-- **Main verbs** (`key`, `decision`, `amend`, `merge`) end the same way: commit, `judge/selfcheck.py`,
-  `git push origin main`, then `gh run watch` of the run the push started, printing its result. A refused
-  self-check means nothing was pushed. `push` has its own ending, in its section.
+  rewriting any commit (a verb only appends commits, and only to the branch it runs on); running on a tree
+  whose `judge/selfcheck.py` fails after the commit (the commits are undone with `git reset --hard
+  origin/main` and the refusal printed).
+- **Main verbs** (`key`, `push`, `decision`, `amend`, `merge`) run on `main`, up to date with `origin/main`,
+  and end the same way: commit, `judge/selfcheck.py`, `git push origin main`, then `gh run watch` of the run
+  the push started, printing its result. A refused self-check means nothing was pushed. Where a verb's effect
+  precedes its entry (`merge`, `push`), the effect and the entry are two local commits sent in one push, so
+  the remote never shows the one without the other.
+- **The ledger.** Every act is an entry; every piece of evidence is referenced from an entry by hash
+  (`push.digest`, `push.review`); files under `transcripts/` are evidence, never the record. A builder's
+  objection is a `spec_conflict` entry, not a note.
 - **Branch verbs** (`proposal`, `spec_conflict`) never touch `main`.
 
 ## `jack key KEY_ID --principal P --powers a,b,c --pubkey FILE`
@@ -75,23 +79,22 @@ break the prefix of every open proposal; the entry is the record of the act, app
 
 ## `jack push BRANCH --review FILE | --review none`
 
-The only way a change to the trusted base reaches `main`. Runs inside BRANCH's worktree — a branch another
-party built; the entry commit is the sovereign's act on it — with `main` checked out in the repository's main
-working copy (`git worktree list`). Only the master key holds `push`. Preconditions, each a refusal with
-its reason: clean tree; BRANCH contains `origin/main`; BRANCH's trusted-base digest differs from `main`'s
-(otherwise "nothing to push: propose and merge"); every commit on BRANCH not on `main` carries a filled
-`Proposer:` trailer; the check passes (as `proposal`); if `kernel/` or any kernel2 production source
-(`checker.go canonical.go ed25519.go signature.go main.go`) differs from `main`'s, the run of record exists
-or is made: `kernel2/check` built once first (so the twelve do not race the build), then `harness/diff.py
---seeds A:B --b kernel2/check` twelve ways into `transcripts/diff-100000-<T>-part00..11.json`, and the sum
-must be 100,000 logs, 0 disagreements, 0 uncompared, ranges without a gap; a complete run already in
-`transcripts/` counts if the checker sources at its commit equal BRANCH's. `--review FILE` copies FILE to
-`transcripts/` and its SHA-256 is the entry's `review`; `--review none` records 64 zeros and prints a
-warning that this push was not read. Entry: `push` {digest: `tools/digest.py` of BRANCH's tree, review}.
-Effect: commits `log.jsonl` and `transcripts/` on BRANCH with message `push: <summary>` and the trailer;
-`judge/selfcheck.py` on BRANCH; in the main working copy `git switch main && git pull --ff-only && git merge
---ff-only BRANCH && git push origin main`; `gh run watch`; then `git worktree remove` of BRANCH's worktree if
-`--remove`. Never a merge commit, never a rebase.
+The only way a change to the trusted base reaches `main`. On `main`, up to date with `origin/main`;
+BRANCH is a local branch another party built, and the verb never commits to it. Preconditions, each a
+refusal with its reason, evaluated on BRANCH's tree (a temporary `git worktree` of BRANCH, removed after):
+BRANCH contains `origin/main`; BRANCH's trusted-base digest differs from `main`'s (otherwise "nothing to
+push: propose and merge"); every commit on BRANCH not on `main` carries a filled `Proposer:` trailer; the
+check passes (as `proposal`); if `kernel/` or any kernel2 production source (`checker.go canonical.go
+ed25519.go signature.go main.go`) differs from `main`'s, the run of record exists or is made there:
+`kernel2/check` built once first (so the twelve do not race the build), then `harness/diff.py --seeds A:B
+--b kernel2/check` twelve ways into `transcripts/diff-100000-<T>-part00..11.json`, and the sum must be
+100,000 logs, 0 disagreements, 0 uncompared, ranges without a gap; a complete run already under
+`transcripts/` on BRANCH counts if the checker sources at its commit equal BRANCH's. `--review FILE` is
+copied to `transcripts/` and its SHA-256 is the entry's `review`; `--review none` records 64 zeros and
+prints a warning that this push was not read. Effect, in this order: `git merge --ff-only BRANCH` (never a
+merge commit, never a rebase); the run's parts and the review copied into `transcripts/`; entry `push`
+{digest: `tools/digest.py` of the tree now on `main`, review}; the main-verb ending, whose self-check runs
+with the new trusted base and the entry both in place. `--remove` removes BRANCH's own worktree afterwards.
 
 ## `jack decision KIND SUBJECT`
 
