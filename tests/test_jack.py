@@ -34,7 +34,11 @@ with open(os.environ["STUB_LOG"], "a") as f:
     f.write(json.dumps(["ssh-keygen"] + sys.argv[1:]) + "\\n")
 os.execv(%r, [%r] + sys.argv[1:])
 """ % (sys.executable, shutil.which("ssh-keygen"), shutil.which("ssh-keygen"))
-TRAILER = "Proposer: builder claude test"
+SILENT = SSH_KEYGEN.split("os.execv")[0]  # records its arguments, exits 0 and writes no signature
+TRAILER = "Proposer: builder builder-1"  # filled: a party of SPEC §10.7 and a key_id
+LOAD = ("import importlib.machinery as m, importlib.util as u, sys; s = u.spec_from_loader('jack', m.SourceFileLoader('jack', sys.argv[1])); "
+        "jack = u.module_from_spec(s); s.loader.exec_module(jack); ")
+RUN = LOAD + "jack.SEEDS = 12; sys.exit(jack.main(sys.argv[2:]))"  # the seed count, patched in-process (RUNBOOK: no environment)
 
 
 def read(path):
@@ -51,11 +55,12 @@ def write(path, text, mode=0o644):
 
 def template(tmp):
     """A bare origin whose main holds kernel/, judge/, kernel2/ (a wrapper of the kernel), the tools, a trivial check
-    and a genesis declaring guy (all powers), builder-1 {proposal, spec_conflict} and odd-1, whose principal has a <."""
+    and a genesis declaring guy (all powers), builder-1 {proposal, spec_conflict}, odd-1, whose principal has a <, and nl-1,
+    whose principal has a blank line."""
     w = build.World(tmp)
-    w.odd, w.nobody = keys.make_key(tmp, "odd"), keys.make_key(tmp, "nobody")
+    w.odd, w.nobody, w.nl = keys.make_key(tmp, "odd"), keys.make_key(tmp, "nobody"), keys.make_key(tmp, "nl")
     w.decls = [build.decl("guy-master", "guy", w.guy, build.ALL), build.decl("builder-1", "builder", w.ann, ["proposal", "spec_conflict"]),
-               build.decl("odd-1", "x<y", w.odd, ["decision"])]
+               build.decl("odd-1", "x<y", w.odd, ["decision"]), build.decl("nl-1", "builder\n\nother", w.nl, ["decision"])]
     repo = gitfix.make_repo(w, with_log=False, tmpdir=tmp).repo
     gitfix.git(repo, "checkout", "-q", "main")
     gitfix.git(repo, "branch", "-D", "pr")
@@ -96,7 +101,7 @@ class Jack(unittest.TestCase):
         write(os.path.join(stubs, "gh"), GH, 0o755)
         write(os.path.join(stubs, "ssh-keygen"), SSH_KEYGEN, 0o755)
         write(os.path.join(t, "gitconfig"), "[user]\n\tname = t\n\temail = t@t\n")
-        self.env = dict(os.environ, PATH=stubs + os.pathsep + os.environ["PATH"], STUB_LOG=self.log_file, JACK_SEEDS="12",
+        self.env = dict(os.environ, PATH=stubs + os.pathsep + os.environ["PATH"], STUB_LOG=self.log_file,
                         STUB_GH=os.path.join(t, "gh.json"), GIT_CONFIG_GLOBAL=os.path.join(t, "gitconfig"), GIT_CONFIG_NOSYSTEM="1")
         self.gh()
         subprocess.run(["git", "clone", "-q", self.origin, self.repo], check=True, env=self.env)
@@ -108,13 +113,13 @@ class Jack(unittest.TestCase):
         """Stub responses: `first` (prefix, rc, stdout) win over the defaults."""
         pr = dict({"state": "OPEN", "baseRefName": "main", "mergeable": "MERGEABLE", "headRefName": "work"}, **(pr or {}))
         rules = [*first, (["pr", "view"], 0, json.dumps(pr)), (["pr", "list"], 0, ""), (["pr", "create"], 0, "https://x/pull/7\n"),
-                 (["run", "list"], 0, "4242\n"), (["run", "watch"], 0, ""), (["pr", "checks"], 0, ""), (["pr", "merge"], 0, "")]
+                 (["pr", "checks"], 0, ""), (["pr", "merge"], 0, "")]
         write(self.env["STUB_GH"], json.dumps([list(r) for r in rules]))
 
     def jack(self, *args, key=None, cwd=None):
         open(self.log_file, "w").close()
         key = (key or self.w.guy).path
-        return subprocess.run([sys.executable, os.path.join(cwd or self.repo, "tools", "jack"), "--key", key, *args],
+        return subprocess.run([sys.executable, "-c", RUN, os.path.join(cwd or self.repo, "tools", "jack"), "--key", key, *args],
                               cwd=cwd or self.repo, env=self.env, capture_output=True, text=True)
 
     def calls(self, *prefix):
@@ -143,7 +148,7 @@ class Jack(unittest.TestCase):
         """Refused with exit 1 and its reason; nothing pushed to main; signed only when the kernel was asked."""
         self.assertEqual((r.returncode, r.stdout.count("refused")), (1, 0), r.stderr)
         self.assertIn(words, r.stderr)
-        keys = {k.path for k in (self.w.guy, self.w.ann, self.w.odd, self.w.nobody)}
+        keys = {k.path for k in (self.w.guy, self.w.ann, self.w.odd, self.w.nobody, self.w.nl)}
         self.assertEqual(any(c[4] in keys for c in self.calls("ssh-keygen", "-Y", "sign", "-f")), signed)  # the simulator signs too
 
     def branch(self, name="work", **kw):
@@ -158,8 +163,20 @@ class Jack(unittest.TestCase):
                 self.refused(self.jack(*args), "--admin and --force are refused")
                 self.assertEqual(self.calls(), [])
 
+    def test_no_environment_variable_changes_the_seed_count(self):  # review finding 1
+        r = subprocess.run([sys.executable, "-c", LOAD + "print(jack.SEEDS)", os.path.join(self.repo, "tools", "jack")],
+                           env=dict(self.env, JACK_SEEDS="0"), capture_output=True, text=True)
+        self.assertEqual(r.stdout.strip(), "100000", r.stderr)
+
     def test_trailer_with_less_than_is_refused_before_signing(self):
-        self.refused(self.jack("decision", "veto", "x", key=self.w.odd), "a trailer containing < is refused")
+        self.refused(self.jack("decision", "veto", "x", key=self.w.odd), "is not a filled trailer")
+
+    def test_a_trailer_is_filled_only_with_a_party_and_a_key_id(self):  # review finding 5
+        self.refused(self.jack("decision", "veto", "x", key=self.w.nl), "is not a filled trailer")
+        for principal in ("builder\n\nother", "Re Viewer", "x<y", ""):
+            with self.subTest(principal):
+                self.refused(self.jack("key", "r-1", "--principal", principal, "--powers", "proposal", "--pubkey", self.w.nobody.path + ".pub"),
+                             f"principal {principal!r} is not [a-z0-9_-]+")
 
     def test_undeclared_key_is_refused_before_signing(self):
         self.refused(self.jack("decision", "veto", "x", key=self.w.nobody), "not a key the log declares")
@@ -218,9 +235,8 @@ class Jack(unittest.TestCase):
         self.assertEqual(self.git("log", "-1", "--format=%B"), "decision: grant judge image sha256:ab\n\nProposer: guy guy-master")
         sign = self.calls("ssh-keygen")[0]
         self.assertEqual(sign[:7], ["ssh-keygen", "-Y", "sign", "-f", self.w.guy.path, "-n", "core-entry"])
-        self.assertEqual(self.calls("gh"), [["gh", "run", "list", "--branch", "main", "--commit", head, "--json", "databaseId", "--jq",
-                                            ".[0].databaseId"], ["gh", "run", "watch", "4242", "--exit-status"]])
-        self.assertIn("run 4242 of main", r.stdout)
+        self.assertEqual(self.calls("gh"), [])  # gh run watch is cut: printed as a command
+        self.assertIn(f"gh run watch --exit-status $(gh run list --branch main --commit {head} --json databaseId", r.stdout)
 
     def test_decision_refusals(self):
         self.refused(self.jack("decision", "wish", "x"), "KIND must be one of")
@@ -302,6 +318,15 @@ class Jack(unittest.TestCase):
         self.git("checkout", "-q", "-b", "old", "origin/main~1")
         self.refused(self.jack("spec_conflict", "--section", "s", "--text", "t", key=self.w.ann), "does not contain origin/main")
 
+    def test_spec_conflict_retitles_the_branch_s_open_pr(self):  # review finding 7
+        self.branch()
+        self.gh((["pr", "list"], 0, "5\n"))
+        r = self.jack("spec_conflict", "--section", "RUNBOOK merge", "--text", "cannot", key=self.w.ann)
+        self.admitted(r)
+        self.assertIn("see PR #5", r.stdout)
+        self.assertEqual((self.calls("gh", "pr", "create"), self.calls("gh", "pr", "edit")),
+                         ([], [["gh", "pr", "edit", "5", "--title", "spec_conflict: RUNBOOK merge"]]))
+
     # jack merge
 
     def proposed(self):
@@ -322,8 +347,8 @@ class Jack(unittest.TestCase):
         self.assertEqual((e["type"], e["body"]), ("merge", {"proposal": 7, "commit": head, "checker": commit_digest(self.repo, "main")}))
         self.assertEqual(self.git("log", "-1", "--format=%B", tip, cwd=self.origin), "merge: #7\n\nProposer: guy guy-master")
         gh = [c[1:4] for c in self.calls("gh")]
-        self.assertEqual(gh, [["pr", "view", "7"], ["pr", "checks", "7"], ["pr", "checks", "7"], ["pr", "merge", "7"],
-                              ["run", "list", "--branch"], ["run", "watch", "4242"]])
+        self.assertEqual(gh, [["pr", "view", "7"], ["pr", "checks", "7"], ["pr", "checks", "7"], ["pr", "merge", "7"]])
+        self.assertIn("gh run watch --exit-status $(gh run list --branch main --commit", r.stdout)
         self.assertEqual(self.calls("gh", "pr", "checks", "7")[1][4:], ["--watch"])
         self.assertEqual(self.remote(), self.git("rev-parse", "origin/main"))  # nothing of jack's reaches main
         self.assertEqual(self.git("worktree", "list").count("\n"), 0)  # the temporary worktree is gone
@@ -381,7 +406,7 @@ class Jack(unittest.TestCase):
         self.assertEqual(self.git("show", "HEAD:transcripts/REVIEW-tb.md"), "read cold")
         self.assertEqual(self.git("status", "--porcelain"), "")
 
-    def test_push_counts_a_complete_run_already_on_the_branch(self):
+    def test_push_makes_the_run_of_record_itself_never_accepting_one_from_the_branch(self):  # review finding 2
         work = self.branch("tb", rel="kernel/__init__.py", text="# revised\n")
         names = [f"transcripts/diff-12-20261019T0000Z-part{k:02}.json" for k in range(12)]
         for k, n in enumerate(names):
@@ -391,9 +416,35 @@ class Jack(unittest.TestCase):
         self.git("commit", "-q", "-m", "the run", "-m", TRAILER)
         self.git("checkout", "-q", "main")
         self.admitted(self.jack("push", "tb", "--review", "none"))
-        record = hashlib.sha256(b"".join(read(os.path.join(self.repo, n)) for n in names)).hexdigest()
-        self.assertEqual(self.entries()[-1]["body"]["record"], record)
-        self.assertEqual(len(glob.glob(os.path.join(self.repo, "transcripts", "diff-*"))), 12)  # no second run was made
+        made = sorted(set(glob.glob(os.path.join(self.repo, "transcripts", "diff-*"))) - {os.path.join(self.repo, n) for n in names})
+        self.assertEqual(len(made), 12)  # the verb's own run, beside the branch's
+        self.assertEqual(self.entries()[-1]["body"]["record"], hashlib.sha256(b"".join(map(read, made))).hexdigest())
+        self.assertEqual({json.loads(read(p))["commit"] for p in made}, {self.git("rev-parse", "tb")})
+
+    def test_push_refuses_a_run_whose_parts_are_not_of_the_branch_head_or_not_their_range(self):  # review finding 2
+        fake = ("import json, subprocess, sys\nlo, hi = map(int, sys.argv[sys.argv.index('--seeds') + 1].split(':'))\n"
+                "head = subprocess.run(['git', 'rev-parse', 'HEAD'], capture_output=True, text=True).stdout.strip()\n"
+                "logs, commit = %s\nprint(json.dumps({'logs': logs, 'seeds': [lo, hi], 'commit': commit, "
+                "'disagreements': [], 'uncompared': []}))\n")
+        for name, flaw in (("other", "hi - lo, '0' * 40"), ("null", "hi - lo, None"),
+                           ("uneven", "hi - lo + {0: 1, 1: -1}.get(lo, 0), head")):  # still twelve logs in all
+            with self.subTest(name):
+                self.git("checkout", "-q", "-b", name, "main")
+                self.commit("kernel/__init__.py", f"# {name}\n")
+                self.commit("harness/diff.py", fake % flaw)
+                self.git("checkout", "-q", "main")
+                self.refused(self.jack("push", name, "--review", "none"), "the run of record is not")
+                self.assertEqual((self.git("rev-parse", "HEAD"), self.remote()), (self.git("rev-parse", "origin/main"),) * 2)
+
+    def test_push_review_of_an_empty_file_hashes_the_empty_file(self):  # review finding 3
+        self.branch("tb", rel="SPEC.md", text="spec, revised\n")
+        self.git("checkout", "-q", "main")
+        write(review := os.path.join(self.tmp.name, "REVIEW-empty.md"), "")
+        r = self.jack("push", "tb", "--review", review)
+        self.admitted(r)
+        self.assertNotIn("WARNING", r.stderr)
+        self.assertEqual(self.entries()[-1]["body"]["review"], hashlib.sha256(b"").hexdigest())
+        self.assertEqual(self.git("ls-tree", "--name-only", "HEAD", "transcripts/"), "transcripts/REVIEW-empty.md")
 
     def test_push_refusals(self):
         self.refused(self.jack("push", "nope", "--review", "none"), "nope is not a local branch")
@@ -417,6 +468,18 @@ class Jack(unittest.TestCase):
         self.assertEqual((self.git("rev-parse", "HEAD"), self.remote(), self.git("worktree", "list").count("\n")),
                          (self.git("rev-parse", "origin/main"), self.git("rev-parse", "origin/main"), 0))
 
+    def test_push_and_merge_read_only_filled_trailers(self):  # review finding 8
+        for k, t in enumerate(("Proposer: x", "Proposer: <party> <key_id>", "Proposer: claude builder-1", "Proposer: builder b-1 extra")):
+            with self.subTest(t):
+                self.git("checkout", "-q", "-b", f"b{k}", "main")
+                write(os.path.join(self.repo, "SPEC.md"), f"spec {k}\n")
+                self.git("commit", "-qam", "work", "-m", t)
+                self.git("push", "-q", "origin", f"b{k}")
+                self.git("checkout", "-q", "main")
+                self.refused(self.jack("push", f"b{k}", "--review", "none"), "without a filled Proposer: trailer")
+                self.gh(pr={"headRefOid": self.git("rev-parse", f"b{k}"), "headRefName": f"b{k}"})
+                self.refused(self.jack("merge", "7"), "carries no filled Proposer")
+
     def test_push_refused_by_the_kernel_after_the_fast_forward_leaves_main_as_origin_main(self):
         self.branch("tb", rel="kernel/__init__.py", text="# revised\n")
         self.git("checkout", "-q", "main")
@@ -426,6 +489,19 @@ class Jack(unittest.TestCase):
         self.refused(r, "the kernel refuses the push entry", signed=True)
         self.assertEqual((self.git("rev-parse", "HEAD"), self.remote(), self.git("status", "--porcelain", "--ignored", "transcripts")),
                          (self.git("rev-parse", "origin/main"), self.git("rev-parse", "origin/main"), ""))
+
+    def test_any_failure_after_a_main_verbs_first_effect_returns_main_to_origin_main(self):  # review finding 6
+        self.admitted(self.jack("decision", "transmute", "A3"))
+        self.branch("tb", rel="SPEC.md", text="spec, revised\n")
+        self.git("checkout", "-q", "main")
+        write(review := os.path.join(self.tmp.name, "REVIEW.md"), "read\n")
+        write(text := os.path.join(self.tmp.name, "A3.md"), "## Amendment A3: a test\n")
+        write(os.path.join(self.tmp.name, "stubs", "ssh-keygen"), SILENT, 0o755)  # the entry's .sig is missing: an OSError
+        for args in (["push", "tb", "--review", review], ["amend", "A3", text]):
+            with self.subTest(args[0]):
+                self.refused(self.jack(*args), "git reset --hard origin/main", signed=True)
+                self.assertEqual((self.git("rev-parse", "HEAD"), self.git("status", "--porcelain", "--ignored", "--", "transcripts", "CHARTER.md")),
+                                 (self.remote(), ""))
 
     def test_push_remove_removes_the_branch_worktree(self):
         wt = os.path.join(self.tmp.name, "wt")
@@ -452,6 +528,19 @@ class Jack(unittest.TestCase):
         self.assertEqual(e["body"], {"id": "A3", "charter": hashlib.sha256(charter).hexdigest(), "activate_at": e["seq"] + 1})
         self.assertEqual((self.git("log", "-1", "--format=%s"), self.remote()), ("amend: A3", self.git("rev-parse", "HEAD")))
         self.refused(self.jack("amend", "A3", text), "A3 is already an amendment")
+
+    def test_amend_takes_activate_at_as_given_and_counts_a_transmute_with_an_extra_member(self):  # review finding 4
+        lines = self.git("show", "HEAD:log.jsonl").splitlines()
+        body = {"kind": "transmute", "subject": "A3", "note": "extra members are allowed (SPEC §5)"}
+        lines.append(build.make_entry(len(lines), log.line_hash(lines[-1]), "decision", "guy", body, self.w.guy, ts="2026-10-19T00:00:00Z"))
+        self.commit("log.jsonl", "".join(l + "\n" for l in lines), msg="decision: transmute A3")
+        self.git("push", "-q", "origin", "main")
+        write(text := os.path.join(self.tmp.name, "A3.md"), "## Amendment A3: a test\n")
+        charter = read(os.path.join(self.repo, "CHARTER.md"))
+        self.refused(self.jack("amend", "A3", text, "--activate-at", "0"), "the kernel refuses the amend entry", signed=True)
+        self.assertEqual((read(os.path.join(self.repo, "CHARTER.md")), self.git("rev-parse", "HEAD")), (charter, self.remote()))
+        self.admitted(self.jack("amend", "A3", text, "--activate-at", "99"))
+        self.assertEqual(self.entries()[-1]["body"]["activate_at"], 99)
 
 
 if __name__ == "__main__":
