@@ -601,6 +601,25 @@ class Scope(Fixture):
         for data in ("#!/bin/sh\n" + "python x\n" * cap, "\n#!/usr/bin/python\n" + "x\n" * cap, "# python\n" + "x\n" * cap):
             self.assertTrue(self.proposal_touching("tools/big", data=data)["ok"], data[:20])
 
+    def test_code_cap_refuses_a_symlink_under_counted(self):
+        """SPEC §10.10: a symbolic link under a counted prefix is refused whatever it points to, and named."""
+        cap = self.scope()["cap"]
+        for target, data in (("../transcripts/long", "#!/usr/bin/env python3\n" + "x = 1\n" * cap),
+                             ("../transcripts/short", "x\n"), ("../sim/", None), ("../nowhere", None)):
+            repo = self.repo()
+            if data is not None:
+                write(repo, target[3:], data)
+            gitfix.link(repo, "tools/script", target)
+            self.propose(repo)
+            r = self.judge(repo)
+            self.assertEqual((r["ok"], r["reason"]), (False, "code_cap"), target)
+            self.assertIn("tools/script", r["detail"])
+        repo = self.repo()
+        write(repo, "transcripts/short", "x\n")
+        gitfix.link(repo, "transcripts/link", "short")
+        self.propose(repo)
+        self.assertTrue(self.judge(repo)["ok"])
+
     def test_code_cap_counts_the_whole_head_not_the_diff(self):
         cap = self.scope()["cap"]
         repo = self.repo()

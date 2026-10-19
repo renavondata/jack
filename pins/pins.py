@@ -52,7 +52,7 @@ def commit(repo, msg, proposer="builder pin-model pin-session"):
 
 
 def proposal_touching(root, path, party="builder", data="x\n", key=None):
-    fx = make_repo(world())
+    fx = make_repo(world(), root=root)  # trunk's judge/scope.json is the tree's, so a scope.json mutant reaches the judge
     gitfix.write(fx.repo, path, data)
     propose(fx.repo, fx.log, world(), party, key=key)
     return judged(root, fx)
@@ -137,6 +137,15 @@ def t_unattributed_proposal(root):
     commit(fx.repo, "re-declare")
     r = judged(root, fx)
     assert (r.get("ok"), r.get("proposer")) == (True, "builder"), r
+    fx = make_repo(w)  # two entries name the work, ann's then builder's, on a path both may touch: the last attributes
+    gitfix.write(fx.repo, "transcripts/t.txt", "x\n")
+    work = commit(fx.repo, "work")
+    fx.log.add("proposal", "ann", proposal("ann", commit=work), w.ann)
+    fx.log.add("proposal", "builder", proposal("builder", commit=work), w.parties["builder"])
+    gitfix.write(fx.repo, "log.jsonl", fx.log.text())
+    commit(fx.repo, "entries")
+    r = judged(root, fx)
+    assert (r.get("ok"), r.get("proposer")) == (True, "builder"), r
     assert proposal_touching(root, "sim/x.py").get("ok") is True
 
 
@@ -157,7 +166,7 @@ def t_counsel_builds(root):
 def t_builder_pin(root):
     """SPEC §10.8: a builder may not touch the pins that judge it, though a reviewer's entry naming the same commit precedes its own."""
     w = world()
-    fx = make_repo(w)
+    fx = make_repo(w, root=root)
     gitfix.write(fx.repo, "pins/p.py", "x\n")
     work = commit(fx.repo, "work")
     for party in ("reviewer", "builder"):
@@ -206,6 +215,21 @@ def t_shebang_counted(root):
     judge_refuses(proposal_touching(root, "tools/big", data="#!/usr/bin/env python3\n" + "x = 1\n" * cap), "code_cap")
     assert proposal_touching(root, "tools/big", data="#!/usr/bin/env python3\n" + "x = 1\n" * (cap - 1)).get("ok") is True
     assert proposal_touching(root, "tools/big", data="#!/bin/sh\n" + "x\n" * cap).get("ok") is True
+
+
+def t_symlink_counted(root):
+    """SPEC §10.10: a symbolic link under a counted prefix is refused whatever it points to; outside them it is not."""
+    for rel, refused in (("tools/script", True), ("transcripts/link", False)):
+        fx = make_repo(world())
+        gitfix.write(fx.repo, "transcripts/short", "x\n")
+        gitfix.link(fx.repo, rel, os.path.relpath("transcripts/short", os.path.dirname(rel)))
+        propose(fx.repo, fx.log, world())
+        r = judged(root, fx)
+        if refused:
+            judge_refuses(r, "code_cap")
+            assert rel in r["detail"], r
+        else:
+            assert r.get("ok") is True, r
 
 
 def t_push_unrecorded(root):
@@ -565,6 +589,12 @@ GUARD = 'if digest(repo, head) != report["trusted_digest"] or show(repo, head, C
 
 CHARTER_MISMATCH = '    if old and promulgated_charter(repo, trunk, trunk_log) != hashlib.sha256(show(repo, trunk, CHARTER) or b"").hexdigest():'
 
+# each party pin's mutant removes that party's list from judge/scope.json and nothing else (SPEC §10)
+BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts/", "log.jsonl"],\n             '
+REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
+COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
+                '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
+
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -596,14 +626,15 @@ PINS = [
                ' and e["body"]["commit"] in commits]', ']'),
         Mutant("later_commits_unchecked", "judge/judge.py", '    if later - {LOG}:', '    if False:'),
         Mutant("law_at_end", "judge/judge.py",
-               '[e["body"] for e in entries[1:i] if e["type"] == "key"]', '[e["body"] for e in entries[1:] if e["type"] == "key"]')]),
-    Pin("counsel_build_admitted", t_counsel_builds, [
-        Mutant("party_scope_unchecked", "judge/judge.py",
-               '    if allowed is not None and any(not is_under(p, allowed) for p in changed):', '    if False:')]),
-    Pin("builder_pin_admitted", t_builder_pin, [
-        Mutant("first_entry_attributes", "judge/judge.py", '    seq, last = named[-1]', '    seq, last = named[0]')]),
-    Pin("reviewer_code_admitted", t_reviewer_code, [
+               '[e["body"] for e in entries[1:i] if e["type"] == "key"]', '[e["body"] for e in entries[1:] if e["type"] == "key"]'),
+        Mutant("first_entry_attributes", "judge/judge.py", '    seq, last = named[-1]', '    seq, last = named[0]'),
         Mutant("party_by_key_id", "judge/judge.py", 'next((d["principal"] for d in', 'next((d["key_id"] for d in')]),
+    Pin("counsel_build_admitted", t_counsel_builds, [
+        Mutant("counsel_unlisted", "judge/scope.json", COUNSEL_LIST, "")]),
+    Pin("builder_pin_admitted", t_builder_pin, [
+        Mutant("builder_unlisted", "judge/scope.json", BUILDER_LIST, "")]),
+    Pin("reviewer_code_admitted", t_reviewer_code, [
+        Mutant("reviewer_unlisted", "judge/scope.json", REVIEWER_LIST, "")]),
     Pin("scope_unguarded", t_scope, [
         Mutant("scope_unchecked", "judge/judge.py",
                '    if any(not is_under(p, scope["paths"]) for p in changed):', '    if False:'),
@@ -615,6 +646,8 @@ PINS = [
     Pin("shebang_uncounted", t_shebang_counted, [
         Mutant("py_suffix_only", "judge/judge.py",
                'return path.endswith(".py") or (first.startswith(b"#!") and b"python" in first)', 'return path.endswith(".py")')]),
+    Pin("symlink_admitted", t_symlink_counted, [
+        Mutant("symlinks_unrefused", "judge/judge.py", "    if links:\n", "    if False:\n")]),
     Pin("unsigned_change", t_unsigned_change, [
         Mutant("power_unchecked", "kernel/check.py",
                '    if e["type"] not in keys[key_id].powers:', '    if False:')]),

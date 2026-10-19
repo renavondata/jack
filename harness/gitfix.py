@@ -23,6 +23,13 @@ def write(repo, rel, data):
         f.write(data)
 
 
+def link(repo, rel, target):
+    """A symbolic link at `rel` pointing to `target`, which git stores as mode 120000."""
+    path = os.path.join(repo, rel)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    os.symlink(target, path)
+
+
 def move(repo, old, new):
     """git mv, creating the destination directory (git mv will not)."""
     os.makedirs(os.path.dirname(os.path.join(repo, new)) or repo, exist_ok=True)

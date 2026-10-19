@@ -112,6 +112,12 @@ def counted_lines(repo, sha, prefixes):
     return sum(len(split_lines(data)) for p, data in texts if is_python(p, data))
 
 
+def symlinks(repo, sha, prefixes):
+    """Symbolic links (git mode 120000) under `prefixes` at `sha`: SPEC §10.10 refuses them uncounted."""
+    entries = (line.split("\t", 1) for line in git(repo, "ls-tree", "-r", sha).splitlines())
+    return sorted(path for meta, path in entries if meta.split()[0] == "120000" and is_under(path, prefixes))
+
+
 def differing(repo, trunk, head):
     """Trusted-base files and CHARTER.md whose bytes differ between two commits: edits, renames, deletions, additions."""
     paths = set(trusted_files(repo, trunk)) | set(trusted_files(repo, head)) | {CHARTER}
@@ -276,6 +282,9 @@ def proposal_checks(repo, trunk, head, report, entries, first):
         return "party_scope", f"outside {report['proposer']}'s paths: {', '.join(p for p in changed if not is_under(p, allowed))}"
     if any(not is_under(p, scope["paths"]) for p in changed):
         return "out_of_scope", f"outside {scope['layer']}'s paths: {', '.join(p for p in changed if not is_under(p, scope['paths']))}"
+    links = symlinks(repo, head, scope["counted"])
+    if links:
+        return "code_cap", f"symbolic links under counted prefixes cannot be counted: {', '.join(links)}"
     if counted_lines(repo, head, scope["counted"]) > scope["cap"]:
         return "code_cap", f"{counted_lines(repo, head, scope['counted'])} counted lines exceed the cap of {scope['cap']}"
 

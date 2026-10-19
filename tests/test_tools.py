@@ -1,5 +1,6 @@
 """Repository tools: kernel line count."""
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -37,6 +38,26 @@ class CountKernel(unittest.TestCase):
             self.assertEqual(counted, {n for n, d in samples.items() if judge.is_python(n, d)})
             for name, data in samples.items():
                 self.assertEqual(count_kernel.lines(os.path.join(tmp, name)), len(judge.split_lines(data)), name)
+
+    def test_refuses_to_follow_a_symlink(self):
+        """SPEC §10.10: a symbolic link is named and the tool exits 2, never following it, whatever it points to."""
+        with tempfile.TemporaryDirectory() as tmp:
+            for d in ("tools", "kernel", "sub"):
+                os.makedirs(os.path.join(tmp, d))
+            shutil.copy2(os.path.join(ROOT, "tools", "count_kernel.py"), os.path.join(tmp, "tools"))
+            for rel, data in (("kernel/check.py", "x = 1\n"), ("long", "#!/usr/bin/env python3\n" + "x = 1\n" * 2000)):
+                with open(os.path.join(tmp, rel), "w") as f:
+                    f.write(data)
+            links = {"kernel/script": "../long", "kernel/sub": "../sub", "kernel/dangling.py": "../nowhere"}
+            for rel, target in links.items():
+                os.symlink(target, os.path.join(tmp, rel))
+            r = subprocess.run([sys.executable, "tools/count_kernel.py"], capture_output=True, text=True, cwd=tmp)
+            self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+            for rel in links:
+                self.assertIn(rel, r.stdout + r.stderr)
+            self.assertNotIn("total", r.stdout)
+            for f in (count_kernel.is_python, count_kernel.lines):
+                self.assertRaises(OSError, f, os.path.join(tmp, "kernel", "script"))
 
 
 if __name__ == "__main__":

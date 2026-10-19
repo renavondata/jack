@@ -1,4 +1,6 @@
 """The pin runner: text-edit mutants on disposable copies, KILLED only with a passing twin."""
+import ast
+import json
 import os
 import tempfile
 import unittest
@@ -25,14 +27,14 @@ class Registry(unittest.TestCase):
                          "unattributed_entry", "checker_drift", "forged_signature_admitted", "trusted_path_unguarded",
                          "trusted_rename_admitted", "weak_key_admitted", "reserved_bytes_admitted",
                          "unattributed_proposal_admitted", "counsel_build_admitted", "builder_pin_admitted", "reviewer_code_admitted",
-                         "scope_unguarded", "cap_unguarded", "shebang_uncounted",
+                         "scope_unguarded", "cap_unguarded", "shebang_uncounted", "symlink_admitted",
                          "push_unrecorded", "freeze_ignored", "one_act_amendment", "decision_forged", "last_key_revocable",
                          "charter_edit_unrecorded", "amend_stale"):
             self.assertIn(required, names)
         for gone in ("final_law_for_all", "vacuous_rule_admitted", "impossible_rule_admitted", "redundancy_unreported",
                      "orphaned_rule_admitted"):
             self.assertNotIn(gone, names, "rule pins return with the law language in C1")
-        self.assertEqual(len(names), 36)
+        self.assertEqual(len(names), 37)
         for p in pins.PINS:
             self.assertTrue(p.mutants, p.name)
             for m in p.mutants:
@@ -43,6 +45,37 @@ class Registry(unittest.TestCase):
                 with open(path) as f:
                     self.assertEqual(f.read().count(m.find), 1, f"{p.name}/{m.name}: find string must occur exactly once")
                 self.assertNotEqual(m.find, m.replace)
+
+
+class PartyPins(unittest.TestCase):
+    """SPEC §10: the mutant of each party pin removes that party's list from judge/scope.json and nothing else,
+    and the pin kills it only by the admission of that party's forbidden path."""
+    CASES = {"counsel_build_admitted": ("counsel", "sim/gen.py"), "builder_pin_admitted": ("builder", "pins/p.py"),
+             "reviewer_code_admitted": ("reviewer", "sim/x.py")}
+
+    def test_the_mutant_removes_exactly_that_partys_list(self):
+        with open(os.path.join(ROOT, "judge", "scope.json")) as f:
+            text = f.read()
+        by = {p.name: p for p in pins.PINS}
+        for name, (party, _) in self.CASES.items():
+            [m] = by[name].mutants
+            self.assertEqual(m.path, "judge/scope.json", name)
+            want = json.loads(text)
+            del want["parties"][party]
+            self.assertEqual(json.loads(text.replace(m.find, m.replace)), want, name)
+
+    def test_killed_only_by_admitting_the_forbidden_path(self):
+        by = {p.name: p for p in pins.PINS}
+        for name, (party, path) in self.CASES.items():
+            [m] = by[name].mutants
+            with tempfile.TemporaryDirectory() as tmp:
+                copy = run.disposable_copy(ROOT, tmp)
+                self.assertEqual(run.apply_mutant(copy, m), "ok", name)
+                with self.assertRaises(AssertionError, msg=name) as cm:
+                    by[name].test(copy)
+            r = ast.literal_eval(str(cm.exception))
+            self.assertEqual((r["ok"], r["proposer"]), (True, party), name)
+            self.assertIn(path, r["touched"], name)
 
 
 class Runner(unittest.TestCase):
