@@ -1,0 +1,245 @@
+#!/usr/bin/env python3
+"""jack: the seven verbs of RUNBOOK.md. The kernel decides; this CLI prepares, signs, appends only what kernel.check admits,
+then performs the effects the entry authorises. Untrusted; not kernel. --dry-run and gh run watch are cut, as RUNBOOK.md's
+last section orders: gh run watch is printed as a command."""
+import argparse, contextlib, datetime, functools, hashlib, io, json, os, re, shutil, subprocess, sys, tempfile, time  # noqa: E401
+sys.path.insert(0, ROOT := os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from judge.judge import PARTIES, digest as commit_digest  # noqa: E402  the trusted-base digest of a commit, from git objects
+from kernel import check, log  # noqa: E402
+from tools import entry  # noqa: E402
+from tools.digest import digest  # noqa: E402  the same digest, of the working tree
+LOG, ZERO, SEEDS = os.path.join(ROOT, "log.jsonl"), "0" * 64, 100000  # no environment variable changes it
+SOURCES = ["kernel/"] + [f"kernel2/{f}.go" for f in "checker canonical ed25519 signature main".split()]
+CHECK = [["-m", "unittest", "discover", "-s", "tests", "-t", "."], ["pins/run.py"], ["tools/count_kernel.py"]]
+KINDS = "veto promote budget grant transmute fix".split()
+
+class Refused(Exception): """Exit 1: the verb refuses, with its reason."""  # noqa: E701
+def refuse(reason): raise Refused(reason)  # noqa: E704
+def run(*cmd, cwd=ROOT, ok=True):
+    r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
+    return refuse(f"{' '.join(cmd)} failed (exit {r.returncode}): {r.stderr.strip()[-400:]}") if ok and r.returncode else r
+def git(*args, cwd=ROOT, ok=True): return run("git", *args, cwd=cwd, ok=ok).stdout.strip()  # noqa: E704
+def fails(*cmd, cwd=ROOT): return run(*cmd, cwd=cwd, ok=False).returncode != 0  # noqa: E704
+def show(rev, path): return subprocess.run(["git", "-C", ROOT, "show", f"{rev}:{path}"], capture_output=True).stdout  # noqa: E704
+def filled(t): return len(f := t.split()) == 2 and f[0] in PARTIES and "<" not in t  # noqa: E704  party key_id, SPEC §10.7
+def trailer(rev): return filled(git("log", "-1", "--format=%(trailers:key=Proposer,valueonly)", rev))  # noqa: E704
+
+def push(*args, cwd=ROOT):  # never forced, never deleting: a rejected push (not a fast-forward) is a refusal, never a retry
+    if any(x.startswith(("+", ":")) for x in args) or fails("git", "push", "-q", *args, cwd=cwd):
+        refuse(f"git push {' '.join(args)}: a + or deleting refspec, or rejected (not a fast-forward: the branch moved, run again); never forced")
+
+def begin(a, on_main):  # the common preconditions; the party and key_id come from the keys the log declares
+    git("fetch", "-q", "origin")
+    if git("status", "--porcelain"):
+        refuse("the tree is not clean: git status --porcelain lists files")
+    (branch := git("symbolic-ref", "-q", "--short", "HEAD", ok=False)) or refuse("detached HEAD")
+    if (branch == "main") != on_main:
+        refuse(f"wrong branch {branch}: this verb runs {'on' if on_main else 'on a branch other than'} main")
+    lines = check.read_lines(open(LOG, "rb").read())  # an invalid log raises the kernel's refusal here
+    state = functools.reduce(lambda s, il: check.check_entry(s, *il), enumerate(lines), check.EMPTY)
+    blob = log.pubkey_blob(" ".join(open(a.key + ".pub").read().split()[:2]))
+    if (key_id := next((k for k, d in state.keys.items() if blob and d.blob == blob), None)) is None:
+        refuse(f"{a.key} is not a key the log declares: refused before signing")
+    a.branch, a.state, a.lines, a.party, a.key_id, a.trailer = branch, state, lines, state.keys[key_id].principal, key_id, \
+        f"Proposer: {state.keys[key_id].principal} {key_id}"
+    if not filled((t := a.trailer).removeprefix("Proposer: ")):
+        refuse(f"{t!r} is not a filled trailer: a party of {', '.join(PARTIES)} and a key_id, no <")
+    if on_main and git("rev-parse", "HEAD") != git("rev-parse", "origin/main"):
+        refuse("main is not up to date: HEAD must equal origin/main")
+    if not on_main and fails("git", "merge-base", "--is-ancestor", "origin/main", "HEAD"):
+        refuse(f"{branch} does not contain origin/main; run:\n  git merge origin/main -m \"Merge main into {branch}\" -m \"{t}\"")
+
+def append(a, type_, body, log_path=LOG):  # sign on the log's head; append only if kernel.check admits the log with it
+    ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    with tempfile.TemporaryDirectory() as d, contextlib.redirect_stdout(out := io.StringIO()):
+        with open(path := os.path.join(d, "entry"), "w", encoding="utf-8") as f:
+            f.write(entry.unsigned(argparse.Namespace(log=log_path, ts=ts, type=type_, proposer=a.party, body_json=json.dumps(body))))
+        subprocess.run(["ssh-keygen", "-Y", "sign", "-f", a.key, "-n", "core-entry", path], check=True, stdout=subprocess.DEVNULL)
+        if entry.assemble(argparse.Namespace(unsigned=path, sig=path + ".sig", log=log_path)):
+            refuse(f"the kernel refuses the {type_} entry (verdict above); nothing appended")
+    data = open(log_path, "rb").read()
+    open(log_path, "ab").write((b"\n" if data and not data.endswith(b"\n") else b"") + out.getvalue().encode())
+
+def commit(a, subject, paths, cwd=ROOT):
+    git("add", "--", *paths, cwd=cwd)
+    git("commit", "-q", "-m", subject, "-m", a.trailer, cwd=cwd)
+
+def watch():  # gh run watch is cut (RUNBOOK.md, bound and custody): printed as the command to run
+    print(f"watch main's run:\n  gh run watch --exit-status $(gh run list --branch main --commit {git('rev-parse', 'HEAD')} "
+          "--json databaseId --jq '.[0].databaseId')")
+
+def main_ending(a, type_, effect, subject, paths=("log.jsonl",)):  # effect() acts, returns the body; any failure to the push undoes all
+    try:
+        body = effect()
+        git("add", "--", *paths)
+        append(a, type_, body)
+        commit(a, subject, paths)
+        if (r := run(sys.executable, "judge/selfcheck.py", "--repo", ROOT, ok=False)).returncode:
+            refuse(f"judge/selfcheck.py fails after the commit: {r.stdout.strip()}")
+        push("origin", "main")
+    except BaseException as x:  # the tree was clean at the start: what is untracked under transcripts/ the verb placed
+        git("reset", "-q", "--hard", "origin/main"), git("clean", "-fdq", "--", "transcripts/")
+        refuse(f"{x}\nthe verb's effects are undone (git reset --hard origin/main, its files removed); nothing was pushed")
+    watch()
+
+def branch_ending(a, type_, body, subject, title, retitle=False):  # on failure after the commit: the two commands that finish the act
+    append(a, type_, body)
+    commit(a, subject, ["log.jsonl"])
+    try:
+        push("-u", "origin", a.branch)
+        n = run("gh", "pr", "list", "--head", a.branch, "--state", "open", "--json", "number", "--jq", ".[0].number").stdout.strip()
+        retitle and n and run("gh", "pr", "edit", n, "--title", title)  # spec_conflict: an existing PR is retitled so
+        return n or run("gh", "pr", "create", "--base", "main", "--head", a.branch, "--title", title, "--body", a.trailer
+                        ).stdout.strip().rsplit("/", 1)[-1]
+    except Refused as x:
+        refuse(f"{x}\nthe commit stands; finish the act with:\n  git push -u origin {a.branch}\n  "
+               f"gh pr create --base main --head {a.branch} --title '{title}' --body '{a.trailer}'")
+
+def the_check(cwd):  # the tests, the pins and the kernel line count; any failure refuses
+    for r in (run(sys.executable, *cmd, cwd=cwd, ok=False) for cmd in CHECK):
+        r.returncode and refuse(f"the check fails: {' '.join(r.args[1:])}\n{(r.stdout + r.stderr)[-1500:]}")
+
+def worktree(rev, fn):  # fn(path) in a temporary detached worktree of rev, removed after
+    try:
+        git("worktree", "add", "-q", "--detach", tmp := tempfile.mkdtemp(prefix="jack-"), rev)
+        return fn(tmp)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True), git("worktree", "prune")
+
+def v_key(a):
+    begin(a, True)
+    if len(fields := open(a.pubkey).read().split()) != 2 or fields[0] != "ssh-ed25519":
+        refuse(f"{a.pubkey} is not a two-field ssh-ed25519 line")
+    re.fullmatch("[a-z0-9_-]+", a.principal) or refuse(f"principal {a.principal!r} is not [a-z0-9_-]+")
+    powers = a.powers.split(",") if a.powers else []
+    if bad := [p for p in powers if p not in log.TYPES]:
+        refuse(f"powers outside the eight: {', '.join(bad)}")
+    if a.declared == a.key_id and "key" not in powers:
+        refuse(f"{a.declared} is the signer's own key: re-declaring it without `key` is refused")
+    main_ending(a, "key", lambda: {"key_id": a.declared, "principal": a.principal, "pubkey": " ".join(fields), "powers": powers},
+                f"key: {a.declared}")
+
+def v_proposal(a):
+    begin(a, False)
+    the_check(ROOT)
+    title = a.title or git("log", "-1", "--format=%s")
+    n = branch_ending(a, "proposal", {"title": title, "commit": git("rev-parse", "HEAD")}, f"proposal: {title}", title)
+    print(f"proposal recorded; PR #{n}")
+
+def v_spec_conflict(a):
+    begin(a, False)
+    n = branch_ending(a, "spec_conflict", {"section": a.section, "text": a.text}, *[f"spec_conflict: {a.section}"] * 2, True)
+    print(f"stopped: the specification cannot be implemented as written; see PR #{n}")
+
+def v_merge(a):
+    begin(a, True)
+    pr = json.loads(run("gh", "pr", "view", str(a.n), "--json", "state,baseRefName,mergeable,headRefOid,headRefName").stdout)
+    if bad := [f"{k} is {pr[k]}, not {w}" for k, w in (("state", "OPEN"), ("baseRefName", "main"), ("mergeable", "MERGEABLE"))
+               if pr[k] != w]:
+        refuse(f"PR #{a.n}: {'; '.join(bad)}")
+    if fails("gh", "pr", "checks", str(a.n), "--required"):
+        refuse(f"PR #{a.n}'s required checks are not green on its current head")
+    head, branch = pr["headRefOid"], pr["headRefName"]
+    lines, parent = check.read_lines(show(head, "log.jsonl")), git("rev-parse", "-q", "--verify", f"{head}^", ok=False)
+    if not (check.check(lines)["ok"] and any((e := json.loads(x))["type"] == "proposal" and e["body"]["commit"] == parent
+                                             for x in lines) or trailer(head)):
+        refuse(f"PR #{a.n}'s head is not one commit past a valid proposal and carries no filled Proposer: trailer")
+    body = {"proposal": a.n, "commit": head, "checker": digest()}
+    worktree(head, lambda tmp: (append(a, "merge", body, os.path.join(tmp, "log.jsonl")),  # a rejected push: the proposal
+                                commit(a, f"merge: #{a.n}", ["log.jsonl"], cwd=tmp),       # moved; refused, run again
+                                push("origin", f"HEAD:refs/heads/{branch}", cwd=tmp)))
+    if subprocess.run(["gh", "pr", "checks", str(a.n), "--watch"]).returncode:
+        refuse(f"PR #{a.n} with its merge entry was not admitted by the judge and the tests; not merged")
+    run("gh", "pr", "merge", str(a.n), "--merge")
+    git("pull", "-q", "--ff-only")
+    watch()
+
+def valid_run(parts, head):  # the record (SHA-256 of the parts in name order) if the twelve are BRANCH head's clean run, else None
+    reps = [json.loads(parts[n]) for n in sorted(parts)]
+    edges = [r["seeds"] for r in reps]
+    ok = len(reps) == 12 and [e[0] for e in edges] == [0] + [e[1] for e in edges[:-1]] and edges[-1][1] == SEEDS and all(
+        r["commit"] == head and r["logs"] == r["seeds"][1] - r["seeds"][0] and r["disagreements"] == [] == r["uncompared"] for r in reps)
+    return hashlib.sha256(b"".join(parts[n] for n in sorted(parts))).hexdigest() if ok else None
+
+def make_run(tmp, head):  # never accepted from BRANCH: kernel2/check built once, then harness/diff.py twelve ways into transcripts/
+    run("kernel2/build.sh", cwd=tmp)
+    os.makedirs(os.path.join(tmp, "transcripts"), exist_ok=True)
+    names = [f"transcripts/diff-{SEEDS}-{time.strftime('%Y%m%dT%H%MZ', time.gmtime())}-part{k:02}.json" for k in range(12)]
+    procs = [subprocess.Popen([sys.executable, "harness/diff.py", "--seeds", f"{k * SEEDS // 12}:{(k + 1) * SEEDS // 12}",
+                               "--b", "kernel2/check"], cwd=tmp, stdout=open(os.path.join(tmp, n), "wb")) for k, n in enumerate(names)]
+    [(p.wait(), p.stdout and p.stdout.close()) for p in procs]
+    if not valid_run(made := {n: open(os.path.join(tmp, n), "rb").read() for n in names}, head):
+        refuse(f"the run of record is not twelve parts of {head[:12]}, each its range's logs, contiguous from 0 to {SEEDS}, "
+               "0 disagreements, 0 uncompared")
+    return made
+
+def v_push(a):
+    begin(a, True)
+    if (b := a.target).startswith("+") or fails("git", "rev-parse", "-q", "--verify", f"refs/heads/{b}"):
+        refuse(f"{b} is not a local branch")
+    if fails("git", "merge-base", "--is-ancestor", "origin/main", b):
+        refuse(f"{b} does not contain origin/main")
+    if commit_digest(ROOT, b) == commit_digest(ROOT, "HEAD"):
+        refuse("nothing to push: propose and merge")
+    if bare := [s[:12] for s in git("rev-list", f"origin/main..{b}").split() if not trailer(s)]:
+        refuse(f"commits on {b} without a filled Proposer: trailer: {', '.join(bare)}")
+    review = None if a.review == "none" else open(a.review, "rb").read()  # an empty file is a review: its hash, not zeros
+    needs_run, head = fails("git", "diff", "--quiet", "origin/main", b, "--", *SOURCES), git("rev-parse", b)
+    place = worktree(b, lambda tmp: (the_check(tmp), make_run(tmp, head) if needs_run else {})[1])
+    review is None and print("WARNING: --review none: this push was not read", file=sys.stderr)
+    placed = {**place, **({} if review is None else {f"transcripts/{os.path.basename(a.review)}": review})}
+    def effect():  # the fast-forward, the evidence placed, then the body on the tree now on main
+        git("merge", "-q", "--ff-only", b)
+        for n, data in placed.items():
+            os.makedirs(os.path.join(ROOT, "transcripts"), exist_ok=True) or open(os.path.join(ROOT, n), "wb").write(data)
+        return {"digest": digest(), "review": ZERO if review is None else hashlib.sha256(review).hexdigest(),
+                "record": valid_run(place, head) if needs_run else ZERO}
+    main_ending(a, "push", effect, f"push: {b}", ["log.jsonl"] + ["transcripts/"] * bool(placed))
+    for wt in (w.splitlines() for w in git("worktree", "list", "--porcelain").split("\n\n") if a.remove):
+        if f"branch refs/heads/{b}" in wt:
+            git("worktree", "remove", wt[0][len("worktree "):])
+
+def v_decision(a):
+    begin(a, True)
+    a.subject or refuse("SUBJECT must be a non-empty string")
+    main_ending(a, "decision", lambda: {"kind": a.kind, "subject": a.subject}, f"decision: {a.kind} {a.subject}")
+
+def v_amend(a):
+    begin(a, True)
+    if a.id not in a.state.transmuted:  # the kernel's state: a valid transmute decision, extra members or not
+        refuse("transmute first")
+    if any(i == a.id for i, _, _ in a.state.amendments):
+        refuse(f"{a.id} is already an amendment")
+    if not (text := open(a.file, encoding="utf-8").read()).startswith(f"## Amendment {a.id}:"):
+        refuse(f"{a.file}'s first line is not '## Amendment {a.id}:'")
+    def effect():  # the charter appended before the entry
+        open(path := os.path.join(ROOT, "CHARTER.md"), "ab").write(b"\n" + text.encode())
+        return {"id": a.id, "charter": hashlib.sha256(open(path, "rb").read()).hexdigest(),
+                "activate_at": len(a.lines) + 1 if a.activate_at is None else a.activate_at}
+    main_ending(a, "amend", effect, f"amend: {a.id}", ["CHARTER.md", "log.jsonl"])
+
+def main(argv):
+    ap = argparse.ArgumentParser(prog="jack", description=__doc__)
+    ap.add_argument("--key", default=os.environ.get("JACK_KEY", os.path.expanduser("~/.ssh/id_ed25519")))
+    sub = ap.add_subparsers(dest="verb", required=True)
+    for verb, specs in (("key", "declared --principal= --powers= --pubkey="), ("proposal", "--title"), ("merge", "n:int"),
+                        ("spec_conflict", "--section= --text="), ("push", "target --review= --remove:bool"),
+                        ("decision", "kind subject"), ("amend", "id file --activate-at:int")):
+        p = sub.add_parser(verb)
+        for spec in specs.split():
+            name, kind = (spec.rstrip("=").split(":") + ["str"])[:2]
+            p.add_argument(name, **{"action": "store_true"} if kind == "bool" else
+                           {"type": int if kind == "int" else str, **({"required": True} if spec.endswith("=") else {})})
+    try:
+        if any("--admin" in x or "--force" in x for x in argv):
+            refuse("--admin and --force are refused, always")
+        if (a := ap.parse_args(argv)).verb == "decision" and a.kind not in KINDS:
+            refuse(f"KIND must be one of {' '.join(KINDS)}, not {a.kind!r}")
+        globals()["v_" + a.verb](a)
+    except (Refused, entry.Usage, OSError, log.Refuse, subprocess.CalledProcessError) as x:
+        print(f"refused: {x}", file=sys.stderr)
+        return 1
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
