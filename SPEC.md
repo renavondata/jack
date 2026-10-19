@@ -353,15 +353,18 @@ order, each a refusal of the whole proposal:
    code enters from a builder, written to a text Guy has read; findings enter from a
    reviewer, as pins (A2 clause 9).
 9. **out_of_scope** — the proposal touches a path not under a prefix in
-   `judge/scope.json`'s `paths`. (Trusted paths are refused by item 1
+   `judge/scope.json`'s `paths`, or its head holds, under any prefix in `paths`, an
+   object that is not a regular file: a symbolic link or a submodule (git modes
+   120000 and 160000) is refused whatever it points to, since the court's
+   repository holds regular files only. (Trusted paths are refused by item 1
    whatever the list says.)
-10. **code_cap** — at the proposal's head, the lines of every `.py` file, and of
-    every file whose first line is a `#!` line naming `python`, under a prefix in
-    `judge/scope.json`'s `counted`, counted as `tools/count_kernel.py` counts, exceed
-    `judge/scope.json`'s `cap`. A symbolic link under such a prefix is refused by this
-    item whatever it points to: its lines cannot be counted from the tree it is in,
-    and `tools/count_kernel.py` names it and exits 2 rather than follow it, so that
-    the two never disagree.
+10. **code_cap** — at the proposal's head, the lines of every regular file under a
+    prefix in `judge/scope.json`'s `counted` that is a `.py` file or whose first line
+    is a `#!` line naming `python`, read from the git object, exceed
+    `judge/scope.json`'s `cap`. A file's lines are its `0x0A` bytes, plus one if it
+    is not empty and its last byte is not `0x0A`. The judge is the only counter the
+    cap depends on; `tools/count_kernel.py` applies the same arithmetic to the
+    kernel for CHARTER §9 criterion 3 and binds nothing here.
 
 Items 7–10 apply only to a proposal whose head differs from trunk; the self-check, which judges trunk against itself, skips them.
 
@@ -411,8 +414,8 @@ with a commit after it that touches more than `log.jsonl`, is admitted),
 `counsel_build_admitted`, `builder_pin_admitted`, `reviewer_code_admitted` (for these
 three the mutant removes that party's list from `judge/scope.json`, and nothing else),
 `scope_unguarded`, `cap_unguarded`, `shebang_uncounted` (a python file without `.py`
-under `counted` is not counted), `symlink_admitted` (a symbolic link under `counted`
-is admitted).
+under `counted` is not counted), `foreign_object_admitted` (a symbolic link, or a
+submodule whose commit is present or absent, under `paths` is admitted).
 
 ## 11. Vectors
 
