@@ -11,6 +11,16 @@ def bind_genesis(repo, lg, world):
     return gitfix.commit_all(repo, "Found against the trusted base")
 
 
+def propose(repo, lg, world, party="builder", msg="change", key=None):
+    """Commit the working tree as the proposal's work, then a `proposal` entry naming that commit, signed by
+    `party`'s genesis key (or `key`), in a commit touching log.jsonl only (SPEC §10.7). Returns the work's sha."""
+    work = gitfix.commit_all(repo, msg)
+    lg.add("proposal", party, build.proposal(msg, commit=work), key or world.parties[party])
+    gitfix.write(repo, "log.jsonl", lg.text())
+    gitfix.commit_all(repo, "Record the proposal")
+    return work
+
+
 def make_repo(world, with_log=True, **kwargs):
     fx = gitfix.make_repo(world, with_log=with_log, **kwargs)
     gitfix.git(fx.repo, "checkout", "-q", "main")

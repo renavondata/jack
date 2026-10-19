@@ -37,7 +37,8 @@ def commit_all(repo, msg):
 
 def make_repo(world, with_log=True, root=ROOT, tmpdir=None):
     """main: pristine kernel/ and judge/ from `root`, a workflow, SPEC.md, CHARTER.md, README and a
-    genesis log bound to that CHARTER.md; the branch `pr` is checked out, ready for the proposal's commits."""
+    genesis log bound to that CHARTER.md, declaring the world's keys and its parties' keys; the branch `pr`
+    is checked out, ready for the proposal's commits."""
     repo = tempfile.mkdtemp(dir=tmpdir, prefix="repo-")
     git(repo, "init", "-q", "-b", "main")
     git(repo, "config", "diff.renames", "true")  # git's default since 2.9, pinned so rename fixtures behave alike everywhere
@@ -47,7 +48,7 @@ def make_repo(world, with_log=True, root=ROOT, tmpdir=None):
     write(repo, "SPEC.md", "spec\n")
     write(repo, "CHARTER.md", CHARTER_TEXT)
     write(repo, "README.md", "readme\n")
-    lg = world.log(charter=CHARTER_SHA256)
+    lg = world.log(world.decls + world.party_decls, charter=CHARTER_SHA256)
     if with_log:
         write(repo, "log.jsonl", lg.text())
     main = commit_all(repo, "trunk")

@@ -22,7 +22,7 @@ from collections import namedtuple
 from harness import build, diff, gitfix, keys, runner
 from harness.build import proposal
 from kernel import log, sig
-from pins.fixtures import bind_genesis, make_repo
+from pins.fixtures import bind_genesis, make_repo, propose
 
 Pin = namedtuple("Pin", "name test mutants")
 Mutant = namedtuple("Mutant", "name path find replace")
@@ -51,10 +51,10 @@ def commit(repo, msg, proposer="builder pin-model pin-session"):
     return gitfix.commit_all(repo, msg + (f"\n\nProposer: {proposer}" if proposer else ""))
 
 
-def proposal_touching(root, path, proposer="builder m s", data="x\n"):
+def proposal_touching(root, path, party="builder", data="x\n", key=None):
     fx = make_repo(world())
     gitfix.write(fx.repo, path, data)
-    commit(fx.repo, "change", proposer)
+    propose(fx.repo, fx.log, world(), party, key=key)
     return judged(root, fx)
 
 
@@ -74,7 +74,7 @@ def t_trusted_path(root):
         assert (r.get("ok"), r.get("reason")) == (False, "trusted_path"), (path, r)
     fx = make_repo(w)
     gitfix.write(fx.repo, "README.md", "docs only\n")
-    commit(fx.repo, "docs")
+    propose(fx.repo, fx.log, w, "counsel", "docs")
     assert judged(root, fx).get("ok") is True
 
 
@@ -89,7 +89,7 @@ def t_trusted_rename(root):
         assert (r.get("ok"), r.get("reason")) == (False, "trusted_path"), (old, new, r)
     fx = make_repo(w)
     gitfix.move(fx.repo, "README.md", "transcripts/README.md")
-    commit(fx.repo, "rename docs")
+    propose(fx.repo, fx.log, w, "counsel", "rename docs")
     assert judged(root, fx).get("ok") is True
 
 
@@ -97,7 +97,7 @@ def t_judge_from_proposal(root):
     from judge import judge as trunk_judge  # pristine, only to compute the fixture trunk's digest
     w = world()
     fx = make_repo(w)
-    fx.log.add("proposal", "ann", proposal("a"), w.ann)
+    propose(fx.repo, fx.log, w)
     fx.log.add("merge", "guy", build.merge(1, "ab" * 32), w.guy)
     gitfix.write(fx.repo, "log.jsonl", fx.log.text())
     commit(fx.repo, "merge judged by a checker the proposal supplied")
@@ -109,48 +109,103 @@ def t_judge_from_proposal(root):
     commit(fx.repo, "merge judged by trunk")
     assert judged(root, fx).get("ok") is True
     fx = make_repo(w)
-    fx.log.add("proposal", "ann", proposal("b"), w.ann)
-    gitfix.write(fx.repo, "log.jsonl", fx.log.text())
-    commit(fx.repo, "proposal")
+    propose(fx.repo, fx.log, w)
     assert judged(root, fx).get("ok") is True
 
 
 def t_unattributed_proposal(root):
-    """SPEC §10.7: the head commit names its party in a Proposer trailer, read by git from the message."""
-    for proposer in (None, "martian m s"):
-        judge_refuses(proposal_touching(root, "README.md", proposer), "unattributed_proposal")
-    judge_refuses(proposal_touching(root, "README.md", None, "Proposer: builder m s\n"), "unattributed_proposal")
-    assert proposal_touching(root, "README.md").get("ok") is True
+    """SPEC §10.7: the party is the principal of the key that signed the last appended proposal entry naming a
+    commit of the proposal, under the law in force at that entry; no later commit changes more than log.jsonl."""
+    w = world()
+    judge_refuses(judged(root, trailer_only(w)), "unattributed_proposal")  # a Proposer trailer, no entry
+    fx = make_repo(w)  # a signed entry, but naming trunk's commit, not one of the proposal's
+    fx.log.add("proposal", "builder", proposal("a", commit=fx.main), w.parties["builder"])
+    gitfix.write(fx.repo, "log.jsonl", fx.log.text())
+    commit(fx.repo, "entry")
+    judge_refuses(judged(root, fx), "unattributed_proposal")
+    fx = make_repo(w)  # a commit after the named one changes more than log.jsonl
+    gitfix.write(fx.repo, "sim/x.py", "x\n")
+    propose(fx.repo, fx.log, w)
+    gitfix.write(fx.repo, "sim/y.py", "y\n")
+    commit(fx.repo, "after the entry")
+    judge_refuses(judged(root, fx), "unattributed_proposal")
+    fx = make_repo(w)  # the key re-declared to another principal after the entry: the party is the law's at the entry
+    gitfix.write(fx.repo, "sim/x.py", "x\n")
+    propose(fx.repo, fx.log, w)
+    fx.log.add("key", "guy", build.decl("builder-1", "reviewer", w.parties["builder"], ["proposal"]), w.guy)
+    gitfix.write(fx.repo, "log.jsonl", fx.log.text())
+    commit(fx.repo, "re-declare")
+    r = judged(root, fx)
+    assert (r.get("ok"), r.get("proposer")) == (True, "builder"), r
+    assert proposal_touching(root, "sim/x.py").get("ok") is True
+
+
+def trailer_only(w):
+    fx = make_repo(w)
+    gitfix.write(fx.repo, "README.md", "x\n")
+    commit(fx.repo, "change", "builder m s")
+    return fx
 
 
 def t_counsel_builds(root):
-    """SPEC §10.8: counsel's proposal touches only documents."""
-    judge_refuses(proposal_touching(root, "sim/gen.py", "counsel m s"), "counsel_builds")
-    assert proposal_touching(root, "transcripts/t.txt", "counsel m s").get("ok") is True
-    assert proposal_touching(root, "sim/gen.py", "builder m s").get("ok") is True
+    """SPEC §10.8: counsel touches documents only."""
+    judge_refuses(proposal_touching(root, "sim/gen.py", "counsel"), "party_scope")
+    assert proposal_touching(root, "transcripts/t.txt", "counsel").get("ok") is True
+    assert proposal_touching(root, "sim/gen.py", "builder").get("ok") is True
+
+
+def t_builder_pin(root):
+    """SPEC §10.8: a builder may not touch the pins that judge it, though a reviewer's entry naming the same commit precedes its own."""
+    w = world()
+    fx = make_repo(w)
+    gitfix.write(fx.repo, "pins/p.py", "x\n")
+    work = commit(fx.repo, "work")
+    for party in ("reviewer", "builder"):
+        fx.log.add("proposal", party, proposal(party, commit=work), w.parties[party])
+    gitfix.write(fx.repo, "log.jsonl", fx.log.text())
+    commit(fx.repo, "entries")
+    judge_refuses(judged(root, fx), "party_scope")
+    assert proposal_touching(root, "pins/p.py", "reviewer").get("ok") is True
+    assert proposal_touching(root, "tests/t.py", "builder").get("ok") is True
+
+
+def t_reviewer_code(root):
+    """SPEC §10.8: a reviewer touches pins and vectors, never code; the party is the key's principal, not its key_id."""
+    judge_refuses(proposal_touching(root, "sim/x.py", "reviewer"), "party_scope")
+    assert proposal_touching(root, "spec/vectors/v.json", "reviewer").get("ok") is True
 
 
 def t_scope(root):
     """SPEC §10.9: every touched path, both sides of a rename included, is under judge/scope.json's paths."""
-    judge_refuses(proposal_touching(root, "docs/x.md"), "out_of_scope")
-    fx = make_repo(world())
+    w = world()
+    judge_refuses(proposal_touching(root, "docs/x.md", "ann", key=w.ann), "out_of_scope")
+    fx = make_repo(w)
     gitfix.git(fx.repo, "checkout", "-q", "main")
     gitfix.write(fx.repo, "notes.txt", "trunk's\n")
     commit(fx.repo, "trunk note")
     gitfix.git(fx.repo, "checkout", "-q", "pr")
     gitfix.git(fx.repo, "reset", "-q", "--hard", "main")
     gitfix.move(fx.repo, "notes.txt", "transcripts/notes.txt")
-    commit(fx.repo, "move a file into scope")
+    propose(fx.repo, fx.log, w, "ann", "move a file into scope", w.ann)
     judge_refuses(judged(root, fx), "out_of_scope")
-    assert proposal_touching(root, "transcripts/notes.txt").get("ok") is True
+    assert proposal_touching(root, "transcripts/notes.txt", "ann", key=w.ann).get("ok") is True
 
 
 def t_code_cap(root):
-    """SPEC §10.10: counted .py lines at the head stay within the cap."""
+    """SPEC §10.10: counted python lines at the head stay within the cap."""
     with open(os.path.join(root, "judge", "scope.json")) as f:
         cap = json.load(f)["cap"]
     judge_refuses(proposal_touching(root, "sim/big.py", data="x = 1\n" * (cap + 1)), "code_cap")
     assert proposal_touching(root, "sim/big.py", data="x = 1\n" * cap).get("ok") is True
+
+
+def t_shebang_counted(root):
+    """SPEC §10.10: a file whose first line is a #! line naming python is counted, .py or not."""
+    with open(os.path.join(root, "judge", "scope.json")) as f:
+        cap = json.load(f)["cap"]
+    judge_refuses(proposal_touching(root, "tools/big", data="#!/usr/bin/env python3\n" + "x = 1\n" * cap), "code_cap")
+    assert proposal_touching(root, "tools/big", data="#!/usr/bin/env python3\n" + "x = 1\n" * (cap - 1)).get("ok") is True
+    assert proposal_touching(root, "tools/big", data="#!/bin/sh\n" + "x\n" * cap).get("ok") is True
 
 
 def t_push_unrecorded(root):
@@ -165,7 +220,7 @@ def t_push_unrecorded(root):
             gitfix.git(fx.repo, "checkout", "-q", "pr")
             gitfix.git(fx.repo, "reset", "-q", "--hard", "main")
             gitfix.write(fx.repo, "README.md", "docs\n")
-            commit(fx.repo, "docs")
+            propose(fx.repo, fx.log, world(), "counsel", "docs")
         judge_refuses(runner.judge_with(root, fx.repo, "main", head), "trusted_base_unrecorded")
     gitfix.git(fx.repo, "checkout", "-q", "main")
     fx.log.add("push", "guy", {"digest": trusted_judge.digest(fx.repo, "main"), "review": "0" * 64}, world().guy)
@@ -189,7 +244,7 @@ def charter_judged(root, charter=None, amend=None):
     gitfix.git(fx.repo, "checkout", "-q", "pr")
     gitfix.git(fx.repo, "reset", "-q", "--hard", "main")
     gitfix.write(fx.repo, "README.md", "docs\n")
-    commit(fx.repo, "docs")
+    propose(fx.repo, fx.log, w, "counsel", "docs")
     return [runner.judge_with(root, fx.repo, "main", head) for head in ("main", "pr")]
 
 
@@ -218,7 +273,7 @@ def t_freeze_ignored(root):
         fx.log.add("amend", "guy", {"id": "A2", "charter": gitfix.CHARTER_SHA256, "activate_at": height}, w.guy)
         fx.log.add("push", "guy", {"digest": json.loads(fx.log.lines[0])["body"]["checker"], "review": "0" * 64}, w.guy)
         gitfix.write(fx.repo, "log.jsonl", fx.log.text())
-        commit(fx.repo, "Amend then push")
+        propose(fx.repo, fx.log, w, msg="Amend then push")
         r = judged(root, fx)
         if reason:
             judge_refuses(r, reason)
@@ -234,7 +289,7 @@ def t_one_act_amendment(root):
             fx.log.add("decision", "guy", {"kind": "transmute", "subject": "A2"}, w.guy)
         fx.log.add("amend", "guy", {"id": "A2", "charter": gitfix.CHARTER_SHA256, "activate_at": 9}, w.guy)
         gitfix.write(fx.repo, "log.jsonl", fx.log.text())
-        commit(fx.repo, "Amend")
+        propose(fx.repo, fx.log, w, msg="Amend")
         r = judged(root, fx)
         if transmute:
             assert r.get("ok") is True, r
@@ -249,7 +304,7 @@ def t_decision_forged(root):
         fx.log.add("key", "guy", build.decl("stranger-1", "guy", w.stranger, ["decision"]), w.guy)
         fx.log.add("decision", "guy", {"kind": "fix", "subject": "x"}, w.guy if sovereign else w.stranger)
         gitfix.write(fx.repo, "log.jsonl", fx.log.text())
-        commit(fx.repo, "Decision")
+        propose(fx.repo, fx.log, w, msg="Decision")
         r = judged(root, fx)
         if sovereign:
             assert r.get("ok") is True, r
@@ -537,11 +592,18 @@ PINS = [
                'if e["type"] == "merge" and e["body"]["checker"] != report["trusted_digest"]:',
                'if e["type"] == "merge" and False:')]),
     Pin("unattributed_proposal_admitted", t_unattributed_proposal, [
-        Mutant("trailer_unchecked", "judge/judge.py",
-               '    if report["proposer"] not in PARTIES:', '    if False:')]),
+        Mutant("commit_unchecked", "judge/judge.py",
+               ' and e["body"]["commit"] in commits]', ']'),
+        Mutant("later_commits_unchecked", "judge/judge.py", '    if later - {LOG}:', '    if False:'),
+        Mutant("law_at_end", "judge/judge.py",
+               '[e["body"] for e in entries[1:i] if e["type"] == "key"]', '[e["body"] for e in entries[1:] if e["type"] == "key"]')]),
     Pin("counsel_build_admitted", t_counsel_builds, [
-        Mutant("counsel_unchecked", "judge/judge.py",
-               '    if report["proposer"] == "counsel" and', '    if False and')]),
+        Mutant("party_scope_unchecked", "judge/judge.py",
+               '    if allowed is not None and any(not is_under(p, allowed) for p in changed):', '    if False:')]),
+    Pin("builder_pin_admitted", t_builder_pin, [
+        Mutant("first_entry_attributes", "judge/judge.py", '    seq, last = named[-1]', '    seq, last = named[0]')]),
+    Pin("reviewer_code_admitted", t_reviewer_code, [
+        Mutant("party_by_key_id", "judge/judge.py", 'next((d["principal"] for d in', 'next((d["key_id"] for d in')]),
     Pin("scope_unguarded", t_scope, [
         Mutant("scope_unchecked", "judge/judge.py",
                '    if any(not is_under(p, scope["paths"]) for p in changed):', '    if False:'),
@@ -550,6 +612,9 @@ PINS = [
     Pin("cap_unguarded", t_code_cap, [
         Mutant("cap_unchecked", "judge/judge.py",
                '    if counted_lines(repo, head, scope["counted"]) > scope["cap"]:', '    if False:')]),
+    Pin("shebang_uncounted", t_shebang_counted, [
+        Mutant("py_suffix_only", "judge/judge.py",
+               'return path.endswith(".py") or (first.startswith(b"#!") and b"python" in first)', 'return path.endswith(".py")')]),
     Pin("unsigned_change", t_unsigned_change, [
         Mutant("power_unchecked", "kernel/check.py",
                '    if e["type"] not in keys[key_id].powers:', '    if False:')]),

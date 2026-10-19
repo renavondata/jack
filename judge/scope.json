@@ -1,7 +1,9 @@
 {"layer": "C1",
- "paths": ["sim/", "harness/", "tests/", "pins/", "tools/", "transcripts/",
+ "paths": ["sim/", "harness/", "tests/", "pins/", "tools/", "spec/vectors/", "transcripts/",
            "REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md", "log.jsonl"],
- "documents": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",
-               "transcripts/", "sim/runs/"],
+ "parties": {"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts/", "log.jsonl"],
+             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],
+             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",
+                         "transcripts/", "sim/runs/", "log.jsonl"]},
  "counted": ["sim/", "harness/", "tests/", "pins/", "tools/"],
- "cap": 4500}
+ "cap": 5500}

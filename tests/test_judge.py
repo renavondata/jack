@@ -12,7 +12,7 @@ from harness import build, gitfix
 from harness.build import proposal
 from harness.gitfix import git, write
 from judge import judge
-from pins.fixtures import make_repo
+from pins.fixtures import make_repo, propose
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.executable
@@ -46,15 +46,20 @@ class Fixture(unittest.TestCase):
         write(repo, "log.jsonl", self.lg.text())
         commit_all(repo, msg)
 
+    def propose(self, repo, msg="change", party="builder", key=None):
+        """The working tree as the proposal's work, attributed by a signed proposal entry (SPEC §10.7)."""
+        write(repo, "log.jsonl", self.lg.text())
+        return propose(repo, self.lg, self.w, party, msg, key)
+
 
 class Verdicts(Fixture):
     def test_valid_appended_entry_is_accepted(self):
         repo = self.repo()
-        line = self.lg.add("proposal", "ann", proposal("a"), self.w.ann)
-        self.append(repo)
+        self.propose(repo, party="ann", key=self.w.ann)
+        line = self.lg.lines[-1]
         r = self.judge(repo)
         self.assertTrue(r["ok"], r)
-        self.assertEqual((r["reason"], r["touched"], r["appended"]), (None, ["log.jsonl"], 1))
+        self.assertEqual((r["reason"], r["touched"], r["appended"], r["proposer"]), (None, ["log.jsonl"], 1, "ann"))
         blob = base64.b64decode(json.loads(line)["sig"])
         n = int.from_bytes(blob[10:14], "big")
         fp = "SHA256:" + base64.b64encode(hashlib.sha256(blob[14:14 + n]).digest()).decode().rstrip("=")
@@ -63,18 +68,18 @@ class Verdicts(Fixture):
         self.assertEqual(r["trusted_digest"], judge.digest(repo, self.main))
         self.assertEqual(r["kernel2"], "absent")
 
-    def test_nothing_appended_is_accepted(self):
+    def test_nothing_appended_is_unattributed(self):
         repo = self.repo()
         write(repo, "README.md", "changed\n")
         commit_all(repo, "docs")
         r = self.judge(repo)
-        self.assertEqual((r["ok"], r["appended"], r["touched"]), (True, 0, ["README.md"]))
+        self.assertEqual((r["ok"], r["appended"], r["touched"], r["reason"]), (False, 0, ["README.md"], "unattributed_proposal"))
 
     def test_no_logs_anywhere(self):
         repo = self.repo(with_log=False)
         write(repo, "README.md", "x\n")
         commit_all(repo, "docs")
-        self.assertTrue(self.judge(repo)["ok"])
+        self.assertEqual(self.judge(repo)["reason"], "unattributed_proposal")  # no log, so no entry to attribute by
 
     def test_prefix_broken(self):
         repo = self.repo()
@@ -103,7 +108,7 @@ class Verdicts(Fixture):
 
     def test_merge_checker_must_match_trunk_digest(self):
         repo = self.repo()
-        self.lg.add("proposal", "ann", proposal("a"), self.w.ann)
+        self.propose(repo)
         self.lg.add("merge", "guy", build.merge(1, "ab" * 32), self.w.guy)
         self.append(repo, "merge")
         r = self.judge(repo)
@@ -115,8 +120,7 @@ class Verdicts(Fixture):
 
     def test_diff_is_against_merge_base(self):
         repo = self.repo()
-        self.lg.add("proposal", "ann", proposal("a"), self.w.ann)
-        self.append(repo)
+        self.propose(repo)
         git(repo, "checkout", "-q", "main")
         write(repo, "README.md", "trunk moved on\n")
         commit_all(repo, "trunk change")
@@ -148,7 +152,7 @@ class TrustedBase(Fixture):
             self.assertIn(old, r["detail"])
         repo = self.repo()
         gitfix.move(repo, "README.md", "transcripts/README.md")
-        commit_all(repo, "rename docs")
+        self.propose(repo, "rename docs", "counsel")
         self.assertTrue(self.judge(repo)["ok"])
 
     def test_deletion_is_refused(self):
@@ -213,7 +217,7 @@ class Charter(Fixture):
         git(repo, "reset", "-q", "--hard", "main")
         write(repo, "README.md", "x\n")
         commit_all(repo, "docs")
-        self.assertTrue(self.judge(repo)["ok"])
+        self.assertEqual(self.judge(repo)["reason"], "unattributed_proposal")  # past the charter check; no log to attribute by
 
     def test_charter_check_precedes_the_kernel(self):
         repo = self.repo()
@@ -251,7 +255,7 @@ class OpeningGrounds(Fixture):
         self.publish(repo)
         self.assertTrue(self.judge(repo, "main", "main")["ok"])
         write(repo, "README.md", "docs\n")
-        commit_all(repo, "docs")
+        self.propose(repo, "docs", "counsel")
         self.assertTrue(self.judge(repo)["ok"])
 
     def test_stale_or_invalid_amendment_does_not_bind_charter(self):
@@ -272,7 +276,7 @@ class OpeningGrounds(Fixture):
             git(repo, "checkout", "-q", "pr")
             git(repo, "reset", "-q", "--hard", "main")
             write(repo, "README.md", "proposal\n")
-            commit_all(repo, "docs")
+            self.propose(repo, "docs", "counsel")
             head = "main" if selfcheck else "pr"
             self.assertEqual(self.judge(repo, "main", head)["reason"], "trusted_base_unrecorded")
             self.lg.add("push", "guy", {"digest": judge.digest(repo, "main"), "review": "0" * 64}, self.w.guy)
@@ -287,7 +291,7 @@ class OpeningGrounds(Fixture):
         git(repo, "checkout", "-q", "pr")
         git(repo, "reset", "-q", "--hard", "main")
         self.lg.add("push", "guy", {"digest": judge.digest(repo, "main"), "review": "0" * 64}, self.w.guy)
-        self.append(repo)
+        self.propose(repo)
         self.assertEqual(self.judge(repo)["reason"], "trusted_base_unrecorded")
 
     def test_freeze_is_strict_and_checks_all_amendments(self):
@@ -300,7 +304,7 @@ class OpeningGrounds(Fixture):
                 if selfcheck:
                     self.publish(repo)
                 else:
-                    self.append(repo)
+                    self.propose(repo)
                 r = self.judge(repo, "main", "main" if selfcheck else "pr")
                 self.assertEqual((r["ok"], r["reason"]), (height == 3, None if height == 3 else "push_during_amendment"))
         repo = self.repo()
@@ -309,7 +313,7 @@ class OpeningGrounds(Fixture):
         self.decision("A3")
         self.amend("A3", height=5)
         self.lg.add("push", "guy", {"digest": judge.digest(repo, "main"), "review": "0" * 64}, self.w.guy)
-        self.append(repo)
+        self.propose(repo)
         self.assertEqual(self.judge(repo)["reason"], "push_during_amendment")
 
     def test_transmutation_is_prior_and_names_the_amendment(self):
@@ -328,7 +332,7 @@ class OpeningGrounds(Fixture):
                 if selfcheck:
                     self.publish(repo)
                 else:
-                    self.append(repo)
+                    self.propose(repo)
                 r = self.judge(repo, "main", "main" if selfcheck else "pr")
                 self.assertEqual((r["ok"], r["reason"]), (earlier == "correct", None if earlier == "correct" else "amend_untransmuted"), r)
 
@@ -341,13 +345,13 @@ class OpeningGrounds(Fixture):
                 if selfcheck:
                     self.publish(repo)
                 else:
-                    self.append(repo)
+                    self.propose(repo)
                 r = self.judge(repo, "main", "main" if selfcheck else "pr")
                 self.assertEqual(r["reason"], "decision_by_other", r)
         repo = self.repo()
         self.lg.add("key", "guy", build.decl("ann-1", "renamed", self.w.ann, ["decision"]), self.w.guy)
         self.decision(key=self.w.ann, proposer="renamed")
-        self.append(repo)
+        self.propose(repo)
         self.assertTrue(self.judge(repo)["ok"])  # any genesis-declared key, even after a new principal
 
 
@@ -368,8 +372,7 @@ class TrunkKernelRuns(Fixture):
 class Cli(Fixture):
     def test_cli_exit_codes_and_json(self):
         repo = self.repo()
-        self.lg.add("proposal", "ann", proposal("a"), self.w.ann)
-        self.append(repo)
+        self.propose(repo)
         r = subprocess.run([PY, os.path.join(ROOT, "judge", "judge.py"), "--repo", repo, "--trunk", "main", "--proposal", "pr"],
                            capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stderr)
@@ -385,12 +388,12 @@ class Cli(Fixture):
 
 
 class Scope(Fixture):
-    """SPEC §10 items 7-10: attribution, counsel does not build, scope, size cap."""
+    """SPEC §10 items 7-10: attribution by the signed proposal entry, the party's paths, the layer's paths, the size cap."""
 
-    def proposal_touching(self, path, proposer="builder m s", data="x\n"):
+    def proposal_touching(self, path, party="builder", data="x\n", key=None):
         repo = self.repo()
         write(repo, path, data)
-        commit_all(repo, "change", proposer)
+        self.propose(repo, party=party, key=key)
         return self.judge(repo)
 
     def scope(self):
@@ -403,20 +406,115 @@ class Scope(Fixture):
         block = spec.split("at C1 it is:", 1)[1].split("```", 2)[1]
         self.assertEqual(self.scope(), json.loads(block))
 
-    def test_unattributed_proposal(self):
-        for proposer in (None, "martian x", " ", "Builder x"):
-            r = self.proposal_touching("README.md", proposer)
-            self.assertEqual((r["ok"], r["reason"]), (False, "unattributed_proposal"), proposer)
-        for p in judge.PARTIES:
-            r = self.proposal_touching("REPORT.md", f"{p} model session")
-            self.assertEqual((r["ok"], r["proposer"]), (True, p), r)
+    def test_party_is_the_principal_of_the_signing_key(self):
+        for party in ("builder", "reviewer", "counsel"):
+            r = self.proposal_touching("transcripts/t.txt", party)
+            self.assertEqual((r["ok"], r["proposer"]), (True, party), r)
+        r = self.proposal_touching("README.md", "ann", key=self.w.ann)
+        self.assertEqual((r["ok"], r["proposer"]), (True, "ann"), r)
 
-    def test_trailer_is_read_from_the_commit_never_from_files(self):
-        r = self.proposal_touching("README.md", None, "Proposer: builder m s\n")
-        self.assertEqual(r["reason"], "unattributed_proposal")
+    def test_a_trailer_alone_does_not_attribute(self):
         repo = self.repo()
-        commit_all(repo, "Proposer: builder m s mentioned in the subject only", None)
-        self.assertEqual(self.judge(repo)["reason"], "unattributed_proposal")
+        write(repo, "README.md", "x\n")
+        commit_all(repo, "change", "builder m s")
+        r = self.judge(repo)
+        self.assertEqual((r["ok"], r["reason"], r["proposer"]), (False, "unattributed_proposal", None))
+
+    def test_entry_must_name_a_commit_of_the_proposal(self):
+        for named in ("hex40", "trunk"):
+            repo = self.repo()
+            write(repo, "README.md", "x\n")
+            commit_all(repo, "work")
+            self.lg.add("proposal", "builder", proposal("a", commit=build.HEX40 if named == "hex40" else self.main),
+                        self.w.parties["builder"])
+            self.append(repo, "entry")
+            r = self.judge(repo)
+            self.assertEqual((r["ok"], r["reason"]), (False, "unattributed_proposal"), named)
+
+    def test_entry_must_be_appended_not_trunks(self):
+        repo = self.repo()
+        git(repo, "checkout", "-q", "-b", "side", "main")
+        write(repo, "README.md", "x\n")
+        work = commit_all(repo, "work")
+        git(repo, "checkout", "-q", "main")
+        self.lg.add("proposal", "builder", proposal("a", commit=work), self.w.parties["builder"])
+        self.append(repo, "trunk records an entry naming the side branch's commit")
+        git(repo, "checkout", "-q", "pr")
+        git(repo, "reset", "-q", "--hard", "main")
+        git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "merge", "-q", "side", "-m", "take the work")
+        r = self.judge(repo)
+        self.assertEqual((r["ok"], r["reason"], r["appended"]), (False, "unattributed_proposal", 0))
+
+    def test_later_commits_change_only_the_log(self):
+        repo = self.repo()
+        write(repo, "sim/x.py", "x\n")
+        self.propose(repo)
+        write(repo, "sim/y.py", "y\n")
+        commit_all(repo, "after the entry")
+        r = self.judge(repo)
+        self.assertEqual((r["ok"], r["reason"]), (False, "unattributed_proposal"))
+        self.assertIn("sim/y.py", r["detail"])
+        repo = self.repo()
+        write(repo, "sim/x.py", "x\n")
+        self.propose(repo)
+        write(repo, "sim/y.py", "y\n")
+        commit_all(repo, "after the entry")
+        git(repo, "rm", "-q", "sim/y.py")
+        commit_all(repo, "and back")
+        self.assertEqual(self.judge(repo)["reason"], "unattributed_proposal", "each commit is judged, not the net diff")
+        repo = self.repo()
+        write(repo, "sim/x.py", "x\n")
+        self.propose(repo)
+        self.lg.add("proposal", "ann", proposal("b"), self.w.ann)
+        self.append(repo, "a log-only commit after the entry")
+        r = self.judge(repo)
+        self.assertEqual((r["ok"], r["proposer"]), (True, "builder"), r)
+
+    def test_a_merge_after_the_entry_counts_against_its_first_parent(self):
+        repo = self.repo()
+        write(repo, "sim/x.py", "x\n")
+        self.propose(repo)
+        git(repo, "checkout", "-q", "main")
+        write(repo, "README.md", "trunk moved on\n")
+        commit_all(repo, "trunk change")
+        git(repo, "checkout", "-q", "pr")
+        git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "merge", "-q", "main", "-m", "merge trunk")
+        r = self.judge(repo)
+        self.assertEqual((r["ok"], r["reason"]), (False, "unattributed_proposal"))
+        self.assertIn("README.md", r["detail"])
+
+    def test_the_last_entry_attributes(self):
+        for order, reason, party in ((("reviewer", "builder"), "party_scope", "builder"), (("builder", "reviewer"), None, "reviewer")):
+            repo = self.repo()
+            write(repo, "pins/p.py", "x\n")
+            work = commit_all(repo, "work")
+            for p in order:
+                self.lg.add("proposal", p, proposal(p, commit=work), self.w.parties[p])
+            self.append(repo, "entries")
+            r = self.judge(repo)
+            self.assertEqual((r["reason"], r["proposer"]), (reason, party), order)
+
+    def test_party_under_the_law_in_force_at_the_entry(self):
+        repo = self.repo()
+        write(repo, "sim/x.py", "x\n")
+        self.propose(repo)
+        self.lg.add("key", "guy", build.decl("builder-1", "reviewer", self.w.parties["builder"], ["proposal"]), self.w.guy)
+        self.append(repo, "the key is re-declared after the entry")
+        r = self.judge(repo)
+        self.assertEqual((r["ok"], r["proposer"]), (True, "builder"), r)
+        repo = self.repo()
+        write(repo, "sim/x.py", "x\n")
+        self.lg.add("key", "guy", build.decl("stranger-1", "counsel", self.w.stranger, ["proposal"]), self.w.guy)
+        self.propose(repo, party="counsel", key=self.w.stranger)
+        r = self.judge(repo)
+        self.assertEqual((r["reason"], r["proposer"]), ("party_scope", "counsel"), r)
+
+    def test_attribution_follows_the_kernel(self):
+        repo = self.repo()
+        self.lg.add("proposal", "guy", proposal("a"), self.w.stranger)
+        write(repo, "log.jsonl", self.lg.text())
+        commit_all(repo, "bad entry", None)
+        self.assertEqual(self.judge(repo)["reason"], "unknown_key")
 
     def test_self_check_skips_items_7_to_10(self):
         repo = self.repo()
@@ -431,38 +529,47 @@ class Scope(Fixture):
         self.assertEqual((r["ok"], r["reason"], r["proposer"]), (True, None, None), r)
         r = self.judge(repo, before, "main")
         self.assertEqual((r["ok"], r["reason"], r["proposer"]), (False, "unattributed_proposal", None))
-        git(repo, "checkout", "-q", "-b", "pr2", "main")
-        write(repo, "README.md", "again\n")
-        commit_all(repo, "no trailer", None)
-        self.assertEqual(self.judge(repo, "main", "pr2")["reason"], "unattributed_proposal")
 
-    def test_attribution_follows_the_kernel(self):
-        repo = self.repo()
-        self.lg.add("proposal", "guy", proposal("a"), self.w.stranger)
-        write(repo, "log.jsonl", self.lg.text())
-        commit_all(repo, "bad entry", None)
-        self.assertEqual(self.judge(repo)["reason"], "unknown_key")
+    def test_party_scope(self):
+        cases = {"builder": (("pins/p.py", "spec/vectors/v.json", "REPORT.md", "LAW.md", "docs/x.md"),
+                             ("sim/x.py", "tests/t.py", "tools/t", "harness/h.py", "transcripts/t.txt", "sim/runs/r.json")),
+                 "reviewer": (("sim/x.py", "tests/t.py", "tools/t", "README.md", "pinsx.py"),
+                              ("pins/p.py", "spec/vectors/v.json", "transcripts/t.txt")),
+                 "counsel": (("sim/gen.py", "tests/test_x.py", "sim/runsx.txt", "pins/p.py", "spec/vectors/v.json"),
+                             ("REPORT.md", "transcripts/t.txt", "sim/runs/r.txt", "LAW.md", "RUNBOOK.md", "BRIEF-C1.md"))}
+        for party, (refused, admitted) in cases.items():
+            for path in refused:
+                r = self.proposal_touching(path, party)
+                self.assertEqual((r["ok"], r["reason"], r["proposer"]), (False, "party_scope", party), (party, path))
+                self.assertIn(path, r["detail"])
+            for path in admitted:
+                self.assertTrue(self.proposal_touching(path, party)["ok"], (party, path))
 
-    def test_counsel_builds(self):
-        for path in ("sim/gen.py", "tests/test_x.py", "sim/runsx.txt"):
-            r = self.proposal_touching(path, "counsel m s")
-            self.assertEqual((r["ok"], r["reason"]), (False, "counsel_builds"), path)
+    def test_a_party_absent_from_parties_is_bounded_by_paths_only(self):
+        for path in ("pins/p.py", "sim/x.py", "REPORT.md", "spec/vectors/v.json"):
+            self.assertTrue(self.proposal_touching(path, "ann", key=self.w.ann)["ok"], path)
+        self.assertEqual(self.proposal_touching("docs/x.md", "ann", key=self.w.ann)["reason"], "out_of_scope")
+
+    def test_rename_touches_both_paths_for_the_party_too(self):
         repo = self.repo()
-        self.lg.add("proposal", "ann", proposal("a"), self.w.ann)
-        write(repo, "log.jsonl", self.lg.text())
-        commit_all(repo, "a valid entry, by counsel", "counsel m s")
-        self.assertEqual(self.judge(repo)["reason"], "counsel_builds")
-        for path in ("REPORT.md", "transcripts/t.txt", "sim/runs/r.txt", "LAW.md"):
-            self.assertTrue(self.proposal_touching(path, "counsel m s")["ok"], path)
-        self.assertTrue(self.proposal_touching("sim/gen.py", "builder m s")["ok"])
+        git(repo, "checkout", "-q", "main")
+        write(repo, "sim/a.py", "a = 1\n")
+        commit_all(repo, "trunk code")
+        git(repo, "checkout", "-q", "pr")
+        git(repo, "reset", "-q", "--hard", "main")
+        gitfix.move(repo, "sim/a.py", "pins/a.py")
+        self.propose(repo, "move", "reviewer")
+        r = self.judge(repo)
+        self.assertEqual((r["ok"], r["reason"]), (False, "party_scope"))
+        self.assertIn("sim/a.py", r["detail"])
 
     def test_out_of_scope(self):
-        for path in ("docs/x.md", "REPORT.md.bak", "sim", "x.py", "spec/vectors/v.json"):
-            r = self.proposal_touching(path)
+        for path in ("docs/x.md", "REPORT.md.bak", "sim", "x.py", "spec/x.json"):
+            r = self.proposal_touching(path, "ann", key=self.w.ann)
             self.assertEqual((r["ok"], r["reason"]), (False, "out_of_scope"), path)
             self.assertIn(path, r["detail"])
-        for path in ("sim/x.py", "harness/x.py", "RUNBOOK.md", "transcripts/a/b.txt"):
-            self.assertTrue(self.proposal_touching(path)["ok"], path)
+        for path in ("sim/x.py", "harness/x.py", "RUNBOOK.md", "transcripts/a/b.txt", "spec/vectors/v.json"):
+            self.assertTrue(self.proposal_touching(path, "ann", key=self.w.ann)["ok"], path)
 
     def test_rename_out_of_scope_touches_both_paths(self):
         repo = self.repo()
@@ -472,9 +579,9 @@ class Scope(Fixture):
         git(repo, "checkout", "-q", "pr")
         git(repo, "reset", "-q", "--hard", "main")
         gitfix.move(repo, "notes.txt", "transcripts/notes.txt")
-        commit_all(repo, "move")
+        self.propose(repo, "move", "ann", self.w.ann)
         r = self.judge(repo)
-        self.assertEqual((r["ok"], r["reason"], r["touched"]), (False, "out_of_scope", ["transcripts/notes.txt"]))
+        self.assertEqual((r["ok"], r["reason"], r["touched"]), (False, "out_of_scope", ["log.jsonl", "transcripts/notes.txt"]))
         self.assertIn("notes.txt", r["detail"])
 
     def test_code_cap(self):
@@ -485,6 +592,15 @@ class Scope(Fixture):
         self.assertTrue(self.proposal_touching("sim/big.py", data="x = 1\n" * (cap - 1) + "y = 2")["ok"])
         self.assertTrue(self.proposal_touching("sim/runs/big.txt", data="x\n" * (cap + 1))["ok"])
 
+    def test_code_cap_counts_python_shebang_files(self):
+        cap = self.scope()["cap"]
+        for shebang in ("#!/usr/bin/env python3", "#!/usr/bin/python", "#! /usr/bin/env python"):
+            r = self.proposal_touching("tools/big", data=shebang + "\n" + "x = 1\n" * cap)
+            self.assertEqual((r["ok"], r["reason"]), (False, "code_cap"), shebang)
+            self.assertTrue(self.proposal_touching("tools/big", data=shebang + "\n" + "x = 1\n" * (cap - 1))["ok"], shebang)
+        for data in ("#!/bin/sh\n" + "python x\n" * cap, "\n#!/usr/bin/python\n" + "x\n" * cap, "# python\n" + "x\n" * cap):
+            self.assertTrue(self.proposal_touching("tools/big", data=data)["ok"], data[:20])
+
     def test_code_cap_counts_the_whole_head_not_the_diff(self):
         cap = self.scope()["cap"]
         repo = self.repo()
@@ -493,8 +609,8 @@ class Scope(Fixture):
         commit_all(repo, "trunk code")
         git(repo, "checkout", "-q", "pr")
         git(repo, "reset", "-q", "--hard", "main")
-        write(repo, "pins/b.py", "b = 1\n" * (cap - cap // 2 + 1))
-        commit_all(repo, "more code")
+        write(repo, "tests/b.py", "b = 1\n" * (cap - cap // 2 + 1))
+        self.propose(repo, "more code")
         self.assertEqual(self.judge(repo)["reason"], "code_cap")
 
 

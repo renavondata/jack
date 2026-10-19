@@ -13,6 +13,7 @@ directory.
 import argparse
 import base64
 import hashlib
+import itertools
 import json
 import os
 import stat
@@ -24,7 +25,7 @@ TRUSTED = ("kernel/", "kernel2/", "judge/", ".github/workflows/", "SPEC.md")
 CHARTER = "CHARTER.md"
 LOG = "log.jsonl"
 SCOPE = "judge/scope.json"
-PARTIES = ("guy", "founder", "builder", "counsel", "reviewer")
+PARTIES = ("guy", "founder", "builder", "counsel", "reviewer")  # the trailer's parties, for tools/jack; the judge reads keys, not trailers
 
 
 class JudgeError(Exception):
@@ -74,15 +75,41 @@ def touched(repo, trunk, head, *flags):
     return sorted(p for p in git(repo, "diff", "--name-only", *flags, base, head).splitlines() if p)
 
 
-def party(repo, sha):
-    """First word of the head commit's first `Proposer:` trailer, parsed by git from the message, or None."""
-    values = git(repo, "log", "-1", "--format=%(trailers:key=Proposer,valueonly)", sha).split("\n")
-    return (values[0].split() or [None])[0]
+def commits_of(repo, trunk, head):
+    """The proposal's commits, those reachable from head and not from trunk, newest first (children before parents)."""
+    return git(repo, "rev-list", "--topo-order", head, "--not", trunk).splitlines()
+
+
+def changed_by(repo, sha):
+    """Paths one commit changes, both sides of a rename, a merge against each of its parents."""
+    return set(git(repo, "diff-tree", "-r", "-m", "--root", "--no-commit-id", "--name-only", "--no-renames", sha).splitlines()) - {""}
+
+
+def signer_blob(e):
+    """Base64 of the pubkey blob embedded in the entry's SSHSIG container."""
+    blob = base64.b64decode(e["sig"])
+    n = int.from_bytes(blob[10:14], "big")
+    return base64.b64encode(blob[14:14 + n]).decode()
+
+
+def principal_at(entries, i, blob):
+    """Principal of the key whose pubkey blob is `blob` under the law in force at entry i (SPEC §7):
+    genesis's declarations, then every key entry before i, a later declaration of a key_id replacing the earlier."""
+    decls = entries[0]["body"]["keys"] + [e["body"] for e in entries[1:i] if e["type"] == "key"]
+    keys = dict((d["key_id"], d) for d in decls)
+    return next((d["principal"] for d in keys.values() if d["pubkey"].split(" ")[1] == blob), None)
+
+
+def is_python(path, data):
+    """A .py file, or one whose first line is a #! line naming python (SPEC §10.10; tools/count_kernel.py alike)."""
+    first = data.split(b"\n", 1)[0]
+    return path.endswith(".py") or (first.startswith(b"#!") and b"python" in first)
 
 
 def counted_lines(repo, sha, prefixes):
-    """Physical lines of every .py file under `prefixes` at `sha`, as tools/count_kernel.py counts them."""
-    return sum(len(split_lines(show(repo, sha, p))) for p in files(repo, sha) if p.endswith(".py") and is_under(p, prefixes))
+    """Physical lines of every python file under `prefixes` at `sha`, as tools/count_kernel.py counts them."""
+    texts = ((p, show(repo, sha, p)) for p in files(repo, sha) if is_under(p, prefixes))
+    return sum(len(split_lines(data)) for p, data in texts if is_python(p, data))
 
 
 def differing(repo, trunk, head):
@@ -204,11 +231,11 @@ def judge(repo, trunk_ref, proposal_ref):
         e = json.loads(line)
         if e["type"] == "merge" and e["body"]["checker"] != report["trusted_digest"]:
             return refuse("judge_from_proposal", f"merge at seq {e['seq']} claims a checker trunk does not have")
+    entries = [json.loads(line) for line in new]
     if head != trunk:
-        failure = proposal_checks(repo, trunk, head, report)
+        failure = proposal_checks(repo, trunk, head, report, entries, len(old))
         if failure:
             return refuse(*failure)
-    entries = [json.loads(line) for line in new]
     trusted = next((e["body"]["digest"] for e in reversed([json.loads(l) for l in old]) if e["type"] == "push"),
                    entries[0]["body"]["checker"] if entries else None)
     if old and trusted != report["trusted_digest"]:
@@ -231,14 +258,22 @@ def judge(repo, trunk_ref, proposal_ref):
     return dict(report, ok=True)
 
 
-def proposal_checks(repo, trunk, head, report):
-    """Items 7-10 apply only when head differs from trunk."""
-    scope, report["proposer"] = json.loads(show(repo, trunk, SCOPE) or b""), party(repo, head)
-    if report["proposer"] not in PARTIES:
-        return "unattributed_proposal", f"head commit's Proposer trailer names no party of {', '.join(PARTIES)}"
+def proposal_checks(repo, trunk, head, report, entries, first):
+    """Items 7-10 apply only when head differs from trunk. `first` is the seq of the first appended entry."""
+    scope, commits = json.loads(show(repo, trunk, SCOPE) or b""), commits_of(repo, trunk, head)
+    named = [(i, e) for i, e in enumerate(entries) if i >= first and e["type"] == "proposal" and e["body"]["commit"] in commits]
+    if not named:
+        return "unattributed_proposal", "no appended proposal entry names a commit of the proposal"
+    seq, last = named[-1]
+    # commits_of lists newest first, so the commits before the named one are those after it
+    later = set().union(*(changed_by(repo, c) for c in itertools.takewhile(lambda c: c != last["body"]["commit"], commits)))
+    if later - {LOG}:
+        return "unattributed_proposal", f"commits after {last['body']['commit']} (seq {seq}) change {', '.join(sorted(later - {LOG}))}"
+    report["proposer"] = principal_at(entries, seq, signer_blob(last))
     changed = touched(repo, trunk, head, "--no-renames")  # a rename touches both its paths
-    if report["proposer"] == "counsel" and any(not is_under(p, scope["documents"]) for p in changed):
-        return "counsel_builds", f"counsel touches code: {', '.join(p for p in changed if not is_under(p, scope['documents']))}"
+    allowed = scope["parties"].get(report["proposer"])  # a party absent from `parties` is bounded by item 9 alone
+    if allowed is not None and any(not is_under(p, allowed) for p in changed):
+        return "party_scope", f"outside {report['proposer']}'s paths: {', '.join(p for p in changed if not is_under(p, allowed))}"
     if any(not is_under(p, scope["paths"]) for p in changed):
         return "out_of_scope", f"outside {scope['layer']}'s paths: {', '.join(p for p in changed if not is_under(p, scope['paths']))}"
     if counted_lines(repo, head, scope["counted"]) > scope["cap"]:

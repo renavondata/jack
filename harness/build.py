@@ -51,15 +51,18 @@ class Log:
 
 
 class World:
-    """Throwaway keys: guy (all powers) and ann (proposal only), plus a genesis."""
+    """Throwaway keys: guy (all powers) and ann (proposal only), plus a genesis; and one key per party of
+    judge/scope.json (proposal only), which the judge fixtures' genesis also declares (SPEC §10.7)."""
 
     def __init__(self, tmpdir):
         self.guy = keys.make_key(tmpdir, "guy")
         self.ann = keys.make_key(tmpdir, "ann")
         self.stranger = keys.make_key(tmpdir, "stranger")
         self.decls = [decl("guy-master", "guy", self.guy, ALL), decl("ann-1", "ann", self.ann, ["proposal"])]
+        self.parties = {p: keys.make_key(tmpdir, p) for p in ("builder", "reviewer", "counsel")}
+        self.party_decls = [decl(f"{p}-1", p, k, ["proposal"]) for p, k in self.parties.items()]
 
-    def log(self, **genesis_kw):
+    def log(self, decls=None, **genesis_kw):
         lg = Log()
-        lg.add("genesis", "guy", genesis_body(self.decls, **genesis_kw), self.guy)
+        lg.add("genesis", "guy", genesis_body(self.decls if decls is None else decls, **genesis_kw), self.guy)
         return lg

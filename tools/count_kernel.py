@@ -7,14 +7,25 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+def is_python(path):
+    """A .py file, or one whose first line is a #! line naming python: what judge/judge.py counts (SPEC §10.10)."""
+    with open(path, "rb") as f:
+        first = f.readline().rstrip(b"\n")
+    return path.endswith(".py") or (first.startswith(b"#!") and b"python" in first)
+
+
+def lines(path):
+    with open(path, "rb") as f:
+        return sum(1 for _ in f)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=1000)
     args = ap.parse_args()
     counts = []
-    for path in sorted(glob.glob(os.path.join(ROOT, "kernel", "*.py"))):
-        with open(path, "rb") as f:
-            counts.append((os.path.relpath(path, ROOT), sum(1 for _ in f)))
+    for path in sorted(p for p in glob.glob(os.path.join(ROOT, "kernel", "*")) if os.path.isfile(p) and is_python(p)):
+        counts.append((os.path.relpath(path, ROOT), lines(path)))
     for rel, n in counts:
         print(f"{rel:24} {n:6}")
     total = sum(n for _, n in counts)
