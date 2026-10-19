@@ -24,7 +24,11 @@ entry written by hand gets the same verdict. (Authority: CHARTER §5, §7; SPEC 
   `kernel.check` admits the log with it.
 - **Commits.** A verb's commit message is `<type>: <summary>` — `key: <KEY_ID>`, `proposal: <title>`,
   `spec_conflict: <section>`, `merge: #<N>`, `push: <BRANCH>`, `decision: <KIND> <SUBJECT>`, `amend: <ID>` — an
-  optional body, and as its **last paragraph** `Proposer: <party> <key_id>`. A trailer containing `<` is refused.
+  optional body, and as its **last paragraph** `Proposer: <party> <key_id>`. A trailer is **filled** when it
+  has exactly those two fields, the party is one of SPEC §10.7's five names and neither field contains `<`;
+  anything else is refused, whether the verb writes it or reads it.
+- **No environment variable** changes what a verb requires or does. `JACK_KEY` names a key and nothing else;
+  the tests patch constants in-process, never through the environment.
 - **Up to date.** Every verb begins with `git fetch origin`. Main verbs require HEAD to equal `origin/main`;
   branch verbs require the branch to contain `origin/main`.
 - **Clean tree.** Every verb refuses if `git status --porcelain` lists anything but the files the verb itself
@@ -37,9 +41,11 @@ entry written by hand gets the same verdict. (Authority: CHARTER §5, §7; SPEC 
   a retry with force.
 - **Main verbs** (`key`, `decision`, `amend`, `push`) run on `main` and end the same way: commit,
   `judge/selfcheck.py`, `git push origin main`, then `gh run watch` of the run the push started, printing its
-  result. A failed self-check undoes the verb's commits with `git reset --hard origin/main` and prints the
-  refusal; nothing was pushed. Where the effect precedes the entry (`push`: the fast-forward, then the entry),
-  both commits go up in one push, so the remote never shows one without the other.
+  result. Any failure after a main verb's first effect — a failed self-check, a refused entry, an error of
+  any kind — returns `main` to `origin/main` with `git reset --hard origin/main`, removes the files the verb
+  placed, and prints the refusal; nothing was pushed. Where the effect precedes the entry (`push`: the
+  fast-forward, then the entry), both commits go up in one push, so the remote never shows one without the
+  other.
 - **`merge`** runs on `main` but appends its entry to the proposal's branch, as SPEC §10.6 has it, and its
   effect is GitHub's merge, performed only after the judge has admitted the entry; it has no self-check and
   no undo, because nothing it does reaches `main` except through the judge.
@@ -53,8 +59,9 @@ entry written by hand gets the same verdict. (Authority: CHARTER §5, §7; SPEC 
 ## `jack key KEY_ID --principal P --powers a,b,c --pubkey FILE`
 
 Entry: `key` with the declaration (SPEC §5). Refuses: a pubkey file that is not a two-field `ssh-ed25519` line;
-a power outside the eight; a re-declaration of the signer's own `key_id` without `key` (the kernel's guard
-would refuse it too; the verb says so first). Effect: the main-verb ending. Keys per party: `builder-1`
+a power outside the eight; a principal that is not `[a-z0-9_-]+` (it becomes the trailer's first field); a
+re-declaration of the signer's own `key_id` without `key` (the kernel's guard would refuse it too; the verb
+says so first). Effect: the main-verb ending. Keys per party: `builder-1`
 {proposal, spec_conflict}, `reviewer-1` {proposal}, `counsel-1` {proposal}; the master key holds the rest.
 Revocation is this verb with `--powers ""`.
 
@@ -73,8 +80,9 @@ On a branch other than `main`, with every change committed and the branch contai
 
 On a branch, with the branch preconditions of `proposal` and no check: a conflict is filed exactly when the
 tests cannot be made to pass (A2 clause 9). Entry: `spec_conflict` {section, text}. Effect: commits
-`log.jsonl`, pushes the branch, opens a pull request titled `spec_conflict: <section>`, and prints "stopped:
-the specification cannot be implemented as written; see PR #n". The builder stops here.
+`log.jsonl`, pushes the branch, opens a pull request titled `spec_conflict: <section>` — or, if the branch
+already has one, retitles it so — and prints "stopped: the specification cannot be implemented as written;
+see PR #n". The builder stops here.
 
 ## `jack merge N`
 
@@ -97,13 +105,14 @@ to it. Preconditions, each a refusal with its reason, evaluated on BRANCH's tree
 BRANCH contains `origin/main`; BRANCH's trusted-base digest differs from `main`'s (otherwise "nothing to
 push: propose and merge"); every commit on BRANCH not on `main` carries a filled `Proposer:` trailer; the
 check passes (as `proposal`); if `kernel/` or any kernel2 production source (`checker.go canonical.go
-ed25519.go signature.go main.go`) differs from `main`'s, the run of record exists or is made there:
-`kernel2/check` built once first (so the twelve do not race the build), then `harness/diff.py --seeds A:B
---b kernel2/check` twelve ways into `transcripts/diff-100000-<T>-part00..11.json`, and the sum must be
-100,000 logs, 0 disagreements, 0 uncompared, ranges without a gap; a complete run already under
-`transcripts/` on BRANCH counts if the checker sources at its commit equal BRANCH's. `--review FILE` is
-copied to `transcripts/` and its SHA-256 is the entry's `review`; `--review none` records 64 zeros and prints
-a warning that this push was not read. Effect, in this order: `git merge --ff-only BRANCH` on `main` (never a
+ed25519.go signature.go main.go`) differs from `main`'s, the run of record is made there by the verb itself —
+never accepted from BRANCH, since the accused does not write its own test (CHARTER §1, F1): `kernel2/check`
+built once first (so the twelve do not race the build), then `harness/diff.py --seeds A:B --b kernel2/check`
+twelve ways into `transcripts/diff-100000-<T>-part00..11.json`, and every part must report `commit` equal to
+BRANCH's head, `logs` equal to the length of its range, no disagreement and nothing uncompared, with the
+twelve ranges contiguous from 0 to 100,000. `--review FILE` is copied to `transcripts/` and its SHA-256 is
+the entry's `review`, an empty file included; `--review none` records 64 zeros and prints a warning that this
+push was not read. Effect, in this order: `git merge --ff-only BRANCH` on `main` (never a
 merge commit, never a rebase); the run's parts and the review placed under `transcripts/`; entry `push`
 {digest: `tools/digest.py` of the tree now on `main`; review; record: the SHA-256 of the twelve parts' bytes
 concatenated in name order, or 64 zeros when no run was required — an extra member until SPEC §5 names it};
@@ -123,7 +132,7 @@ On `main`. KIND is one of `veto promote budget grant transmute fix`; SUBJECT a n
 On `main`. Preconditions: a valid `decision` of kind `transmute` with subject ID is in the log (otherwise
 refused: "transmute first"); FILE's first line is `## Amendment ID:`; ID is not already an amendment.
 Effect before the entry: a blank line and FILE appended to `CHARTER.md`. Entry: `amend` {id, charter: the
-SHA-256 of the new `CHARTER.md`, activate_at: N, default the entry's seq + 1}. Effect: commits `CHARTER.md`
+SHA-256 of the new `CHARTER.md`, activate_at: N as given, the entry's seq + 1 when omitted}. Effect: commits `CHARTER.md`
 and `log.jsonl`; the main-verb ending (judge items 2, 12, 13 on the way in).
 
 **Order of an amendment (A2 clause 7, the research's protocol):** `jack decision transmute ID` → the pushes
@@ -145,6 +154,7 @@ says what the code does not enforce. A2 was recorded before its mechanisms and i
 
 `tools/jack` is one Python file within 250 lines as `tools/count_kernel.py` counts, standard library plus
 `tools/entry.py`, `kernel` and `judge` imports; it is untrusted, enters by pull request, and is read cold.
-Its tests stub `gh` and `ssh-keygen` with scripts on `PATH` that record their arguments. If a verb cannot be
-written within the bound, `--dry-run` is cut first and `gh run watch` second (printed as a command instead);
-the verbs are not.
+Its tests stub `gh` and `ssh-keygen` with scripts on `PATH` that record their arguments, and every finding of
+a cold read becomes a test there before its fix. If a verb cannot be written within the bound, `--dry-run` is
+cut first, `gh run watch` second and `--remove` third (each printed as a command instead); the verbs and
+their refusals are not.
