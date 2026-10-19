@@ -39,26 +39,25 @@ class CountKernel(unittest.TestCase):
             for name, data in samples.items():
                 self.assertEqual(count_kernel.lines(os.path.join(tmp, name)), len(judge.split_lines(data)), name)
 
-    def test_refuses_to_follow_a_symlink(self):
-        """SPEC §10.10: a symbolic link is named and the tool exits 2, never following it, whatever it points to."""
+    def test_counts_nested_kernel_files_and_follows_no_link(self):
+        """CHARTER §9 criterion 3: every python file under kernel/, nested ones too, by the arithmetic of SPEC §10.10;
+        a symbolic link is neither followed nor counted, and is no error (the cap of §10.10 is the judge's alone)."""
         with tempfile.TemporaryDirectory() as tmp:
-            for d in ("tools", "kernel", "sub"):
+            for d in ("tools", "kernel/nested", "sub"):
                 os.makedirs(os.path.join(tmp, d))
             shutil.copy2(os.path.join(ROOT, "tools", "count_kernel.py"), os.path.join(tmp, "tools"))
-            for rel, data in (("kernel/check.py", "x = 1\n"), ("long", "#!/usr/bin/env python3\n" + "x = 1\n" * 2000)):
+            long = "#!/usr/bin/env python3\n" + "x = 1\n" * 2000
+            for rel, data in (("kernel/check.py", "x = 1\n"), ("kernel/nested/a.py", "a\nb\nc"),
+                              ("kernel/nested/tool", "#!/usr/bin/python\n"), ("kernel/notes.txt", "x\n" * 2000),
+                              ("long", long), ("sub/x.py", long)):
                 with open(os.path.join(tmp, rel), "w") as f:
                     f.write(data)
-            links = {"kernel/script": "../long", "kernel/sub": "../sub", "kernel/dangling.py": "../nowhere"}
-            for rel, target in links.items():
+            for rel, target in (("kernel/script", "../long"), ("kernel/sub", "../sub"), ("kernel/dangling.py", "../nowhere")):
                 os.symlink(target, os.path.join(tmp, rel))
             r = subprocess.run([sys.executable, "tools/count_kernel.py"], capture_output=True, text=True, cwd=tmp)
-            self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
-            for rel in links:
-                self.assertIn(rel, r.stdout + r.stderr)
-            self.assertNotIn("total", r.stdout)
-            for f in (count_kernel.is_python, count_kernel.lines):
-                self.assertRaises(OSError, f, os.path.join(tmp, "kernel", "script"))
-
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            listed = {l.split()[0]: int(l.split()[1]) for l in r.stdout.strip().splitlines()}
+            self.assertEqual(listed, {"kernel/check.py": 1, "kernel/nested/a.py": 3, "kernel/nested/tool": 1, "total": 5})
 
 if __name__ == "__main__":
     unittest.main()

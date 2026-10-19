@@ -30,6 +30,16 @@ def link(repo, rel, target):
     os.symlink(target, path)
 
 
+def gitlink(repo, rel, commit=None):
+    """A submodule at `rel` (git mode 160000) naming `commit`, by default a commit created in `repo`'s own object
+    database and left unreferenced, so that it is present; pass any other sha for one that is absent. Returns the sha."""
+    commit = commit or git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit-tree", "-m", "x\n" * 9000,
+                           git(repo, "hash-object", "-t", "tree", "-w", "/dev/null"))
+    os.makedirs(os.path.join(repo, rel))  # the uninitialised submodule's directory, which `git add -A` leaves alone
+    git(repo, "update-index", "--add", "--cacheinfo", f"160000,{commit},{rel}")
+    return commit
+
+
 def move(repo, old, new):
     """git mv, creating the destination directory (git mv will not)."""
     os.makedirs(os.path.dirname(os.path.join(repo, new)) or repo, exist_ok=True)

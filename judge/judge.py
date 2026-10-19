@@ -25,6 +25,7 @@ TRUSTED = ("kernel/", "kernel2/", "judge/", ".github/workflows/", "SPEC.md")
 CHARTER = "CHARTER.md"
 LOG = "log.jsonl"
 SCOPE = "judge/scope.json"
+REGULAR = ("100644", "100755")  # git's modes for a regular file; a symbolic link is 120000, a submodule 160000
 PARTIES = ("guy", "founder", "builder", "counsel", "reviewer")  # the trailer's parties, for tools/jack; the judge reads keys, not trailers
 
 
@@ -45,6 +46,12 @@ def rev(repo, ref):
 
 def files(repo, sha):
     return git(repo, "ls-tree", "-r", "--name-only", sha).splitlines()
+
+
+def modes(repo, sha):
+    """(mode, path) of every object in commit `sha`'s tree, read before any content; a submodule is not entered."""
+    entries = (e.split("\t", 1) for e in git(repo, "ls-tree", "-r", "-z", sha).split("\0") if e)
+    return [(meta.split()[0], path) for meta, path in entries]
 
 
 def show(repo, sha, path):
@@ -107,15 +114,15 @@ def is_python(path, data):
 
 
 def counted_lines(repo, sha, prefixes):
-    """Physical lines of every python file under `prefixes` at `sha`, as tools/count_kernel.py counts them."""
-    texts = ((p, show(repo, sha, p)) for p in files(repo, sha) if is_under(p, prefixes))
+    """Lines of every python regular file under `prefixes` at `sha`, read from the git object (SPEC §10.10):
+    its 0x0A bytes, plus one if it is not empty and does not end in 0x0A."""
+    texts = ((p, show(repo, sha, p)) for mode, p in modes(repo, sha) if mode in REGULAR and is_under(p, prefixes))
     return sum(len(split_lines(data)) for p, data in texts if is_python(p, data))
 
 
-def symlinks(repo, sha, prefixes):
-    """Symbolic links (git mode 120000) under `prefixes` at `sha`: SPEC §10.10 refuses them uncounted."""
-    entries = (line.split("\t", 1) for line in git(repo, "ls-tree", "-r", sha).splitlines())
-    return sorted(path for meta, path in entries if meta.split()[0] == "120000" and is_under(path, prefixes))
+def foreign(repo, sha, prefixes):
+    """Objects under `prefixes` at `sha` that are not regular files, symbolic links and submodules alike (SPEC §10.9)."""
+    return sorted(p for mode, p in modes(repo, sha) if mode not in REGULAR and is_under(p, prefixes))
 
 
 def differing(repo, trunk, head):
@@ -282,9 +289,9 @@ def proposal_checks(repo, trunk, head, report, entries, first):
         return "party_scope", f"outside {report['proposer']}'s paths: {', '.join(p for p in changed if not is_under(p, allowed))}"
     if any(not is_under(p, scope["paths"]) for p in changed):
         return "out_of_scope", f"outside {scope['layer']}'s paths: {', '.join(p for p in changed if not is_under(p, scope['paths']))}"
-    links = symlinks(repo, head, scope["counted"])
-    if links:
-        return "code_cap", f"symbolic links under counted prefixes cannot be counted: {', '.join(links)}"
+    objects = foreign(repo, head, scope["paths"])
+    if objects:
+        return "out_of_scope", f"not regular files under {scope['layer']}'s paths: {', '.join(objects)}"
     if counted_lines(repo, head, scope["counted"]) > scope["cap"]:
         return "code_cap", f"{counted_lines(repo, head, scope['counted'])} counted lines exceed the cap of {scope['cap']}"
 

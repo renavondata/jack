@@ -601,24 +601,65 @@ class Scope(Fixture):
         for data in ("#!/bin/sh\n" + "python x\n" * cap, "\n#!/usr/bin/python\n" + "x\n" * cap, "# python\n" + "x\n" * cap):
             self.assertTrue(self.proposal_touching("tools/big", data=data)["ok"], data[:20])
 
-    def test_code_cap_refuses_a_symlink_under_counted(self):
-        """SPEC §10.10: a symbolic link under a counted prefix is refused whatever it points to, and named."""
-        cap = self.scope()["cap"]
-        for target, data in (("../transcripts/long", "#!/usr/bin/env python3\n" + "x = 1\n" * cap),
-                             ("../transcripts/short", "x\n"), ("../sim/", None), ("../nowhere", None)):
-            repo = self.repo()
-            if data is not None:
-                write(repo, target[3:], data)
-            gitfix.link(repo, "tools/script", target)
-            self.propose(repo)
-            r = self.judge(repo)
-            self.assertEqual((r["ok"], r["reason"]), (False, "code_cap"), target)
-            self.assertIn("tools/script", r["detail"])
+    def foreign(self, kind, rel, target=None):
+        """A repo whose proposal adds at `rel` a symbolic link to `target`, a submodule whose commit is present or
+        absent, or (kind "file") a regular file: the twin of the other three."""
         repo = self.repo()
-        write(repo, "transcripts/short", "x\n")
-        gitfix.link(repo, "transcripts/link", "short")
+        if kind == "link":
+            gitfix.link(repo, rel, target)
+        elif kind == "file":
+            write(repo, rel, "x = 1\n")
+        else:
+            gitfix.gitlink(repo, rel, None if kind == "present" else "12" * 20)
+        self.propose(repo)
+        return repo
+
+    def test_out_of_scope_refuses_a_foreign_object_under_paths(self):
+        """SPEC §10.9: a symbolic link or a submodule under a prefix in paths is refused whatever it points to,
+        and named; a regular file at the same path is admitted."""
+        cap = self.scope()["cap"]
+        cases = [("link", "tools/script", "../transcripts/long"), ("link", "tools/script", "../sim/"),
+                 ("link", "tools/script", "../nowhere"), ("link", "transcripts/link", "short"),
+                 ("present", "tools/vendor.py", None), ("absent", "tools/vendor.py", None),
+                 ("present", "transcripts/sub", None), ("absent", "transcripts/sub", None)]
+        for kind, rel, target in cases:
+            repo = self.foreign(kind, rel, target)
+            if kind == "link":  # a target with content, so a link that were followed would count it
+                write(repo, "transcripts/long", "#!/usr/bin/env python3\n" + "x = 1\n" * cap)
+                write(repo, "transcripts/short", "x\n")
+                self.propose(repo, "targets")
+            mode = "120000" if kind == "link" else "160000"
+            self.assertIn(mode, git(repo, "ls-tree", "pr", rel), (kind, rel))
+            r = self.judge(repo)
+            self.assertEqual((r["ok"], r["reason"]), (False, "out_of_scope"), (kind, rel, target))
+            self.assertIn(rel, r["detail"])
+            self.assertTrue(self.judge(self.foreign("file", rel))["ok"], rel)
+
+    def test_a_foreign_object_outside_paths_is_not_this_items(self):
+        """SPEC §10.9 reads only under paths: trunk's submodule at an unlisted path, its commit absent, neither
+        refuses an untouching proposal nor crashes the judge."""
+        repo = self.repo()
+        git(repo, "checkout", "-q", "main")
+        gitfix.gitlink(repo, "vendor", "12" * 20)
+        commit_all(repo, "trunk submodule")
+        git(repo, "checkout", "-q", "pr")
+        git(repo, "reset", "-q", "--hard", "main")
+        write(repo, "transcripts/t.txt", "x\n")
         self.propose(repo)
         self.assertTrue(self.judge(repo)["ok"])
+
+    def test_code_cap_counts_regular_files_only(self):
+        """SPEC §10.10: only mode 100644 and 100755 blobs are counted, read from the git object, a submodule's
+        commit never rendered as text, an absent one no crash."""
+        repo = self.repo()
+        write(repo, "tools/a.py", "a = 1\nb = 2")
+        write(repo, "tools/run", "#!/usr/bin/env python3\n")
+        os.chmod(os.path.join(repo, "tools/run"), 0o755)
+        gitfix.link(repo, "tools/link.py", "a.py")
+        gitfix.gitlink(repo, "tools/present.py")
+        gitfix.gitlink(repo, "tools/absent.py", "12" * 20)
+        head = commit_all(repo, "objects")
+        self.assertEqual(judge.counted_lines(repo, head, ["tools/"]), 3)
 
     def test_code_cap_counts_the_whole_head_not_the_diff(self):
         cap = self.scope()["cap"]

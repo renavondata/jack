@@ -217,19 +217,28 @@ def t_shebang_counted(root):
     assert proposal_touching(root, "tools/big", data="#!/bin/sh\n" + "x\n" * cap).get("ok") is True
 
 
-def t_symlink_counted(root):
-    """SPEC §10.10: a symbolic link under a counted prefix is refused whatever it points to; outside them it is not."""
-    for rel, refused in (("tools/script", True), ("transcripts/link", False)):
-        fx = make_repo(world())
-        gitfix.write(fx.repo, "transcripts/short", "x\n")
-        gitfix.link(fx.repo, rel, os.path.relpath("transcripts/short", os.path.dirname(rel)))
-        propose(fx.repo, fx.log, world())
-        r = judged(root, fx)
-        if refused:
-            judge_refuses(r, "code_cap")
-            assert rel in r["detail"], r
+def t_foreign_object(root):
+    """SPEC §10.9: a symbolic link, or a submodule whose commit is present or absent, under paths is refused out_of_scope
+    and named, whatever it points to; a regular file at the same path is admitted."""
+    def place(repo, kind, rel):
+        if kind == "link":
+            gitfix.write(repo, "transcripts/long", "#!/usr/bin/env python3\n" + "x = 1\n" * 9000)
+            gitfix.link(repo, rel, "../transcripts/long")
+        elif kind == "file":
+            gitfix.write(repo, rel, "x = 1\n")
         else:
-            assert r.get("ok") is True, r
+            gitfix.gitlink(repo, rel, None if kind == "present" else "12" * 20)
+    for kind, rel in (("link", "tools/script"), ("present", "tools/vendor.py"), ("absent", "transcripts/sub")):
+        for k in (kind, "file"):
+            fx = make_repo(world(), root=root)
+            place(fx.repo, k, rel)
+            propose(fx.repo, fx.log, world())
+            r = judged(root, fx)
+            if k == "file":
+                assert r.get("ok") is True, (rel, r)
+            else:
+                judge_refuses(r, "out_of_scope")
+                assert rel in r["detail"], r
 
 
 def t_push_unrecorded(root):
@@ -646,8 +655,8 @@ PINS = [
     Pin("shebang_uncounted", t_shebang_counted, [
         Mutant("py_suffix_only", "judge/judge.py",
                'return path.endswith(".py") or (first.startswith(b"#!") and b"python" in first)', 'return path.endswith(".py")')]),
-    Pin("symlink_admitted", t_symlink_counted, [
-        Mutant("symlinks_unrefused", "judge/judge.py", "    if links:\n", "    if False:\n")]),
+    Pin("foreign_object_admitted", t_foreign_object, [
+        Mutant("mode_unchecked", "judge/judge.py", "    if objects:\n", "    if False:\n")]),
     Pin("unsigned_change", t_unsigned_change, [
         Mutant("power_unchecked", "kernel/check.py",
                '    if e["type"] not in keys[key_id].powers:', '    if False:')]),
