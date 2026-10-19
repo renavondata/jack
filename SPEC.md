@@ -369,16 +369,19 @@ Items 11–14 apply to every judged log, the self-check included.
 `judge/scope.json` is under `judge/`, so it is trusted base and changes only
 by Guy's own push. Its members are `layer` (a string), `paths`, `documents`
 and `counted` (lists of path prefixes; a prefix ending in `/` matches a
-directory, otherwise exactly one file) and `cap` (an integer). At C0 it is:
+directory, otherwise exactly one file) and `cap` (an integer). The file equals
+the block below, byte for byte less whitespace; a push that changes one without
+the other is refused by the tests. At C0 the layer was `C0` and the cap 3000;
+at C1 it is:
 
 ```
-{"layer": "C0",
+{"layer": "C1",
  "paths": ["sim/", "harness/", "tests/", "pins/", "tools/", "transcripts/",
            "REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md", "log.jsonl"],
  "documents": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",
                "transcripts/", "sim/runs/"],
  "counted": ["sim/", "harness/", "tests/", "pins/", "tools/"],
- "cap": 3000}
+ "cap": 4500}
 ```
 
 Pins for items 7–10, each with its mutant and a passing twin:
