@@ -25,14 +25,15 @@ hand gets the same verdict. (Authority: CHARTER §5, §7; A2 clauses 6 and 10; t
   `Proposer: <party> <key_id>`. A trailer containing `<` is refused.
 - **Clean tree.** Every verb refuses if `git status --porcelain` lists anything but the files the verb itself
   stages; refuses on a detached HEAD; refuses on `main` for branch verbs and off `main` for main verbs.
+  `push` is neither: it runs in its branch's worktree and ends on `main`, as its section says.
 - **`--dry-run`** prints the entry it would sign and the effects it would perform, and does nothing.
 - **Refused in code, always:** `--admin`; `--force` or `+` refspecs; deleting any remote branch; creating a tag;
-  rewriting any commit; editing a branch the caller's key did not propose; running on a tree whose
-  `judge/selfcheck.py` fails after the commit (the commit is undone with `git reset --soft HEAD~1` and the
-  refusal printed).
-- **Main verbs** (`key`, `push`, `decision`, `amend`, `merge`) end the same way: commit, `judge/selfcheck.py`,
+  rewriting any commit (a verb only appends commits; `push`'s entry commit on another party's branch is the
+  one such append); running on a tree whose `judge/selfcheck.py` fails after the commit (the commit is undone
+  with `git reset --soft HEAD~1` and the refusal printed).
+- **Main verbs** (`key`, `decision`, `amend`, `merge`) end the same way: commit, `judge/selfcheck.py`,
   `git push origin main`, then `gh run watch` of the run the push started, printing its result. A refused
-  self-check means nothing was pushed.
+  self-check means nothing was pushed. `push` has its own ending, in its section.
 - **Branch verbs** (`proposal`, `spec_conflict`) never touch `main`.
 
 ## `jack key KEY_ID --principal P --powers a,b,c --pubkey FILE`
@@ -74,8 +75,9 @@ break the prefix of every open proposal; the entry is the record of the act, app
 
 ## `jack push BRANCH --review FILE | --review none`
 
-The only way a change to the trusted base reaches `main`. Runs inside BRANCH's worktree, with `main`
-checked out in the repository's main working copy (`git worktree list`). Preconditions, each a refusal with
+The only way a change to the trusted base reaches `main`. Runs inside BRANCH's worktree — a branch another
+party built; the entry commit is the sovereign's act on it — with `main` checked out in the repository's main
+working copy (`git worktree list`). Only the master key holds `push`. Preconditions, each a refusal with
 its reason: clean tree; BRANCH contains `origin/main`; BRANCH's trusted-base digest differs from `main`'s
 (otherwise "nothing to push: propose and merge"); every commit on BRANCH not on `main` carries a filled
 `Proposer:` trailer; the check passes (as `proposal`); if `kernel/` or any kernel2 production source
