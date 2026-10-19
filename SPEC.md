@@ -101,6 +101,12 @@ including keys containing `.`); a required member with the wrong shape is
 
 hex64 = `[0-9a-f]{64}`, hex40 = `[0-9a-f]{40}`. "integer ≥ 0" excludes booleans.
 
+A body schema never gains a required member: the kernel judges every entry by one
+schema, so a member required today would refuse the entries of yesterday (CHARTER §2.2).
+New evidence travels as an optional member the verbs write and the judge may read —
+`push.record`, hex64, the SHA-256 of the run of record's parts concatenated in name order,
+or 64 zeros when the checkers did not change (RUNBOOK, `jack push`) — or as a new type.
+
 A **key declaration** (the body of a `key` entry, and each element of `genesis.keys`) is an object with
 **exactly** these four members, and no others (else **schema**): `key_id`: `[a-z0-9_-]{1,64}`;
 `principal`: non-empty string; `powers`: array of entry-type names (any of the
@@ -332,20 +338,27 @@ order, each a refusal of the whole proposal:
    trunk and disagrees (minus `detail`).
 6. **judge_from_proposal** — an appended `merge` whose `checker` is not trunk's
    trusted-base digest.
-7. **unattributed_proposal** — the proposal's head commit message carries no
-   `Proposer: <party> …` trailer. The party is the first word after
-   `Proposer:`; at C0 it is one of `guy`, `founder`, `builder`, `counsel`,
-   `reviewer`. The trailer is a claim; the judge checks that it is made.
-8. **counsel_builds** — the party is `counsel` and the proposal touches any
-   path not under a prefix in `judge/scope.json`'s `documents`. Counsel
-   writes text and reviews; code enters only from a builder, written to a
-   text Guy has read.
+7. **unattributed_proposal** — the entries the proposal appends to trunk's log
+   contain no `proposal` whose `commit` is a commit of the proposal, or some commit
+   of the proposal after that `commit` changes a path other than `log.jsonl`. The
+   **party** is the `principal` of the key that signed the last such `proposal`
+   entry, under the law in force at it (§7); the kernel has verified the signature,
+   so the party is a fact, not a claim. (At C0 a `Proposer:` trailer on the head
+   commit stood in for the key, A2 clause 3; the verbs still write the trailer, but
+   the judge no longer reads it.)
+8. **party_scope** — the proposal touches a path not under a prefix in
+   `judge/scope.json`'s `parties[party]`; a party absent from `parties` may touch
+   anything in `paths`. At C1 a builder may not touch the pins and vectors that
+   judge it, a reviewer may touch nothing else, and counsel touches documents only:
+   code enters from a builder, written to a text Guy has read; findings enter from a
+   reviewer, as pins (A2 clause 9).
 9. **out_of_scope** — the proposal touches a path not under a prefix in
    `judge/scope.json`'s `paths`. (Trusted paths are refused by item 1
    whatever the list says.)
-10. **code_cap** — at the proposal's head, the lines of every `.py` file under
-    a prefix in `judge/scope.json`'s `counted`, counted as
-    `tools/count_kernel.py` counts, exceed `judge/scope.json`'s `cap`.
+10. **code_cap** — at the proposal's head, the lines of every `.py` file, and of
+    every file whose first line is a `#!` line naming `python`, under a prefix in
+    `judge/scope.json`'s `counted`, counted as `tools/count_kernel.py` counts, exceed
+    `judge/scope.json`'s `cap`.
 
 Items 7–10 apply only to a proposal whose head differs from trunk; the self-check, which judges trunk against itself, skips them.
 
@@ -367,26 +380,34 @@ Items 7–10 apply only to a proposal whose head differs from trunk; the self-ch
 Items 11–14 apply to every judged log, the self-check included.
 
 `judge/scope.json` is under `judge/`, so it is trusted base and changes only
-by Guy's own push. Its members are `layer` (a string), `paths`, `documents`
-and `counted` (lists of path prefixes; a prefix ending in `/` matches a
-directory, otherwise exactly one file) and `cap` (an integer). The file equals
+by Guy's own push. Its members are `layer` (a string), `paths` and `counted`
+(lists of path prefixes; a prefix ending in `/` matches a directory, otherwise
+exactly one file), `parties` (party name → such a list) and `cap` (an integer).
+The file equals
 the block below, byte for byte less whitespace; a push that changes one without
-the other is refused by the tests. At C0 the layer was `C0` and the cap 3000;
+the other is refused by the tests. At C0 the layer was `C0` and the cap 3000. C1
+opened at 4500 on 19 October and was raised to 5500 the same day, when the tests
+of the verbs exceeded it, a finding against the pre-statement for the C1 report;
 at C1 it is:
 
 ```
 {"layer": "C1",
- "paths": ["sim/", "harness/", "tests/", "pins/", "tools/", "transcripts/",
+ "paths": ["sim/", "harness/", "tests/", "pins/", "tools/", "spec/vectors/", "transcripts/",
            "REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md", "log.jsonl"],
- "documents": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",
-               "transcripts/", "sim/runs/"],
+ "parties": {"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts/", "log.jsonl"],
+             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],
+             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",
+                         "transcripts/", "sim/runs/", "log.jsonl"]},
  "counted": ["sim/", "harness/", "tests/", "pins/", "tools/"],
- "cap": 4500}
+ "cap": 5500}
 ```
 
 Pins for items 7–10, each with its mutant and a passing twin:
-`unattributed_proposal_admitted`, `counsel_build_admitted`, `scope_unguarded`,
-`cap_unguarded`.
+`unattributed_proposal_admitted` (a proposal with no signed `proposal` entry, or
+with a commit after it that touches more than `log.jsonl`, is admitted),
+`counsel_build_admitted`, `builder_pin_admitted`, `reviewer_code_admitted`,
+`scope_unguarded`, `cap_unguarded`, `shebang_uncounted` (a python file without `.py`
+under `counted` is not counted).
 
 ## 11. Vectors
 
