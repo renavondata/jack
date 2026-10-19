@@ -147,8 +147,10 @@ def t_scope(root):
 
 def t_code_cap(root):
     """SPEC §10.10: counted .py lines at the head stay within the cap."""
-    judge_refuses(proposal_touching(root, "sim/big.py", data="x = 1\n" * 3001), "code_cap")
-    assert proposal_touching(root, "sim/big.py", data="x = 1\n" * 3000).get("ok") is True
+    with open(os.path.join(root, "judge", "scope.json")) as f:
+        cap = json.load(f)["cap"]
+    judge_refuses(proposal_touching(root, "sim/big.py", data="x = 1\n" * (cap + 1)), "code_cap")
+    assert proposal_touching(root, "sim/big.py", data="x = 1\n" * cap).get("ok") is True
 
 
 def t_push_unrecorded(root):
