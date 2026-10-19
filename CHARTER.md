@@ -246,3 +246,55 @@ Guy's decision on counsel's review of PR #1 (head fe5c2f2). Appended; overrides 
    - `trusted_path_unguarded`, `trusted_rename_admitted`, `forged_signature_admitted`, `weak_key_declared` and `checker_drift`.
 6. **Timestamps do not decrease along the log**: C1.
 7. **Recorded lesson.** The first draft's defects lay in machinery C0 did not yet need. The builder's own mutants did not find them; cold probes by another party did. Every layer is reviewed by a party that did not write it.
+
+
+## Amendment A2: the opening of C1 (18 October 2026)
+
+Guy's rulings of 18 October 2026 on the cold reads of C1's brief (`transcripts/REVIEW-brief.md`,
+`REVIEW-brief-2.md`) and on counsel's research of the same day (`transcripts/RESEARCH-trusted-core.md`).
+Appended; overrides earlier text where they conflict. Recorded by `amend` A2 under SPEC §7, after a
+`decision` of kind `transmute` naming it; in force from its `activate_at`.
+
+1. **Primary rules and their language.** The law language of §3 and A1.3, with its witnesses and lapse,
+   enters at the layer in which the first real case arises: the first entry Guy wants refused that
+   recognition does not refuse. Until then no primary rule exists, and no layer is required to build the
+   language in advance of it. Each layer's report states whether a case arose. If none has arisen by C2's
+   exit, §12's thesis that three secondary rules suffice is on trial, and C2's report says so.
+2. **Timestamps.** `ts` does not decrease along the log. This is part of recognition, in the kernel, and
+   binds every entry (replacing A1.6's allocation of it to a rule). Reason `ts_decreased`; pin
+   `clock_runs_backward`.
+3. **The judge's grounds.** The judge refuses a proposal on any ground a layer's brief pre-states,
+   provided the ground is decidable from git and the log alone, is stated over powers and paths and never
+   over a party's name, and refusing costs the proposer nothing but resubmission. §2.4 governs effects; the
+   adjudication of a proposal is not an effect. The grounds of SPEC §10.7–10, adopted on 16 October, are
+   the first such grounds; until keys exist for every party, the `Proposer:` trailer stands in for the
+   signing key, and that substitution ends when the party's key is declared.
+4. **Briefs.** A layer's brief may pre-state criteria, bounds and review rules for that layer, as §9 did
+   for C0. They bind that layer only, and may tighten the charter's bounds, never loosen them. The kernel's
+   bound is 500 lines for C1.
+5. **The last key.** A `key` entry that would leave no key holding the `key` power is refused (§2.4:
+   losing it is irreversible). Reason `bad_key`, a third cause of a refused declaration (SPEC §7); pin
+   `last_key_revocable`.
+6. **The sovereign's acts are entries** (§7, made mechanical). A change to the trusted base is lawful only
+   when a `push` entry names its digest; the judge and the self-check refuse a trunk whose trusted base
+   is not the one in force (SPEC §10.11). Veto, promotion, budget, grant, transmutation and the fix of a
+   failed window are `decision` entries signed by a key declared in genesis (§10.14). A layer boundary is
+   therefore an entry, not a tag; `c0-exit` is the last tag.
+7. **Amendment is two acts and a wait.** A `decision` of kind `transmute` names the amendment; the
+   `amend` follows and is in force from its `activate_at`, never before, and never over earlier entries
+   (§3: the law looks forward). Between the `amend` and its height no `push` is lawful (SPEC §10.12): the
+   law changes, then the code. An amendment that cannot be followed by agreeing checkers lapses unused.
+8. **Someone other than the owner checks the record.** The head hash of `log.jsonl` on `main` is
+   published on every push; a monitor that the owner does not operate verifies that each head extends the
+   last and that both checkers accept the log, and writs Guy on any failure (§3 adjudication, extended to
+   the record's history; maxim 1 applied to the sovereign).
+9. **Review ends by construction.** A review finding is a pin, a mutant with a passing twin, or a replay
+   disagreement; a reviewer's key may propose only under `pins/` and `spec/vectors/`; a builder's key may
+   not touch them; a round that adds no pin ends the review. A builder that finds the specification
+   contradictory records a `spec_conflict` entry and stops; it does not make the tests pass.
+10. **Recorded lesson.** C0's exit found that counsel's harness, written freely and reviewed open-endedly,
+    grew without producing the evidence it claimed, and that a brief had twice tried to settle by drafting
+    what only an amendment can settle. Code is written to a text Guy has read; questions of what the
+    charter allows are put to Guy as rulings and recorded here. Whatever counsel and builders are forbidden
+    is what the agent of C3 is forbidden, by the same judge, keys and amendment path; nothing is imposed on
+    the agent that was not first imposed on us.
