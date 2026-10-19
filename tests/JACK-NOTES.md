@@ -1,55 +1,69 @@
-# tools/jack: sentences of RUNBOOK.md that cannot be implemented as written
+# tools/jack: sentences of RUNBOOK.md that cannot be implemented as written (second round)
 
-The build of `tools/jack` stopped here. Both points below are about `jack push`. In each, a general rule in
-"Common to every verb" refuses something that `jack push`'s own section requires. If `tools/jack` keeps the
-rule, `jack push` can never run. If it drops the rule for `push`, the code is choosing an exception the text
-does not state. Nothing has been built, and no tests were changed to fit either reading.
+The two findings of the first round are resolved: `push` now runs on `main`, and it never commits to BRANCH.
+The build of `tools/jack` stopped again on a full re-read of the corrected text, before any code was written.
+The first finding below is a direct contradiction. The other two are cases where one rule covers ground that
+another rule says differently, and the code would have to choose. No tests were written to fit any reading.
 
-## 1. `push` is a main verb, but it runs off `main`
+(The ledger rule, RUNBOOK.md:39–40, says that a builder's objection is a `spec_conflict` entry, not a note.
+This file is a note because the instruction for this build says that a conflict goes here, committed alone.)
 
-- RUNBOOK.md:13–14: verbs run "in the working copy they act on (… the `main` checkout for main verbs)".
-- RUNBOOK.md:27: every verb "refuses … off `main` for main verbs".
-- RUNBOOK.md:33: "**Main verbs** (`key`, `push`, `decision`, `amend`, `merge`)".
-- RUNBOOK.md:77: `jack push BRANCH` "Runs inside BRANCH's worktree, with `main` checked out in the
-  repository's main working copy". BRANCH is never `main`, because it "contains `origin/main`" and must have
-  a different digest.
+## 1. `merge`'s effect happens on the remote, so the remote shows it before the entry
 
-Taken together, line 27 refuses every call that line 77 describes. A related point: line 33's ending
-("commit, `judge/selfcheck.py`, `git push origin main`, then `gh run watch`") is not `push`'s own ending
-(RUNBOOK.md:89–92). That ending commits on BRANCH, runs the self-check on BRANCH, and fast-forwards `main` in
-another working copy.
+- RUNBOOK.md:35–37: "Where a verb's effect precedes its entry (`merge`, `push`), the effect and the entry are
+  two local commits sent in one push, so the remote never shows the one without the other."
+- RUNBOOK.md:75: "Effect, in this order: `gh pr merge N --merge`; `git pull --ff-only`; entry `merge` …"
 
-Possible fix: take `push` out of the main-verb list on lines 14, 27 and 33 and give it a class of its own.
-It would run on BRANCH (not `main`), with `main` checked out in the main working copy, and end as its own
-section says.
+`gh pr merge` makes the merge commit on GitHub, so it is not a local commit. From the moment it returns until
+`git push origin main`, the remote shows the merge without its entry. If the self-check then fails, the
+`git reset --hard origin/main` of line 31 undoes only the local entry commit. The merge stays on the remote
+with no entry, for good. Both lines cannot be followed together.
 
-## 2. `push` edits a branch the caller's key did not propose
+Possible fix: write `merge`'s effect as a local merge, the way `push`'s is. That would be `git fetch origin
+pull/N/head`, then `git merge --no-ff FETCH_HEAD` with the message `gh pr merge` would have used, then the
+entry, then one push. GitHub marks the pull request merged once its head is reachable from `main`. The
+alternative is to drop `merge` from line 36 and say that its remote effect comes first.
 
-- RUNBOOK.md:29–30: "Refused in code, always: … editing a branch the caller's key did not propose".
-- RUNBOOK.md:43: `push` is held only by the master key ("the master key holds the rest").
-- RUNBOOK.md:80–81: BRANCH's commits need only "a filled `Proposer:` trailer", from any party.
-- RUNBOOK.md:89: "Effect: commits `log.jsonl` and `transcripts/` on BRANCH".
-- RUNBOOK.md:122: the kernel2 author's "work enters by `jack push`".
+## 2. The undo after a failed self-check, applied to branch verbs, discards the branch
 
-When the master key pushes a branch that another party built (the case on line 122), the commit on line 89
-edits a branch the caller's key did not propose. The "always" rule refuses that commit.
+- RUNBOOK.md:29–32: "Refused in code, always: … rewriting any commit (a verb only appends commits, and only
+  to the branch it runs on); running on a tree whose `judge/selfcheck.py` fails after the commit (the commits
+  are undone with `git reset --hard origin/main` …)".
+- RUNBOOK.md:41: "Branch verbs (`proposal`, `spec_conflict`) never touch `main`."
 
-A second problem, smaller but in the same rule: the code cannot tell which *key* proposed a branch. The only
-evidence in git is the `Proposer:` trailers. RUNBOOK.md:25 fixes their form only for verb commits
-(`<party> <key_id>`). Work commits in practice carry `Proposer: <party> <model> <session>`, which names a
-party and no key. So the most this rule can enforce is "party". Whether that is enough depends on the rule
-of one key per party (RUNBOOK.md:42–43) still holding.
+The "always" list covers every verb, so `proposal` and `spec_conflict` must also run the self-check after
+their commit. On a branch, `git reset --hard origin/main` points the branch at `main`, which throws away the
+builder's work commits along with the verb's own commit. That is the rewrite the same bullet forbids. The
+sections for `proposal` and `spec_conflict` do not mention the self-check at all.
 
-Possible fix: state that `push`'s commit on BRANCH is the one permitted edit of another party's branch. Also
-say whether "the caller's key" is checked by the party in each commit's trailer, or by a key-bearing trailer
-that the RUNBOOK requires on work commits too.
+Possible fix: say that branch verbs undo with `git reset --hard @{u}` when the branch has an upstream, or
+otherwise `git reset --hard HEAD~1`. Or limit the self-check refusal to main verbs, where line 34 already
+lists it.
 
-## Readings the build would have taken (not conflicts, recorded so the next build does not have to guess)
+## 3. The run of record is evidence that no entry references by hash
 
-- `jack spec_conflict` is "on a branch, as `proposal`". The build reads this as the branch preconditions
-  only, without the check. The builder files a conflict precisely when it cannot make the tests pass (A2
-  clause 9).
-- The commit summaries the text leaves open would be: `key: <KEY_ID>`, `decision: <KIND> <SUBJECT>` and
-  `merge: #<N>`. For `push: <summary>`, a `--summary` flag that defaults to BRANCH head's subject, the same
-  default `proposal` uses for `title`.
-- `jack push`'s `--remove` (RUNBOOK.md:92) is a flag, although the verb's heading on line 75 does not list it.
+- RUNBOOK.md:38–39: "every piece of evidence is referenced from an entry by hash (`push.digest`,
+  `push.review`); files under `transcripts/` are evidence".
+- RUNBOOK.md:94–96: `push` copies "the run's parts and the review … into `transcripts/`", and its entry is
+  "`push` {digest: `tools/digest.py` of the tree now on `main`, review}".
+
+`push.digest` covers only the trusted base (`kernel/`, `kernel2/`, `judge/`, `.github/workflows/`,
+`SPEC.md`), and `push.review` covers only the review. The twelve `diff-…-partNN.json` files are evidence under
+`transcripts/` that `push` itself places there, but no hash in any entry covers them. Adding a member would
+satisfy the ledger rule but change the entry the `push` section fixes. Keeping the entry as written breaks
+the rule. (SPEC allows extra body members, so either reading passes the kernel.)
+
+Possible fix: add a member to `push`, for example `run`: the SHA-256 of the twelve parts concatenated in part
+order, or 64 zeros when no run was required. Or say that the run's parts are exempt because `digest` pins
+the checker sources they were made from.
+
+## Readings a rebuild would take (not conflicts, recorded so the next build does not have to guess)
+
+- `spec_conflict` is "on a branch, as `proposal`". This reads as the branch preconditions only, without the
+  check, because a conflict is filed exactly when the tests cannot be made to pass (A2 clause 9).
+- Commit summaries the text leaves open: `key: <KEY_ID>`, `decision: <KIND> <SUBJECT>`, `merge: #<N>`, and
+  `push: <BRANCH>`.
+- "Up to date with `origin/main`" means `git fetch origin` and then `HEAD` equals `origin/main`. Branch verbs
+  fetch before testing whether the branch contains `origin/main`.
+- `--dry-run` for `push` prints the preconditions it would evaluate and does not create the temporary
+  worktree.
