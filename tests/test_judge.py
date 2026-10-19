@@ -393,14 +393,15 @@ class Scope(Fixture):
         commit_all(repo, "change", proposer)
         return self.judge(repo)
 
-    def test_scope_json_is_the_specs(self):
+    def scope(self):
         with open(os.path.join(ROOT, "judge", "scope.json")) as f:
-            scope = json.load(f)
-        self.assertEqual(scope, {"layer": "C0", "cap": 3000,
-            "paths": ["sim/", "harness/", "tests/", "pins/", "tools/", "transcripts/",
-                      "REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md", "log.jsonl"],
-            "documents": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md", "transcripts/", "sim/runs/"],
-            "counted": ["sim/", "harness/", "tests/", "pins/", "tools/"]})
+            return json.load(f)
+
+    def test_scope_json_is_the_specs(self):
+        with open(os.path.join(ROOT, "SPEC.md")) as f:
+            spec = f.read()
+        block = spec.split("at C1 it is:", 1)[1].split("```", 2)[1]
+        self.assertEqual(self.scope(), json.loads(block))
 
     def test_unattributed_proposal(self):
         for proposer in (None, "martian x", " ", "Builder x"):
@@ -477,20 +478,22 @@ class Scope(Fixture):
         self.assertIn("notes.txt", r["detail"])
 
     def test_code_cap(self):
-        r = self.proposal_touching("sim/big.py", data="x = 1\n" * 3001)
+        cap = self.scope()["cap"]
+        r = self.proposal_touching("sim/big.py", data="x = 1\n" * (cap + 1))
         self.assertEqual((r["ok"], r["reason"]), (False, "code_cap"))
-        self.assertTrue(self.proposal_touching("sim/big.py", data="x = 1\n" * 3000)["ok"])
-        self.assertTrue(self.proposal_touching("sim/big.py", data="x = 1\n" * 2999 + "y = 2")["ok"])
-        self.assertTrue(self.proposal_touching("sim/runs/big.txt", data="x\n" * 4000)["ok"])
+        self.assertTrue(self.proposal_touching("sim/big.py", data="x = 1\n" * cap)["ok"])
+        self.assertTrue(self.proposal_touching("sim/big.py", data="x = 1\n" * (cap - 1) + "y = 2")["ok"])
+        self.assertTrue(self.proposal_touching("sim/runs/big.txt", data="x\n" * (cap + 1))["ok"])
 
     def test_code_cap_counts_the_whole_head_not_the_diff(self):
+        cap = self.scope()["cap"]
         repo = self.repo()
         git(repo, "checkout", "-q", "main")
-        write(repo, "tools/a.py", "a = 1\n" * 2000)
+        write(repo, "tools/a.py", "a = 1\n" * (cap // 2))
         commit_all(repo, "trunk code")
         git(repo, "checkout", "-q", "pr")
         git(repo, "reset", "-q", "--hard", "main")
-        write(repo, "pins/b.py", "b = 1\n" * 1001)
+        write(repo, "pins/b.py", "b = 1\n" * (cap - cap // 2 + 1))
         commit_all(repo, "more code")
         self.assertEqual(self.judge(repo)["reason"], "code_cap")
 
