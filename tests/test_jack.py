@@ -55,12 +55,13 @@ def write(path, text, mode=0o644):
 
 def template(tmp):
     """A bare origin whose main holds kernel/, judge/, kernel2/ (a wrapper of the kernel), the tools, a trivial check
-    and a genesis declaring guy (all powers), builder-1 {proposal, spec_conflict}, odd-1, whose principal has a <, and nl-1,
-    whose principal has a blank line."""
+    and a genesis declaring guy (all powers), builder-1 {proposal, spec_conflict}, odd-1, whose principal has a <, nl-1,
+    whose principal has a blank line, and sp-1, whose principal is a party, a space and more."""
     w = build.World(tmp)
-    w.odd, w.nobody, w.nl = keys.make_key(tmp, "odd"), keys.make_key(tmp, "nobody"), keys.make_key(tmp, "nl")
+    w.odd, w.nobody, w.nl, w.sp = keys.make_key(tmp, "odd"), keys.make_key(tmp, "nobody"), keys.make_key(tmp, "nl"), keys.make_key(tmp, "sp")
     w.decls = [build.decl("guy-master", "guy", w.guy, build.ALL), build.decl("builder-1", "builder", w.ann, ["proposal", "spec_conflict"]),
-               build.decl("odd-1", "x<y", w.odd, ["decision"]), build.decl("nl-1", "builder\n\nother", w.nl, ["decision"])]
+               build.decl("odd-1", "x<y", w.odd, ["decision"]), build.decl("nl-1", "builder\n\nother", w.nl, ["decision"]),
+               build.decl("sp-1", "builder other", w.sp, ["decision"])]
     repo = gitfix.make_repo(w, with_log=False, tmpdir=tmp).repo
     gitfix.git(repo, "checkout", "-q", "main")
     gitfix.git(repo, "branch", "-D", "pr")
@@ -148,7 +149,7 @@ class Jack(unittest.TestCase):
         """Refused with exit 1 and its reason; nothing pushed to main; signed only when the kernel was asked."""
         self.assertEqual((r.returncode, r.stdout.count("refused")), (1, 0), r.stderr)
         self.assertIn(words, r.stderr)
-        keys = {k.path for k in (self.w.guy, self.w.ann, self.w.odd, self.w.nobody, self.w.nl)}
+        keys = {k.path for k in (self.w.guy, self.w.ann, self.w.odd, self.w.nobody, self.w.nl, self.w.sp)}
         self.assertEqual(any(c[4] in keys for c in self.calls("ssh-keygen", "-Y", "sign", "-f")), signed)  # the simulator signs too
 
     def branch(self, name="work", **kw):
@@ -468,8 +469,17 @@ class Jack(unittest.TestCase):
         self.assertEqual((self.git("rev-parse", "HEAD"), self.remote(), self.git("worktree", "list").count("\n")),
                          (self.git("rev-parse", "origin/main"), self.git("rev-parse", "origin/main"), 0))
 
+    def test_a_filled_trailer_has_a_party_first_and_at_least_one_more_field(self):
+        r = subprocess.run([sys.executable, "-c", LOAD + "print([jack.filled(t) for t in sys.argv[2:]])", os.path.join(self.repo, "tools", "jack"),
+                            "builder claude-opus-5-5 4dbea0e7", "counsel claude-fable-5-1 session_x", "guy", "guy <key_id>", "nobody key-1", "builder b-1\nother"],
+                           env=self.env, capture_output=True, text=True)
+        self.assertEqual(r.stdout.strip(), "[True, True, False, False, False, False]", r.stderr)
+
+    def test_a_key_whose_principal_is_not_a_party_is_refused_before_signing(self):
+        self.refused(self.jack("decision", "veto", "x", key=self.w.sp), "principal 'builder other' is not a party")
+
     def test_push_and_merge_read_only_filled_trailers(self):  # review finding 8
-        for k, t in enumerate(("Proposer: x", "Proposer: <party> <key_id>", "Proposer: claude builder-1", "Proposer: builder b-1 extra")):
+        for k, t in enumerate(("Proposer: x", "Proposer: <party> <key_id>", "Proposer: claude builder-1", "Proposer: guy")):
             with self.subTest(t):
                 self.git("checkout", "-q", "-b", f"b{k}", "main")
                 write(os.path.join(self.repo, "SPEC.md"), f"spec {k}\n")
