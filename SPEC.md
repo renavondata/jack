@@ -358,7 +358,10 @@ order, each a refusal of the whole proposal:
 10. **code_cap** — at the proposal's head, the lines of every `.py` file, and of
     every file whose first line is a `#!` line naming `python`, under a prefix in
     `judge/scope.json`'s `counted`, counted as `tools/count_kernel.py` counts, exceed
-    `judge/scope.json`'s `cap`.
+    `judge/scope.json`'s `cap`. A symbolic link under such a prefix is refused by this
+    item whatever it points to: its lines cannot be counted from the tree it is in,
+    and `tools/count_kernel.py` names it and exits 2 rather than follow it, so that
+    the two never disagree.
 
 Items 7–10 apply only to a proposal whose head differs from trunk; the self-check, which judges trunk against itself, skips them.
 
@@ -405,9 +408,11 @@ at C1 it is:
 Pins for items 7–10, each with its mutant and a passing twin:
 `unattributed_proposal_admitted` (a proposal with no signed `proposal` entry, or
 with a commit after it that touches more than `log.jsonl`, is admitted),
-`counsel_build_admitted`, `builder_pin_admitted`, `reviewer_code_admitted`,
+`counsel_build_admitted`, `builder_pin_admitted`, `reviewer_code_admitted` (for these
+three the mutant removes that party's list from `judge/scope.json`, and nothing else),
 `scope_unguarded`, `cap_unguarded`, `shebang_uncounted` (a python file without `.py`
-under `counted` is not counted).
+under `counted` is not counted), `symlink_admitted` (a symbolic link under `counted`
+is admitted).
 
 ## 11. Vectors
 
