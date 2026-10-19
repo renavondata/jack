@@ -1,7 +1,7 @@
-{"layer": "C0",
+{"layer": "C1",
  "paths": ["sim/", "harness/", "tests/", "pins/", "tools/", "transcripts/",
            "REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md", "log.jsonl"],
  "documents": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",
                "transcripts/", "sim/runs/"],
  "counted": ["sim/", "harness/", "tests/", "pins/", "tools/"],
- "cap": 3000}
+ "cap": 4500}
