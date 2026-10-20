@@ -93,10 +93,18 @@ a valid `proposal` entry in the PR's log, or — until the judge checks it — c
 trailer. Act: in a temporary worktree of the PR's head branch, entry `merge` {proposal: N, commit: the PR's
 head SHA, checker: the trusted-base digest of `main`'s tree (`tools/digest.py`; SPEC §10.6 refuses any other)},
 committed with message `merge: #N` and the trailer, pushed to the PR's branch as a fast-forward (a rejected
-push means the proposal moved: refused, run again). Effect: `gh pr checks N --watch` until the judge and the
-tests have admitted the head that carries the entry, then `gh pr merge N --merge`, which GitHub performs only
-if they did; then `git pull --ff-only` on `main` and `gh run watch` of `main`'s run. The merge commit GitHub
-makes is the effect of the entry that precedes it. When the clerk holds `merge`, this verb is unchanged.
+push means the proposal moved: refused, run again). Effect, bound to H, the commit that push created:
+`gh pr checks N --watch` until the checks GitHub has reported on the PR's head end, then `gh pr view N` for
+the head and its checks. While no check is reported, or one of the two named `judge` and `tests` is not yet,
+the verb sleeps `CHECKS_POLL` seconds (a constant of the verb, patched in-process by its tests) and watches
+again, with no deadline: GitHub registers a pushed head's checks some seconds after the push, and the judge
+and the tests take minutes. A head other than H means the proposal moved after the entry: refused, nothing
+merged. A check that ends in anything but success: refused, the entry standing on the branch. When both
+have passed on H: `gh pr merge N --merge --match-head-commit H`, which GitHub performs only for that head
+and only if its protection of `main` (the same two checks, required) is satisfied; then `git pull --ff-only`
+on `main` and `gh run watch` of `main`'s run. The merge commit GitHub makes is the effect of the entry that
+precedes it. An interrupted wait undoes nothing: the entry stands, and the act is finished by the same
+watch and merge once GitHub has judged. When the clerk holds `merge`, this verb is unchanged.
 
 ## `jack push BRANCH --review FILE | --review none`
 
@@ -167,6 +175,11 @@ but `~/git/jack`.
 `tools/jack` is one Python file within 250 lines as `tools/count_kernel.py` counts, standard library plus
 `tools/entry.py`, `kernel` and `judge` imports; it is untrusted, enters by pull request, and is read cold.
 Its tests stub `gh` and `ssh-keygen` with scripts on `PATH` that record their arguments, and every finding of
-a cold read becomes a test there before its fix. If a verb cannot be written within the bound, `--dry-run` is
+a cold read becomes a test there before its fix. The stub `gh` answers as GitHub would, from the fixture's
+remote: `pr view` and `pr checks` with the checks registered so far on the live head, the judge's among them
+the real judge's verdict; `pr merge` refuses a head other than `--match-head-commit`'s or one without both
+checks passed, and otherwise writes the merge commit to the remote's `main`. A test of a verb's ending asserts
+the effect in the remote, not the call that asked for it, and a fixture's proposal touches only paths its
+party may touch, so that the judge admits it. If a verb cannot be written within the bound, `--dry-run` is
 cut first, `gh run watch` second and `--remove` third (each printed as a command instead); the verbs and
 their refusals are not.
