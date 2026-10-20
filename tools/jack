@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-"""jack: the seven verbs of RUNBOOK.md. The kernel decides; this CLI prepares, signs, appends only what kernel.check admits,
-then performs the effects the entry authorises. Untrusted; not kernel. --dry-run and gh run watch are cut, as RUNBOOK.md's
-last section orders: gh run watch is printed as a command."""
+"""jack: the seven verbs of RUNBOOK.md. The kernel decides; this CLI prepares, signs, appends only what kernel.check admits, then
+performs the effects the entry authorises. Untrusted; not kernel. --dry-run and gh run watch are cut (RUNBOOK.md's last section)."""
 import argparse, contextlib, datetime, functools, hashlib, io, json, os, re, shutil, subprocess, sys, tempfile, time  # noqa: E401
 sys.path.insert(0, ROOT := os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from judge.judge import PARTIES, digest as commit_digest  # noqa: E402  the trusted-base digest of a commit, from git objects
@@ -11,7 +10,7 @@ from tools.digest import digest  # noqa: E402  the same digest, of the working t
 LOG, ZERO, SEEDS = os.path.join(ROOT, "log.jsonl"), "0" * 64, 100000  # no environment variable changes it
 SOURCES = ["kernel/"] + [f"kernel2/{f}.go" for f in "checker canonical ed25519 signature main".split()]
 CHECK = [["-m", "unittest", "discover", "-s", "tests", "-t", "."], ["pins/run.py"], ["tools/count_kernel.py"]]
-KINDS = "veto promote budget grant transmute fix".split()
+KINDS, CHECKS, CHECKS_POLL = "veto promote budget grant transmute fix".split(), ("judge", "tests"), 10  # the workflows' checks; seconds
 
 class Refused(Exception): """Exit 1: the verb refuses, with its reason."""  # noqa: E701
 def refuse(reason): raise Refused(reason)  # noqa: E704
@@ -30,8 +29,7 @@ def push(*args, cwd=ROOT):  # never forced, never deleting: a rejected push (not
 
 def begin(a, on_main):  # the common preconditions; the party and key_id come from the keys the log declares
     git("fetch", "-q", "origin")
-    if git("status", "--porcelain"):
-        refuse("the tree is not clean: git status --porcelain lists files")
+    git("status", "--porcelain") and refuse("the tree is not clean: git status --porcelain lists files")
     (branch := git("symbolic-ref", "-q", "--short", "HEAD", ok=False)) or refuse("detached HEAD")
     if (branch == "main") != on_main:
         refuse(f"wrong branch {branch}: this verb runs {'on' if on_main else 'on a branch other than'} main")
@@ -44,10 +42,8 @@ def begin(a, on_main):  # the common preconditions; the party and key_id come fr
         f"Proposer: {state.keys[key_id].principal} {key_id}"
     if not filled((t := a.trailer).removeprefix("Proposer: ")):
         refuse(f"{t!r} is not a filled trailer: one line, a party of {', '.join(PARTIES)} first, at least one more field, no <")
-    if a.party not in PARTIES:
-        refuse(f"{a.key}'s principal {a.party!r} is not a party of {', '.join(PARTIES)}: refused before signing")
-    if on_main and git("rev-parse", "HEAD") != git("rev-parse", "origin/main"):
-        refuse("main is not up to date: HEAD must equal origin/main")
+    a.party in PARTIES or refuse(f"{a.key}'s principal {a.party!r} is not a party of {', '.join(PARTIES)}: refused before signing")
+    on_main and git("rev-parse", "HEAD") != git("rev-parse", "origin/main") and refuse("main is not up to date: HEAD must equal origin/main")
     if not on_main and fails("git", "merge-base", "--is-ancestor", "origin/main", "HEAD"):
         refuse(f"{branch} does not contain origin/main; run:\n  git merge origin/main -m \"Merge main into {branch}\" -m \"{t}\"")
 
@@ -133,28 +129,35 @@ def v_spec_conflict(a):
     n = branch_ending(a, "spec_conflict", {"section": a.section, "text": a.text}, *[f"spec_conflict: {a.section}"] * 2, True)
     print(f"stopped: the specification cannot be implemented as written; see PR #{n}")
 
+def admitted(n, sha):  # True once CHECKS succeed on sha; False while one is unreported; a failure or a moved head is refused
+    r = subprocess.run(["gh", "pr", "checks", n, "--watch"], stderr=subprocess.PIPE, text=True)  # ends when the reported checks end
+    if "no checks reported" in r.stderr: return False  # noqa: E701
+    r.returncode and refuse(f"PR #{n} with its merge entry was not admitted by the judge and the tests; not merged\n{r.stderr.strip()}")
+    pr = json.loads(run("gh", "pr", "view", n, "--json", "headRefOid,statusCheckRollup").stdout)
+    pr["headRefOid"] == sha or refuse(f"PR #{n}'s head {pr['headRefOid'][:12]} moved off the merge entry {sha[:12]}; not merged")
+    done = {c.get("name"): c.get("conclusion") for c in pr["statusCheckRollup"]}  # every one of CHECKS: a pending one waits
+    return all([done.get(k) == "SUCCESS" or done.get(k) not in (None, "") and refuse(f"PR #{n}'s {k} check is {done[k]}; not merged")
+                for k in CHECKS])
+
 def v_merge(a):
     begin(a, True)
     pr = json.loads(run("gh", "pr", "view", str(a.n), "--json", "state,baseRefName,mergeable,headRefOid,headRefName").stdout)
     if bad := [f"{k} is {pr[k]}, not {w}" for k, w in (("state", "OPEN"), ("baseRefName", "main"), ("mergeable", "MERGEABLE"))
                if pr[k] != w]:
         refuse(f"PR #{a.n}: {'; '.join(bad)}")
-    if fails("gh", "pr", "checks", str(a.n), "--required"):
-        refuse(f"PR #{a.n}'s required checks are not green on its current head")
+    fails("gh", "pr", "checks", str(a.n), "--required") and refuse(f"PR #{a.n}'s required checks are not green on its current head")
     head, branch = pr["headRefOid"], pr["headRefName"]
     lines, parent = check.read_lines(show(head, "log.jsonl")), git("rev-parse", "-q", "--verify", f"{head}^", ok=False)
     if not (check.check(lines)["ok"] and any((e := json.loads(x))["type"] == "proposal" and e["body"]["commit"] == parent
                                              for x in lines) or trailer(head)):
         refuse(f"PR #{a.n}'s head is not one commit past a valid proposal and carries no filled Proposer: trailer")
     body = {"proposal": a.n, "commit": head, "checker": digest()}
-    worktree(head, lambda tmp: (append(a, "merge", body, os.path.join(tmp, "log.jsonl")),  # a rejected push: the proposal
-                                commit(a, f"merge: #{a.n}", ["log.jsonl"], cwd=tmp),       # moved; refused, run again
-                                push("origin", f"HEAD:refs/heads/{branch}", cwd=tmp)))
-    if subprocess.run(["gh", "pr", "checks", str(a.n), "--watch"]).returncode:
-        refuse(f"PR #{a.n} with its merge entry was not admitted by the judge and the tests; not merged")
-    run("gh", "pr", "merge", str(a.n), "--merge")
-    git("pull", "-q", "--ff-only")
-    watch()
+    sha = worktree(head, lambda tmp: (append(a, "merge", body, os.path.join(tmp, "log.jsonl")),  # a rejected push: the
+                                      commit(a, f"merge: #{a.n}", ["log.jsonl"], cwd=tmp),       # proposal moved; refused,
+                                      push("origin", f"HEAD:refs/heads/{branch}", cwd=tmp), git("rev-parse", "HEAD", cwd=tmp))[3])
+    while not admitted(str(a.n), sha): time.sleep(CHECKS_POLL)  # noqa: E701  no deadline: until CHECKS succeed on sha, or a refusal
+    run("gh", "pr", "merge", str(a.n), "--merge", "--match-head-commit", sha)  # GitHub merges only sha, the head that carries the entry
+    git("pull", "-q", "--ff-only"), watch()
 
 def valid_run(parts, head):  # the record (SHA-256 of the parts in name order) if the twelve are BRANCH head's clean run, else None
     reps = [json.loads(parts[n]) for n in sorted(parts)]

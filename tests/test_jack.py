@@ -13,27 +13,58 @@ import tempfile
 import unittest
 
 from harness import build, gitfix, keys
-from judge.judge import digest as commit_digest
+from judge.judge import digest as commit_digest, judge
 from kernel import log
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KERNEL2_CHECK = ("#!/bin/sh\nexec %s -E -s -c \"import sys; sys.path.insert(0, '%s'); from kernel.check import main; "
                  "sys.exit(main(sys.argv))\" \"$@\"\n" % (sys.executable, ROOT))
 GH = """#!%s
-import json, os, sys
+import json, os, subprocess, sys
+sys.path.insert(0, %r)
 with open(os.environ["STUB_LOG"], "a") as f:
     f.write(json.dumps(["gh"] + sys.argv[1:]) + "\\n")
-for prefix, rc, out in json.load(open(os.environ["STUB_GH"])):
-    if sys.argv[1:1 + len(prefix)] == prefix:
+calls = [json.loads(c) for c in open(os.environ["STUB_LOG"]) if c.startswith('["gh"')]
+gh, args = json.load(open(os.environ["STUB_GH"])), sys.argv[1:]
+origin, pr = os.environ["STUB_ORIGIN"], gh["pr"]
+def git(*a): return subprocess.run(["git", "--git-dir", origin, *a], capture_output=True, text=True, check=True).stdout.strip()
+if gh["move"] and len(calls) == gh["move"][0]:  # another actor replaces the PR's head before this call is answered
+    git("update-ref", "refs/heads/" + pr["headRefName"], gh["move"][1])
+def checks():  # what GitHub reports on the live head: the registered names; the judge's is the real judge's verdict
+    from judge.judge import judge
+    head = git("rev-parse", "refs/heads/" + pr["headRefName"])
+    names = gh["registered"][min(sum("--watch" in c for c in calls), len(gh["registered"]) - 1)]
+    ok = "judge" not in names or judge(origin, "main", head)["ok"]
+    return head, {n: "SUCCESS" if n != "judge" or ok else "FAILURE" for n in names}
+for prefix, rc, out in gh["rules"]:
+    if args[:len(prefix)] == prefix and out is not None:
         sys.stdout.write(out)
         sys.exit(rc)
-""" % sys.executable
+    if args[:len(prefix)] == prefix and args[1] == "view":  # None: GitHub answers, from the bare origin
+        head, done = checks()
+        sys.exit(print(json.dumps(dict({"headRefOid": head, "statusCheckRollup": [{"name": n, "status": "COMPLETED", "conclusion": v}
+                                                                               for n, v in done.items()]}, **pr))))
+    if args[:len(prefix)] == prefix and args[1] == "checks":  # --watch ends when the reported checks end, without the rest
+        head, done = checks()
+        done or sys.exit(sys.stderr.write(f"no checks reported on the '{pr['headRefName']}' branch\\n") and 1)
+        sys.exit(print(json.dumps(done)) or "FAILURE" in done.values())
+    if args[:len(prefix)] == prefix and args[1] == "merge":  # branch protection, --match-head-commit, then a merge commit
+        head, done = checks()
+        if "--match-head-commit" in args and args[args.index("--match-head-commit") + 1] != head:
+            sys.exit(sys.stderr.write("Head branch was modified\\n") and 1)
+        if done != {"judge": "SUCCESS", "tests": "SUCCESS"}:
+            sys.exit(sys.stderr.write("the base branch policy prohibits the merge: required checks\\n") and 1)
+        tree, main = git("merge-tree", "--write-tree", "main", head), git("rev-parse", "main")
+        git("update-ref", "refs/heads/main", git("commit-tree", tree, "-p", main, "-p", head, "-m", "Merge pull request #7"), main)
+        sys.exit(0)
+""" % (sys.executable, ROOT)
 SSH_KEYGEN = """#!%s
 import json, os, sys
 with open(os.environ["STUB_LOG"], "a") as f:
     f.write(json.dumps(["ssh-keygen"] + sys.argv[1:]) + "\\n")
 os.execv(%r, [%r] + sys.argv[1:])
 """ % (sys.executable, shutil.which("ssh-keygen"), shutil.which("ssh-keygen"))
+BOTH = ("judge", "tests")  # the two workflows' checks, registered on the pushed head
 SILENT = SSH_KEYGEN.split("os.execv")[0]  # records its arguments, exits 0 and writes no signature
 TRAILER = "Proposer: builder builder-1"  # filled: a party of SPEC §10.7 and a key_id
 LOAD = ("import importlib.machinery as m, importlib.util as u, sys; s = u.spec_from_loader('jack', m.SourceFileLoader('jack', sys.argv[1])); "
@@ -103,24 +134,27 @@ class Jack(unittest.TestCase):
         write(os.path.join(stubs, "ssh-keygen"), SSH_KEYGEN, 0o755)
         write(os.path.join(t, "gitconfig"), "[user]\n\tname = t\n\temail = t@t\n")
         self.env = dict(os.environ, PATH=stubs + os.pathsep + os.environ["PATH"], STUB_LOG=self.log_file,
-                        STUB_GH=os.path.join(t, "gh.json"), GIT_CONFIG_GLOBAL=os.path.join(t, "gitconfig"), GIT_CONFIG_NOSYSTEM="1")
+                        STUB_GH=os.path.join(t, "gh.json"), STUB_ORIGIN=self.origin, GIT_CONFIG_GLOBAL=os.path.join(t, "gitconfig"), GIT_CONFIG_NOSYSTEM="1")
         self.gh()
         subprocess.run(["git", "clone", "-q", self.origin, self.repo], check=True, env=self.env)
 
     def tearDown(self):
         self.tmp.cleanup()
 
-    def gh(self, *first, pr=None):
-        """Stub responses: `first` (prefix, rc, stdout) win over the defaults."""
+    def gh(self, *first, pr=None, registered=(BOTH,), move=None):
+        """Stub responses: `first` (prefix, rc, stdout) win over the defaults; stdout None is GitHub's answer from the origin.
+        registered[i]: the checks reported at the (i+1)th `pr checks --watch` and after, the last repeating; move (k, sha):
+        the PR's branch is set to sha before the kth gh call is answered."""
         pr = dict({"state": "OPEN", "baseRefName": "main", "mergeable": "MERGEABLE", "headRefName": "work"}, **(pr or {}))
-        rules = [*first, (["pr", "view"], 0, json.dumps(pr)), (["pr", "list"], 0, ""), (["pr", "create"], 0, "https://x/pull/7\n"),
-                 (["pr", "checks"], 0, ""), (["pr", "merge"], 0, "")]
-        write(self.env["STUB_GH"], json.dumps([list(r) for r in rules]))
+        rules = [*first, (["pr", "view"], 0, None), (["pr", "list"], 0, ""), (["pr", "create"], 0, "https://x/pull/7\n"),
+                 (["pr", "checks", "7", "--watch"], 0, None), (["pr", "checks"], 0, ""), (["pr", "merge"], 0, None)]
+        write(self.env["STUB_GH"], json.dumps({"rules": [list(r) for r in rules], "pr": pr, "registered": [[]] + list(map(list, registered)),
+                                               "move": move}))
 
-    def jack(self, *args, key=None, cwd=None):
+    def jack(self, *args, key=None, cwd=None, patch=""):
         open(self.log_file, "w").close()
         key = (key or self.w.guy).path
-        return subprocess.run([sys.executable, "-c", RUN, os.path.join(cwd or self.repo, "tools", "jack"), "--key", key, *args],
+        return subprocess.run([sys.executable, "-c", RUN.replace("sys.exit(jack", patch + "sys.exit(jack"), os.path.join(cwd or self.repo, "tools", "jack"), "--key", key, *args],
                               cwd=cwd or self.repo, env=self.env, capture_output=True, text=True)
 
     def calls(self, *prefix):
@@ -330,29 +364,45 @@ class Jack(unittest.TestCase):
 
     # jack merge
 
-    def proposed(self):
-        self.branch()
+    def proposed(self, rel="tests/work.txt"):  # a path of the builder's (judge/scope.json): the real judge admits the proposal
+        self.branch(rel=rel)
         self.admitted(self.jack("proposal", key=self.w.ann))
         head = self.git("rev-parse", "HEAD")
         self.git("checkout", "-q", "main")
-        self.gh(pr={"headRefOid": head})
+        self.gh()
         return head
 
-    def test_merge_admitted_entry_on_the_proposal_branch_then_github_merges(self):
-        head = self.proposed()
-        r = self.jack("merge", "7")
+    def merged(self, r, head, main):
+        """Admitted, and GitHub's merge commit is the effect of the entry: main's parents are the old main and the entry's
+        commit, one past the proposal; local main pulled it, and the printed watch names it."""
         self.admitted(r)
-        tip = self.remote("work")
-        self.assertEqual(self.git("rev-parse", f"{tip}^", cwd=self.origin), head)
+        tip, now = self.remote("work"), self.remote()
+        self.assertEqual((self.git("rev-parse", f"{tip}^", cwd=self.origin), self.entries(tip)[-1]["type"]), (head, "merge"))
+        self.assertEqual(self.git("log", "-1", "--format=%P", now).split(), [main, tip])
+        self.assertTrue(judge(self.origin, main, tip)["ok"])
+        self.assertEqual(self.git("rev-parse", "HEAD"), now)
+        self.assertIn(f"gh run list --branch main --commit {now} ", r.stdout)
+        self.assertEqual(self.calls("gh", "pr", "merge"), [["gh", "pr", "merge", "7", "--merge", "--match-head-commit", tip]])
+        return tip
+
+    def test_merge_admitted_entry_on_the_proposal_branch_then_github_merges(self):
+        head, main = self.proposed(), self.remote()
+        self.assertTrue(judge(self.origin, main, head)["ok"])  # review merge-wait finding 1: the fixture's proposal is admitted
+        r = self.jack("merge", "7")
+        tip = self.merged(r, head, main)  # review merge-wait finding 2
         e = self.entries(tip)[-1]
         self.assertEqual((e["type"], e["body"]), ("merge", {"proposal": 7, "commit": head, "checker": commit_digest(self.repo, "main")}))
         self.assertEqual(self.git("log", "-1", "--format=%B", tip, cwd=self.origin), "merge: #7\n\nProposer: guy guy-master")
         gh = [c[1:4] for c in self.calls("gh")]
-        self.assertEqual(gh, [["pr", "view", "7"], ["pr", "checks", "7"], ["pr", "checks", "7"], ["pr", "merge", "7"]])
-        self.assertIn("gh run watch --exit-status $(gh run list --branch main --commit", r.stdout)
+        self.assertEqual(gh, [["pr", "view", "7"], ["pr", "checks", "7"], ["pr", "checks", "7"], ["pr", "view", "7"], ["pr", "merge", "7"]])
         self.assertEqual(self.calls("gh", "pr", "checks", "7")[1][4:], ["--watch"])
-        self.assertEqual(self.remote(), self.git("rev-parse", "origin/main"))  # nothing of jack's reaches main
         self.assertEqual(self.git("worktree", "list").count("\n"), 0)  # the temporary worktree is gone
+
+    def test_merge_of_a_proposal_the_judge_refuses_is_not_merged(self):  # README.md is outside the builder's paths
+        head, main = self.proposed(rel="README.md"), self.remote()
+        self.assertEqual(judge(self.origin, main, head)["reason"], "party_scope")
+        self.refused(self.jack("merge", "7"), "was not admitted by the judge and the tests; not merged", signed=True)
+        self.assertEqual((self.calls("gh", "pr", "merge"), self.remote()), ([], main))
 
     def test_merge_refusals(self):
         head = self.proposed()
@@ -374,9 +424,38 @@ class Jack(unittest.TestCase):
         self.gh(pr={"headRefOid": self.git("rev-parse", f"{head}^")})  # GitHub's view is stale: the push is no fast-forward
         self.refused(self.jack("merge", "7"), "the branch moved, run again", signed=True)
         self.assertEqual((self.remote("work"), self.calls("gh", "pr", "merge")), (head, []))
-        self.gh((["pr", "checks", "7", "--watch"], 1, ""), pr={"headRefOid": head})
+        self.gh((["pr", "checks", "7", "--watch"], 1, ""))
         self.refused(self.jack("merge", "7"), "was not admitted by the judge and the tests; not merged", signed=True)
         self.assertEqual(self.calls("gh", "pr", "merge"), [])
+
+    def test_merge_waits_until_github_reports_the_head_s_checks(self):
+        head, main = self.proposed(), self.remote()
+        self.gh(registered=((), (), BOTH))
+        self.merged(self.jack("merge", "7", patch="jack.CHECKS_POLL = 0; "), head, main)
+        gh = [c[1:4] for c in self.calls("gh")]
+        self.assertEqual(gh[1:], [["pr", "checks", "7"]] * 4 + [["pr", "view", "7"], ["pr", "merge", "7"]])
+
+    def test_merge_waits_until_both_checks_are_reported_on_the_head(self):  # review merge-wait finding 3
+        head, main = self.proposed(), self.remote()
+        self.gh(registered=((), ("tests",), BOTH))  # the tests registered and passed; the judge not yet
+        self.merged(self.jack("merge", "7", patch="jack.CHECKS_POLL = 0; "), head, main)
+        gh = [c[1:5] for c in self.calls("gh")]
+        self.assertEqual(gh[2:], [["pr", "checks", "7", "--watch"]] * 2 + [["pr", "view", "7", "--json"], ["pr", "checks", "7", "--watch"],
+                                                                         ["pr", "view", "7", "--json"], ["pr", "merge", "7", "--merge"]])
+
+    def test_merge_refused_when_the_head_moves_off_the_entry_during_the_wait(self):  # review merge-wait finding 4
+        head, main = self.proposed(), self.remote()
+        for k, words in ((3, "moved off the merge entry"), (5, "Head branch was modified")):  # before the watch; before the merge
+            with self.subTest(k):
+                self.gh(move=(k, head))  # the admitted proposal without the entry replaces the PR's head
+                self.refused(self.jack("merge", "7"), words, signed=True)
+                self.assertEqual((self.remote(), self.remote("work")), (main, head))
+
+    def test_merge_waits_for_the_checks_however_long_they_take(self):  # review merge-wait finding 5: the RUNBOOK sets no deadline
+        head, main = self.proposed(), self.remote()
+        self.gh(registered=((),) * 5 + (BOTH,))
+        self.merged(self.jack("merge", "7", patch="jack.CHECKS_POLL = 0; jack.time.monotonic = __import__('itertools').count(0, 3600).__next__; "),
+                    head, main)  # an hour passes between calls
 
     # jack push
 
