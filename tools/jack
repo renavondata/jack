@@ -129,35 +129,35 @@ def v_spec_conflict(a):
     n = branch_ending(a, "spec_conflict", {"section": a.section, "text": a.text}, *[f"spec_conflict: {a.section}"] * 2, True)
     print(f"stopped: the specification cannot be implemented as written; see PR #{n}")
 
-def admitted(n, sha):  # True once CHECKS succeed on sha; False while one is unreported; a failure or a moved head is refused
+def passed(n, sha):  # True once CHECKS succeed on sha; False while one is unreported or running; a failure or a moved head is refused
     r = subprocess.run(["gh", "pr", "checks", n, "--watch"], stderr=subprocess.PIPE, text=True)  # ends when the reported checks end
     if "no checks reported" in r.stderr: return False  # noqa: E701
-    r.returncode and refuse(f"PR #{n} with its merge entry was not admitted by the judge and the tests; not merged\n{r.stderr.strip()}")
+    r.returncode and refuse(f"PR #{n}'s head {sha[:12]} was not admitted by the judge and the tests; not merged\n{r.stderr.strip()}")
     pr = json.loads(run("gh", "pr", "view", n, "--json", "headRefOid,statusCheckRollup").stdout)
-    pr["headRefOid"] == sha or refuse(f"PR #{n}'s head {pr['headRefOid'][:12]} moved off the merge entry {sha[:12]}; not merged")
+    pr["headRefOid"] == sha or refuse(f"PR #{n}'s head {pr['headRefOid'][:12]} moved off {sha[:12]} during the wait; not merged")
     done = {c.get("name"): c.get("conclusion") for c in pr["statusCheckRollup"]}  # every one of CHECKS: a pending one waits
-    return all([done.get(k) == "SUCCESS" or done.get(k) not in (None, "") and refuse(f"PR #{n}'s {k} check is {done[k]}; not merged")
-                for k in CHECKS])
+    return all([done.get(k) == "SUCCESS" or done.get(k) not in (None, "") and refuse(f"PR #{n}'s {k} is {done[k]}; not merged") for k in CHECKS])
+
+def admitted(n, sha):  # the precondition's wait on the proposal's head and the effect's on the entry's: no deadline, saying for what
+    print(f"waiting for {' and '.join(CHECKS)} to pass on PR #{n}'s head {sha[:12]}", flush=True)
+    while not passed(n, sha): time.sleep(CHECKS_POLL)  # noqa: E701
 
 def v_merge(a):
     begin(a, True)
     pr = json.loads(run("gh", "pr", "view", str(a.n), "--json", "state,baseRefName,mergeable,headRefOid,headRefName").stdout)
-    if bad := [f"{k} is {pr[k]}, not {w}" for k, w in (("state", "OPEN"), ("baseRefName", "main"), ("mergeable", "MERGEABLE"))
-               if pr[k] != w]:
-        refuse(f"PR #{a.n}: {'; '.join(bad)}")
-    fails("gh", "pr", "checks", str(a.n), "--required") and refuse(f"PR #{a.n}'s required checks are not green on its current head")
-    head, branch = pr["headRefOid"], pr["headRefName"]
-    lines, parent = check.read_lines(show(head, "log.jsonl")), git("rev-parse", "-q", "--verify", f"{head}^", ok=False)
+    bad = [f"{k} is {pr[k]}, not {w}" for k, w in (("state", "OPEN"), ("baseRefName", "main"), ("mergeable", "MERGEABLE")) if pr[k] != w]
+    bad and refuse(f"PR #{a.n}: {'; '.join(bad)}")
+    lines, parent = check.read_lines(show(head := pr["headRefOid"], "log.jsonl")), git("rev-parse", "-q", "--verify", f"{head}^", ok=False)
     if not (check.check(lines)["ok"] and any((e := json.loads(x))["type"] == "proposal" and e["body"]["commit"] == parent
                                              for x in lines) or trailer(head)):
         refuse(f"PR #{a.n}'s head is not one commit past a valid proposal and carries no filled Proposer: trailer")
+    admitted(str(a.n), head)  # GitHub has admitted the proposal's head before anything is signed
     body = {"proposal": a.n, "commit": head, "checker": digest()}
     sha = worktree(head, lambda tmp: (append(a, "merge", body, os.path.join(tmp, "log.jsonl")),  # a rejected push: the
                                       commit(a, f"merge: #{a.n}", ["log.jsonl"], cwd=tmp),       # proposal moved; refused,
-                                      push("origin", f"HEAD:refs/heads/{branch}", cwd=tmp), git("rev-parse", "HEAD", cwd=tmp))[3])
-    while not admitted(str(a.n), sha): time.sleep(CHECKS_POLL)  # noqa: E701  no deadline: until CHECKS succeed on sha, or a refusal
-    run("gh", "pr", "merge", str(a.n), "--merge", "--match-head-commit", sha)  # GitHub merges only sha, the head that carries the entry
-    git("pull", "-q", "--ff-only"), watch()
+                                      push("origin", f"HEAD:refs/heads/{pr['headRefName']}", cwd=tmp), git("rev-parse", "HEAD", cwd=tmp))[3])
+    admitted(str(a.n), sha)  # the effect waits for CHECKS on sha, the head that carries the entry; GitHub then merges only sha
+    run("gh", "pr", "merge", str(a.n), "--merge", "--match-head-commit", sha), git("pull", "-q", "--ff-only"), watch()
 
 def valid_run(parts, head):  # the record (SHA-256 of the parts in name order) if the twelve are BRANCH head's clean run, else None
     reps = [json.loads(parts[n]) for n in sorted(parts)]
