@@ -24,9 +24,10 @@ entry written by hand gets the same verdict. (Authority: CHARTER §5, §7; SPEC 
   `kernel.check` admits the log with it.
 - **Commits.** A verb's commit message is `<type>: <summary>` — `key: <KEY_ID>`, `proposal: <title>`,
   `spec_conflict: <section>`, `merge: #<N>`, `push: <BRANCH>`, `decision: <KIND> <SUBJECT>`, `amend: <ID>` — an
-  optional body, and as its **last paragraph** `Proposer: <party> <key_id>`. A trailer is **filled** when it
-  has exactly those two fields, the party is one of SPEC §10.7's five names and neither field contains `<`;
-  anything else is refused, whether the verb writes it or reads it.
+  optional body, and as its **last paragraph** `Proposer: <party> <key_id>`. A trailer is **filled** when it is
+  one line whose first field is one of SPEC §10.7's five party names, at least one field follows it, and no
+  field contains `<`: the verbs write `<party> <key_id>`, and a commit made by hand carries
+  `<party> <model id> <session id>`, as the judge read it at C0.
 - **No environment variable** changes what a verb requires or does. `JACK_KEY` names a key and nothing else;
   the tests patch constants in-process, never through the environment.
 - **Up to date.** Every verb begins with `git fetch origin`. Main verbs require HEAD to equal `origin/main`;

@@ -21,7 +21,7 @@ def run(*cmd, cwd=ROOT, ok=True):
 def git(*args, cwd=ROOT, ok=True): return run("git", *args, cwd=cwd, ok=ok).stdout.strip()  # noqa: E704
 def fails(*cmd, cwd=ROOT): return run(*cmd, cwd=cwd, ok=False).returncode != 0  # noqa: E704
 def show(rev, path): return subprocess.run(["git", "-C", ROOT, "show", f"{rev}:{path}"], capture_output=True).stdout  # noqa: E704
-def filled(t): return len(f := t.split()) == 2 and f[0] in PARTIES and "<" not in t  # noqa: E704  party key_id, SPEC §10.7
+def filled(t): return "\n" not in t and len(f := t.split()) >= 2 and f[0] in PARTIES and "<" not in t  # noqa: E704  one line, a party of SPEC §10.7 first, then 1+ fields
 def trailer(rev): return filled(git("log", "-1", "--format=%(trailers:key=Proposer,valueonly)", rev))  # noqa: E704
 
 def push(*args, cwd=ROOT):  # never forced, never deleting: a rejected push (not a fast-forward) is a refusal, never a retry
@@ -43,7 +43,9 @@ def begin(a, on_main):  # the common preconditions; the party and key_id come fr
     a.branch, a.state, a.lines, a.party, a.key_id, a.trailer = branch, state, lines, state.keys[key_id].principal, key_id, \
         f"Proposer: {state.keys[key_id].principal} {key_id}"
     if not filled((t := a.trailer).removeprefix("Proposer: ")):
-        refuse(f"{t!r} is not a filled trailer: a party of {', '.join(PARTIES)} and a key_id, no <")
+        refuse(f"{t!r} is not a filled trailer: one line, a party of {', '.join(PARTIES)} first, at least one more field, no <")
+    if a.party not in PARTIES:
+        refuse(f"{a.key}'s principal {a.party!r} is not a party of {', '.join(PARTIES)}: refused before signing")
     if on_main and git("rev-parse", "HEAD") != git("rev-parse", "origin/main"):
         refuse("main is not up to date: HEAD must equal origin/main")
     if not on_main and fails("git", "merge-base", "--is-ancestor", "origin/main", "HEAD"):
