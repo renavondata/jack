@@ -11,7 +11,7 @@ from tools.digest import digest  # noqa: E402  the same digest, of the working t
 LOG, ZERO, SEEDS = os.path.join(ROOT, "log.jsonl"), "0" * 64, 100000  # no environment variable changes it
 SOURCES = ["kernel/"] + [f"kernel2/{f}.go" for f in "checker canonical ed25519 signature main".split()]
 CHECK = [["-m", "unittest", "discover", "-s", "tests", "-t", "."], ["pins/run.py"], ["tools/count_kernel.py"]]
-KINDS = "veto promote budget grant transmute fix".split()
+KINDS, CHECKS_POLL, CHECKS_WAIT = "veto promote budget grant transmute fix".split(), 10, 600  # seconds: merge waits for the head's checks
 
 class Refused(Exception): """Exit 1: the verb refuses, with its reason."""  # noqa: E701
 def refuse(reason): raise Refused(reason)  # noqa: E704
@@ -150,8 +150,11 @@ def v_merge(a):
     worktree(head, lambda tmp: (append(a, "merge", body, os.path.join(tmp, "log.jsonl")),  # a rejected push: the proposal
                                 commit(a, f"merge: #{a.n}", ["log.jsonl"], cwd=tmp),       # moved; refused, run again
                                 push("origin", f"HEAD:refs/heads/{branch}", cwd=tmp)))
-    if subprocess.run(["gh", "pr", "checks", str(a.n), "--watch"]).returncode:
-        refuse(f"PR #{a.n} with its merge entry was not admitted by the judge and the tests; not merged")
+    end = time.monotonic() + CHECKS_WAIT  # GitHub registers a pushed head's checks seconds later: none reported yet is no verdict
+    while "no checks reported" in (r := subprocess.run(["gh", "pr", "checks", str(a.n), "--watch"], stderr=subprocess.PIPE, text=True)).stderr:
+        time.sleep(CHECKS_POLL) if time.monotonic() < end else refuse(f"no checks reported on PR #{a.n} after {CHECKS_WAIT}s; the merge entry "
+                                     f"stands on the branch; finish the act with:\n  gh pr checks {a.n} --watch\n  gh pr merge {a.n} --merge && git pull --ff-only")
+    r.returncode and refuse(f"PR #{a.n} with its merge entry was not admitted by the judge and the tests; not merged\n{r.stderr.strip()}")
     run("gh", "pr", "merge", str(a.n), "--merge")
     git("pull", "-q", "--ff-only")
     watch()

@@ -34,6 +34,9 @@ with open(os.environ["STUB_LOG"], "a") as f:
     f.write(json.dumps(["ssh-keygen"] + sys.argv[1:]) + "\\n")
 os.execv(%r, [%r] + sys.argv[1:])
 """ % (sys.executable, shutil.which("ssh-keygen"), shutil.which("ssh-keygen"))
+LATE = GH.replace("for prefix", """if sys.argv[1:5] == ["pr", "checks", "7", "--watch"] and sum('"--watch"' in c for c in open(os.environ["STUB_LOG"])) <= %d:
+    sys.exit(sys.stderr.write("no checks reported on the 'merge-wait' branch\\n") and 1)
+for prefix""", 1)  # % n: its first n `pr checks 7 --watch` report no checks, as GitHub does before it registers a pushed head's
 SILENT = SSH_KEYGEN.split("os.execv")[0]  # records its arguments, exits 0 and writes no signature
 TRAILER = "Proposer: builder builder-1"  # filled: a party of SPEC §10.7 and a key_id
 LOAD = ("import importlib.machinery as m, importlib.util as u, sys; s = u.spec_from_loader('jack', m.SourceFileLoader('jack', sys.argv[1])); "
@@ -117,10 +120,10 @@ class Jack(unittest.TestCase):
                  (["pr", "checks"], 0, ""), (["pr", "merge"], 0, "")]
         write(self.env["STUB_GH"], json.dumps([list(r) for r in rules]))
 
-    def jack(self, *args, key=None, cwd=None):
+    def jack(self, *args, key=None, cwd=None, patch=""):
         open(self.log_file, "w").close()
         key = (key or self.w.guy).path
-        return subprocess.run([sys.executable, "-c", RUN, os.path.join(cwd or self.repo, "tools", "jack"), "--key", key, *args],
+        return subprocess.run([sys.executable, "-c", RUN.replace("sys.exit(jack", patch + "sys.exit(jack"), os.path.join(cwd or self.repo, "tools", "jack"), "--key", key, *args],
                               cwd=cwd or self.repo, env=self.env, capture_output=True, text=True)
 
     def calls(self, *prefix):
@@ -377,6 +380,26 @@ class Jack(unittest.TestCase):
         self.gh((["pr", "checks", "7", "--watch"], 1, ""), pr={"headRefOid": head})
         self.refused(self.jack("merge", "7"), "was not admitted by the judge and the tests; not merged", signed=True)
         self.assertEqual(self.calls("gh", "pr", "merge"), [])
+
+    def test_merge_waits_until_github_reports_the_head_s_checks(self):
+        head = self.proposed()
+        write(os.path.join(self.tmp.name, "stubs", "gh"), LATE % 2, 0o755)
+        self.admitted(self.jack("merge", "7", patch="jack.CHECKS_POLL = 0; "))
+        gh = [c[1:] for c in self.calls("gh")]
+        self.assertEqual(gh[1:], [["pr", "checks", "7", "--required"]] + [["pr", "checks", "7", "--watch"]] * 3 + [["pr", "merge", "7", "--merge"]])
+        self.assertEqual(self.entries(self.remote("work"))[-1]["body"]["commit"], head)
+
+    def test_merge_with_no_checks_reported_in_checks_wait_leaves_the_entry_and_prints_the_finishing_commands(self):
+        head = self.proposed()
+        write(os.path.join(self.tmp.name, "stubs", "gh"), LATE % 10**9, 0o755)
+        r = self.jack("merge", "7", patch="jack.CHECKS_POLL = jack.CHECKS_WAIT = 0; ")
+        self.assertEqual(r.returncode, 1, r.stderr)
+        self.assertNotIn("not admitted", r.stderr)
+        for words in ("the merge entry stands on the branch", "gh pr checks 7 --watch", "gh pr merge 7 --merge && git pull --ff-only"):
+            self.assertIn(words, r.stderr)
+        self.assertEqual(self.calls("gh", "pr", "merge"), [])
+        self.assertEqual((self.git("rev-parse", f"{self.remote('work')}^", cwd=self.origin), self.entries(self.remote("work"))[-1]["type"]),
+                         (head, "merge"))  # nothing undone: the entry stands on the branch
 
     # jack push
 
