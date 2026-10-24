@@ -57,7 +57,7 @@ cannot be implemented files `spec_conflict` rather than deciding.
 ## `jack key KEY_ID --principal P --powers a,b,c --pubkey FILE`
 
 Entry: `key` with the declaration (SPEC §5). Refuses: a pubkey file that is not a two-field `ssh-ed25519` line;
-a power outside the eight; a principal that is not `[a-z0-9_-]+`; a re-declaration of the signer's own
+a power outside the kernel's `TYPES` (ten from C1a); a principal that is not `[a-z0-9_-]+`; a re-declaration of the signer's own
 `key_id` without `key` (the kernel's guard would refuse it too; the verb says so first). Keys per party:
 `builder-1` {proposal, spec_conflict}, `reviewer-1` {proposal}, `counsel-1` {proposal}; the master key holds
 the rest. Revocation is this verb with `--powers ""`.
@@ -67,8 +67,8 @@ the rest. Revocation is this verb with `--powers ""`.
 On a branch other than `main`, every change committed, the branch containing `origin/main` (otherwise refused,
 naming the merge to run: `git merge origin/main -m "Merge main into <branch>" -m "Proposer: <party> <key_id>"`).
 Refuses unless the check passes: `python3 -m unittest discover -s tests -t .`, `python3 pins/run.py`,
-`python3 tools/count_kernel.py`. Entry: `proposal` {title: T, default the head commit's subject; commit: the
-head's SHA, the work}. Effect: `log.jsonl` committed on top of the work, the branch pushed, a pull request
+`python3 tools/count_kernel.py`. Entry: `proposal` {title: T, default the subject of the work commit; commit: the
+last commit on the branch that changes a path other than `log.jsonl`, the work}. Effect: `log.jsonl` committed on top of the work, the branch pushed, a pull request
 against `main` opened — or, if the branch has one, nothing more. Nothing but `log.jsonl` may follow the
 entry's `commit` on the branch (SPEC §10.7): work added later is proposed again, on top, and the earlier
 entry stands as history.
@@ -82,8 +82,9 @@ branch pushed, a pull request titled `spec_conflict: <section>` opened or the br
 
 ## `jack merge N`
 
-On `main`. Preconditions: PR N is open against `main` and mergeable; its head is one commit past the `commit`
-of a valid `proposal` entry in its log (or, until the judge checks it, carries a filled trailer); and GitHub
+On `main`. Preconditions: PR N is open against `main` and mergeable; its head is the `commit` of a valid
+`proposal` entry in its log followed only by commits that touch `log.jsonl` (SPEC §10.7; or, until the judge
+checks it, carries a filled trailer); and GitHub
 has admitted that head — the verb waits while `judge` or `tests` is unreported or running, and refuses if
 either failed. Entry: `merge` {proposal: N, commit: that head, checker: the trusted-base digest of `main`'s
 tree (`tools/digest.py`; SPEC §10.6 refuses any other)}, committed `merge: #N` with the trailer and pushed to
@@ -140,6 +141,36 @@ is never red by design. A change to `SPEC.md` that needs no code is pushed on it
 This runbook is counsel's and `tools/jack` the builder's, so they cannot share a proposal (`party_scope`):
 the text lands first, by counsel's `proposal`, and the builder builds to the text on `main` (A2 clause 9);
 a verb that departs from the text is a finding, whichever of the two moved last.
+
+## `jack forecast "CLAIM" --p N --by TS [--type T --args JSON]`
+
+Entry: `forecast` {claim, p: N (an integer 1–999, per mille), resolves_by: TS, and, when given, type
+and args}. For every party but the master key a **branch verb**: it appends the entry and commits
+`forecast: <claim, truncated>` on the current branch, touching `log.jsonl` only, before or after that
+branch's `proposal` entry (SPEC §10.7 admits log-only commits on either side); a forecast about the
+branch's first CI run is made **before** `jack proposal`, which is what pushes the branch. For the
+master key a main verb. Refuses: N outside 1–999; TS not an instant, or earlier than the verb's clock;
+an empty claim. A forecast is never edited; a wrong forecast is data.
+
+## `jack resolve SEQ --outcome 0|1 --evidence E`
+
+Entry: `resolution` {forecast: SEQ, outcome, evidence: E}. Branch or main verb as `forecast`. Refuses
+before signing, each with the kernel's own reason: SEQ not a `forecast`, or already resolved; the
+caller's principal equal to the forecast's (`self_judged`). E is a run id, a commit, or
+`sha256:<hex64>` naming a file `transcripts/evidence/<hex64>` already in the tree (the verb checks the
+hash). Evidence files are **work**: the resolver commits the file, runs `jack proposal` (title
+"evidence for forecast SEQ"), then `jack resolve` on the same branch; evidence already on `main` needs
+no new proposal.
+
+## `jack score [--as-of TS]`
+
+No entry, no signing, no fetch; reads `log.jsonl` of the working copy. Prints, per (`proposer`,
+`type`) with at least one resolved forecast, then per `proposer` and per `type` alone: forecasts,
+resolved, mean p over resolved (as a fraction), outcome rate, mean log-loss, and the base-rate
+log-loss, all as `BRIEF-C1.md` defines them (natural logarithm; prequential Laplace base rate
+pooled by type in resolution-seq order; four decimals, half to even). With `--as-of TS` it also
+lists every unresolved forecast whose `resolves_by` is before TS, by `resolves_by` then seq. The
+witness is `tests/vectors/score.jsonl` and its expected table in the brief (pin `score_not_proper`).
 
 ## Working copies (no verbs; nothing here touches the record)
 
