@@ -1,131 +1,186 @@
-# Brief C1 — the clerk, writs, and the first law (draft, for Guy to amend or discard)
+# Brief C1 — the ledger, then the clerk
 
-CHARTER §8: *C1: clerk and writs; Guy's acts as typed entries. Exit: clean
-simulator run, then E_t ≥ 20 against p₀ within 14 days live.* This draft is
-counsel's proposal of scope; it binds nothing. On Guy's decision of 14 October
-2026, on counsel's review, **the law language is C1's**: C0 is the record only.
+Counsel's proposal of 25 October 2026 (`counsel-2`, Claude Fable 5.1, session
+`013Ce38BiYZ9xMbMtFh7wzxX`), replacing the draft of 14 October. It follows
+Guy's ruling of 25 October that C1 opens **ledger-first** (option (a) of
+`transcripts/RULING-20261025-ledger-first.md`), which Amendment A3
+(`transcripts/AMEND-A3.md`) records in the charter. It binds nothing until a
+party of another model family has read it cold (A2.10) and Guy has accepted it
+by merge. The earlier draft's law-language section stands as A2.1 settled it:
+no rule language until the first real case; this brief adds none.
 
 ## Precondition
 
-C0 promoted: genesis signed, both checkers agreeing on the real log and 10^5
-seeded logs, every pin KILLED, kernel within 1,000 lines. If kernel2 is still
-absent, C1 cannot open (§6 safety needs independent replay).
+C0 promoted (tag `c0-exit`, 17 October). `decision transmute A3` on the log.
+The kernel's bound for C1 is 500 lines (A2.4); it stands at 411.
 
-## The law language: start from the first precedent
+## Purpose
 
-CHARTER §3 says primary rules accrete as precedent, each from a witnessed case.
-C1 therefore does **not** begin by choosing a rule language. It begins when
-the first real case arrives: the first entry Guy wants refused that recognition
-(a)(b) does not refuse. The language is then the **smallest** that expresses
-that one rule with its two witnesses, admitted by a change entry; it grows only
-when a later case cannot be written in it. Each growth is itself a change entry
-to the trusted base (`merge.installs`, below), read by Guy.
+A record that binds is C0. C1 makes it **say things about the world and be
+scored for them**, then makes the court act on its own obligations without
+Guy. Two windows, each with a pre-stated exit; the layer is promoted at the
+end of the second.
 
-The candidates, in increasing size:
+- **C1a, the ledger.** Two entry types, `forecast` and `resolution`, under a
+  proper score. Every party, Guy included, may forecast; no party resolves its
+  own forecast; every resolution names its evidence. Assize's scoring
+  (`harness.ledger`) is ported as the first entrant, outside the kernel.
+- **C1b, the clerk.** Level-triggered writs, as the 14 October draft had them,
+  with one change: the clerk's first writ class is **a forecast past its
+  `resolves_by` with no resolution**, a real obligation derived from state and
+  the clock, so the clerk is built against a case rather than an invention.
 
-1. **A fixed menu of rule schemas**, each a few lines of checker code
-   parametrised by data: `forbid(type, field, value)`, `require(type, field)`,
-   `monotone(field)`, `at_most(type, n, per)`. Decidable by construction; a
-   schema is admitted once, by Guy, and instantiated by `rule` entries. Smallest
-   interpreter; the law can grow only along the menu.
-2. **Conjunctive queries** over the facts of the prefix and the candidate
-   entry (no recursion, no negation), plus a short list of built-in comparisons
-   (`=`, `≠`, `<` on integers and on fixed-width timestamps). Still decidable
-   and fast; expresses uniqueness ("one merge per proposal") and ordering.
-3. **Stratified Datalog with witnesses, replacements, orphan check and lapse**
-   — the C0 draft, preserved whole on branch `c1-law-draft` (fe5c2f2) with its
-   tests, pins, simulator kinds and SPEC sections. The largest candidate (about
-   280 kernel lines) and, without comparison built-ins, unable to express the
-   first candidate rule below. Design input, not a starting point.
+## C1a: the ledger
 
-### The first candidate rule: non-decreasing timestamps
+### Entry types (SPEC §5; the patch is `transcripts/SPEC-C1a-patch.md`)
 
-`ts` is a fixed-width UTC string (`YYYY-MM-DDTHH:MM:SSZ`), so lexicographic
-order is chronological order. The rule: entry *i*'s `ts` is not earlier than
-entry *i*−1's. Its violating witness is an entry whose `ts` precedes its
-parent's; its satisfying witness an entry whose `ts` equals or follows it.
-C0 records `ts` and never orders it (SPEC.md §12.4); C1 admits this rule first,
-in whichever language is chosen, and it decides which: candidate 1 needs a
-`monotone(ts)` schema, candidate 2 a `<` on strings, candidate 3 cannot say it.
+- `forecast`: `claim` (non-empty string); `p` (integer 1–999, per mille: the
+  canonical line admits integers only, and 1–999 bounds the log-loss without a
+  clipping rule); `resolves_by` (an instant, not earlier than the entry's `ts`).
+  Optional, by convention and read by the tools, never by the kernel: `type`
+  and `args`, as assize's Amendment 4 rule 3 has them, so a resolver can be
+  mechanical later.
+- `resolution`: `forecast` (the `seq` of an earlier `forecast` entry);
+  `outcome` (integer 0 or 1); `evidence` (non-empty string: a run id, a commit,
+  or the SHA-256 of a file under `transcripts/evidence/` committed alongside).
 
-## Scope
+### Recognition (SPEC §7–8)
 
-1. **Clerk (§5).** Level-triggered, on a timer (GitHub Actions `schedule` and
-   `workflow_dispatch`, from trunk, read-only token plus the herald key's
-   capability). Reads state = fold(law, log) and the clock, computes
-   obligations, issues writs and invitations, escalates along the pre-stated
-   ladder: re-invite; re-invite on another runner or model; writ to Guy. Holds
-   no change power; decides nothing about validity.
-2. **Writs as entries.** New types, admitted at C1's genesis-of-layer by change
-   entry: `writ` (obligation, deadline, escalation level), `discharge`,
-   `invite`, `accept`, `wish`, and Guy's acts typed by entry and key (§7) so
-   decisions and repairs split mechanically.
-3. **Rules, witnesses and lapse** in the language chosen above: `rule` and
-   `repeal` entries signed by a key with the change power; each rule with a
-   violating and a satisfying witness; the pins C0 set aside return
-   (`final_law_for_all`, `vacuous_rule_admitted`, `impossible_rule_admitted`,
-   `redundancy_unreported`); the notice period as a writ; a `counter_witness`
-   entry type whose witness joins a rule's violating witnesses; the lapse
-   itself as a change entry the clerk prepares and the change key signs.
-4. **Lawful changes to the trusted base.** `merge.installs`: a merge entry
-   signed by the change key names the trusted-base digest that is in force
-   from the next entry; the judge then accepts proposals touching trusted paths
-   only when a matching `installs` follows, and checks trunk's actual digest
-   against the digest in force. Until then the trusted base changes only by
-   Guy's own commits (C0 rule), including `kernel2/`.
-5. **Merge authorship.** The judge holds no secret, so C0 cannot sign `merge`
-   entries; the clerk's herald key (`accept`, `wish`, and `merge`?) is Guy's
-   decision. The herald key must not hold `key`, nor the change power.
-6. **Second checker in CI.** Done in C0: `harness/diff.py` (SPEC §9a) runs 300 seeds
-   and the vectors through both checkers on every push to main and every pull
-   request; the judge refuses `checker_drift`. C1 adds its attack kinds and keeps it green.
+- A `resolution` whose `forecast` is not the `seq` of an earlier valid
+  `forecast`, or of one already resolved, is **schema**.
+- A `resolution` whose `proposer` equals the forecast's `proposer` is
+  **self_judged**, a thirteenth reason code: maxim 1, by principal, so two keys
+  of one party cannot launder a judgement.
+- State gains two things: the proposer of every forecast by seq, and the set of
+  resolved seqs. Nothing else.
+- Powers are entry-type names as before; `forecast` and `resolution` are granted
+  by `key` entries. Proposed grants, Guy's to make: every party `forecast`;
+  builder, reviewer and counsel `resolution`; the master key both.
 
-## Questions C0 raised for C1 (see REPORT.md)
+### Scoring (outside the kernel)
 
-- `pull_request` runs the proposal's own tests and pins (F1). Make the
-  `push: main` run the one that counts, or drop the PR run to a report?
-- A `key` entry that leaves no key with `key` power locks the log. Refuse it in
-  the kernel, or leave it to Guy?
-- Hardware keys (`sk-ssh-ed25519@openssh.com`) sign a different message; add
-  the format by change entry if Guy's master key needs it.
-- If C1 flattens bodies into facts, decide whether keys containing `.` are
-  escaped or refused from C1's genesis-of-layer; C0 allows them.
-- A proposal must rebase whenever trunk's trusted base moves; with
-  `merge.installs` the judge could instead compare against the digest in force.
+`tools/jack score` (builder) reports, from the log alone, per proposer and per
+`type`: forecasts, resolutions, mean p, outcome rate, log-loss, and the
+base-rate log-loss (the empirical outcome frequency of that type to date, ½
+before any resolution), as assize's STATUS does. The score is law because it
+carries a proof (Gneiting & Raftery 2007); the base-rate comparator is an
+entrant. Unresolved forecasts past `resolves_by` are counted and listed: they
+are C1b's first obligations.
 
-## Pre-stated exit
+### Verbs (RUNBOOK; built by the builder to the text)
 
-Clean simulator run (attack list extended with the rule attacks — vacuous,
-impossible — and with stalling and flooding as liveness attacks the clerk must
-answer); then E_t ≥ 20 against p₀ (assize's weekly `guy_acts.py` series)
-within 14 days live; windows, α = 0.05, p₀ and the attack list committed
-before the window opens; zero checker disagreements throughout; Guy has not
-vetoed.
+`jack forecast`, `jack resolve`, `jack score`. Forecast and resolve are branch
+verbs for every party but Guy: their entries ride a proposal's branch as
+`log.jsonl`-only commits after the `proposal` entry (SPEC §10.7 admits this)
+and reach `main` by merge; for the master key they are main verbs.
 
-## From C0's exit (counsel, 17 October 2026)
+### The first forecasts
 
-Scope for C1, each from a witnessed case; Guy strikes what he does not want.
+Counsel's, entered within the window so that counsel is scored from the first
+week; each has a `resolves_by` and a type a resolver can settle:
 
-0. **Already law.** SPEC §10.7–10 (a proposal names its party; counsel does not build; scope by path;
-   a size cap) entered C0 after two witnessed cases of proposals beyond their authority (the founder's
-   first draft; counsel's harness). C1's `judge/scope.json` sets its own paths, documents and cap.
-1. **Keys for every party.** Items 7–8 check a claim. C1 declares a key per party (builder, reviewer,
-   counsel, herald) by `key` entries with `proposal` power only, once the kernel refuses a `key` entry
-   that leaves no key with the `key` power; a proposal is then signed, not labelled.
-2. **A window, stated before it opens**, and a trusted-base defect inside it restarts it (CHARTER §6).
-   C0 had neither.
-3. **A charter-amendment entry type.** After genesis any edit to CHARTER.md makes the judge refuse every
-   proposal. §5 of this report's proposed charter changes wait for it.
-4. **`merge.installs`** (scope item 4): the digest in force becomes an entry, so the trusted base can
-   change lawfully and the record can say which checker judged what.
-5. **A byte-level simulator kind.** Every checker disagreement found in C0 came from reviews and byte
-   probes, none from the simulator; the differential now compares every prefix, but the generator still
-   never produces malformed lines, non-ASCII digits, a BOM, CRLF or deep nesting.
-6. **Habits, not scope:** a spec change reruns the full differential before merge; the production path is
-   what is tested; every layer is read cold by a party of another family; counsel writes text and reads
-   verdicts, never code.
+| id | claim | p | resolves_by |
+|---|---|---:|---|
+| J1 | C1a's exit criteria are met within 14 days of the push that installs the types | 500 | +14 days |
+| J2 | the first 50 resolved world-typed forecasts in this ledger show every model proposer within 0.05 of base-rate log-loss | 600 | when n = 50 |
+| J3 | assize records an L2 verdict line before C1a exits | 300 | C1a exit |
+| J5 | the kernel is within 500 lines at C1a's exit | 700 | C1a exit |
+| J6 | the two checkers disagree on at least one simulated log before C1a's exit | 500 | C1a exit |
+| J7 | at C1a's window end, at most a fifth of its forecasts are unresolved past `resolves_by` | 600 | window end |
 
-**A question for the brief's opening.** It assumes the first real case needs a rule language in the
-kernel. C0's first two cases were judge-level, about paths and parties, and were met by data the judge
-reads. Whether C1's first rule is a kernel rule (non-decreasing timestamps has no witnessed case yet) or
-another judge-level one is for Guy to decide before the language is chosen.
+(J4, an act-alone class on a world act by 30 November, waits for C1b's typed
+acts.) Guy's and the builder's forecasts enter under their own keys; the
+builder's minimum claims are assize's: tests green on the first CI run of its
+branch, the brief's criteria met at exit.
+
+### Pre-stated criteria for C1a
+
+1. Every pin below KILLED with a passing twin, in CI, from trunk.
+2. Both checkers agree, entry by entry and reason by reason, on the real log and
+   on 10⁵ seeded logs whose seed list is committed before the first run, with
+   the simulator extended by the kinds below.
+3. Kernel within 500 lines; `judge/scope.json` cap unchanged unless a
+   `spec_conflict` says why.
+4. Within the window: at least 20 forecasts by at least three parties; at least
+   10 resolutions, none refused as `self_judged` on `main`; at least 5
+   resolutions of world-typed forecasts carrying an evidence hash whose file is
+   in the tree.
+5. `jack score` reproduces assize's scoring on a copied assize ledger converted
+   to entries (the port's witness), to the third decimal.
+6. Guy has not vetoed.
+
+### Pins, each with its named mutant, KILLED with a passing twin
+
+- `self_resolution_admitted`: a resolution by the forecast's own principal is
+  admitted.
+- `dangling_resolution_admitted`: a resolution naming a seq that is not a
+  forecast is admitted.
+- `double_resolution_admitted`: a second resolution of one forecast is admitted.
+- `past_forecast_admitted`: a forecast whose `resolves_by` precedes its `ts` is
+  admitted.
+- `permille_out_of_range_admitted`: `p` of 0 or 1000 is admitted.
+- `score_not_proper`: `jack score` with log-loss replaced by accuracy, or by a
+  score that rewards p = 999 regardless of outcome, is not caught by the test.
+- `self_judged_uncoded`: the kernel refuses self-resolution under a code other
+  than `self_judged`, so the two checkers could agree on the verdict and differ
+  on the reason.
+
+Simulator kinds added: `forecast_valid`, `resolution_valid`,
+`resolution_self`, `resolution_dangling`, `resolution_double`,
+`forecast_past`, `forecast_permille`.
+
+### Window
+
+Fourteen days from the `push` that installs the two types on `main`. Stated
+here before it opens, as CHARTER §6 requires. A trusted-base defect found inside
+the window restarts it (REPORT §8, scope item 2).
+
+## C1b: the clerk
+
+As the 14 October draft, items 1, 2 and 5, with these changes:
+
+- The first writ class is the overdue forecast. The writ names the forecast,
+  the parties holding `resolution` power other than its proposer, and a
+  deadline; escalation: re-invite, re-invite another party or model, writ to
+  Guy.
+- Guy's acts typed by entry: `wish` enters as a type (never scored, A3 of
+  assize), with `decision` already present; `accept` and `invite` as the draft
+  had them.
+- The herald key (`accept`, `wish`, `resolution` by mechanism) is declared by
+  Guy; it never holds `key` or the change power.
+- Exit: a clean simulator run with stalling and flooding as liveness attacks;
+  then E_t ≥ 20 against p₀ (assize's weekly `guy_acts.py` series) within 14
+  days live; windows, α = 0.05, p₀ and the attack list committed before the
+  window opens; zero checker disagreements throughout; Guy has not vetoed.
+
+C1b's brief text is written at C1a's exit, by counsel, from C1a's report:
+what the ledger's overdue forecasts actually looked like decides the writ's
+shape.
+
+## Refusal list
+
+No LLM call, network access or clock read in either checker; `ts` and
+`resolves_by` enter only as entry fields. No scoring in the kernel. No new
+required member on an existing type. No `float` anywhere in an entry. Counsel
+writes no code: this brief, the SPEC patch text, the RUNBOOK sections and the
+ruling are counsel's; the kernel, kernel2, tools and tests are the builder's
+and the second family's; the pins are the reviewer's. No change to `CHARTER.md`
+except by `jack amend A3`, after the installing push, as A2.7 orders.
+
+## Stop and report if
+
+- the kernel would pass 500 lines;
+- the two checkers disagree about what this brief or the SPEC patch means (a
+  `spec_conflict`, not a patch);
+- a forecast anyone wants to make cannot be stated without a non-integer;
+- the first real case for a primary rule arises (A2.1 then governs, and the
+  language question reopens with a witnessed case).
+
+## Deliverables
+
+C1a: SPEC §5, §7, §8, §9, §11 and §12 amended per the patch (text first, by
+Guy's push, with the code built to it); kernel and kernel2 with the two types;
+the pins and simulator kinds; `tools/jack forecast | resolve | score`; the
+first forecasts; `transcripts/REVIEW-brief-3.md`, a cold read of this brief by
+a party of another family, before the builder starts; a C1a report in
+REPORT.md's form; the brief text of C1b. Then `jack amend A3`.

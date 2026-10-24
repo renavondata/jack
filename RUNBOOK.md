@@ -141,6 +141,30 @@ This runbook is counsel's and `tools/jack` the builder's, so they cannot share a
 the text lands first, by counsel's `proposal`, and the builder builds to the text on `main` (A2 clause 9);
 a verb that departs from the text is a finding, whichever of the two moved last.
 
+## `jack forecast "CLAIM" --p N --by TS [--type T --args JSON]`
+
+Entry: `forecast` {claim, p: N (an integer 1–999, per mille), resolves_by: TS, and, when given, type
+and args}. For every party but the master key a **branch verb**: it appends the entry and commits
+`forecast: <claim, truncated>` on the current branch, after that branch's `proposal` entry, touching
+`log.jsonl` only (SPEC §10.7), so the forecast reaches `main` with the proposal it rides; for the
+master key a main verb. Refuses: N outside 1–999; TS not an instant or earlier than now; a claim that
+is empty. A forecast is never edited; a wrong forecast is data.
+
+## `jack resolve SEQ --outcome 0|1 --evidence E`
+
+Entry: `resolution` {forecast: SEQ, outcome, evidence: E}. Branch or main verb as `forecast`.
+Refuses before signing, each with the kernel's own reason: SEQ not a `forecast`, or already
+resolved; the caller's principal equal to the forecast's (`self_judged`). E is a run id, a commit,
+or `sha256:<hex64>` of a file the verb has just placed under `transcripts/evidence/` from `--file`;
+with `--file` the verb commits the file in the same commit as the entry.
+
+## `jack score [--since SEQ] [--by proposer|type]`
+
+No entry. Reads the log and prints, per proposer and per `type`: forecasts, resolutions, mean p,
+outcome rate, log-loss, and the base-rate log-loss of that type to date (½ before any resolution);
+then the forecasts unresolved past `resolves_by`, oldest first, which are C1b's obligations. The
+score is log-loss on p/1000; nothing else is admitted as a score (pin `score_not_proper`).
+
 ## Working copies (no verbs; nothing here touches the record)
 
 Working copies live under `~/git/worktrees/jack/`: a branch's worktree at `~/git/worktrees/jack/<branch>`, a
