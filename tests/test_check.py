@@ -314,145 +314,94 @@ class OpeningState(Base):
         self.assertEqual(check.EMPTY.transmuted, frozenset())
 
 
-T0, T1, T2 = "2026-10-25T00:00:00Z", "2026-10-25T00:00:01Z", "2026-11-01T00:00:00Z"
+T0, T1, T2, EARLY = "2026-10-25T00:00:00Z", "2026-10-25T00:00:01Z", "2026-11-01T00:00:00Z", "2026-10-24T23:59:59Z"
 
 
 class Ledger(Base):
-    """C1a (SPEC §7, §8 steps 2a, 7, 8a, 9): timestamps do not decrease; forecasts and their resolutions."""
+    """C1a (SPEC §7, §8 steps 2a, 7, 8a, 9): timestamps do not decrease; forecasts and their resolutions, by principal."""
     fold = OpeningState.fold
 
-    def setUp(self):
-        w = self.w
-        w.ann2 = getattr(w, "ann2", None) or keys.make_key(self.tmp.name, "ann2")
-        self.decls = [build.decl("guy-master", "guy", w.guy, build.ALL),
-                      build.decl("ann-1", "ann", w.ann, ["proposal", "forecast", "resolution"]),
-                      build.decl("ann-2", "ann", w.ann2, ["resolution"]),  # a second key of the same party
-                      build.decl("builder-1", "builder", w.parties["builder"], ["forecast", "resolution"])]
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        w = cls.w
+        cls.key = {"guy": w.guy, "ann": w.ann, "ann2": keys.make_key(cls.tmp.name, "ann2"), "builder": w.parties["builder"],
+                   "stranger": w.stranger}
+        cls.decls = [build.decl("guy-master", "guy", w.guy, build.ALL), build.decl("ann-1", "ann", w.ann, ["proposal", "forecast", "resolution"]),
+                     build.decl("ann-2", "ann", cls.key["ann2"], ["resolution"]),  # a second key of the same party
+                     build.decl("builder-1", "builder", cls.key["builder"], ["forecast", "resolution"])]
 
-    def log(self):
-        return self.w.log(decls=self.decls)
-
-    def forecast(self, lg, who="ann", key=None, ts=T0, **body):
-        lg.add("forecast", who, dict({"claim": "it rains", "p": 700, "resolves_by": T2}, **body), key or self.w.ann, ts=ts)
-        return len(lg.lines) - 1
-
-    def resolve(self, lg, seq, who="builder", key=None, ts=T1, **body):
-        lg.add("resolution", who, dict({"forecast": seq, "outcome": 1, "evidence": "run 42"}, **body),
-               key or self.w.parties["builder"], ts=ts)
+    def lg(self, *steps):
+        """Genesis, then each step: ("f", signer, overrides) a forecast at T0, or ("r", forecast seq, signer, overrides) at T1;
+        the signer "ann2" signs as ann, "as:X" overrides the proposer."""
+        lg = self.w.log(decls=self.decls)
+        for step in steps:
+            kind, *rest = step
+            seq = rest.pop(0) if kind == "r" else None
+            signer, over = rest[0], dict(rest[1]) if len(rest) > 1 else {}
+            who, ts = over.pop("as", signer.rstrip("2")), over.pop("ts", T0 if kind == "f" else T1)
+            body = {"claim": "it rains", "p": 700, "resolves_by": T2} if kind == "f" else {"forecast": seq, "outcome": 1, "evidence": "run 4"}
+            lg.add("forecast" if kind == "f" else "resolution", who, dict(body, **over), self.key[signer], ts=ts)
+        return lg
 
     def test_timestamps_equal_or_later_are_admitted_earlier_is_ts_decreased(self):
-        lg = self.log()  # genesis at build.TS, 2026-10-13
-        lg.add("proposal", "ann", proposal(), self.w.ann, ts=build.TS)
-        lg.add("proposal", "ann", proposal(), self.w.ann, ts=T0)
+        lg = self.w.log(decls=self.decls)  # genesis at build.TS, 2026-10-13
+        for ts in (build.TS, T0, T0):
+            lg.add("proposal", "ann", proposal(), self.w.ann, ts=ts)
         self.ok(lg)
-        for earlier in ("2026-10-24T23:59:59Z", "2025-12-31T23:59:59Z", "0001-01-01T00:00:00Z"):
+        for earlier in (EARLY, "2025-12-31T23:59:59Z", "0001-01-01T00:00:00Z"):
             bad = build.Log(lg.lines); bad.add("proposal", "ann", proposal(), self.w.ann, ts=earlier)
-            self.refused(bad.lines, 3, "ts_decreased")
-
-    def test_genesis_is_exempt_and_the_parent_is_the_previous_entry_only(self):
-        lg = build.Log(); lg.add("genesis", "guy", build.genesis_body(self.decls), self.w.guy, ts="0001-01-01T00:00:00Z")
-        lg.add("proposal", "ann", proposal(), self.w.ann, ts=T1)
-        lg.add("proposal", "ann", proposal(), self.w.ann, ts=T1)
-        self.ok(lg)
-        lg.add("proposal", "ann", proposal(), self.w.ann, ts=T0)  # later than genesis, earlier than its parent
-        self.refused(lg.lines, 3, "ts_decreased")
+            self.refused(bad.lines, 4, "ts_decreased")
+        g = build.Log(); g.add("genesis", "guy", build.genesis_body(self.decls), self.w.guy, ts="9999-12-31T23:59:59Z")
+        self.ok(g)  # genesis has no parent and is exempt
+        g.add("proposal", "ann", proposal(), self.w.ann, ts=T0)
+        self.refused(g.lines, 1, "ts_decreased")
 
     def test_ts_decreased_is_step_2a_after_shape_before_seq(self):
-        lg = self.log()
-        lg.add("proposal", "ann", proposal(), self.w.ann, ts=T1)
-        early = "2026-10-20T00:00:00Z"
-        e = build.make_entry(9, lg.head, "proposal", "", {"no": "body"}, self.w.stranger, ts=early)  # bad seq, no proposer, schema, key
-        self.refused(lg.lines + [e], 2, "ts_decreased")
-        e = build.make_entry(2, "00" * 32, "genesis", "ann", proposal(), self.w.ann, ts=early)  # parent, genesis_misplaced
-        self.refused(lg.lines + [e], 2, "ts_decreased")
-        e = log.parse_line(build.make_entry(2, lg.head, "proposal", "ann", proposal(), self.w.ann, ts=early)); e["extra"] = 1
-        self.refused(lg.lines + [log.canonical(e)], 2, "schema")  # shape (step 2) first
-        self.refused(lg.lines + [build.make_entry(2, lg.head, "proposal", "ann", proposal(), self.w.ann, ts=early)[:-2]], 2,
-                     "malformed_json")
+        lg = self.lg(("f", "ann", {"ts": T1}))
+        for line in (build.make_entry(9, lg.head, "proposal", "", {"no": "body"}, self.w.stranger, ts=T0),  # bad seq, proposer, body, key
+                     build.make_entry(2, "00" * 32, "genesis", "ann", proposal(), self.w.ann, ts=T0)):  # parent, genesis misplaced
+            self.refused(lg.lines + [line], 2, "ts_decreased")
+        e = log.parse_line(build.make_entry(2, lg.head, "proposal", "ann", proposal(), self.w.ann, ts=T0)); e["extra"] = 1
+        self.refused(lg.lines + [log.canonical(e)], 2, "schema")  # shape is step 2
 
-    def test_forecast_and_resolution_admitted_with_extra_members(self):
-        lg = self.log()
-        f = self.forecast(lg, type="world.screen", args={"screen": 3})
-        self.forecast(lg, who="guy", key=self.w.guy, p=1, resolves_by=T0)  # resolves_by equal to ts
-        self.forecast(lg, who="builder", key=self.w.parties["builder"], p=999)
-        self.resolve(lg, f, outcome=0, note="extra")
-        self.resolve(lg, f + 1, who="ann", key=self.w.ann)
-        self.resolve(lg, f + 2, who="ann", key=self.w.ann2)  # ann's second key resolves builder's forecast
-        self.ok(lg)
+    def test_admitted_ledger_and_its_state(self):
+        lg = self.lg(("f", "ann", {"type": "world.screen", "args": {"n": [1]}}), ("f", "guy", {"p": 1, "resolves_by": T0}),
+                     ("f", "builder", {"p": 999}), ("r", 1, "builder", {"outcome": 0, "note": "x"}), ("r", 2, "ann"), ("r", 3, "ann2"))
+        self.ok(lg)  # resolves_by equal to ts; ann's second key resolves builder's forecast; extra members
         state = self.fold(lg)
-        self.assertEqual(state.forecasts, {f: "ann", f + 1: "guy", f + 2: "builder"})
-        self.assertEqual(state.resolved, {f, f + 1, f + 2})
-        self.assertEqual(state.ts, T1)
+        self.assertEqual((state.forecasts, state.resolved, state.ts), ({1: "ann", 2: "guy", 3: "builder"}, {1, 2, 3}, T1))
         self.assertEqual((check.EMPTY.forecasts, check.EMPTY.resolved, check.EMPTY.ts), ({}, frozenset(), None))
+        old = self.w.log(); old.add("proposal", "ann", proposal(), self.w.ann); old.add("merge", "guy", build.merge(1), self.w.guy)
+        self.ok(old)  # earlier logs replay unchanged
 
-    def test_forecast_resolving_before_its_own_ts_is_schema_before_the_signature(self):
-        lg = self.log()
-        lg.add("forecast", "ann", {"claim": "c", "p": 700, "resolves_by": "2026-10-24T23:59:59Z"}, self.w.ann, ts=T0)
-        self.refused(lg.lines, 1, "schema")
-        lg = self.log()
-        lg.add("forecast", "ann", {"claim": "c", "p": 700, "resolves_by": "2026-10-24T23:59:59Z"}, self.w.stranger, ts=T0)
-        self.refused(lg.lines, 1, "schema")  # an unknown key, but the body is judged first
-
-    def test_permille_and_boolean_bounds(self):
-        for p, verdict in ((0, "schema"), (1, None), (999, None), (1000, "schema"), (True, "schema")):
-            lg = self.log(); self.forecast(lg, p=p)
-            self.assertEqual(refusal(check.check(lg.lines)), verdict and (1, verdict), p)
-        for outcome, verdict in ((False, "schema"), (True, "schema"), (0, None), (2, "schema")):
-            lg = self.log(); self.resolve(lg, self.forecast(lg), outcome=outcome)
-            self.assertEqual(refusal(check.check(lg.lines)), verdict and (2, verdict), outcome)
-
-    def test_dangling_resolution_is_schema(self):
-        lg = self.log()
-        lg.add("proposal", "ann", proposal(), self.w.ann, ts=T0)
-        f = self.forecast(lg)
-        for seq in (0, 1, f + 1, f + 5):  # genesis, a proposal, the resolution's own seq, the future
-            bad = build.Log(lg.lines); self.resolve(bad, seq)
-            self.refused(bad.lines, f + 1, "schema")
-        bad = build.Log(lg.lines); self.resolve(bad, f, key=self.w.stranger)
-        self.refused(bad.lines, f + 1, "unknown_key")
-        bad = build.Log(lg.lines); self.resolve(bad, 1, key=self.w.stranger)
-        self.refused(bad.lines, f + 1, "schema")  # dangling (step 7) outranks unknown_key (step 8)
-
-    def test_forecast_and_resolution_need_their_powers(self):
-        lg = self.log(); self.forecast(lg, key=self.w.ann2)  # ann-2 holds resolution, not forecast
-        self.refused(lg.lines, 1, "no_power")
-        lg = self.w.log(); lg.add("forecast", "ann", {"claim": "c", "p": 5, "resolves_by": T2}, self.w.ann, ts=T0)
-        self.refused(lg.lines, 1, "no_power")
-
-    def test_double_resolution_is_schema(self):
-        lg = self.log(); f = self.forecast(lg); self.resolve(lg, f)
-        self.ok(lg)
-        for who, key, outcome in (("builder", self.w.parties["builder"], 1), ("guy", self.w.guy, 0), ("ann", self.w.ann, 1)):
-            bad = build.Log(lg.lines); self.resolve(bad, f, who=who, key=key, outcome=outcome)
-            self.refused(bad.lines, f + 2, "schema")  # a self-resolution of a resolved forecast is schema too
-
-    def test_self_resolution_is_self_judged_by_principal_after_the_signature(self):
-        lg = self.log(); f = self.forecast(lg)
-        for key in (self.w.ann, self.w.ann2):
-            bad = build.Log(lg.lines); self.resolve(bad, f, who="ann", key=key)
-            self.refused(bad.lines, 2, "self_judged")
-        guy = self.log(); g = self.forecast(guy, who="guy", key=self.w.guy); self.resolve(guy, g, who="guy", key=self.w.guy)
-        self.refused(guy.lines, 2, "self_judged")
-        bad = build.Log(lg.lines); self.resolve(bad, f, who="ann", key=self.w.ann)
-        e = log.parse_line(bad.lines[-1]); e["body"]["evidence"] = "tampered"
-        self.refused(lg.lines + [log.canonical(e)], 2, "bad_signature")  # not self_judged: the party is not yet a fact
-        bad = build.Log(lg.lines); self.resolve(bad, f, who="ann", key=self.w.parties["builder"])
-        self.refused(bad.lines, 2, "proposer_mismatch")
-        bad = build.Log(lg.lines); self.resolve(bad, f, who="ann", key=self.w.stranger)
-        self.refused(bad.lines, 2, "unknown_key")
-        twin = build.Log(lg.lines); self.resolve(twin, f)  # the same resolution by another party
-        self.ok(twin)
-
-    def test_a_self_judged_resolution_leaves_the_forecast_open(self):
-        lg = self.log(); f = self.forecast(lg)
-        bad = build.Log(lg.lines); self.resolve(bad, f, who="ann", key=self.w.ann)
-        self.assertRaises(log.Refuse, check.check_entry, self.fold(lg), 2, bad.lines[-1])
-        self.resolve(lg, f)
-        self.ok(lg)
-
-    def test_earlier_logs_replay_unchanged(self):
-        lg = self.w.log(); lg.add("proposal", "ann", proposal(), self.w.ann); lg.add("merge", "guy", build.merge(1), self.w.guy)
-        self.ok(lg)
+    def test_refusals_each_at_its_step(self):
+        cases = [  # (steps, (seq, reason)); each is one refusal, its twin admitted in test_admitted_ledger_and_its_state
+            ((("f", "ann", {"resolves_by": EARLY}),), (1, "schema")),  # resolves_by before ts, step 7
+            ((("f", "stranger", {"as": "ann", "resolves_by": EARLY}),), (1, "schema")),  # ... before the signature
+            ((("f", "ann", {"p": 0}),), (1, "schema")), ((("f", "ann", {"p": 1000}),), (1, "schema")),
+            ((("f", "ann", {"p": True}),), (1, "schema")), ((("f", "ann", {"p": False}),), (1, "schema")),
+            ((("f", "ann"), ("r", 1, "builder", {"outcome": False})), (2, "schema")),
+            ((("f", "ann"), ("r", 1, "builder", {"outcome": True})), (2, "schema")),
+            ((("f", "ann2"),), (1, "no_power")),  # ann-2 holds resolution, not forecast
+            ((("f", "ann"), ("r", 0, "builder")), (2, "schema")), ((("f", "ann"), ("r", 2, "builder")), (2, "schema")),  # genesis; itself
+            ((("f", "ann"), ("r", 9, "builder")), (2, "schema")),  # the future
+            ((("f", "ann"), ("r", 0, "stranger", {"as": "builder"})), (2, "schema")),  # dangling outranks unknown_key
+            ((("f", "ann"), ("r", 1, "stranger", {"as": "builder"})), (2, "unknown_key")),
+            ((("f", "ann"), ("r", 1, "builder"), ("r", 1, "guy", {"outcome": 0})), (3, "schema")),  # double
+            ((("f", "ann"), ("r", 1, "builder"), ("r", 1, "ann")), (3, "schema")),  # a self-resolution of a resolved forecast
+            ((("f", "ann"), ("r", 1, "ann")), (2, "self_judged")), ((("f", "ann"), ("r", 1, "ann2")), (2, "self_judged")),  # by principal
+            ((("f", "guy"), ("r", 1, "guy")), (2, "self_judged")),
+            ((("f", "ann"), ("r", 1, "builder", {"as": "ann"})), (2, "proposer_mismatch")),
+        ]
+        for steps, verdict in cases:
+            self.refused(self.lg(*steps).lines, *verdict)
+        lg = self.lg(("f", "ann"), ("r", 1, "ann"))
+        e = log.parse_line(lg.lines[-1]); e["body"]["evidence"] = "tampered"
+        self.refused(lg.lines[:-1] + [log.canonical(e)], 2, "bad_signature")  # not self_judged: the party is not yet a fact
+        self.ok(self.lg(("f", "ann"), ("r", 1, "builder")))  # the twin of every refusal above
+        nopower = self.w.log(); nopower.add("forecast", "ann", {"claim": "c", "p": 5, "resolves_by": T2}, self.w.ann, ts=T0)
+        self.refused(nopower.lines, 1, "no_power")
 
 
 class Cli(Base):

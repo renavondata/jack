@@ -63,10 +63,8 @@ class Sim:
         self.model.t += datetime.timedelta(hours=self.rng.choice((0, 1, 1, 2, 3, 5, 8, 13, 24, 30)))
         return self.model.t.strftime(FMT)
 
-    def earlier(self):
-        """A valid instant strictly before the last timestamp: by a second, an hour, a year or to the year 0001."""
-        back = self.rng.choice((datetime.timedelta(seconds=1), datetime.timedelta(hours=1), datetime.timedelta(days=365), None))
-        return (self.model.t - back if back else datetime.datetime(1, 1, 1)).strftime(FMT)
+    def keyof(self, who):
+        return self.pool.guy if who == "guy" else self.pool.ann
 
     @property
     def n(self):
@@ -110,7 +108,7 @@ class Sim:
         who = who or self.rng.choice(("guy", "ann"))
         self.model.forecasts[self.n] = who
         ts = self.ts()
-        self.add("forecast", who, self.forecast_body(ts, **over), self.pool.guy if who == "guy" else self.pool.ann, ts=ts)
+        self.add("forecast", who, self.forecast_body(ts, **over), self.keyof(who), ts=ts)
         return self.n - 1
 
     def resolver(self, f):
@@ -121,11 +119,10 @@ class Sim:
         return dict({"forecast": f, "outcome": self.rng.randint(0, 1),
                      "evidence": self.rng.choice(("run 4242", "ab" * 20, "sha256:" + "cd" * 32))}, **over)
 
-    def step_resolution(self, f=None, who=None, key=None, **over):
+    def step_resolution(self, f=None, **over):
         f = self.rng.choice(self.model.open()) if f is None else f
-        who = who or self.resolver(f)
         self.model.resolved.add(f)
-        self.add("resolution", who, self.resolution(f, **over), key or (self.pool.guy if who == "guy" else self.pool.ann))
+        self.add("resolution", self.resolver(f), self.resolution(f, **over), self.keyof(self.resolver(f)))
 
     def step(self):
         menu = [self.step_proposal, self.step_key, self.step_forecast]
@@ -267,69 +264,46 @@ def generate_kind(kind, rng, pool):
 def generate_ledger(kind, rng, pool, s):
     """C1a's kinds. A refusing kind yields its refusal or, half the time, its twin: the nearest entry the law admits."""
     m, lg, twin = s.model, s.lg, rng.random() < 0.5
-    if kind == "ts_decreasing":  # step 2a, after shape and before everything else: a bad seq or proposer does not mask it
-        ts = m.t.strftime(FMT) if twin else s.earlier()
-        variant = rng.choice(("plain", "bad_seq", "no_proposer", "stranger", "forecast"))
-        body = s.forecast_body(ts) if variant == "forecast" else proposal(s.title())
-        lg.lines.append(build.make_entry(s.n + (variant == "bad_seq" and not twin), lg.head, "forecast" if variant == "forecast" else "proposal",
-                                         "" if variant == "no_proposer" and not twin else "ann",
-                                         body, pool.stranger if variant == "stranger" and not twin else pool.ann, ts=ts))
+    if kind == "ts_decreasing":  # step 2a, after shape and before all else: a bad seq, proposer or key does not mask it
+        back = rng.choice((m.t - datetime.timedelta(seconds=rng.choice((1, 3600, 86400 * 365))), datetime.datetime(1, 1, 1)))
+        bad = "twin" if twin else rng.choice(("plain", "bad_seq", "no_proposer", "stranger"))
+        lg.lines.append(build.make_entry(s.n + (bad == "bad_seq"), lg.head, "proposal", "" if bad == "no_proposer" else "ann",
+                                         proposal(s.title()), pool.stranger if bad == "stranger" else pool.ann,
+                                         ts=(m.t if twin else back).strftime(FMT)))  # the twin: equal to the last ts
         return Case(None, kind, lg.lines, s.ok() if twin else s.refused("ts_decreased"))
-    if kind == "forecast_valid":
-        s.step_forecast()
-        s.prefix(0, 2)
-        return Case(None, kind, lg.lines, s.ok())
     f = s.step_forecast()
-    if kind == "resolution_valid":
+    if kind in ("forecast_valid", "resolution_valid"):
         s.prefix(0, 3)
-        s.step_resolution(f if f not in m.resolved else None) if m.open() else s.step_resolution(s.step_forecast())
+        kind == "resolution_valid" and s.step_resolution(rng.choice(m.open() or [s.step_forecast()]))
         return Case(None, kind, lg.lines, s.ok())
     if kind == "resolution_self":  # by principal, after the signature; a resolved forecast is schema first
-        variant = "twin" if twin else rng.choice(("same_key", "second_key", "bad_signature", "resolved"))
+        variant = "twin" if twin else rng.choice(("self_judged", "second_key", "bad_signature", "schema"))
+        who = s.resolver(f) if twin else m.forecasts[f]
         if variant == "second_key":  # a second key of the forecaster's party, declared by guy
-            who = m.forecasts[f]
             s.add("key", "guy", decl(f"{who}-2", who, pool.stranger, ["resolution"]), pool.guy)
-            s.add("resolution", who, s.resolution(f), pool.stranger)
-            return Case(None, kind, lg.lines, s.refused("self_judged"))
-        if variant == "resolved":
-            s.step_resolution(f)
-        who = s.resolver(f) if variant == "twin" else m.forecasts[f]
-        s.add("resolution", who, s.resolution(f), pool.guy if who == "guy" else pool.ann)
+        variant == "schema" and s.step_resolution(f)
+        s.add("resolution", who, s.resolution(f), pool.stranger if variant == "second_key" else s.keyof(who))
         if variant == "bad_signature":
             e = log.parse_line(lg.lines[-1]); e["body"]["evidence"] += "!"; lg.lines[-1] = log.canonical(e)
-        return Case(None, kind, lg.lines, {"twin": s.ok(), "same_key": s.refused("self_judged"), "resolved": s.refused("schema"),
-                                           "bad_signature": s.refused("bad_signature")}[variant])
-    if kind == "resolution_dangling":  # schema at step 7, before the signature: an unknown key does not mask it
+        return Case(None, kind, lg.lines, s.ok() if twin else s.refused({"second_key": "self_judged"}.get(variant, variant)))
+    if kind in ("resolution_dangling", "resolution_double"):  # schema at step 7, before the signature: a stranger's key does not mask it
+        kind == "resolution_double" and s.step_resolution(f)
         s.prefix(0, 3)
-        target = rng.choice(m.open() or [s.step_forecast()]) if twin else rng.choice(
-            [i for i in range(s.n) if i not in m.forecasts] + [s.n, s.n + rng.randint(1, 9), 2**53 - 1])
-        key = pool.stranger if not twin and rng.random() < 0.3 else None
         if twin:
-            s.step_resolution(target)
+            s.step_resolution(rng.choice(m.open() or [s.step_forecast()]))
         else:
-            s.add("resolution", "ann", s.resolution(target), key or pool.ann)
-        return Case(None, kind, lg.lines, s.ok() if twin else s.refused("schema"))
-    if kind == "resolution_double":
-        s.step_resolution(f)
-        s.prefix(0, 2)
-        g = s.step_forecast() if twin else f
-        who = rng.choice(("guy", "ann"))
-        if twin and who == m.forecasts[g]:
-            who = s.resolver(g)
-        s.add("resolution", who, s.resolution(g), pool.guy if who == "guy" else pool.ann)
+            target = f if kind == "resolution_double" else rng.choice([i for i in range(s.n) if i not in m.forecasts] + [s.n, s.n + 7, 2**53 - 1])
+            s.add("resolution", "ann", s.resolution(target), pool.stranger if rng.random() < 0.3 else pool.ann)
         return Case(None, kind, lg.lines, s.ok() if twin else s.refused("schema"))
     if kind == "forecast_past":  # resolves_by before ts is schema, before the signature
         ts = s.ts()
-        by = ts if twin else (m.t - rng.choice((datetime.timedelta(seconds=1), datetime.timedelta(days=400)))).strftime(FMT)
+        by = ts if twin else (m.t - datetime.timedelta(seconds=rng.choice((1, 86400 * 400)))).strftime(FMT)
         s.add("forecast", "ann", s.forecast_body(ts, resolves_by=by), pool.stranger if not twin and rng.random() < 0.3 else pool.ann, ts=ts)
         return Case(None, kind, lg.lines, s.ok() if twin else s.refused("schema"))
-    if kind in ("forecast_permille_0", "forecast_permille_1000"):
-        p = {"forecast_permille_0": (1, 0), "forecast_permille_1000": (999, 1000)}[kind][not twin]
-        s.step_forecast(p=p)
-        return Case(None, kind, lg.lines, s.ok() if twin else s.refused("schema"))
-    if kind == "forecast_boolean":  # a boolean is not an integer, in p or in outcome
-        member, value = rng.choice((("p", True), ("p", False), ("outcome", True), ("outcome", False)))
-        value = int(value) if twin and member == "outcome" else 1 if twin else value
+    if kind in ("forecast_permille_0", "forecast_permille_1000", "forecast_boolean"):  # a boolean is not an integer, in p or outcome
+        member, value = {"forecast_permille_0": ("p", 0), "forecast_permille_1000": ("p", 1000)}.get(kind) or rng.choice(
+            (("p", True), ("p", False), ("outcome", True), ("outcome", False)))
+        value = (999 if value == 1000 else 1 if member == "p" else int(value)) if twin else value  # the twin: the nearest integer
         s.step_forecast(p=value) if member == "p" else s.step_resolution(f, outcome=value)
         return Case(None, kind, lg.lines, s.ok() if twin else s.refused("schema"))
     raise ValueError(kind)
