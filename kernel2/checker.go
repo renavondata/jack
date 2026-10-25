@@ -22,7 +22,7 @@ var (
 
 func isType(s string) bool {
 	switch s {
-	case "genesis", "key", "proposal", "merge", "amend", "push", "decision", "spec_conflict":
+	case "genesis", "key", "proposal", "merge", "amend", "push", "decision", "spec_conflict", "forecast", "resolution":
 		return true
 	}
 	return false
@@ -159,6 +159,12 @@ func bodyShape(typ string, m object) ([]declaration, bool) {
 		return nil, isDecisionKind(m["kind"]) && nonempty(m["subject"])
 	case "spec_conflict":
 		return nil, nonempty(m["section"]) && nonempty(m["text"])
+	case "forecast":
+		p, ok := m["p"].(jsonInteger)
+		return nil, nonempty(m["claim"]) && ok && p >= 1 && p <= 999 && timestampShape(m["resolves_by"])
+	case "resolution":
+		outcome, ok := m["outcome"].(jsonInteger)
+		return nil, nonnegative(m["forecast"]) && ok && (outcome == 0 || outcome == 1) && nonempty(m["evidence"])
 	}
 	panic("entry shape admitted unknown type")
 }
@@ -170,6 +176,7 @@ type amendment struct {
 
 type law struct {
 	head               string
+	prevTS             string
 	keys               map[string]declaration
 	byBlob             map[string]string // Lifetime ownership; includes rotated-out blobs.
 	genesisCharter     string
@@ -178,12 +185,15 @@ type law struct {
 	amendments         []amendment // Log order, not activation-height order.
 	amendIDs           map[string]bool
 	transmuted         map[string]bool
+	forecasts          map[int64]string
+	resolved           map[int64]bool
 }
 
 func newLaw() law {
 	return law{
 		head: strings.Repeat("0", 64), keys: map[string]declaration{},
 		byBlob: map[string]string{}, amendIDs: map[string]bool{}, transmuted: map[string]bool{},
+		forecasts: map[int64]string{}, resolved: map[int64]bool{},
 	}
 }
 
@@ -252,6 +262,10 @@ func checkEntry(line []byte, seq int64, state *law) map[string]any {
 	if !entryShape(m) {
 		return fail("schema", "entry shape")
 	}
+	ts := m["ts"].(string)
+	if seq > 0 && ts < state.prevTS {
+		return fail("ts_decreased", "ts is earlier than previous entry ts")
+	}
 	if int64(m["seq"].(jsonInteger)) != seq {
 		return fail("bad_seq", "seq differs from line index")
 	}
@@ -274,6 +288,15 @@ func checkEntry(line []byte, seq int64, state *law) map[string]any {
 	if typ == "amend" {
 		if state.amendIDs[body["id"].(string)] || int64(body["activate_at"].(jsonInteger)) <= seq {
 			return fail("schema", "amendment id repeated or activation does not exceed seq")
+		}
+	}
+	if typ == "forecast" && body["resolves_by"].(string) < ts {
+		return fail("schema", "forecast resolves_by is earlier than ts")
+	}
+	if typ == "resolution" {
+		target := int64(body["forecast"].(jsonInteger))
+		if _, exists := state.forecasts[target]; !exists || state.resolved[target] {
+			return fail("schema", "resolution references unknown or already-resolved forecast")
 		}
 	}
 	if typ == "genesis" {
@@ -307,6 +330,9 @@ func checkEntry(line []byte, seq int64, state *law) map[string]any {
 	if !verifyEd25519(container.public, signedData(canonical(unsigned)), container.signature) {
 		return fail("bad_signature", "strict Ed25519 verification failed")
 	}
+	if typ == "resolution" && proposer == state.forecasts[int64(body["forecast"].(jsonInteger))] {
+		return fail("self_judged", "resolution proposer equals forecast proposer")
+	}
 	switch typ {
 	case "genesis":
 		state.genesisCharter = body["charter"].(string)
@@ -326,7 +352,12 @@ func checkEntry(line []byte, seq int64, state *law) map[string]any {
 		if body["kind"] == "transmute" {
 			state.transmuted[body["subject"].(string)] = true
 		}
+	case "forecast":
+		state.forecasts[seq] = proposer
+	case "resolution":
+		state.resolved[int64(body["forecast"].(jsonInteger))] = true
 	}
+	state.prevTS = ts
 	state.head = fmt.Sprintf("%x", sha256.Sum256(line))
 	return nil
 }

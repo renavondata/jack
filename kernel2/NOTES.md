@@ -2,64 +2,62 @@
 
 ## Author and scope
 
-- Model ID: **`google/gemini-4-argon`** (updating prior `openai/gpt-6-astra` revision).
-- Session: this OpenCode revision session in
-  `/home/g/git/kernel2-room`, 2026-10-18. The harness did not expose a unique
-  session identifier. No commits were made.
-- Sources consulted: the current `SPEC.md` in full first, then the existing
-  implementation, tests and documentation in `kernel2/`, and the supplied vector
-  files under `spec/vectors/` (including `spec/vectors/logs/34_*.jsonl` through `39_*.jsonl`) and `tests/vectors/`.
-  This revision read no files outside `/home/g/git/kernel2-room` and no
-  first-checker implementation.
-- Implementation: Go standard library only. Production verification uses
-  independently implemented Edwards arithmetic over `math/big`, canonical
-  point decoding, `S < L`, reduced SHA-512 challenge, and the cofactorless
-  equation. Small-order public keys are rejected at declaration, not by the
-  signature verifier itself. `crypto/ed25519` appears only in tests.
-- The checker makes no network, clock, or LLM calls. Its decisions depend on
-  the log bytes. The launcher disables Go downloads and telemetry; build
-  cache, temporary files, and the executable are confined to `kernel2/.cache/`.
+- Model ID: **`google/gemini-4-argon`**.
+- Session: `c1a-kernel2` room (`/home/g/git/worktrees/jack/c1a-kernel2`), 2026-10-25.
+- Sources consulted: only `SPEC.md`, `spec/`, `tests/vectors/`, and `kernel2/`. No files outside those paths and no first-checker implementation were read.
+- Implementation: Go standard library only. Production verification uses independently implemented Edwards arithmetic over `math/big`, canonical point decoding, `S < L`, reduced SHA-512 challenge, and the cofactorless equation. Small-order public keys are rejected at declaration, not by the signature verifier itself. `crypto/ed25519` appears only in tests.
+- The checker makes no network, clock, or LLM calls. Its decisions depend solely on the log bytes.
 
-## Changes for the current specification
+## C1a changes and driving SPEC.md sentences
 
-- §4–5: entry types and key powers accept all eight names: `genesis`, `key`,
-  `proposal`, `merge`, `amend`, `push`, `decision`, `spec_conflict`. Empty and
-  repeated powers remain valid. The four new body schemas enforce their exact
-  required shapes while permitting extra members, including dotted keys.
-- §5, §7, §8 step 7: amendments require an ID matching `[A-Z][0-9]{1,3}`, a
-  hex64 charter and an integer activation height. Reused IDs and heights not
-  strictly greater than the entry's sequence yield `schema` before signature
-  parsing. No amendment-number ordering or activation-height ordering is imposed.
-- §7, §8 step 9 (`last_key_revocable`): a `key` entry is refused with `bad_key`
-  if, with its declaration registered, no declared key's `powers` would include
-  `key`. This check runs at §8 step 9 after public-key weakness and lifetime
-  blob ownership, applies to `key` entries only (never `genesis`), and does not
-  mutate key state (`keys` or `byBlob`) when refused.
-- §7, §8 steps 9–10: the folded law now contains the head, current keys and
-  lifetime blob ownership, genesis charter, promulgated charter, amendment
-  history and IDs, trusted base, and transmuted set. Genesis establishes the
-  initial charter and trusted base. A valid amendment immediately updates the
-  promulgated charter; `charterAt(position)` selects the latest amendment in
-  **log order** with `activate_at <= position`, falling back to genesis.
-  Pending amendments cannot displace the active charter, and an older amendment
-  activating later cannot override a newer already-active amendment.
-- A valid push updates the trusted base immediately. A valid `transmute`
-  decision adds its nonempty subject to a set, with repetition harmless; the
-  subject need not match an amendment ID or refer to an existing amendment.
-  Other decision kinds (`veto`, `promote`, `budget`, `grant`, `fix`), proposals,
-  merges and specification conflicts change only the head. In particular,
-  a `grant` decision is not a key declaration.
-- All new entries use the existing strict SSHSIG/Ed25519 path and current-key
-  powers. Effects occur after successful signature verification. The twelve
-  reason codes and CLI verdict format are preserved.
-- §10's judge-only checks remain outside the validity predicate: the kernel
-  accepts an otherwise valid untransmuted amendment, a push during a pending
-  amendment, or a decision signed by an empowered key declared after genesis.
-  Digest values are claims here; only their shape is checked.
-- The vector runner checks every file in `spec/vectors/logs/` against
-  `spec/vectors/verdicts.json`, in-process and through the launcher, as well as the
-  cryptographic and canonical-JSON vector files under `spec/vectors/` and
-  `tests/vectors/`.
+1. **Ten entry types and key powers (`forecast`, `resolution`)** (`kernel2/checker.go`: `isType`):
+   - **§4 table (`type`)**: *"one of `genesis key proposal merge amend push decision spec_conflict forecast resolution`"*.
+   - **§5 (`key declaration`)**: *"`powers`: array of entry-type names (any of the ten, possibly empty, repetition allowed)"*.
+2. **`forecast` and `resolution` body schemas** (`kernel2/checker.go`: `bodyShape`):
+   - **§5 table (`forecast`)**: *"`claim`: non-empty string; `p`: integer 1–999 (per mille; a boolean is not an integer); `resolves_by`: an instant in §4's `ts` form, not earlier than the entry's own `ts`"*.
+   - **§5 prose**: *"`forecast.type` and `forecast.args` are optional members the tools read (RUNBOOK); the kernel never reads them and refuses nothing on their account."*
+   - **§5 table (`resolution`)**: *"`forecast`: integer ≥ 0, the `seq` of an earlier valid `forecast` entry not already resolved; `outcome`: integer 0 or 1 (a boolean is not an integer); `evidence`: non-empty string"*.
+   - **§5 prose**: *"Required members per type; **extra members are allowed** (any keys, any depth, including keys containing `.`); a required member with the wrong shape is **schema**."* and *"`integer ≥ 0` excludes booleans."*
+3. **Non-decreasing timestamps (`ts_decreased` at §8 step 2a)** (`kernel2/checker.go`: `law.prevTS`, `checkEntry`):
+   - **§7**: *"**Timestamps do not decrease** (CHARTER A2.2): entry i's `ts` is not earlier than entry i−1's, compared as strings, which for §4's fixed-width UTC form is chronological order. Genesis has no parent and is exempt. Refusal: **ts_decreased**, tested at §8 step 2a."*
+   - **§8 step 2a**: *"`ts` earlier than the previous entry's `ts` (entry 0 exempt) → **ts_decreased**."* (Tested after step 2 `entryShape` and before step 3 `bad_seq`.)
+   - **§8 step 9**: *"for every entry, record its `ts` as the previous `ts`."*
+   - **§12 item 11**: *"A2.2's `ts_decreased` is implemented with them; scoring is outside the kernel; §12.4's sentence 'whose order is not checked at C0' is superseded."*
+4. **Forecast and resolution state and refusals (`schema` at step 7; `self_judged` at step 8a)** (`kernel2/checker.go`: `law.forecasts`, `law.resolved`, `checkEntry`):
+   - **§7**: *"**Forecasts** are recorded by seq with their `proposer`; **resolved** seqs are recorded. A `resolution` whose `forecast` is not a recorded forecast seq, or is already resolved, is **schema** (§8 step 7, before the signature). A `resolution` whose `proposer` equals the recorded proposer of its `forecast` is **self_judged** (§8 step 8a, after the signature, so the party is a verified fact): CHARTER §2 maxim 1, judged by principal so that two keys of one party cannot launder a judgement. Consequently a self-resolution with a bad signature is `bad_signature`, and a self-resolution of an already-resolved forecast is `schema`."*
+   - **§8 step 7**: *"For `forecast`, `resolves_by` earlier than `ts` → **schema**. For `resolution`, a `forecast` member that is not a recorded forecast seq, or one already resolved → **schema**."*
+   - **§8 step 8a**: *"For `resolution`, the entry's `proposer` equals the recorded proposer of its `forecast` → **self_judged**."*
+   - **§8 step 9**: *"for `forecast`, record (seq, proposer); for `resolution`, mark its `forecast` resolved"*.
+5. **Fourteen reason codes and unchanged CLI contract** (`kernel2/checker.go`, `kernel2/main.go`):
+   - **§9**: *"Reason codes (closed set, fourteen): `malformed_json not_canonical schema bad_seq parent_mismatch genesis_misplaced no_proposer bad_key unknown_key proposer_mismatch no_power bad_signature ts_decreased self_judged`."*
+
+## C1a test logs in `kernel2/` and the SPEC sentences they witness
+
+In `kernel2/governance_test.go` (`TestC1aSignedLogs`, verified both in-process, over all proper prefixes per §9a.2, and through the `./check` CLI binary) and `kernel2/vectors_test.go` (`TestScoreVectorLog`):
+
+| Test log | Verdict | SPEC.md sentence(s) witnessed |
+|---|---|---|
+| `40_forecast_valid` | `{"ok":true,"entries":2}` | §4 (`type` includes `forecast`); §5 (`forecast` required members `claim`, `p` in 1–999, `resolves_by`, and optional `type`/`args` ignored); §7 & §8 step 9 (`for forecast, record (seq, proposer)`). |
+| `40b_forecast_equal_resolves_by_valid` | `{"ok":true,"entries":2}` | §5 (`resolves_by`: *"not earlier than the entry's own `ts`"* and `p: 1` boundary); §7 (*"entry i's `ts` is not earlier than entry i−1's"*). |
+| `41_resolution_valid` | `{"ok":true,"entries":3}` | §4 (`type` includes `resolution`); §5 (`resolution` required members `forecast`, `outcome`, `evidence`); §7 & §8 step 9 (`for resolution, mark its forecast resolved`). |
+| `42_resolution_self_bad` | `{"ok":false,"seq":2,"reason":"self_judged"}` | §7 & §8 step 8a (*"For `resolution`, the entry's `proposer` equals the recorded proposer of its `forecast` → **self_judged**"*). |
+| `42b_resolution_self_second_key_bad` | `{"ok":false,"seq":2,"reason":"self_judged"}` | §7 (*"judged by principal so that two keys of one party cannot launder a judgement"*). |
+| `43_resolution_dangling_bad` | `{"ok":false,"seq":1,"reason":"schema"}` | §7 & §8 step 7 (*"For `resolution`, a `forecast` member that is not a recorded forecast seq, or one already resolved → **schema**"*). |
+| `44_resolution_double_bad` | `{"ok":false,"seq":3,"reason":"schema"}` | §7 & §8 step 7 (*"A `resolution` whose `forecast` is not a recorded forecast seq, or is already resolved, is **schema** (§8 step 7, before the signature)... and a self-resolution of an already-resolved forecast is `schema`"*). |
+| `45_forecast_past_bad` | `{"ok":false,"seq":1,"reason":"schema"}` | §5 & §8 step 7 (*"For `forecast`, `resolves_by` earlier than `ts` → **schema**"*). |
+| `46a_forecast_permille_0_bad` | `{"ok":false,"seq":1,"reason":"schema"}` | §5 (`forecast.p`: *"integer 1–999"* — 0 refused with `schema`). |
+| `46b_forecast_permille_1000_bad` | `{"ok":false,"seq":1,"reason":"schema"}` | §5 (`forecast.p`: *"integer 1–999"* — 1000 refused with `schema`). |
+| `47_forecast_boolean_bad` | `{"ok":false,"seq":1,"reason":"schema"}` | §5 (`forecast.p`: *"integer 1–999 (per mille; a boolean is not an integer)"* — `p: true` refused with `schema`). |
+| `47b_resolution_outcome_boolean_bad` | `{"ok":false,"seq":2,"reason":"schema"}` | §5 (`resolution.outcome`: *"integer 0 or 1 (a boolean is not an integer)"* — `outcome: true` refused with `schema`). |
+| `48_ts_decreased_bad` | `{"ok":false,"seq":1,"reason":"ts_decreased"}` | §7 & §8 step 2a (*"`ts` earlier than the previous entry's `ts` (entry 0 exempt) → **ts_decreased**"*). |
+| `48b_ts_decreased_precedes_bad_seq` | `{"ok":false,"seq":1,"reason":"ts_decreased"}` | §8 order of checks: step 2a (`ts_decreased`) precedes step 3 (`bad_seq`), step 4 (`parent_mismatch`), step 5 (`genesis_misplaced`), step 6 (`no_proposer`), step 7 (`schema`), and step 8 (`bad_signature`). |
+| `49_self_resolution_bad_signature` | `{"ok":false,"seq":2,"reason":"bad_signature"}` | §7 & §8 steps 8–8a (*"Consequently a self-resolution with a bad signature is `bad_signature`"*). |
+| `tests/vectors/score.jsonl` | `{"ok":true,"entries":17}` | §4–§9 end-to-end over genesis, 10 forecasts, and 6 cross-principal resolutions, plus all 17 proper prefixes (§9a.2). |
+
+## Probability of agreement on 10⁵ seeded logs at the first run of record
+
+- **Probability: 0.98 (980 per mille)**.
+- **Basis**: Every check order in §8 (steps 1, 2, 2a, 3, 4, 5, 6, 7, 8, 8a, 9, 10), every boundary (`p` in `1..999`, `outcome` in `{0, 1}`, booleans excluded from integers, string comparison of validated `YYYY-MM-DDTHH:MM:SSZ` timestamps for `ts_decreased` and `resolves_by < ts`, dangling/double resolution at step 7 before signature, and `self_judged` by `proposer` at step 8a after signature) is explicitly pinned in `SPEC.md` and exercised against all 40 existing log vectors, `tests/vectors/score.jsonl`, and the 15 C1a signed test logs in `kernel2/`. A 2% residual allowance accounts for any uninspected generator quirk outside this room.
 
 ## Retained specification guarantees
 
@@ -117,12 +115,13 @@ kernel2/test.sh -vet=all
 
 ## Vector results
 
-The command above **passed** on 2026-10-18, including all Go vet checks enabled
+The command above **passed** on 2026-10-25, including all Go vet checks enabled
 by `-vet=all` and every vector file in `spec/vectors/` and `tests/vectors/`.
 
 | Input | Result |
 |---|---|
 | `spec/vectors/logs/*.jsonl` against `spec/vectors/verdicts.json` | **40/40 verdicts match**, excluding only `detail`; verified both in-process and through `kernel2/check`, including exit status |
+| `tests/vectors/score.jsonl` | **17/17 entries valid** (`{"ok":true,"entries":17}`), plus all 17 proper prefixes (`0..16`), verified both in-process and through `kernel2/check` |
 | `spec/vectors/canonical.json` | **6/6** canonical serializations and SHA-256 hashes; **12/12** refusal reasons; genesis-parent constant matches |
 | `tests/vectors/rfc8032.json` | **5/5** signature verdicts match |
 | `tests/vectors/speccheck.json` | **12/12** signature verdicts match (cases 0–3 valid, 4–11 invalid) |

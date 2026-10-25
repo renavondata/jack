@@ -107,7 +107,7 @@ func testEntry(typ string, body object) object {
 }
 
 func testGenesis(private ed25519.PrivateKey) object {
-	m := testEntry("genesis", object{"charter": strings.Repeat("0", 64), "checker": strings.Repeat("0", 64), "keys": []any{testDeclaration("root", private, "genesis", "key", "proposal", "merge", "amend", "push", "decision", "spec_conflict")}})
+	m := testEntry("genesis", object{"charter": strings.Repeat("0", 64), "checker": strings.Repeat("0", 64), "keys": []any{testDeclaration("root", private, "genesis", "key", "proposal", "merge", "amend", "push", "decision", "spec_conflict", "forecast", "resolution")}})
 	testSign(m, private)
 	return m
 }

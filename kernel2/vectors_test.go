@@ -165,6 +165,44 @@ func TestLogVectors(t *testing.T) {
 	testLogVectors(t, "../spec/vectors")
 }
 
+func TestScoreVectorLog(t *testing.T) {
+	const path = "../tests/vectors/score.jsonl"
+	b, err := os.ReadFile(path)
+	if os.IsNotExist(err) {
+		t.Skipf("optional referenced vector file is absent from this room: %s", path)
+	}
+	if err != nil {
+		t.Fatal(err)
+	}
+	lines := bytes.Split(bytes.TrimSuffix(b, []byte{'\n'}), []byte{'\n'})
+	for n := 0; n <= len(lines); n++ {
+		prefix := bytes.Join(lines[:n], []byte{'\n'})
+		if n > 0 {
+			prefix = append(prefix, '\n')
+		}
+		got, err := checkLog(bytes.NewReader(prefix))
+		if err != nil {
+			t.Fatal(err)
+		}
+		want := map[string]any{"ok": true, "entries": float64(n)}
+		if !reflect.DeepEqual(normalizeVerdict(t, got), want) {
+			t.Fatalf("prefix %d: got %v, want %v", n, got, want)
+		}
+	}
+	cmd := exec.Command("./check", path)
+	out, err := cmd.Output()
+	if err != nil {
+		t.Fatalf("CLI score.jsonl failed: %v", err)
+	}
+	var actual map[string]any
+	if err := json.Unmarshal(out, &actual); err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(actual, map[string]any{"ok": true, "entries": float64(len(lines))}) {
+		t.Fatalf("CLI got %v", actual)
+	}
+}
+
 func testLogVectors(t *testing.T, directory string) {
 	t.Helper()
 	wants := loadVerdicts(t, directory)
