@@ -76,7 +76,7 @@ An entry object has **exactly** the keys `seq, parent, ts, type, proposer, body,
 |---|---|
 | `seq` | integer ≥ 0 (not a boolean) |
 | `parent` | `[0-9a-f]{64}` |
-| `ts` | `YYYY-MM-DDTHH:MM:SSZ` in **ASCII digits only** (`[0-9]`, never other Unicode digits), naming an instant that exists: year 0001–9999, a real Gregorian date (leap years included), hour 00–23, minute 00–59, second 00–59 (no leap seconds). The checker never reads a clock and does not order timestamps at C0. |
+| `ts` | `YYYY-MM-DDTHH:MM:SSZ` in **ASCII digits only** (`[0-9]`, never other Unicode digits), naming an instant that exists: year 0001–9999, a real Gregorian date (leap years included), hour 00–23, minute 00–59, second 00–59 (no leap seconds). The checker never reads a clock; from C1a it refuses a `ts` earlier than the previous entry's (§8 step 2a, **ts_decreased**). |
 | `type` | one of `genesis key proposal merge amend push decision spec_conflict forecast resolution` |
 | `proposer` | a string (emptiness is checked later, §8 step 6) |
 | `body` | an object |
@@ -270,7 +270,7 @@ For entry *i* with line text T, in this order; the first failure refuses:
    for `forecast`, record (seq, proposer); for `resolution`, mark its `forecast` resolved;
    for every entry, record its `ts` as the previous `ts`.
    `proposal`, `merge`, `spec_conflict` and the other decisions have no effect on the
-   state beyond the head hash.
+   state beyond the head hash and the previous `ts`.
 10. The head becomes the hash of T.
 
 `detail` is free text and is not compared between checkers.
