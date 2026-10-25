@@ -1,0 +1,141 @@
+{
+ "started": "2026-10-25T11:33:36.838162+00:00",
+ "elapsed_s": 600.3,
+ "budget_s": 600.0,
+ "jobs": 12,
+ "seeds_file": "sim/seeds.txt",
+ "seeds_run": 49242,
+ "seeds": [
+  "4178ee380b3a2c0a",
+  "8668282caa09ebc5"
+ ],
+ "by_kind": {
+  "benign": 1976,
+  "duplicate_key": 1961,
+  "flooding": 1930,
+  "forecast_boolean": 2001,
+  "forecast_past": 1949,
+  "forecast_permille_0": 1976,
+  "forecast_permille_1000": 2018,
+  "forecast_valid": 1956,
+  "forged": 1893,
+  "forking": 1989,
+  "resolution_dangling": 1924,
+  "resolution_double": 1934,
+  "resolution_self": 1962,
+  "resolution_valid": 2046,
+  "retroactive": 1984,
+  "revoked": 1983,
+  "rewriting": 1952,
+  "schema": 1969,
+  "self_judging": 2003,
+  "stalling": 1949,
+  "structure": 1920,
+  "ts_decreasing": 2006,
+  "unattributed": 1931,
+  "unsigned_change": 2036,
+  "weak_key": 1994
+ },
+ "by_kind_verdict": {
+  "benign": {
+   "ok": 1976
+  },
+  "duplicate_key": {
+   "bad_key": 1961
+  },
+  "flooding": {
+   "ok": 1930
+  },
+  "forecast_boolean": {
+   "ok": 994,
+   "schema": 1007
+  },
+  "forecast_past": {
+   "ok": 998,
+   "schema": 951
+  },
+  "forecast_permille_0": {
+   "ok": 989,
+   "schema": 987
+  },
+  "forecast_permille_1000": {
+   "ok": 1005,
+   "schema": 1013
+  },
+  "forecast_valid": {
+   "ok": 1956
+  },
+  "forged": {
+   "bad_signature": 1398,
+   "unknown_key": 495
+  },
+  "forking": {
+   "parent_mismatch": 1989
+  },
+  "resolution_dangling": {
+   "ok": 958,
+   "schema": 966
+  },
+  "resolution_double": {
+   "ok": 1007,
+   "schema": 927
+  },
+  "resolution_self": {
+   "bad_signature": 240,
+   "ok": 1002,
+   "schema": 249,
+   "self_judged": 471
+  },
+  "resolution_valid": {
+   "ok": 2046
+  },
+  "retroactive": {
+   "ok": 1984
+  },
+  "revoked": {
+   "no_power": 1983
+  },
+  "rewriting": {
+   "bad_signature": 1332,
+   "parent_mismatch": 620
+  },
+  "schema": {
+   "schema": 1969
+  },
+  "self_judging": {
+   "ok": 2003
+  },
+  "stalling": {
+   "ok": 1949
+  },
+  "structure": {
+   "bad_seq": 483,
+   "genesis_misplaced": 466,
+   "malformed_json": 479,
+   "not_canonical": 492
+  },
+  "ts_decreasing": {
+   "ok": 1016,
+   "ts_decreased": 990
+  },
+  "unattributed": {
+   "no_proposer": 961,
+   "proposer_mismatch": 970
+  },
+  "unsigned_change": {
+   "no_power": 2036
+  },
+  "weak_key": {
+   "bad_key": 1994
+  }
+ },
+ "properties": [
+  "oracle",
+  "prefix",
+  "sticky_refusal",
+  "deterministic"
+ ],
+ "failures": [],
+ "python": "3.14.7",
+ "openssh": "OpenSSH_10.5p1, OpenSSL 3.6.4 25 Aug 2026"
+}

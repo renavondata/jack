@@ -90,13 +90,15 @@ def template(tmp):
     whose principal has a blank line, and sp-1, whose principal is a party, a space and more."""
     w = build.World(tmp)
     w.odd, w.nobody, w.nl, w.sp = keys.make_key(tmp, "odd"), keys.make_key(tmp, "nobody"), keys.make_key(tmp, "nl"), keys.make_key(tmp, "sp")
-    w.decls = [build.decl("guy-master", "guy", w.guy, build.ALL), build.decl("builder-1", "builder", w.ann, ["proposal", "spec_conflict"]),
+    w.decls = [build.decl("guy-master", "guy", w.guy, build.ALL), build.decl("reviewer-1", "reviewer", w.parties["reviewer"], ["resolution"]),
+               build.decl("builder-1", "builder", w.ann, ["proposal", "spec_conflict", "forecast", "resolution"]),
                build.decl("odd-1", "x<y", w.odd, ["decision"]), build.decl("nl-1", "builder\n\nother", w.nl, ["decision"]),
                build.decl("sp-1", "builder other", w.sp, ["decision"])]
     repo = gitfix.make_repo(w, with_log=False, tmpdir=tmp).repo
     gitfix.git(repo, "checkout", "-q", "main")
     gitfix.git(repo, "branch", "-D", "pr")
-    for rel in ("tools/jack", "tools/entry.py", "tools/digest.py", "tools/count_kernel.py", "sim/__init__.py", "sim/gen.py", "sim/seeds.txt"):
+    for rel in ("tools/jack", "tools/entry.py", "tools/digest.py", "tools/count_kernel.py", "sim/__init__.py", "sim/gen.py", "sim/seeds.txt",
+                "tests/vectors/weak_keys.json"):
         os.makedirs(os.path.dirname(os.path.join(repo, rel)), exist_ok=True)
         shutil.copy2(os.path.join(ROOT, rel), os.path.join(repo, rel))
     shutil.copytree(os.path.join(ROOT, "harness"), os.path.join(repo, "harness"), ignore=shutil.ignore_patterns("__pycache__"))
@@ -293,7 +295,8 @@ class Jack(unittest.TestCase):
         write(three, self.w.nobody.pubkey + " comment\n")
         args = ["--principal", "reviewer", "--pubkey", self.w.nobody.path + ".pub"]
         self.refused(self.jack("key", "r-1", "--principal", "r", "--powers", "proposal", "--pubkey", three), "not a two-field ssh-ed25519")
-        self.refused(self.jack("key", "r-1", "--powers", "proposal,wish", *args), "powers outside the eight: wish")
+        self.refused(self.jack("key", "r-1", "--powers", "proposal,wish", *args), "powers outside the ten: wish")
+        self.admitted(self.jack("key", "r-1", "--powers", "forecast,resolution", *args))
         self.refused(self.jack("key", "guy-master", "--powers", "proposal", *args), "the signer's own key")
 
     # jack proposal and jack spec_conflict
@@ -434,7 +437,7 @@ class Jack(unittest.TestCase):
         self.git("push", "-q", "origin", "bare")
         self.git("checkout", "-q", "main")
         self.gh(pr={"headRefOid": self.git("rev-parse", "bare"), "headRefName": "bare"})
-        self.refused(self.jack("merge", "7"), "not one commit past a valid proposal and carries no filled Proposer")
+        self.refused(self.jack("merge", "7"), "not a valid proposal's commit followed only by log.jsonl commits, and carries no filled")
 
     def test_merge_refused_when_the_proposal_moved_or_was_not_admitted(self):
         head = self.proposed()
@@ -610,13 +613,85 @@ class Jack(unittest.TestCase):
                 self.assertEqual((self.git("rev-parse", "HEAD"), self.git("status", "--porcelain", "--ignored", "--", "transcripts", "CHARTER.md")),
                                  (self.remote(), ""))
 
-    def test_push_remove_removes_the_branch_worktree(self):
-        wt = os.path.join(self.tmp.name, "wt")
-        self.git("worktree", "add", "-q", wt, "-b", "tb")
-        self.commit("SPEC.md", "spec, revised\n", cwd=wt)
-        self.admitted(self.jack("push", "tb", "--review", "none", "--remove"))
-        self.assertFalse(os.path.exists(wt))
-        self.assertEqual(self.git("rev-parse", "HEAD^"), self.git("rev-parse", "tb"))
+    def test_push_prints_the_worktree_removal_instead_of_remove(self):  # RUNBOOK: --remove is cut third, printed as a command
+        self.branch("tb", rel="SPEC.md", text="spec, revised\n")
+        self.git("checkout", "-q", "main")
+        r = self.jack("push", "tb", "--review", "none")
+        self.admitted(r)
+        self.assertIn("git worktree remove ~/git/worktrees/jack/tb", r.stdout)
+        self.assertEqual(self.jack("push", "tb", "--review", "none", "--remove").returncode, 2)
+
+    # jack forecast, jack resolve (jack score: tests/test_score.py)
+
+    def forecast(self, *extra, key=None, claim="ci green on the first run", by="2099-01-01T00:00:00Z"):
+        return self.jack("forecast", claim, "--p", "700", "--by", by, *extra, key=key or self.w.ann)
+
+    def test_forecast_is_a_log_only_branch_commit_before_the_proposal_and_a_main_verb_for_guy(self):
+        work = self.branch(rel="tests/work.txt")
+        r = self.forecast("--type", "pins_green", "--args", '{"n": [1]}')
+        self.admitted(r)
+        e, head = self.entries()[-1], self.git("rev-parse", "HEAD")
+        self.assertEqual((e["type"], e["proposer"], e["body"]), ("forecast", "builder", {"claim": "ci green on the first run", "p": 700,
+                         "resolves_by": "2099-01-01T00:00:00Z", "type": "pins_green", "args": {"n": [1]}}))
+        self.assertEqual(self.git("show", "--format=%B", "--name-only", head), "forecast: ci green on the first run\n\nProposer: builder builder-1\n\n\nlog.jsonl")
+        self.assertEqual((self.remote("work"), self.calls("gh")), ("work", []))  # nothing pushed: rev-parse echoes an unknown ref
+        self.admitted(self.jack("proposal", key=self.w.ann))
+        self.assertEqual(self.entries()[-1]["body"], {"title": "work", "commit": work})  # the work, not the forecast's commit
+        self.assertTrue(judge(self.origin, self.remote(), self.remote("work"))["ok"])
+        self.admitted(self.forecast(key=self.w.ann))  # after the proposal: still admitted by the judge
+        self.git("push", "-q", "origin", "work")
+        self.assertTrue(judge(self.origin, self.remote(), self.remote("work"))["ok"])
+        self.git("checkout", "-q", "main")
+        self.admitted(self.forecast(claim="  a  multi\nline claim " + "x" * 80, key=self.w.guy))
+        self.assertEqual((self.remote(), self.entries()[-1]["proposer"]), (self.git("rev-parse", "HEAD"), "guy"))
+        self.assertEqual(self.git("log", "-1", "--format=%s"), "forecast: a multi line claim " + "x" * 41)  # sixty characters
+
+    def test_forecast_refusals_before_signing(self):
+        self.refused(self.forecast(), "wrong branch main")  # builder's is a branch verb
+        self.branch()
+        for args, words in ((["--p", "0"], "outside 1-999"), (["--p", "1000"], "outside 1-999"), (["--by", "soon"], "is not an instant"),
+                            (["--by", "2020-01-01T00:00:00Z"], "at or after the clock"), (["--args", "[1]"], "not a JSON object"),
+                            (["--args", "{"], "not JSON")):
+            self.refused(self.jack("forecast", "c", "--p", "700", "--by", "2099-01-01T00:00:00Z", *args, key=self.w.ann), words)
+        self.refused(self.forecast(claim=""), "the claim is empty")
+        self.refused(self.forecast(key=self.w.guy), "wrong branch work")  # the master key's is a main verb
+
+    def test_resolve_by_another_party_with_evidence_and_its_refusals(self):
+        self.admitted(self.forecast(key=self.w.guy))
+        f = len(self.entries()) - 1
+        self.refused(self.jack("resolve", str(f), "--outcome", "1", "--evidence", "run 1"), "self_judged: guy made forecast")
+        data = b"the report\n"
+        h = hashlib.sha256(data).hexdigest()
+        self.branch(rel=f"transcripts/evidence/{h}", text=data.decode())
+        for seq, outcome, evidence, words in ((0, 1, "run 1", "schema: seq 0"), (f, 2, "run 1", "is not 0 or 1"),
+                                               (f, 1, "sha256:" + "0" * 64, "names no file"), (f, 1, "sha256:" + h[:-1], "names no file")):
+            self.refused(self.jack("resolve", str(seq), "--outcome", str(outcome), "--evidence", evidence, key=self.w.ann), words)
+        write(os.path.join(self.repo, "transcripts/evidence", "0" * 64), "not its hash\n")
+        self.git("add", "-A"), self.git("commit", "-q", "-m", "w", "-m", TRAILER)
+        self.refused(self.jack("resolve", str(f), "--outcome", "1", "--evidence", "sha256:" + "0" * 64, key=self.w.ann), "names no file")
+        self.admitted(self.jack("resolve", str(f), "--outcome", "0", "--evidence", "sha256:" + h, key=self.w.ann))
+        e = self.entries()[-1]
+        self.assertEqual((e["type"], e["proposer"], e["body"]), ("resolution", "builder", {"forecast": f, "outcome": 0, "evidence": "sha256:" + h}))
+        self.assertEqual(self.git("show", "--format=%s", "--name-only", "HEAD"), f"resolution: {f} 0\n\nlog.jsonl")
+        self.refused(self.jack("resolve", str(f), "--outcome", "1", "--evidence", "run 2", key=self.w.parties["reviewer"]),
+                     f"schema: seq {f} is not an unresolved forecast")
+
+    def test_merge_admits_log_only_commits_after_the_proposal_and_refuses_work(self):
+        head, main = self.proposed(), self.remote()
+        self.git("checkout", "-q", "work")
+        self.admitted(self.forecast())
+        self.git("push", "-q", "origin", "work")
+        self.git("checkout", "-q", "main")
+        tip = self.remote("work")  # the forecast's commit, one past the proposal's
+        self.merged(self.jack("merge", "7"), tip, main)
+        self.git("checkout", "-q", "-b", "late", "origin/main")
+        self.commit("tests/late.txt", "work\n")
+        self.admitted(self.jack("proposal", key=self.w.ann))
+        self.commit("tests/later.txt", "more work after the proposal\n", trailer=False)
+        self.git("push", "-q", "origin", "late")
+        self.git("checkout", "-q", "main")
+        self.gh(pr={"headRefName": "late"})
+        self.refused(self.jack("merge", "7"), "not a valid proposal's commit followed only by log.jsonl commits")
 
     # jack amend
 

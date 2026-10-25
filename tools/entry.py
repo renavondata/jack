@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
-"""Prepare an entry on a log's current head, then assemble its SSH signature into a line the kernel admits.
-Generates no key. Not kernel.
+"""Prepare an entry on a log's current head, then assemble its SSH signature into a line the kernel admits; the bodies of
+jack forecast and jack resolve, and jack score's tables (RUNBOOK.md). Generates no key. Not kernel.
 """
 import argparse
+import datetime
+import decimal
+import fractions
+import hashlib
 import json
+import math
 import os
 import re
 import shlex
@@ -75,6 +80,83 @@ def assemble(a):
         return 1
     sys.stdout.write(line + "\n")
     return 0
+
+
+def now():
+    """The verb's clock, UTC, in SPEC §4's form; the kernel never reads one."""
+    return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def forecast_body(a, now):
+    """jack forecast's body, or Usage: N in 1-999, TS an instant not earlier than the verb's clock, a claim; args an object."""
+    try:
+        args = {} if a.args is None else {"args": json.loads(a.args)}
+    except ValueError as x:
+        raise Usage(f"--args is not JSON: {x}") from None
+    for bad, why in ((not 1 <= a.p <= 999, f"--p {a.p} is outside 1-999 (per mille)"), (not a.claim, "the claim is empty"),
+                     (not log.instant(a.by) or a.by < now, f"--by {a.by!r} is not an instant at or after the clock, {now}"),
+                     (not isinstance(args.get("args", {}), dict), "--args is not a JSON object")):
+        if bad:
+            raise Usage(why)
+    return dict({"claim": a.claim, "p": a.p, "resolves_by": a.by}, **({} if a.type is None else {"type": a.type}), **args)
+
+
+def resolution_body(a, state, party, root=ROOT):
+    """jack resolve's body, or Usage with the kernel's own reason, before signing; sha256:<hex64> names a file of that hash."""
+    if a.seq not in state.forecasts or a.seq in state.resolved or a.outcome not in (0, 1):
+        raise Usage(f"schema: seq {a.seq} is not an unresolved forecast, or outcome {a.outcome} is not 0 or 1")
+    if state.forecasts[a.seq] == party:
+        raise Usage(f"self_judged: {party} made forecast {a.seq}; no party resolves its own forecast")
+    path = os.path.join(root, "transcripts", "evidence", h := a.evidence.removeprefix("sha256:"))
+    if a.evidence.startswith("sha256:") and not (log.HEX64.fullmatch(h) and os.path.isfile(path)
+                                                and hashlib.sha256(open(path, "rb").read()).hexdigest() == h):
+        raise Usage(f"{a.evidence} names no file transcripts/evidence/<hex64> whose SHA-256 is <hex64>")
+    return {"forecast": a.seq, "outcome": a.outcome, "evidence": a.evidence}
+
+
+def valid_run(parts, head, seeds):
+    """jack push: the record (SHA-256 of the parts in name order) if the twelve are BRANCH head's clean run, else None."""
+    reps = [json.loads(parts[n]) for n in sorted(parts)]
+    edges = [r["seeds"] for r in reps]
+    ok = len(reps) == 12 and [e[0] for e in edges] == [0] + [e[1] for e in edges[:-1]] and edges[-1][1] == seeds and all(
+        r["commit"] == head and r["logs"] == r["seeds"][1] - r["seeds"][0] and r["disagreements"] == [] == r["uncompared"] for r in reps)
+    return hashlib.sha256(b"".join(parts[n] for n in sorted(parts))).hexdigest() if ok else None
+
+
+def fmt(x):
+    """Four decimals, half to even, of the exact value (a Fraction, or a float's binary value)."""
+    q = fractions.Fraction(x)
+    return str((decimal.Decimal(q.numerator) / decimal.Decimal(q.denominator)).quantize(decimal.Decimal("0.0001"), decimal.ROUND_HALF_EVEN))
+
+
+def score(lines, as_of=None):
+    """jack score (BRIEF-C1.md): per (proposer, type), the forecasts' count, then per proposer and per type: resolved, mean p,
+    outcome rate, mean log-loss in nats and the base-rate loss (Laplace, pooled by type, in resolution-seq order)."""
+    if not check.check(lines)["ok"] or as_of is not None and not log.instant(as_of):
+        raise Usage(f"the log is refused by the kernel, or --as-of {as_of!r} is not an instant")
+    es = [json.loads(line) for line in lines]
+    kind = {i: e["body"]["type"] if isinstance(e["body"].get("type"), str) else "free" for i, e in enumerate(es) if e["type"] == "forecast"}
+    rows, seen = [], {}  # one per resolution: (proposer, type, p, outcome, loss, base-rate loss)
+    for e in (e for e in es if e["type"] == "resolution"):
+        f, o = e["body"]["forecast"], e["body"]["outcome"]
+        (s, n), p = seen.get(kind[f], (0, 0)), es[f]["body"]["p"]
+        rows.append((es[f]["proposer"], kind[f], p, o, -math.log((p if o else 1000 - p) / 1000), -math.log((s + 1 if o else n - s + 1) / (n + 2))))
+        seen[kind[f]] = (s + o, n + 1)
+    out, mean = [], lambda rs, j, d=1: fmt(fractions.Fraction(sum(r[j] for r in rs)) / (d * len(rs)))
+    for head, key, cols in ((("proposer", "type"), slice(0, 2), "R"), (("proposer", "type"), slice(0, 2), "F"),
+                            (("proposer",), slice(0, 1), "FR"), (("type",), slice(1, 2), "FR")):
+        names = [*head, *(["forecasts"] if "F" in cols else []), *(["resolved", "mean p", "rate", "loss", "base-rate loss"] if "R" in cols else [])]
+        out += ["", "| " + " | ".join(names) + " |", "|" + "---|" * len(head) + "---:|" * (len(names) - len(head))]
+        for g in sorted({r[key] for r in rows}):
+            rs = [r for r in rows if r[key] == g]
+            cells = [*g, *([str(sum((es[i]["proposer"], t)[key] == g for i, t in kind.items()))] if "F" in cols else []),
+                     *([str(len(rs)), mean(rs, 2, 1000), mean(rs, 3), mean(rs, 4), mean(rs, 5)] if "R" in cols else [])]
+            out.append("| " + " | ".join(cells) + " |")
+    late = sorted((es[i]["body"]["resolves_by"], i) for i in kind if as_of and i not in {r["body"]["forecast"] for r in es
+                                                                                       if r["type"] == "resolution"} and es[i]["body"]["resolves_by"] < as_of)
+    out += [f"\noverdue at {as_of}:", "| seq | proposer | type | p | resolves_by |", "|---:|---|---|---:|---|"] if as_of else []
+    out += [f"| {i} | {es[i]['proposer']} | {kind[i]} | {es[i]['body']['p']} | {by} |" for by, i in late]
+    return "\n".join(out[1:])
 
 
 def main(argv=None):

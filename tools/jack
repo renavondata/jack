@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""jack: the seven verbs of RUNBOOK.md. The kernel decides; this CLI prepares, signs, appends only what kernel.check admits, then
-performs the effects the entry authorises. Untrusted; not kernel. --dry-run and gh run watch are cut (RUNBOOK.md's last section)."""
-import argparse, contextlib, datetime, functools, hashlib, io, json, os, re, shutil, subprocess, sys, tempfile, time  # noqa: E401
+"""jack: the verbs of RUNBOOK.md. The kernel decides; this CLI prepares, signs, appends only what kernel.check admits, then performs
+the effects the entry authorises. Untrusted; not kernel. --dry-run, gh run watch and --remove are cut (RUNBOOK.md's last section)."""
+import argparse, contextlib, functools, hashlib, io, itertools, json, os, re, shutil, subprocess, sys, tempfile, time  # noqa: E401
 sys.path.insert(0, ROOT := os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from judge.judge import PARTIES, digest as commit_digest  # noqa: E402  the trusted-base digest of a commit, from git objects
+from judge.judge import PARTIES, changed_by, commits_of, digest as commit_digest  # noqa: E402  SPEC §10.7's own functions
 from kernel import check, log  # noqa: E402
 from tools import entry  # noqa: E402
 from tools.digest import digest  # noqa: E402  the same digest, of the working tree
@@ -27,12 +27,10 @@ def push(*args, cwd=ROOT):  # never forced, never deleting: a rejected push (not
     if any(x.startswith(("+", ":")) for x in args) or fails("git", "push", "-q", *args, cwd=cwd):
         refuse(f"git push {' '.join(args)}: a + or deleting refspec, or rejected (not a fast-forward: the branch moved, run again); never forced")
 
-def begin(a, on_main):  # the common preconditions; the party and key_id come from the keys the log declares
+def begin(a, on_main):  # the common preconditions; the party and key_id come from the keys the log declares; None: main for guy only
     git("fetch", "-q", "origin")
     git("status", "--porcelain") and refuse("the tree is not clean: git status --porcelain lists files")
     (branch := git("symbolic-ref", "-q", "--short", "HEAD", ok=False)) or refuse("detached HEAD")
-    if (branch == "main") != on_main:
-        refuse(f"wrong branch {branch}: this verb runs {'on' if on_main else 'on a branch other than'} main")
     lines = check.read_lines(open(LOG, "rb").read())  # an invalid log raises the kernel's refusal here
     state = functools.reduce(lambda s, il: check.check_entry(s, *il), enumerate(lines), check.EMPTY)
     blob = log.pubkey_blob(" ".join(open(a.key + ".pub").read().split()[:2]))
@@ -43,15 +41,16 @@ def begin(a, on_main):  # the common preconditions; the party and key_id come fr
     if not filled((t := a.trailer).removeprefix("Proposer: ")):
         refuse(f"{t!r} is not a filled trailer: one line, a party of {', '.join(PARTIES)} first, at least one more field, no <")
     a.party in PARTIES or refuse(f"{a.key}'s principal {a.party!r} is not a party of {', '.join(PARTIES)}: refused before signing")
+    if (branch == "main") != (on_main := a.party == "guy" if on_main is None else on_main):  # forecast, resolve: the master key's on main
+        refuse(f"wrong branch {branch}: this verb runs {'on' if on_main else 'on a branch other than'} main")
     on_main and git("rev-parse", "HEAD") != git("rev-parse", "origin/main") and refuse("main is not up to date: HEAD must equal origin/main")
     if not on_main and fails("git", "merge-base", "--is-ancestor", "origin/main", "HEAD"):
         refuse(f"{branch} does not contain origin/main; run:\n  git merge origin/main -m \"Merge main into {branch}\" -m \"{t}\"")
 
 def append(a, type_, body, log_path=LOG):  # sign on the log's head; append only if kernel.check admits the log with it
-    ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     with tempfile.TemporaryDirectory() as d, contextlib.redirect_stdout(out := io.StringIO()):
         with open(path := os.path.join(d, "entry"), "w", encoding="utf-8") as f:
-            f.write(entry.unsigned(argparse.Namespace(log=log_path, ts=ts, type=type_, proposer=a.party, body_json=json.dumps(body))))
+            f.write(entry.unsigned(argparse.Namespace(log=log_path, ts=entry.now(), type=type_, proposer=a.party, body_json=json.dumps(body))))
         subprocess.run(["ssh-keygen", "-Y", "sign", "-f", a.key, "-n", "core-entry", path], check=True, stdout=subprocess.DEVNULL)
         if entry.assemble(argparse.Namespace(unsigned=path, sig=path + ".sig", log=log_path)):
             refuse(f"the kernel refuses the {type_} entry (verdict above); nothing appended")
@@ -111,17 +110,18 @@ def v_key(a):
     re.fullmatch("[a-z0-9_-]+", a.principal) or refuse(f"principal {a.principal!r} is not [a-z0-9_-]+")
     powers = a.powers.split(",") if a.powers else []
     if bad := [p for p in powers if p not in log.TYPES]:
-        refuse(f"powers outside the eight: {', '.join(bad)}")
+        refuse(f"powers outside the ten: {', '.join(bad)}")
     if a.declared == a.key_id and "key" not in powers:
         refuse(f"{a.declared} is the signer's own key: re-declaring it without `key` is refused")
     main_ending(a, "key", lambda: {"key_id": a.declared, "principal": a.principal, "pubkey": " ".join(fields), "powers": powers},
                 f"key: {a.declared}")
 
-def v_proposal(a):
+def v_proposal(a):  # commit: the branch's last commit changing a path other than log.jsonl (SPEC §10.7's functions), else HEAD
     begin(a, False)
     the_check(ROOT)
-    title = a.title or git("log", "-1", "--format=%s")
-    n = branch_ending(a, "proposal", {"title": title, "commit": git("rev-parse", "HEAD")}, f"proposal: {title}", title)
+    commit = next((c for c in commits_of(ROOT, "origin/main", "HEAD") if changed_by(ROOT, c) - {"log.jsonl"}), git("rev-parse", "HEAD"))
+    title = a.title or git("log", "-1", "--format=%s", commit)
+    n = branch_ending(a, "proposal", {"title": title, "commit": commit}, f"proposal: {title}", title)
     print(f"proposal recorded; PR #{n}")
 
 def v_spec_conflict(a):
@@ -147,10 +147,11 @@ def v_merge(a):
     pr = json.loads(run("gh", "pr", "view", str(a.n), "--json", "state,baseRefName,mergeable,headRefOid,headRefName").stdout)
     bad = [f"{k} is {pr[k]}, not {w}" for k, w in (("state", "OPEN"), ("baseRefName", "main"), ("mergeable", "MERGEABLE")) if pr[k] != w]
     bad and refuse(f"PR #{a.n}: {'; '.join(bad)}")
-    lines, parent = check.read_lines(show(head := pr["headRefOid"], "log.jsonl")), git("rev-parse", "-q", "--verify", f"{head}^", ok=False)
-    if not (check.check(lines)["ok"] and any((e := json.loads(x))["type"] == "proposal" and e["body"]["commit"] == parent
-                                             for x in lines) or trailer(head)):
-        refuse(f"PR #{a.n}'s head is not one commit past a valid proposal and carries no filled Proposer: trailer")
+    lines, commits = check.read_lines(show(head := pr["headRefOid"], "log.jsonl")), commits_of(ROOT, "origin/main", head)
+    named = [e["body"]["commit"] for e in map(json.loads, lines) if e["type"] == "proposal" and e["body"]["commit"] in commits][-1:] \
+        if check.check(lines)["ok"] else []  # SPEC §10.7: the last proposal naming a commit of the PR, then only log.jsonl commits
+    if not (named and all(changed_by(ROOT, c) <= {"log.jsonl"} for c in itertools.takewhile(lambda c: c != named[0], commits)) or trailer(head)):
+        refuse(f"PR #{a.n}'s head is not a valid proposal's commit followed only by log.jsonl commits, and carries no filled Proposer: trailer")
     admitted(str(a.n), head)  # GitHub has admitted the proposal's head before anything is signed
     body = {"proposal": a.n, "commit": head, "checker": digest()}
     sha = worktree(head, lambda tmp: (append(a, "merge", body, os.path.join(tmp, "log.jsonl")),  # a rejected push: the
@@ -159,13 +160,6 @@ def v_merge(a):
     admitted(str(a.n), sha)  # the effect waits for CHECKS on sha, the head that carries the entry; GitHub then merges only sha
     run("gh", "pr", "merge", str(a.n), "--merge", "--match-head-commit", sha), git("pull", "-q", "--ff-only"), watch()
 
-def valid_run(parts, head):  # the record (SHA-256 of the parts in name order) if the twelve are BRANCH head's clean run, else None
-    reps = [json.loads(parts[n]) for n in sorted(parts)]
-    edges = [r["seeds"] for r in reps]
-    ok = len(reps) == 12 and [e[0] for e in edges] == [0] + [e[1] for e in edges[:-1]] and edges[-1][1] == SEEDS and all(
-        r["commit"] == head and r["logs"] == r["seeds"][1] - r["seeds"][0] and r["disagreements"] == [] == r["uncompared"] for r in reps)
-    return hashlib.sha256(b"".join(parts[n] for n in sorted(parts))).hexdigest() if ok else None
-
 def make_run(tmp, head):  # never accepted from BRANCH: kernel2/check built once, then harness/diff.py twelve ways into transcripts/
     run("kernel2/build.sh", cwd=tmp)
     os.makedirs(os.path.join(tmp, "transcripts"), exist_ok=True)
@@ -173,7 +167,7 @@ def make_run(tmp, head):  # never accepted from BRANCH: kernel2/check built once
     procs = [subprocess.Popen([sys.executable, "harness/diff.py", "--seeds", f"{k * SEEDS // 12}:{(k + 1) * SEEDS // 12}",
                                "--b", "kernel2/check"], cwd=tmp, stdout=open(os.path.join(tmp, n), "wb")) for k, n in enumerate(names)]
     [(p.wait(), p.stdout and p.stdout.close()) for p in procs]
-    if not valid_run(made := {n: open(os.path.join(tmp, n), "rb").read() for n in names}, head):
+    if not entry.valid_run(made := {n: open(os.path.join(tmp, n), "rb").read() for n in names}, head, SEEDS):
         refuse(f"the run of record is not twelve parts of {head[:12]}, each its range's logs, contiguous from 0 to {SEEDS}, "
                "0 disagreements, 0 uncompared")
     return made
@@ -198,11 +192,9 @@ def v_push(a):
         for n, data in placed.items():
             os.makedirs(os.path.join(ROOT, "transcripts"), exist_ok=True) or open(os.path.join(ROOT, n), "wb").write(data)
         return {"digest": digest(), "review": ZERO if review is None else hashlib.sha256(review).hexdigest(),
-                "record": valid_run(place, head) if needs_run else ZERO}
+                "record": entry.valid_run(place, head, SEEDS) if needs_run else ZERO}
     main_ending(a, "push", effect, f"push: {b}", ["log.jsonl"] + ["transcripts/"] * bool(placed))
-    for wt in (w.splitlines() for w in git("worktree", "list", "--porcelain").split("\n\n") if a.remove):
-        if f"branch refs/heads/{b}" in wt:
-            git("worktree", "remove", wt[0][len("worktree "):])
+    print(f"--remove is cut (RUNBOOK.md): remove {b}'s worktree, if it has one, with:\n  git worktree remove ~/git/worktrees/jack/{b}")
 
 def v_decision(a):
     begin(a, True)
@@ -223,13 +215,21 @@ def v_amend(a):
                 "activate_at": len(a.lines) + 1 if a.activate_at is None else a.activate_at}
     main_ending(a, "amend", effect, f"amend: {a.id}", ["CHARTER.md", "log.jsonl"])
 
+def ledger_ending(a, type_, body, subject):  # the master key's is a main verb; any other party's commits log.jsonl on its branch
+    if a.party == "guy": return main_ending(a, type_, lambda: body, subject)  # noqa: E701
+    append(a, type_, body), commit(a, subject, ["log.jsonl"]), print(f"{type_} committed on {a.branch}; jack proposal pushes it")
+def v_forecast(a): begin(a, None), ledger_ending(a, "forecast", entry.forecast_body(a, entry.now()), f"forecast: {' '.join(a.claim.split())[:60]}")  # noqa: E704
+def v_resolve(a): begin(a, None), ledger_ending(a, "resolution", entry.resolution_body(a, a.state, a.party), f"resolution: {a.seq} {a.outcome}")  # noqa: E704
+def v_score(a): print(entry.score(check.read_lines(open(LOG, "rb").read()), a.as_of))  # noqa: E704  no entry, signing, fetch or clean tree
+
 def main(argv):
     ap = argparse.ArgumentParser(prog="jack", description=__doc__)
     ap.add_argument("--key", default=os.environ.get("JACK_KEY", os.path.expanduser("~/.ssh/id_ed25519")))
     sub = ap.add_subparsers(dest="verb", required=True)
     for verb, specs in (("key", "declared --principal= --powers= --pubkey="), ("proposal", "--title"), ("merge", "n:int"),
-                        ("spec_conflict", "--section= --text="), ("push", "target --review= --remove:bool"),
-                        ("decision", "kind subject"), ("amend", "id file --activate-at:int")):
+                        ("spec_conflict", "--section= --text="), ("push", "target --review="), ("decision", "kind subject"),
+                        ("amend", "id file --activate-at:int"), ("forecast", "claim --p:int= --by= --type --args"),
+                        ("resolve", "seq:int --outcome:int= --evidence="), ("score", "--as-of")):
         p = sub.add_parser(verb)
         for spec in specs.split():
             name, kind = (spec.rstrip("=").split(":") + ["str"])[:2]
