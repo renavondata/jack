@@ -77,7 +77,7 @@ An entry object has **exactly** the keys `seq, parent, ts, type, proposer, body,
 | `seq` | integer ≥ 0 (not a boolean) |
 | `parent` | `[0-9a-f]{64}` |
 | `ts` | `YYYY-MM-DDTHH:MM:SSZ` in **ASCII digits only** (`[0-9]`, never other Unicode digits), naming an instant that exists: year 0001–9999, a real Gregorian date (leap years included), hour 00–23, minute 00–59, second 00–59 (no leap seconds). The checker never reads a clock and does not order timestamps at C0. |
-| `type` | one of `genesis key proposal merge amend push decision spec_conflict` |
+| `type` | one of `genesis key proposal merge amend push decision spec_conflict forecast resolution` |
 | `proposer` | a string (emptiness is checked later, §8 step 6) |
 | `body` | an object |
 | `sig` | `[A-Za-z0-9+/]+={0,2}` (decoded in §6) |
@@ -98,6 +98,12 @@ including keys containing `.`); a required member with the wrong shape is
 | `push` | `digest`: hex64, the trusted-base digest (§10.1) of the trunk this entry authorises; `review`: hex64, the SHA-256 of the cold review the push was read against, or 64 zeros if none |
 | `decision` | `kind`: one of `veto promote budget grant transmute fix`; `subject`: non-empty string (for `transmute`, the `id` of the amendment it unlocks) |
 | `spec_conflict` | `section`: non-empty string; `text`: non-empty string (what the builder could not reconcile) |
+| `forecast` | `claim`: non-empty string; `p`: integer 1–999 (per mille; a boolean is not an integer); `resolves_by`: an instant in §4's `ts` form, not earlier than the entry's own `ts` |
+| `resolution` | `forecast`: integer ≥ 0, the `seq` of an earlier valid `forecast` entry not already resolved; `outcome`: integer 0 or 1 (a boolean is not an integer); `evidence`: non-empty string |
+
+`forecast.type` and `forecast.args` are optional members the tools read (RUNBOOK);
+the kernel never reads them and refuses nothing on their account. `p` is per mille because canonical
+lines admit integers only (§2); 1–999 bounds the log-loss without a clipping rule.
 
 hex64 = `[0-9a-f]{64}`, hex40 = `[0-9a-f]{40}`. "integer ≥ 0" excludes booleans.
 
@@ -110,7 +116,7 @@ or 64 zeros when the checkers did not change (RUNBOOK, `jack push`) — or as a 
 A **key declaration** (the body of a `key` entry, and each element of `genesis.keys`) is an object with
 **exactly** these four members, and no others (else **schema**): `key_id`: `[a-z0-9_-]{1,64}`;
 `principal`: non-empty string; `powers`: array of entry-type names (any of the
-eight, possibly empty, repetition allowed); `pubkey`: a string of exactly two fields
+ten, possibly empty, repetition allowed); `pubkey`: a string of exactly two fields
 separated by exactly one ASCII space (U+0020; no other whitespace, no leading or trailing space), the first `ssh-ed25519`, the second standard base64
 (with padding) decoding to exactly 51 bytes. 51 is a multiple of 3, so a correct encoding has no `=`
 padding and no unused bits; any other encoding fails the length test (**schema**). Likewise a
@@ -216,8 +222,21 @@ is what entries 0..*i*−1 established:
   genesis's `checker` if there is none.
 - **Transmuted amendments** are the `subject`s of valid `decision` entries of kind
   `transmute`. The kernel records them; the judge enforces them (§10.13).
+- **Timestamps do not decrease** (CHARTER A2.2): entry *i*'s `ts` is not earlier than entry *i*−1's,
+  compared as strings, which for §4's fixed-width UTC form is chronological order. Genesis has no
+  parent and is exempt. Refusal: **ts_decreased**, tested at §8 step 2a.
+- **Forecasts** are recorded by seq with their `proposer`; **resolved** seqs are recorded. A
+  `resolution` whose `forecast` is not a recorded forecast seq, or is already resolved, is **schema**
+  (§8 step 7, before the signature). A `resolution` whose `proposer` equals the recorded proposer of
+  its `forecast` is **self_judged** (§8 step 8a, after the signature, so the party is a verified
+  fact): CHARTER §2 maxim 1, judged by principal so that two keys of one party cannot launder a
+  judgement. Consequently a self-resolution with a bad signature is `bad_signature`, and a
+  self-resolution of an already-resolved forecast is `schema`.
+- **Availability.** The two types are recognised from the checker that implements them; recognition
+  is additive and every earlier valid log replays unchanged. Which entries count toward a window is
+  the brief's business (BRIEF-C1.md), not the checker's.
 
-Nothing else is state at C1's opening. Recognition (c) of CHARTER §3 ("every rule in force
+Nothing else is state at C1a. Recognition (c) of CHARTER §3 ("every rule in force
 at its parent accepts it") holds vacuously: no rule can be admitted.
 
 ## 8. The validity predicate
@@ -226,6 +245,7 @@ For entry *i* with line text T, in this order; the first failure refuses:
 
 1. §1–2 decoding and parsing → **malformed_json** / **not_canonical**.
 2. §4 shape → **schema**.
+2a. `ts` earlier than the previous entry's `ts` (entry 0 exempt) → **ts_decreased**.
 3. `seq` ≠ *i* → **bad_seq**.
 4. `parent` ≠ hash of line *i*−1 (or ≠ 64 zeros for *i* = 0) → **parent_mismatch**.
 5. `type` is `genesis` and *i* ≠ 0, or `type` is not `genesis` and *i* = 0 → **genesis_misplaced**.
@@ -233,16 +253,22 @@ For entry *i* with line text T, in this order; the first failure refuses:
 7. §5 body schema → **schema**. For `genesis`, its key declarations are then
    registered in order (§7; a weak or duplicate pubkey → **bad_key**). For
    `amend`, §7's two constraints (an unused `id`; `activate_at` above its `seq`)
-   are tested here, before the signature → **schema**.
+   are tested here, before the signature → **schema**. For `forecast`, `resolves_by` earlier
+   than `ts` → **schema**. For `resolution`, a `forecast` member that is not a recorded forecast
+   seq, or one already resolved → **schema**.
 8. Signature: §6 container parse fails → **bad_signature**; the embedded pubkey
    blob equals no declared key's blob → **unknown_key**; that key's principal ≠
    `proposer` → **proposer_mismatch**; `type` ∉ that key's powers →
    **no_power**; Ed25519 fails → **bad_signature**.
+8a. For `resolution`, the entry's `proposer` equals the recorded proposer of its `forecast` →
+   **self_judged**.
 9. Effect: for `key`, register the declaration (§7; a weak or owned pubkey, or the
    last `key` power lost → **bad_key**); for `amend`,
    the promulgated charter becomes its `charter` and it is in force from
    `activate_at` (§7); for `push`, the trusted base in force becomes its `digest`;
-   for `decision` of kind `transmute`, its `subject` joins the transmuted set.
+   for `decision` of kind `transmute`, its `subject` joins the transmuted set;
+   for `forecast`, record (seq, proposer); for `resolution`, mark its `forecast` resolved;
+   for every entry, record its `ts` as the previous `ts`.
    `proposal`, `merge`, `spec_conflict` and the other decisions have no effect on the
    state beyond the head hash.
 10. The head becomes the hash of T.
@@ -266,9 +292,9 @@ Key order in the output is irrelevant; the differential harness compares the
 parsed objects **minus `detail`**. The Python kernel is `python3 -m kernel.check <log>`;
 the second checker is `kernel2/check <log>` (kernel2/README.md).
 
-Reason codes (closed set, twelve): `malformed_json not_canonical schema bad_seq
+Reason codes (closed set, fourteen): `malformed_json not_canonical schema bad_seq
 parent_mismatch genesis_misplaced no_proposer bad_key unknown_key
-proposer_mismatch no_power bad_signature`.
+proposer_mismatch no_power bad_signature ts_decreased self_judged`.
 
 ## 9a. The differential (binding for `harness/diff.py`)
 
@@ -290,7 +316,7 @@ or less is wrong.
    members `ok` and `entries`, `entries` a non-negative integer (not a
    boolean), and exit status 0; on refusal exactly the members `ok`, `seq`,
    `reason` and `detail`, `seq` a non-negative integer (not a boolean),
-   `reason` one of §9's twelve codes, `detail` a string, and exit status 1;
+   `reason` one of §9's fourteen codes, `detail` a string, and exit status 1;
    the output is UTF-8 without a byte-order mark, one JSON object with no
    duplicate members and no `NaN` or `Infinity`.
 4. **Agreement.** Two outputs agree iff both are verdicts and they are equal
@@ -432,6 +458,13 @@ trusted path is digested rather than refused).
   (throwaway public keys embedded in their genesis) and the verdict each must
   produce: one per reason code, plus valid logs exercising every entry type,
   grant, revocation and re-declaration, and the last `key` power lost.
+  Signed logs added, each with its required `(seq, reason)` verdict: `40_forecast_valid`,
+  `41_resolution_valid`, `42_resolution_self_bad` (`self_judged`), `43_resolution_dangling_bad`
+  (`schema`), `44_resolution_double_bad` (`schema`), `45_forecast_past_bad` (`schema`),
+  `46a_forecast_permille_0_bad` (`schema`), `46b_forecast_permille_1000_bad` (`schema`),
+  `47_forecast_boolean_bad` (`schema`, `p: true`), `48_ts_decreased_bad` (`ts_decreased`),
+  `49_self_resolution_bad_signature` (`bad_signature`, not `self_judged`). Each refused log stops at
+  its first bad entry, so each witnesses one refusal.
 
 ## 12. Decisions and resolved ambiguities
 
@@ -456,3 +489,6 @@ trusted path is digested rather than refused).
    against git, not by the checker.
 10. Body keys may contain `.` and bodies may carry any extra members: the
     checker reads only the required ones.
+11. C1 opens ledger-first (Guy, 25 October 2026; A3): `forecast` and `resolution` precede the clerk; `p`
+    is per mille; self-resolution has its own code; A2.2's `ts_decreased` is implemented with them;
+    scoring is outside the kernel; §12.4's sentence "whose order is not checked at C0" is superseded.
