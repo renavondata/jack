@@ -1,0 +1,13 @@
+{
+ "logs": 8333,
+ "prefixes": 53209,
+ "uncompared": [],
+ "requested": 8333,
+ "seeds": [
+  58333,
+  66666
+ ],
+ "commit": "377aad9cb0a0e01aa3e697beb90ef6ef7f819e30",
+ "seeds_sha256": "011b2ee01a4bb4207b92b8d3d128ec4ce5210f3dc5c1de72dd58436911b14386",
+ "disagreements": []
+}
