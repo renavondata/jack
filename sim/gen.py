@@ -1,11 +1,12 @@
 """Seeded simulator: a generator for every record attack in CHARTER §6 and for benign entries.
 
 Each case carries the verdict the generator intends (its oracle). The oracle is
-an independent account of the law at C0 — which keys hold which powers after
-each entry — and never calls the kernel. The rule attacks of §6 (vacuous,
+an independent account of the law — which keys hold which powers after
+each entry, which forecasts are open and the last timestamp — and never calls the kernel. The rule attacks of §6 (vacuous,
 impossible) have no generator until the law language arrives in C1.
 Not kernel.
 """
+import datetime
 import random
 from collections import namedtuple
 
@@ -15,26 +16,34 @@ from kernel import log, sig  # canonical form, hashes and SSHSIG parsing, to cra
 
 Case = namedtuple("Case", "seed kind lines expected")
 KINDS = ("benign", "retroactive", "forged", "rewriting", "forking", "unattributed", "unsigned_change", "revoked",
-         "weak_key", "duplicate_key", "self_judging", "stalling", "flooding", "schema", "structure")
+         "weak_key", "duplicate_key", "self_judging", "stalling", "flooding", "schema", "structure",
+         "ts_decreasing", "forecast_valid", "resolution_valid", "resolution_self", "resolution_dangling", "resolution_double",
+         "forecast_past", "forecast_permille_0", "forecast_permille_1000", "forecast_boolean")  # C1a: each refusing kind has a twin
 TITLES = ("alpha", "beta", "gamma", "delta", "epsilon", "zeta")
 CHECKER = "33" * 32  # the checker digest genesis records in simulated logs
+EPOCH, FMT = datetime.datetime(2026, 1, 1), "%Y-%m-%dT%H:%M:%SZ"
+LEDGER = ["proposal", "forecast", "resolution"]  # ann's powers: she forecasts and resolves as guy does
 
 
 class KeyPool:
-    """Throwaway keys for one run: guy (all powers), ann (proposal), bob (granted later), stranger."""
+    """Throwaway keys for one run: guy (all powers), ann (proposal, forecast, resolution), bob (granted later), stranger."""
 
     def __init__(self, tmpdir):
         self.guy, self.ann = keys.make_key(tmpdir, "guy"), keys.make_key(tmpdir, "ann")
         self.bob, self.stranger = keys.make_key(tmpdir, "bob"), keys.make_key(tmpdir, "stranger")
-        self.decls = [decl("guy-master", "guy", self.guy, ALL), decl("ann-1", "ann", self.ann, ["proposal"])]
+        self.decls = [decl("guy-master", "guy", self.guy, ALL), decl("ann-1", "ann", self.ann, LEDGER)]
 
 
 class Model:
     """The oracle's account of the law in force: key_id → (principal, powers); plus bookkeeping."""
 
     def __init__(self):
-        self.keys = {"guy-master": ("guy", frozenset(ALL)), "ann-1": ("ann", frozenset({"proposal"}))}
+        self.keys = {"guy-master": ("guy", frozenset(ALL)), "ann-1": ("ann", frozenset(LEDGER))}
         self.proposals, self.signers = [], []  # seqs of proposals; the key that signed each line
+        self.forecasts, self.resolved, self.t = {}, set(), EPOCH  # forecast seq → principal; resolved seqs; the last ts
+
+    def open(self):
+        return [f for f in self.forecasts if f not in self.resolved]
 
     def may(self, key_id, type_):
         return type_ in self.keys.get(key_id, ("", frozenset()))[1]
@@ -45,12 +54,19 @@ class Sim:
         self.rng, self.pool, self.model, self.lg = rng, pool, Model(), build.Log()
         self.add("genesis", "guy", build.genesis_body(pool.decls, checker=CHECKER), pool.guy)
 
-    def add(self, type_, proposer, body, key, **kw):
+    def add(self, type_, proposer, body, key, ts=None, **kw):
         self.model.signers.append(key)
-        return self.lg.add(type_, proposer, body, key, ts=self.ts(), **kw)
+        return self.lg.add(type_, proposer, body, key, ts=ts or self.ts(), **kw)
 
     def ts(self):
-        return f"2026-{self.rng.randint(1, 12):02}-{self.rng.randint(1, 28):02}T{self.rng.randint(0, 23):02}:00:00Z"
+        """The next timestamp: never earlier than the last (equal about one time in ten), whole hours only."""
+        self.model.t += datetime.timedelta(hours=self.rng.choice((0, 1, 1, 2, 3, 5, 8, 13, 24, 30)))
+        return self.model.t.strftime(FMT)
+
+    def earlier(self):
+        """A valid instant strictly before the last timestamp: by a second, an hour, a year or to the year 0001."""
+        back = self.rng.choice((datetime.timedelta(seconds=1), datetime.timedelta(hours=1), datetime.timedelta(days=365), None))
+        return (self.model.t - back if back else datetime.datetime(1, 1, 1)).strftime(FMT)
 
     @property
     def n(self):
@@ -81,10 +97,42 @@ class Sim:
     def step_merge(self, checker=CHECKER):
         self.add("merge", "guy", build.merge(self.rng.choice(self.model.proposals), checker), self.pool.guy)
 
+    def forecast_body(self, ts, **over):
+        """A valid forecast at ts: p anywhere in 1-999 (the bounds often), resolves_by at ts or later, type and args sometimes."""
+        later = datetime.datetime.strptime(ts, FMT) + datetime.timedelta(hours=self.rng.choice((0, 1, 24, 24 * 30)))
+        body = {"claim": self.rng.choice(("ci green", "screen meets", "x\n")), "p": self.rng.choice((1, 999, self.rng.randint(1, 999))),
+                "resolves_by": later.strftime(FMT)}
+        body.update({"type": self.rng.choice(("pins_green", "world.screen"))} if self.rng.random() < 0.5 else {})
+        body.update({"args": {"n": self.rng.randint(0, 9)}} if self.rng.random() < 0.3 else {})
+        return dict(body, **over)
+
+    def step_forecast(self, who=None, **over):
+        who = who or self.rng.choice(("guy", "ann"))
+        self.model.forecasts[self.n] = who
+        ts = self.ts()
+        self.add("forecast", who, self.forecast_body(ts, **over), self.pool.guy if who == "guy" else self.pool.ann, ts=ts)
+        return self.n - 1
+
+    def resolver(self, f):
+        """The other of guy and ann: never the forecast's own principal."""
+        return "ann" if self.model.forecasts[f] == "guy" else "guy"
+
+    def resolution(self, f, **over):
+        return dict({"forecast": f, "outcome": self.rng.randint(0, 1),
+                     "evidence": self.rng.choice(("run 4242", "ab" * 20, "sha256:" + "cd" * 32))}, **over)
+
+    def step_resolution(self, f=None, who=None, key=None, **over):
+        f = self.rng.choice(self.model.open()) if f is None else f
+        who = who or self.resolver(f)
+        self.model.resolved.add(f)
+        self.add("resolution", who, self.resolution(f, **over), key or (self.pool.guy if who == "guy" else self.pool.ann))
+
     def step(self):
-        menu = [self.step_proposal, self.step_key]
+        menu = [self.step_proposal, self.step_key, self.step_forecast]
         if self.model.proposals:
             menu.append(self.step_merge)
+        if self.model.open():
+            menu.append(self.step_resolution)
         if self.model.may("bob-1", "proposal"):
             menu.append(lambda: self.step_proposal("bob"))
         self.rng.choice(menu)()
@@ -133,8 +181,8 @@ def generate_kind(kind, rng, pool):
     if kind == "rewriting":
         i = rng.randrange(s.n)
         e = log.parse_line(lg.lines[i])
-        if e["type"] == "key":  # a key declaration has exactly four members (SPEC §5): tamper a valid field instead
-            e["ts"] = "2025-06-15T12:34:56Z"  # never generated (Sim.ts: 2026, :00:00)
+        if e["type"] == "key":  # a key declaration has exactly four members (SPEC §5): tamper a valid field instead;
+            e["body"]["powers"] = e["body"]["powers"] + (e["body"]["powers"][:1] or ["proposal"])  # not ts: it may decrease
         else:
             e["body"]["charter" if e["type"] == "genesis" else "note"] = "ab" * 32 if e["type"] == "genesis" else "edited"
         if i < s.n - 1 and rng.random() < 0.5:
@@ -145,7 +193,7 @@ def generate_kind(kind, rng, pool):
         return Case(None, kind, lg.lines, s.refused("bad_signature", seq=i))
     if kind == "forking":
         parent = rng.choice([log.GENESIS_PARENT] + [log.line_hash(l) for l in lg.lines[:-1]])
-        lg.lines.append(build.make_entry(s.n, parent, "proposal", "ann", proposal(s.title()), pool.ann))
+        lg.lines.append(build.make_entry(s.n, parent, "proposal", "ann", proposal(s.title()), pool.ann, ts=s.ts()))
         return Case(None, kind, lg.lines, s.refused("parent_mismatch"))
     if kind == "unattributed":
         if rng.random() < 0.5:
@@ -206,13 +254,84 @@ def generate_kind(kind, rng, pool):
         if variant == "genesis_misplaced":
             s.add("genesis", "guy", build.genesis_body(pool.decls, checker=CHECKER), pool.guy)
             return Case(None, kind, lg.lines, s.refused("genesis_misplaced"))
-        line = build.make_entry(s.n + (variant == "bad_seq"), lg.head, "proposal", "ann", proposal(s.title()), pool.ann)
+        line = build.make_entry(s.n + (variant == "bad_seq"), lg.head, "proposal", "ann", proposal(s.title()), pool.ann, ts=s.ts())
         if variant == "not_canonical":
             line = line.replace(',"ts"', ', "ts"', 1)
         if variant == "malformed_json":
             line = line[:-3]
         lg.lines.append(line)
         return Case(None, kind, lg.lines, s.refused(variant))
+    return generate_ledger(kind, rng, pool, s)
+
+
+def generate_ledger(kind, rng, pool, s):
+    """C1a's kinds. A refusing kind yields its refusal or, half the time, its twin: the nearest entry the law admits."""
+    m, lg, twin = s.model, s.lg, rng.random() < 0.5
+    if kind == "ts_decreasing":  # step 2a, after shape and before everything else: a bad seq or proposer does not mask it
+        ts = m.t.strftime(FMT) if twin else s.earlier()
+        variant = rng.choice(("plain", "bad_seq", "no_proposer", "stranger", "forecast"))
+        body = s.forecast_body(ts) if variant == "forecast" else proposal(s.title())
+        lg.lines.append(build.make_entry(s.n + (variant == "bad_seq" and not twin), lg.head, "forecast" if variant == "forecast" else "proposal",
+                                         "" if variant == "no_proposer" and not twin else "ann",
+                                         body, pool.stranger if variant == "stranger" and not twin else pool.ann, ts=ts))
+        return Case(None, kind, lg.lines, s.ok() if twin else s.refused("ts_decreased"))
+    if kind == "forecast_valid":
+        s.step_forecast()
+        s.prefix(0, 2)
+        return Case(None, kind, lg.lines, s.ok())
+    f = s.step_forecast()
+    if kind == "resolution_valid":
+        s.prefix(0, 3)
+        s.step_resolution(f if f not in m.resolved else None) if m.open() else s.step_resolution(s.step_forecast())
+        return Case(None, kind, lg.lines, s.ok())
+    if kind == "resolution_self":  # by principal, after the signature; a resolved forecast is schema first
+        variant = "twin" if twin else rng.choice(("same_key", "second_key", "bad_signature", "resolved"))
+        if variant == "second_key":  # a second key of the forecaster's party, declared by guy
+            who = m.forecasts[f]
+            s.add("key", "guy", decl(f"{who}-2", who, pool.stranger, ["resolution"]), pool.guy)
+            s.add("resolution", who, s.resolution(f), pool.stranger)
+            return Case(None, kind, lg.lines, s.refused("self_judged"))
+        if variant == "resolved":
+            s.step_resolution(f)
+        who = s.resolver(f) if variant == "twin" else m.forecasts[f]
+        s.add("resolution", who, s.resolution(f), pool.guy if who == "guy" else pool.ann)
+        if variant == "bad_signature":
+            e = log.parse_line(lg.lines[-1]); e["body"]["evidence"] += "!"; lg.lines[-1] = log.canonical(e)
+        return Case(None, kind, lg.lines, {"twin": s.ok(), "same_key": s.refused("self_judged"), "resolved": s.refused("schema"),
+                                           "bad_signature": s.refused("bad_signature")}[variant])
+    if kind == "resolution_dangling":  # schema at step 7, before the signature: an unknown key does not mask it
+        s.prefix(0, 3)
+        target = rng.choice(m.open() or [s.step_forecast()]) if twin else rng.choice(
+            [i for i in range(s.n) if i not in m.forecasts] + [s.n, s.n + rng.randint(1, 9), 2**53 - 1])
+        key = pool.stranger if not twin and rng.random() < 0.3 else None
+        if twin:
+            s.step_resolution(target)
+        else:
+            s.add("resolution", "ann", s.resolution(target), key or pool.ann)
+        return Case(None, kind, lg.lines, s.ok() if twin else s.refused("schema"))
+    if kind == "resolution_double":
+        s.step_resolution(f)
+        s.prefix(0, 2)
+        g = s.step_forecast() if twin else f
+        who = rng.choice(("guy", "ann"))
+        if twin and who == m.forecasts[g]:
+            who = s.resolver(g)
+        s.add("resolution", who, s.resolution(g), pool.guy if who == "guy" else pool.ann)
+        return Case(None, kind, lg.lines, s.ok() if twin else s.refused("schema"))
+    if kind == "forecast_past":  # resolves_by before ts is schema, before the signature
+        ts = s.ts()
+        by = ts if twin else (m.t - rng.choice((datetime.timedelta(seconds=1), datetime.timedelta(days=400)))).strftime(FMT)
+        s.add("forecast", "ann", s.forecast_body(ts, resolves_by=by), pool.stranger if not twin and rng.random() < 0.3 else pool.ann, ts=ts)
+        return Case(None, kind, lg.lines, s.ok() if twin else s.refused("schema"))
+    if kind in ("forecast_permille_0", "forecast_permille_1000"):
+        p = {"forecast_permille_0": (1, 0), "forecast_permille_1000": (999, 1000)}[kind][not twin]
+        s.step_forecast(p=p)
+        return Case(None, kind, lg.lines, s.ok() if twin else s.refused("schema"))
+    if kind == "forecast_boolean":  # a boolean is not an integer, in p or in outcome
+        member, value = rng.choice((("p", True), ("p", False), ("outcome", True), ("outcome", False)))
+        value = int(value) if twin and member == "outcome" else 1 if twin else value
+        s.step_forecast(p=value) if member == "p" else s.step_resolution(f, outcome=value)
+        return Case(None, kind, lg.lines, s.ok() if twin else s.refused("schema"))
     raise ValueError(kind)
 
 

@@ -62,9 +62,9 @@ def _init():
 def _one(seed):
     try:
         case = gen.generate(seed, POOL)
-        return seed, case.kind, evaluate(case, POOL)
+        return seed, case.kind, case.expected.get("reason", "ok"), evaluate(case, POOL)
     except Exception as x:  # a generator defect is a finding, recorded against its seed, never a dead run
-        return seed, "error", [("generator", f"{type(x).__name__}: {x}")]
+        return seed, "error", "error", [("generator", f"{type(x).__name__}: {x}")]
 
 
 def progress(n, total, elapsed, budget, failures):
@@ -87,12 +87,13 @@ def main(argv=None):
     with open(a.seeds) as f:
         seeds = [l.strip() for l in f if l.strip()][:a.limit]
     started, t0 = datetime.datetime.now(datetime.timezone.utc), time.monotonic()
-    done, by_kind, failures = [], {}, []
+    done, by_kind, by_verdict, failures = [], {}, {}, []
     shown, tty = 0.0, sys.stderr.isatty()
     with multiprocessing.Pool(a.jobs, initializer=_init) as pool:
-        for seed, kind, bad in pool.imap(_one, seeds, chunksize=1):
+        for seed, kind, verdict, bad in pool.imap(_one, seeds, chunksize=1):
             done.append(seed)
             by_kind[kind] = by_kind.get(kind, 0) + 1
+            by_verdict.setdefault(kind, {})[verdict] = by_verdict.setdefault(kind, {}).get(verdict, 0) + 1  # intended verdicts
             failures += [(seed, kind, prop, detail) for prop, detail in bad]
             now = time.monotonic()
             if not a.quiet and (now - shown >= (1 if tty else 30) or len(done) == len(seeds)):
@@ -109,6 +110,7 @@ def main(argv=None):
     transcript = {"started": started.isoformat(), "elapsed_s": round(elapsed, 1), "budget_s": a.budget, "jobs": a.jobs,
                   "seeds_file": os.path.relpath(a.seeds), "seeds_run": len(done),
                   "seeds": [done[0], done[-1]] if done else [], "by_kind": dict(sorted(by_kind.items())),
+                  "by_kind_verdict": {k: dict(sorted(v.items())) for k, v in sorted(by_verdict.items())},
                   "properties": list(PROPERTIES), "failures": failures,
                   "python": sys.version.split()[0], "openssh": ssh}
     os.makedirs(a.out, exist_ok=True)

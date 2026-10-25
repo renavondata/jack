@@ -29,6 +29,9 @@ class Generators(unittest.TestCase):
         for name in ("self_judging", "retroactive", "forged", "rewriting", "forking", "unattributed", "stalling",
                      "flooding", "benign", "unsigned_change", "revoked", "weak_key", "duplicate_key", "schema", "structure"):
             self.assertIn(name, gen.KINDS, name)
+        for name in ("ts_decreasing", "forecast_valid", "resolution_valid", "resolution_self", "resolution_dangling",
+                     "resolution_double", "forecast_past", "forecast_permille_0", "forecast_permille_1000", "forecast_boolean"):
+            self.assertIn(name, gen.KINDS, name)  # BRIEF-C1.md, C1a's simulator kinds
         for name in ("vacuous", "impossible", "lapse", "orphaning", "breach"):
             self.assertNotIn(name, gen.KINDS, "rule attacks return with the law language in C1")
 
@@ -41,17 +44,40 @@ class Generators(unittest.TestCase):
 
     def test_rewriting_a_key_entry_is_not_a_schema_refusal(self):
         """Seeds on which `rewriting` hits a key entry: since round 2 a key declaration has exactly four members,
-        so the generator tampers the entry's ts, not its body (counsel's review, 14 Oct 2026)."""
-        for s in ("abe4598310936905", "807cfd4db6b58b69", "cb54abe4a7a01c36", "5f09da6ff7544a65",
-                  "dcf96225d14ce404", "7f5d392118fff56c", "38cc2874cb07b5a8", "27d1519a7b5c64af"):
+        so the generator tampers a valid field, not the body's shape (counsel's review, 14 Oct 2026). From C1a the field is
+        `powers`, a power repeated, not `ts`: an earlier ts is ts_decreased. Seeds re-found for the C1a kinds."""
+        for s in ("b40a8140306b53ae", "bcbd8a8f356f322e", "c2b71f90bf0ef9b8", "1161a16aed6daf91",
+                  "8077e437c56c5c02", "0ce62cf5c485ee63", "4f332879346f2a0e", "e9c603ed305d7d56"):
             case = gen.generate(s, self.pool)
             self.assertEqual(case.kind, "rewriting")
+            self.assertIn(case.expected["reason"], ("bad_signature", "parent_mismatch"), s)
+            self.assertTrue(any(e["type"] == "key" and len(e["body"]["powers"]) > len(set(e["body"]["powers"]))
+                                for e in map(json.loads, case.lines)), s)
             self.assertEqual(strip(check.check(case.lines)), case.expected, s)
 
     def test_generate_is_deterministic_in_the_seed(self):
         a, b = gen.generate("4178ee380b3a2c0a", self.pool), gen.generate("4178ee380b3a2c0a", self.pool)
         self.assertEqual((a.kind, a.expected), (b.kind, b.expected))
         self.assertEqual([json.loads(l)["body"] for l in a.lines], [json.loads(l)["body"] for l in b.lines])
+
+    def test_every_refusing_ledger_kind_has_its_reason_and_a_passing_twin(self):
+        """BRIEF-C1.md criterion 2: each new kind's refusing case is refused with its named reason and its twin admitted."""
+        named = {"ts_decreasing": {"ts_decreased"}, "resolution_self": {"self_judged", "bad_signature", "schema"},
+                 "resolution_dangling": {"schema"}, "resolution_double": {"schema"}, "forecast_past": {"schema"},
+                 "forecast_permille_0": {"schema"}, "forecast_permille_1000": {"schema"}, "forecast_boolean": {"schema"},
+                 "forecast_valid": set(), "resolution_valid": set()}
+        for kind, reasons in named.items():
+            seen = set()
+            for seed in range(40):
+                case = gen.generate_kind(kind, random.Random(seed), self.pool)
+                v = strip(check.check(case.lines))
+                self.assertEqual(v, case.expected, f"{kind} seed {seed}")
+                seen.add(v.get("reason", "ok"))
+            self.assertEqual(seen, reasons | {"ok"}, kind)
+
+    def test_simulated_timestamps_never_decrease_but_repeat(self):
+        ts = [json.loads(l)["ts"] for k in range(30) for l in gen.generate_kind("flooding", random.Random(k), self.pool).lines]
+        self.assertTrue(any(a == b for a, b in zip(ts, ts[1:])))
 
     def test_seeds_cover_all_kinds(self):
         kinds = {gen.generate(f"{i:016x}", self.pool).kind for i in range(200)}
@@ -108,13 +134,14 @@ class Runner(unittest.TestCase):
                 t = json.load(f)
             self.assertEqual((t["seeds_run"], t["failures"]), (10, []))
             self.assertEqual(sum(t["by_kind"].values()), 10)
+            self.assertEqual({k: sum(v.values()) for k, v in t["by_kind_verdict"].items()}, t["by_kind"])
             self.assertEqual(t["seeds"][0], "4178ee380b3a2c0a")
             self.assertIn("properties", t)
 
     def test_worker_reports_a_generator_error_instead_of_dying(self):
         run._init()
-        seed, kind, failures = run._one("not-hex")
-        self.assertEqual((seed, kind), ("not-hex", "error"))
+        seed, kind, verdict, failures = run._one("not-hex")
+        self.assertEqual((seed, kind, verdict), ("not-hex", "error", "error"))
         self.assertEqual(failures[0][0], "generator")
 
 
