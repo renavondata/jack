@@ -79,6 +79,11 @@ class Generators(unittest.TestCase):
         ts = [json.loads(l)["ts"] for k in range(30) for l in gen.generate_kind("flooding", random.Random(k), self.pool).lines]
         self.assertTrue(any(a == b for a, b in zip(ts, ts[1:])))
 
+    def test_year_one_timestamps_are_zero_padded_on_every_platform(self):
+        case = gen.generate_kind("ts_decreasing", random.Random(19), self.pool)
+        for l in case.lines:
+            self.assertRegex(json.loads(l)["ts"], r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+
     def test_seeds_cover_all_kinds(self):
         kinds = {gen.generate(f"{i:016x}", self.pool).kind for i in range(200)}
         self.assertEqual(kinds, set(gen.KINDS))
