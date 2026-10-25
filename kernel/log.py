@@ -9,6 +9,8 @@ import json
 import re
 
 TYPES = ("genesis", "key", "proposal", "merge", "amend", "push", "decision", "spec_conflict", "forecast", "resolution")
+REASONS = ("malformed_json", "not_canonical", "schema", "bad_seq", "parent_mismatch", "genesis_misplaced", "no_proposer",
+           "bad_key", "unknown_key", "proposer_mismatch", "no_power", "bad_signature", "ts_decreased", "self_judged")  # SPEC §9
 TOP_KEYS = frozenset({"seq", "parent", "ts", "type", "proposer", "body", "sig"})
 GENESIS_PARENT = "0" * 64
 MAX_INT = 2**53 - 1

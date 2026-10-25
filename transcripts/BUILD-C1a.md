@@ -8,8 +8,8 @@ Nothing under `kernel2/` beyond its README was read; `harness/diff.py` was not r
 ## 0. Stop: the code cap (BRIEF-C1.md, "Stop and report if … `judge/scope.json` would need to change")
 
 The judge's `code_cap` (SPEC §10.10) counts every Python file under `sim/ harness/ tests/ pins/ tools/`
-against `judge/scope.json`'s cap of **5500**. `main` stands at **5101**; this branch, complete, at **5625**,
-**125 over**. That is before the reviewer's ten C1a pins, which are under `pins/` and counted too.
+against `judge/scope.json`'s cap of **5500**. `main` stands at **5101**; this branch, complete and with
+counsel's rulings applied, at **5614**, **114 over**. That is before the reviewer's ten C1a pins, which are under `pins/` and counted too.
 
 | file | added | removed |
 |---|---:|---:|
@@ -31,7 +31,13 @@ I compacted the kernel tests and the simulator once (commit `21f83db`) without d
 not cut further, because the remaining lines are coverage of the new behaviour, and cutting them to fit
 would be weakening tests to get green under another name. The choice is Guy's: raise the cap (a
 `judge/scope.json` change, by his push, recorded as a finding against the pre-statement, as on
-19 October), or rule which coverage goes. The branch is committed locally and **not pushed**, pending that ruling.
+19 October), or rule which coverage goes. Counsel's rulings of 25 October did not address the cap; on them
+the branch is pushed (a branch push touches nothing the cap guards), and the cap stays open for Guy before
+his `jack push`.
+
+The table below is the first measurement (5625), before the rulings: they removed the separate counts
+table (−8 lines in `tools/entry.py` and `tests/test_score.py`) and added the kernel's reason list and the
+data-driven vector test (+2 in `kernel/`, which is not counted, and −3 net under `tests/` and `tools/`).
 
 ## 1. What was built, file by file
 
@@ -46,6 +52,8 @@ would be weakening tests to get green under another name. The choice is Guy's: r
 - Step 8a, after `signer()`: the resolution's `proposer` equals the forecast's recorded proposer →
   `self_judged`. The proposer is the verified principal by then, so two keys of one party are caught.
 - Step 9: `forecasts` (seq → proposer), `resolved` (frozenset), `ts`. `State` gains exactly these three fields.
+- `log.REASONS`: the fourteen codes of SPEC §9, the kernel's own list (counsel's ruling; read by
+  `tests/test_vectors.py`, which checks it equals the harness's).
 - **`harness/diff.py`**: `REASONS` is the fourteen (SPEC §9, §9a.3); still 62 of its 65 lines.
 
 **Simulator** (`sim/gen.py`, generator revision **`21f83db`**; `sim/run.py`):
@@ -86,8 +94,9 @@ would be weakening tests to get green under another name. The choice is Guy's: r
 - `jack score [--as-of TS]`: reads the working copy's `log.jsonl`. It makes no entry, signs nothing,
   fetches nothing and requires no clean tree. The logic is `entry.score`: natural log; Laplace base rate
   pooled by type in resolution-seq order; Fractions for p and rate, so four-decimal half-to-even rounding
-  is exact. It prints the witness table verbatim, then forecast counts per (`proposer`, `type`), then the
-  per-proposer and per-type tables. With `--as-of` it adds the overdue list, by `resolves_by` then seq.
+  is exact. It prints the witness table verbatim (the (`proposer`, `type`) groups, the witness's columns),
+  then the per-proposer and per-type tables, each with a `forecasts` column (all forecasts) before
+  `resolved` (counsel's ruling, 25 October). With `--as-of` it adds the overdue list, by `resolves_by` then seq.
 - `jack proposal`: `commit` is the newest commit not on `origin/main` that changes a path other than
   `log.jsonl`, judged by the judge's own `commits_of` and `changed_by`; if there is none, HEAD (a
   forecast-only branch).
@@ -109,6 +118,10 @@ would be weakening tests to get green under another name. The choice is Guy's: r
 - `tests/test_jack.py`: the forecast branch and main verbs, the refusals, resolve with evidence, the
   merge precondition (a log-only commit after the proposal is merged, a work commit is refused), and
   the `--remove` cut.
+- `tests/test_vectors.py`, data-driven (counsel's ruling): every log `spec/vectors/verdicts.json` names, and
+  only those, gives its verdict; every reason is in `log.REASONS`; the generated logs are a subset of the
+  committed ones, each with its verdict. `tools/vectors.py` keeps logs and verdicts it does not generate,
+  so the reviewer's 40–49 land without a builder change.
 - `tests/test_score.py` and the witness `tests/vectors/score.jsonl`: the brief's ten forecasts and six
   resolutions, signed with throwaway keys from `harness/keys.py`, each resolution by a party other than
   the forecaster (`python3 -m tests.test_score` rebuilds it). `jack score` is run as a subprocess in a copy
@@ -120,14 +133,14 @@ would be weakening tests to get green under another name. The choice is Guy's: r
 ```
 kernel/__init__.py            0
 kernel/check.py             138
-kernel/log.py               170
+kernel/log.py               172
 kernel/sig.py               140
-total                       448
+total                       450
 ```
 
 ## 3. Unit tests, pins
 
-`python3 -m unittest discover -s tests -t .` → `Ran 229 tests … OK (skipped=1)`. The skip is
+`python3 -m unittest discover -s tests -t .` → `Ran 229 tests … OK (skipped=1)` (on the committed tree). The skip is
 `test_sig.test_named_difference_s_plus_L` ("this OpenSSH build also rejects S >= L"), an environment skip
 that predates this branch. `python3 pins/run.py` → `KILLED 50, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0`.
 A mutation check of the new kernel lines, on a scratch copy against `tests/test_check.py` and
@@ -164,13 +177,10 @@ unsigned_change 2036, weak_key 1994.
 
 1. SPEC patch placement: the §5 note sits directly after the table; step 9's clauses join its semicolon
    list; `2a.`/`8a.` are lines between the numbered steps. **0.9**
-2. "The master key" is a key whose principal is `guy`: forecast and resolve are main verbs for it, branch
-   verbs for every other party. **0.75**
-3. **Score layout (nearest to a conflict).** BRIEF and RUNBOOK say each group prints "forecasts (all)", yet
-   the witness table, which must print exactly, has no forecasts column. I print the table verbatim and
-   give the forecast counts in their own (`proposer`, `type`) table and as a column of the per-proposer and
-   per-type tables. A reader who wants the column inside the first table finds criterion 5 unsatisfiable,
-   which is why I did not take that reading. Counsel should settle the layout in the text. **0.5**
+2. "The master key" is any key whose principal is `guy`. **Settled by counsel, 25 October.**
+3. Score layout: the witness table verbatim; `forecasts` as a column of the per-proposer and per-type
+   tables only; no separate counts table. **Settled by counsel, 25 October**; BRIEF-C1.md's sentence to be
+   corrected by counsel's proposal.
 4. The per-proposer and per-type groups are, like the pairs, those with at least one resolved forecast;
    "forecasts" counts all of the group's forecasts, resolved or not. **0.7**
 5. A forecast whose `type` is absent or not a string has type `free`. **0.5**
@@ -199,12 +209,9 @@ unsigned_change 2036, weak_key 1994.
 
 ## 6. Found, not mine to fix
 
-- **Vectors 40–49 will break `tests/test_vectors.py` and need `tools/vectors.py`.** The test asserts that
-  `tools/vectors.py` generates exactly the 40 committed logs and that their reasons are exactly the twelve.
-  Both are builder paths the reviewer may not touch. When the reviewer's vectors land, a builder change
-  must come with them: either the reviewer's proposal fails `tests`, or the builder extends
-  `tools/vectors.py` to the new logs first.
-- SPEC §11 (patched) names `40`–`49` (eleven logs); BRIEF-C1.md's deliverables say "`40`–`47`".
+- Vectors 40–49 and `tests/test_vectors.py`: resolved by counsel's ruling (§1, Tests); the test no longer
+  asserts the count of logs or a fixed reason set.
+- SPEC §11 (patched) names `40`–`49`; BRIEF-C1.md's "`40`–`47`" is an erratum (counsel, 25 October).
 - The SPEC sentences the patch left (reported at Step 1): §4's "does not order timestamps at C0"; §8
   step 9's "no effect on the state beyond the head hash" (every entry now records its `ts`); the "(C0)" title.
 - `tests/test_score.py`'s witness and the reviewer's independent `spec/vectors/` rebuild should agree

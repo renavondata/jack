@@ -72,14 +72,6 @@ class Witness(unittest.TestCase):
         self.assertEqual(r.stdout.split("\n\n")[0], TABLE)
         self.assertEqual(r.stdout, TABLE + """
 
-| proposer | type | forecasts |
-|---|---|---:|
-| builder | pins_green | 2 |
-| builder | world.delivery | 1 |
-| counsel | pins_green | 1 |
-| counsel | world.screen | 3 |
-| reviewer | pins_green | 1 |
-
 | proposer | forecasts | resolved | mean p | rate | loss | base-rate loss |
 |---|---:|---:|---:|---:|---:|---:|
 | builder | 3 | 2 | 0.8500 | 0.5000 | 1.2629 | 0.6931 |

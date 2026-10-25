@@ -5,7 +5,7 @@ Keys are throwaway and discarded; only their public halves survive, embedded in
 each log's genesis. Verdicts come from the Python kernel, which implements
 SPEC.md; a second checker must reproduce them. Not kernel."""
 import argparse
-import glob
+import io
 import json
 import os
 import sys
@@ -113,11 +113,10 @@ def main():
     argparse.ArgumentParser(description=__doc__).parse_args()
     out = OUT
     os.makedirs(os.path.join(out, "logs"), exist_ok=True)
-    for old in glob.glob(os.path.join(out, "logs", "*.jsonl")):
-        os.remove(old)
+    with open(os.path.join(out, "verdicts.json")) if os.path.exists(os.path.join(out, "verdicts.json")) else io.StringIO("{}") as f:
+        verdicts = json.load(f).get("verdicts", {})  # logs this generator does not make (the reviewer's) are kept
     with tempfile.TemporaryDirectory() as tmp:
         w = build.World(tmp)
-        verdicts = {}
         for name, lines in logs(w).items():
             with open(os.path.join(out, "logs", name + ".jsonl"), "w") as f:
                 f.write("".join(l + "\n" for l in lines))

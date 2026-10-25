@@ -130,8 +130,8 @@ def fmt(x):
 
 
 def score(lines, as_of=None):
-    """jack score (BRIEF-C1.md): per (proposer, type), the forecasts' count, then per proposer and per type: resolved, mean p,
-    outcome rate, mean log-loss in nats and the base-rate loss (Laplace, pooled by type, in resolution-seq order)."""
+    """jack score (BRIEF-C1.md): per (proposer, type), then per proposer and per type with all its forecasts counted: resolved,
+    mean p, outcome rate, mean log-loss in nats and the base-rate loss (Laplace, pooled by type, in resolution-seq order)."""
     if not check.check(lines)["ok"] or as_of is not None and not log.instant(as_of):
         raise Usage(f"the log is refused by the kernel, or --as-of {as_of!r} is not an instant")
     es = [json.loads(line) for line in lines]
@@ -143,14 +143,13 @@ def score(lines, as_of=None):
         rows.append((es[f]["proposer"], kind[f], p, o, -math.log((p if o else 1000 - p) / 1000), -math.log((s + 1 if o else n - s + 1) / (n + 2))))
         seen[kind[f]] = (s + o, n + 1)
     out, mean = [], lambda rs, j, d=1: fmt(fractions.Fraction(sum(r[j] for r in rs)) / (d * len(rs)))
-    for head, key, cols in ((("proposer", "type"), slice(0, 2), "R"), (("proposer", "type"), slice(0, 2), "F"),
-                            (("proposer",), slice(0, 1), "FR"), (("type",), slice(1, 2), "FR")):
-        names = [*head, *(["forecasts"] if "F" in cols else []), *(["resolved", "mean p", "rate", "loss", "base-rate loss"] if "R" in cols else [])]
+    for head, key, counted in ((("proposer", "type"), slice(0, 2), False), (("proposer",), slice(0, 1), True), (("type",), slice(1, 2), True)):
+        names = [*head, *(["forecasts"] if counted else []), "resolved", "mean p", "rate", "loss", "base-rate loss"]
         out += ["", "| " + " | ".join(names) + " |", "|" + "---|" * len(head) + "---:|" * (len(names) - len(head))]
         for g in sorted({r[key] for r in rows}):
             rs = [r for r in rows if r[key] == g]
-            cells = [*g, *([str(sum((es[i]["proposer"], t)[key] == g for i, t in kind.items()))] if "F" in cols else []),
-                     *([str(len(rs)), mean(rs, 2, 1000), mean(rs, 3), mean(rs, 4), mean(rs, 5)] if "R" in cols else [])]
+            cells = [*g, *([str(sum((es[i]["proposer"], t)[key] == g for i, t in kind.items()))] if counted else []),
+                     str(len(rs)), mean(rs, 2, 1000), mean(rs, 3), mean(rs, 4), mean(rs, 5)]
             out.append("| " + " | ".join(cells) + " |")
     late = sorted((es[i]["body"]["resolves_by"], i) for i in kind if as_of and i not in {r["body"]["forecast"] for r in es
                                                                                        if r["type"] == "resolution"} and es[i]["body"]["resolves_by"] < as_of)
