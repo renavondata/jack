@@ -13,13 +13,14 @@ from . import log, sig
 from .log import Refuse
 
 Key = namedtuple("Key", "principal blob powers")
-class State(namedtuple("State", "head keys owners charter amendments trusted_base transmuted")):
-    """Charter is promulgated; amendments retain log order for position-dependent force."""
+class State(namedtuple("State", "head keys owners charter amendments trusted_base transmuted forecasts resolved ts")):
+    """Charter is promulgated; amendments retain log order for position-dependent force; forecasts: seq → proposer;
+    ts: the previous entry's."""
     def charter_at(self, position):
         return next((c for _, height, c in reversed(self.amendments) if height <= position), self.charter)
 
 
-EMPTY = State(log.GENESIS_PARENT, {}, {}, None, (), None, frozenset())
+EMPTY = State(log.GENESIS_PARENT, {}, {}, None, (), None, frozenset(), {}, frozenset(), None)
 
 
 def signer(e, keys):
@@ -55,6 +56,8 @@ def check_entry(state, i, line):
     """Recognition (a)(b) under the law before i, then the entry's effect: the next state."""
     e = log.parse_line(line)
     log.check_shape(e)
+    if state.ts is not None and e["ts"] < state.ts:  # fixed-width UTC: string order is time order; genesis has no parent
+        raise Refuse("ts_decreased", f"{e['ts']} is earlier than {state.ts}")
     if e["seq"] != i:
         raise Refuse("bad_seq", f"expected {i}")
     if e["parent"] != state.head:
@@ -67,16 +70,24 @@ def check_entry(state, i, line):
     body = e["body"]
     if e["type"] == "amend" and (body["activate_at"] <= i or any(a == body["id"] for a, _, _ in state.amendments)):
         raise Refuse("schema", "amendment id reused or activation not above seq")
+    if e["type"] == "forecast" and body["resolves_by"] < e["ts"]:
+        raise Refuse("schema", "resolves_by is earlier than ts")
+    if e["type"] == "resolution" and (body["forecast"] not in state.forecasts or body["forecast"] in state.resolved):
+        raise Refuse("schema", f"seq {body['forecast']} is not an unresolved forecast")
     keys, owners = state.keys, state.owners
     if e["type"] == "genesis":
         for d in e["body"]["keys"]:
             keys, owners = declare(keys, owners, d)
     signer(e, keys)
+    if e["type"] == "resolution" and state.forecasts[body["forecast"]] == e["proposer"]:
+        raise Refuse("self_judged", f"{e['proposer']} made forecast {body['forecast']}")  # by principal: maxim 1
     if e["type"] == "key":
         keys, owners = declare(keys, owners, e["body"])
         if not any("key" in k.powers for k in keys.values()):
             raise Refuse("bad_key", "no declared key would keep the power to declare keys")
     charter, amendments, trusted, transmuted = state.charter, state.amendments, state.trusted_base, state.transmuted
+    forecasts = {**state.forecasts, i: e["proposer"]} if e["type"] == "forecast" else state.forecasts
+    resolved = state.resolved | {body["forecast"]} if e["type"] == "resolution" else state.resolved
     if e["type"] == "genesis":
         charter, trusted = body["charter"], body["checker"]
         amendments = ((None, 0, charter),)
@@ -86,7 +97,7 @@ def check_entry(state, i, line):
         trusted = body["digest"]
     elif e["type"] == "decision" and body["kind"] == "transmute":
         transmuted = transmuted | {body["subject"]}
-    return State(log.line_hash(line), keys, owners, charter, amendments, trusted, transmuted)
+    return State(log.line_hash(line), keys, owners, charter, amendments, trusted, transmuted, forecasts, resolved, e["ts"])
 
 
 def check(lines):

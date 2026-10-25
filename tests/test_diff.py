@@ -56,6 +56,14 @@ class Differential(unittest.TestCase):
         self.assertEqual(diff.run(self.checker(f"printf '{refusal}'; exit 1"), self.log), {"ok": False, "seq": 0, "reason": "schema"})
         self.assertEqual(self.lengths(self.checker('echo " {\\"entries\\": $n, \\"ok\\": true}"')), [])
 
+    def test_exactly_the_fourteen_reason_codes_are_verdicts(self):  # SPEC §9 and §9a.3, amended together at C1a
+        codes = ("malformed_json not_canonical schema bad_seq parent_mismatch genesis_misplaced no_proposer bad_key unknown_key "
+                 "proposer_mismatch no_power bad_signature ts_decreased self_judged").split()
+        self.assertEqual(sorted(diff.REASONS), sorted(codes))
+        for reason in codes + ["self_judging", "ts_decreasing", "Schema"]:
+            out = f'{{"detail":"","ok":false,"reason":"{reason}","seq":0}}'
+            self.assertEqual("ok" in diff.run(self.checker(f"printf '{out}'; exit 1"), self.log), reason in codes, reason)
+
     def test_crash_as_agreement(self):
         missing = [os.path.join(self.tmp.name, "missing")]
         for a in (self.checker("exit 3"), self.checker("exec sleep 30"), missing):

@@ -8,7 +8,7 @@ import hashlib
 import json
 import re
 
-TYPES = ("genesis", "key", "proposal", "merge", "amend", "push", "decision", "spec_conflict")
+TYPES = ("genesis", "key", "proposal", "merge", "amend", "push", "decision", "spec_conflict", "forecast", "resolution")
 TOP_KEYS = frozenset({"seq", "parent", "ts", "type", "proposer", "body", "sig"})
 GENESIS_PARENT = "0" * 64
 MAX_INT = 2**53 - 1
@@ -157,6 +157,8 @@ BODY = {
     "push": {"digest": HEX64, "review": HEX64},
     "decision": {"kind": re.compile(r"veto|promote|budget|grant|transmute|fix"), "subject": NONEMPTY},
     "spec_conflict": {"section": NONEMPTY, "text": NONEMPTY},
+    "forecast": {"claim": NONEMPTY, "p": lambda v: _is_int(v) and 1 <= v <= 999, "resolves_by": instant},  # p per mille
+    "resolution": {"forecast": int, "outcome": lambda v: _is_int(v) and v in (0, 1), "evidence": NONEMPTY},
 }
 
 

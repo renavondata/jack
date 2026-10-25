@@ -177,6 +177,35 @@ class Body(unittest.TestCase):
         for bad in ("2", 2.0):
             self.assertEqual(self.refused("amend", dict(bodies["amend"], activate_at=bad)), "schema")
 
+    def test_ledger_body_schemas(self):
+        """SPEC §5 (C1a): p an integer 1-999 and outcome 0 or 1, booleans refused; resolves_by an instant;
+        forecast an integer >= 0; claim and evidence non-empty; type and args never read."""
+        bodies = {"forecast": {"claim": "c", "p": 500, "resolves_by": "2026-11-01T00:00:00Z"},
+                  "resolution": {"forecast": 3, "outcome": 1, "evidence": "sha256:" + HEX64}}
+        for type_, body in bodies.items():
+            with self.subTest(type=type_):
+                self.assertIsNone(log.check_body(type_, dict(body, extra={"a.b": [1.5]})))
+                for field in body:
+                    self.assertEqual(self.refused(type_, {k: v for k, v in body.items() if k != field}), "schema")
+                    for bad in (None, True, False, [], {}, ""):
+                        self.assertEqual(self.refused(type_, dict(body, **{field: bad})), "schema")
+        for p in (1, 2, 998, 999):
+            self.assertIsNone(log.check_body("forecast", dict(bodies["forecast"], p=p)))
+        for p in (0, 1000, -1, True, False, "500", 500.0):
+            self.assertEqual(self.refused("forecast", dict(bodies["forecast"], p=p)), "schema")
+        for outcome in (0, 1):
+            self.assertIsNone(log.check_body("resolution", dict(bodies["resolution"], outcome=outcome)))
+        for outcome in (2, -1, True, False, "1", 1.0):
+            self.assertEqual(self.refused("resolution", dict(bodies["resolution"], outcome=outcome)), "schema")
+        for seq in (0, 2**53 - 1):
+            self.assertIsNone(log.check_body("resolution", dict(bodies["resolution"], forecast=seq)))
+        for seq in (-1, True, "3"):
+            self.assertEqual(self.refused("resolution", dict(bodies["resolution"], forecast=seq)), "schema")
+        for ts in ("2026-02-29T00:00:00Z", "2026-11-01T00:00:60Z", "2026-11-01 00:00:00Z", "2026-11-01T00:00:00"):
+            self.assertEqual(self.refused("forecast", dict(bodies["forecast"], resolves_by=ts)), "schema")
+        for type_ in ({"type": 7, "args": "x"}, {"type": None}, {"args": []}):  # read by the tools, never by the kernel
+            self.assertIsNone(log.check_body("forecast", dict(bodies["forecast"], **type_)))
+
     def test_eight_names_in_key_declarations(self):
         for powers in (list(log.TYPES), [], ["push", "push"]):
             declaration = dict(KEY, powers=powers)

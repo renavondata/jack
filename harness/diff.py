@@ -3,7 +3,7 @@ import argparse, glob, hashlib, json, os, pathlib, subprocess, sys, tempfile  # 
 sys.path.insert(0, ROOT := os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # for sim.gen, run as a script
 from sim import gen  # noqa: E402
 REASONS = ("malformed_json not_canonical schema bad_seq parent_mismatch genesis_misplaced no_proposer bad_key "
-           "unknown_key proposer_mismatch no_power bad_signature").split()
+           "unknown_key proposer_mismatch no_power bad_signature ts_decreased self_judged").split()  # SPEC §9: fourteen
 
 def run(cmd, path, timeout=120):
     """The checker's verdict minus detail if it gave one (SPEC §9a.3), else what came instead (no "ok")."""
