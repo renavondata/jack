@@ -14,6 +14,7 @@ import glob
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -22,7 +23,7 @@ from collections import namedtuple
 from harness import build, diff, gitfix, keys, runner
 from harness.build import proposal
 from kernel import log, sig
-from pins.fixtures import bind_genesis, make_repo, propose
+from pins.fixtures import bind_genesis, ledger_cases, make_repo, propose
 
 Pin = namedtuple("Pin", "name test mutants")
 Mutant = namedtuple("Mutant", "name path find replace")
@@ -562,6 +563,43 @@ def t_checker_drift(root):
     assert not bad, bad
 
 
+# --- ledger pins (BRIEF-C1.md, C1a) -----------------------------------------------------------
+
+@functools.lru_cache(None)
+def ledger():
+    return ledger_cases(world())
+
+
+def ledger_pin(*names):
+    """A pin over pins/fixtures.py's ledger logs: each gives exactly its (seq, reason), or is admitted whole."""
+    def test(root):
+        for name in names:
+            lg, want = ledger()[name]
+            v = runner.check_with(root, lg.lines)
+            admitted(v, want) if isinstance(want, int) else refused(v, *want)
+    return test
+
+
+SCORE_TABLE = """| proposer | type | resolved | mean p | rate | loss | base-rate loss |
+|---|---|---:|---:|---:|---:|---:|
+| builder | pins_green | 1 | 0.8000 | 1.0000 | 0.2231 | 0.6931 |
+| builder | world.delivery | 1 | 0.9000 | 0.0000 | 2.3026 | 0.6931 |
+| counsel | pins_green | 1 | 0.5000 | 1.0000 | 0.6931 | 0.6931 |
+| counsel | world.screen | 2 | 0.4500 | 0.5000 | 0.4338 | 0.8959 |
+| reviewer | pins_green | 1 | 0.7000 | 0.0000 | 1.2040 | 1.0986 |"""  # BRIEF-C1.md, verbatim
+
+
+def t_score_proper(root):
+    """BRIEF-C1.md criterion 5: `jack score` on the reviewer's witness, spec/vectors/score.jsonl, prints the brief's table first,
+    exactly; run in a copy of the tools holding only that log, so the tree's own log.jsonl is never touched."""
+    with tempfile.TemporaryDirectory() as tmp:
+        for d in ("tools", "kernel", "judge", "harness"):
+            shutil.copytree(os.path.join(root, d), os.path.join(tmp, d), ignore=shutil.ignore_patterns("__pycache__"))
+        shutil.copy(os.path.join(root, "spec", "vectors", "score.jsonl"), os.path.join(tmp, "log.jsonl"))
+        r = subprocess.run([sys.executable, os.path.join(tmp, "tools", "jack"), "score"], cwd=tmp, capture_output=True, text=True)
+    assert (r.returncode, r.stdout.split("\n\n")[0]) == (0, SCORE_TABLE), r.stdout + r.stderr
+
+
 # --- differential pins (SPEC §9a.7) ----------------------------------------------
 
 def toy(body='echo "{\\"ok\\":true,\\"entries\\":$n}"', wrong_at=-1):
@@ -750,4 +788,33 @@ PINS = [
     Pin("prefix_skipped", t_prefix_skipped, [
         Mutant("empty_prefix_skipped", "harness/diff.py", "for k in range(len(lines) + 1):", "for k in range(1, len(lines) + 1):"),
         Mutant("prefix_off_by_one", "harness/diff.py", "lines[:k])", "lines[:k + 1])")]),
+    Pin("clock_runs_backward", ledger_pin("48_ts_decreased_bad", "ts_back_and_bad_seq", "ts_equal"), [
+        Mutant("ts_unchecked", "kernel/check.py", '    if state.ts is not None and e["ts"] < state.ts:', "    if False:")]),
+    Pin("self_resolution_admitted", ledger_pin("42_resolution_self_bad", "self_same_key", "other_party"), [
+        Mutant("self_unchecked", "kernel/check.py",
+               '    if e["type"] == "resolution" and state.forecasts[body["forecast"]] == e["proposer"]:', "    if False:")]),
+    Pin("dangling_resolution_admitted", ledger_pin("43_resolution_dangling_bad", "dangling_2", "dangling_3", "dangling_9007199254740991",
+                                                   "dangling_resolution_seq", "other_party"), [
+        Mutant("target_unchecked", "kernel/check.py", '(body["forecast"] not in state.forecasts or body', "(body")]),
+    Pin("double_resolution_admitted", ledger_pin("44_resolution_double_bad", "self_of_resolved", "second_open_forecast"), [
+        Mutant("resolved_unchecked", "kernel/check.py", ' or body["forecast"] in state.resolved)', ")")]),
+    Pin("past_forecast_admitted", ledger_pin("45_forecast_past_bad", "past_by_400_days", "resolves_by_equal_ts"), [
+        Mutant("resolves_by_unchecked", "kernel/check.py", '    if e["type"] == "forecast" and body["resolves_by"] < e["ts"]:', "    if False:")]),
+    Pin("permille_out_of_range_admitted", ledger_pin("46a_forecast_permille_0_bad", "46b_forecast_permille_1000_bad", "p_1", "p_999"), [
+        Mutant("p_0_admitted", "kernel/log.py", "_is_int(v) and 1 <= v <= 999", "_is_int(v) and 0 <= v <= 999"),
+        Mutant("p_1000_admitted", "kernel/log.py", "_is_int(v) and 1 <= v <= 999", "_is_int(v) and 1 <= v <= 1000")]),
+    Pin("boolean_integer_admitted", ledger_pin("47_forecast_boolean_bad", "p_false", "outcome_true", "outcome_false", "forecast_true",
+                                               "p_1", "outcome_0", "other_party"), [
+        Mutant("p_boolean_admitted", "kernel/log.py", '"p": lambda v: _is_int(v) and', '"p": lambda v: isinstance(v, int) and'),
+        Mutant("outcome_boolean_admitted", "kernel/log.py", '"outcome": lambda v: _is_int(v) and', '"outcome": lambda v: isinstance(v, int) and'),
+        Mutant("booleans_are_integers", "kernel/log.py", "    return isinstance(v, int) and not isinstance(v, bool)", "    return isinstance(v, int)")]),
+    Pin("self_judged_uncoded", ledger_pin("42_resolution_self_bad", "self_same_key", "49_self_resolution_bad_signature", "other_party"), [
+        Mutant("self_judged_as_schema", "kernel/check.py", 'raise Refuse("self_judged",', 'raise Refuse("schema",'),
+        Mutant("judged_before_signature", "kernel/check.py", "    signer(e, keys)\n    if e[\"type\"] == \"resolution\" and state.forecasts[body[\"forecast\"]] == e[\"proposer\"]:\n"
+               "        raise Refuse(\"self_judged\", f\"{e['proposer']} made forecast {body['forecast']}\")  # by principal: maxim 1\n",
+               "    if e[\"type\"] == \"resolution\" and state.forecasts[body[\"forecast\"]] == e[\"proposer\"]:\n"
+               "        raise Refuse(\"self_judged\", f\"{e['proposer']} made forecast {body['forecast']}\")  # by principal: maxim 1\n    signer(e, keys)\n")]),
+    Pin("score_not_proper", t_score_proper, [
+        Mutant("linear_score", "tools/entry.py", "-math.log((p if o else 1000 - p) / 1000)", "1 - abs(o - p / 1000)"),
+        Mutant("minimised_at_999", "tools/entry.py", "-math.log((p if o else 1000 - p) / 1000)", "(1000 - p) / 1000")]),
 ]

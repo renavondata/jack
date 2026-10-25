@@ -190,6 +190,59 @@
    "ok": false,
    "seq": 1,
    "reason": "no_power"
+  },
+  "40_forecast_valid.jsonl": {
+   "ok": true,
+   "entries": 4
+  },
+  "41_resolution_valid.jsonl": {
+   "ok": true,
+   "entries": 5
+  },
+  "42_resolution_self_bad.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "reason": "self_judged"
+  },
+  "43_resolution_dangling_bad.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "reason": "schema"
+  },
+  "44_resolution_double_bad.jsonl": {
+   "ok": false,
+   "seq": 3,
+   "reason": "schema"
+  },
+  "45_forecast_past_bad.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "schema"
+  },
+  "46a_forecast_permille_0_bad.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "schema"
+  },
+  "46b_forecast_permille_1000_bad.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "schema"
+  },
+  "47_forecast_boolean_bad.jsonl": {
+   "ok": false,
+   "seq": 1,
+   "reason": "schema"
+  },
+  "48_ts_decreased_bad.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "reason": "ts_decreased"
+  },
+  "49_self_resolution_bad_signature.jsonl": {
+   "ok": false,
+   "seq": 2,
+   "reason": "bad_signature"
   }
  }
 }
