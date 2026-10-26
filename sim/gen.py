@@ -22,6 +22,9 @@ KINDS = ("benign", "retroactive", "forged", "rewriting", "forking", "unattribute
 TITLES = ("alpha", "beta", "gamma", "delta", "epsilon", "zeta")
 CHECKER = "33" * 32  # the checker digest genesis records in simulated logs
 EPOCH, FMT = datetime.datetime(2026, 1, 1), "%Y-%m-%dT%H:%M:%SZ"
+
+
+def stamp(t): return f"{t.year:04d}" + t.strftime("-%m-%dT%H:%M:%SZ")  # glibc's %Y does not pad year 1
 LEDGER = ["proposal", "forecast", "resolution"]  # ann's powers: she forecasts and resolves as guy does
 
 
@@ -61,7 +64,7 @@ class Sim:
     def ts(self):
         """The next timestamp: never earlier than the last (equal about one time in ten), whole hours only."""
         self.model.t += datetime.timedelta(hours=self.rng.choice((0, 1, 1, 2, 3, 5, 8, 13, 24, 30)))
-        return self.model.t.strftime(FMT)
+        return stamp(self.model.t)
 
     def keyof(self, who):
         return self.pool.guy if who == "guy" else self.pool.ann
@@ -99,7 +102,7 @@ class Sim:
         """A valid forecast at ts: p anywhere in 1-999 (the bounds often), resolves_by at ts or later, type and args sometimes."""
         later = datetime.datetime.strptime(ts, FMT) + datetime.timedelta(hours=self.rng.choice((0, 1, 24, 24 * 30)))
         body = {"claim": self.rng.choice(("ci green", "screen meets", "x\n")), "p": self.rng.choice((1, 999, self.rng.randint(1, 999))),
-                "resolves_by": later.strftime(FMT)}
+                "resolves_by": stamp(later)}
         body.update({"type": self.rng.choice(("pins_green", "world.screen"))} if self.rng.random() < 0.5 else {})
         body.update({"args": {"n": self.rng.randint(0, 9)}} if self.rng.random() < 0.3 else {})
         return dict(body, **over)
@@ -269,7 +272,7 @@ def generate_ledger(kind, rng, pool, s):
         bad = "twin" if twin else rng.choice(("plain", "bad_seq", "no_proposer", "stranger"))
         lg.lines.append(build.make_entry(s.n + (bad == "bad_seq"), lg.head, "proposal", "" if bad == "no_proposer" else "ann",
                                          proposal(s.title()), pool.stranger if bad == "stranger" else pool.ann,
-                                         ts=(m.t if twin else back).strftime(FMT)))  # the twin: equal to the last ts
+                                         ts=stamp(m.t if twin else back)))  # the twin: equal to the last ts
         return Case(None, kind, lg.lines, s.ok() if twin else s.refused("ts_decreased"))
     f = s.step_forecast()
     if kind in ("forecast_valid", "resolution_valid"):
@@ -297,7 +300,7 @@ def generate_ledger(kind, rng, pool, s):
         return Case(None, kind, lg.lines, s.ok() if twin else s.refused("schema"))
     if kind == "forecast_past":  # resolves_by before ts is schema, before the signature
         ts = s.ts()
-        by = ts if twin else (m.t - datetime.timedelta(seconds=rng.choice((1, 86400 * 400)))).strftime(FMT)
+        by = ts if twin else stamp(m.t - datetime.timedelta(seconds=rng.choice((1, 86400 * 400))))
         s.add("forecast", "ann", s.forecast_body(ts, resolves_by=by), pool.stranger if not twin and rng.random() < 0.3 else pool.ann, ts=ts)
         return Case(None, kind, lg.lines, s.ok() if twin else s.refused("schema"))
     if kind in ("forecast_permille_0", "forecast_permille_1000", "forecast_boolean"):  # a boolean is not an integer, in p or outcome
