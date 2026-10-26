@@ -52,7 +52,8 @@ end of the second.
    Every criterion below is evaluated on the exit prefix and the tree at the
    commit that carries it. A later amendment cannot move the start.
 5. Grants (Guy): `forecast` to every party's key; `resolution` to builder,
-   reviewer and counsel; both to the master key. The `jack key` verb admits any
+   reviewer and counsel; both to the master key (the key whose principal is
+   `guy`; the verbs test the principal, not the key_id). The `jack key` verb admits any
    power named in the kernel's `TYPES`, so no verb change is needed beyond its
    text ("outside the ten").
 
@@ -100,22 +101,26 @@ pre-stated in this file before it opens; counsel's J1 is not extended.
 - A resolved forecast's loss: `−[o·ln(p/1000) + (1−o)·ln(1−p/1000)]`, natural
   logarithm. Bounded by the per-mille range; no clipping rule exists.
 - Groups: every (`proposer`, `type`) pair with at least one resolved forecast
-  (a forecast without `type` has type `free`); for each: forecasts (all),
-  resolved, mean p (over resolved, as a fraction), outcome rate, mean loss, and
+  (a forecast without `type` has type `free`); for each: resolved, mean p
+  (over resolved, as a fraction), outcome rate, mean loss, and
   the **base-rate loss**: for the *k*-th resolution of forecasts of that type on
   the whole log in resolution-seq order, pooled across proposers, the base rate
   is Laplace, `(s + 1) / (n + 2)` with `s` and `n` the successes and count of
   the earlier resolutions of that type; its loss is the same formula at that
   rate; the group's base-rate loss is the mean over the group's resolved
   forecasts. Half before any resolution, by construction.
-- Also printed: the same figures per `proposer` and per `type` alone; and,
+- Also printed: the same figures per `proposer` and per `type` alone, each
+  row preceded by its count of forecasts (all, resolved or not); and,
   given `--as-of`, every unresolved forecast whose `resolves_by` is before it,
   ordered by `resolves_by` then seq. Numbers are printed to four decimals,
   rounded half to even.
-- **The witness** (criterion 5): `tests/vectors/score.jsonl`, a signed log
+- **The witness** (criterion 5): `spec/vectors/score.jsonl`, a signed log
   the reviewer builds containing exactly these ten forecasts and six
   resolutions in this order, and the expected table below, which `jack score`
-  must print exactly.
+  must print exactly. The builder's independent rebuild, `tests/vectors/score.jsonl`,
+  must agree with it entry by entry in meaning (proposer, type, p; forecast,
+  outcome; each resolver a party other than the forecaster); any difference is
+  a finding against one of them (REVIEW-C1a-code §3).
 
   Forecasts, in seq order: F1 counsel `world.screen` 600; F2 builder
   `pins_green` 800; F3 counsel `world.screen` 300; F4 reviewer `pins_green`
@@ -210,7 +215,7 @@ branch (made before `jack proposal`), and the brief's criteria met at exit.
    each with `evidence` of the form `sha256:<hex64>` and a file
    `transcripts/evidence/<hex64>` whose SHA-256 is that value, present in the
    tree at the exit prefix's commit.
-5. `jack score` on `tests/vectors/score.jsonl` prints the table above exactly.
+5. `jack score` on `spec/vectors/score.jsonl` prints the table above exactly.
 6. The exit prefix contains no `decision` of kind `veto` whose `subject` is
    `C1a`.
 

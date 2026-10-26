@@ -23,8 +23,8 @@ cannot be implemented files `spec_conflict` rather than deciding.
   is not one of SPEC §10.7's five parties, is refused before anything is signed.
 - **Time.** `ts` is the clock, UTC, `YYYY-MM-DDTHH:MM:SSZ`. The verb reads the clock; the kernel never does.
 - **Signing.** `ssh-keygen -Y sign -n core-entry` over the canonical message (SPEC §6), through `tools/entry.py`;
-  the line is appended only if `kernel.check` admits the log with it. The master key prompts for its
-  passphrase; party keys do not.
+  the line is appended only if `kernel.check` admits the log with it. The master key (the key whose
+  principal is `guy`; the verbs test the principal) prompts for its passphrase; party keys do not.
 - **Commits.** A verb's commit message is `<type>: <summary>` — `key: <KEY_ID>`, `proposal: <title>`,
   `spec_conflict: <section>`, `merge: #<N>`, `push: <BRANCH>`, `decision: <KIND> <SUBJECT>`, `amend: <ID>` — an
   optional body, and as its **last paragraph** `Proposer: <party> <key_id>`. A trailer is **filled** when it is
@@ -59,8 +59,10 @@ cannot be implemented files `spec_conflict` rather than deciding.
 Entry: `key` with the declaration (SPEC §5). Refuses: a pubkey file that is not a two-field `ssh-ed25519` line;
 a power outside the kernel's `TYPES` (ten from C1a); a principal that is not `[a-z0-9_-]+`; a re-declaration of the signer's own
 `key_id` without `key` (the kernel's guard would refuse it too; the verb says so first). Keys per party:
-`builder-1` {proposal, spec_conflict}, `reviewer-1` {proposal}, `counsel-1` {proposal}; the master key holds
-the rest. Revocation is this verb with `--powers ""`.
+from C1a (seqs 31–34), `builder-2` {proposal, spec_conflict, forecast, resolution}, `reviewer-2` {proposal,
+forecast, resolution}, `counsel-2` {proposal, forecast}; the master key holds every power. Earlier key_ids
+(`builder-1`, `reviewer-1`, `counsel-1`) stay declared with their C0 powers and are not used. Revocation is
+this verb with `--powers ""`.
 
 ## `jack proposal [--title T]`
 
@@ -165,12 +167,13 @@ no new proposal.
 ## `jack score [--as-of TS]`
 
 No entry, no signing, no fetch; reads `log.jsonl` of the working copy. Prints, per (`proposer`,
-`type`) with at least one resolved forecast, then per `proposer` and per `type` alone: forecasts,
-resolved, mean p over resolved (as a fraction), outcome rate, mean log-loss, and the base-rate
+`type`) with at least one resolved forecast: resolved, mean p over resolved (as a fraction), outcome rate, mean log-loss, and the base-rate
 log-loss, all as `BRIEF-C1.md` defines them (natural logarithm; prequential Laplace base rate
-pooled by type in resolution-seq order; four decimals, half to even). With `--as-of TS` it also
+pooled by type in resolution-seq order; four decimals, half to even); then the same per `proposer`
+and per `type` alone, each row preceded by its count of forecasts, resolved or not. With `--as-of TS` it also
 lists every unresolved forecast whose `resolves_by` is before TS, by `resolves_by` then seq. The
-witness is `tests/vectors/score.jsonl` and its expected table in the brief (pin `score_not_proper`).
+witness is `spec/vectors/score.jsonl` (the reviewer's; the builder's `tests/vectors/score.jsonl` must agree
+with it in meaning) and its expected table in the brief (pin `score_not_proper`).
 
 ## Working copies (no verbs; nothing here touches the record)
 
