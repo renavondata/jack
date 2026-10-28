@@ -23,3 +23,27 @@ Evidence: that file at that commit, copied. Resolver: as above.
 A claim about the state of `renavondata/assize` (a verdict line present, an issue closed, a label
 applied, a price figure). Outcome 1 iff the GitHub REST response for the named object, fetched after
 `resolves_by` and saved, shows it. Evidence: the saved response. Resolver: as above.
+
+## `world.hkjc`
+A claim about the outcome of racing run by the Hong Kong Jockey Club: a named runner's finishing
+position, how many races at a meeting the market favourite wins, a dividend, or the settled return
+of a published set of picks. Named in this file on 2026-10-28, in the commit before the first forecast of the type was entered
+on the same branch, with the base rates it is forecast against in
+`transcripts/HKJC-EPROCESS-20261028.md`. Terms: a *meeting* is one HKJC fixture, identified by its
+date and racecourse; "the first (second) meeting after this entry" means the first (second) fixture
+whose first race is scheduled after the forecast's `ts`, by the HKJC's published fixture list; the
+*races at a meeting* are the races actually run there (an abandoned or voided race is not one); the
+*favourite* in a race is the runner with the shortest final WIN odds as the HKJC's result shows them,
+and a dead-heat for shortest odds counts if any of the tied runners wins; a runner's *final WIN odds*
+are the HKJC's final WIN odds for it, which for the winner are its WIN dividend per ten dollars
+divided by ten; *hkjc.guru's published picks for a meeting* are the rows its proofing ledger
+(`https://hkjc.guru/proofing`) froze for that meeting's races before they were run, and their *settled
+flat return* is the sum over those rows of (stake × WIN dividend per dollar if the runner won, else
+zero) minus the sum of stakes, as the ledger settles it; a meeting for which the ledger published
+nothing has a settled flat return of zero, which is not positive. Outcome 1 iff the HKJC's official
+results for the meeting (the Local Results pages of `racing.hkjc.com`, one per race) — or, for a claim
+about hkjc.guru's picks, the settled proofing ledger as `hkjc.guru/proofing` shows it — fetched
+after the meeting and saved, show the forecast's condition met. Evidence: the saved pages. The
+market's own forecast is the incumbent of this type (A4 clause 4): a forecast may carry the market's
+implied probability of its claim in `args` as `market_p` (per mille) with its source and time, and the
+base rate it was forecast against as `base_rate`. Resolver: as above.
