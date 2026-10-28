@@ -47,3 +47,15 @@ after the meeting and saved, show the forecast's condition met. Evidence: the sa
 market's own forecast is the incumbent of this type (A4 clause 4): a forecast may carry the market's
 implied probability of its claim in `args` as `market_p` (per mille) with its source and time, and the
 base rate it was forecast against as `base_rate`. Resolver: as above.
+
+**Reading of `world.hkjc`'s "settled flat return" (28 October 2026, after `transcripts/REVIEWER-HKJC-20261028.md`
+findings 1 and 2; a reading of the text above, not a change to it, so it binds the forecasts already entered).**
+The operative definition is the formula and the words "as the ledger settles it": the return is at the ledger's
+own stakes (its 1, 2 and 3 unit tiers), with each row's settled payout as the ledger records it, so a scratched
+runner settled as a refund contributes zero, not a loss. The word "flat" in the term's name is a misnomer and
+means nothing further. The base rate counsel forecast against (0.273 over 615 meetings) was computed at one
+unit per pick; at the ledger's tiers the same seven seasons give 0.250 (0.188 over the last two), and the two
+signs disagree at one meeting in seventeen — the forecasts stand as entered, and the discrepancy is theirs to
+bear. `/proofing` shows the fifty most recently settled picks, so a meeting's evidence is fetched and saved
+within a few days of its settlement, not at `resolves_by`; the ledger's R2 mirror and `ledger.sqlite` on the
+host hold the rows after the page has rolled on, and either serves as evidence when saved.

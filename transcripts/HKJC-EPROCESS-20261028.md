@@ -113,3 +113,9 @@ for inc, ch in [('market','blend'), ('market','model'), ('blend','market'), ('mo
 Base rates: group the same parquet by (race_date, first two characters of race_id) for meetings;
 favourite = `arg_min(horse_id, odds)` per race, top pick = `arg_max(horse_id, win_prob)`; value
 picks are the rows with `value_flag`, flat return per row `won * odds − 1`.
+
+## Addendum, 28 October (after the reviewer's findings)
+At the ledger's advised stakes (3 units at edge ≥ 1.50, 2 at ≥ 1.30, 1 at ≥ 1.15, edge = win_prob × odds),
+a meeting's settled return is positive at 154 of 615 meetings (0.250), 33 of 176 over the last two seasons
+(0.188); the flat (one unit) and advised signs disagree at 36 of 615 (0.059). The reading recorded in
+`world-types.md` applies the advised-stake figure to the claims as entered.
