@@ -28,10 +28,10 @@ in any race.
 | favourite wins ≥ 3 of the races run | 73, 0.600 | 83, 0.450 | **1** |
 | favourite wins ≥ 4 of the races run | 74, 0.340 | 84, 0.200 | **0** |
 | at least one winner at final WIN odds ≥ 20 | 75, 0.580 | 85, 0.560 | **1** |
-| hkjc.guru's published picks show a positive settled return | 76, 0.230 | 86, 0.230 | pending the ledger's settle run; `/proofing` at 15:30Z still ended at ST_20261025 |
+| hkjc.guru's published picks show a positive settled return | 76, 0.230 | 86, 0.230 | **0** — the ledger settled ST_20261028 R02 (2u at 4.90), R04 (2u at 21.00) and R06 (1u at 18.00) as Lost, payout 0.00u each: return −5u (`/proofing` fetched 2026-10-29T02:30:42Z, evidence `transcripts/evidence/` by the hash in the resolution) |
 
-Log loss on the three resolved: counsel 0.511 + 0.416 + 0.545 = 1.472; reviewer 0.799 + 0.223 + 0.580 = 1.602;
-the base rates (0.593, 0.327, 0.585) would have scored 0.523 + 0.396 + 0.536 = 1.455. The card-informed
+Log loss on the four: counsel 0.511 + 0.416 + 0.545 + 0.261 = 1.733; reviewer 0.799 + 0.223 + 0.580 + 0.261 = 1.863;
+the base rates (0.593, 0.327, 0.585, 0.250) would have scored 0.523 + 0.396 + 0.536 + 0.288 = 1.743. The card-informed
 forecaster did worse than the base rate tonight, which is one meeting and says nothing yet; the ledger
 will say.
 
