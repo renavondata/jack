@@ -1,0 +1,386 @@
+==== weekly acts table, window Wed 21 Oct - Tue 27 Oct 2026 HKT (2026-10-20T16:00:00Z .. 2026-10-27T16:00:00Z), run 2026-10-28 by counsel-2's session
+==== totals: renavondata/assize decisions 29 repairs 87 merges 30; renavondata/jack decisions 1 repairs 2 merges 6; both repairs 89
+==== files: assize CSV sha256 71353b2241a4428f00e3ff75cc1db22fca57f86cb521b71d061fc1b563f0bbaf; jack CSV sha256 bf5cc9dbafe92c04382001595f45a07d3788bc624349cca3d5f2089f5e0db910; classifier (guy_acts.py of 13 Oct with repo, path and end bound as arguments) sha256 b5d387cacabf0377da05a17404ae0352e3ed602a12ddefa90708db25a70389d9
+==== assize-21-27oct.csv
+repo,time_hkt,class,kind,ref,note
+renavondata/assize,2026-10-21 09:23,decision,draft signed,#286,
+renavondata/assize,2026-10-21 09:23,decision,draft signed,#284,
+renavondata/assize,2026-10-21 09:23,decision,draft signed,#281,
+renavondata/assize,2026-10-21 12:31,comment,free-text comment,289,Acknowledged by the sovereign.
+renavondata/assize,2026-10-21 12:31,repair,stop/failure issue closed,#289,No Builder item on master: signed #286 edits harness/pins.py
+renavondata/assize,2026-10-21 13:31,decision,Accept,PR #290,
+renavondata/assize,2026-10-21 13:46,decision,Accept,PR #288,
+renavondata/assize,2026-10-21 14:48,repair,dispatch review,39557694810,
+renavondata/assize,2026-10-21 14:48,comment,free-text comment,278,Acknowledged; review of #257 dispatched.
+renavondata/assize,2026-10-21 14:48,repair,stop/failure issue closed,#278,No Builder item on master: brief 2 has no unfinished item; P
+renavondata/assize,2026-10-21 14:48,comment,free-text comment,291,"Review 39539669594 committed its verdict (6047cb1, ACCEPT WITH OBLIGAT"
+renavondata/assize,2026-10-21 14:48,repair,stop/failure issue closed,#291,review run 39539669594 cancelled on instr-284-departure-scor
+renavondata/assize,2026-10-21 14:48,comment,free-text comment,259,"As recommended: routed, and the loop resumed."
+renavondata/assize,2026-10-21 14:48,repair,stop/failure issue closed,#259,review run 39263445906 cancelled on l2a-audit-8aae43c-f1-aud
+renavondata/assize,2026-10-21 14:48,comment,free-text comment,279,Declined as the draft check recommended: wish #107 is already done.
+renavondata/assize,2026-10-21 14:48,decision,draft declined,#279,
+renavondata/assize,2026-10-21 14:48,comment,free-text comment,107,Done; see the draft check on #279.
+renavondata/assize,2026-10-21 14:48,repair,own issue closed,#107,
+renavondata/assize,2026-10-21 14:48,comment,free-text comment,283,Declined as the draft check recommended: wish #80 is already done.
+renavondata/assize,2026-10-21 14:48,decision,draft declined,#283,
+renavondata/assize,2026-10-21 14:48,comment,free-text comment,80,Done; see the draft check on #283.
+renavondata/assize,2026-10-21 14:48,repair,own issue closed,#80,
+renavondata/assize,2026-10-21 14:48,comment,free-text comment,285,Declined as the draft check recommended: wish #72 is already done.
+renavondata/assize,2026-10-21 14:48,decision,draft declined,#285,
+renavondata/assize,2026-10-21 14:48,comment,free-text comment,72,Done; see the draft check on #285.
+renavondata/assize,2026-10-21 14:48,repair,own issue closed,#72,
+renavondata/assize,2026-10-21 14:48,comment,free-text comment,69,Carried by a signed instruction (#286/#281/#284).
+renavondata/assize,2026-10-21 14:48,repair,own issue closed,#69,
+renavondata/assize,2026-10-21 14:49,comment,free-text comment,101,Carried by a signed instruction (#286/#281/#284).
+renavondata/assize,2026-10-21 14:49,repair,own issue closed,#101,
+renavondata/assize,2026-10-21 14:49,comment,free-text comment,74,Carried by a signed instruction (#286/#281/#284).
+renavondata/assize,2026-10-21 14:49,repair,own issue closed,#74,
+renavondata/assize,2026-10-21 15:18,repair,re-Accept (same PR),PR #290,
+renavondata/assize,2026-10-21 15:54,comment,free-text comment,292,Acknowledged by the sovereign.
+renavondata/assize,2026-10-21 15:54,repair,stop/failure issue closed,#292,Master Builder has no item: every candidate is held by an op
+renavondata/assize,2026-10-21 15:54,repair,dispatch build,39565353851,
+renavondata/assize,2026-10-21 15:59,repair,dispatch build,39565956232,
+renavondata/assize,2026-10-21 17:53,repair,dispatch build,39580456671,
+renavondata/assize,2026-10-21 18:52,comment,free-text comment,294,Acknowledged by the sovereign.
+renavondata/assize,2026-10-21 18:52,repair,stop/failure issue closed,#294,Master Builder has no item: every candidate is held by an op
+renavondata/assize,2026-10-21 18:52,repair,dispatch build,39587768765,
+renavondata/assize,2026-10-21 19:14,decision,Accept,PR #287,
+renavondata/assize,2026-10-21 20:17,comment,free-text comment,295,Acknowledged by the sovereign.
+renavondata/assize,2026-10-21 20:17,repair,stop/failure issue closed,#295,"Master Builder has no takeable item: #286 held by PR #290, L"
+renavondata/assize,2026-10-21 20:17,repair,dispatch build,39598395147,
+renavondata/assize,2026-10-21 23:54,comment,free-text comment,298,Acknowledged by the sovereign.
+renavondata/assize,2026-10-21 23:54,repair,stop/failure issue closed,#298,Builder on master: no unheld item (briefs exhausted; #293 an
+renavondata/assize,2026-10-21 23:54,repair,dispatch build,39630003919,
+renavondata/assize,2026-10-21 23:59,decision,Accept,PR #293,
+renavondata/assize,2026-10-21 23:59,comment,free-text comment,297,Superseded: a later review of #293 completed (ACCEPT WITH OBLIGATIONS 
+renavondata/assize,2026-10-21 23:59,repair,stop/failure issue closed,#297,review run 39592166232 cancelled on l2a-baseline-report
+renavondata/assize,2026-10-22 00:05,decision,wish filed,#300,Brief 2: the seal precedes NetHack
+renavondata/assize,2026-10-22 00:05,decision,wish filed,#302,pins and pins-master run on steel-agent
+renavondata/assize,2026-10-22 05:03,decision,draft signed,#303,
+renavondata/assize,2026-10-22 10:08,comment,free-text comment,308,Acknowledged by the sovereign.
+renavondata/assize,2026-10-22 10:08,repair,stop/failure issue closed,#308,"Builder on master: no free item (A3 item 1 held by PR #301, "
+renavondata/assize,2026-10-22 10:08,repair,dispatch build,39709705450,
+renavondata/assize,2026-10-22 13:34,decision,Accept,PR #310,
+renavondata/assize,2026-10-22 14:16,comment,free-text comment,312,Acknowledged by the sovereign.
+renavondata/assize,2026-10-22 14:16,repair,stop/failure issue closed,#312,Builder on master: no free item (L2c's host run fails 7 hist
+renavondata/assize,2026-10-22 14:16,repair,dispatch build,39732892880,
+renavondata/assize,2026-10-22 14:21,comment,free-text comment,313,Acknowledged by the sovereign.
+renavondata/assize,2026-10-22 14:21,repair,stop/failure issue closed,#313,Builder on master: no free item (host measure run cannot pas
+renavondata/assize,2026-10-22 14:21,repair,dispatch build,39733478158,
+renavondata/assize,2026-10-22 14:35,comment,free-text comment,314,Acknowledged by the sovereign.
+renavondata/assize,2026-10-22 14:35,repair,stop/failure issue closed,#314,Builder on master: no free item; measure host checkout has n
+renavondata/assize,2026-10-22 14:35,repair,dispatch build,39734866242,
+renavondata/assize,2026-10-22 16:45,repair,label removed (blocked),#301,
+renavondata/assize,2026-10-22 16:46,repair,dispatch build,39750206491,
+renavondata/assize,2026-10-22 16:46,comment,free-text comment,299,Stale: the holding PRs merged; #301 sent to a Builder to merge master.
+renavondata/assize,2026-10-22 16:46,repair,stop/failure issue closed,#299,Builder on master: no free item (Wish #69 held by PR #296; L
+renavondata/assize,2026-10-22 16:46,comment,free-text comment,309,Stale: the holding PRs merged; #301 sent to a Builder to merge master.
+renavondata/assize,2026-10-22 16:46,repair,stop/failure issue closed,#309,review run 39691524672 cancelled on l2b-zero-diff-pin
+renavondata/assize,2026-10-22 16:46,comment,free-text comment,311,Stale: the holding PRs merged; #301 sent to a Builder to merge master.
+renavondata/assize,2026-10-22 16:46,repair,stop/failure issue closed,#311,Builder on master: no free item (brief 2 A3 item 1 held by P
+renavondata/assize,2026-10-22 16:46,decision,instruction filed,#315,Guy's signature admits the seal's CODEOWNERS lines
+renavondata/assize,2026-10-22 18:59,decision,Accept,PR #316,
+renavondata/assize,2026-10-23 00:03,repair,re-Accept (same PR),PR #316,
+renavondata/assize,2026-10-23 00:03,repair,dispatch review,39810576423,
+renavondata/assize,2026-10-23 11:07,repair,re-Accept (same PR),PR #316,
+renavondata/assize,2026-10-23 17:20,decision,instruction filed,#320,measure.yml checks out full history (#317)
+renavondata/assize,2026-10-23 17:21,repair,re-fire (needs-review),#318,
+renavondata/assize,2026-10-23 17:21,comment,free-text comment,319,Review re-fired by relabelling #318.
+renavondata/assize,2026-10-23 17:21,repair,stop/failure issue closed,#319,review run 39835855722 failure on l2b-nethack-manifest
+renavondata/assize,2026-10-23 17:23,repair,dispatch build,39931463987,
+renavondata/assize,2026-10-23 18:39,comment,free-text comment,324,Acknowledged by the sovereign.
+renavondata/assize,2026-10-23 18:39,repair,stop/failure issue closed,#324,Builder on master has no candidate: #315/#320 held by PRs #3
+renavondata/assize,2026-10-23 18:39,repair,dispatch build,39940664203,
+renavondata/assize,2026-10-23 18:39,repair,label added (seen),#324,
+renavondata/assize,2026-10-23 18:41,repair,stop/failure issue closed,#323,review run 39937126459 failure on instr-320-measure-full-his
+renavondata/assize,2026-10-23 23:01,decision,ruleset created,every repo's default branch: no force-push or deletion (admins included),
+renavondata/assize,2026-10-23 23:33,comment,free-text comment,328,Acknowledged by the sovereign.
+renavondata/assize,2026-10-23 23:33,repair,stop/failure issue closed,#328,Builder stopped on master: NLE 0.7.3 (NetHack 3.6.6 variant)
+renavondata/assize,2026-10-23 23:33,repair,dispatch build,39979356394,
+renavondata/assize,2026-10-24 09:14,comment,free-text comment,321,Admin-merged by Guy: P0m's unsigned_guy can't be satisfied by any huma
+renavondata/assize,2026-10-24 09:15,comment,free-text comment,321,"Not merged: the master ruleset has no bypass, so --admin was refused ("
+renavondata/assize,2026-10-24 09:15,repair,PR closed unmerged,#321,
+renavondata/assize,2026-10-24 09:15,decision,instruction filed,#330,pins and pins-master: timeout 120 minutes
+renavondata/assize,2026-10-24 12:35,decision,Accept,PR #331,
+renavondata/assize,2026-10-24 18:33,comment,free-text comment,335,Acknowledged by the sovereign.
+renavondata/assize,2026-10-24 18:33,repair,stop/failure issue closed,#335,Stuck pull requests (daily sweep)
+renavondata/assize,2026-10-24 18:33,repair,dispatch build,40086370632,
+renavondata/assize,2026-10-24 18:43,comment,free-text comment,336,Acknowledged by the sovereign.
+renavondata/assize,2026-10-24 18:43,repair,stop/failure issue closed,#336,Build on master stopped: every candidate item is held by an 
+renavondata/assize,2026-10-24 18:43,repair,dispatch build,40087036031,
+renavondata/assize,2026-10-25 03:00,decision,wish filed,#341,Wish: freeze at the seal
+renavondata/assize,2026-10-25 03:33,decision,draft signed,#342,
+renavondata/assize,2026-10-25 04:35,comment,free-text comment,344,Acknowledged by the sovereign.
+renavondata/assize,2026-10-25 04:35,repair,stop/failure issue closed,#344,Carried at the seal (wish #341)
+renavondata/assize,2026-10-25 04:35,repair,dispatch build,40130488141,
+renavondata/assize,2026-10-25 04:47,repair,re-fire (needs-review),#322,
+renavondata/assize,2026-10-25 18:52,repair,label added (blocked),#322,
+renavondata/assize,2026-10-25 20:16,decision,Accept,PR #322,
+renavondata/assize,2026-10-25 20:16,repair,stop/failure issue closed,#317,"measure.yml checks out shallow history, so host pins fail an"
+renavondata/assize,2026-10-25 20:16,repair,dispatch build,40192398751,
+renavondata/assize,2026-10-25 20:25,repair,label added (blocked),#345,
+renavondata/assize,2026-10-25 20:26,repair,dispatch build,40193090153,
+renavondata/assize,2026-10-25 20:27,repair,re-fire (instruction),#342,
+renavondata/assize,2026-10-25 20:37,repair,stop/failure issue closed,#351,Seal PR (#342 item 3) cannot pass P0bm/P0bs within #342's to
+renavondata/assize,2026-10-26 00:59,decision,Accept,PR #352,
+renavondata/assize,2026-10-26 01:06,comment,free-text comment,353,Acknowledged by the sovereign.
+renavondata/assize,2026-10-26 01:06,repair,stop/failure issue closed,#353,Builder on master: #342 item 3b/3d blocked — measure.yml tim
+renavondata/assize,2026-10-26 01:06,repair,dispatch build,40214879802,
+renavondata/assize,2026-10-26 01:25,comment,free-text comment,354,Acknowledged by the sovereign.
+renavondata/assize,2026-10-26 01:25,repair,stop/failure issue closed,#354,"Instruction #342 3b blocked: measure.yml sets no GH_TOKEN, s"
+renavondata/assize,2026-10-26 01:25,repair,dispatch build,40216413699,
+renavondata/assize,2026-10-26 10:07,decision,Accept,PR #357,
+renavondata/assize,2026-10-26 10:41,decision,draft signed,#356,
+renavondata/assize,2026-10-26 10:41,repair,re-run pins,40221756284,
+renavondata/assize,2026-10-26 10:44,comment,free-text comment,342,"Items 1–3 merged (#350, #352); 3b/3d carried by #356. Proposer: guy"
+renavondata/assize,2026-10-26 10:44,decision,draft declined,#342,
+renavondata/assize,2026-10-26 10:46,repair,re-Accept (same PR),PR #357,
+renavondata/assize,2026-10-26 10:48,comment,free-text comment,326,Acknowledged. Proposer: guy
+renavondata/assize,2026-10-26 10:48,repair,stop/failure issue closed,#326,build run 39940664203 cancelled on master
+renavondata/assize,2026-10-26 10:49,comment,free-text comment,334,Acknowledged. Proposer: guy
+renavondata/assize,2026-10-26 10:49,repair,stop/failure issue closed,#334,build run 40067923175 cancelled on master
+renavondata/assize,2026-10-26 10:49,comment,free-text comment,346,Acknowledged. Proposer: guy
+renavondata/assize,2026-10-26 10:49,repair,stop/failure issue closed,#346,review run 40129944019 cancelled on l2-wish134-price-wallclo
+renavondata/assize,2026-10-26 10:49,comment,free-text comment,348,Acknowledged. Proposer: guy
+renavondata/assize,2026-10-26 10:49,repair,stop/failure issue closed,#348,Builder on master: no candidate free — every open item is he
+renavondata/assize,2026-10-26 10:49,comment,free-text comment,349,Acknowledged. Proposer: guy
+renavondata/assize,2026-10-26 10:49,repair,stop/failure issue closed,#349,Stuck pull requests (daily sweep)
+renavondata/assize,2026-10-26 10:49,comment,free-text comment,355,Acknowledged. Proposer: guy
+renavondata/assize,2026-10-26 10:49,repair,stop/failure issue closed,#355,#342 items 3b/3d still blocked after the acknowledgement of 
+renavondata/assize,2026-10-26 13:10,decision,Accept,PR #358,
+renavondata/assize,2026-10-26 16:46,repair,dispatch measure,40294623092,
+renavondata/assize,2026-10-26 17:52,repair,dispatch measure,40302882199,
+renavondata/assize,2026-10-26 17:53,repair,dispatch measure,40303027739,
+renavondata/assize,2026-10-26 21:09,repair,dispatch measure,40328209908,
+renavondata/assize,2026-10-26 22:11,repair,dispatch build,40337311493,
+renavondata/assize,2026-10-26 22:12,comment,free-text comment,359,Acknowledged; measure 40328209908 on master is green: VERDICT FIT unde
+renavondata/assize,2026-10-26 22:12,repair,stop/failure issue closed,#359,Build run 40260825171 stopped on master: no free item (#356 
+renavondata/assize,2026-10-26 22:12,comment,free-text comment,360,Acknowledged; measure 40328209908 on master is green: VERDICT FIT unde
+renavondata/assize,2026-10-26 22:12,repair,stop/failure issue closed,#360,"Build stopped on master: #356 item 4 (Crafter host verdict, "
+renavondata/assize,2026-10-27 11:22,decision,Accept,PR #361,
+renavondata/assize,2026-10-27 11:22,comment,free-text comment,362,Acknowledged; a later build opened #361. Proposer: guy
+renavondata/assize,2026-10-27 11:22,repair,stop/failure issue closed,#362,build run 40337311493 cancelled on master
+renavondata/assize,2026-10-27 11:22,comment,free-text comment,343,Carried under wish #341 (freeze at the seal); L2 ended by Amendment 6.
+renavondata/assize,2026-10-27 11:22,repair,PR closed unmerged,#343,
+renavondata/assize,2026-10-27 11:28,comment,free-text comment,341,Satisfied: Amendment 6 and the L2 verdict line (PR #361). The court en
+renavondata/assize,2026-10-27 11:28,repair,own issue closed,#341,
+renavondata/assize,2026-10-27 22:58,comment,free-text comment,364,L3 is in renavondata/jack under Amendment 6; this draft is carried the
+renavondata/assize,2026-10-27 22:58,repair,PR closed unmerged,#364,
+renavondata/assize,2026-10-27 22:58,comment,free-text comment,363,Read; L2's end-of-layer brief acknowledged. The court ends at the seal
+renavondata/assize,2026-10-27 22:58,repair,stop/failure issue closed,#363,Sovereign brief at L3
+
+==== jack-21-27oct.csv
+repo,time_hkt,class,kind,ref,note
+renavondata/jack,2026-10-23 23:01,decision,ruleset created,every repo's default branch: no force-push or deletion (admins included),
+renavondata/jack,2026-10-25 04:30,repair,PR closed unmerged,#23,
+renavondata/jack,2026-10-26 17:13,repair,PR closed unmerged,#28,
+renavondata/jack,2026-10-26 17:13,comment,free-text comment,28,Superseded by #29: main gained seqs 50–51 after this branch's entries 
+
+==== guy_acts2.py
+"""guy_acts.py (project doc claude/guy_acts.py, 13 Oct) generalised: repo and local path as arguments,
+and an END bound so a closed week can be re-run identically later. Classification unchanged.
+Usage: python3 guy_acts2.py <owner/repo> <local git path> <start ISO Z> <end ISO Z> <out.csv>
+"""
+import csv, json, subprocess, sys
+from collections import Counter, defaultdict
+from datetime import datetime, timedelta, timezone
+
+R = sys.argv[1]
+LOCAL = sys.argv[2]
+G = "gfrmin"
+HKT = timezone(timedelta(hours=8))
+START = sys.argv[3]
+END = sys.argv[4]
+OUT = sys.argv[5]
+
+
+def api(path):
+    out = subprocess.run(["gh", "api", path], capture_output=True, text=True, check=True).stdout
+    return json.loads(out)
+
+
+def pages(path, key=None, stop=None):
+    n = 1
+    while True:
+        sep = "&" if "?" in path else "?"
+        d = api(f"{path}{sep}per_page=100&page={n}")
+        items = d[key] if key else d
+        if not items:
+            return
+        for it in items:
+            yield it
+        if stop and stop(items[-1]):
+            return
+        n += 1
+
+
+def t(s):
+    return datetime.fromisoformat(s.replace("Z", "+00:00"))
+
+
+start = t(START)
+end = t(END)
+acts = []  # (time, class, kind, ref, note)
+
+
+def add(ts, cls, kind, ref, note=""):
+    if start <= t(ts) < end:
+        acts.append((t(ts), cls, kind, ref, note))
+
+
+issues = {}
+for it in pages(f"repos/{R}/issues?state=all&since={START}&sort=updated&direction=desc"):
+    issues[it["number"]] = it
+
+for n, it in issues.items():
+    if it["user"]["login"] != G or "pull_request" in it:
+        continue
+    labels = {l["name"] for l in it["labels"]}
+    if "wish" in labels:
+        add(it["created_at"], "decision", "wish filed", f"#{n}", it["title"][:70])
+    elif "instruction" in labels:
+        add(it["created_at"], "decision", "instruction filed", f"#{n}", it["title"][:70])
+    else:
+        add(it["created_at"], "decision", "instruction filed", f"#{n}", it["title"][:70])
+
+events = [e for e in pages(f"repos/{R}/issues/events", stop=lambda e: t(e["created_at"]) < start)
+          if e.get("actor") and e["actor"]["login"] == G and t(e["created_at"]) >= start]
+events.sort(key=lambda e: e["created_at"])
+signed_once = set()
+skip = set()
+by_issue = defaultdict(list)
+for e in events:
+    by_issue[e["issue"]["number"]].append(e)
+for n, evs in by_issue.items():
+    it = issues.get(n) or evs[0]["issue"]
+    author = (it.get("user") or {}).get("login")
+    is_pr = "pull_request" in it
+    labels_now = {l["name"] for l in it.get("labels", [])}
+    for i, e in enumerate(evs):
+        if id(e) in skip:
+            continue
+        ev, lab, ts = e["event"], (e.get("label") or {}).get("name", ""), e["created_at"]
+        if ev in ("assigned", "unassigned"):
+            if (e.get("assigner") or {}).get("login") == G:
+                add(ts, "repair", f"issue event ({ev})", f"#{n}")
+            continue
+        if ev in ("review_dismissed", "auto_squash_enabled", "auto_merge_enabled", "auto_rebase_enabled",
+                  "automatic_base_change_succeeded", "automatic_base_change_failed"):
+            continue
+        if ev == "unlabeled" and lab == "instruction":
+            later = next((f for f in evs[i + 1:] if f["event"] == "labeled"
+                          and (f.get("label") or {}).get("name") == "instruction"), None)
+            if later is not None:
+                skip.add(id(later))
+                quick = t(later["created_at"]) - t(ts) <= timedelta(minutes=10)
+                add(ts, "repair", "re-fire (instruction)" if quick else "unsign/re-sign cycle", f"#{n}")
+            else:
+                add(ts, "decision", "unsigned (withdrawn)", f"#{n}")
+            continue
+        if ev == "unlabeled":
+            back = next((f for f in evs[i + 1:] if f["event"] == "labeled"
+                         and (f.get("label") or {}).get("name") == lab
+                         and t(f["created_at"]) - t(ts) <= timedelta(minutes=10)), None)
+            if back is not None:
+                skip.add(id(back))
+                add(ts, "repair", f"re-fire ({lab})", f"#{n}")
+            elif lab == "instruction":
+                add(ts, "decision", "unsigned", f"#{n}")
+            else:
+                add(ts, "repair", f"label removed ({lab})", f"#{n}")
+        elif ev == "labeled":
+            if lab == "instruction" and author != G and n not in signed_once:
+                signed_once.add(n)
+                add(ts, "decision", "draft signed", f"#{n}")
+            elif lab in ("instruction", "wish") and author == G and \
+                    t(ts) - t(it["created_at"]) <= timedelta(minutes=2):
+                pass
+            else:
+                add(ts, "repair", f"label added ({lab})", f"#{n}")
+        elif ev == "closed":
+            if is_pr:
+                if not (it.get("pull_request") or {}).get("merged_at"):
+                    add(ts, "repair", "PR closed unmerged", f"#{n}")
+            elif "draft" in labels_now and author != G:
+                add(ts, "decision", "draft declined", f"#{n}")
+            elif author == G:
+                add(ts, "repair", "own issue closed", f"#{n}")
+            else:
+                add(ts, "repair", "stop/failure issue closed", f"#{n}", (it.get("title") or "")[:60])
+        elif ev in ("merged", "referenced", "cross-referenced", "mentioned", "subscribed",
+                    "head_ref_deleted", "head_ref_restored", "review_requested",
+                    "auto_merge_enabled", "added_to_merge_queue"):
+            continue
+        else:
+            add(ts, "repair", f"issue event ({ev})", f"#{n}")
+
+for n, it in issues.items():
+    if "pull_request" not in it:
+        continue
+    approved = False
+    for rv in sorted(api(f"repos/{R}/pulls/{n}/reviews?per_page=100"), key=lambda r: r.get("submitted_at") or ""):
+        if rv["user"] and rv["user"]["login"] == G and rv.get("submitted_at"):
+            if rv["state"] in ("APPROVED", "DISMISSED"):
+                add(rv["submitted_at"], "repair" if approved else "decision",
+                    "re-Accept (same PR)" if approved else "Accept", f"PR #{n}")
+                approved = True
+            else:
+                add(rv["submitted_at"], "repair", f"review {rv['state'].lower()}", f"PR #{n}")
+
+for run in pages(f"repos/{R}/actions/runs?created={START}..{END}", key="workflow_runs"):
+    trig = (run.get("triggering_actor") or {}).get("login")
+    if trig != G:
+        continue
+    if run["event"] == "workflow_dispatch":
+        add(run["created_at"], "repair", f"dispatch {run['name']}", str(run["id"]))
+    elif run.get("run_attempt", 1) > 1:
+        add(run.get("run_started_at") or run["created_at"], "repair", f"re-run {run['name']}", str(run["id"]))
+
+try:
+    for rs in api(f"repos/{R}/rulesets"):
+        d = api(f"repos/{R}/rulesets/{rs['id']}")
+        add(d["created_at"], "decision", "ruleset created", d["name"])
+except subprocess.CalledProcessError:
+    pass
+
+for c in pages(f"repos/{R}/issues/comments?since={START}"):
+    if c["user"]["login"] != G:
+        continue
+    body = c["body"].strip()
+    machine = body.startswith(("override by gfrmin", "re-fired by gfrmin", "Closed by gfrmin"))
+    if not machine:
+        add(c["created_at"], "comment", "free-text comment", c["issue_url"].rsplit("/", 1)[1], body[:70].replace("\n", " "))
+
+acts.sort()
+with open(OUT, "w", newline="") as f:
+    w = csv.writer(f)
+    w.writerow(["repo", "time_hkt", "class", "kind", "ref", "note"])
+    for a in acts:
+        w.writerow([R, a[0].astimezone(HKT).strftime("%Y-%m-%d %H:%M"), *a[1:]])
+
+days = defaultdict(Counter)
+for a in acts:
+    days[a[0].astimezone(HKT).strftime("%a %d %b")][a[1]] += 1
+merges = Counter()
+branch = subprocess.run(["git", "-C", LOCAL, "symbolic-ref", "--short", "refs/remotes/origin/HEAD"],
+                        capture_output=True, text=True).stdout.strip() or "origin/master"
+log = subprocess.run(["git", "-C", LOCAL, "log", branch, "--first-parent", "--merges",
+                      f"--since={START}", f"--until={END}", "--format=%cI"], capture_output=True, text=True, check=True).stdout.split()
+for c in log:
+    merges[t(c).astimezone(HKT).strftime("%a %d %b")] += 1
+print(f"== {R}  {START} .. {END}")
+print(f"{'day (HKT)':<12} decision repair  merges  repairs/merge  repair share")
+tot = Counter()
+alldays = sorted(set(days) | set(merges), key=lambda s: datetime.strptime(s + " 2026", "%a %d %b %Y"))
+for d in alldays:
+    c = days[d]; tot.update(c)
+    share = c["repair"] / max(1, c["repair"] + c["decision"])
+    m = merges[d]; tot["merges"] += m
+    rpm = f"{c['repair'] / m:.1f}" if m else "-"
+    print(f"{d:<12} {c['decision']:>8} {c['repair']:>6} {m:>7} {rpm:>14}  {share:>11.0%}")
+share = tot["repair"] / max(1, tot["repair"] + tot["decision"])
+print(f"{'total':<12} {tot['decision']:>8} {tot['repair']:>6} {tot['merges']:>7} {tot['repair'] / max(1, tot['merges']):>14.1f}  {share:>11.0%}")
+print(f"free-text comments by gfrmin (not counted as acts): {tot['comment']}")
+for cls in ("decision", "repair"):
+    k = Counter(a[2] for a in acts if a[1] == cls)
+    print(cls + ": " + "; ".join(f"{v} {n}" for n, v in k.most_common()))
