@@ -1,0 +1,11 @@
+{
+  "W1": {"principle": "obligations from state and clock, with deadlines", "enforcer": "code: tools/clerk.py forecast_writs"},
+  "W3": {"principle": "the herald merges only on green CI", "enforcer": "code: tools/clerk.py merge_writs"},
+  "W4": {"principle": "window criteria and the procedure:object ratio", "enforcer": "code: tools/status.py assess; tools/clerk.py window_writs"},
+  "A5": {"principle": "windows are maxima; exit at the crossing", "enforcer": "code: tools/jack v_decision"},
+  "validity": {"principle": "keys, chain, types, no self-judgement", "enforcer": "code: kernel; two checkers"},
+  "admission": {"principle": "trusted base unchanged except by push", "enforcer": "code: judge in CI"},
+  "irreversible": {"principle": "keys, pushes, settings gated by the sovereign", "enforcer": "code: keys, rulesets"},
+  "runner": {"principle": "no party acts except through entries; second checker for text", "enforcer": "hand: sessions"},
+  "elections": {"principle": "elections of proposers", "enforcer": "hand: no witness yet; C2"}
+}
