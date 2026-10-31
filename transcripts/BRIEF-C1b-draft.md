@@ -1,12 +1,14 @@
-# Brief C1b — the clerk (draft v6, 31 October 2026; finalised from the C1a report at C1a's exit)
+# Brief C1b — the clerk (draft v7, 31 October 2026; finalised from the C1a report at C1a's exit)
 
 Counsel's text, in BRIEF-C1's form. v2 answered `transcripts/REVIEW-C1b-A5.md` (gpt-6-astra, BLOCK on
 F5–F8); v3 answered `transcripts/REVIEW-C1b-v2.md` (gemini-4-argon, ACCEPT WITH OBLIGATIONS F1–F6); v4
 answered `transcripts/REVIEW-C1b-v3.md` (gpt-6-astra, BLOCK on F1, regrouped outcomes); v5 answered
 `transcripts/REVIEW-C1b-v4.md` (gpt-6-astra, BLOCK on F3: v4 dropped the charter's "no repair by Guy"
-from the success condition); v6 answers `transcripts/REVIEW-C1b-v5.md` (gpt-6-astra, BLOCK on F1: an
-unnamed repair attributed to the oldest open writ let a repair-assisted completion score as repair-free)
-as `transcripts/REPLY-REVIEW-C1b-v5.md` sets out. Its spine is PLAN-20261030 §4's enforcement map: each criterion is a row that has a witness on the
+from the success condition); v6 answered `transcripts/REVIEW-C1b-v5.md` (gpt-6-astra, BLOCK on F1: an
+unnamed repair attributed to the oldest open writ); v7 answers `transcripts/REVIEW-C1b-v6.md`
+(gpt-6-astra, BLOCK on F1: a repair naming one beneficiary still let a second beneficiary score as
+repair-free) as `transcripts/REPLY-REVIEW-C1b-v6.md` sets out: no named scope is trusted, and every
+sovereign repair taints every writ open at its instant. Its spine is PLAN-20261030 §4's enforcement map: each criterion is a row that has a witness on the
 record, in witnessed order. Where it names code, the builder builds it and the reviewer pins it;
 counsel writes none.
 
@@ -42,7 +44,7 @@ the shortfall in lines; a push is decided on that number, never before it, and u
 stands as written.
 
 ## Order of acts, and the clock
-1. This brief merged with its sixth read on the record. Counsel enters **L0**, the promotion
+1. This brief merged with its seventh read on the record. Counsel enters **L0**, the promotion
    forecast, with `args.id` = `"L0"` so that `status.py` finds it, and `resolves_by` no later than
    fourteen days after L0's own `ts` — the maximum the sovereign's budget decision names (seq 50); the
    `promote` follows L0, so the bound holds from the `promote` too. Nothing in this brief states the
@@ -106,21 +108,27 @@ line and nothing else.
   by its complement: every entry signed by the sovereign's key except `genesis`, `key`, `amend`, `push`,
   a `proposal` (a wish) and a `decision` of a kind other than `fix` — so a `decision fix`, a
   `resolution`, a `merge` and, by §7's letter, a `forecast` (C2 may reclassify the last; until then it
-  counts). **Attribution is conservative**: a repair whose `subject` names the forecast seq of an open
-  writ, or the pull request of a pending batch, is attributed to that item alone; a repair naming
-  neither, or naming nothing open, is attributed to **every writ open at its `ts`** — a completion that
-  may have needed the sovereign cannot count positively, and the sovereign who names what he fixed
-  taints one item instead of all. A repair at an instant with no open writ taints nothing. A repair
-  entered after the item it names was finalised changes neither that item's Y nor any stake (A4.3): it
-  is a late report, a §7 violation in itself, printed by `status.py` as a W4 line `late-reported
-  repairs: n` that refuses `promote` while n > 0 in the window. A repair made off the log is counted
-  from the acts table as a W4 line, held by counsel, and never enters the bet. The sovereign's RUNBOOK
-  line is therefore `jack decision fix "forecast <seq>: <what>"`, entered before the writ is discharged.
-- **Null, p₀ = 6/11**: the incumbent measured on this log with this statistic. The replay of the rule
-  above over the log through seq 163 yields nine items — four expired writs (45 at seq 50; 46 and 47
-  at 68; 56 at 103) and five herald batches (merges 102, 106, 110, 140, 151), all five timely and none
-  with a sovereign repair attributed — the sovereign's merges and forecasts of seqs 11–47 touch only
-  writ 37, still open — so Laplace gives (5 + 1)/(9 + 2). Under A4 clause 3 nine consecutive
+  counts). **Attribution trusts no scope**: every sovereign repair is attributed to **every writ open
+  at its `ts`** — a `subject` naming one beneficiary does not establish that no other open writ needed
+  the same act, so no named scope narrows the taint; the `subject` is for the record. A completion
+  that may have needed the sovereign cannot count positively; the court's incentive is to need him
+  not at all, which is §6's sentence. A repair at an instant with no open writ taints nothing. A repair
+  entered after an item was finalised changes neither that item's Y nor any stake (A4.3) — it taints
+  what is open at its own entry, and is a late report, a §7 violation in itself, printed by
+  `status.py` as a W4 line `late-reported repairs: n` that refuses `promote` while n > 0 in the
+  window. A repair made off the log is counted from the acts table as a W4 line, held by counsel, and
+  never enters the bet. The sovereign's RUNBOOK line is `jack decision fix "<what>"`, entered when the
+  act is made; a recorder that enters it for him (the C2 brief's first obligation) needs no precision
+  about beneficiaries, since none is used.
+- **Null, p₀ = 6/11**, committed with its provenance. The replay of the item rule over the log
+  through seq 163 yields nine items — four expired writs (45 at seq 50; 46 and 47 at 68; 56 at 103)
+  and five herald batches (merges 102, 106, 110, 140, 151), all five timely. Under v5's attribution
+  (a repair to the oldest open writ) none of the five carried a repair, Laplace (5 + 1)/(9 + 2) =
+  6/11; under this brief's attribution the sovereign's merge 44 and forecasts 45–47 taint every writ
+  then open, among them 38, whose batch (merge 110) is therefore Y = 0 — four successes, Laplace 5/11.
+  The brief commits the more demanding 6/11, a constant measured on the incumbent's prefix before the
+  window (A4.2; a brief may tighten), and states that it is not this rule's own replay, which is 5/11.
+  Under A4 clause 3 nine consecutive
   successes carry E to 25.5 and eight to 15.5; ten successes followed by one failure give 7.8.
   Assize's repairs per merge (3.6, 0.89, 2.9) are reported beside it, not bet on. Committed here;
   never re-estimated.
@@ -194,12 +202,16 @@ Reported: the procedure : object ratio (A3.4 applies); J7; the weekly acts table
   resolution adds no item; a merge holding only finalised writs adds no item; a mixed batch keeps only
   its fresh writs; mutant: the late resolution counted as a success; mutant: `all([])` counted as a
   success.
-- `repair_erased_from_success`: two identical timely batches, one with a `decision fix` naming its
-  writ before discharge; that item's Y is 0, asserted on Y and not only on wealth; mutant: the repair
+- `repair_erased_from_success`: two identical timely batches, one with a `decision fix` entered while
+  its writ is open; that item's Y is 0, asserted on Y and not only on wealth; mutant: the repair
   predicate dropped; twin: the same timely completion without repair.
-- `repair_misattributed`: writ A open; a `decision fix` naming no writ precedes B's timely resolution
-  and herald merge; B's item scores 0 (and A's, when finalised); mutant: the repair sent to the oldest
-  open writ alone; twin: the same B completion with no repair scores 1; control: a fix naming B zeros B.
+- `repair_taints_all_open`: writs A and B open; a `decision fix` — naming A, naming B, or naming
+  nothing — precedes B's timely resolution and herald merge; B's item scores 0 in all three cases, and
+  A's when finalised; mutant: a named subject restricts the taint to the named writ; mutant: the
+  repair sent to the oldest open writ alone; twin: the same B completion with no repair scores 1.
+- `replay_merge_110`: on the real prefix through seq 163, merge 110's item is Y = 0 (writ 38 open at
+  seqs 44–47) and the items number nine with four successes; mutant: oldest-only attribution gives it
+  1; twin: the same prefix with the sovereign's entries 44–47 removed gives it 1.
 - `late_report_immutable`: a `decision fix` naming an item already finalised changes no Y and no stake,
   and `status.py` prints `late-reported repairs: 1` and refuses `promote`; mutant: the item revised;
   mutant: the line not printed.
@@ -239,16 +251,16 @@ recorded — never a redefinition).
 `tools/clerk.py`; `status.py` reading `decision promote`, L0, the tree, the verified run and the map,
 computing live E and printing the `promote` line; `tools/jack decision` fetching the run and reading
 that line; `tests/test_clerk.py`; the pins; RUNBOOK `jack clerk` and the sovereign's `jack decision
-fix "forecast <seq>: <what>"` before the writ a hand repair serves is discharged (§7); the deletion of the genesis tool and its tests with the
+fix "<what>"` when a hand repair is made (§7); the deletion of the genesis tool and its tests with the
 `Digest` coverage kept; `transcripts/WISHES.md` as the sovereign's; L0–L5 entered; the C1b report in
 REPORT.md's form; the C2 brief text, written at C1b's exit from the report.
 
 ## Counsel's forecasts on this window (entered after this brief's acceptance, before the `promote`)
 | id | claim | p |
 |---|---|---|
-| L0 | **the promotion forecast**: every pre-stated criterion of this brief holds on the exit prefix by L0's `resolves_by`, which is the window's end — C1b promoted, not failed (the fifth read says 0.30) | 0.4 |
+| L0 | **the promotion forecast**: every pre-stated criterion of this brief holds on the exit prefix by L0's `resolves_by`, which is the window's end — C1b promoted, not failed (the fifth and sixth reads say 0.30) | 0.35 |
 | L1 | the attack test is green on its first `tests` run on `main` | 0.6 |
 | L2 | liveness E ≥ 20 within 7 days of the `promote` — nine timely, repair-free herald acts in seven days (the fourth read says 0.25) | 0.25 |
-| L3 | at least one item scores Y = 0 in the window (the fourth read says 0.75) | 0.75 |
+| L3 | at least one item scores Y = 0 in the window (the fourth read says 0.75; under this attribution one hand repair of the sovereign's zeros every open writ) | 0.8 |
 | L4 | A5 is cited by or refuses an act by 29 December (the first reader says 0.75) | 0.65 |
-| L5 | the clerk, its tests and pins fit under 6,200 with no push (the third and fifth reads say 0.25) | 0.35 |
+| L5 | the clerk, its tests and pins fit under 6,200 with no push (the reads say 0.25, 0.25, 0.20) | 0.3 |
