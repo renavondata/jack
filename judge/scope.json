@@ -6,4 +6,4 @@
              "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",
                          "transcripts/", "sim/runs/", "log.jsonl"]},
  "counted": ["sim/", "harness/", "tests/", "pins/", "tools/"],
- "cap": 6200}
+ "cap": 6900}

@@ -422,7 +422,7 @@ The file equals
 the block below, byte for byte less whitespace; a push that changes one without
 the other is refused by the tests. At C0 the layer was `C0` and the cap 3000. C1
 opened at 4500 on 19 October and was raised to 5500 the same day, when the tests
-of the verbs exceeded it, a finding against the pre-statement for the C1 report; raised to 6200 on 25 October by C1a's installing push, when the ledger's tests and simulator kinds reached 5614 before the reviewer's pins, a second finding against the pre-statement (transcripts/BUILD-C1a.md §0);
+of the verbs exceeded it, a finding against the pre-statement for the C1 report; raised to 6200 on 25 October by C1a's installing push, when the ledger's tests and simulator kinds reached 5614 before the reviewer's pins, a second finding against the pre-statement (transcripts/BUILD-C1a.md §0); raised to 6900 on 31 October by C1b's cap push, when the clerk, its tests and the reviewer's 24 pins measured 6874 (pull requests #60 and #61) against BRIEF-C1b v3–v7's "no cap change" and v2's anticipated 7000, a third finding against the pre-statement (transcripts/PUSH-cap-6900.md);
 at C1 it is:
 
 ```
@@ -434,7 +434,7 @@ at C1 it is:
              "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",
                          "transcripts/", "sim/runs/", "log.jsonl"]},
  "counted": ["sim/", "harness/", "tests/", "pins/", "tools/"],
- "cap": 6200}
+ "cap": 6900}
 ```
 
 Pins for items 7–10, each with its mutant and a passing twin:
