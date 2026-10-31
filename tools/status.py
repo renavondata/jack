@@ -8,12 +8,88 @@ import hashlib
 import json
 import os
 import sys
+from fractions import Fraction
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 from kernel import check  # noqa: E402
+from judge.judge import signer_blob  # noqa: E402
 
 FMT = "%Y-%m-%dT%H:%M:%SZ"
+P0 = Fraction(6, 11)  # BRIEF-C1b v7; never estimated from the live window
+
+
+def sovereign_keys(es):
+    return {d["pubkey"].split()[1] for d in es[0]["body"]["keys"]}
+
+
+def c1b_window(es):
+    """The opening's seq breaks timestamp ties; only the named L0 supplies the maximum."""
+    opening = next(e for e in es if e["type"] == "decision" and
+                   e["body"] == {"kind": "promote", "subject": "C1a"})
+    l0 = next(e for e in es if e["seq"] < opening["seq"] and e["type"] == "forecast" and
+              e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "L0")
+    return opening["seq"], opening["ts"], l0["body"]["resolves_by"]
+
+
+def wealth(items):
+    """A4.3, exact and prequential. Return new rows; never revise an earlier stake."""
+    result, successes, capital = [], 0, Fraction(1)
+    for n, item in enumerate(items):
+        q = Fraction(successes + 1, n + 2)
+        stake = max(Fraction(0), (q - P0) / (P0 * (1 - P0)))
+        capital *= 1 + stake * (item["Y"] - P0)
+        result.append(dict(item, stake=stake, E=capital))
+        successes += item["Y"]
+    return result
+
+
+def item_process(es, after_seq=-1):
+    """BRIEF-C1b §Liveness (i)-(iv), in entry order. No clock-created or regrouped items.
+
+    `after_seq` is the first window's opening, not the latest restart: A4 wealth continues.
+    Callers supply a prefix ending at the observation instant. Resolved writs leave the open
+    set immediately; a sovereign boundary clears pending resolutions without reopening them.
+    """
+    sovereign = sovereign_keys(es)
+    opened, pending, items, late_reports = {}, [], [], []
+
+    def finalise(e, kind, members, success):
+        repairs = tuple(sorted({r for _, rs in members for r in rs}))
+        items.append({"seq": e["seq"], "ts": e["ts"], "kind": kind,
+                      "forecasts": tuple(f for f, _ in members), "repairs": repairs,
+                      "Y": int(success and not repairs)})
+
+    for e in es:
+        seq, body, typ = e["seq"], e["body"], e["type"]
+        for f in sorted(opened):
+            forecast, repairs = opened[f]
+            if forecast["body"]["resolves_by"] < e["ts"]:
+                finalise(e, "expiry", [(f, repairs)], False)
+                del opened[f]
+        royal = signer_blob(e) in sovereign
+        repair = royal and typ not in ("genesis", "key", "amend", "push", "proposal") and not (
+            typ == "decision" and body["kind"] != "fix")
+        if repair:
+            if items:
+                late_reports.append(seq)
+            for _, repairs in opened.values():
+                repairs.append(seq)
+        if typ == "forecast" and seq > after_seq:
+            opened[seq] = (e, [])
+        if typ == "resolution" and body["forecast"] in opened:
+            f = body["forecast"]
+            _, repairs = opened.pop(f)
+            if royal:
+                finalise(e, "sovereign resolution", [(f, repairs)], False)
+            else:
+                pending.append((f, repairs))
+        if typ == "merge" and pending:
+            finalise(e, "batch", sorted(pending), not royal)
+        if typ == "merge" or royal:
+            pending = []
+    scored = wealth(items)
+    return {"items": scored, "late_reports": late_reports, "E": scored[-1]["E"] if scored else Fraction(1)}
 
 
 def instant(s):
