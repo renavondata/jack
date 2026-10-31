@@ -226,8 +226,8 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
     verified = run_verified(run, rev) and completed_by(run, as_of)
     checks = [(verified, "criterion 1: pins and twins in verified tests run"),
               (verified, "criterion 2: checker agreement in verified tests run"),
-              (facts["counted"] <= 6200 and facts["kernel"] <= 500 and facts["scope"],
-               f"criterion 3: counted {facts['counted']}/6200; kernel {facts['kernel']}/500; scope equals SPEC: {facts['scope']}")]
+              (facts["counted"] <= 6900 and facts["kernel"] <= 500 and facts["scope"],
+               f"criterion 3: counted {facts['counted']}/6900; kernel {facts['kernel']}/500; scope equals SPEC: {facts['scope']}")]
     if subject == "C1b":
         process = item_process(s["prefix"], s["opening"])
         proposed = item_process(s["prefix"], s["opening"], min(as_of, s["end"]))

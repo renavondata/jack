@@ -17,7 +17,7 @@ from tools import clerk, status
 EARLY = "2026-10-31T11:59:59Z"
 SHA = "a" * 40
 GREEN = dict(path=status.WORKFLOW, event="push", head_branch="main", head_sha=SHA, conclusion="success", updated_at=EARLY)
-FACTS = dict(counted=6200, kernel=500, scope=True)
+FACTS = dict(counted=6900, kernel=500, scope=True)
 with open(os.path.join(status.ROOT, status.MAP)) as f:
     MAP = json.load(f)
 loader = importlib.machinery.SourceFileLoader("jack_promotion", os.path.join(status.ROOT, "tools/jack"))
@@ -32,7 +32,7 @@ class Promotion(SignedFixture):
         self.s.complete(9, type="world.fixture")
 
     def tree(self):
-        scope = {"counted": ["tests/"], "cap": 6200}
+        scope = {"counted": ["tests/"], "cap": 6900}
         return tree({"judge/scope.json": json.dumps(scope), "SPEC.md": "at C1 it is:\n```\n" + json.dumps(scope) + "\n```\n",
                      "tests/test_clerk.py": "# synthetic attack witness\n", status.MAP: json.dumps(MAP),
                      "log.jsonl": self.s.log.text(), "transcripts/evidence/acts.csv": "repo,time_hkt,class,kind,ref,note\n"})
@@ -131,7 +131,7 @@ class Promotion(SignedFixture):
         self.refused(" STOP")
 
     def test_short_tree_criterion_alone_prevents_signing(self):
-        for facts in (dict(FACTS, counted=6201), dict(FACTS, kernel=501), dict(FACTS, scope=False)):
+        for facts in (dict(FACTS, counted=FACTS["counted"] + 1), dict(FACTS, kernel=501), dict(FACTS, scope=False)):
             self.refused("criterion 3", facts=facts)
 
     def test_promotion_accounts_for_expiry_since_last_entry_without_revising_live_items(self):

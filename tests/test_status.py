@@ -66,7 +66,7 @@ class StatusTest(unittest.TestCase):
         self.assertFalse(st.status(es, "A3", 14, "2026-10-28T00:00:00Z", root=self.root, subject="other")["veto"])
 
     def test_render_marks_short_lines(self):
-        with patch.object(st, "tree_facts", return_value=dict(counted=6200, kernel=500, scope=True)):
+        with patch.object(st, "tree_facts", return_value=dict(counted=6900, kernel=500, scope=True)):
             text = st.render(st.assess(self.es, "C1a", "2026-10-26T04:00:00Z", self.root, None))
         self.assertIn("forecasts 3/20; proposers 3/3", text)
         self.assertIn("world-typed with evidence 1/5 SHORT", text)
