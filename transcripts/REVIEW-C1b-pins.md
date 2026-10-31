@@ -32,6 +32,18 @@ The other tests pass. The builder must update this obsolete count; the
 reviewer's permitted paths do not include `tests/`. This also blocks the
 local `tools/jack proposal` check, before signing or pushing a proposal.
 
+The requested verb was attempted with title
+`C1b pins registered: 24 pins, 30 mutants KILLED; tree at 6874 counted lines`.
+It refused with `the check fails: -m unittest discover -s tests -t .` and
+the same `70 != 46` failure (264 tests, one failure, one skip). No reviewer
+proposal entry was signed, and no push-recovery commands were printed.
+The measured branch is published separately as a draft PR carrying this
+blocker; it is not a successfully recorded proposal.
+
+Forecast seq 199 was entered through `tools/jack forecast` under reviewer-2:
+"the counted lines of this branch's proposal head exceed 6,200 by at most 674",
+type `proposal.count`, p = 990/1000, resolves_by `2026-11-03T00:00:00Z`.
+
 ## Counted lines
 
 The requested committed-tree measurement:
