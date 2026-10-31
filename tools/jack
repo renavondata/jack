@@ -50,7 +50,8 @@ def begin(a, on_main):  # the common preconditions; the party and key_id come fr
 def append(a, type_, body, log_path=LOG):  # sign on the log's head; append only if kernel.check admits the log with it
     with tempfile.TemporaryDirectory() as d, contextlib.redirect_stdout(out := io.StringIO()):
         with open(path := os.path.join(d, "entry"), "w", encoding="utf-8") as f:
-            f.write(entry.unsigned(argparse.Namespace(log=log_path, ts=entry.now(), type=type_, proposer=a.party, body_json=json.dumps(body))))
+            f.write(entry.unsigned(argparse.Namespace(log=log_path, ts=getattr(a, "decision_ts", None) or entry.now(),
+                                                    type=type_, proposer=a.party, body_json=json.dumps(body))))
         subprocess.run(["ssh-keygen", "-Y", "sign", "-f", a.key, "-n", "core-entry", path], check=True, stdout=subprocess.DEVNULL)
         if entry.assemble(argparse.Namespace(unsigned=path, sig=path + ".sig", log=log_path)):
             refuse(f"the kernel refuses the {type_} entry (verdict above); nothing appended")
@@ -199,6 +200,28 @@ def v_push(a):
 def v_decision(a):
     begin(a, True)
     a.subject or refuse("SUBJECT must be a non-empty string")
+    if a.kind == "promote":
+        a.subject in ("C1a", "C1b") or refuse("promotion criteria unknown for " + a.subject)
+        head = git("rev-parse", "HEAD")
+        endpoint = "repos/{owner}/{repo}/actions/workflows/tests.yml/runs"
+        def fetch(query):
+            pages = json.loads(run("gh", "api", endpoint + query, "--paginate", "--slurp").stdout)
+            return [r for page in pages for r in page["workflow_runs"]]
+        current = fetch(f"?head_sha={head}&event=push&branch=main")
+        history = fetch("?event=push&branch=main")
+        a.decision_ts = entry.now()  # the assessed instant is the instant signed, including expiry boundaries
+        from tools.status import run_verified
+        with tempfile.TemporaryDirectory() as tmp:
+            for name, value in (("run", next((r for r in current if run_verified(r, head)), None)), ("runs", history)):
+                with open(os.path.join(tmp, name), "w") as f:
+                    json.dump(value, f)
+            command = [sys.executable, "tools/status.py", "--subject", a.subject, "--run", os.path.join(tmp, "run"),
+                       "--runs", os.path.join(tmp, "runs"), "--as-of", a.decision_ts]
+            if a.acts:
+                command += ["--acts", a.acts]
+            result = run(*command).stdout
+        lines = [line for line in result.splitlines() if line.startswith(f"promote {a.subject}:")]
+        lines == [f"promote {a.subject}: lawful"] or refuse("\n".join(lines) or "status returned no promotion verdict")
     main_ending(a, "decision", lambda: {"kind": a.kind, "subject": a.subject}, f"decision: {a.kind} {a.subject}")
 
 def v_amend(a):
@@ -223,11 +246,20 @@ def v_resolve(a): begin(a, None), ledger_ending(a, "resolution", entry.resolutio
 def v_score(a): print(entry.score(check.read_lines(open(LOG, "rb").read()), a.as_of))  # noqa: E704  no entry, signing, fetch or clean tree
 
 def main(argv):
+    read = argparse.ArgumentParser(add_help=False)
+    read.add_argument("--key")
+    read.add_argument("verb", nargs="?")
+    readonly, rest = read.parse_known_args(argv)
+    if readonly.verb in ("status", "clerk"):
+        from tools import status, clerk
+        return {"status": status.main, "clerk": clerk.main}[readonly.verb](rest)
     ap = argparse.ArgumentParser(prog="jack", description=__doc__)
     ap.add_argument("--key", default=os.environ.get("JACK_KEY", os.path.expanduser("~/.ssh/id_ed25519")))
     sub = ap.add_subparsers(dest="verb", required=True)
+    for verb in ("status", "clerk"):
+        sub.add_parser(verb, help=f"read-only {verb}; jack {verb} --help lists evidence inputs")
     for verb, specs in (("key", "declared --principal= --powers= --pubkey="), ("proposal", "--title"), ("merge", "n:int"),
-                        ("spec_conflict", "--section= --text="), ("push", "target --review="), ("decision", "kind subject"),
+                        ("spec_conflict", "--section= --text="), ("push", "target --review="), ("decision", "kind subject --acts"),
                         ("amend", "id file --activate-at:int"), ("forecast", "claim --p:int= --by= --type --args"),
                         ("resolve", "seq:int --outcome:int= --evidence="), ("score", "--as-of")):
         p = sub.add_parser(verb)
@@ -241,7 +273,7 @@ def main(argv):
         if (a := ap.parse_args(argv)).verb == "decision" and a.kind not in KINDS:
             refuse(f"KIND must be one of {' '.join(KINDS)}, not {a.kind!r}")
         globals()["v_" + a.verb](a)
-    except (Refused, entry.Usage, OSError, log.Refuse, subprocess.CalledProcessError) as x:
+    except (Refused, entry.Usage, OSError, ValueError, KeyError, log.Refuse, subprocess.CalledProcessError) as x:
         print(f"refused: {x}", file=sys.stderr)
         return 1
     return 0

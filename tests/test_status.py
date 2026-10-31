@@ -1,10 +1,11 @@
 """tools/status.py: the window's figures from synthetic entries (hermetic; no log on disk, no clock)."""
 import hashlib
-import os
-import tempfile
 import unittest
+from unittest.mock import patch
 
 from tools import status as st
+from harness.gitfix import write
+from tests.clerk_fixture import tree
 
 
 def e(seq, ts, type_, proposer, **body):
@@ -13,12 +14,9 @@ def e(seq, ts, type_, proposer, **body):
 
 class StatusTest(unittest.TestCase):
     def setUp(self):
-        self.root = tempfile.mkdtemp()
-        os.makedirs(os.path.join(self.root, "transcripts", "evidence"))
         blob = b"a saved page\n"
         self.h = hashlib.sha256(blob).hexdigest()
-        with open(os.path.join(self.root, "transcripts", "evidence", self.h), "wb") as f:
-            f.write(blob)
+        self.root, _ = self.enterContext(tree({"transcripts/evidence/" + self.h: blob}))
         self.es = [
             e(0, "2026-10-25T16:44:10Z", "amend", "guy", id="A3", activate_at=1),
             e(1, "2026-10-26T00:00:00Z", "forecast", "counsel", claim="w", p=500, resolves_by="2026-10-27T00:00:00Z", type="world.x"),
@@ -51,20 +49,28 @@ class StatusTest(unittest.TestCase):
         self.assertEqual(s["forecasts"], 3)
 
     def test_evidence_must_hash(self):
+        write(self.root, "transcripts/evidence/" + "0" * 64, b"present, but not the claimed bytes")
         bad = dict(self.es[4]); bad["body"] = dict(bad["body"], evidence="sha256:" + "0" * 64)
         s = st.status(self.es[:4] + [bad] + self.es[5:], "A3", 14, "2026-10-26T04:00:00Z", root=self.root)
         self.assertEqual((s["world_resolutions"], s["world_resolutions_with_evidence"]), (1, 0))
 
+    def test_resolution_ratio_follows_its_forecasts_type(self):
+        world = st.status(self.es, "A3", 14, "2026-10-26T04:00:00Z", root=self.root)
+        procedure = st.status(self.es + [e(6, "2026-10-26T04:00:00Z", "resolution", "herald", forecast=2, outcome=1, evidence="run")],
+                              "A3", 14, "2026-10-26T04:00:00Z", root=self.root)
+        self.assertEqual((procedure["procedure"], procedure["object"]), (world["procedure"] + 1, world["object"]))
+
     def test_veto_on_the_subject(self):
         es = self.es + [e(7, "2026-10-27T00:00:00Z", "decision", "guy", kind="veto", subject="C1a")]
         self.assertTrue(st.status(es, "A3", 14, "2026-10-28T00:00:00Z", root=self.root)["veto"])
-        self.assertFalse(st.status(es, "A3", 14, "2026-10-28T00:00:00Z", root=self.root, subject="C1b")["veto"])
+        self.assertFalse(st.status(es, "A3", 14, "2026-10-28T00:00:00Z", root=self.root, subject="other")["veto"])
 
     def test_render_marks_short_lines(self):
-        text = st.render(st.status(self.es, "A3", 14, "2026-10-26T04:00:00Z", root=self.root))
-        self.assertIn("forecasts 3/20 SHORT", text)
-        self.assertIn("proposers 3/3 met", text)
-        self.assertIn("within 5:1", text)
+        with patch.object(st, "tree_facts", return_value=dict(counted=6200, kernel=500, scope=True)):
+            text = st.render(st.assess(self.es, "C1a", "2026-10-26T04:00:00Z", self.root, None))
+        self.assertIn("forecasts 3/20; proposers 3/3", text)
+        self.assertIn("world-typed with evidence 1/5 SHORT", text)
+        self.assertIn("maximum 5:1) met", text)
 
 
 if __name__ == "__main__":
