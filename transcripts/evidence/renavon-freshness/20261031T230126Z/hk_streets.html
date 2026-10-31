@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    
+    <meta name="csrf-token" content="Ijc5ODdhMTAwODM1MDk2MGU4YTliZDFjYjIyYjk2M2ZkYThiMjc0ODgi.auZzXQ.vgO-CCnMpbNYps4r9EyEnU59y6M">
+
+    
+    <title>hk_streets - Hong Kong bilingual street name directory by district | Renavon</title>
+
+    
+    <meta name="description" content="Hong Kong bilingual street name directory by district. 4,584 rows. Query via SQL, download files (CSV and Parquet), or use the API.">
+
+    
+    <meta name="keywords" content="hk_streets, Hong Kong bilingual street name directory by district, , [, &#34;, g, e, o, g, r, a, p, h, i, c, &#34;, ,,  , &#34;, s, t, r, e, e, t, s, &#34;, ,,  , &#34;, r, e, f, e, r, e, n, c, e, &#34;, ,,  , &#34;, a, d, d, r, e, s, s, &#34;, ], Hong Kong data">
+
+    
+    <meta name="robots" content="index, follow">
+
+    
+    
+    <link rel="canonical" href="https://renavon.com/data/govhk/hk_streets">
+    
+
+    
+    <link rel="alternate" type="application/atom+xml" title="Renavon Blog" href="/blog/feed.xml">
+
+    
+    <meta property="og:type" content="product">
+    <meta property="og:title" content="hk_streets - Hong Kong bilingual street name directory by district">
+    <meta property="og:description" content="Bilingual directory of Hong Kong street names organized by district. Search streets in English or Chinese with automatic street type classification (Road, Street, Avenue, Lane, etc.). Useful for addre...">
+    <meta property="og:url" content="https://renavon.com/data/govhk/hk_streets">
+    <meta property="og:site_name" content="Renavon">
+    <meta property="og:image" content="https://renavon.com/static/renavon_logo.png">
+    <meta property="og:locale" content="en_US">
+
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="hk_streets - Hong Kong bilingual street name directory by district | Renavon">
+    <meta name="twitter:description" content="Hong Kong bilingual street name directory by district. 4,584 rows. Query via SQL, download files (CSV and Parquet), or use the API.">
+    <meta name="twitter:image" content="https://renavon.com/static/renavon_logo.png">
+
+    
+    <link rel="shortcut icon" href="/static/favicon.ico">
+
+    
+    
+    
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://renavon.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Datasets", "item": "https://renavon.com/datasets"},
+    {"@type": "ListItem", "position": 3, "name": "hk_streets", "item": "https://renavon.com/data/govhk/hk_streets"}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "hk_streets",
+    "description": "Bilingual directory of Hong Kong street names organized by district. Search streets in English or Chinese with automatic street type classification (Road, Street, Avenue, Lane, etc.). Useful for address validation, geographic analysis, and location-based research.
+",
+    "creator": {"@type": "Organization", "name": "govhk"},
+    "publisher": {"@type": "Organization", "name": "Renavon", "url": "https://renavon.com/"},
+    "isAccessibleForFree": true,
+    "spatialCoverage": "Hong Kong"
+    
+    ,
+    "dateModified": "2024-05-24T22:05:06+00:00"
+    
+    ,
+    "distribution": {
+        "@type": "DataDownload",
+        "encodingFormat": "text/csv",
+        "contentUrl": "https://renavon.com/data/govhk/hk_streets/download/csv"
+    },
+    "variableMeasured": ["district", "name_english", "name_chinese", "street_type", "source_url", "updated_at", "id"]
+    
+}
+</script>
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "What data is in hk_streets?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Bilingual directory of Hong Kong street names organized by district. Search streets in English or Chinese with automatic street type classification (Road, Street, Avenue, Lane, etc.). Useful for address validation, geographic analysis, and location-based research.\n"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How can I access hk_streets?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can query this dataset via SQL using the REST API, download files (CSV and Parquet), or access programmatically with your API key."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How much data does hk_streets contain?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "hk_streets contains 4,584 rows across 7 columns."
+            }
+        }
+    ]
+}
+</script>
+
+    
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    
+    <link href="/static/css/main.css" rel="stylesheet">
+
+    
+    <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+
+    
+    
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer crossorigin="anonymous"></script>
+    
+
+    
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_1HRPWj8xOz5e1q7iGMicuo3qhK2MsLTN7BOPi3CIKwy', {
+            api_host: 'https://us.i.posthog.com',
+            capture_pageview: true,
+            capture_pageleave: true,
+            autocapture: true,
+            session_recording: {
+                recordCrossOriginIframes: false
+            },
+            enable_heatmaps: true,
+            capture_exceptions: true,
+            // Drop third-party noise from the $exception signal so real
+            // errors in our own JS are visible. Sources dominating the
+            // raw signal: (1) the embedded Tawk.to chat widget fails
+            // during init with TypeError, (2) cross-origin scripts
+            // without CORS headers surface as opaque "Script error."
+            // with no stack, (3) browser extensions do JSON.parse('')
+            // at injection time — surface as SyntaxError with an empty
+            // stack frame array. All three hide the few real errors.
+            before_send: function (captureResult) {
+                if (captureResult && captureResult.event === '$exception') {
+                    var props = captureResult.properties || {};
+                    var list = props['$exception_list'] || [];
+                    var listStr = list.length ? JSON.stringify(list) : '';
+                    if (listStr.indexOf('embed.tawk.to') !== -1) {
+                        return null;
+                    }
+                    var values = props['$exception_values'];
+                    if (Array.isArray(values) && values.length === 1 && values[0] === 'Script error.') {
+                        return null;
+                    }
+                    // Empty stacktrace frames = attacker can't debug it,
+                    // neither can we. Almost always extension noise.
+                    var firstFrames = list[0] && list[0].stacktrace && list[0].stacktrace.frames;
+                    if (Array.isArray(firstFrames) && firstFrames.length === 0) {
+                        return null;
+                    }
+                }
+                return captureResult;
+            }
+        });
+        
+        posthog.register({environment: "production"});
+    </script>
+
+    
+    
+
+    
+    
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/6245ca292abe5b455fc2c291/1fvg9rd9d';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','anonymous');
+        s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    
+
+    
+    
+
+    
+    
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased min-h-screen flex flex-col">
+    
+    
+    
+    <nav class="sticky top-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <a href="/" class="flex items-center gap-3 group">
+                    <img src="/static/renavon_logo.png" alt="" class="h-9 w-9 rounded-lg">
+                    <span class="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">Renavon</span>
+                </a>
+
+                
+                <div class="hidden md:flex items-center gap-1">
+                    <a href="/datasets" class="text-gray-300 hover:text-cyan-400 font-medium transition-colors px-3 py-2 text-sm">Datasets</a>
+                    <a href="/packages/" class="text-gray-300 hover:text-cyan-400 font-medium transition-colors px-3 py-2 text-sm">Pricing</a>
+                    <a href="/connect" class="text-gray-300 hover:text-cyan-400 font-medium transition-colors px-3 py-2 text-sm">Use with AI</a>
+                    <a href="/faq" class="text-gray-300 hover:text-cyan-400 font-medium transition-colors px-3 py-2 text-sm">Docs</a>
+                </div>
+
+                
+                <div class="flex items-center gap-4">
+                    
+                        <a href="/auth/login" class="hidden md:inline text-gray-300 hover:text-white font-medium transition-colors text-sm">Sign In</a>
+                        <a href="/auth/login" class="bg-grad-cyan hover:bg-grad-cyan-bright text-gray-950 font-semibold px-4 py-2 rounded-lg shadow-cta-cyan hover:shadow-glow-cyan-strong transition-all text-sm">
+                            Get Started →
+                        </a>
+                    
+                </div>
+
+                
+                <button type="button" aria-label="Toggle navigation menu" aria-controls="mobile-menu" aria-expanded="false" class="md:hidden text-gray-400 hover:text-white" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+
+            
+            <div id="mobile-menu" class="hidden md:hidden pb-4">
+                <div class="flex flex-col gap-2">
+                    <a href="/datasets" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-gray-800/50 transition-colors">Datasets</a>
+                    <a href="/packages/" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-gray-800/50 transition-colors">Pricing</a>
+                    <a href="/connect" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-gray-800/50 transition-colors">Use with AI</a>
+                    <a href="/faq" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-gray-800/50 transition-colors">Docs</a>
+                    
+                        <div class="border-t border-gray-800/50 my-2"></div>
+                        <a href="/auth/login" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-gray-800/50 transition-colors">Sign In</a>
+                        <a href="/auth/login" class="text-cyan-400 hover:text-cyan-300 px-3 py-2 rounded-lg hover:bg-gray-800/50 font-medium transition-colors">Get Started</a>
+                    
+                    
+                </div>
+            </div>
+        </div>
+    <script>
+    (function() {
+        var menu = document.getElementById('mobile-menu');
+        if (!menu) return;
+        var toggle = document.querySelector('button[aria-controls="mobile-menu"]');
+        // aria-expanded was a static "false" that nothing ever wrote to, so a
+        // screen reader was told the menu was collapsed while it was open.
+        // Re-derive it from the menu's real state after every path that can
+        // change it: the button toggle, a link click, Escape, outside click.
+        function syncExpanded() {
+            if (toggle) {
+                toggle.setAttribute('aria-expanded', menu.classList.contains('hidden') ? 'false' : 'true');
+            }
+        }
+        function closeMenu() {
+            menu.classList.add('hidden');
+            syncExpanded();
+        }
+        // The button's inline onclick is registered first (it is an attribute
+        // handler), so by the time this listener runs the class has already
+        // been toggled and syncExpanded reads the post-toggle state.
+        if (toggle) toggle.addEventListener('click', syncExpanded);
+        menu.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', closeMenu);
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeMenu();
+        });
+        document.addEventListener('click', function(e) {
+            if (!menu.contains(e.target) && !e.target.closest('button[onclick]')) {
+                closeMenu();
+            }
+        });
+    })();
+    </script>
+    </nav>
+    
+    
+
+    
+    <main class="flex-grow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+            
+            
+                
+            
+            
+
+<nav class="mb-6" aria-label="Breadcrumb">
+    <ol class="flex flex-wrap items-center gap-2 text-sm">
+        <li><a href="/" class="text-gray-400 hover:text-cyan-400 transition-colors">Home</a></li>
+        <li class="text-gray-600">/</li>
+        <li><a href="/datasets" class="text-gray-400 hover:text-cyan-400 transition-colors">Datasets</a></li>
+        <li class="text-gray-600">/</li>
+        <li class="text-gray-300">hk_streets</li>
+    </ol>
+</nav>
+
+
+<div class="flex flex-wrap items-center gap-3 mb-3">
+    <div class="flex items-baseline">
+        <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">hk_streets</h1>
+    </div>
+    <span class="pill pill-free">
+        FREE
+    </span>
+    
+    <span class="pill pill-neutral">4,584 rows</span>
+    
+</div>
+
+<p class="text-lg text-cyan-300 mb-6 max-w-3xl">Hong Kong bilingual street name directory by district</p>
+
+
+
+
+<p class="mb-6 text-sm">
+    <a href="https://crescira.com/data/govhk/hk_streets" class="text-cyan-400 hover:text-cyan-300 underline-offset-4 hover:underline" data-site-page-link>Also on crescira.com &rarr;</a>
+</p>
+
+
+
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+    
+    
+        <a href="/data/govhk/hk_streets/download/csv" class="action-tile">
+            <div class="flex items-start justify-between">
+                <span class="action-tile-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+                </span>
+                <span class="font-mono text-xs uppercase tracking-wider text-gray-500">No-code</span>
+            </div>
+            <p class="text-white font-semibold text-base">Download a file</p>
+            <p class="text-gray-400 text-sm">The complete dataset. No account needed.</p>
+            <span class="text-cyan-400 text-sm font-medium inline-flex items-center gap-1 mt-1">
+                Download full CSV <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </span>
+        </a>
+    
+
+    
+    <a href="/connect" class="action-tile">
+        <div class="flex items-start justify-between">
+            <span class="action-tile-icon">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+            </span>
+            <span class="font-mono text-xs uppercase tracking-wider text-gray-500">For engineers</span>
+        </div>
+        <p class="text-white font-semibold text-base">Query with SQL</p>
+        <p class="text-gray-400 text-sm">DBeaver, DuckDB, MotherDuck, or HTTPS. Sub-second latency.</p>
+        <span class="text-cyan-400 text-sm font-medium inline-flex items-center gap-1 mt-1">
+            Open connection details <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </span>
+    </a>
+
+    
+    <a href="/connect#ai" class="action-tile gold">
+        <div class="flex items-start justify-between">
+            <span class="action-tile-icon">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2l1.5 5.5L19 9l-5.5 1.5L12 16l-1.5-5.5L5 9l5.5-1.5L12 2zM19 14l.7 2.3L22 17l-2.3.7L19 20l-.7-2.3L16 17l2.3-.7L19 14z"/></svg>
+            </span>
+            <span class="font-mono text-xs uppercase tracking-wider text-gray-500">Agent builders</span>
+        </div>
+        <p class="text-white font-semibold text-base">Connect to AI</p>
+        <p class="text-gray-400 text-sm">MCP for Claude Desktop, Cursor, ChatGPT, Goose. 1-line install.</p>
+        <span class="text-gold-400 text-sm font-medium inline-flex items-center gap-1 mt-1">
+            See setup <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </span>
+    </a>
+</div>
+
+
+<div class="bg-gray-900/50 border border-gray-800/50 rounded-xl overflow-hidden mb-8">
+    <div class="p-6 md:p-8">
+        
+        <div class="mb-8">
+            <p class="text-gray-300 leading-relaxed">Bilingual directory of Hong Kong street names organized by district. Search streets in English or Chinese with automatic street type classification (Road, Street, Avenue, Lane, etc.). Useful for address validation, geographic analysis, and location-based research.
+</p>
+        </div>
+
+        
+        
+            
+
+
+
+
+<div class="mb-8 p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-xl flex items-center justify-between gap-4 flex-wrap">
+    <div class="flex items-center gap-3">
+        <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+        <div>
+            <span class="text-cyan-300 font-medium">Free dataset</span>
+            <p class="text-cyan-400/70 text-sm">The complete dataset is free to download below. No account needed.</p>
+        </div>
+    </div>
+    <a href="/auth/login?next=/data/govhk/hk_streets" class="inline-flex items-center gap-1.5 border border-cyan-500/40 hover:bg-cyan-500/10 text-cyan-400 font-semibold px-4 py-2 rounded-lg text-sm transition-colors whitespace-nowrap"
+       data-dataset="hk_streets"
+       onclick="typeof posthog!=='undefined'&&posthog.capture('cta_clicked',{cta:'register_from_dataset',page:'dataset_detail',dataset:this.dataset.dataset})">
+        Create a free account for SQL and the API
+    </a>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div class="mb-8">
+    <h2 class="text-lg font-semibold text-white mb-4">The evidence</h2>
+
+    
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        
+        <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
+            <div class="text-sm text-gray-400 mb-1">Data coverage</div>
+            <div class="text-base font-semibold text-white">Aug 2023 – May 2024</div>
+            
+            
+        </div>
+        
+        
+        <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
+            <div class="text-sm text-gray-400 mb-1">Volume</div>
+            <div class="text-base font-mono font-semibold text-white">4,584 rows</div>
+        </div>
+        
+        
+        <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
+            <div class="text-sm text-gray-400 mb-1">Last refreshed</div>
+            <div class="text-base font-semibold text-gold-400">24 May, 2024 (2 years ago)</div>
+        </div>
+        
+        
+        <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
+            <div class="text-sm text-gray-400 mb-1">Data through</div>
+            <div class="text-base font-semibold text-white">24 May, 2024 (2 years ago)</div>
+        </div>
+        
+    </div>
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    <details class="faq-item" open>
+        <summary>
+            <span class="text-sm font-semibold text-white">Schema &amp; column quality <span class="text-gray-500 font-normal">(7 columns)</span></span>
+        </summary>
+        <p class="md:hidden text-sm text-gray-500 mt-3 mb-1">Scroll table sideways to see more columns &rarr;</p>
+        <div class="overflow-x-auto mt-3 md:mt-0">
+            <table class="min-w-full text-sm">
+                <thead>
+                    <tr class="border-b border-gray-800 text-left text-xs font-semibold text-cyan-400 uppercase tracking-wider">
+                        <th class="px-4 py-3">Column</th>
+                        <th class="px-4 py-3">Type</th>
+                        <th class="px-4 py-3">Description</th>
+                        <th class="px-4 py-3 text-right">Populated</th>
+                        <th class="px-4 py-3 text-right">Distinct</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800/50">
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">district</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">String</td>
+                        <td class="px-4 py-3 text-gray-400">Hong Kong district name</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">name_english</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">String</td>
+                        <td class="px-4 py-3 text-gray-400">Street name in English</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">name_chinese</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">String</td>
+                        <td class="px-4 py-3 text-gray-400">Street name in Chinese</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">street_type</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">String</td>
+                        <td class="px-4 py-3 text-gray-400">Street type classification: Road, Street, Avenue, Lane, Path, Terrace, Drive, Square, Circuit, Other</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">source_url</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">String</td>
+                        <td class="px-4 py-3 text-gray-400">Source URL for the street data</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">updated_at</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">DateTime64(3)</td>
+                        <td class="px-4 py-3 text-gray-400">Timestamp when record was last updated</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">id</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">String</td>
+                        <td class="px-4 py-3 text-gray-400">Stable unique identifier for this row — the last column of every export. Use it to deduplicate, to key an incremental load, or to reference one specific row. It is additive: the entity and join keys you already use (race_id, horse_id, and the like) are unchanged.</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </details>
+    
+</div>
+
+
+
+<div class="mb-8">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+        <h2 class="text-lg font-semibold text-white">Full data</h2>
+        <div class="flex gap-2">
+            <a href="/data/govhk/hk_streets/download/csv"
+               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-cyan-400 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                CSV
+            </a>
+            <a href="/data/govhk/hk_streets/download/excel"
+               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-emerald-400 border border-emerald-500/30 rounded-lg hover:bg-emerald-500/10 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Excel
+            </a>
+        </div>
+    </div>
+    
+    <p class="text-sm text-gray-400 mb-4">Full Hong Kong street directory, no row cap. Reference dataset shipped in its entirety.</p>
+    
+    
+        
+<div class="terminal-card">
+    
+    <div class="terminal-head">
+        <div class="terminal-dots"><span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span></div>
+        <span class="terminal-sql">SELECT * FROM renavon_exports.hk_streets LIMIT 50</span>
+        <span class="terminal-lat">0.02s</span>
+    </div>
+    <div id="data-grid" class="w-full"
+         data-grid-url="/data/govhk/hk_streets/sample.json"
+         data-grid-mode="sample"
+         data-dataset="hk_streets"></div>
+
+    
+    
+    
+    <noscript>
+        <div class="overflow-x-auto" role="region" aria-label="Sample data table">
+            <table class="w-full data-table">
+                <thead>
+                    <tr>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">district</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">name_english</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">name_chinese</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">street_type</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">source_url</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">updated_at</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">id</th>
+                        
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800/50">
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">ABERDEEN STREET</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">鴨巴甸街</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Street</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1b3688866ad234e6220391bcf08dd517</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">ALBANY ROAD</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">雅賓利道</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Road</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">95d8268a4c3cd8ca48bec9ed3b5023d2</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">ALBERT PATH</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">亞厘畢里</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Path</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">d2efb4c906efdb9eda43acabbff6a003</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">ALGAR COURT</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">亞厘架巷</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Other</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">b5bf4b2372be5aed5dc1c4c77c5df7ff</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">ARBUTHNOT ROAD</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">亞畢諾道</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Road</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">9fada6e9fea6de753a4c199459cfdb80</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BABINGTON PATH</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">巴丙頓道</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Path</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">9579d43441848598325085ab508f0694</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BANK STREET</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">銀行街</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Street</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">dc5995fc6ba51a1d4e5ea8edce9361c6</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BARKER ROAD</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">白加道</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Road</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">7ca532622a475ca2b7f2fdf0c3955ef4</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BATTERY PATH</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">炮台里</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Path</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">81b0c99f26b6ca89f9f5b3005be189ed</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BELCHER&#39;S STREET</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">卑路乍街</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Street</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">71ccabe47a6c2cc6382441d494726b50</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BLUFF PATH</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">百祿徑</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Path</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">09315c1f2e18f28f6ace9976c309edce</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BONHAM ROAD</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">般咸道</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Road</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">862fb38903dd12bea4f29bb794e9af41</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BONHAM STRAND</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">文咸東街</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Other</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">97fd414b0b7251efa1a495ec60b0cbc7</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BONHAM STRAND WEST</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">文咸西街</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Other</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">fb883d673b1b50615eedef053536fcac</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BORRETT ROAD</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">波老道</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Road</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2cde95b6151741fe1fa8fea126f687e6</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BREEZY PATH</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">卑利士道</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Path</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">a2b17bc4893e7ed79c56465086b92c5b</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BREWIN PATH</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">蒲魯賢徑</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Path</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">a6afc0051902b73789d05641b547afcb</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BRIDGES STREET</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">必列者士街</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Street</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">ae28aac8037224c0cb79585289a5fc9e</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">BURD STREET</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">畢街</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Street</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">a81c0e5b9bb2912e8c2b0142747142c1</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CADOGAN STREET</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">加多近街</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Street</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1b9ef0726936e90afed093036ec1f8bf</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CAINE LANE</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">堅巷</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Lane</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">195384aa04a89c8d45816d9d1720659b</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CAINE ROAD</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">堅道</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Road</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">da02c947be12b1dfd0b101f857eb509b</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CALDER PATH</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">歌老打路</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Path</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">70705ec2ded1135a26f98002c39dee22</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CASTLE LANE</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">衞城里</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Lane</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">168b22762f68bf806e52154db2db7be3</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">C&amp;W</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CASTLE ROAD</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">衞城道</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Road</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.landsd.gov.hk/landsd_psi_data/SMO/data/PSI_Street%20Name_20230630.xml</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2024-05-24 22:05:06.356000</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2ac8d15bf6547fdcca2cbffb1ddf1457</td>
+                        
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        <p class="mt-3 text-sm text-gray-400">
+            Showing the first 25 rows.
+            <a href="/data/govhk/hk_streets/download/csv"
+               class="text-cyan-400 hover:text-cyan-300 underline transition-colors">Download the full sample as CSV</a>
+            for the rest.
+        </p>
+    </noscript>
+    
+
+    
+    <div class="px-4 py-3 bg-gray-800/50 border-t border-gray-700/50 text-sm text-gray-400 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span id="grid-status" role="status" aria-live="polite" aria-atomic="true">Loading data&hellip;</span>
+        <span class="text-gray-600">|</span>
+        <span class="text-gray-500">Click a header to sort; drag headers to reorder.</span>
+    </div>
+</div>
+    
+
+    
+    
+        
+            
+<div class="mt-4 p-4 rounded-lg border border-gray-700/60 bg-gray-800/40" id="sample-email-capture">
+    <form hx-post="/data/govhk/hk_streets/sample-email"
+          hx-target="#sample-email-capture"
+          hx-swap="outerHTML"
+          class="flex flex-col sm:flex-row sm:items-center gap-3">
+        <input type="hidden" name="csrf_token" value="Ijc5ODdhMTAwODM1MDk2MGU4YTliZDFjYjIyYjk2M2ZkYThiMjc0ODgi.auZzXQ.vgO-CCnMpbNYps4r9EyEnU59y6M"/>
+        <label for="sample-email-input" class="text-sm text-gray-300 sm:flex-1">
+            Want the sample and data dictionary emailed to you?
+        </label>
+        
+        <input type="text" name="website" tabindex="-1" autocomplete="off"
+               class="hidden" aria-hidden="true">
+        <div class="flex gap-2">
+            <input id="sample-email-input" type="email" name="email" required
+                   placeholder="you@company.com"
+                   class="px-3 py-1.5 text-sm rounded-lg bg-gray-900 border border-gray-600 text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none">
+            <button type="submit"
+                    class="px-3 py-1.5 text-sm font-medium text-cyan-400 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 transition-colors whitespace-nowrap">
+                Email it to me
+            </button>
+        </div>
+    </form>
+    
+</div>
+        
+    
+</div>
+
+
+
+        
+
+        
+        <div class="p-6 bg-gray-800/30 border border-gray-700/50 rounded-xl text-center mb-8">
+            <p class="text-gray-400 text-sm mb-3">Get notified when this dataset is updated.</p>
+            <form action="/newsletter" method="POST" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                <input type="hidden" name="csrf_token" value="Ijc5ODdhMTAwODM1MDk2MGU4YTliZDFjYjIyYjk2M2ZkYThiMjc0ODgi.auZzXQ.vgO-CCnMpbNYps4r9EyEnU59y6M"/>
+                <input type="hidden" name="source" value="dataset_hk_streets"/>
+                <input type="email" name="email" required placeholder="your@email.com"
+                       class="flex-grow bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 transition-all">
+                <button type="submit" class="bg-gray-700 hover:bg-gray-600 text-white font-medium px-6 py-3 rounded-lg transition-all whitespace-nowrap"
+                        onclick="typeof posthog!=='undefined'&&posthog.capture('cta_clicked',{cta:'newsletter_signup',page:'dataset_detail',dataset:'hk_streets'})">
+                    Notify Me
+                </button>
+            </form>
+        </div>
+
+        
+        <div class="p-6 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-center">
+            <h4 class="text-xl font-bold text-white mb-2">Questions about this data?</h4>
+            <p class="text-cyan-300/80 mb-4">Our data experts are ready to help clarify any aspects of this dataset.</p>
+            <a href="/contact"
+               class="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-gray-950 font-semibold px-6 py-3 rounded-lg shadow-lg shadow-cyan-500/20 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                Contact Our Team
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+        </div>
+    </main>
+
+    
+    
+    
+    <footer class="bg-gray-900/50 border-t border-gray-800/50 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-8 mb-8">
+                
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="/static/renavon_logo.png" alt="" class="h-8 w-8 rounded-lg">
+                        <span class="text-lg font-bold text-white">Renavon</span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed max-w-xs">Structured Hong Kong data &mdash; racing, equities, registry, government &mdash; cleaned and delivered.</p>
+                </div>
+
+                
+                <div>
+                    <p class="text-white font-semibold mb-4 text-xs uppercase tracking-wider">Product</p>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/datasets" class="text-gray-400 hover:text-cyan-400 transition-colors">Datasets</a></li>
+                        <li><a href="/packages/" class="text-gray-400 hover:text-cyan-400 transition-colors">Pricing</a></li>
+                        <li><a href="/connect" class="text-gray-400 hover:text-cyan-400 transition-colors">Use with AI (MCP)</a></li>
+                    </ul>
+                </div>
+
+                
+                
+                <div>
+                    <p class="text-white font-semibold mb-4 text-xs uppercase tracking-wider">Popular Data</p>
+                    <ul class="space-y-2 text-sm">
+                        
+                        <li><a href="/data/hong-kong-horse-racing-results" class="text-gray-400 hover:text-cyan-400 transition-colors">HK Horse Racing Results</a></li>
+                        
+                        <li><a href="/data/hong-kong-horse-racing-odds" class="text-gray-400 hover:text-cyan-400 transition-colors">HK Horse Racing Odds</a></li>
+                        
+                        <li><a href="/data/hong-kong-company-data" class="text-gray-400 hover:text-cyan-400 transition-colors">HK Company Data</a></li>
+                        
+                        <li><a href="/data/hong-kong-director-dealings" class="text-gray-400 hover:text-cyan-400 transition-colors">HK Director Dealings</a></li>
+                        
+                        <li><a href="/data/sfc-licensed-persons" class="text-gray-400 hover:text-cyan-400 transition-colors">SFC Licensed Persons</a></li>
+                        
+                    </ul>
+                </div>
+                
+
+                
+                <div>
+                    <p class="text-white font-semibold mb-4 text-xs uppercase tracking-wider">Resources</p>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/faq" class="text-gray-400 hover:text-cyan-400 transition-colors">Docs &amp; FAQ</a></li>
+                        
+                        <li><a href="/blog/" class="text-gray-400 hover:text-cyan-400 transition-colors">Blog</a></li>
+                        <li><a href="/contact" class="text-gray-400 hover:text-cyan-400 transition-colors">Support</a></li>
+                    </ul>
+                </div>
+
+                
+                <div>
+                    <p class="text-white font-semibold mb-4 text-xs uppercase tracking-wider">Company</p>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/about" class="text-gray-400 hover:text-cyan-400 transition-colors">About</a></li>
+                        <li><a href="/contact" class="text-gray-400 hover:text-cyan-400 transition-colors">Contact</a></li>
+                        <li><a href="/terms" class="text-gray-400 hover:text-cyan-400 transition-colors">Terms</a></li>
+                        <li><a href="/privacy" class="text-gray-400 hover:text-cyan-400 transition-colors">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            <div class="border-t border-gray-800/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-400 text-sm">&copy; 2026 Data Guru LLC &middot; Primary-source data &middot; No affiliation with HKJC, HKEX, or HKSAR Government</p>
+                <div class="flex items-center gap-4">
+                    <a href="https://linkedin.com/company/renavon" class="text-gray-400 hover:text-cyan-400 transition-colors" aria-label="LinkedIn">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                        </svg>
+                    </a>
+                    <a href="mailto:contact@renavon.com" class="text-gray-400 hover:text-cyan-400 transition-colors" aria-label="Email">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    
+
+    
+    
+
+<link rel="stylesheet" href="/static/js/data-grid.css">
+<script type="module" src="/static/js/data-grid.js"></script>
+
+
+
+
+</body>
+</html>

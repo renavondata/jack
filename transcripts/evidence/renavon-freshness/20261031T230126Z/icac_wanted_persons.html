@@ -1,0 +1,1955 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    
+    <meta name="csrf-token" content="IjI0Y2IwMjA2NDdmMzljZWUxMjFjM2NjODY0ZDQyNjVjZWVhOTc4MmMi.auZzYw.9KUgoqHbVBW9QFbv3VDP8gnOLwA">
+
+    
+    <title>icac_wanted_persons - Hong Kong ICAC wanted persons list | Renavon</title>
+
+    
+    <meta name="description" content="Hong Kong ICAC wanted persons list. 57 rows. Query via SQL, download files (CSV and Parquet), or use the API.">
+
+    
+    <meta name="keywords" content="icac_wanted_persons, Hong Kong ICAC wanted persons list, , [, &#34;, g, o, v, e, r, n, m, e, n, t, &#34;, ,,  , &#34;, i, c, a, c, &#34;, ,,  , &#34;, c, r, i, m, e, &#34;, ,,  , &#34;, l, a, w, -, e, n, f, o, r, c, e, m, e, n, t, &#34;, ], Hong Kong data">
+
+    
+    <meta name="robots" content="index, follow">
+
+    
+    
+    <link rel="canonical" href="https://renavon.com/data/icac/icac_wanted_persons">
+    
+
+    
+    <link rel="alternate" type="application/atom+xml" title="Renavon Blog" href="/blog/feed.xml">
+
+    
+    <meta property="og:type" content="product">
+    <meta property="og:title" content="icac_wanted_persons - Hong Kong ICAC wanted persons list">
+    <meta property="og:description" content="Public list of persons wanted by Hong Kong&#39;s Independent Commission Against Corruption (ICAC). This data is freely available on the ICAC website and is provided here for research and public interest p...">
+    <meta property="og:url" content="https://renavon.com/data/icac/icac_wanted_persons">
+    <meta property="og:site_name" content="Renavon">
+    <meta property="og:image" content="https://renavon.com/static/renavon_logo.png">
+    <meta property="og:locale" content="en_US">
+
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="icac_wanted_persons - Hong Kong ICAC wanted persons list | Renavon">
+    <meta name="twitter:description" content="Hong Kong ICAC wanted persons list. 57 rows. Query via SQL, download files (CSV and Parquet), or use the API.">
+    <meta name="twitter:image" content="https://renavon.com/static/renavon_logo.png">
+
+    
+    <link rel="shortcut icon" href="/static/favicon.ico">
+
+    
+    
+    
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://renavon.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Datasets", "item": "https://renavon.com/datasets"},
+    {"@type": "ListItem", "position": 3, "name": "icac_wanted_persons", "item": "https://renavon.com/data/icac/icac_wanted_persons"}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "icac_wanted_persons",
+    "description": "Public list of persons wanted by Hong Kong&#39;s Independent Commission Against Corruption (ICAC). This data is freely available on the ICAC website and is provided here for research and public interest purposes.
+",
+    "creator": {"@type": "Organization", "name": "icac"},
+    "publisher": {"@type": "Organization", "name": "Renavon", "url": "https://renavon.com/"},
+    "isAccessibleForFree": true,
+    "spatialCoverage": "Hong Kong"
+    
+    ,
+    "dateModified": "2026-10-31T22:01:24+00:00"
+    
+    ,
+    "distribution": {
+        "@type": "DataDownload",
+        "encodingFormat": "text/csv",
+        "contentUrl": "https://renavon.com/data/icac/icac_wanted_persons/download/csv"
+    },
+    "variableMeasured": ["wantedperson_id", "name", "alias", "charges", "case_brief", "gender", "year_of_birth", "age", "place_of_birth", "nationality", "height", "hk_id_card", "passport_no", "photo_url", "source_url", "updated_at", "id"]
+    
+}
+</script>
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "What data is in icac_wanted_persons?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Public list of persons wanted by Hong Kong\u0027s Independent Commission Against Corruption (ICAC). This data is freely available on the ICAC website and is provided here for research and public interest purposes.\n"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How can I access icac_wanted_persons?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can query this dataset via SQL using the REST API, download files (CSV and Parquet), or access programmatically with your API key."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How much data does icac_wanted_persons contain?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "icac_wanted_persons contains 57 rows across 17 columns."
+            }
+        }
+    ]
+}
+</script>
+
+    
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    
+    <link href="/static/css/main.css" rel="stylesheet">
+
+    
+    <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+
+    
+    
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer crossorigin="anonymous"></script>
+    
+
+    
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_1HRPWj8xOz5e1q7iGMicuo3qhK2MsLTN7BOPi3CIKwy', {
+            api_host: 'https://us.i.posthog.com',
+            capture_pageview: true,
+            capture_pageleave: true,
+            autocapture: true,
+            session_recording: {
+                recordCrossOriginIframes: false
+            },
+            enable_heatmaps: true,
+            capture_exceptions: true,
+            // Drop third-party noise from the $exception signal so real
+            // errors in our own JS are visible. Sources dominating the
+            // raw signal: (1) the embedded Tawk.to chat widget fails
+            // during init with TypeError, (2) cross-origin scripts
+            // without CORS headers surface as opaque "Script error."
+            // with no stack, (3) browser extensions do JSON.parse('')
+            // at injection time — surface as SyntaxError with an empty
+            // stack frame array. All three hide the few real errors.
+            before_send: function (captureResult) {
+                if (captureResult && captureResult.event === '$exception') {
+                    var props = captureResult.properties || {};
+                    var list = props['$exception_list'] || [];
+                    var listStr = list.length ? JSON.stringify(list) : '';
+                    if (listStr.indexOf('embed.tawk.to') !== -1) {
+                        return null;
+                    }
+                    var values = props['$exception_values'];
+                    if (Array.isArray(values) && values.length === 1 && values[0] === 'Script error.') {
+                        return null;
+                    }
+                    // Empty stacktrace frames = attacker can't debug it,
+                    // neither can we. Almost always extension noise.
+                    var firstFrames = list[0] && list[0].stacktrace && list[0].stacktrace.frames;
+                    if (Array.isArray(firstFrames) && firstFrames.length === 0) {
+                        return null;
+                    }
+                }
+                return captureResult;
+            }
+        });
+        
+        posthog.register({environment: "production"});
+    </script>
+
+    
+    
+
+    
+    
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/6245ca292abe5b455fc2c291/1fvg9rd9d';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','anonymous');
+        s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    
+
+    
+    
+
+    
+    
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased min-h-screen flex flex-col">
+    
+    
+    
+    <nav class="sticky top-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <a href="/" class="flex items-center gap-3 group">
+                    <img src="/static/renavon_logo.png" alt="" class="h-9 w-9 rounded-lg">
+                    <span class="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">Renavon</span>
+                </a>
+
+                
+                <div class="hidden md:flex items-center gap-1">
+                    <a href="/datasets" class="text-gray-300 hover:text-cyan-400 font-medium transition-colors px-3 py-2 text-sm">Datasets</a>
+                    <a href="/packages/" class="text-gray-300 hover:text-cyan-400 font-medium transition-colors px-3 py-2 text-sm">Pricing</a>
+                    <a href="/connect" class="text-gray-300 hover:text-cyan-400 font-medium transition-colors px-3 py-2 text-sm">Use with AI</a>
+                    <a href="/faq" class="text-gray-300 hover:text-cyan-400 font-medium transition-colors px-3 py-2 text-sm">Docs</a>
+                </div>
+
+                
+                <div class="flex items-center gap-4">
+                    
+                        <a href="/auth/login" class="hidden md:inline text-gray-300 hover:text-white font-medium transition-colors text-sm">Sign In</a>
+                        <a href="/auth/login" class="bg-grad-cyan hover:bg-grad-cyan-bright text-gray-950 font-semibold px-4 py-2 rounded-lg shadow-cta-cyan hover:shadow-glow-cyan-strong transition-all text-sm">
+                            Get Started →
+                        </a>
+                    
+                </div>
+
+                
+                <button type="button" aria-label="Toggle navigation menu" aria-controls="mobile-menu" aria-expanded="false" class="md:hidden text-gray-400 hover:text-white" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+
+            
+            <div id="mobile-menu" class="hidden md:hidden pb-4">
+                <div class="flex flex-col gap-2">
+                    <a href="/datasets" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-gray-800/50 transition-colors">Datasets</a>
+                    <a href="/packages/" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-gray-800/50 transition-colors">Pricing</a>
+                    <a href="/connect" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-gray-800/50 transition-colors">Use with AI</a>
+                    <a href="/faq" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-gray-800/50 transition-colors">Docs</a>
+                    
+                        <div class="border-t border-gray-800/50 my-2"></div>
+                        <a href="/auth/login" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-gray-800/50 transition-colors">Sign In</a>
+                        <a href="/auth/login" class="text-cyan-400 hover:text-cyan-300 px-3 py-2 rounded-lg hover:bg-gray-800/50 font-medium transition-colors">Get Started</a>
+                    
+                    
+                </div>
+            </div>
+        </div>
+    <script>
+    (function() {
+        var menu = document.getElementById('mobile-menu');
+        if (!menu) return;
+        var toggle = document.querySelector('button[aria-controls="mobile-menu"]');
+        // aria-expanded was a static "false" that nothing ever wrote to, so a
+        // screen reader was told the menu was collapsed while it was open.
+        // Re-derive it from the menu's real state after every path that can
+        // change it: the button toggle, a link click, Escape, outside click.
+        function syncExpanded() {
+            if (toggle) {
+                toggle.setAttribute('aria-expanded', menu.classList.contains('hidden') ? 'false' : 'true');
+            }
+        }
+        function closeMenu() {
+            menu.classList.add('hidden');
+            syncExpanded();
+        }
+        // The button's inline onclick is registered first (it is an attribute
+        // handler), so by the time this listener runs the class has already
+        // been toggled and syncExpanded reads the post-toggle state.
+        if (toggle) toggle.addEventListener('click', syncExpanded);
+        menu.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', closeMenu);
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeMenu();
+        });
+        document.addEventListener('click', function(e) {
+            if (!menu.contains(e.target) && !e.target.closest('button[onclick]')) {
+                closeMenu();
+            }
+        });
+    })();
+    </script>
+    </nav>
+    
+    
+
+    
+    <main class="flex-grow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+            
+            
+                
+            
+            
+
+<nav class="mb-6" aria-label="Breadcrumb">
+    <ol class="flex flex-wrap items-center gap-2 text-sm">
+        <li><a href="/" class="text-gray-400 hover:text-cyan-400 transition-colors">Home</a></li>
+        <li class="text-gray-600">/</li>
+        <li><a href="/datasets" class="text-gray-400 hover:text-cyan-400 transition-colors">Datasets</a></li>
+        <li class="text-gray-600">/</li>
+        <li class="text-gray-300">icac_wanted_persons</li>
+    </ol>
+</nav>
+
+
+<div class="flex flex-wrap items-center gap-3 mb-3">
+    <div class="flex items-baseline">
+        <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">icac_wanted_persons</h1>
+    </div>
+    <span class="pill pill-free">
+        FREE
+    </span>
+    
+    <span class="pill pill-neutral">57 rows</span>
+    
+</div>
+
+<p class="text-lg text-cyan-300 mb-6 max-w-3xl">Hong Kong ICAC wanted persons list</p>
+
+
+
+
+<p class="mb-6 text-sm">
+    <a href="https://crhk.guru/data/icac/icac_wanted_persons" class="text-cyan-400 hover:text-cyan-300 underline-offset-4 hover:underline" data-site-page-link>Also on crhk.guru &rarr;</a>
+</p>
+
+
+
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+    
+    
+        <a href="/data/icac/icac_wanted_persons/download/csv" class="action-tile">
+            <div class="flex items-start justify-between">
+                <span class="action-tile-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+                </span>
+                <span class="font-mono text-xs uppercase tracking-wider text-gray-500">No-code</span>
+            </div>
+            <p class="text-white font-semibold text-base">Download a file</p>
+            <p class="text-gray-400 text-sm">The complete dataset. No account needed.</p>
+            <span class="text-cyan-400 text-sm font-medium inline-flex items-center gap-1 mt-1">
+                Download full CSV <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </span>
+        </a>
+    
+
+    
+    <a href="/connect" class="action-tile">
+        <div class="flex items-start justify-between">
+            <span class="action-tile-icon">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+            </span>
+            <span class="font-mono text-xs uppercase tracking-wider text-gray-500">For engineers</span>
+        </div>
+        <p class="text-white font-semibold text-base">Query with SQL</p>
+        <p class="text-gray-400 text-sm">DBeaver, DuckDB, MotherDuck, or HTTPS. Sub-second latency.</p>
+        <span class="text-cyan-400 text-sm font-medium inline-flex items-center gap-1 mt-1">
+            Open connection details <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </span>
+    </a>
+
+    
+    <a href="/connect#ai" class="action-tile gold">
+        <div class="flex items-start justify-between">
+            <span class="action-tile-icon">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2l1.5 5.5L19 9l-5.5 1.5L12 16l-1.5-5.5L5 9l5.5-1.5L12 2zM19 14l.7 2.3L22 17l-2.3.7L19 20l-.7-2.3L16 17l2.3-.7L19 14z"/></svg>
+            </span>
+            <span class="font-mono text-xs uppercase tracking-wider text-gray-500">Agent builders</span>
+        </div>
+        <p class="text-white font-semibold text-base">Connect to AI</p>
+        <p class="text-gray-400 text-sm">MCP for Claude Desktop, Cursor, ChatGPT, Goose. 1-line install.</p>
+        <span class="text-gold-400 text-sm font-medium inline-flex items-center gap-1 mt-1">
+            See setup <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </span>
+    </a>
+</div>
+
+
+<div class="bg-gray-900/50 border border-gray-800/50 rounded-xl overflow-hidden mb-8">
+    <div class="p-6 md:p-8">
+        
+        <div class="mb-8">
+            <p class="text-gray-300 leading-relaxed">Public list of persons wanted by Hong Kong&#39;s Independent Commission Against Corruption (ICAC). This data is freely available on the ICAC website and is provided here for research and public interest purposes.
+</p>
+        </div>
+
+        
+        
+            
+
+
+
+
+<div class="mb-8 p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-xl flex items-center justify-between gap-4 flex-wrap">
+    <div class="flex items-center gap-3">
+        <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+        <div>
+            <span class="text-cyan-300 font-medium">Free dataset</span>
+            <p class="text-cyan-400/70 text-sm">The complete dataset is free to download below. No account needed.</p>
+        </div>
+    </div>
+    <a href="/auth/login?next=/data/icac/icac_wanted_persons" class="inline-flex items-center gap-1.5 border border-cyan-500/40 hover:bg-cyan-500/10 text-cyan-400 font-semibold px-4 py-2 rounded-lg text-sm transition-colors whitespace-nowrap"
+       data-dataset="icac_wanted_persons"
+       onclick="typeof posthog!=='undefined'&&posthog.capture('cta_clicked',{cta:'register_from_dataset',page:'dataset_detail',dataset:this.dataset.dataset})">
+        Create a free account for SQL and the API
+    </a>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div class="mb-8">
+    <h2 class="text-lg font-semibold text-white mb-4">The evidence</h2>
+
+    
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        
+        <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
+            <div class="text-sm text-gray-400 mb-1">Data coverage</div>
+            <div class="text-base font-semibold text-white">Jun 2026 – Jun 2026</div>
+            
+            
+        </div>
+        
+        
+        <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
+            <div class="text-sm text-gray-400 mb-1">Volume</div>
+            <div class="text-base font-mono font-semibold text-white">57 rows</div>
+        </div>
+        
+        
+        <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
+            <div class="text-sm text-gray-400 mb-1">Last refreshed</div>
+            <div class="text-base font-semibold text-emerald-400">31 October, 2026 (1 hour ago)</div>
+        </div>
+        
+        
+        <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
+            <div class="text-sm text-gray-400 mb-1">Data through</div>
+            <div class="text-base font-semibold text-white">11 June, 2026 (4 months ago)</div>
+        </div>
+        
+    </div>
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    <details class="faq-item" open>
+        <summary>
+            <span class="text-sm font-semibold text-white">Schema &amp; column quality <span class="text-gray-500 font-normal">(17 columns)</span></span>
+        </summary>
+        <p class="md:hidden text-sm text-gray-500 mt-3 mb-1">Scroll table sideways to see more columns &rarr;</p>
+        <div class="overflow-x-auto mt-3 md:mt-0">
+            <table class="min-w-full text-sm">
+                <thead>
+                    <tr class="border-b border-gray-800 text-left text-xs font-semibold text-cyan-400 uppercase tracking-wider">
+                        <th class="px-4 py-3">Column</th>
+                        <th class="px-4 py-3">Type</th>
+                        <th class="px-4 py-3">Description</th>
+                        <th class="px-4 py-3 text-right">Populated</th>
+                        <th class="px-4 py-3 text-right">Distinct</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800/50">
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">wantedperson_id</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">String</td>
+                        <td class="px-4 py-3 text-gray-400">Unique identifier for the wanted person</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">name</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">String</td>
+                        <td class="px-4 py-3 text-gray-400">Person&#39;s name in English</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">alias</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(String)</td>
+                        <td class="px-4 py-3 text-gray-400">Known aliases or alternative names</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">charges</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(String)</td>
+                        <td class="px-4 py-3 text-gray-400">Criminal charges against the person</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">case_brief</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(String)</td>
+                        <td class="px-4 py-3 text-gray-400">Brief description of the case</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">gender</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(String)</td>
+                        <td class="px-4 py-3 text-gray-400">Gender (M/F)</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">year_of_birth</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(String)</td>
+                        <td class="px-4 py-3 text-gray-400">Year of birth</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">age</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(Int64)</td>
+                        <td class="px-4 py-3 text-gray-400">Age at time of data scrape</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">place_of_birth</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(String)</td>
+                        <td class="px-4 py-3 text-gray-400">Place of birth</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">nationality</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(String)</td>
+                        <td class="px-4 py-3 text-gray-400">Nationality</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">height</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(Float32)</td>
+                        <td class="px-4 py-3 text-gray-400">Height in meters</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">hk_id_card</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(String)</td>
+                        <td class="px-4 py-3 text-gray-400">Hong Kong ID card number (partial)</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">passport_no</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(String)</td>
+                        <td class="px-4 py-3 text-gray-400">Passport number (if known)</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">photo_url</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(String)</td>
+                        <td class="px-4 py-3 text-gray-400">URL to the person&#39;s photo</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">source_url</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">String</td>
+                        <td class="px-4 py-3 text-gray-400">Original ICAC page URL</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">updated_at</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">Nullable(DateTime)</td>
+                        <td class="px-4 py-3 text-gray-400">Timestamp when record was last updated</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr class="hover:bg-gray-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-medium text-white whitespace-nowrap">id</td>
+                        <td class="px-4 py-3 font-mono text-cyan-400/80 whitespace-nowrap">String</td>
+                        <td class="px-4 py-3 text-gray-400">Stable unique identifier for this row — the last column of every export. Use it to deduplicate, to key an incremental load, or to reference one specific row. It is additive: the entity and join keys you already use (race_id, horse_id, and the like) are unchanged.</td>
+                        <td class="px-4 py-3 text-right font-mono whitespace-nowrap text-gray-600">
+                            &mdash;
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">
+                            &mdash;
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </details>
+    
+</div>
+
+
+
+<div class="mb-8">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+        <h2 class="text-lg font-semibold text-white">Full data</h2>
+        <div class="flex gap-2">
+            <a href="/data/icac/icac_wanted_persons/download/csv"
+               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-cyan-400 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                CSV
+            </a>
+            <a href="/data/icac/icac_wanted_persons/download/excel"
+               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-emerald-400 border border-emerald-500/30 rounded-lg hover:bg-emerald-500/10 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Excel
+            </a>
+        </div>
+    </div>
+    
+    <p class="text-sm text-gray-400 mb-4">Full current list of persons wanted by Hong Kong&#39;s ICAC, no row cap. The dataset is small and freely public — shipped in entirety as the sample.</p>
+    
+    
+        
+<div class="terminal-card">
+    
+    <div class="terminal-head">
+        <div class="terminal-dots"><span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span></div>
+        <span class="terminal-sql">SELECT * FROM renavon_exports.icac_wanted_persons LIMIT 50</span>
+        <span class="terminal-lat">0.02s</span>
+    </div>
+    <div id="data-grid" class="w-full"
+         data-grid-url="/data/icac/icac_wanted_persons/sample.json"
+         data-grid-mode="sample"
+         data-dataset="icac_wanted_persons"></div>
+
+    
+    
+    
+    <noscript>
+        <div class="overflow-x-auto" role="region" aria-label="Sample data table">
+            <table class="w-full data-table">
+                <thead>
+                    <tr>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">wantedperson_id</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">name</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">alias</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">charges</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">case_brief</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">gender</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">year_of_birth</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">age</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">place_of_birth</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">nationality</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">height</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">hk_id_card</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">passport_no</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">photo_url</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">source_url</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">updated_at</th>
+                        
+                        <th class="px-4 py-3 text-left text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider whitespace-nowrap border-b border-gray-700/50">id</th>
+                        
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800/50">
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">07c8f872c73bd4e69703da1257f25c7f</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">NG Ho-lun</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">(1) Fraud (2) Conspiracy to make false instruments</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">NG Ho-lun is wanted on suspicion of having falsely represented to two insurers, namely Sun Life Hong Kong Limited and China Taiping Life Insurance (Hong Kong) Company Limited, between December 2016 and June 2024 about the insurance agents and policyholders on the insurance policies concerned to induce the two insurers to release payments of commissions, bonuses and allowances totalling about $3 million.  NG left Hong Kong in October 2025.  A warrant was issued by the Magistrates’ Court for his arrest.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1990</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">36</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Hong Kong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Y116XXX(X)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/78/NG%20Ho-lun.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_78.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">07c8f872c73bd4e69703da1257f25c7f</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">fc9728a965ff0fae0c65012e00e3f524</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">MA Zhonghong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Conspiracy to defraud Dealing with property known or believed to represent proceeds of an indicatable offence</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">MA is wanted on suspicion of (i) having conspired with a then chairman and a then substantial shareholder of a listed company to defraud by concealing a “backdoor listing” agreement; and (ii) together with another person dealing with crime proceeds of $42 million.  The alleged offences took place between July 2013 and November 2015.  On 25 October 2022, a warrant of arrest was issued by the District Court on MA when he failed to appear at court for mention.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1973</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">53</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Mainland</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">G374XXXXX</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/66/MA%20Zhonghong.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_66.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">fc9728a965ff0fae0c65012e00e3f524</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">15f6036231db2f8b2786b904d3025489</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">YAU Man-chun</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Illegal conduct to incite another person not to vote, or to cast invalid vote, by activity in public during election period</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">YAU Man-chun is wanted on suspicion of having engaged in illegal conduct at the 2021 Legislative Council General Election between 31 October 2021 and 29 November 2021, by carrying out an activity in public, namely displaying posts on a social media page, which incited other persons to cast blank votes and not to vote at the said election.  YAU left Hong Kong in July 2021.  A warrant was issued by the Magistrates’ Court for his arrest.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1982</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">44</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">China</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">P776xxx(x)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Unknown</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/59/YAU%20Man%20Chun.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_59.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">15f6036231db2f8b2786b904d3025489</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1752e8ec8dc2823b0d661fcacb5926b8</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">LAU Ka-man</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Illegal conduct to incite another person not to vote, or to cast invalid vote, by activity in public during election period</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">LAU Ka-man is wanted on suspicion of having engaged in illegal conduct at the 2021 Legislative Council General Election on 16 December 2021, by carrying out an activity in public, namely broadcasting a discussion with CHEUNG Kwan-yang Sunny, LEE Hin-long and LEE Ka-wai (the said three persons are also wanted by the ICAC), which incited other persons not to vote at the said election.  LAU left Hong Kong in July 2021.  A warrant was issued by the Magistrates’ Court for her arrest.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Female</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1995</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">31</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Hong Kong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Y432XXX(X)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/64/LAU%20Ka%20Man.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_64.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1752e8ec8dc2823b0d661fcacb5926b8</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">17536a0f681211e94a2b319dea61952d</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">KOVACS Zsolt Gergely</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Conspiracy for an agent to accept advantages</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">KOVACS Zsolt Gergely is wanted on suspicion of having conspired with GAJDOS Ladislav (also wanted by the ICAC), a then buying manager of Tesco Stores Limited, and a then sourcing manager of Tesco International Sourcing Limited to accept advantages from CHEN Jinqun (also wanted by the ICAC), the operator of Handwin Toys Industrial Co., Limited, for causing Tesco International Sourcing Limited to place toy orders with the latter.   The alleged offences took place between June 2010 and January 2020 involving bribe payments totaling over USD700,000.  KOVACS Zsolt Gergely left Hong Kong in October 2020 and failed to surrender to ICAC bail in November 2020.  A warrant was issued by the Magistrates’ Courts for his arrest.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1976</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">50</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Hungary</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Hungarian / British</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">M687XXX(X)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">5289XXXXX</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/69/KOVACS.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_69.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">17536a0f681211e94a2b319dea61952d</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">19f9626693780554e916314db08b2251</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">YAN Lizhong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Conspiracy for agents to accept advantages, contrary to S.9(1) of the Prevention of Bribery Ordinance and S.159A of the Crimes Ordinance</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">YAN Lizhong is wanted on suspicion of having conspired with HU Weida (also wanted by the ICAC), HR Manager of Zhongyi Hong Kong Limited, and others, between 23 November 2023 and 20 June 2024, to accept advantages consisting of about $6 million from various imported workers for securing and continuing their employment with a joint venture company.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1972</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">54</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">China</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">WX576XXX(X)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/76/Photograph%20of%20YAN%20Lizhong.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_76.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">19f9626693780554e916314db08b2251</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1ff83668f1df9c3816c2e73be29d3275</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">FU Zi-cong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Conspiracy to defraud</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">FU is wanted on conspiring with TAN Sim-chew (also wanted by the ICAC) and three other persons to defraud Benefun International Holdings Limited, its shareholders, potential investors and also the Stock Exchange of Hong Kong Limited by dishonestly making false representations in relation to an acquisition of a plantation business in Xinjiang, the Mainland. The consideration for the said plantation business was HK$500 million.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1957</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">69</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">China</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1659xxx</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/18/59_no%20photo%20-%20amend.JPG</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_18.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1ff83668f1df9c3816c2e73be29d3275</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">217a25c46a6eb4f37bee2b26e3a1266e</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHO Ming-sum, Raymond</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Conspiracy to live on earnings of prostitution Conspiracy to pervert the course of public justice</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">On February 4 2004, CHO was charged by the ICAC with one count of conspiracy to live on earnings of prostitution and one count of conspiracy to pervert the course of public justice. Since July 2004, he and four co-defendants had been standing trial in the District Court. On December 6 2004, CHO failed to appear in court for the verdict and the trial Judge issued a Warrant for his arrest. The trial continued in CHO&#39;s absence and on December 7 2004 he was found guilty in his absence and sentenced to 34 months&#39; imprisonment.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1970</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">56</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Hong Kong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1.7799999713897705</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">G447xxx(x)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/38/CHO%20Raymond.JPG</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_38.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">217a25c46a6eb4f37bee2b26e3a1266e</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">25f0fa4a27de555be11d77eec4f29285</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">QIU Xiaoming</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Conspiracy for an agent to accept advantages</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">QIU, Proprietor of Fortune International (HK) Limited, is wanted for failing to attend hearing at District Court for an offence of conspiracy for an agent to accept advantages.  QIU and an employee of Fotorama (Hong Kong) Limited, was alleged of conspiring together and with a middleman, for the said employee to accept advantages for placing orders of Fotorama (Hong Kong) Limited with Fortune International (HK) Limited.  QIU was charged in November 2017, with two counts of conspiracy for an agent to accept advantages.  On 13 March 2018, a warrant of arrest was issued by the Judge on QIU when he failed to appear at court for mention.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1969</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">57</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">China</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">G515xxxxx</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/57/QIU_2.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_57.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">25f0fa4a27de555be11d77eec4f29285</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">268b144f17b8101421cd6739e3c4a58b</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">JIWATUWINAN Witthaya</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHAN Kai-cheung</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CONSPIRACY TO DEFRAUD</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">JIWATUWINAN is wanted on suspicion of having corruptly conspired with LI Rui-hua, an Assistant General Manager of Guangnan. (Holdings) Ltd.(Guangnan) (also wanted by the ICAC) and others to defraud Guangnan. Between 1997 and 1998, JIWATUWINAN and the conspirators applied and utilized Letters of Credit facilities from various banks by providing false supporting documents without genuine underlying commercial transactions. The alleged fraud caused Guangnan to suffer liabilities to a total amount of HK$430 million.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1955</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">71</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Bangkok, Thailand</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Thai</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">P404xxx(x)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/35/11652photo.gif</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_35.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">268b144f17b8101421cd6739e3c4a58b</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">32bf8072beef3c9bc8c206275724aef0</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">LEE Yiu-man</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">LEE Yiu; Yiu Chai; Ah Man</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CONSPIRACY TO MURDER CONSPIRACY TO PERVERT THE COURSE OF PUBLIC JUSTICE</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">LEE is wanted on suspicion of having conspired with CHENG Wui-yiu, CHENG Hing (wanted by the ICAC) and two others to influence an ICAC witness into refraining from assisting ICAC in a corruption investigation and to murder the witness. The witness, CHUI To-yan, Tommy, who had offered valuable information to assist ICAC in investigating the corrupt activities of a cigarette smuggling syndicate, was murdered in Singapore in March 1995.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1965</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">61</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Hong Kong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese /</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">G117xxx(x)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/31/11654photo.gif</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_31.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">32bf8072beef3c9bc8c206275724aef0</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">3322991af621e48b303e200703afaa06</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">TONG Wai-hung</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Illegal conduct to incite another person not to vote, or to cast invalid vote, by activity in public during election period</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">TONG Wai-hung is wanted on suspicion of having engaged in illegal conduct at the 2025 Legislative Council General election between 24 October 2025 and 19 November 2025, by carrying out an activity in public, namely displaying on his social media pages, which incited other persons not to vote at the said election.  TONG left Hong Kong.  A warrant was issued by the Magistrates’ Court for his arrest.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1981</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">45</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Hong Kong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Z461XXX(X)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/80/Photo_TONG%20Wai%20Hung_revised.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_80.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">3322991af621e48b303e200703afaa06</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">34f4b1c729cc6d2d326c1ca3723af002</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHE Hanshu</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Conspiracy to defraud</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHE Hanshu and ZHANG Yaohui, both former Executive Directors of Neo-China Group (Holdings) Limited (NCG), are wanted by the ICAC on suspicion of conspiring with LI Songxiao, former Chairman of NCG, to make various fraudulent property transactions between NCG and some BVI companies, for the purposes of artificially inflating the profit and assets of NCG. This caused false representations to be made in the public announcements, circulars and annual reports of NCG between 2003 and 2007.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1967</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">59</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">China</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">R302xxx(x)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/25/50_Photo-CHE%20Hanshu.JPG</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_25.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">34f4b1c729cc6d2d326c1ca3723af002</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">3ef34609b62a78f615f82b886df1a575</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">GAN Song-chun</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Conspiracy to defraud</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">GAN Song-chun, former General Manager of Polycore Optical (Hong Kong) Limited (POHK), is wanted for having conspired with TEN Wan-suang, HO Mei-fan Connie and LEUNG Yuk-ping to defraud POHK. Between 2008 and 2010, the aforementioned had conspired to defraud POHK by dishonestly failing to disclose or concealing GAN&#39;s interest or benefit in Lens Optics Technology (LOT) from POHK, and diverting orders from POHK to LOT, thereby causing POHK to suffer a loss/ resulting a gain to others. GAN left Hong Kong in 2010 and his whereabouts is now unknown.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1958</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">68</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Malaysia</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Malaysian</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">P868xxx(x)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">A204xxxxx</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/21/57_IF_2010_2733.JPG</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_21.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">3ef34609b62a78f615f82b886df1a575</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">4186afddf6305cdd8ec1070f412d7e11</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">TAN Sim-chew</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Conspiracy for an agent to accept advantages and conspiracy to defraud</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">TAN is wanted on conspiring with seven other persons to accept advantages of a total of HK$180 million as a reward for causing Benefun International Holdings Limited (Benefun) to acquire a plantation business in Xinjiang, the Mainland, at a consideration of HK$500 million, and to cause change to Benefun’s constitution of the board of directors. TAN is also wanted on conspiring with FU Zi-cong (also wanted by the ICAC) and three other persons to defraud Benefun, its shareholders, potential investors and also the Stock Exchange of Hong Kong Limited by dishonestly making false representations in relation to the acquisition of the said plantation business.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1946</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">80</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">China</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Singaporean</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">S204xxxxx</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/19/60_01.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_19.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">4186afddf6305cdd8ec1070f412d7e11</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1009600ec38413fe7bc74d8c73ee962c</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">HUNG Wing-wah</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Fei Lo Hung (Fat Hung)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CONSPIRACY TO OFFER ADVANTAGE TO AN AGENT CONSPIRACY TO DEFRAUD</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">HUNG is wanted on suspicion of having conspired with others to offer bribes to senior executive officers of British-American Tobacco Co. (Hong Kong) Ltd. (BAT). Between 1988 and 1993, HUNG offered corrupt payments of a total amount of HK$100 million to ensure continuous supplies of cigarettes to HUNG by BAT. The value of the cigarettes amounted to HK$8.5 billion, which were smuggled to the Mainland and Taiwan. HUNG is also wanted on suspicion of having conspired with others to defraud the Government of Hong Kong by not disclosing to the Inland Revenue Department the assessable profits generated from trading of these cigarettes.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1949</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">77</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">China</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese /</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">A855xxx(x)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/29/11658photo.gif</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_29.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1009600ec38413fe7bc74d8c73ee962c</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">fdf781afdaafbc4d4fae221717e038fd</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHIO Ho-cheong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHAN Kai-kit; Tommy CHIO</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CONSPIRACY TO DEFRAUD</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHIO is wanted on suspicion of having corruptly conspired with CHOW Hing, Julian a director of H.K.I.C. Development Ltd., LI Rui-hua, an Assistant General Manager of Guangnan. (Holdings) Ltd. (Guangnan) (both are also wanted by the ICAC) and others to defraud Guangnan. Between 1997 and 1998, CHIO and the conspirators applied and utilized Letters of Credit facilities from various banks by providing false supporting documents without genuine underlying commercial transactions. The alleged fraud caused Guangnan to suffer liabilities to a total amount of HK$118.5 million.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1950</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">76</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">China</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Portuguese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/36/11661photo.gif</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_36.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">fdf781afdaafbc4d4fae221717e038fd</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">50910e1d4cdfff930e50d1d9bd3d8beb</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHAN Tsz-leung</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Conspiracy to defraud</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHAN is wanted on suspicion of having corruptly conspired with LI Runqun and LI Yucheng, directors of Ultragrace Ltd., CHAN Wai-lam and LAI Yu-hong, directors of Commercial Power Investiment Ltd. (all are wanted by ICAC) and others to defraud the Bank of China, the Bank of Communications, the Kwangtung Provincial Bank and the Kincheng Banking Corporation. They had, between 1997 and 1998, allegedly used false supporting documents to apply for letter of credit (L/C) facilities from the said four banks and had caused the banks to issue 16 L/C to a total value of HK$51 million. CHAN, charged on 20.9.2000 with 2 counts of conspiracy to defraud had absconded bail whilst awaiting trial.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1953</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">73</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">China</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1.7000000476837158</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">K661xxx(x)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">H900xxxxx (HKSAR)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/39/12357photo.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_39.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">50910e1d4cdfff930e50d1d9bd3d8beb</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">50cd458c270c99054e768608a31de237</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">HUI Chi-fung</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Ted HUI</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Illegal conduct to incite another person not to vote, or to cast invalid vote, by activity in public during election period</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">HUI Chi-fung is wanted on suspicion of having engaged in illegal conduct at the 2021 Legislative Council General Election between 30 October 2021 and 29 November 2021, by carrying out an activity in public, namely displaying posts on a social media page, which incited other persons to cast blank votes and not to vote at the said election.  HUI left Hong Kong in November 2020.  A warrant was issued by the Magistrates’ Court for his arrest.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1982</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">44</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Hong Kong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Z231xxx(x)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/58/HUI%20Chi-fung.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_58.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">50cd458c270c99054e768608a31de237</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">548979030a7ec90043377eb932461df7</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">WONG Ho-tin</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Steven / Steve</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Illegal conduct to incite another person not to vote, or to cast invalid vote, by activity in public during election period</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">WONG Ho-tin is wanted on suspicion of having engaged in illegal conduct at the 2025 Legislative Council General Election on or about 6 December 2025, by carrying out an activity in public, namely leaving a comment on a post of a social media platform which incited others not to vote at the said election.  WONG left Hong Kong in July 2025.  A warrant was issued by the Magistrates’ Court for his arrest.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2001</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">25</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">China</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">M885XXX(X)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/82/WONG%20Ho-tin.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_82.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">548979030a7ec90043377eb932461df7</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">55b06080d6dafe522e685123ddb01f74</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">MUI Yat-fai</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Offering advantages</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">MUI, proprietor of a footwear company, is wanted for offering bribes on a number of occasions between 2001 and 2003 to a Business Unit Manager of an international sporting goods company as rewards for securing business orders for goods from MUI&#39;s company. He was charged on 10 August 2005 with eight counts of offering an advantage. A warrant for MUI’s arrest was issued by the Judge on 24 February 2006 following his failure to appear for trial.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1954</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">72</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Hong Kong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">E584xxx(x)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/33/MUI%20Yat-fai.png</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_33.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">55b06080d6dafe522e685123ddb01f74</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">6110c6aee1793628d803e8e54d9a3aab</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">LAW Kwun-chung</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Illegal conduct to incite another person not to vote, or to cast invalid vote, by activity in public during election period</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">LAW Kwun-chung is wanted on suspicion of having engaged in illegal conduct at the 2021 Legislative Council General Election on or about 3 December 2021, by carrying out an activity in public, namely making a speech at a conference, which incited another person not to vote at the said election.  LAW left Hong Kong in June 2020.  A warrant was issued by the Magistrates’ Court for his arrest.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1993</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">33</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">China</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">R294XXX(X)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Unknown</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/60/LAW%20Kwun%20Chung.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_60.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">6110c6aee1793628d803e8e54d9a3aab</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">61e4db15a7ac90643f15f11132773a21</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHOW Hing, Julian</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CONSPIRACY TO DEFRAUD</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHOW is wanted on suspicion of having corruptly conspired with CHIO Ho-cheong, a director of Ang-du International Corp. Ltd., LI Rui-hua, an Assistant General Manager of Guangnan. (Holdings) Ltd. (Guangnan) (both are also wanted by the ICAC) and others to defraud Guangnan (Holdings) Ltd. (Guangnan). Between 1997 and 1998, CHOW and the conspirators applied and utilized Letters of Credit facilities from various banks by providing false supporting documents without genuine underlying commercial transactions. The alleged fraud caused Guangnan to suffer liabilities to a total amount of HK$118.5 million.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1967</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">59</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Hong Kong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese /</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">G462xxx(x)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/44/11660photo.gif</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_44.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">61e4db15a7ac90643f15f11132773a21</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">62459609c0518fd36d8756fee3e9140b</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">LEE Hin-long</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Illegal conduct to incite another person not to vote, or to cast invalid vote, by activity in public during election period</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">LEE Hin-long is wanted on suspicion of having engaged in illegal conduct at the 2021 Legislative Council General Election on 16 December 2021, by carrying out an activity in public, namely broadcasting a discussion with CHEUNG Kwan-yang Sunny, LEE Ka-wai and LAU Ka-man (the said three persons are also wanted by the ICAC), which incited other persons not to vote at the said election.  LEE left Hong Kong in March 2021.  A warrant was issued by the Magistrates’ Court for his arrest.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1993</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">33</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Hong Kong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Y360XXX(X)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/62/LEE%20Hin-long.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_62.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">62459609c0518fd36d8756fee3e9140b</td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">64cfc4d1276bfd4f65a09acf4f24117b</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHEUNG Kwan-yang, Sunny</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">-</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Illegal conduct to incite another person not to vote, or to cast invalid vote, by activity in public during election period</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">CHEUNG Kwan-yang Sunny is wanted on suspicion of having engaged in illegal conduct at the 2021 Legislative Council General Election between 15 and 16 December 2021, by carrying out activities in public, namely displaying posts on two social media pages and broadcasting a discussion with LEE Hin-long, LEE Ka-wai and LAU Ka-man (the said three persons are also wanted by the ICAC), which incited other persons not to vote at the said election.  CHEUNG left Hong Kong in August 2020.  A warrant was issued by the Magistrates’ Court for his arrest.</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Male</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">1996</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">30</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Hong Kong</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Chinese</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">Y534XXX(X)</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap"></td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/thumbnail300By390.ashx?src=/filemanager/WantedPerson/en/upload/61/CHEUNG%20Kwan%20Yang%20Sunny.jpg</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">https://www.icac.org.hk/en/rc/wanted/index_id_61.html</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">2026-06-11 12:04:46</td>
+                        
+                        <td class="px-4 py-3 text-sm font-mono text-gray-300 whitespace-nowrap">64cfc4d1276bfd4f65a09acf4f24117b</td>
+                        
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        <p class="mt-3 text-sm text-gray-400">
+            Showing the first 25 rows.
+            <a href="/data/icac/icac_wanted_persons/download/csv"
+               class="text-cyan-400 hover:text-cyan-300 underline transition-colors">Download the full sample as CSV</a>
+            for the rest.
+        </p>
+    </noscript>
+    
+
+    
+    <div class="px-4 py-3 bg-gray-800/50 border-t border-gray-700/50 text-sm text-gray-400 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span id="grid-status" role="status" aria-live="polite" aria-atomic="true">Loading data&hellip;</span>
+        <span class="text-gray-600">|</span>
+        <span class="text-gray-500">Click a header to sort; drag headers to reorder.</span>
+    </div>
+</div>
+    
+
+    
+    
+        
+            
+<div class="mt-4 p-4 rounded-lg border border-gray-700/60 bg-gray-800/40" id="sample-email-capture">
+    <form hx-post="/data/icac/icac_wanted_persons/sample-email"
+          hx-target="#sample-email-capture"
+          hx-swap="outerHTML"
+          class="flex flex-col sm:flex-row sm:items-center gap-3">
+        <input type="hidden" name="csrf_token" value="IjI0Y2IwMjA2NDdmMzljZWUxMjFjM2NjODY0ZDQyNjVjZWVhOTc4MmMi.auZzYw.9KUgoqHbVBW9QFbv3VDP8gnOLwA"/>
+        <label for="sample-email-input" class="text-sm text-gray-300 sm:flex-1">
+            Want the sample and data dictionary emailed to you?
+        </label>
+        
+        <input type="text" name="website" tabindex="-1" autocomplete="off"
+               class="hidden" aria-hidden="true">
+        <div class="flex gap-2">
+            <input id="sample-email-input" type="email" name="email" required
+                   placeholder="you@company.com"
+                   class="px-3 py-1.5 text-sm rounded-lg bg-gray-900 border border-gray-600 text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none">
+            <button type="submit"
+                    class="px-3 py-1.5 text-sm font-medium text-cyan-400 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 transition-colors whitespace-nowrap">
+                Email it to me
+            </button>
+        </div>
+    </form>
+    
+</div>
+        
+    
+</div>
+
+
+
+        
+
+        
+        <div class="p-6 bg-gray-800/30 border border-gray-700/50 rounded-xl text-center mb-8">
+            <p class="text-gray-400 text-sm mb-3">Get notified when this dataset is updated.</p>
+            <form action="/newsletter" method="POST" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                <input type="hidden" name="csrf_token" value="IjI0Y2IwMjA2NDdmMzljZWUxMjFjM2NjODY0ZDQyNjVjZWVhOTc4MmMi.auZzYw.9KUgoqHbVBW9QFbv3VDP8gnOLwA"/>
+                <input type="hidden" name="source" value="dataset_icac_wanted_persons"/>
+                <input type="email" name="email" required placeholder="your@email.com"
+                       class="flex-grow bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 transition-all">
+                <button type="submit" class="bg-gray-700 hover:bg-gray-600 text-white font-medium px-6 py-3 rounded-lg transition-all whitespace-nowrap"
+                        onclick="typeof posthog!=='undefined'&&posthog.capture('cta_clicked',{cta:'newsletter_signup',page:'dataset_detail',dataset:'icac_wanted_persons'})">
+                    Notify Me
+                </button>
+            </form>
+        </div>
+
+        
+        <div class="p-6 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-center">
+            <h4 class="text-xl font-bold text-white mb-2">Questions about this data?</h4>
+            <p class="text-cyan-300/80 mb-4">Our data experts are ready to help clarify any aspects of this dataset.</p>
+            <a href="/contact"
+               class="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-gray-950 font-semibold px-6 py-3 rounded-lg shadow-lg shadow-cyan-500/20 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                Contact Our Team
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+        </div>
+    </main>
+
+    
+    
+    
+    <footer class="bg-gray-900/50 border-t border-gray-800/50 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-8 mb-8">
+                
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="/static/renavon_logo.png" alt="" class="h-8 w-8 rounded-lg">
+                        <span class="text-lg font-bold text-white">Renavon</span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed max-w-xs">Structured Hong Kong data &mdash; racing, equities, registry, government &mdash; cleaned and delivered.</p>
+                </div>
+
+                
+                <div>
+                    <p class="text-white font-semibold mb-4 text-xs uppercase tracking-wider">Product</p>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/datasets" class="text-gray-400 hover:text-cyan-400 transition-colors">Datasets</a></li>
+                        <li><a href="/packages/" class="text-gray-400 hover:text-cyan-400 transition-colors">Pricing</a></li>
+                        <li><a href="/connect" class="text-gray-400 hover:text-cyan-400 transition-colors">Use with AI (MCP)</a></li>
+                    </ul>
+                </div>
+
+                
+                
+                <div>
+                    <p class="text-white font-semibold mb-4 text-xs uppercase tracking-wider">Popular Data</p>
+                    <ul class="space-y-2 text-sm">
+                        
+                        <li><a href="/data/hong-kong-horse-racing-results" class="text-gray-400 hover:text-cyan-400 transition-colors">HK Horse Racing Results</a></li>
+                        
+                        <li><a href="/data/hong-kong-horse-racing-odds" class="text-gray-400 hover:text-cyan-400 transition-colors">HK Horse Racing Odds</a></li>
+                        
+                        <li><a href="/data/hong-kong-company-data" class="text-gray-400 hover:text-cyan-400 transition-colors">HK Company Data</a></li>
+                        
+                        <li><a href="/data/hong-kong-director-dealings" class="text-gray-400 hover:text-cyan-400 transition-colors">HK Director Dealings</a></li>
+                        
+                        <li><a href="/data/sfc-licensed-persons" class="text-gray-400 hover:text-cyan-400 transition-colors">SFC Licensed Persons</a></li>
+                        
+                    </ul>
+                </div>
+                
+
+                
+                <div>
+                    <p class="text-white font-semibold mb-4 text-xs uppercase tracking-wider">Resources</p>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/faq" class="text-gray-400 hover:text-cyan-400 transition-colors">Docs &amp; FAQ</a></li>
+                        
+                        <li><a href="/blog/" class="text-gray-400 hover:text-cyan-400 transition-colors">Blog</a></li>
+                        <li><a href="/contact" class="text-gray-400 hover:text-cyan-400 transition-colors">Support</a></li>
+                    </ul>
+                </div>
+
+                
+                <div>
+                    <p class="text-white font-semibold mb-4 text-xs uppercase tracking-wider">Company</p>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/about" class="text-gray-400 hover:text-cyan-400 transition-colors">About</a></li>
+                        <li><a href="/contact" class="text-gray-400 hover:text-cyan-400 transition-colors">Contact</a></li>
+                        <li><a href="/terms" class="text-gray-400 hover:text-cyan-400 transition-colors">Terms</a></li>
+                        <li><a href="/privacy" class="text-gray-400 hover:text-cyan-400 transition-colors">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            <div class="border-t border-gray-800/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-400 text-sm">&copy; 2026 Data Guru LLC &middot; Primary-source data &middot; No affiliation with HKJC, HKEX, or HKSAR Government</p>
+                <div class="flex items-center gap-4">
+                    <a href="https://linkedin.com/company/renavon" class="text-gray-400 hover:text-cyan-400 transition-colors" aria-label="LinkedIn">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                        </svg>
+                    </a>
+                    <a href="mailto:contact@renavon.com" class="text-gray-400 hover:text-cyan-400 transition-colors" aria-label="Email">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    
+
+    
+    
+
+<link rel="stylesheet" href="/static/js/data-grid.css">
+<script type="module" src="/static/js/data-grid.js"></script>
+
+
+
+
+</body>
+</html>
