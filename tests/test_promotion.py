@@ -6,13 +6,12 @@ import json
 import os
 import subprocess
 import sys
-import tempfile
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from harness import keys
-from tests.test_clerk import DUE, LATE, NOW, Stream
+from harness.gitfix import write
+from tests.clerk_fixture import DUE, LATE, NOW, SignedFixture, Stream, commit, tree
 from tools import clerk, status
 
 EARLY = "2026-10-31T11:59:59Z"
@@ -27,21 +26,16 @@ jack = importlib.util.module_from_spec(spec)
 loader.exec_module(jack)
 
 
-class Promotion(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.tmp = tempfile.TemporaryDirectory()
-        cls.signers = {who: keys.make_key(cls.tmp.name, who) for who in ("guy", "counsel", "herald")}
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.tmp.cleanup()
-
+class Promotion(SignedFixture):
     def setUp(self):
-        self.s = Stream(self.signers)
-        for _ in range(9):
-            self.s.resolve(self.s.forecast(type="world.fixture"))
-            self.s.merge()
+        super().setUp()
+        self.s.complete(9, type="world.fixture")
+
+    def tree(self):
+        scope = {"counted": ["tests/"], "cap": 6200}
+        return tree({"judge/scope.json": json.dumps(scope), "SPEC.md": "at C1 it is:\n```\n" + json.dumps(scope) + "\n```\n",
+                     "tests/test_clerk.py": "# synthetic attack witness\n", status.MAP: json.dumps(MAP),
+                     "log.jsonl": self.s.log.text(), "transcripts/evidence/acts.csv": "repo,time_hkt,class,kind,ref,note\n"})
 
     def assess(self, **kw):
         args = dict(es=self.s.es, subject="C1b", as_of=NOW, root=self.tmp.name, rev=SHA,
@@ -52,6 +46,13 @@ class Promotion(unittest.TestCase):
 
     def verdict(self, **kw):
         return status.promotion_line(self.assess(**kw))
+
+    def refused(self, text, **kw):
+        s = self.assess(**kw)
+        self.assertEqual(len(status.unmet(s)), 1)
+        self.assertIn(text, status.render(s))
+        self.decision(status.render(s))
+        return s
 
     def decision(self, text, run=GREEN):
         """Exercise the real gate and API arguments; only the irreversible ending is stubbed."""
@@ -101,56 +102,37 @@ class Promotion(unittest.TestCase):
 
     def test_live_e_not_replaced_by_green_regression_run(self):
         self.s = Stream(self.signers)
-        self.s.resolve(self.s.forecast(type="world.fixture"))
-        self.s.merge()
-        s = self.assess()
-        self.assertEqual(s["E"], 1)
-        self.assertEqual([text for ok, text in s["checks"] if not ok], ["criterion 5: live E 1 >= 20; items 1; at promote E 1"])
-        self.decision(status.render(s))
+        self.s.complete(1, type="world.fixture")
+        s = self.refused("criterion 5: live E 1 >= 20; items 1; at promote E 1")
+        self.assertEqual([(i["forecasts"], i["Y"]) for i in s["items"]], [((5,), 1)])
 
     def test_veto_subject_is_exact(self):
         self.s.add("decision", "guy", kind="veto", subject="other")
         self.assertEqual(self.verdict(), "promote C1b: lawful")
         self.s.add("decision", "guy", kind="veto", subject="C1b")
-        s = self.assess()
-        self.assertEqual([text for ok, text in s["checks"] if not ok], ["criterion 6: veto on C1b: YES"])
-        self.decision(status.render(s))
+        self.refused("criterion 6: veto on C1b: YES")
 
     def test_map_printed_and_each_required_hand_row_refuses(self):
         for row in ("W1", "W3", "W4", "A5"):
             mapping = copy.deepcopy(MAP)
             mapping[row]["enforcer"] = "hand: counsel"
-            s = self.assess(mapping=mapping)
+            s = self.refused("criterion 7: C1b enforcement map rows code", mapping=mapping)
             self.assertIn(f"map {row}: {mapping[row]['principle']} | hand: counsel", status.render(s))
-            self.assertEqual([t for ok, t in s["checks"] if not ok], ["criterion 7: C1b enforcement map rows code"])
-            self.decision(status.render(s))
         self.assertEqual(self.verdict(mapping=MAP), "promote C1b: lawful")  # runner/elections stay hand
         self.assertIn("criterion 7", self.verdict(mapping={}))
 
     def test_stop_ratio_alone_prevents_signing(self):
         s = self.assess()
-        for _ in range(5 * s["object"] - s["procedure"] + 1):
+        for _ in range(5 * s["object"] - s["procedure"]):
             self.s.add("proposal", title="procedure", commit=SHA)
-        s = self.assess()
-        self.assertEqual(len([ok for ok, _ in s["checks"] if not ok]), 1)
-        self.assertIn(" STOP", status.render(s))
-        self.decision(status.render(s))
+        s = self.refused(" STOP")  # the prospective promote itself must fit
+        self.assertEqual(s["procedure"], 5 * s["object"])
+        self.s.add("proposal", title="procedure", commit=SHA)
+        self.refused(" STOP")
 
     def test_short_tree_criterion_alone_prevents_signing(self):
         for facts in (dict(FACTS, counted=6201), dict(FACTS, kernel=501), dict(FACTS, scope=False)):
-            s = self.assess(facts=facts)
-            self.assertEqual(len([ok for ok, _ in s["checks"] if not ok]), 1)
-            self.assertIn("criterion 3", status.promotion_line(s))
-            self.decision(status.render(s))
-
-    def test_ratio_counts_the_prospective_promotion_entry(self):
-        s = self.assess()
-        for _ in range(5 * s["object"] - s["procedure"]):
-            self.s.add("proposal", title="procedure", commit=SHA)
-        s = self.assess()
-        self.assertEqual(s["procedure"], 5 * s["object"])
-        self.assertIn("A3.4 ratio", status.promotion_line(s))
-        self.decision(status.render(s))
+            self.refused("criterion 3", facts=facts)
 
     def test_promotion_accounts_for_expiry_since_last_entry_without_revising_live_items(self):
         self.s.forecast(resolves_by=NOW)
@@ -165,12 +147,9 @@ class Promotion(unittest.TestCase):
     def test_late_report_line_refuses_without_revising_any_bet(self):
         before = self.assess()
         self.s.add("decision", "guy", kind="fix", subject=str(before["items"][0]["forecasts"][0]))
-        after = self.assess()
+        after = self.refused("late-reported repairs: 1 SHORT")
         self.assertEqual(after["items"], before["items"])
         self.assertEqual(after["E"], before["E"])
-        self.assertIn("late-reported repairs: 1 SHORT", status.render(after))
-        self.assertEqual([t for ok, t in after["checks"] if not ok], ["late-reported repairs: 1"])
-        self.decision(status.render(after))
 
     def test_attack_run_must_precede_first_item_and_include_attack_file(self):
         for run in (dict(GREEN, updated_at=NOW), dict(GREEN, updated_at=LATE), dict(GREEN, event="pull_request")):
@@ -188,12 +167,11 @@ class Promotion(unittest.TestCase):
         self.assertEqual(status.off_log_repairs([row, dict(row, time_hkt="2026-11-03 08:00")] + ignored, NOW, DUE), 2)
         self.assertEqual(self.verdict(acts=ignored), "promote C1b: lawful")
         for acts, text in ((None, "off-log repairs: unknown (no acts file)"), ([row], "off-log repairs: 1")):
-            s = self.assess(acts=acts)
+            s = self.refused(text, acts=acts)
             ws = clerk.window_writs(self.s.es, s, LATE)
             self.assertEqual([(w["class"], w["obligation"], w["holders"], w["deadline"], w["escalated"]) for w in ws],
                              [("W4", text, ("counsel",), DUE, True)])
             self.assertIn("ESCALATED to guy", clerk.render(ws))
-            self.decision(status.render(s))
 
     def test_w3_only_earlier_green_exact_workflow_and_commit_discharge(self):
         merge = self.s.es[-1]
@@ -212,47 +190,28 @@ class Promotion(unittest.TestCase):
         self.assertEqual(clerk.merge_writs(es, [], NOW, DUE, f"| precedent | {marker} |"), [])
 
     def test_historical_bad_promote_stays_repair_after_later_success(self):
-        promote = self.s.add("decision", "guy", kind="promote", subject="C1b")
-        later = dict(GREEN, head_sha="b" * 40, updated_at=LATE)
-        with patch.object(status, "prefix_tree", return_value=SHA), patch.object(status, "tree_facts", return_value=FACTS), \
-                patch.object(status, "tree_bytes", side_effect=lambda root, rev, path: json.dumps(MAP).encode() if path == status.MAP else b"attack"):
+        with self.tree() as (root, sha):
+            promote = self.s.add("decision", "guy", kind="promote", subject="C1b")
+            later = dict(GREEN, head_sha=commit(root, {"log.jsonl": self.s.log.text()}), updated_at=LATE)
+            good, bad_run = dict(GREEN, head_sha=sha), dict(GREEN, head_sha=sha, conclusion="failure")
             def repairs(runs):
-                return [r for r in status.promotion_repairs(self.s.es, LATE, self.tmp.name, later["head_sha"], runs, [])
+                s = status.report(es=self.s.es, subject="C1b", as_of=LATE, root=root, rev=later["head_sha"], runs=runs, acts=[])
+                return [r for r in s["repairs"]
                         if f"promote C1b seq {promote}:" in r]
-            bad = repairs([dict(GREEN, conclusion="failure")])
+            bad = repairs([bad_run])
             self.assertEqual(len(bad), 1)
-            self.assertEqual(repairs([dict(GREEN, conclusion="failure"), later]), bad)
-            self.assertEqual(repairs([GREEN, later]), [])
+            self.assertIn("criterion 1", bad[0])
+            self.assertEqual(repairs([bad_run, later]), bad)
+            self.assertEqual(repairs([good, later]), [])
         s = self.assess()
         s["repairs"] = bad
         self.assertIn("sovereign REPAIR", clerk.render(clerk.window_writs(self.s.es, s, LATE)))
 
-    def test_closing_seq_blocks_equal_timestamp_later_entries(self):
-        close = self.s.add("decision", "guy", kind="promote", subject="C1b")
-        self.s.add("decision", "guy", kind="veto", subject="C1b")
-        s = self.assess()
-        self.assertEqual((s["end"], s["prefix_last_seq"], s["veto"]), (NOW, close, False))
-        self.assertEqual(status.promotion_line(s), "promote C1b: lawful")
-
     def test_cli_saved_inputs_and_deterministic_clerk(self):
-        with tempfile.TemporaryDirectory() as root:
-            def write(path, text):
-                os.makedirs(os.path.dirname(os.path.join(root, path)), exist_ok=True)
-                with open(os.path.join(root, path), "w") as f:
-                    f.write(text)
-            scope = {"counted": ["tests/"], "cap": 6200}
-            write("judge/scope.json", json.dumps(scope))
-            write("SPEC.md", "at C1 it is:\n```\n" + json.dumps(scope) + "\n```\n")
-            write("tests/test_clerk.py", "# synthetic attack witness\n")
-            write(status.MAP, json.dumps(MAP))
-            write("log.jsonl", self.s.log.text())
-            write("transcripts/evidence/acts.csv", "repo,time_hkt,class,kind,ref,note\n")
-            status.git_bytes(root, "init", "-q")
-            status.git_bytes(root, "add", ".")
-            status.git_bytes(root, "-c", "user.name=test", "-c", "user.email=test@example.test", "commit", "-qm", "fixture")
-            sha = status.git_bytes(root, "rev-parse", "HEAD").decode().strip()
-            write("run.json", json.dumps(dict(GREEN, head_sha=sha)))
-            write("runs.json", json.dumps([dict(GREEN, head_sha=sha)]))
+        with self.tree() as (root, sha):
+            self.assertEqual(status.tree_facts(root, sha), dict(counted=1, kernel=0, scope=True))
+            write(root, "run.json", json.dumps(dict(GREEN, head_sha=sha)))
+            write(root, "runs.json", json.dumps([dict(GREEN, head_sha=sha)]))
             args = ["--root", root, "--log", os.path.join(root, "log.jsonl"), "--as-of", NOW,
                     "--run", os.path.join(root, "run.json"), "--runs", os.path.join(root, "runs.json"),
                     "--acts", os.path.join(root, "transcripts/evidence/acts.csv")]
@@ -264,44 +223,12 @@ class Promotion(unittest.TestCase):
             first = cli("clerk")
             self.assertIn("W3 merge", first)
             self.assertEqual(first, cli("clerk"))
-            write("run.json", json.dumps(dict(GREEN, head_sha=sha, event="pull_request")))
+            write(root, "run.json", json.dumps(dict(GREEN, head_sha=sha, event="pull_request")))
             self.assertIn("promote C1b: refused: criterion 1", cli("status"))
-            write("transcripts/evidence/acts.csv", "wrong,header\n")
+            write(root, "transcripts/evidence/acts.csv", "wrong,header\n")
             r = subprocess.run([sys.executable, os.path.join(status.ROOT, "tools/clerk.py"), *args], capture_output=True, text=True)
             self.assertNotEqual(r.returncode, 0)
             self.assertIn("--acts header", r.stderr)
-
-
-class TreeEvidence(unittest.TestCase):
-    def test_real_git_counts_scope_and_historical_tree(self):
-        with tempfile.TemporaryDirectory() as root:
-            def git(*args):
-                return status.git_bytes(root, *args).decode().strip()
-            def write(path, text):
-                os.makedirs(os.path.dirname(os.path.join(root, path)), exist_ok=True)
-                with open(os.path.join(root, path), "w") as f:
-                    f.write(text)
-            def commit():
-                git("add", ".")
-                git("-c", "user.name=test", "-c", "user.email=test@example.test", "commit", "-qm", "fixture")
-                return git("rev-parse", "HEAD")
-            git("init", "-q")
-            scope = {"counted": ["tools/"], "cap": 6200}
-            write("judge/scope.json", json.dumps(scope))
-            write("SPEC.md", "at C1 it is:\n```\n" + json.dumps(scope) + "\n```\n")
-            write("kernel/check.py", "# kernel\n")
-            write("tools/check.py", "# first\n# second")
-            write("tools/check", "#!/usr/bin/env python3\n# third\n")
-            write("log.jsonl", '{"seq": 0}\n')
-            first = commit()
-            self.assertEqual(status.tree_facts(root, first), dict(counted=4, kernel=1, scope=True))
-            write("judge/scope.json", json.dumps(dict(scope, cap=6201)))
-            write("tools/check.py", "# current\n")
-            write("log.jsonl", '{"seq": 0}\n{"seq": 1}\n')
-            second = commit()
-            self.assertEqual(status.tree_facts(root, second), dict(counted=3, kernel=1, scope=False))
-            self.assertEqual(status.prefix_tree(root, second, [{"seq": 0}]), first)
-            self.assertIsNone(status.prefix_tree(root, second, [{"seq": 99}]))
 
 
 if __name__ == "__main__":

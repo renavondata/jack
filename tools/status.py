@@ -40,8 +40,8 @@ def promotes(e, subject):
     return e["type"] == "decision" and e["body"].get("kind") == "promote" and e["body"].get("subject") == subject
 
 
-def wealth(items):
-    """A4.3, exact and prequential. Return new rows; never revise an earlier stake."""
+def score_items(items):
+    """The live and historical item projection: exact A4.3 rows and terminal wealth."""
     result, successes, capital = [], 0, Fraction(1)
     for n, item in enumerate(items):
         q = Fraction(successes + 1, n + 2)
@@ -49,7 +49,7 @@ def wealth(items):
         capital *= 1 + stake * (item["Y"] - P0)
         result.append(dict(item, stake=stake, E=capital))
         successes += item["Y"]
-    return result
+    return {"items": result, "E": capital}
 
 
 def item_process(es, after_seq=-1, promotion_at=None):
@@ -101,8 +101,7 @@ def item_process(es, after_seq=-1, promotion_at=None):
             pending = []
     if promotion_at is not None:
         expire({"seq": es[-1]["seq"] + 1, "ts": promotion_at})
-    scored = wealth(items)
-    return {"items": scored, "late_reports": late_reports, "E": scored[-1]["E"] if scored else Fraction(1)}
+    return dict(score_items(items), late_reports=late_reports)
 
 
 def instant(s):
@@ -212,8 +211,16 @@ def off_log_repairs(acts, start, end):
                for row in acts)
 
 
-def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=None):
-    """All promotion predicates, with structured lines shared by status and W4."""
+def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=None, decision=None):
+    """One assessment for live status and a promotion's own prefix, tree and instant."""
+    if decision is not None:
+        es = [e for e in es if e["seq"] <= decision["seq"]]
+        as_of, subject = decision["ts"], decision["body"]["subject"]
+        rev = prefix_tree(root, rev, es[:-1])
+        if rev is None:
+            raise ValueError("historical tree unverified")
+        run = next((r for r in runs if run_verified(r, rev) and completed_by(r, as_of)), None)
+        mapping = None
     s = status(es, "A3", 14, as_of, root, subject, rev)
     facts = tree_facts(root, rev)
     verified = run_verified(run, rev) and completed_by(run, as_of)
@@ -227,13 +234,11 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
         gate = attack_start(root, runs, as_of)
         checks.append((gate is not None and all(gate < i["ts"] for i in proposed["items"]),
                        f"criterion 4: attack green on main before first item: {gate or 'unverified'}"))
-        items = wealth([i for i in process["items"] if gate is not None and gate < i["ts"]])
-        s.update(items=items, E=items[-1]["E"] if items else Fraction(1), late_reports=process["late_reports"])
-        exit_items = wealth([i for i in proposed["items"] if gate is not None and gate < i["ts"]])
-        exit_e = exit_items[-1]["E"] if exit_items else Fraction(1)
-        s["promotion_E"] = exit_e
-        checks.append((s["E"] >= 20 and exit_e >= 20,
-                       f"criterion 5: live E {s['E']} >= 20; items {len(items)}; at promote E {exit_e}"))
+        live, exit_ = [score_items(i for i in p["items"] if gate is not None and gate < i["ts"])
+                       for p in (process, proposed)]
+        s.update(live, late_reports=process["late_reports"], promotion_E=exit_["E"])
+        checks.append((s["E"] >= 20 and s["promotion_E"] >= 20,
+                       f"criterion 5: live E {s['E']} >= 20; items {len(s['items'])}; at promote E {s['promotion_E']}"))
         if mapping is None:
             try:
                 mapping = json.loads(tree_bytes(root, rev, MAP))
@@ -272,27 +277,12 @@ def prefix_tree(root, head, prefix):
     return None
 
 
-def promotion_repairs(es, as_of, root, head, runs, acts):
-    repairs = []
-    for i, e in enumerate(es):
-        if e["ts"] > as_of or not any(promotes(e, w) for w in ("C1a", "C1b")):
-            continue
-        rev = prefix_tree(root, head, es[:i])
-        failures = ["historical tree unverified"]
-        if rev:
-            run = next((r for r in runs if run_verified(r, rev) and completed_by(r, e["ts"])), None)
-            try:
-                past = assess(es[:i + 1], e["body"]["subject"], e["ts"], root, rev, run, runs, acts)
-                failures = [text for ok, text in past["checks"] if not ok]
-            except (StopIteration, OSError, ValueError, subprocess.CalledProcessError):
-                failures = ["historical criteria unverified"]
-        if failures:
-            repairs.append(f"sovereign REPAIR: promote {e['body']['subject']} seq {e['seq']}: " + "; ".join(failures))
-    return repairs
+def unmet(s):
+    return [text for ok, text in s["checks"] if not ok]
 
 
 def promotion_line(s):
-    failures = [text for ok, text in s["checks"] if not ok]
+    failures = unmet(s)
     return f"promote {s['subject']}: " + ("refused: " + "; ".join(failures) if failures else "lawful")
 
 
@@ -348,23 +338,22 @@ def inputs(a):
             acts = list(reader)
     head = git_bytes(a.root, "rev-parse", "HEAD").decode().strip()
     subject = a.subject or ("C1b" if any(promotes(e, "C1a") for e in es) else "C1a")
-    return es, head, subject, run, runs, acts, mapping
+    return dict(es=es, rev=head, subject=subject, as_of=a.as_of, root=a.root, run=run, runs=runs, acts=acts, mapping=mapping)
 
 
-def report(es, head, subject, now, root, run, runs, acts, mapping):
-    closing = next((e for e in es if promotes(e, subject)), None)
-    rev = head
-    if closing:
-        before = [e for e in es if e["seq"] < closing["seq"]]
-        rev = prefix_tree(root, head, before)
-        if not rev:
-            raise ValueError("historical exit tree unverified")
-        es = before + [closing]
-        now = closing["ts"]
-        run = next((r for r in runs if run_verified(r, rev) and completed_by(r, now)), None)
-        mapping = None
-    s = assess(es, subject, now, root, rev, run, runs, acts, mapping)
-    s["repairs"] = promotion_repairs(es, now, root, head, runs, acts)
+def report(**context):
+    decisions = [e for e in context["es"] if e["ts"] <= context["as_of"] and
+                 any(promotes(e, w) for w in ("C1a", "C1b"))]
+    closing = next((e for e in decisions if promotes(e, context["subject"])), None)
+    s = assess(**context, decision=closing)
+    s["repairs"] = []
+    for e in decisions:
+        try:
+            failures = unmet(s if e == closing else assess(**context, decision=e))
+        except (StopIteration, OSError, ValueError, subprocess.CalledProcessError):
+            failures = ["historical criteria unverified"]
+        if failures:
+            s["repairs"].append(f"sovereign REPAIR: promote {e['body']['subject']} seq {e['seq']}: " + "; ".join(failures))
     return s
 
 
@@ -373,8 +362,7 @@ def main(argv=None):
     ap.add_argument("--json", action="store_true", help="structured status, exact fractions encoded as strings")
     a = ap.parse_args(argv)
     try:
-        es, head, subject, run, runs, acts, mapping = inputs(a)
-        s = report(es, head, subject, a.as_of, a.root, run, runs, acts, mapping)
+        s = report(**inputs(a))
         print(json.dumps(s, indent=1, default=str) if a.json else render(s))
     except (StopIteration, OSError, ValueError, subprocess.CalledProcessError) as exc:
         raise SystemExit(f"status unverified: {exc or 'window opening or L0 missing'}")
