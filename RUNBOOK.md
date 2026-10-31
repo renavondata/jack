@@ -56,13 +56,17 @@ cannot be implemented files `spec_conflict` rather than deciding.
 
 ## `jack key KEY_ID --principal P --powers a,b,c --pubkey FILE`
 
-Entry: `key` with the declaration (SPEC §5). Refuses: a pubkey file that is not a two-field `ssh-ed25519` line;
+Entry: `key` with the declaration (SPEC §5). Refuses: a pubkey file that is not a two-field `ssh-ed25519` line
+(`ssh-keygen` writes three — strip the comment first: `cut -d' ' -f1,2 ~/.ssh/x.pub > /tmp/x.pub`, or generate with `-C ""`);
 a power outside the kernel's `TYPES` (ten from C1a); a principal that is not `[a-z0-9_-]+`; a re-declaration of the signer's own
 `key_id` without `key` (the kernel's guard would refuse it too; the verb says so first). Keys per party:
 from C1a (seqs 31–34), `builder-2` {proposal, spec_conflict, forecast, resolution}, `reviewer-2` {proposal,
-forecast, resolution}, `counsel-2` {proposal, forecast}; the master key holds every power. Earlier key_ids
+forecast, resolution}, `counsel-2` {proposal, forecast, resolution}; the master key holds every power. Earlier key_ids
 (`builder-1`, `reviewer-1`, `counsel-1`) stay declared with their C0 powers and are not used. Revocation is
-this verb with `--powers ""`.
+this verb with `--powers ""`. The herald is `herald-2` {merge} (seq 201), principal `herald`, whose private key lives
+on steel at `~/.ssh/jack-herald` and is used only by the `herald` workflow of `renavondata/opencode-runner` (every
+ten minutes: `jack merge N` on each open pull request whose head GitHub has admitted); `herald-1` {merge, resolution}
+and `builder-3`, counsel's, are revoked once `herald-2` has merged once (COUNSEL-OPEN 17).
 
 ## `jack proposal [--title T]`
 
@@ -174,6 +178,35 @@ and per `type` alone, each row preceded by its count of forecasts, resolved or n
 lists every unresolved forecast whose `resolves_by` is before TS, by `resolves_by` then seq. The
 witness is `spec/vectors/score.jsonl` (the reviewer's; the builder's `tests/vectors/score.jsonl` must agree
 with it in meaning) and its expected table in the brief (pin `score_not_proper`).
+
+## `jack clerk` — `python3 tools/clerk.py [--as-of T] [--runs FILE] [--acts FILE] [--counsel-open FILE]`
+
+C1b's clerk (BRIEF-C1b v7): every open writ, derived from `log.jsonl`, the tree and the clock, printed with
+its class, obligation, holders and deadline; one past its deadline reads `ESCALATED to guy`. Read-only,
+level-triggered, no state, no signing, no network: run it on a timer or by hand, and a missed tick costs
+nothing. Writ classes: **W1** — every `forecast` entered after C1b's opening, from its entry; holders are
+the keys with `resolution` power whose principal is not the forecaster's; deadline `resolves_by`,
+overdue strictly after it; discharged by a `resolution`. **W3** — a `merge` entry whose `commit` has no
+`tests.yml` run with `conclusion` success and `updated_at` not after the merge entry's `ts` in `--runs FILE`
+(a JSON array in the shape of the Actions API's `workflow_runs`); holder counsel; deadline the window's end;
+discharged by a row of `transcripts/COUNSEL-OPEN.md` containing the literal `W3 merge <seq>`. **W4** — every
+line of `status.py` that is not `met`, including `off-log repairs: n` from `--acts FILE` (the weekly acts
+CSV saved under `transcripts/evidence/`; absent, the line reads `unknown` and is a writ) and a `decision
+promote` entered while a criterion did not hold at its instant (a sovereign REPAIR, which no later success
+erases); holder counsel; deadline the window's end. Evidence not supplied is unverified, never green.
+
+`python3 tools/status.py` now reads C1b from the log — opened by `decision promote C1a`, ended by the counsel
+forecast with `args.id` `L0` — and prints the item process of §Liveness (the herald's act as the item, every
+sovereign repair tainting every writ open at its instant, p₀ = 6/11, exact fractions), `late-reported
+repairs: n`, criterion 3 from the tree, criterion 7 from `tools/enforcement.json`, and one line `promote
+<window>: lawful` or `refused: <every criterion not established>`; criteria 1 and 2 come only from `--run
+FILE`, the `tests.yml` push-to-main run for the tree's exact commit, verified field by field.
+
+`jack decision promote <window>` fetches that run itself with `gh api`, runs `status.py` with it, and signs
+only when the line reads `lawful`; on `refused` it prints the line and signs nothing. The sovereign's hand
+repairs are entered as `jack decision fix "<what>"` when made (§7): a repair taints every writ open at its
+instant whatever its subject says, so the subject is for the record, and one entered after the item it
+concerns was finalised changes no score but prints as a late report that refuses `promote` while it stands.
 
 ## Working copies (no verbs; nothing here touches the record)
 
