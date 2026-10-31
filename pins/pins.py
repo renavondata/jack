@@ -818,3 +818,133 @@ PINS = [
         Mutant("linear_score", "tools/entry.py", "-math.log((p if o else 1000 - p) / 1000)", "1 - abs(o - p / 1000)"),
         Mutant("minimised_at_999", "tools/entry.py", "-math.log((p if o else 1000 - p) / 1000)", "(1000 - p) / 1000")]),
 ]
+
+
+# --- clerk pins (BRIEF-C1b v7 §Pins; REVIEW-C1b-v7 §4) -------------------------
+
+def fixture_tests(module, *methods):
+    """Run the disposable tree's distinguishing fixtures, never this process's imports."""
+    def test(root):
+        names = [f"tests.{module}.test_{method}" for method in methods]
+        r = subprocess.run([sys.executable, "-E", "-s", "-m", "unittest", "-q", *names],
+                           cwd=root, capture_output=True, text=True)
+        assert r.returncode == 0, r.stdout + r.stderr
+    return test
+
+
+clerk_tests = functools.partial(fixture_tests, "test_clerk.ClerkTest")
+promotion_tests = functools.partial(fixture_tests, "test_promotion.Promotion")
+status_tests = functools.partial(fixture_tests, "test_status.StatusTest")
+W1_TEST = clerk_tests("w1_from_entry_strict_deadline_holders_and_discharge")
+W1_OPEN = 'if e["type"] == "forecast" and e["seq"] > opening and e["seq"] not in resolved:'
+TAINT = '            for _, repairs in opened.values():\n                repairs.append(seq)'
+OLDEST_TAINT = Mutant("oldest_only_attribution", "tools/status.py", TAINT,
+                      '            for _, repairs in list(opened.values())[:1]:\n                repairs.append(seq)')
+BATCH = '            finalise(e, "batch", sorted(pending), not royal)'
+
+# A genuine evidence-component mutant: join the new batch to all intersecting old
+# components transitively, replacing their identities and recomputing the bets.
+REGROUP = '''
+        if kind == "batch":
+            evidence = {r["body"]["forecast"]: r["body"]["evidence"] for r in es
+                        if r["seq"] <= e["seq"] and r["type"] == "resolution"}
+            component = items.pop()
+            while True:
+                labels = {evidence.get(f) for f in component["forecasts"]}
+                joined = [i for i in items if labels & {evidence.get(f) for f in i["forecasts"]}]
+                if not joined:
+                    break
+                for old in joined:
+                    items.remove(old)
+                    component["forecasts"] = tuple(sorted(set(component["forecasts"] + old["forecasts"])))
+                    component["repairs"] = tuple(sorted(set(component["repairs"] + old["repairs"])))
+                    component["Y"] &= old["Y"]
+            items.append(component)
+'''
+
+C1B_PINS = [
+    Pin("overdue_strictly_after", W1_TEST, [
+        Mutant("equality_overdue", "tools/clerk.py", '"escalated": deadline < now', '"escalated": deadline <= now')]),
+    Pin("w1_from_entry", W1_TEST, [
+        Mutant("only_when_overdue", "tools/clerk.py", W1_OPEN,
+               W1_OPEN[:-1] + ' and e["body"]["resolves_by"] < now:')]),
+    Pin("self_holder", W1_TEST, [
+        Mutant("self_filter_dropped", "tools/clerk.py", 'd["principal"] != e["proposer"]', 'True')]),
+    Pin("w3_unwitnessed", promotion_tests("w3_only_earlier_green_exact_workflow_and_commit_discharge"), [
+        Mutant("any_run_accepted", "tools/clerk.py",
+               'r.get("path") == status.WORKFLOW and r.get("head_sha") == e["body"]["commit"] and\n'
+               '                    r.get("conclusion") == "success" and status.completed_by(r, e["ts"])', 'True')]),
+    Pin("w4_promote_unmet", promotion_tests("historical_bad_promote_stays_repair_after_later_success"), [
+        Mutant("repair_never_raised", "tools/status.py", '        if failures:\n', '        if False:\n')]),
+    Pin("promote_refused", promotion_tests("all_met_lawful_and_the_verb_signs", "veto_subject_is_exact",
+                                         "short_tree_criterion_alone_prevents_signing", "stop_ratio_alone_prevents_signing",
+                                         "map_printed_and_each_required_hand_row_refuses", "live_e_not_replaced_by_green_regression_run"), [
+        Mutant("promotion_check_dropped", "tools/jack",
+               '        lines == [f"promote {a.subject}: lawful"] or refuse("\\n".join(lines) or "status returned no promotion verdict")', '        pass'),
+        Mutant("regression_run_for_live_E", "tools/status.py", 's["E"] >= 20 and s["promotion_E"] >= 20', 'verified')]),
+    Pin("run_verified", promotion_tests("all_met_lawful_and_the_verb_signs", "run_verified_each_field_and_no_signing"), [
+        Mutant("any_run_accepted", "tools/status.py",
+               'return isinstance(run, dict) and all(run.get(k) == v for k, v in (',
+               'return isinstance(run, dict) and all(True or run.get(k) == v for k, v in ('),
+        Mutant("event_unchecked", "tools/status.py", '("event", "push"), ', '')]),
+    Pin("escalated", W1_TEST, [
+        Mutant("escalation_silent", "tools/clerk.py", 'f" ESCALATED to {w[\'sovereign\']}"', '""')]),
+    Pin("wealth_arithmetic", clerk_tests("exact_prequential_wealth"), [
+        Mutant("p0_reestimated", "tools/status.py", '    result, successes, capital = [], 0, Fraction(1)',
+               '    items = list(items)\n    P0 = Fraction(sum(i["Y"] for i in items) + 1, len(items) + 2)\n'
+               '    result, successes, capital = [], 0, Fraction(1)')]),
+    Pin("item_before_open", clerk_tests("window_and_same_timestamp_opening"), [
+        Mutant("preopening_counted", "tools/status.py", 'if typ == "forecast" and seq > after_seq:', 'if typ == "forecast":')]),
+    Pin("item_is_batch", clerk_tests("batch_is_not_a_count_of_resolutions"), [
+        Mutant("resolutions_counted_singly", "tools/status.py", BATCH,
+               '            for member in sorted(pending):\n                finalise(e, "batch", [member], not royal)')]),
+    Pin("regroup_scored_items", clerk_tests("evidence_reuse_cannot_regroup_scored_items"), [
+        Mutant("evidence_component_regrouping", "tools/status.py", '"Y": int(success and not repairs)})',
+               '"Y": int(success and not repairs)})\n' + REGROUP)]),
+    Pin("expired_writ_zero", clerk_tests("expiry_precedes_own_resolution_and_expired_only_merge", "mixed_batch_keeps_only_fresh_writs",
+                                        "expiry_ties_in_forecast_order", "batch_is_not_a_count_of_resolutions"), [
+        Mutant("late_resolution_success", "tools/status.py", 'if forecast["body"]["resolves_by"] < e["ts"]:',
+               'if forecast["body"]["resolves_by"] < e["ts"] and not (e["type"] == "resolution" and e["body"]["forecast"] == f):'),
+        Mutant("empty_batch_success", "tools/status.py", 'if typ == "merge" and pending:', 'if typ == "merge":')]),
+    Pin("repair_erased_from_success", clerk_tests("repair_subject_never_narrows_taint"), [
+        Mutant("repair_predicate_dropped", "tools/status.py", '"Y": int(success and not repairs)', '"Y": int(success)')]),
+    Pin("repair_taints_all_open", clerk_tests("repair_subject_never_narrows_taint"), [
+        Mutant("named_subject_only", "tools/status.py", TAINT,
+               '            named = [(f, rs) for f, rs in opened.values() if f["body"]["claim"] == body.get("subject")]\n'
+               '            for _, repairs in named or opened.values():\n                repairs.append(seq)'),
+        OLDEST_TAINT]),
+    Pin("replay_merge_110", clerk_tests("real_prefix_and_semantic_twin"), [OLDEST_TAINT]),
+    Pin("late_report_immutable", lambda root: (
+        clerk_tests("late_report_never_changes_prior_items_stakes_or_wealth")(root),
+        promotion_tests("all_met_lawful_and_the_verb_signs", "late_report_line_refuses_without_revising_any_bet")(root)), [
+        Mutant("finalised_item_revised", "tools/status.py", '                late_reports.append(seq)',
+               '                late_reports.append(seq)\n                for item in items:\n'
+               '                    if body.get("subject") in map(str, item["forecasts"]):\n                        item["Y"] = 0'),
+        Mutant("late_report_line_omitted", "tools/status.py", '        checks.append((n == 0, f"late-reported repairs: {n}"))', '        pass')]),
+    Pin("sovereign_resolution_zero", clerk_tests("sovereign_resolution_and_merge_are_zero", "batch_is_not_a_count_of_resolutions"), [
+        Mutant("sovereign_completion_as_herald", "tools/status.py", '        royal = signer_blob(e) in sovereign',
+               '        royal = signer_blob(e) in sovereign and typ not in ("resolution", "merge")')]),
+    Pin("window_from_the_promote", clerk_tests("window_and_same_timestamp_opening"), [
+        Mutant("latest_decision_opens", "tools/status.py",
+               'opening = next(e for e in es if e["type"] == "decision" and\n                   promotes(e, "C1a"))',
+               'opening = next(e for e in reversed(es) if e["type"] == "decision")'),
+        Mutant("latest_counsel_forecast_ends", "tools/status.py",
+               'l0 = next(e for e in es if e["seq"] < opening["seq"] and e["type"] == "forecast" and\n'
+               '              e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "L0")',
+               'l0 = next(e for e in reversed(es) if e["type"] == "forecast" and e["proposer"] == "counsel")')]),
+    Pin("evidence_unhashed", status_tests("counts_ratio_and_evidence", "evidence_must_hash"), [
+        Mutant("rehash_skipped", "tools/status.py", 'hashlib.sha256(tree_bytes(root, rev, path)).hexdigest() == ev[7:]',
+               'tree_bytes(root, rev, path) is not None')]),
+    Pin("ratio_misclassified", status_tests("counts_ratio_and_evidence", "resolution_ratio_follows_its_forecasts_type"), [
+        Mutant("world_resolution_procedure", "tools/status.py",
+               'or (e["type"] == "resolution" and e["body"]["forecast"] in world))', ')')]),
+    Pin("flooding_bounded", clerk_tests("w1_from_entry_strict_deadline_holders_and_discharge", "flood_and_byte_identical_projection"), [
+        Mutant("deduplicated_by_claim", "tools/clerk.py", W1_OPEN,
+               W1_OPEN[:-1] + ' and not any(es[w["seq"]]["body"]["claim"] == e["body"]["claim"] for w in writs):')]),
+    Pin("veto_c1b", promotion_tests("veto_subject_is_exact"), [
+        Mutant("veto_subject_ignored", "tools/status.py", 'and e["body"].get("subject") == subject for e in prefix)', 'for e in prefix)')]),
+    Pin("map_printed", promotion_tests("map_printed_and_each_required_hand_row_refuses"), [
+        Mutant("hand_row_passes", "tools/status.py", 'mapping.get(k, {}).get("enforcer", "").startswith("code:")',
+               'mapping.get(k, {}).get("enforcer", "").startswith(("code:", "hand:"))')]),
+]
+PINS += C1B_PINS
