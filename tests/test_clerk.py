@@ -2,63 +2,16 @@
 import copy
 import json
 import os
-import tempfile
 import unittest
 from fractions import Fraction
 
-from harness import build, keys
+from harness import build
 from kernel import check
+from tests.clerk_fixture import DUE, LATE, NOW, SignedFixture, Stream
 from tools import clerk, status
 
-NOW = "2026-10-31T12:00:00Z"
-DUE = "2026-11-03T00:00:00Z"
-LATE = "2026-11-03T00:00:01Z"
 
-
-class Stream:
-    def __init__(self, signers):
-        self.signers, self.log, self.es = signers, build.Log(), []
-        self.add("genesis", "guy", **build.genesis_body([build.decl("guy", "guy", signers["guy"], build.ALL)]))
-        for who in ("counsel", "herald"):
-            self.add("key", "guy", **build.decl(who, who, signers[who], build.ALL))
-        self.forecast(args={"id": "L0"})
-        self.opening = self.add("decision", "guy", kind="promote", subject="C1a")
-
-    def add(self, typ, who="herald", ts=NOW, **body):
-        self.es.append(json.loads(self.log.add(typ, who, body, self.signers[who], ts=ts)))
-        return self.es[-1]["seq"]
-
-    def forecast(self, **body):
-        return self.add("forecast", "counsel", **dict({"claim": "same claim", "p": 500, "resolves_by": DUE}, **body))
-
-    def resolve(self, f, who="herald", ts=NOW, evidence="run"):
-        return self.add("resolution", who, ts=ts, forecast=f, outcome=1, evidence=evidence)
-
-    def merge(self, who="herald", ts=NOW):
-        return self.add("merge", who, ts=ts, **build.merge(self.opening))
-
-    def process(self):
-        return status.item_process(self.es, self.opening)
-
-    def complete(self, n):
-        for _ in range(n):
-            self.resolve(self.forecast())
-            self.merge()
-
-
-class ClerkTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.tmp = tempfile.TemporaryDirectory()
-        cls.signers = {who: keys.make_key(cls.tmp.name, who) for who in ("guy", "counsel", "herald")}
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.tmp.cleanup()
-
-    def setUp(self):
-        self.s = Stream(self.signers)
-
+class ClerkTest(SignedFixture):
     def rows(self):
         return [(i["seq"], i["kind"], i["forecasts"], i["Y"]) for i in self.s.process()["items"]]
 
@@ -153,7 +106,7 @@ class ClerkTest(unittest.TestCase):
     def test_repair_without_open_writ_has_no_future_taint(self):
         self.s.add("decision", "guy", kind="fix", subject="runner")
         self.s.complete(1)
-        self.assertEqual([i["Y"] for i in self.s.process()["items"]], [1])
+        self.assertEqual(self.rows(), [(8, "batch", (6,), 1)])
 
     def test_late_report_never_changes_prior_items_stakes_or_wealth(self):
         self.s.complete(9)
@@ -180,20 +133,24 @@ class ClerkTest(unittest.TestCase):
         self.assertTrue(all(len(row[2]) == row[3] == 1 for row in self.rows()))
 
     def test_evidence_reuse_cannot_regroup_scored_items(self):
-        self.s.complete(6)
+        for n in range(6):
+            self.s.resolve(self.s.forecast(), evidence=f"run{n}")
+            self.s.merge()
         before = self.s.process()["items"]
-        fs = [self.s.forecast() for _ in range(2)]
-        for f in fs:
-            self.s.resolve(f)  # same evidence as all six earlier batches
-        m = self.s.merge()
-        after = self.s.process()["items"]
-        self.assertEqual(after[:-1], before)
-        self.assertEqual(self.rows()[-1], (m, "batch", tuple(fs), 1))
-        self.assertEqual(after[-1]["E"], status.wealth([{"Y": 1}] * 7)[-1]["E"])
+        for evidence, n in (("run", 7), ("fresh", 8)):
+            fs = [self.s.forecast() for _ in range(2)]
+            for k, f in enumerate(fs):
+                self.s.resolve(f, evidence=f"{evidence}{k}")
+            m = self.s.merge()
+            after = self.s.process()["items"]
+            self.assertEqual(after[:-1], before)
+            self.assertEqual(self.rows()[-1], (m, "batch", tuple(fs), 1))
+            self.assertEqual((len(after), after[-1]["E"]), (n, status.score_items([{"Y": 1}] * n)["E"]))
+            before = after
 
     def test_exact_prequential_wealth(self):
-        eight = status.wealth([{"Y": 1}] * 8)
-        nine = status.wealth([{"Y": 1}] * 9)
+        eight = status.score_items([{"Y": 1}] * 8)["items"]
+        nine = status.score_items([{"Y": 1}] * 9)["items"]
         self.assertEqual(status.P0, Fraction(6, 11))
         self.assertEqual(nine[:-1], eight)
         self.assertIsInstance(nine[-1]["E"], Fraction)
@@ -210,7 +167,7 @@ class ClerkTest(unittest.TestCase):
                     (110, (38,), 0), (140, (121,), 1), (151, (114, 115, 118, 123, 127), 1)]
         self.assertEqual([(i["seq"], i["forecasts"], i["Y"]) for i in items], expected)
         self.assertEqual(sum(i["Y"] for i in items), 4)
-        self.assertEqual(items[6]["repairs"], (44, 45, 46, 47))
+        self.assertEqual([i["repairs"] for i in items], [(46, 47), (47,), (), (), (), (), (44, 45, 46, 47), (), ()])
         twin = status.item_process([e for e in es if e["seq"] not in (44, 45, 46, 47)])["items"]
         self.assertEqual(next(i["Y"] for i in twin if i["seq"] == 110), 1)
         for n in range(1, len(es) + 1):

@@ -26,20 +26,17 @@ def forecast_writs(entries, runs, now):
         if e["type"] == "key":
             keys[e["body"]["key_id"]] = e["body"]
     resolved = {e["body"]["forecast"] for e in es if e["type"] == "resolution"}
-    sovereign = ",".join(sorted({d["principal"] for d in es[0]["body"]["keys"]}))
     writs = []
     for e in es:
         if e["type"] == "forecast" and e["seq"] > opening and e["seq"] not in resolved:
             holders = tuple(sorted(k for k, d in keys.items() if "resolution" in d["powers"] and
                                    d["principal"] != e["proposer"]))
-            deadline = e["body"]["resolves_by"]
-            writs.append({"class": "W1", "seq": e["seq"], "holders": holders, "deadline": deadline,
-                          "escalated": deadline < now, "sovereign": sovereign})
+            writs.append(writ(es, "W1", f"forecast {e['seq']}", e["body"]["resolves_by"], now, e["seq"], holders))
     return writs
 
 
-def writ(es, kind, obligation, deadline, now, seq=None):
-    return {"class": kind, "seq": seq, "obligation": obligation, "holders": ("counsel",),
+def writ(es, kind, obligation, deadline, now, seq=None, holders=("counsel",)):
+    return {"class": kind, "seq": seq, "obligation": obligation, "holders": holders,
             "deadline": deadline, "escalated": deadline < now,
             "sovereign": ",".join(sorted({d["principal"] for d in es[0]["body"]["keys"]}))}
 
@@ -54,13 +51,13 @@ def merge_writs(es, runs, now, deadline, counsel_open):
 
 
 def window_writs(es, s, now):
-    lines = [text for ok, text in s["checks"] if not ok] + s.get("repairs", [])
+    lines = status.unmet(s) + s.get("repairs", [])
     lines += [f"overdue forecast {seq} ({who}) due {by}" for by, seq, who, _ in s["overdue"]]
     return [writ(es, "W4", text, s["end"], now) for text in lines]
 
 
 def render(writs):
-    return "\n".join(f"{w['class']} {w.get('obligation', 'forecast ' + str(w['seq']))}: holders {','.join(w['holders']) or '(none)'}; "
+    return "\n".join(f"{w['class']} {w['obligation']}: holders {','.join(w['holders']) or '(none)'}; "
                      f"deadline {w['deadline']}" + (f" ESCALATED to {w['sovereign']}" if w["escalated"] else "")
                      for w in writs)
 
@@ -70,17 +67,18 @@ def main(argv=None):
     ap.add_argument("--counsel-open", metavar="FILE", help="W3 precedent table (default transcripts/COUNSEL-OPEN.md at HEAD)")
     a = ap.parse_args(argv)
     try:
-        es, head, subject, run, runs, acts, mapping = status.inputs(a)
-        s = status.report(es, head, subject, a.as_of, a.root, run, runs, acts, mapping)
+        context = status.inputs(a)
+        es, runs = context["es"], context["runs"]
+        s = status.report(**context)
         try:
             if a.counsel_open:
                 with open(a.counsel_open) as f:
                     precedents = f.read()
             else:
-                precedents = status.tree_bytes(a.root, head, "transcripts/COUNSEL-OPEN.md").decode()
+                precedents = status.tree_bytes(a.root, context["rev"], "transcripts/COUNSEL-OPEN.md").decode()
         except (FileNotFoundError, subprocess.CalledProcessError):
             precedents = ""
-        forecasts = forecast_writs(es, runs, a.as_of) if subject == "C1b" else []
+        forecasts = forecast_writs(es, runs, a.as_of) if s["subject"] == "C1b" else []
         print(render(forecasts + merge_writs(es, runs, a.as_of, s["end"], precedents) + window_writs(es, s, a.as_of)))
     except (StopIteration, OSError, ValueError, subprocess.CalledProcessError) as exc:
         raise SystemExit(f"clerk unverified: {exc or 'window opening or L0 missing'}")

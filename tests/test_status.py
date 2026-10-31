@@ -1,11 +1,11 @@
 """tools/status.py: the window's figures from synthetic entries (hermetic; no log on disk, no clock)."""
 import hashlib
-import os
-import tempfile
 import unittest
 from unittest.mock import patch
 
 from tools import status as st
+from harness.gitfix import write
+from tests.clerk_fixture import tree
 
 
 def e(seq, ts, type_, proposer, **body):
@@ -14,12 +14,9 @@ def e(seq, ts, type_, proposer, **body):
 
 class StatusTest(unittest.TestCase):
     def setUp(self):
-        self.root = tempfile.mkdtemp()
-        os.makedirs(os.path.join(self.root, "transcripts", "evidence"))
         blob = b"a saved page\n"
         self.h = hashlib.sha256(blob).hexdigest()
-        with open(os.path.join(self.root, "transcripts", "evidence", self.h), "wb") as f:
-            f.write(blob)
+        self.root, _ = self.enterContext(tree({"transcripts/evidence/" + self.h: blob}))
         self.es = [
             e(0, "2026-10-25T16:44:10Z", "amend", "guy", id="A3", activate_at=1),
             e(1, "2026-10-26T00:00:00Z", "forecast", "counsel", claim="w", p=500, resolves_by="2026-10-27T00:00:00Z", type="world.x"),
@@ -52,8 +49,7 @@ class StatusTest(unittest.TestCase):
         self.assertEqual(s["forecasts"], 3)
 
     def test_evidence_must_hash(self):
-        with open(os.path.join(self.root, "transcripts", "evidence", "0" * 64), "wb") as f:
-            f.write(b"present, but not the claimed bytes")
+        write(self.root, "transcripts/evidence/" + "0" * 64, b"present, but not the claimed bytes")
         bad = dict(self.es[4]); bad["body"] = dict(bad["body"], evidence="sha256:" + "0" * 64)
         s = st.status(self.es[:4] + [bad] + self.es[5:], "A3", 14, "2026-10-26T04:00:00Z", root=self.root)
         self.assertEqual((s["world_resolutions"], s["world_resolutions_with_evidence"]), (1, 0))
