@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#0e2013">
+    <title>Race Meeting · Happy Valley 2026-10-21 · HKJC Guru</title>
+    <meta name="description" content="Race Meeting: Happy Valley, 2026-10-21 — 9 races.">
+    
+    
+    
+    
+    
+    
+    <link rel="canonical" href="https://hkjc.guru/meeting/2026-10-21/HV">
+    <link rel="alternate" hreflang="en" href="https://hkjc.guru/meeting/2026-10-21/HV">
+    
+    
+    <link rel="alternate" hreflang="zh-HK" href="https://hkjc.guru/zh-HK/meeting/2026-10-21/HV">
+    
+    <link rel="alternate" hreflang="x-default" href="https://hkjc.guru/meeting/2026-10-21/HV">
+    
+    <meta property="og:site_name" content="HKJC Guru">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hkjc.guru/meeting/2026-10-21/HV">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="Race Meeting · Happy Valley 2026-10-21 · HKJC Guru">
+    <meta property="og:description" content="Race Meeting: Happy Valley, 2026-10-21 — 9 races.">
+    <meta property="og:image" content="https://hkjc.guru/og/home.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap"></noscript>
+    <link rel="stylesheet" href="/static/app.css?v=cc231a2a">
+    <script src="/static/htmx.min.js?v=e209dda5" defer></script>
+    
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_1HRPWj8xOz5e1q7iGMicuo3qhK2MsLTN7BOPi3CIKwy', {api_host: 'https://us.i.posthog.com', person_profiles: 'identified_only'});
+        document.addEventListener('click', function (ev) {
+            var el = ev.target.closest('[data-ph-capture-attribute-funnel]');
+            if (!el) return;
+            var funnel = el.getAttribute('data-ph-capture-attribute-funnel');
+            var eventName = funnel.indexOf('advisory') === 0 ? 'advisory_cta_click' : 'funnel_cta_click';
+            posthog.capture(eventName, {funnel: funnel});
+        });
+        // Outbound renavon clicks, keyed by PLACEMENT (the same series crhk.guru
+        // reports). Delegated, not bound per-anchor, so anchors swapped in over
+        // htmx are counted too. The links carry only data-outbound="<placement>";
+        // the href, its UTM query and the campaign all come from
+        // app/services/products.py, so this never has to agree with a template
+        // about what a link points at. sendBeacon, because the click is
+        // navigating away: an ordinary XHR is cancelled on unload and the event
+        // is lost, which is how outbound tracking measures zero and looks like
+        // nobody clicked.
+        document.addEventListener('click', function (ev) {
+            var a = ev.target.closest && ev.target.closest('a[data-outbound]');
+            if (!a) return;
+            posthog.capture('outbound_click', {
+                placement: a.dataset.outbound,
+                href: a.getAttribute('href')
+            }, { transport: 'sendBeacon' });
+        });
+        document.addEventListener('htmx:afterRequest', function (ev) {
+            if (ev.detail.pathInfo && ev.detail.pathInfo.requestPath === '/advisory/waitlist' && ev.detail.successful) {
+                posthog.capture('subscribe_started');
+            }
+        });
+    </script>
+    
+    
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "description": "9 races at Happy Valley on 2026-10-21", "mainEntity": {"@type": "ItemList", "itemListElement": [{"@type": "ListItem", "name": "Race 1 \u2014 RACING SPIRIT HANDICAP", "position": 1, "url": "https://hkjc.guru/race/2026-10-21/HV/1"}, {"@type": "ListItem", "name": "Race 2 \u2014 SUCCESS HANDICAP", "position": 2, "url": "https://hkjc.guru/race/2026-10-21/HV/2"}, {"@type": "ListItem", "name": "Race 3 \u2014 RACING SPIRIT HANDICAP", "position": 3, "url": "https://hkjc.guru/race/2026-10-21/HV/3"}, {"@type": "ListItem", "name": "Race 4 \u2014 SWIFTY HANDICAP", "position": 4, "url": "https://hkjc.guru/race/2026-10-21/HV/4"}, {"@type": "ListItem", "name": "Race 5 \u2014 SPEEDY HANDICAP", "position": 5, "url": "https://hkjc.guru/race/2026-10-21/HV/5"}, {"@type": "ListItem", "name": "Race 6 \u2014 THE LONGINES CUP (HANDICAP)", "position": 6, "url": "https://hkjc.guru/race/2026-10-21/HV/6"}, {"@type": "ListItem", "name": "Race 7 \u2014 SWIFTY HANDICAP", "position": 7, "url": "https://hkjc.guru/race/2026-10-21/HV/7"}, {"@type": "ListItem", "name": "Race 8 \u2014 FLYING HANDICAP", "position": 8, "url": "https://hkjc.guru/race/2026-10-21/HV/8"}, {"@type": "ListItem", "name": "Race 9 \u2014 SONGS OF VICTORY HANDICAP", "position": 9, "url": "https://hkjc.guru/race/2026-10-21/HV/9"}]}, "name": "Happy Valley 2026-10-21"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "item": "https://hkjc.guru/", "name": "HKJC Guru", "position": 1}, {"@type": "ListItem", "item": "https://hkjc.guru/meeting/2026-10-21/HV", "name": "Happy Valley 2026-10-21", "position": 2}]}</script>
+
+</head>
+<body class="bg-page font-sans text-ink min-h-screen flex flex-col" hx-indicator="#loading-bar">
+    <div id="loading-bar" class="htmx-indicator fixed top-0 inset-x-0 h-0.5 bg-gold z-[60]" aria-hidden="true"></div>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-gold focus:text-gold-ink focus:rounded">Skip to content</a>
+
+    
+    <header class="bg-green-950">
+        <p class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 text-[11px] sm:text-xs text-mist text-center flex items-center justify-center gap-2">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-gold pulse-dot flex-none" aria-hidden="true"></span>
+            <span>HKJC Guru is an independent statistics service and is not affiliated with, endorsed by, or connected to The Hong Kong Jockey Club.</span>
+        </p>
+    </header>
+
+    <nav class="sticky top-0 z-50 bg-green-900 border-b-[3px] border-gold">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            
+            
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-0 min-h-14 py-2 sm:py-0">
+                <a href="/" class="flex items-baseline gap-1.5 flex-none group mr-auto sm:mr-0 order-first sm:order-none">
+                    <span class="font-display text-lg font-extrabold tracking-tight text-snow group-hover:text-gold-bright transition-colors">HKJC</span>
+                    <span class="font-display text-lg font-extrabold tracking-tight text-gold group-hover:text-gold-bright transition-colors">GURU</span>
+                </a>
+                
+                <div class="contents sm:flex sm:items-center sm:gap-5 sm:ml-auto sm:order-3">
+                <div class="flex items-center gap-4 sm:gap-5 text-[13.5px] font-medium">
+                    <a href="/#racing" class="text-mist hover:text-gold-bright transition-colors">Races</a>
+                    <a href="/model" class="text-mist hover:text-gold-bright transition-colors ">Ratings</a>
+                    <a href="/advisory" class="text-mist hover:text-gold-bright transition-colors ">Advisory</a>
+                    <a href="/data" class="text-mist hover:text-gold-bright transition-colors ">Data</a>
+                    
+                    <a href="/zh-HK/meeting/2026-10-21/HV" lang="zh-HK" class="font-mono text-[11px] font-medium border border-green-line rounded px-2.5 py-1 text-mist hover:text-gold hover:border-gold transition-colors">中文</a>
+                    
+                </div>
+                <a href="https://renavon.com/auth/login?site=hkjc&amp;utm_source=hkjcguru&amp;utm_medium=referral&amp;utm_campaign=account" data-outbound="account" data-ph-capture-attribute-funnel="account" class="text-[13.5px] font-medium text-mist hover:text-gold-bright transition-colors -order-1 sm:order-none">Account</a>
+                </div>
+                
+                
+                
+
+<form method="get" action="/search" role="search" aria-label="Site search" class="flex w-full order-last pb-2 sm:pb-0 sm:order-2 sm:w-auto sm:flex-1 sm:min-w-44 sm:max-w-sm sm:mx-4">
+    <div class="w-full h-9 flex items-center gap-2 px-3 rounded bg-page text-ink focus-within:border-claret border border-transparent focus-within:ring-2 focus-within:ring-gold-bright focus-within:ring-offset-2 focus-within:ring-offset-green-900">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ink-soft flex-none" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" name="q"
+               placeholder="Search by horse, jockey, or trainer…" aria-label="Search by horse, jockey, or trainer…"
+               class="flex-1 min-w-0 bg-transparent text-sm placeholder:text-ink-faint focus:outline-none">
+        
+    </div>
+    
+</form>
+
+                
+            </div>
+        </div>
+    </nav>
+
+    
+    
+    
+    
+    <aside aria-label="Next Meeting" class="bg-page-dim border-b border-rule">
+        <p class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 text-xs text-ink-soft flex items-center gap-2">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-claret pulse-dot flex-none" aria-hidden="true"></span>
+            <a href="/meeting/2026-11-01/HV" class="hover:text-claret">
+                <span class="kicker kicker-dim">Next Meeting</span>
+                <span class="font-medium text-ink ml-1.5">Happy Valley · 2026-11-01</span>
+                <span class="font-mono text-[11px] ml-1.5">10 races · none run yet</span>
+            </a>
+        </p>
+    </aside>
+    
+
+    <main id="main-content" class="flex-1">
+        
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+
+    <header>
+        <p class="kicker">Race Meeting</p>
+        <h1 class="font-display text-[1.7rem] leading-tight sm:text-4xl font-extrabold text-ink mt-1.5">Happy Valley &middot; 2026-10-21</h1>
+        <p class="text-ink-soft text-sm mt-2">
+            9 races
+             · GOOD
+            
+            · <a class="text-claret underline underline-offset-2" href="/venue/happy-valley">Happy Valley stats</a>
+        </p>
+        
+        
+        
+        <p class="font-mono text-xs text-ink-soft mt-2">
+            
+            
+            9 gear changes
+        </p>
+        
+    </header>
+
+    <section class="mt-7" data-answer="races">
+        <div class="rule-head">
+            <h2>Races</h2>
+        </div>
+        <div>
+            
+            
+            <a href="/race/2026-10-21/HV/1"
+               class="flex items-center gap-3 px-1.5 py-2.5 border-b border-rule hover:bg-page-dim transition-colors ">
+                <span class="font-mono text-xs font-bold text-ink w-8 flex-none">R1</span>
+                <span class="min-w-0 flex-1">
+                    
+                    <span class="block font-semibold text-[13.5px] truncate">RACING SPIRIT HANDICAP</span>
+                    <span class="block text-[11px] text-ink-soft font-mono mt-0.5">
+                        1650m · Class 4
+                    </span>
+                </span>
+                <span class="flex items-center gap-2 flex-none">
+                    
+                    <span class="text-right">
+                        <span class="block text-[10px] uppercase tracking-wide text-ink-faint font-mono">Winner</span>
+                        <span class="block text-[13px] font-semibold">ACE</span>
+                    </span>
+                    <span class="font-mono text-xs tabular-figures text-ink-soft">2.9</span>
+                    
+                </span>
+            </a>
+            
+            
+            <a href="/race/2026-10-21/HV/2"
+               class="flex items-center gap-3 px-1.5 py-2.5 border-b border-rule hover:bg-page-dim transition-colors bg-page-dim/50">
+                <span class="font-mono text-xs font-bold text-ink w-8 flex-none">R2</span>
+                <span class="min-w-0 flex-1">
+                    
+                    <span class="block font-semibold text-[13.5px] truncate">SUCCESS HANDICAP</span>
+                    <span class="block text-[11px] text-ink-soft font-mono mt-0.5">
+                        1200m · Class 5
+                    </span>
+                </span>
+                <span class="flex items-center gap-2 flex-none">
+                    
+                    <span class="text-right">
+                        <span class="block text-[10px] uppercase tracking-wide text-ink-faint font-mono">Winner</span>
+                        <span class="block text-[13px] font-semibold">VERBIER</span>
+                    </span>
+                    <span class="font-mono text-xs tabular-figures text-ink-soft">49.0</span>
+                    
+                </span>
+            </a>
+            
+            
+            <a href="/race/2026-10-21/HV/3"
+               class="flex items-center gap-3 px-1.5 py-2.5 border-b border-rule hover:bg-page-dim transition-colors ">
+                <span class="font-mono text-xs font-bold text-ink w-8 flex-none">R3</span>
+                <span class="min-w-0 flex-1">
+                    
+                    <span class="block font-semibold text-[13.5px] truncate">RACING SPIRIT HANDICAP</span>
+                    <span class="block text-[11px] text-ink-soft font-mono mt-0.5">
+                        1650m · Class 4
+                    </span>
+                </span>
+                <span class="flex items-center gap-2 flex-none">
+                    
+                    <span class="text-right">
+                        <span class="block text-[10px] uppercase tracking-wide text-ink-faint font-mono">Winner</span>
+                        <span class="block text-[13px] font-semibold">TURIN CHAMPIONS</span>
+                    </span>
+                    <span class="font-mono text-xs tabular-figures text-ink-soft">10.0</span>
+                    
+                </span>
+            </a>
+            
+            
+            <a href="/race/2026-10-21/HV/4"
+               class="flex items-center gap-3 px-1.5 py-2.5 border-b border-rule hover:bg-page-dim transition-colors bg-page-dim/50">
+                <span class="font-mono text-xs font-bold text-ink w-8 flex-none">R4</span>
+                <span class="min-w-0 flex-1">
+                    
+                    <span class="block font-semibold text-[13.5px] truncate">SWIFTY HANDICAP</span>
+                    <span class="block text-[11px] text-ink-soft font-mono mt-0.5">
+                        1200m · Class 4
+                    </span>
+                </span>
+                <span class="flex items-center gap-2 flex-none">
+                    
+                    <span class="text-right">
+                        <span class="block text-[10px] uppercase tracking-wide text-ink-faint font-mono">Winner</span>
+                        <span class="block text-[13px] font-semibold">VIRTUS GLORY</span>
+                    </span>
+                    <span class="font-mono text-xs tabular-figures text-ink-soft">2.1</span>
+                    
+                </span>
+            </a>
+            
+            
+            <a href="/race/2026-10-21/HV/5"
+               class="flex items-center gap-3 px-1.5 py-2.5 border-b border-rule hover:bg-page-dim transition-colors ">
+                <span class="font-mono text-xs font-bold text-ink w-8 flex-none">R5</span>
+                <span class="min-w-0 flex-1">
+                    
+                    <span class="block font-semibold text-[13.5px] truncate">SPEEDY HANDICAP</span>
+                    <span class="block text-[11px] text-ink-soft font-mono mt-0.5">
+                        1000m · Class 4
+                    </span>
+                </span>
+                <span class="flex items-center gap-2 flex-none">
+                    
+                    <span class="text-right">
+                        <span class="block text-[10px] uppercase tracking-wide text-ink-faint font-mono">Winner</span>
+                        <span class="block text-[13px] font-semibold">SUPER SIXTY</span>
+                    </span>
+                    <span class="font-mono text-xs tabular-figures text-ink-soft">9.6</span>
+                    
+                </span>
+            </a>
+            
+            
+            <a href="/race/2026-10-21/HV/6"
+               class="flex items-center gap-3 px-1.5 py-2.5 border-b border-rule hover:bg-page-dim transition-colors bg-page-dim/50">
+                <span class="font-mono text-xs font-bold text-ink w-8 flex-none">R6</span>
+                <span class="min-w-0 flex-1">
+                    
+                    <span class="block font-semibold text-[13.5px] truncate">THE LONGINES CUP (HANDICAP)</span>
+                    <span class="block text-[11px] text-ink-soft font-mono mt-0.5">
+                        1000m · Class 2
+                    </span>
+                </span>
+                <span class="flex items-center gap-2 flex-none">
+                    
+                    <span class="text-right">
+                        <span class="block text-[10px] uppercase tracking-wide text-ink-faint font-mono">Winner</span>
+                        <span class="block text-[13px] font-semibold">BOTTOMUPTOGETHER</span>
+                    </span>
+                    <span class="font-mono text-xs tabular-figures text-ink-soft">6.9</span>
+                    
+                </span>
+            </a>
+            
+            
+            <a href="/race/2026-10-21/HV/7"
+               class="flex items-center gap-3 px-1.5 py-2.5 border-b border-rule hover:bg-page-dim transition-colors ">
+                <span class="font-mono text-xs font-bold text-ink w-8 flex-none">R7</span>
+                <span class="min-w-0 flex-1">
+                    
+                    <span class="block font-semibold text-[13.5px] truncate">SWIFTY HANDICAP</span>
+                    <span class="block text-[11px] text-ink-soft font-mono mt-0.5">
+                        1200m · Class 4
+                    </span>
+                </span>
+                <span class="flex items-center gap-2 flex-none">
+                    
+                    <span class="text-right">
+                        <span class="block text-[10px] uppercase tracking-wide text-ink-faint font-mono">Winner</span>
+                        <span class="block text-[13px] font-semibold">MALPENSA</span>
+                    </span>
+                    <span class="font-mono text-xs tabular-figures text-ink-soft">6.5</span>
+                    
+                </span>
+            </a>
+            
+            
+            <a href="/race/2026-10-21/HV/8"
+               class="flex items-center gap-3 px-1.5 py-2.5 border-b border-rule hover:bg-page-dim transition-colors bg-page-dim/50">
+                <span class="font-mono text-xs font-bold text-ink w-8 flex-none">R8</span>
+                <span class="min-w-0 flex-1">
+                    
+                    <span class="block font-semibold text-[13.5px] truncate">FLYING HANDICAP</span>
+                    <span class="block text-[11px] text-ink-soft font-mono mt-0.5">
+                        1200m · Class 3
+                    </span>
+                </span>
+                <span class="flex items-center gap-2 flex-none">
+                    
+                    <span class="text-right">
+                        <span class="block text-[10px] uppercase tracking-wide text-ink-faint font-mono">Winner</span>
+                        <span class="block text-[13px] font-semibold">LEADING AGILITY</span>
+                    </span>
+                    <span class="font-mono text-xs tabular-figures text-ink-soft">4.7</span>
+                    
+                </span>
+            </a>
+            
+            
+            <a href="/race/2026-10-21/HV/9"
+               class="flex items-center gap-3 px-1.5 py-2.5 border-b border-rule hover:bg-page-dim transition-colors ">
+                <span class="font-mono text-xs font-bold text-ink w-8 flex-none">R9</span>
+                <span class="min-w-0 flex-1">
+                    
+                    <span class="block font-semibold text-[13.5px] truncate">SONGS OF VICTORY HANDICAP</span>
+                    <span class="block text-[11px] text-ink-soft font-mono mt-0.5">
+                        1650m · Class 3
+                    </span>
+                </span>
+                <span class="flex items-center gap-2 flex-none">
+                    
+                    <span class="text-right">
+                        <span class="block text-[10px] uppercase tracking-wide text-ink-faint font-mono">Winner</span>
+                        <span class="block text-[13px] font-semibold">SOLID WIN</span>
+                    </span>
+                    <span class="font-mono text-xs tabular-figures text-ink-soft">6.4</span>
+                    
+                </span>
+            </a>
+            
+        </div>
+    </section>
+
+    
+
+    <div class="xlinks mt-10">
+        
+        <a href="/meeting/2026-10-19/ST">← 2026-10-19</a>
+        
+        
+        <a href="/meeting/2026-10-25/ST">2026-10-25 →</a>
+        
+        <a href="/venue/happy-valley">Happy Valley</a>
+        <a href="/season/2026-27">This season</a>
+    </div>
+    
+
+<nav class="mt-5" aria-label="The data behind this page">
+    <p class="kicker kicker-dim">The data behind this page</p>
+    <div class="xlinks mt-2">
+        <a href="/data/hkjc/hkjc_races" data-ph-capture-attribute-funnel="meeting_data_behind">HKJC Race Catalog</a><a href="/data/hkjc/hkjc_race_results" data-ph-capture-attribute-funnel="meeting_data_behind">HKJC Race Results</a><a href="/data/hkjc/hkjc_dividends" data-ph-capture-attribute-funnel="meeting_data_behind">HKJC Dividends</a>
+    </div>
+</nav>
+
+
+
+</div>
+
+    </main>
+
+    <footer class="bg-green-950 mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <p class="font-display text-base font-bold text-snow">HKJC <span class="text-gold">GURU</span></p>
+                    <p class="font-mono text-[10px] text-mist mt-2 leading-relaxed tracking-wide uppercase">Hong Kong horse racing results, form, and ratings</p>
+                    <p class="text-[11px] text-mist mt-3">Data from <a href="https://renavon.com/?utm_source=hkjcguru&amp;utm_medium=referral&amp;utm_campaign=footer" data-outbound="footer" target="_blank" rel="noopener noreferrer" data-ph-capture-attribute-funnel="footer" class="text-mist hover:text-gold-bright underline underline-offset-2 transition-colors">Renavon.com<span class="sr-only"> (opens in new tab)</span></a></p>
+                </div>
+                <div>
+                    <p class="kicker kicker-dim !text-mist">Explore</p>
+                    <ul class="mt-3 space-y-1.5 text-[13px]">
+                        <li><a href="/horses" class="text-mist hover:text-gold-bright transition-colors">Horses</a></li>
+                        <li><a href="/jockeys" class="text-mist hover:text-gold-bright transition-colors">Jockeys</a></li>
+                        <li><a href="/trainers" class="text-mist hover:text-gold-bright transition-colors">Trainers</a></li>
+                        <li><a href="/venue/sha-tin" class="text-mist hover:text-gold-bright transition-colors">Sha Tin</a></li>
+                        <li><a href="/venue/happy-valley" class="text-mist hover:text-gold-bright transition-colors">Happy Valley</a></li>
+                        <li><a href="/search" class="text-mist hover:text-gold-bright transition-colors">Search</a></li>
+                        <li><a href="/glossary" class="text-mist hover:text-gold-bright transition-colors">Glossary</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="kicker kicker-dim !text-mist">Model &amp; advisory</p>
+                    <ul class="mt-3 space-y-1.5 text-[13px]">
+                        <li><a href="/model" class="text-mist hover:text-gold-bright transition-colors">Ratings</a></li>
+                        <li><a href="/advisory" class="text-mist hover:text-gold-bright transition-colors">Advisory</a></li>
+                        <li><a href="/proofing" class="text-mist hover:text-gold-bright transition-colors">View Track Record</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="kicker kicker-dim !text-mist">Data products</p>
+                    <ul class="mt-3 space-y-1.5 text-[13px]">
+                        <li><a href="/data" class="text-mist hover:text-gold-bright transition-colors">Data products</a></li>
+                        <li><a href="/pricing" class="text-mist hover:text-gold-bright transition-colors">Pricing</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 pt-5 border-t border-green-line/60 text-[11px] text-mist leading-relaxed space-y-2">
+                <p>HKJC Guru is an independent statistics service and is not affiliated with, endorsed by, or connected to The Hong Kong Jockey Club.</p>
+                <p>Bet responsibly. If gambling is a problem, call the HK Ping Wo Fund hotline 18281.</p>
+                <p class="font-mono text-[10px]">© 2026 · Renavon · Not affiliated with The Hong Kong Jockey Club · <a href="https://renavon.com/privacy" class="hover:text-gold-bright underline underline-offset-2" data-legal="privacy">Privacy</a> · <a href="https://renavon.com/terms" class="hover:text-gold-bright underline underline-offset-2" data-legal="terms">Terms</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Any failed htmx request (network error or non-2xx response) leaves its
+        // swap target unchanged by default — silent from the user's perspective.
+        // Render a visible, retryable error into the target instead.
+        (function () {
+            var retryLabel = "Retry";
+            var errorLabel = "Something went wrong loading results.";
+            function handleHtmxError(evt) {
+                var target = evt.detail.target;
+                if (!target || !target.id) return;
+                // A sustained outage re-fires this on every keystroke of a live-search
+                // input — without this guard that would blow away the retry button and
+                // re-announce the alert on every request.
+                if (target.querySelector('#htmx-error-box')) return;
+                // requestConfig.path is the route template *before* query params are
+                // interpolated (e.g. "/search", not "/search?q=..&page=.."); the fully
+                // resolved URL htmx actually sent is pathInfo.finalRequestPath.
+                var info = evt.detail.pathInfo || {};
+                var cfg = evt.detail.requestConfig || {};
+                var elt = evt.detail.elt;
+                var verb = cfg.verb || 'get';
+                var path = info.finalRequestPath || cfg.path;
+                // Some triggers (search) hx-select a fragment out of a full-page
+                // response and hx-swap="outerHTML" it in; others (waitlist) just
+                // hx-swap innerHTML with no select. Read the trigger's own attrs
+                // at retry time rather than assuming one shape for every target.
+                var select = elt && elt.getAttribute('hx-select');
+                var swap = (elt && elt.getAttribute('hx-swap')) || 'innerHTML';
+                // If focus was inside the content we're about to replace, it would
+                // otherwise silently fall back to <body> — move it to the new alert.
+                var hadFocusInside = target.contains(document.activeElement) && document.activeElement !== document.body;
+                target.innerHTML =
+                    '<div class="text-center py-12" role="alert" id="htmx-error-box" tabindex="-1">' +
+                    '<p class="text-ink-soft text-lg mb-4">' + errorLabel + '</p>' +
+                    (path ? '<button type="button" class="cta-gold" id="htmx-retry-btn">' + retryLabel + '</button>' : '') +
+                    '</div>';
+                var box = document.getElementById('htmx-error-box');
+                var btn = document.getElementById('htmx-retry-btn');
+                if (btn && path) {
+                    btn.addEventListener('click', function () {
+                        box.remove();
+                        htmx.ajax(verb, path, {source: elt, target: target, swap: swap, select: select || undefined});
+                    });
+                }
+                if (hadFocusInside && box) {
+                    box.focus();
+                }
+            }
+            // A Cloudflare managed challenge (renavondata/renavon-monorepo#1469) answers an hx-get with 403 and
+            // `cf-mitigated: challenge`. htmx does not swap a 4xx body, so without this the
+            // target silently keeps its stale content and the page just stops updating.
+            // That is the tab-left-open case: cf_clearance is honoured on XHRs but expires
+            // after 30 minutes, and only a TOP-LEVEL navigation can present the
+            // interstitial and mint a new one -- an XHR cannot.
+            //
+            // So reload rather than render the error box below. Clearing isError is what
+            // stops that box from claiming an outage: htmx 2.0.4 gates htmx:responseError
+            // on that flag alone, after the swap block (verified in the vendored bundle,
+            // not assumed), so it is the only way to say "handled, and not a failure".
+            function handleCfChallenge(evt) {
+                var xhr = evt.detail && evt.detail.xhr;
+                if (!xhr) return;
+                var mitigated = xhr.getResponseHeader('cf-mitigated') || '';
+                if (mitigated.toLowerCase().indexOf('challenge') === -1) return;
+                evt.detail.shouldSwap = false;
+                evt.detail.isError = false;
+                // At most one reload per 20s. A challenge the browser cannot satisfy --
+                // third-party cookies blocked, JS storage denied -- would otherwise reload
+                // forever, which is worse than the stale panel this is fixing.
+                var now = Date.now(), last = 0;
+                try { last = parseInt(sessionStorage.getItem('cf-challenge-reload') || '0', 10) || 0; } catch (e) {}
+                if (now - last < 20000) return;
+                try { sessionStorage.setItem('cf-challenge-reload', String(now)); } catch (e) {}
+                window.location.reload();
+            }
+            // Registered BEFORE the error handlers so a challenge is classified first.
+            document.body.addEventListener('htmx:beforeSwap', handleCfChallenge);
+            document.body.addEventListener('htmx:responseError', handleHtmxError);
+            document.body.addEventListener('htmx:sendError', handleHtmxError);
+        })();
+    </script>
+</body>
+</html>
