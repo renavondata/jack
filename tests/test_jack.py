@@ -89,8 +89,10 @@ def template(tmp):
     and a genesis declaring guy (all powers), builder-1 {proposal, spec_conflict}, odd-1, whose principal has a <, nl-1,
     whose principal has a blank line, and sp-1, whose principal is a party, a space and more."""
     w = build.World(tmp)
+    w.herald = keys.make_key(tmp, "herald")
     w.odd, w.nobody, w.nl, w.sp = keys.make_key(tmp, "odd"), keys.make_key(tmp, "nobody"), keys.make_key(tmp, "nl"), keys.make_key(tmp, "sp")
     w.decls = [build.decl("guy-master", "guy", w.guy, build.ALL), build.decl("reviewer-1", "reviewer", w.parties["reviewer"], ["resolution"]),
+               build.decl("herald-2", "herald", w.herald, ["merge"]),
                build.decl("builder-1", "builder", w.ann, ["proposal", "spec_conflict", "forecast", "resolution"]),
                build.decl("odd-1", "x<y", w.odd, ["decision"]), build.decl("nl-1", "builder\n\nother", w.nl, ["decision"]),
                build.decl("sp-1", "builder other", w.sp, ["decision"])]
@@ -402,6 +404,12 @@ class Jack(unittest.TestCase):
         self.assertEqual([c[4:] for c in self.calls("gh", "pr", "checks", "7")], [["--watch"]] * 2)
         self.assertEqual(self.git("worktree", "list").count("\n"), 0)  # the temporary worktree is gone
 
+    def test_merge_admitted_under_herald_key(self):
+        head, main = self.proposed(), self.remote()
+        tip = self.merged(self.jack("merge", "7", key=self.w.herald), head, main)
+        self.assertEqual(self.entries(tip)[-1]["proposer"], "herald")
+        self.assertEqual(self.git("log", "-1", "--format=%B", tip, cwd=self.origin), "merge: #7\n\nProposer: herald herald-2")
+
     def refused_before_signing(self, head, main):  # RUNBOOK 2.7: refuses if either check failed on the proposal's head
         self.refused(self.jack("merge", "7"), f"PR #7's head {head[:12]} was not admitted by the judge and the tests; not merged")
         self.assertEqual((self.calls("gh", "pr", "merge"), self.remote(), self.remote("work")), ([], main, head))  # no entry on the branch
@@ -571,7 +579,7 @@ class Jack(unittest.TestCase):
 
     def test_a_filled_trailer_has_a_party_first_and_at_least_one_more_field(self):
         r = subprocess.run([sys.executable, "-c", LOAD + "print([jack.filled(t) for t in sys.argv[2:]])", os.path.join(self.repo, "tools", "jack"),
-                            "builder claude-opus-5-5 4dbea0e7", "counsel claude-fable-5-1 session_x", "guy", "guy <key_id>", "nobody key-1", "builder b-1\nother"],
+                            "builder claude-opus-5-5 4dbea0e7", "counsel claude-fable-5-1 session_x", "guy", "guy <key_id>", "Nobody key-1", "builder b-1\nother"],
                            env=self.env, capture_output=True, text=True)
         self.assertEqual(r.stdout.strip(), "[True, True, False, False, False, False]", r.stderr)
 
@@ -579,7 +587,7 @@ class Jack(unittest.TestCase):
         self.refused(self.jack("decision", "veto", "x", key=self.w.sp), "principal 'builder other' is not a party")
 
     def test_push_and_merge_read_only_filled_trailers(self):  # review finding 8
-        for k, t in enumerate(("Proposer: x", "Proposer: <party> <key_id>", "Proposer: claude builder-1", "Proposer: guy")):
+        for k, t in enumerate(("Proposer: x", "Proposer: <party> <key_id>", "Proposer: Claude builder-1", "Proposer: guy")):
             with self.subTest(t):
                 self.git("checkout", "-q", "-b", f"b{k}", "main")
                 write(os.path.join(self.repo, "SPEC.md"), f"spec {k}\n")
