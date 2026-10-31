@@ -1,12 +1,13 @@
-# Brief C1b — the clerk (draft v4, 31 October 2026; finalised from the C1a report at C1a's exit)
+# Brief C1b — the clerk (draft v5, 31 October 2026; finalised from the C1a report at C1a's exit)
 
 Counsel's text, in BRIEF-C1's form. v2 answered `transcripts/REVIEW-C1b-A5.md` (gpt-6-astra, BLOCK on
 F5–F8); v3 answered `transcripts/REVIEW-C1b-v2.md` (gemini-4-argon, ACCEPT WITH OBLIGATIONS F1–F6); v4
-answers `transcripts/REVIEW-C1b-v3.md` (gpt-6-astra, BLOCK on F1: the collapsed item regrouped
-outcomes already bet on, against A4.3) as `transcripts/REPLY-REVIEW-C1b-v3.md` sets out. Its spine is
-PLAN-20261030 §4's enforcement map: each criterion is a row that has a witness on the record, in
-witnessed order. Where it names code, the builder builds it and the reviewer pins it; counsel writes
-none.
+answered `transcripts/REVIEW-C1b-v3.md` (gpt-6-astra, BLOCK on F1, regrouped outcomes); v5 answers
+`transcripts/REVIEW-C1b-v4.md` (gpt-6-astra, BLOCK on F3: v4 dropped the charter's "no repair by Guy"
+from the success condition, which a brief may not loosen) as `transcripts/REPLY-REVIEW-C1b-v4.md` sets
+out. Its spine is PLAN-20261030 §4's enforcement map: each criterion is a row that has a witness on the
+record, in witnessed order. Where it names code, the builder builds it and the reviewer pins it;
+counsel writes none.
 
 ## Precondition
 A5 in force. `tools/status.py` on `main`. Every C1a criterion holding on the current prefix (the tool
@@ -17,30 +18,30 @@ C1a made the record say things about the world and be scored for them. C1b makes
 its own obligations without the sovereign: every obligation derived from state and the clock, with a
 deadline, raised where a party reads it, escalated when the deadline passes (maxim 3). The clerk
 decides nothing about validity and holds no change power (§5). Its forcing witness is the record of
-counsel's hand-set reminders, measured on the log: of the seven herald acts that have discharged
-forecasts (merge entries 58, 71, 102, 106, 110, 140, 151), three discharged one late — seq 45 by
-1.2 h, 46/47 by 8.2 h, 56 by 3.8 h after `resolves_by`.
+counsel's hand-set reminders, measured on the log: four writs expired undischarged — seq 45 (resolved
+1.2 h late), 46 and 47 (8.2 h), 56 (3.8 h) — against five herald acts whose every resolution was timely.
 
 ## Scope
 No new entry type and no kernel change. Writs are *derived* state, recomputable by anyone from
 `log.jsonl`, the tree, the clock and GitHub's REST view of the repository, discharged by entries that
 already exist. `invite` and `accept` are C2's, with `wish`, in one kernel change and one run of record;
 **until then a wish of the sovereign's is a `proposal` signed by him appending to
-`transcripts/WISHES.md`** — on the log, under his key, distinguishable as the only `proposal` entries
-that key signs (he signs no other). A wish is never an item (§7: wishes are never scored); a wish not
-entered is not a wish; counsel transcribes none. The acts table counts it once the classifier reads
-`log.jsonl` — counsel's obligation, outside this brief. **The trusted base is not touched.** The
-clerk, its tests and its pins are built under the cap of 6,200. `tools/genesis.py` (80 counted lines,
-unused since seq 0; a second log is not this repository's) is deleted, and with it the genesis tests
-of `tests/test_genesis.py`; that file's `Digest` class — `tools/digest.py` against the judge's digest,
-the refusal of symbolic links and submodules in the trusted base — still serves `jack merge` and
-`jack push` and is kept, in a file of its own. The builder reports the headroom this leaves. `sim/run.py`
-and `tools/vectors.py` stay: `tests/test_sim.py` and `tests/test_vectors.py` exercise them today, which
-is use, not anticipation. If the clerk does not fit, the builder stops and reports the shortfall in
-lines; a push is decided on that number, never before it, and until then criterion 3 stands as written.
+`transcripts/WISHES.md`** — on the log, under his key; every `proposal` his key signs is a wish and he
+signs no other. A wish is never an item (§7: wishes are never scored); a wish not entered is not a
+wish; counsel transcribes none. The acts table counts it once the classifier reads `log.jsonl` —
+counsel's obligation, outside this brief. **The trusted base is not touched.** The clerk, its tests
+and its pins are built under the cap of 6,200. `tools/genesis.py` (80 counted lines, unused since
+seq 0; a second log is not this repository's) is deleted, and with it the genesis tests of
+`tests/test_genesis.py`; that file's `Digest` class — `tools/digest.py` against the judge's digest, the
+refusal of symbolic links and submodules in the trusted base — still serves `jack merge` and
+`jack push` and is kept, in a file of its own. The builder reports the headroom this leaves.
+`sim/run.py` and `tools/vectors.py` stay: `tests/test_sim.py` and `tests/test_vectors.py` exercise
+them today, which is use, not anticipation. If the clerk does not fit, the builder stops and reports
+the shortfall in lines; a push is decided on that number, never before it, and until then criterion 3
+stands as written.
 
 ## Order of acts, and the clock
-1. This brief merged with its fourth read on the record. Counsel enters **L0**, the promotion
+1. This brief merged with its fifth read on the record. Counsel enters **L0**, the promotion
    forecast, with `args.id` = `"L0"` so that `status.py` finds it, and `resolves_by` no later than
    fourteen days after L0's own `ts` — the maximum the sovereign's budget decision names (seq 50); the
    `promote` follows L0, so the bound holds from the `promote` too. Nothing in this brief states the
@@ -57,13 +58,14 @@ Run on a timer or by hand; it keeps no state between runs (level-triggered: a mi
 nothing). It prints every open writ — the obligation, who may discharge it, the deadline — and marks
 one past its deadline **ESCALATED**, naming the sovereign. Writ classes, each with deadline and discharge:
 - **W1 forecast**: every `forecast` entered after the opening is a writ from its entry; holders: every
-  key with `resolution` power whose principal is not the forecaster's; deadline: `resolves_by` itself
-  — the witnesses above are failures only under that deadline, and a grace period would make the
-  incumbent's record perfect; discharged by a `resolution`. (A writ is overdue when the clock is
-  *strictly after* `resolves_by`; at equality it is not.)
+  key with `resolution` power whose principal is not the forecaster's; deadline: `resolves_by` itself,
+  the obligation the entry already carries (SPEC §5) — every late case on the record would be timely
+  under a 48 h grace, which would leave the deadline no witness; discharged by a `resolution`. (A writ
+  is overdue when the clock is *strictly after* `resolves_by`; at equality it is not.)
 - **W3 unwitnessed merge**: a `merge` entry on `main` whose `commit` had no green `tests` run before the
   merge commit's time; holder: counsel; discharged by a COUNSEL-OPEN line naming it as precedent.
-- **W4 window state**: every line of `status.py` that is not `met`; holder: counsel; deadline: the
+- **W4 window state**: every line of `status.py` that is not `met`, including the count of the
+  sovereign's acts off the log (from the acts table; §7 requires none); holder: counsel; deadline: the
   window's end. A `decision promote` on the log entered while a criterion did not hold at its instant
   is printed as a sovereign REPAIR; since the verb refuses one, its presence means a hand-made entry.
 There is no proposal writ: every herald merge since the herald's key (seq 51) completed within
@@ -72,28 +74,41 @@ Re-invitation of another party or model is C2's.
 
 `status.py` reads C1b from the log: it opens at the `ts` of the `decision` with kind `promote` and
 subject `C1a` and ends at L0's `resolves_by`. For `promote <window>` it prints one line, `lawful` or
-`refused: <every criterion not established>`: criteria 3 (counted lines, kernel within 500,
-`judge/scope.json` equal to SPEC §10's block), 4, 6 (a veto refuses) and the ratio from the tree and
-the log; criteria 1, 2 and 5 from a `tests` run on the tree's commit supplied to it (`--run`), absent
-which they are unverified and refuse. The verb reads that line and nothing else.
+`refused: <every criterion not established>`. From the tree and the log: criterion 3 (counted lines,
+kernel within 500, `judge/scope.json` equal to SPEC §10's block), 4, 5 (**live E, computed from the
+log by `status.py` itself** — a green test proving that nine synthetic successes cross 20 is not nine
+successes on this prefix), 6 (a veto refuses), 7 (a C1b map row still hand refuses) and the ratio.
+Criteria 1 and 2 from a `tests` run the verb fetches from the repository's Actions API for the
+tree's exact commit — `status.py` verifies workflow `tests`, `head_sha` equal to the tree's commit,
+`conclusion` success; absent, pending, failed, another workflow's or another commit's run leaves them
+unverified and refuses; the operator types no run id. The verb reads that line and nothing else.
 
 ## Liveness: the statistic, the null, the bet
-- **Item**: the herald's act. The resolutions landed by one `merge` entry — the run of entries since the
-  previous main-ending entry, ending at that merge — are one item, finalised at that merge's seq. A
-  writ whose `resolves_by` passes undischarged is an item of its own, Y = 0, finalised at the first
-  entry whose `ts` is strictly after `resolves_by`; a later resolution of it adds no item. Items are
-  ordered by finalising seq, expired writs before a batch at the same seq, by forecast seq. **An item
-  once finalised is never regrouped**: no later entry, evidence string or merge changes an earlier
-  item or any bet already placed (A4.3). There is no evidence collapse — the batch is the collapse.
-- **Yᵢ = 1** iff every resolution in the item was entered not after its forecast's `resolves_by`. The
-  statistic has no repair term: the sovereign's repairs are counted weekly from the acts table, which
-  arrives days after the acts and names minutes, and an outcome must be fixed when its bet is.
-- **Null, p₀ = 5/9**, the incumbent measured on this log with this statistic: of the seven herald acts
-  above, four were timely (merges 102, 106, 140, 151) and three were not (58, 71, 110); Laplace gives
-  (4 + 1)/(7 + 2). This replaces v3's mapping from assize's repairs per merge (0.41), which both
-  readers called a modelling assumption; assize's figure is reported beside it, not bet on. Under A4
-  clause 3, nine consecutive timely acts carry E to 22.0 and eight to 13.6; ten with one failure give
-  6.8. Committed here; never re-estimated.
+- **Item**: the herald's act, under these conventions, applied entry by entry in log order:
+  (i) before an entry is processed, every open writ whose `resolves_by` is strictly before the entry's
+  `ts` is finalised as an item of its own with Y = 0, in forecast-seq order; (ii) a resolution of a
+  writ already finalised is ignored for items; (iii) the eligible resolutions since the previous
+  main-ending entry, ending at a `merge` entry, are one item finalised at that merge's seq, and a
+  merge with no eligible resolution forms no item; (iv) a resolution signed by the sovereign's key is
+  an item of its own at its entry with Y = 0 — completion by the sovereign is a repair — and his
+  other entries are boundaries that form no item. Items are ordered by finalising seq. **An item once
+  finalised is never regrouped**: no later entry, evidence string or merge changes an earlier item or
+  any bet already placed (A4.3). There is no evidence collapse — the batch is the collapse.
+- **Yᵢ = 1** iff every resolution in the item was entered not after its forecast's `resolves_by` **and
+  no repair by the sovereign is attributed to the item** (§6). A repair is what §7 makes it on the log:
+  an entry signed by the sovereign's key that §7 does not list as a decision — a `decision` of kind
+  `fix`, a `resolution`, a `merge`. A `decision fix` whose `subject` names a forecast seq or a pull
+  request is attributed to the item holding that writ or that merge; one naming neither, to the
+  earliest-opened writ open at its `ts`; a sovereign `resolution` is its own item under (iv). A repair
+  made off the log is a §7 violation: it is counted from the acts table as a W4 line, held by counsel,
+  and never enters the bet — the sovereign enters his hand repairs with `jack decision fix "<what>"`.
+- **Null, p₀ = 6/11**: the incumbent measured on this log with this statistic. The replay of the rule
+  above over the log through seq 157 yields nine items — four expired writs (45 at seq 50; 46 and 47
+  at 68; 56 at 103) and five herald batches (merges 102, 106, 110, 140, 151), all five timely and none
+  with a sovereign repair entry — so Laplace gives (5 + 1)/(9 + 2). Under A4 clause 3 nine consecutive
+  successes carry E to 25.5 and eight to 15.5; ten successes followed by one failure give 7.8.
+  Assize's repairs per merge (3.6, 0.89, 2.9) are reported beside it, not bet on. Committed here;
+  never re-estimated.
 - **Flooding, bounded not stopped.** Any number of forecasts resolved in one merge are one item. Six
   trivial forecasts resolved in six merges are six items and cost six forecasts, six resolutions, six
   proposals and six merges — twenty-four procedure entries against no object, which the ratio reports
@@ -102,7 +117,8 @@ which they are unverified and refuse. The verb reads that line and nothing else.
   world-typed forecasts resolved from evidence by another principal — is not an attack.
 - **Bet**: A4 clause 3, wealth continued (C1a bet nothing: it had no liveness statistic); λᵢ from the
   Laplace estimate over the items so far; E ≥ 20 promotes; α = 0.05.
-- **Reported, not tested**: repairs per week; the acts table's columns; assize's repairs per merge.
+- **Reported, not tested**: repairs per week on and off the log; the acts table's columns; assize's
+  repairs per merge.
 
 ## Safety: the attack run before any item counts
 `tests/test_clerk.py` builds its own logs (not the simulator's seeds, four of whose first five
@@ -118,7 +134,7 @@ as before (criterion 2). No item counts before the first green run of this test 
 3. Counted lines within the cap of 6,200; the kernel within 500; `judge/scope.json` and SPEC §10's
    block unchanged.
 4. The attack test green on `main` before the first counted item.
-5. Liveness E ≥ 20 under the bet above on items finalised after the opening.
+5. Liveness E ≥ 20 under the bet above on items finalised after the opening, computed from the log.
 6. No `decision` of kind `veto` with subject `C1b`.
 7. The enforcement map reprinted by `status.py` shows the rows C1b moves — obligations from state and
    clock (W1), window state (W4), the herald's merge on green (W3), windows as maxima (A5, by the
@@ -132,38 +148,50 @@ Reported: the procedure : object ratio (A3.4 applies); J7; the weekly acts table
 - `w1_from_entry`: a forecast is a W1 writ at its entry, not at its lateness; mutant: raised only when
   overdue; twin: a resolved forecast is no writ.
 - `self_holder`: both the forecaster and another principal hold `resolution` power; only the other is
-  named; mutant: the filter dropped.
+  named, and it is named; mutant: the filter dropped.
 - `w3_unwitnessed`: a merge whose commit has no earlier green `tests` run is a W3 writ, on a synthetic
   runs listing holding a failed `tests` run and a green one *after* the merge's time; mutant: any run
   accepted; twin: a green run before the merge.
 - `w4_promote_unmet`: a `decision promote` at a prefix where a criterion fails is a REPAIR writ, and a
   later success does not erase it; mutant: never raised; twin: all held at that prefix.
-- `promote_refused`: a veto, a SHORT line, a STOP line and a missing `--run` each print `refused` and
-  the verb signs nothing; all met with a green run prints `lawful` and signs; mutant: the check dropped.
+- `promote_refused`: a veto, a SHORT line, a STOP line, a hand C1b map row and live E below 20 each
+  print `refused` and the verb signs nothing; all met prints `lawful` and signs; mutant: the check
+  dropped; mutant: a green regression run substituted for live E.
+- `run_verified`: an absent, pending, failed, other-workflow or other-commit run leaves criteria 1 and
+  2 unverified and refuses; the `tests` run on the tree's commit with `conclusion` success verifies;
+  mutant: any run accepted.
 - `escalated`: a writ past its deadline prints ESCALATED and names the sovereign; before it, an
   ordinary open writ; mutant: silent.
-- `wealth_arithmetic`: on a fixed sequence at p₀ = 5/9, nine successes give E ≥ 20 and eight do not;
+- `wealth_arithmetic`: on a fixed sequence at p₀ = 6/11, nine successes give E ≥ 20 and eight do not;
   mutant: p₀ re-estimated from the sequence.
 - `item_before_open`: a forecast entered before the `promote` and resolved after it adds no item; an
-  otherwise identical one entered after does; mutant: counted.
-- `item_is_batch`: six timely resolutions in one merge are one item; mutant: counted singly; twin: six
-  merges, six items.
+  otherwise identical one entered after does, distinguished by seq when the `ts` is shared; mutant:
+  counted.
+- `item_is_batch`: six timely resolutions in one merge are one item and six merges are six — asserted
+  as counts; mutant: counted singly.
 - `regroup_scored_items`: after six items are scored, a merge discharging two new writs that cite two
-  of the old items' evidence strings appends one item and changes no earlier item or bet; mutant:
-  evidence-component regrouping (the reviewer's extension: E 30.07 to 14.39); twin: fresh evidence in
-  separate merges appends outcomes.
-- `expired_writ_zero`: a writ unresolved past `resolves_by` is an item with Y = 0 at the first later
-  entry, and its late resolution adds no item; mutant: the late resolution counted as a success.
+  of the old items' evidence strings appends one item and changes no earlier item or bet — at p₀ = 6/11
+  a seventh success, never a return to the five-item wealth; mutant: evidence-component regrouping;
+  twin: fresh evidence in separate merges appends outcomes. Assert identities, count and wealth.
+- `expired_writ_zero`: a writ unresolved past `resolves_by` is a Y = 0 item at the first later entry,
+  finalised before that entry is processed even when the entry is its own late resolution; the late
+  resolution adds no item; a merge holding only finalised writs adds no item; mutant: the late
+  resolution counted as a success; mutant: `all([])` counted as a success.
+- `repair_erased_from_success`: two identical timely batches, one with a `decision fix` attributed
+  during discharge; that item's Y is 0, asserted on Y and not only on wealth; mutant: the repair
+  predicate dropped; twin: the same timely completion without repair.
+- `sovereign_resolution_zero`: a resolution signed by the sovereign's key is its own Y = 0 item;
+  mutant: counted in the next merge's batch as a success.
 - `window_from_the_promote`: C1b opens at the `ts` of `decision promote C1a` and ends at L0's
   `resolves_by`, on a fixture with a `budget` decision *after* the `promote` and a non-L0 counsel
-  forecast *after* L0 with a different date; mutant: the latest decision; mutant: the latest counsel
-  forecast.
+  forecast *after* L0 with a different date, each boundary asserted separately; mutant: the latest
+  decision; mutant: the latest counsel forecast.
 - `evidence_unhashed`: a present file whose bytes do not hash to its name does not count; mutant: the
   re-hash skipped; twin: the matching file.
 - `ratio_misclassified`: a world-typed forecast's resolution counts as object; mutant: counted as
   procedure; twin: a procedure forecast's resolution counts as procedure.
-- `flooding_bounded`: two forecasts with identical claim text raise two writs; mutant: deduplicated by
-  claim text; twin: one forecast, one writ.
+- `flooding_bounded`: two forecasts with identical claim text at distinct seqs raise two writs; mutant:
+  deduplicated by claim text; twin: one forecast, one writ.
 - `veto_c1b`: a veto with subject `C1b` fails criterion 6 and one on another subject does not; mutant:
   subject ignored.
 - `map_printed`: a C1b row labelled hand fails criterion 7; all C1b rows code passes; excluded rows may
@@ -172,30 +200,31 @@ Reported: the procedure : object ratio (A3.4 applies); J7; the weekly acts table
 ## Refusal list
 No new entry type; no kernel or kernel2 change; no cap change and no touch of the trusted base; no LLM
 call in the clerk; no state kept between runs; no writ class beyond W1, W3, W4 — no proposal writ; no
-repair term and no classifier input in the statistic; no invitation or election logic; no change to
-A4's bet; no reminder set by counsel's session once the clerk is on `main`; no wish transcribed by
-counsel. Counsel writes no code: this brief, the replies, the RUNBOOK section and the report are
-counsel's; `tools/clerk.py`, `status.py`'s additions, the verb's refusal, the deletion and `tests/`
-the builder's; the pins the reviewer's.
+classifier input in the statistic; no success condition weaker than §6's; no invitation or election
+logic; no change to A4's bet; no reminder set by counsel's session once the clerk is on `main`; no
+wish transcribed by counsel. Counsel writes no code: this brief, the replies, the RUNBOOK section and
+the report are counsel's; `tools/clerk.py`, `status.py`'s additions, the verb's refusal, the deletion
+and `tests/` the builder's; the pins the reviewer's.
 
 ## Stop and report if
 the clerk does not fit under the cap (report the shortfall in lines); a writ class not listed here is
-needed; the two checkers disagree; a sovereign repair is needed to discharge an item (a failed item,
+needed; the two checkers disagree; a sovereign repair is needed to discharge an item (a Y = 0 item,
 recorded — never a redefinition).
 
 ## Deliverables
-`tools/clerk.py`; `status.py` reading `decision promote`, L0, the tree, a `--run` and the map, and
-printing the `promote` line; `tools/jack decision` reading it; `tests/test_clerk.py`; the pins; RUNBOOK
-`jack clerk`; the deletion of the genesis tool and its tests with the `Digest` coverage kept;
-`transcripts/WISHES.md` as the sovereign's; L0–L5 entered; the C1b report in REPORT.md's form; the C2
-brief text, written at C1b's exit from the report.
+`tools/clerk.py`; `status.py` reading `decision promote`, L0, the tree, the verified run and the map,
+computing live E and printing the `promote` line; `tools/jack decision` fetching the run and reading
+that line; `tests/test_clerk.py`; the pins; RUNBOOK `jack clerk` and the sovereign's `jack decision
+fix "<what>"` after any hand repair (§7); the deletion of the genesis tool and its tests with the
+`Digest` coverage kept; `transcripts/WISHES.md` as the sovereign's; L0–L5 entered; the C1b report in
+REPORT.md's form; the C2 brief text, written at C1b's exit from the report.
 
 ## Counsel's forecasts on this window (entered after this brief's acceptance, before the `promote`)
 | id | claim | p |
 |---|---|---|
-| L0 | **the promotion forecast**: every pre-stated criterion of this brief holds on the exit prefix by L0's `resolves_by`, which is the window's end — C1b promoted, not failed | 0.5 |
+| L0 | **the promotion forecast**: every pre-stated criterion of this brief holds on the exit prefix by L0's `resolves_by`, which is the window's end — C1b promoted, not failed | 0.45 |
 | L1 | the attack test is green on its first `tests` run on `main` | 0.6 |
-| L2 | liveness E ≥ 20 within 7 days of the `promote` — nine timely herald acts in seven days (the readers say 0.30, 0.65 and 0.40 on v2/v3's statistics) | 0.3 |
-| L3 | at least one item scores Y = 0 in the window | 0.7 |
+| L2 | liveness E ≥ 20 within 7 days of the `promote` — nine timely, repair-free herald acts in seven days (the fourth read says 0.25) | 0.25 |
+| L3 | at least one item scores Y = 0 in the window (the fourth read says 0.75) | 0.75 |
 | L4 | A5 is cited by or refuses an act by 29 December (the first reader says 0.75) | 0.65 |
-| L5 | the clerk, its tests and pins fit under 6,200 with no push (the third reader says 0.25) | 0.5 |
+| L5 | the clerk, its tests and pins fit under 6,200 with no push (the third reader says 0.25) | 0.4 |
