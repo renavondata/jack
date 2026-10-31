@@ -1,11 +1,12 @@
-# Brief C1b — the clerk (draft v5, 31 October 2026; finalised from the C1a report at C1a's exit)
+# Brief C1b — the clerk (draft v6, 31 October 2026; finalised from the C1a report at C1a's exit)
 
 Counsel's text, in BRIEF-C1's form. v2 answered `transcripts/REVIEW-C1b-A5.md` (gpt-6-astra, BLOCK on
 F5–F8); v3 answered `transcripts/REVIEW-C1b-v2.md` (gemini-4-argon, ACCEPT WITH OBLIGATIONS F1–F6); v4
-answered `transcripts/REVIEW-C1b-v3.md` (gpt-6-astra, BLOCK on F1, regrouped outcomes); v5 answers
+answered `transcripts/REVIEW-C1b-v3.md` (gpt-6-astra, BLOCK on F1, regrouped outcomes); v5 answered
 `transcripts/REVIEW-C1b-v4.md` (gpt-6-astra, BLOCK on F3: v4 dropped the charter's "no repair by Guy"
-from the success condition, which a brief may not loosen) as `transcripts/REPLY-REVIEW-C1b-v4.md` sets
-out. Its spine is PLAN-20261030 §4's enforcement map: each criterion is a row that has a witness on the
+from the success condition); v6 answers `transcripts/REVIEW-C1b-v5.md` (gpt-6-astra, BLOCK on F1: an
+unnamed repair attributed to the oldest open writ let a repair-assisted completion score as repair-free)
+as `transcripts/REPLY-REVIEW-C1b-v5.md` sets out. Its spine is PLAN-20261030 §4's enforcement map: each criterion is a row that has a witness on the
 record, in witnessed order. Where it names code, the builder builds it and the reviewer pins it;
 counsel writes none.
 
@@ -41,7 +42,7 @@ the shortfall in lines; a push is decided on that number, never before it, and u
 stands as written.
 
 ## Order of acts, and the clock
-1. This brief merged with its fifth read on the record. Counsel enters **L0**, the promotion
+1. This brief merged with its sixth read on the record. Counsel enters **L0**, the promotion
    forecast, with `args.id` = `"L0"` so that `status.py` finds it, and `resolves_by` no later than
    fourteen days after L0's own `ts` — the maximum the sovereign's budget decision names (seq 50); the
    `promote` follows L0, so the bound holds from the `promote` too. Nothing in this brief states the
@@ -79,9 +80,11 @@ kernel within 500, `judge/scope.json` equal to SPEC §10's block), 4, 5 (**live 
 log by `status.py` itself** — a green test proving that nine synthetic successes cross 20 is not nine
 successes on this prefix), 6 (a veto refuses), 7 (a C1b map row still hand refuses) and the ratio.
 Criteria 1 and 2 from a `tests` run the verb fetches from the repository's Actions API for the
-tree's exact commit — `status.py` verifies workflow `tests`, `head_sha` equal to the tree's commit,
-`conclusion` success; absent, pending, failed, another workflow's or another commit's run leaves them
-unverified and refuses; the operator types no run id. The verb reads that line and nothing else.
+tree's exact commit — `status.py` verifies the workflow by its file path `.github/workflows/tests.yml`
+(not its display name), `event` push, `head_branch` main, `head_sha` equal to the tree's commit,
+`conclusion` success; absent, pending, failed, another workflow's, another commit's or a pull
+request's run leaves them unverified and refuses; the operator types no run id. The verb reads that
+line and nothing else.
 
 ## Liveness: the statistic, the null, the bet
 - **Item**: the herald's act, under these conventions, applied entry by entry in log order:
@@ -89,23 +92,35 @@ unverified and refuses; the operator types no run id. The verb reads that line a
   `ts` is finalised as an item of its own with Y = 0, in forecast-seq order; (ii) a resolution of a
   writ already finalised is ignored for items; (iii) the eligible resolutions since the previous
   main-ending entry, ending at a `merge` entry, are one item finalised at that merge's seq, and a
-  merge with no eligible resolution forms no item; (iv) a resolution signed by the sovereign's key is
-  an item of its own at its entry with Y = 0 — completion by the sovereign is a repair — and his
-  other entries are boundaries that form no item. Items are ordered by finalising seq. **An item once
+  merge with no eligible resolution forms no item; (iv) a resolution signed by the sovereign's key of a
+  writ not yet finalised is an item of its own at its entry with Y = 0 — completion by the sovereign is
+  a repair — and never joins a batch; (i) and (ii) take priority, so an expired writ he resolves stays
+  one zero; a `merge` signed by his key finalises its eligible batch as an item with Y = 0 under the
+  repair term below, and none if the batch is empty; his other entries are boundaries that form no
+  item, and a batch they clear is not resurrected as expiry items. Items are ordered by finalising
+  seq, ties by forecast seq. **An item once
   finalised is never regrouped**: no later entry, evidence string or merge changes an earlier item or
   any bet already placed (A4.3). There is no evidence collapse — the batch is the collapse.
 - **Yᵢ = 1** iff every resolution in the item was entered not after its forecast's `resolves_by` **and
-  no repair by the sovereign is attributed to the item** (§6). A repair is what §7 makes it on the log:
-  an entry signed by the sovereign's key that §7 does not list as a decision — a `decision` of kind
-  `fix`, a `resolution`, a `merge`. A `decision fix` whose `subject` names a forecast seq or a pull
-  request is attributed to the item holding that writ or that merge; one naming neither, to the
-  earliest-opened writ open at its `ts`; a sovereign `resolution` is its own item under (iv). A repair
-  made off the log is a §7 violation: it is counted from the acts table as a W4 line, held by counsel,
-  and never enters the bet — the sovereign enters his hand repairs with `jack decision fix "<what>"`.
+  no repair by the sovereign is attributed to the item** (§6). A repair is what §7 makes it on the log,
+  by its complement: every entry signed by the sovereign's key except `genesis`, `key`, `amend`, `push`,
+  a `proposal` (a wish) and a `decision` of a kind other than `fix` — so a `decision fix`, a
+  `resolution`, a `merge` and, by §7's letter, a `forecast` (C2 may reclassify the last; until then it
+  counts). **Attribution is conservative**: a repair whose `subject` names the forecast seq of an open
+  writ, or the pull request of a pending batch, is attributed to that item alone; a repair naming
+  neither, or naming nothing open, is attributed to **every writ open at its `ts`** — a completion that
+  may have needed the sovereign cannot count positively, and the sovereign who names what he fixed
+  taints one item instead of all. A repair at an instant with no open writ taints nothing. A repair
+  entered after the item it names was finalised changes neither that item's Y nor any stake (A4.3): it
+  is a late report, a §7 violation in itself, printed by `status.py` as a W4 line `late-reported
+  repairs: n` that refuses `promote` while n > 0 in the window. A repair made off the log is counted
+  from the acts table as a W4 line, held by counsel, and never enters the bet. The sovereign's RUNBOOK
+  line is therefore `jack decision fix "forecast <seq>: <what>"`, entered before the writ is discharged.
 - **Null, p₀ = 6/11**: the incumbent measured on this log with this statistic. The replay of the rule
-  above over the log through seq 157 yields nine items — four expired writs (45 at seq 50; 46 and 47
+  above over the log through seq 163 yields nine items — four expired writs (45 at seq 50; 46 and 47
   at 68; 56 at 103) and five herald batches (merges 102, 106, 110, 140, 151), all five timely and none
-  with a sovereign repair entry — so Laplace gives (5 + 1)/(9 + 2). Under A4 clause 3 nine consecutive
+  with a sovereign repair attributed — the sovereign's merges and forecasts of seqs 11–47 touch only
+  writ 37, still open — so Laplace gives (5 + 1)/(9 + 2). Under A4 clause 3 nine consecutive
   successes carry E to 25.5 and eight to 15.5; ten successes followed by one failure give 7.8.
   Assize's repairs per merge (3.6, 0.89, 2.9) are reported beside it, not bet on. Committed here;
   never re-estimated.
@@ -157,9 +172,10 @@ Reported: the procedure : object ratio (A3.4 applies); J7; the weekly acts table
 - `promote_refused`: a veto, a SHORT line, a STOP line, a hand C1b map row and live E below 20 each
   print `refused` and the verb signs nothing; all met prints `lawful` and signs; mutant: the check
   dropped; mutant: a green regression run substituted for live E.
-- `run_verified`: an absent, pending, failed, other-workflow or other-commit run leaves criteria 1 and
-  2 unverified and refuses; the `tests` run on the tree's commit with `conclusion` success verifies;
-  mutant: any run accepted.
+- `run_verified`: an absent, pending, failed, other-workflow, other-commit or pull-request run leaves
+  criteria 1 and 2 unverified and refuses, and the verb signs nothing; the `tests.yml` push-to-main run
+  on the tree's commit with `conclusion` success verifies; mutant: any run accepted; mutant: `event`
+  unchecked.
 - `escalated`: a writ past its deadline prints ESCALATED and names the sovereign; before it, an
   ordinary open writ; mutant: silent.
 - `wealth_arithmetic`: on a fixed sequence at p₀ = 6/11, nine successes give E ≥ 20 and eight do not;
@@ -175,13 +191,21 @@ Reported: the procedure : object ratio (A3.4 applies); J7; the weekly acts table
   twin: fresh evidence in separate merges appends outcomes. Assert identities, count and wealth.
 - `expired_writ_zero`: a writ unresolved past `resolves_by` is a Y = 0 item at the first later entry,
   finalised before that entry is processed even when the entry is its own late resolution; the late
-  resolution adds no item; a merge holding only finalised writs adds no item; mutant: the late
-  resolution counted as a success; mutant: `all([])` counted as a success.
-- `repair_erased_from_success`: two identical timely batches, one with a `decision fix` attributed
-  during discharge; that item's Y is 0, asserted on Y and not only on wealth; mutant: the repair
+  resolution adds no item; a merge holding only finalised writs adds no item; a mixed batch keeps only
+  its fresh writs; mutant: the late resolution counted as a success; mutant: `all([])` counted as a
+  success.
+- `repair_erased_from_success`: two identical timely batches, one with a `decision fix` naming its
+  writ before discharge; that item's Y is 0, asserted on Y and not only on wealth; mutant: the repair
   predicate dropped; twin: the same timely completion without repair.
-- `sovereign_resolution_zero`: a resolution signed by the sovereign's key is its own Y = 0 item;
-  mutant: counted in the next merge's batch as a success.
+- `repair_misattributed`: writ A open; a `decision fix` naming no writ precedes B's timely resolution
+  and herald merge; B's item scores 0 (and A's, when finalised); mutant: the repair sent to the oldest
+  open writ alone; twin: the same B completion with no repair scores 1; control: a fix naming B zeros B.
+- `late_report_immutable`: a `decision fix` naming an item already finalised changes no Y and no stake,
+  and `status.py` prints `late-reported repairs: 1` and refuses `promote`; mutant: the item revised;
+  mutant: the line not printed.
+- `sovereign_resolution_zero`: a fresh resolution signed by the sovereign's key is its own Y = 0 item
+  and adds nothing at the next merge; an expired writ he resolves stays one zero; a sovereign merge
+  with an eligible batch finalises it at Y = 0; mutant: counted in the next merge's batch as a success.
 - `window_from_the_promote`: C1b opens at the `ts` of `decision promote C1a` and ends at L0's
   `resolves_by`, on a fixture with a `budget` decision *after* the `promote` and a non-L0 counsel
   forecast *after* L0 with a different date, each boundary asserted separately; mutant: the latest
@@ -215,16 +239,16 @@ recorded — never a redefinition).
 `tools/clerk.py`; `status.py` reading `decision promote`, L0, the tree, the verified run and the map,
 computing live E and printing the `promote` line; `tools/jack decision` fetching the run and reading
 that line; `tests/test_clerk.py`; the pins; RUNBOOK `jack clerk` and the sovereign's `jack decision
-fix "<what>"` after any hand repair (§7); the deletion of the genesis tool and its tests with the
+fix "forecast <seq>: <what>"` before the writ a hand repair serves is discharged (§7); the deletion of the genesis tool and its tests with the
 `Digest` coverage kept; `transcripts/WISHES.md` as the sovereign's; L0–L5 entered; the C1b report in
 REPORT.md's form; the C2 brief text, written at C1b's exit from the report.
 
 ## Counsel's forecasts on this window (entered after this brief's acceptance, before the `promote`)
 | id | claim | p |
 |---|---|---|
-| L0 | **the promotion forecast**: every pre-stated criterion of this brief holds on the exit prefix by L0's `resolves_by`, which is the window's end — C1b promoted, not failed | 0.45 |
+| L0 | **the promotion forecast**: every pre-stated criterion of this brief holds on the exit prefix by L0's `resolves_by`, which is the window's end — C1b promoted, not failed (the fifth read says 0.30) | 0.4 |
 | L1 | the attack test is green on its first `tests` run on `main` | 0.6 |
 | L2 | liveness E ≥ 20 within 7 days of the `promote` — nine timely, repair-free herald acts in seven days (the fourth read says 0.25) | 0.25 |
 | L3 | at least one item scores Y = 0 in the window (the fourth read says 0.75) | 0.75 |
 | L4 | A5 is cited by or refuses an act by 29 December (the first reader says 0.75) | 0.65 |
-| L5 | the clerk, its tests and pins fit under 6,200 with no push (the third reader says 0.25) | 0.4 |
+| L5 | the clerk, its tests and pins fit under 6,200 with no push (the third and fifth reads say 0.25) | 0.35 |
