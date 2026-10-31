@@ -301,3 +301,93 @@ decision and the K6 ruling. C0 is then frozen: the trusted base changes only for
 each recorded as a precedent, until C1's `merge.installs`. No `key` entries until C1 guards the master key
 against revoking its own `key` power. A CHARTER.md edit makes the judge refuse every proposal
 (`charter_mismatch`) until C1's charter-amendment entry.
+
+
+# C1a report — the record says things about the world
+
+Counsel's exit report, 31 October 2026. Proposer: counsel `claude-fable-5-1`, session
+`session_013Ce38BiYZ9xMbMtFh7wzxX`. **Exit prefix: seq 188**, the sovereign's `decision promote C1a`
+at `2026-10-31T10:42:10Z` (A5 clause 1), commit `77f6b54f7678237161eb8a0111a5c97436af4986`, `log.jsonl`
+SHA-256 `f5078eb3b238a88f…` at that commit. **The tests run that counts: 41193831601** (`tests`, `push`
+to `main`, on that commit, success). The window opened at seq 30 (A3, `2026-10-25T16:44:10Z`) and was
+closed early under A5 after six days of its fourteen; the stated end, `2026-11-08T16:44:10Z`, was not
+reached and is not moved. C1b opened at the same instant; its brief is `transcripts/BRIEF-C1b-draft.md`
+v7, accepted by `transcripts/REVIEW-C1b-v7.md`.
+
+## 1. Verdict against BRIEF-C1's pre-stated criteria, on the exit prefix
+
+| # | criterion | state | evidence |
+|---|---|---|---|
+| 1 | every pin KILLED with a passing twin in the `tests` run on `main` at the exit prefix's commit | **MET** | run 41193831601: `KILLED 64, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0` over 46 pins; 236 tests OK |
+| 2 | both checkers agree on the exit prefix, every proper prefix, and 10⁵ seeded logs from the committed list, extended by the new kinds | **MET** | the CI self-check runs both checkers over `log.jsonl` on every push; the installing run of 25 Oct on `377aad9` compared all 10⁵ seeds of `sim/seeds.txt` in twelve parts, 0 disagreements, 0 uncompared (`transcripts/diff-100000-20261025T1328Z-part00…11.json`); the per-push sample on the exit commit: 300 seeds, 2,019 prefixes, 0 disagreements. No disagreement was recorded inside the window (J6 resolves 0) |
+| 3 | kernel within 500 lines; `judge/scope.json` unchanged from the installing push | **MET** | `tools/count_kernel.py`: 450 (`log.py` 172, `sig.py` 140, `check.py` 138) — at the sovereign's target of 450 exactly, with no room left in it; `judge/scope.json` unchanged since the push (cap 6,200; 5,998 counted lines used) |
+| 4 | within the window ≥ 20 forecasts by ≥ 3 proposers, ≥ 10 resolutions, ≥ 5 resolving world-typed forecasts with hashed evidence in the tree | **MET** | `tools/status.py --as-of 2026-10-31T10:42:10Z`: forecasts 63 by 4 proposers (builder, counsel, guy, reviewer); resolutions 19; world-typed with evidence in tree 12 of 12, hashes re-computed from the files |
+| 5 | `jack score` on `spec/vectors/score.jsonl` prints the table exactly | **MET** | `tests.test_score.Witness` in run 41193831601 |
+| 6 | no `decision` of kind `veto` with subject `C1a` | **MET** | none on the prefix |
+
+Reported, not criteria: no primary-rule case arose (A2.1); the A3.4 accounting on the exit prefix is
+procedure 127 : object 32 = **3.97 : 1**, within 5 : 1 but risen from 2.1 : 1 on 30 October — the seven
+cold reads of the C1b brief were all procedure; J7: 0 of 63 window forecasts unresolved past
+`resolves_by`. No stop condition fired.
+
+## 2. What the window produced
+
+- **A world.** `world.hkjc` (`transcripts/world-types.md`): forecasts on Hong Kong race meetings, resolved
+  from saved pages hashed into `transcripts/evidence/`, by a principal other than the forecaster's.
+  Two meetings so far; the e-process of 28 October (`transcripts/HKJC-EPROCESS-20261028.md`) records
+  that the closing market (2.0081 nats/race) beats the model (2.1571) and that the blend never carried
+  E past 2.2 — a result against the model, on the record.
+- **Four proposers, two families.** Counsel (Claude), the builder and herald (Claude, counsel's custody),
+  the sovereign, and a reviewer on steel (gpt-6-astra, then gemini-4-argon, in the sovereign's custody)
+  whose seven reads of the C1b brief are the window's main procedural product.
+- **The status tool** (`tools/status.py`, PR #41): the window's criteria, the ratio, J7 and the overdue
+  list computed from the log and the tree. It merged with tests and **without pins** in `pins/pins.py`;
+  see §4.
+- **Amendment A5** (seq 137, in force from 138): a window is a maximum, closable by the sovereign's
+  `promote` once its criteria hold. Forced by this window: every criterion held on 29 October with ten
+  days of text left to run.
+- **The runner** (`renavondata/opencode-runner`): an issue labelled `run` becomes a session on steel in
+  its own worktree, under keys the sovereign holds; seven reads went issue → session → signed entries
+  → pull request with no hand on them after the second (the first two died on provider billing and a
+  shadowed token).
+
+## 3. Forecasts resolved at exit (herald, this pull request)
+
+| seq | claim | outcome | evidence |
+|---|---|---|---|
+| 37 | J1: every C1a criterion met on the exit prefix | 1 | §1; run 41193831601 |
+| 39 | J5: kernel within 500 lines at the exit prefix's commit | 1 | 450 |
+| 40 | J6: a checker disagreement recorded on a simulated log between the installing push and W | 0 | none recorded; the diff reports above |
+| 41 | J7: at W at most one fifth of the window's forecasts unresolved past `resolves_by` | 1 | 0 of 63 |
+| 117 | the sovereign's decision entries closing C1a and opening C1b on the log by 10 Nov | 1 | one entry does both (seq 188), as A5 and the brief order it |
+| 122 | C1a closed by a decision before 8 Nov, after the status tool and the stalling/flooding kinds are on `main` | 1 | seq 188; PR #41; `sim/gen.py` kinds |
+
+J3 (38) was resolved 1 at seq 109. J2 (42) runs to January.
+
+## 4. Precedents and counsel's errors, for the record
+
+1. **Forecasts 45, 46/47 and 56 expired undischarged** (1.2 h, 8.2 h and 3.8 h late): the clerk-in-
+   counsel's-head failed four times in six days. These are C1b's forcing witness.
+2. **Resolution of 123 was wrong.** Its claim required the status tool "with its pins KILLED"; PR #41
+   carried tests and no pins. The herald (counsel's custody) resolved it 1 on 30 October. The kernel
+   admits no second resolution, so the error stands in the score; the three pins the brief named for
+   the tool are in C1b's list.
+3. **Three successive brief versions were blocked on defects the previous version introduced** —
+   a regrouping statistic (v3), a loosened success condition (v4), a permissive repair attribution
+   (v5, v6). All found by one model family on steel; two families had read v1 and v2. The reads cost
+   about three dollars and an hour each.
+4. **PR #31 merged before `tests` finished on its merge-entry head** (disclosed on 30 October); the
+   merge script now waits for both heads. This is C1b's W3 witness.
+5. **The ratio nearly doubled in a day** from reads, replies and resolutions of procedure forecasts.
+   A3.4 stops the layer above 5 : 1; the object stream (HKJC) is what buys room.
+6. **The sovereign's hand repairs reached the log nowhere** this week — a branch pushed by hand, label
+   flips, three billing top-ups. §7 wants them entered; C1b counts them from the acts table as a W4
+   line and never bets on them; a recorder is the C2 brief's first obligation.
+
+## 5. What C1b opens with
+
+The clerk's brief (v7) with 24 pins and the attack test; the builder session filed to the runner at
+the promote (issue 7); counsel's L0–L5 at seqs 180–185, L0's end `2026-11-14T09:00:00Z`; p₀ = 6/11
+committed with its provenance; the ratio at 3.97 : 1 and the Happy Valley meeting of 1 November as the
+next object entries. The sovereign's remaining acts in C1b: `decision promote C1b` when its criteria
+hold, and `decision fix "<what>"` whenever he repairs by hand.
