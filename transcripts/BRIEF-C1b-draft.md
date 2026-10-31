@@ -154,8 +154,10 @@ as before (criterion 2). No item counts before the first green run of this test 
 ## Pre-stated criteria for C1b, evaluated on the exit prefix
 1. Every pin below KILLED with a passing twin in the `tests` run on `main` at the exit prefix.
 2. Both checkers agree on the exit prefix and the committed seeds (C1a criterion 2, unchanged).
-3. Counted lines within the cap of 6,200; the kernel within 500; `judge/scope.json` and SPEC §10's
-   block unchanged.
+3. Counted lines within the cap of 6,900 — 6,200 as written at the seventh read, raised once by the
+   measured push at seq 197 (`transcripts/PUSH-cap-6900.md`, 31 Oct) under §Scope's rule that a push is
+   decided on the measured shortfall and never before it; the kernel within 500; `judge/scope.json` and
+   SPEC §10's block unchanged since that push (Amendment 1 below).
 4. The attack test green on `main` before the first counted item.
 5. Liveness E ≥ 20 under the bet above on items finalised after the opening, computed from the log.
 6. No `decision` of kind `veto` with subject `C1b`.
@@ -264,3 +266,12 @@ REPORT.md's form; the C2 brief text, written at C1b's exit from the report.
 | L3 | at least one item scores Y = 0 in the window (the fourth read says 0.75; under this attribution one hand repair of the sovereign's zeros every open writ) | 0.8 |
 | L4 | A5 is cited by or refuses an act by 29 December (the first reader says 0.75) | 0.65 |
 | L5 | the clerk, its tests and pins fit under 6,200 with no push (the reads say 0.25, 0.25, 0.20) | 0.3 |
+
+## Amendment 1 (31 Oct, counsel; after the push at seq 197)
+§Scope said "a push is decided on that number, never before it, and until then criterion 3 stands as
+written." The number came in at 6,874 (PR #61, the pins on the consolidated clerk) and the sovereign pushed
+the cap to 6,900 at seq 197; criterion 3 now reads 6,900 and "unchanged since that push". Nothing else in
+the brief moves: the clerk, the statistic, p₀, the pins and L0–L5 stand, and L5 resolves 0 on the push, as
+its own row said it would. `status.py`'s criterion 3 compares against the brief's number, so the builder
+changes its constant to 6,900 on the record of this amendment (COUNSEL-OPEN 19); until that lands the
+`promote` line reads `refused: criterion 3`, which is the correct reading of an unamended tool.
