@@ -20,7 +20,9 @@ cannot be implemented files `spec_conflict` rather than deciding.
 - **Key and party.** `--key PATH` names the private key; default `$JACK_KEY`, else `~/.ssh/id_ed25519`. The
   party is never an argument: it is the `principal` of the key the log declares for that public key, and it
   is the entry's `proposer` and the trailer's first field. A key the log does not declare, or whose principal
-  is not one of SPEC §10.7's five parties, is refused before anything is signed.
+  is not one token of `[a-z0-9_-]+` (the rule the `key` verb applies at declaration), is refused before anything
+  is signed; the verbs keep no list of parties of their own (PR #66, 31 Oct — until then `tools/jack` whitelisted
+  five and refused the herald's key, COUNSEL-OPEN 18).
 - **Time.** `ts` is the clock, UTC, `YYYY-MM-DDTHH:MM:SSZ`. The verb reads the clock; the kernel never does.
 - **Signing.** `ssh-keygen -Y sign -n core-entry` over the canonical message (SPEC §6), through `tools/entry.py`;
   the line is appended only if `kernel.check` admits the log with it. The master key (the key whose
