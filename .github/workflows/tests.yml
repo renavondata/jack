@@ -14,6 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+      - name: "Is this head's diff log.jsonl alone? (BRIEF-C2a: the simulator sample is skipped on such a head; nothing else is)"
+        id: diff
+        run: |
+          files=$(git diff --name-only HEAD^1 HEAD || true)
+          if [ -n "$files" ] && [ "$files" = "log.jsonl" ]; then echo "logonly=true" >> "$GITHUB_OUTPUT"; else echo "logonly=false" >> "$GITHUB_OUTPUT"; fi
+          echo "changed: $files"
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
@@ -24,6 +32,7 @@ jobs:
       - name: Judge self-check (the production path, trunk against itself; kernel2 must run)
         run: python3 judge/selfcheck.py
       - name: Simulator sample through both checkers (first 2,000 committed seeds; §9 criterion 2)
+        if: steps.diff.outputs.logonly != 'true'
         run: python3 harness/diff.py --seeds 300 --b kernel2/check 'spec/vectors/logs/*.jsonl'
       - name: Kernel line count (CHARTER §9 criterion 3)
         run: python3 tools/count_kernel.py
