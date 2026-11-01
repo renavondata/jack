@@ -1,0 +1,971 @@
+{
+ "opening": "2026-10-31T10:42:10Z",
+ "as_of": "2026-11-01T13:10:16Z",
+ "events": 25,
+ "excluded_forecasts": [
+  [
+   288,
+   "rigged: ts >= cutoff"
+  ],
+  [
+   289,
+   "rigged: ts >= cutoff"
+  ],
+  [
+   290,
+   "rigged: ts >= cutoff"
+  ]
+ ],
+ "terminal_weights": {
+  "counsel": 0.347673,
+  "reviewer": 0.000142,
+  "builder": 0.022653,
+  "guy": 0.314766,
+  "base": 0.314766
+ },
+ "own_likelihood_ratio_vs_base": {
+  "counsel": 1.104545,
+  "reviewer": 0.000451,
+  "builder": 0.071967,
+  "guy": 1.0,
+  "base": 1.0
+ },
+ "E_value": 1.0,
+ "rows": [
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hk_property_poi",
+    [
+     "2026-11-01T00:00:00Z",
+     "2026-11-01T01:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T00:00:00Z",
+   "resolution_seq": 261,
+   "Y": 1,
+   "base": "1/2",
+   "base_counts": [
+    0,
+    0
+   ],
+   "forecasts": {
+    "reviewer": [
+     251,
+     "1/5"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.2,
+    "reviewer": 0.2,
+    "builder": 0.2,
+    "guy": 0.2,
+    "base": 0.2
+   },
+   "q": 0.44,
+   "D_over_B": -0.018508,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hkex_disclosures",
+    [
+     "2026-11-01T00:00:00Z",
+     "2026-11-01T01:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T00:00:00Z",
+   "resolution_seq": 262,
+   "Y": 1,
+   "base": "2/3",
+   "base_counts": [
+    1,
+    1
+   ],
+   "forecasts": {
+    "reviewer": [
+     252,
+     "1/5"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.227273,
+    "reviewer": 0.090909,
+    "builder": 0.227273,
+    "guy": 0.227273,
+    "base": 0.227273
+   },
+   "q": 0.624242,
+   "D_over_B": -0.00952,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hkex_disclosure_interests",
+    [
+     "2026-11-01T00:00:00Z",
+     "2026-11-01T01:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T00:00:00Z",
+   "resolution_seq": 263,
+   "Y": 1,
+   "base": "3/4",
+   "base_counts": [
+    2,
+    2
+   ],
+   "forecasts": {
+    "reviewer": [
+     253,
+     "1/5"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.242718,
+    "reviewer": 0.029126,
+    "builder": 0.242718,
+    "guy": 0.242718,
+    "base": 0.242718
+   },
+   "q": 0.733981,
+   "D_over_B": -0.003126,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hk_property_poi",
+    [
+     "2026-11-01T01:00:00Z",
+     "2026-11-01T02:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T01:00:00Z",
+   "resolution_seq": 269,
+   "Y": 1,
+   "base": "4/5",
+   "base_counts": [
+    3,
+    3
+   ],
+   "forecasts": {
+    "reviewer": [
+     256,
+     "1/5"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.248016,
+    "reviewer": 0.007937,
+    "builder": 0.248016,
+    "guy": 0.248016,
+    "base": 0.248016
+   },
+   "q": 0.795238,
+   "D_over_B": -0.000864,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hkex_disclosures",
+    [
+     "2026-11-01T01:00:00Z",
+     "2026-11-01T02:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T01:00:00Z",
+   "resolution_seq": 270,
+   "Y": 1,
+   "base": "5/6",
+   "base_counts": [
+    4,
+    4
+   ],
+   "forecasts": {
+    "reviewer": [
+     257,
+     "1/5"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.249501,
+    "reviewer": 0.001996,
+    "builder": 0.249501,
+    "guy": 0.249501,
+    "base": 0.249501
+   },
+   "q": 0.832069,
+   "D_over_B": -0.00022,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hkex_disclosure_interests",
+    [
+     "2026-11-01T01:00:00Z",
+     "2026-11-01T02:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T01:00:00Z",
+   "resolution_seq": 271,
+   "Y": 1,
+   "base": "6/7",
+   "base_counts": [
+    5,
+    5
+   ],
+   "forecasts": {
+    "reviewer": [
+     258,
+     "1/5"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.24988,
+    "reviewer": 0.00048,
+    "builder": 0.24988,
+    "guy": 0.24988,
+    "base": 0.24988
+   },
+   "q": 0.856828,
+   "D_over_B": -5.3e-05,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hk_property_poi",
+    [
+     "2026-11-01T02:00:00Z",
+     "2026-11-01T03:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T02:00:00Z",
+   "resolution_seq": 277,
+   "Y": 1,
+   "base": "7/8",
+   "base_counts": [
+    6,
+    6
+   ],
+   "forecasts": {
+    "builder": [
+     264,
+     "9/25"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.249972,
+    "reviewer": 0.000112,
+    "builder": 0.249972,
+    "guy": 0.249972,
+    "base": 0.249972
+   },
+   "q": 0.746264,
+   "D_over_B": -0.023042,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hkex_disclosures",
+    [
+     "2026-11-01T02:00:00Z",
+     "2026-11-01T03:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T02:00:00Z",
+   "resolution_seq": 278,
+   "Y": 1,
+   "base": "8/9",
+   "base_counts": [
+    7,
+    7
+   ],
+   "forecasts": {
+    "builder": [
+     265,
+     "9/25"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.293094,
+    "reviewer": 0.000131,
+    "builder": 0.120587,
+    "guy": 0.293094,
+    "base": 0.293094
+   },
+   "q": 0.825112,
+   "D_over_B": -0.01078,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hkex_disclosure_interests",
+    [
+     "2026-11-01T02:00:00Z",
+     "2026-11-01T03:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T02:00:00Z",
+   "resolution_seq": 279,
+   "Y": 1,
+   "base": "9/10",
+   "base_counts": [
+    8,
+    8
+   ],
+   "forecasts": {
+    "builder": [
+     266,
+     "9/25"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.315749,
+    "reviewer": 0.000141,
+    "builder": 0.052613,
+    "guy": 0.315749,
+    "base": 0.315749
+   },
+   "q": 0.871589,
+   "D_over_B": -0.004644,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hk_property_poi",
+    [
+     "2026-11-01T03:00:00Z",
+     "2026-11-01T04:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T03:00:00Z",
+   "resolution_seq": 285,
+   "Y": 1,
+   "base": "10/11",
+   "base_counts": [
+    9,
+    9
+   ],
+   "forecasts": {
+    "builder": [
+     272,
+     "47/50"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.326041,
+    "reviewer": 0.000146,
+    "builder": 0.021731,
+    "guy": 0.326041,
+    "base": 0.326041
+   },
+   "q": 0.909763,
+   "D_over_B": 0.000107,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hkex_disclosures",
+    [
+     "2026-11-01T03:00:00Z",
+     "2026-11-01T04:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T03:00:00Z",
+   "resolution_seq": 286,
+   "Y": 1,
+   "base": "11/12",
+   "base_counts": [
+    10,
+    10
+   ],
+   "forecasts": {
+    "builder": [
+     273,
+     "47/50"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.3258,
+    "reviewer": 0.000146,
+    "builder": 0.022453,
+    "guy": 0.3258,
+    "base": 0.3258
+   },
+   "q": 0.917191,
+   "D_over_B": 8.3e-05,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hkex_disclosure_interests",
+    [
+     "2026-11-01T03:00:00Z",
+     "2026-11-01T04:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T03:00:00Z",
+   "resolution_seq": 287,
+   "Y": 1,
+   "base": "12/13",
+   "base_counts": [
+    11,
+    11
+   ],
+   "forecasts": {
+    "builder": [
+     274,
+     "47/50"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.325614,
+    "reviewer": 0.000146,
+    "builder": 0.023012,
+    "guy": 0.325614,
+    "base": 0.325614
+   },
+   "q": 0.923466,
+   "D_over_B": 6.1e-05,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hk_property_poi",
+    [
+     "2026-11-01T04:00:00Z",
+     "2026-11-01T05:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T04:00:00Z",
+   "resolution_seq": 293,
+   "Y": 1,
+   "base": "13/14",
+   "base_counts": [
+    12,
+    12
+   ],
+   "forecasts": {
+    "reviewer": [
+     280,
+     "97/100"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.325477,
+    "reviewer": 0.000146,
+    "builder": 0.023424,
+    "guy": 0.325477,
+    "base": 0.325477
+   },
+   "q": 0.928577,
+   "D_over_B": 1e-06,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hkex_disclosures",
+    [
+     "2026-11-01T04:00:00Z",
+     "2026-11-01T05:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T04:00:00Z",
+   "resolution_seq": 294,
+   "Y": 1,
+   "base": "14/15",
+   "base_counts": [
+    13,
+    13
+   ],
+   "forecasts": {
+    "reviewer": [
+     281,
+     "97/100"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.325475,
+    "reviewer": 0.000152,
+    "builder": 0.023424,
+    "guy": 0.325475,
+    "base": 0.325475
+   },
+   "q": 0.933339,
+   "D_over_B": 1e-06,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.renavon",
+    "freshness",
+    "hkex_disclosure_interests",
+    [
+     "2026-11-01T04:00:00Z",
+     "2026-11-01T05:00:00Z"
+    ]
+   ],
+   "cutoff": "2026-11-01T04:00:00Z",
+   "resolution_seq": 295,
+   "Y": 1,
+   "base": "15/16",
+   "base_counts": [
+    14,
+    14
+   ],
+   "forecasts": {
+    "reviewer": [
+     282,
+     "97/100"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.325473,
+    "reviewer": 0.000158,
+    "builder": 0.023423,
+    "guy": 0.325473,
+    "base": 0.325473
+   },
+   "q": 0.937505,
+   "D_over_B": 1e-06,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.hkjc",
+    "M2",
+    1,
+    "favourite_wins"
+   ],
+   "cutoff": "2026-11-01T04:45:00Z",
+   "resolution_seq": 299,
+   "Y": 1,
+   "base": "1/2",
+   "base_counts": [
+    4,
+    8
+   ],
+   "forecasts": {
+    "counsel": [
+     239,
+     "1/4"
+    ],
+    "reviewer": [
+     227,
+     "11/50"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.325471,
+    "reviewer": 0.000164,
+    "builder": 0.023423,
+    "guy": 0.325471,
+    "base": 0.325471
+   },
+   "q": 0.418586,
+   "D_over_B": -0.025732,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.hkjc",
+    "M2",
+    2,
+    "favourite_wins"
+   ],
+   "cutoff": "2026-11-01T05:15:00Z",
+   "resolution_seq": 301,
+   "Y": 0,
+   "base": "7/12",
+   "base_counts": [
+    6,
+    10
+   ],
+   "forecasts": {
+    "counsel": [
+     240,
+     "1/4"
+    ],
+    "reviewer": [
+     228,
+     "11/50"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.194387,
+    "reviewer": 8.6e-05,
+    "builder": 0.027979,
+    "guy": 0.388774,
+    "base": 0.388774
+   },
+   "q": 0.518506,
+   "D_over_B": 0.020937,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.hkjc",
+    "M2",
+    3,
+    "favourite_wins"
+   ],
+   "cutoff": "2026-11-01T05:45:00Z",
+   "resolution_seq": 303,
+   "Y": 1,
+   "base": "1/2",
+   "base_counts": [
+    6,
+    12
+   ],
+   "forecasts": {
+    "counsel": [
+     241,
+     "1/4"
+    ],
+    "reviewer": [
+     229,
+     "11/50"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.302787,
+    "reviewer": 0.000139,
+    "builder": 0.024212,
+    "guy": 0.336431,
+    "base": 0.336431
+   },
+   "q": 0.424264,
+   "D_over_B": -0.023781,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.hkjc",
+    "M2",
+    4,
+    "favourite_wins"
+   ],
+   "cutoff": "2026-11-01T06:15:00Z",
+   "resolution_seq": 307,
+   "Y": 0,
+   "base": "9/16",
+   "base_counts": [
+    8,
+    14
+   ],
+   "forecasts": {
+    "counsel": [
+     242,
+     "1/4"
+    ],
+    "reviewer": [
+     230,
+     "11/50"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.178419,
+    "reviewer": 7.2e-05,
+    "builder": 0.028534,
+    "guy": 0.396487,
+    "base": 0.396487
+   },
+   "q": 0.506719,
+   "D_over_B": 0.017375,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.hkjc",
+    "M2",
+    5,
+    "favourite_wins"
+   ],
+   "cutoff": "2026-11-01T07:10:00Z",
+   "resolution_seq": 309,
+   "Y": 0,
+   "base": "1/2",
+   "base_counts": [
+    8,
+    16
+   ],
+   "forecasts": {
+    "counsel": [
+     243,
+     "1/4"
+    ],
+    "reviewer": [
+     231,
+     "11/50"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.271274,
+    "reviewer": 0.000114,
+    "builder": 0.025308,
+    "guy": 0.351652,
+    "base": 0.351652
+   },
+   "q": 0.432149,
+   "D_over_B": 0.018424,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.hkjc",
+    "M2",
+    6,
+    "favourite_wins"
+   ],
+   "cutoff": "2026-11-01T07:40:00Z",
+   "resolution_seq": 311,
+   "Y": 1,
+   "base": "9/20",
+   "base_counts": [
+    8,
+    18
+   ],
+   "forecasts": {
+    "counsel": [
+     244,
+     "1/4"
+    ],
+    "reviewer": [
+     232,
+     "11/50"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.358291,
+    "reviewer": 0.000157,
+    "builder": 0.022284,
+    "guy": 0.309634,
+    "base": 0.309634
+   },
+   "q": 0.378306,
+   "D_over_B": -0.025127,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.hkjc",
+    "M2",
+    7,
+    "favourite_wins"
+   ],
+   "cutoff": "2026-11-01T08:10:00Z",
+   "resolution_seq": 315,
+   "Y": 1,
+   "base": "1/2",
+   "base_counts": [
+    10,
+    20
+   ],
+   "forecasts": {
+    "counsel": [
+     245,
+     "1/4"
+    ],
+    "reviewer": [
+     233,
+     "47/200"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.236773,
+    "reviewer": 9.1e-05,
+    "builder": 0.026507,
+    "guy": 0.368314,
+    "base": 0.368314
+   },
+   "q": 0.440782,
+   "D_over_B": -0.018251,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.hkjc",
+    "M2",
+    8,
+    "favourite_wins"
+   ],
+   "cutoff": "2026-11-01T08:40:00Z",
+   "resolution_seq": 317,
+   "Y": 0,
+   "base": "13/24",
+   "base_counts": [
+    12,
+    22
+   ],
+   "forecasts": {
+    "counsel": [
+     246,
+     "1/4"
+    ],
+    "reviewer": [
+     234,
+     "11/50"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.134292,
+    "reviewer": 4.9e-05,
+    "builder": 0.030068,
+    "guy": 0.417796,
+    "base": 0.417796
+   },
+   "q": 0.502483,
+   "D_over_B": 0.011877,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.hkjc",
+    "M2",
+    9,
+    "favourite_wins"
+   ],
+   "cutoff": "2026-11-01T09:15:00Z",
+   "resolution_seq": 321,
+   "Y": 0,
+   "base": "1/2",
+   "base_counts": [
+    12,
+    24
+   ],
+   "forecasts": {
+    "counsel": [
+     247,
+     "1/4"
+    ],
+    "reviewer": [
+     235,
+     "11/50"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.202443,
+    "reviewer": 7.6e-05,
+    "builder": 0.0277,
+    "guy": 0.384891,
+    "base": 0.384891
+   },
+   "q": 0.449368,
+   "D_over_B": 0.013966,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  },
+  {
+   "key": [
+    "world.hkjc",
+    "M2",
+    10,
+    "favourite_wins"
+   ],
+   "cutoff": "2026-11-01T09:50:00Z",
+   "resolution_seq": 323,
+   "Y": 0,
+   "base": "13/28",
+   "base_counts": [
+    12,
+    26
+   ],
+   "forecasts": {
+    "counsel": [
+     248,
+     "1/4"
+    ],
+    "reviewer": [
+     236,
+     "11/50"
+    ]
+   },
+   "weights_before": {
+    "counsel": 0.275741,
+    "reviewer": 0.000108,
+    "builder": 0.025153,
+    "guy": 0.349499,
+    "base": 0.349499
+   },
+   "q": 0.405172,
+   "D_over_B": 0.015155,
+   "lambda": 0.0,
+   "factor": 1.0,
+   "E_after": 1.0
+  }
+ ]
+}
