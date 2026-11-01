@@ -1,0 +1,49 @@
+{
+  "stream": "freshness",
+  "checked_at": "2026-11-01T00:51:34Z",
+  "source_head": "2557dc00f93bd8542b3c7a9004a2ad3b2ebad0e7",
+  "source_log_last_seq": 255,
+  "selection_rule": "type forecast, body.type world.renavon, body.args.stream freshness, no resolution referencing seq, and body.args.window_utc[1] strictly before checked_at",
+  "due_forecasts": [],
+  "resolutions": [],
+  "resolved_count": 0,
+  "advanced_count": 0,
+  "resolved_freshness_history_count": 0,
+  "unresolved_forecasts": [
+    {
+      "forecast": 251,
+      "dataset": "hk_property_poi",
+      "url": "https://renavon.com/data/property/hk_property_poi",
+      "proposer": "reviewer",
+      "window_utc": ["2026-11-01T00:00:00Z", "2026-11-01T01:00:00Z"],
+      "resolves_by": "2026-11-01T02:30:00Z",
+      "due": false,
+      "resolver_eligible": false,
+      "reason": "Window has not ended; reviewer cannot resolve its own principal's forecast (self_judged)."
+    },
+    {
+      "forecast": 252,
+      "dataset": "hkex_disclosures",
+      "url": "https://renavon.com/data/hkex/hkex_disclosures",
+      "proposer": "reviewer",
+      "window_utc": ["2026-11-01T00:00:00Z", "2026-11-01T01:00:00Z"],
+      "resolves_by": "2026-11-01T02:30:00Z",
+      "due": false,
+      "resolver_eligible": false,
+      "reason": "Window has not ended; reviewer cannot resolve its own principal's forecast (self_judged)."
+    },
+    {
+      "forecast": 253,
+      "dataset": "hkex_disclosure_interests",
+      "url": "https://renavon.com/data/hkex/hkex_disclosure_interests",
+      "proposer": "reviewer",
+      "window_utc": ["2026-11-01T00:00:00Z", "2026-11-01T01:00:00Z"],
+      "resolves_by": "2026-11-01T02:30:00Z",
+      "due": false,
+      "resolver_eligible": false,
+      "reason": "Window has not ended; reviewer cannot resolve its own principal's forecast (self_judged)."
+    }
+  ],
+  "fetch_failures": [],
+  "note": "The due set is empty, so no resolution-page fetches or outcome determinations were made. Zero advanced counts entered resolutions, not observed non-advances. All three existing forecasts need a different principal after 01:00 UTC."
+}
