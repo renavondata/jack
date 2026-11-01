@@ -129,6 +129,20 @@ def fmt(x):
     return str((decimal.Decimal(q.numerator) / decimal.Decimal(q.denominator)).quantize(decimal.Decimal("0.0001"), decimal.ROUND_HALF_EVEN))
 
 
+def resolution_rates(es):
+    """C1's prequential Laplace base: every resolution, pooled by type, in seq order."""
+    forecasts, seen = {}, {}
+    for e in sorted(es, key=lambda e: e["seq"]):
+        if e["type"] == "forecast":
+            forecasts[e["seq"]] = e
+        if e["type"] == "resolution":
+            f = forecasts[e["body"]["forecast"]]
+            typ = f["body"].get("type", "free")
+            s, n = seen.get(typ, (0, 0))
+            yield e, f, fractions.Fraction(s + 1, n + 2), (s, n)
+            seen[typ] = (s + e["body"]["outcome"], n + 1)
+
+
 def score(lines, as_of=None):
     """jack score (BRIEF-C1.md): per (proposer, type), then per proposer and per type with all its forecasts counted: resolved,
     mean p, outcome rate, mean log-loss in nats and the base-rate loss (Laplace, pooled by type, in resolution-seq order)."""
@@ -136,12 +150,11 @@ def score(lines, as_of=None):
         raise Usage(f"the log is refused by the kernel, or --as-of {as_of!r} is not an instant")
     es = [json.loads(line) for line in lines]
     kind = {i: e["body"]["type"] if isinstance(e["body"].get("type"), str) else "free" for i, e in enumerate(es) if e["type"] == "forecast"}
-    rows, seen = [], {}  # one per resolution: (proposer, type, p, outcome, loss, base-rate loss)
-    for e in (e for e in es if e["type"] == "resolution"):
+    rows = []  # one per resolution: (proposer, type, p, outcome, loss, base-rate loss)
+    for e, forecast, base, _ in resolution_rates(es):
         f, o = e["body"]["forecast"], e["body"]["outcome"]
-        (s, n), p = seen.get(kind[f], (0, 0)), es[f]["body"]["p"]
-        rows.append((es[f]["proposer"], kind[f], p, o, -math.log((p if o else 1000 - p) / 1000), -math.log((s + 1 if o else n - s + 1) / (n + 2))))
-        seen[kind[f]] = (s + o, n + 1)
+        p = forecast["body"]["p"]
+        rows.append((es[f]["proposer"], kind[f], p, o, -math.log((p if o else 1000 - p) / 1000), -math.log(base if o else 1 - base)))
     out, mean = [], lambda rs, j, d=1: fmt(fractions.Fraction(sum(r[j] for r in rs)) / (d * len(rs)))
     for head, key, counted in ((("proposer", "type"), slice(0, 2), False), (("proposer",), slice(0, 1), True), (("type",), slice(1, 2), True)):
         names = [*head, *(["forecasts"] if counted else []), "resolved", "mean p", "rate", "loss", "base-rate loss"]

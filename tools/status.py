@@ -3,6 +3,7 @@
 from log.jsonl and the tree, so that no criterion is counted by hand (PLAN-20261030 §4; BRIEF-C1 criterion 4, A3.4, J7).
 No entry, no signing, no fetch. The clock enters only as --as-of (default now); the kernel never reads it."""
 import argparse
+import ast
 import csv
 import datetime as dt
 import hashlib
@@ -16,6 +17,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 from kernel import check  # noqa: E402
 from judge.judge import counted_lines, signer_blob  # noqa: E402
+from tools import value as val  # noqa: E402
 
 FMT = "%Y-%m-%dT%H:%M:%SZ"
 P0 = Fraction(6, 11)  # BRIEF-C1b v7; never estimated from the live window
@@ -38,6 +40,14 @@ def c1b_window(es):
 
 def promotes(e, subject):
     return e["type"] == "decision" and e["body"].get("kind") == "promote" and e["body"].get("subject") == subject
+
+
+def c2a_window(es):
+    opening = val.opening_push(es)
+    v0 = next(e for e in es if e["seq"] < opening["seq"] and e["type"] == "forecast" and
+              e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "V0")
+    end = min(instant(v0["body"]["resolves_by"]), instant(opening["ts"]) + dt.timedelta(days=14))
+    return opening["seq"], opening["ts"], end.strftime(FMT)
 
 
 def score_items(items):
@@ -123,8 +133,8 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None):
     """The figures BRIEF-C1 evaluates on the exit prefix, on the prefix as of `as_of` (an instant string)."""
     now = instant(as_of)
     es = [e for e in es if instant(e["ts"]) <= now]
-    if subject == "C1b":
-        opening, start, end = c1b_window(es)
+    if subject in ("C1b", "C2a"):
+        opening, start, end = (c2a_window if subject == "C2a" else c1b_window)(es)
         start, end = instant(start), instant(end)
         window = subject
     else:
@@ -189,13 +199,13 @@ def completed_by(run, when):
         return False
 
 
-def attack_start(root, runs, as_of):
+def attack_start(root, runs, as_of, path="tests/test_clerk.py"):
     """A tests run counts only if its committed tree actually includes the clerk attack test."""
     times = []
     for run in runs:
         if run.get("head_sha") and run_verified(run, run["head_sha"]) and completed_by(run, as_of):
             try:
-                if tree_bytes(root, run["head_sha"], "tests/test_clerk.py"):
+                if tree_bytes(root, run["head_sha"], path):
                     times.append(run["updated_at"])
             except subprocess.CalledProcessError:
                 pass  # a missing object/file is no witness; this tool never fetches
@@ -209,6 +219,58 @@ def off_log_repairs(acts, start, end):
     return sum(row["repo"] == "renavondata/jack" and row["class"] == "repair" and
                instant(start) <= dt.datetime.strptime(row["time_hkt"], "%Y-%m-%d %H:%M").replace(tzinfo=hkt) <= instant(end)
                for row in acts)
+
+
+VALUE_PINS = ("worked_table forecast_before_cutoff rigged revision weights_from_resolved_prefix abstention_is_base "
+              "one_event_one_key grouping_by_principal uniform_prior no_learning_rate exact_probabilities per_type_base "
+              "bounded_difference lambda_predictable factor_algebra window_from_the_push wealth_continues promote_refused_value").split()
+
+
+def c2a_tree_evidence(root, rev, prefix, opening):
+    """Check the opening's scope through every intervening tree; keep C1b's process code."""
+    try:
+        start = prefix_tree(root, rev, [e for e in prefix if e["seq"] <= opening])
+        if start is None:
+            return False, False, False
+        def scope_at(sha):
+            return (tree_bytes(root, sha, "judge/scope.json"),
+                    tree_bytes(root, sha, "SPEC.md").split(b"at C1 it is:", 1)[1].split(b"```", 2)[1])
+        original = scope_at(start)
+        unchanged = all(scope_at(c) == original for c in [rev] + git_bytes(root, "rev-list", f"{start}..{rev}").decode().split())
+        unchanged = unchanged and json.loads(original[0])["cap"] == 7800 and not any(
+            e["type"] == "push" and e["seq"] > opening for e in prefix)
+        def process_at(sha):
+            nodes = ast.parse(tree_bytes(root, sha, "tools/status.py")).body
+            return [ast.dump(n) for n in nodes if getattr(n, "name", None) in ("item_process", "score_items", "sovereign_keys") or
+                    isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "P0" for t in n.targets)]
+        same = process_at(start) == process_at(rev) and tree_bytes(root, start, "tools/clerk.py") == tree_bytes(root, rev, "tools/clerk.py")
+        pins = tree_bytes(root, rev, "pins/pins.py").decode()
+        registered = all(f'Pin("{name}"' in pins or f"Pin('{name}'" in pins for name in VALUE_PINS)
+        return unchanged, same, registered
+    except (OSError, ValueError, IndexError, subprocess.CalledProcessError):
+        return False, False, False
+
+
+def assess_value(s, facts, verified, root, rev, runs, acts):
+    end = min(s["as_of"], s["end"])
+    unchanged, same, registered = c2a_tree_evidence(root, rev, s["prefix"], s["opening"])
+    gate = attack_start(root, runs, end, "tests/test_value.py")
+    v = val.value(s["prefix"], as_of=end, attack_green=gate)
+    live_gate = attack_start(root, runs, end)
+    process = item_process(s["prefix"], c1b_window(s["prefix"])[0], end)
+    live = score_items(i for i in process["items"] if live_gate is not None and live_gate < i["ts"])
+    off = off_log_repairs(acts, s["start"], end)
+    s.update(value=v, continued_liveness=live, late_reports=process["late_reports"])
+    return [(verified and registered, "criterion 1: C2a pins and twins in verified tests run"),
+            (verified, "criterion 2: checker agreement in verified tests run"),
+            (facts["counted"] <= 7800 and facts["kernel"] <= 500 and facts["scope"] and unchanged,
+             f"criterion 3: counted {facts['counted']}/7800; kernel {facts['kernel']}/500; scope equals SPEC and unchanged: {facts['scope'] and unchanged}"),
+            (gate is not None and all(gate < r["cutoff"] for r in v["rows"]),
+             f"criterion 4: attack green on main before first scored cutoff: {gate or 'unverified'}"),
+            (v["E_value"] >= 20, f"criterion 5: value E {v['E_value']:.6f} >= 20"),
+            (same and live_gate is not None and live["E"] >= 20 and not process["late_reports"],
+             f"criterion 6: continued liveness E {live['E']} >= 20; unchanged {same}; attack {live_gate or 'unverified'}; late repairs {len(process['late_reports'])}"),
+            (off == 0, f"criterion 7: off-log repairs: {off if off is not None else 'unknown (no acts file)'}")]
 
 
 def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=None, decision=None):
@@ -228,7 +290,9 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
               (verified, "criterion 2: checker agreement in verified tests run"),
               (facts["counted"] <= 6900 and facts["kernel"] <= 500 and facts["scope"],
                f"criterion 3: counted {facts['counted']}/6900; kernel {facts['kernel']}/500; scope equals SPEC: {facts['scope']}")]
-    if subject == "C1b":
+    if subject == "C2a":
+        checks = assess_value(s, facts, verified, root, rev, runs, acts)
+    elif subject == "C1b":
         process = item_process(s["prefix"], s["opening"])
         proposed = item_process(s["prefix"], s["opening"], min(as_of, s["end"]))
         gate = attack_start(root, runs, as_of)
@@ -257,7 +321,7 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
                         f"criterion 4: forecasts {s['forecasts']}/20; proposers {len(s['proposers'])}/3; "
                         f"resolutions {s['resolutions']}/10; world-typed with evidence {s['world_resolutions_with_evidence']}/5"),
                        (verified, "criterion 5: score vectors in verified tests run")])
-    checks.append((not s["veto"], f"criterion 6: veto on {subject}: {'YES' if s['veto'] else 'none'}"))
+    checks.append((not s["veto"], f"criterion {7 if subject == 'C2a' else 6}: veto on {subject}: {'YES' if s['veto'] else 'none'}"))
     exit_procedure = s["procedure"] + int(not any(promotes(e, subject) for e in s["prefix"]))
     checks.append((exit_procedure <= 5 * s["object"], f"A3.4 ratio: procedure {s['procedure']} : object {s['object']}; "
                    f"at promote {exit_procedure} : {s['object']} (maximum 5:1)"))
@@ -292,6 +356,14 @@ def render(s):
     lines += [f"map {k}: {v['principle']} | {v['enforcer']}" for k, v in sorted(s.get("map", {}).items())]
     lines += [f"J7: {s['j7_unresolved_past_due']} of {s['j7_denominator']} window forecasts unresolved past resolves_by"]
     lines += [f"overdue forecast {seq} ({who}) due {by}; evidence {ev or '-'}" for by, seq, who, ev in s["overdue"]]
+    if "value" in s:
+        v, live = s["value"], s["continued_liveness"]
+        weights = v["window_weights"]
+        below = ", ".join(k for k in weights if weights[k] < weights["base"]) or "none"
+        lines += [f"value: E {v['E_value']:.6f} over {v['events']} events; window events {v['window_events']}",
+                  "elections: " + " / ".join(f"{k} {float(w):.6f}" for k, w in weights.items()) + f"; below base: {below}",
+                  f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
+    lines = s.get("history", []) + lines
     return "\n".join(lines + s.get("repairs", []) + [promotion_line(s)])
 
 
@@ -300,7 +372,7 @@ def parser(description):
     ap.add_argument("--log", default=os.path.join(ROOT, "log.jsonl"), help="kernel-checked log (default repository log.jsonl)")
     ap.add_argument("--root", default=ROOT, help="local git repository for tree/history evidence (default this repository)")
     ap.add_argument("--as-of", default=dt.datetime.now(dt.timezone.utc).strftime(FMT), help="UTC YYYY-MM-DDTHH:MM:SSZ; default now")
-    ap.add_argument("--subject", choices=("C1a", "C1b"), help="default C1b after promote C1a, otherwise C1a")
+    ap.add_argument("--subject", choices=("C1a", "C1b", "C2a"), help="status defaults to the latest opened window")
     ap.add_argument("--run", metavar="FILE", help="one Actions workflow-run JSON object for HEAD: tests.yml path, push event, main branch, "
                     "exact SHA, success conclusion, updated_at by as-of; absent leaves criteria 1/2 unverified")
     ap.add_argument("--runs", metavar="FILE", help="JSON array of Actions workflow_runs: historical promotion, attack and W3 witnesses; default empty")
@@ -343,13 +415,16 @@ def inputs(a):
 
 def report(**context):
     decisions = [e for e in context["es"] if e["ts"] <= context["as_of"] and
-                 any(promotes(e, w) for w in ("C1a", "C1b"))]
+                 any(promotes(e, w) for w in ("C1a", "C1b", "C2a"))]
     closing = next((e for e in decisions if promotes(e, context["subject"])), None)
     s = assess(**context, decision=closing)
     s["repairs"] = []
     for e in decisions:
         try:
-            failures = unmet(s if e == closing else assess(**context, decision=e))
+            historical = s if e == closing else assess(**context, decision=e)
+            failures = unmet(historical)
+            if s["subject"] == "C2a" and promotes(e, "C1b"):
+                s.setdefault("history", []).append("C1b history:\n" + render(historical))
         except (StopIteration, OSError, ValueError, subprocess.CalledProcessError):
             failures = ["historical criteria unverified"]
         if failures:
@@ -362,7 +437,10 @@ def main(argv=None):
     ap.add_argument("--json", action="store_true", help="structured status, exact fractions encoded as strings")
     a = ap.parse_args(argv)
     try:
-        s = report(**inputs(a))
+        context = inputs(a)
+        if a.subject is None and any(e["type"] == "push" and e["seq"] > 337 for e in context["es"]):
+            context["subject"] = "C2a"
+        s = report(**context)
         print(json.dumps(s, indent=1, default=str) if a.json else render(s))
     except (StopIteration, OSError, ValueError, subprocess.CalledProcessError) as exc:
         raise SystemExit(f"status unverified: {exc or 'window opening or L0 missing'}")

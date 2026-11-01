@@ -18,7 +18,7 @@ Case = namedtuple("Case", "seed kind lines expected")
 KINDS = ("benign", "retroactive", "forged", "rewriting", "forking", "unattributed", "unsigned_change", "revoked",
          "weak_key", "duplicate_key", "self_judging", "stalling", "flooding", "schema", "structure",
          "ts_decreasing", "forecast_valid", "resolution_valid", "resolution_self", "resolution_dangling", "resolution_double",
-         "forecast_past", "forecast_permille_0", "forecast_permille_1000", "forecast_boolean")  # C1a: each refusing kind has a twin
+         "forecast_past", "forecast_permille_0", "forecast_permille_1000", "forecast_boolean", "rigged", "colluding")
 TITLES = ("alpha", "beta", "gamma", "delta", "epsilon", "zeta")
 CHECKER = "33" * 32  # the checker digest genesis records in simulated logs
 EPOCH, FMT = datetime.datetime(2026, 1, 1), "%Y-%m-%dT%H:%M:%SZ"
@@ -153,6 +153,8 @@ def generate_kind(kind, rng, pool):
     s = Sim(rng, pool)
     m, lg = s.model, s.lg
     s.prefix()
+    if kind in ("rigged", "colluding"):
+        return generate_value(kind, rng, pool, s)
     if kind == "benign":
         s.step()
         return Case(None, kind, lg.lines, s.ok())
@@ -262,6 +264,25 @@ def generate_kind(kind, rng, pool):
         lg.lines.append(line)
         return Case(None, kind, lg.lines, s.refused(variant))
     return generate_ledger(kind, rng, pool, s)
+
+
+def generate_value(kind, rng, pool, s):
+    """Valid signed entries; the value scorer, not recognition, refuses their influence."""
+    ts = s.ts()
+    cutoff = stamp(s.model.t + datetime.timedelta(hours=1))
+    args = {"meeting": "sim", "race": 1, "off_utc": cutoff}
+    body = s.forecast_body(ts, p=900, type="world.hkjc", args=args, resolves_by=cutoff)
+    first = s.n
+    s.add("forecast", "ann", body, pool.ann, ts=ts)
+    if kind == "colluding":
+        s.add("key", "guy", decl("ann-2", "ann", pool.stranger, ["forecast"]), pool.guy, ts=ts)
+        s.add("forecast", "ann", dict(body, p=100), pool.stranger, ts=ts)
+    else:
+        s.add("forecast", "ann", dict(body, p=100), pool.ann, ts=cutoff)
+    s.add("resolution", "guy", s.resolution(first, outcome=1), pool.guy, ts=cutoff)
+    if kind == "rigged":
+        s.add("forecast", "ann", body, pool.ann, ts=cutoff)
+    return Case(None, kind, s.lg.lines, s.ok())
 
 
 def generate_ledger(kind, rng, pool, s):
