@@ -48,7 +48,9 @@ class Generators(unittest.TestCase):
         `powers`, a power repeated, not `ts`: an earlier ts is ts_decreased. Seeds re-found for the C1a kinds."""
         for s in ("b40a8140306b53ae", "bcbd8a8f356f322e", "c2b71f90bf0ef9b8", "1161a16aed6daf91",
                   "8077e437c56c5c02", "0ce62cf5c485ee63", "4f332879346f2a0e", "e9c603ed305d7d56"):
-            case = gen.generate(s, self.pool)
+            rng = random.Random(int(s, 16))
+            self.assertEqual(rng.choice(gen.KINDS[:-2]), "rewriting")  # freeze the C1a reproducer's kind draw
+            case = gen.generate_kind("rewriting", rng, self.pool)
             self.assertEqual(case.kind, "rewriting")
             self.assertIn(case.expected["reason"], ("bad_signature", "parent_mismatch"), s)
             self.assertTrue(any(e["type"] == "key" and len(e["body"]["powers"]) > len(set(e["body"]["powers"]))

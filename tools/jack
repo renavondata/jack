@@ -201,7 +201,7 @@ def v_decision(a):
     begin(a, True)
     a.subject or refuse("SUBJECT must be a non-empty string")
     if a.kind == "promote":
-        a.subject in ("C1a", "C1b") or refuse("promotion criteria unknown for " + a.subject)
+        a.subject in ("C1a", "C1b", "C2a") or refuse("promotion criteria unknown for " + a.subject)
         head = git("rev-parse", "HEAD")
         endpoint = "repos/{owner}/{repo}/actions/workflows/tests.yml/runs"
         def fetch(query):
