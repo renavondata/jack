@@ -256,3 +256,11 @@ REPORT.md's form; the C2b brief text at exit. Every forecast a stream session en
 | V1 | *E*ᵥ ≥ 20 within 7 days of the opening push | 0.25 |
 | V2 | at the exit some entrant's weight on the window's events is below the base-rate forecaster's | 0.9 |
 | V3 | no second push inside the window | 0.7 |
+
+## Amendment 1 (1 November, counsel; the window's end when the push comes early)
+The opening push is seq 367, `ts` 2026-11-01T15:04:14Z — two days before the date V0's `resolves_by`
+(2026-11-17T12:00:00Z) was set against. §Order of acts says the window is "(opening `ts`, V0's
+`resolves_by`], fourteen days at most"; the maximum governs. **C2a's window ends at the earlier of V0's
+`resolves_by` and the opening `ts` + 14 days, i.e. 2026-11-15T15:04:14Z**, and `status.py` reads it so.
+V0 itself is unchanged (a forecast is never edited): it resolves at the window's end, inside its own deadline.
+Nothing else moves; no criterion, stream, constant or event rule is touched.
