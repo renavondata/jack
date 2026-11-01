@@ -1,0 +1,76 @@
+{
+  "stream": "freshness",
+  "checked_at": "2026-11-01T18:12:53Z",
+  "source_head": "213290b8668680881d70f3ca9867a3c9263f1494",
+  "source_log_last_seq": 379,
+  "selection_rule": "type forecast, body.type world.renavon, body.args.stream freshness, no resolution referencing seq, and body.args.window_utc[1] at or before checked_at",
+  "due_forecasts": [
+    {
+      "forecast": 374,
+      "dataset": "hk_property_poi",
+      "url": "https://renavon.com/data/property/hk_property_poi",
+      "proposer": "reviewer",
+      "window_utc": ["2026-11-01T17:00:00Z", "2026-11-01T18:00:00Z"],
+      "resolves_by": "2026-11-01T20:00:00Z",
+      "due": true,
+      "resolver_eligible": true
+    },
+    {
+      "forecast": 375,
+      "dataset": "hkex_disclosures",
+      "url": "https://renavon.com/data/hkex/hkex_disclosures",
+      "proposer": "reviewer",
+      "window_utc": ["2026-11-01T17:00:00Z", "2026-11-01T18:00:00Z"],
+      "resolves_by": "2026-11-01T20:00:00Z",
+      "due": true,
+      "resolver_eligible": true
+    },
+    {
+      "forecast": 376,
+      "dataset": "hkex_disclosure_interests",
+      "url": "https://renavon.com/data/hkex/hkex_disclosure_interests",
+      "proposer": "reviewer",
+      "window_utc": ["2026-11-01T17:00:00Z", "2026-11-01T18:00:00Z"],
+      "resolves_by": "2026-11-01T20:00:00Z",
+      "due": true,
+      "resolver_eligible": true
+    },
+    {
+      "forecast": 377,
+      "dataset": "crhk_companies",
+      "url": "https://renavon.com/data/crhk/crhk_companies",
+      "proposer": "reviewer",
+      "window_utc": ["2026-11-01T17:00:00Z", "2026-11-01T18:00:00Z"],
+      "resolves_by": "2026-11-01T20:00:00Z",
+      "due": true,
+      "resolver_eligible": true
+    },
+    {
+      "forecast": 378,
+      "dataset": "sfc_licences",
+      "url": "https://renavon.com/data/sfc/sfc_licences",
+      "proposer": "reviewer",
+      "window_utc": ["2026-11-01T17:00:00Z", "2026-11-01T18:00:00Z"],
+      "resolves_by": "2026-11-01T20:00:00Z",
+      "due": true,
+      "resolver_eligible": true
+    },
+    {
+      "forecast": 379,
+      "dataset": "hk_property_transactions",
+      "url": "https://renavon.com/data/property/hk_property_transactions",
+      "proposer": "reviewer",
+      "window_utc": ["2026-11-01T17:00:00Z", "2026-11-01T18:00:00Z"],
+      "resolves_by": "2026-11-01T20:00:00Z",
+      "due": true,
+      "resolver_eligible": true
+    }
+  ],
+  "resolutions": [],
+  "resolved_count": 0,
+  "advanced_count": 0,
+  "resolved_freshness_history_count": 0,
+  "unresolved_forecasts": [],
+  "fetch_failures": [],
+  "note": "Resolution commands will append the six W1 entries after the live pages are fetched and hashed."
+}
