@@ -1,0 +1,55 @@
+{
+  "meeting": "M2",
+  "date": "2026-11-01",
+  "venue": "Happy Valley",
+  "races": [
+    {
+      "race": 7,
+      "winner": "TURQUOISE VELOCITY",
+      "winner_no": 4,
+      "shortest_final_win_odds": {"runner": "TURQUOISE VELOCITY", "no": 4, "odds": 3.1},
+      "favourite_won": true,
+      "dead_heat": false,
+      "void": false,
+      "sources": [
+        {
+          "url": "https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx?RaceDate=2026/11/01&Racecourse=HV&RaceNo=7",
+          "sha256": "882022274186a5299f46af77b6cb19deff82b41165bcb56a3fb78beefa155e2f",
+          "fetched_at": "2026-11-01T09:19:26Z"
+        },
+        {
+          "url": "https://hkjc.guru/race/2026-11-01/HV/7",
+          "sha256": "495220315139ec6b82c63784558c92014e23bfac1838f6e5d191154cabd1d3a1",
+          "fetched_at": "2026-11-01T09:19:25Z"
+        }
+      ]
+    },
+    {
+      "race": 8,
+      "winner": "ETERNAL FORTUNE",
+      "winner_no": 7,
+      "shortest_final_win_odds": {"runner": "JUMBO BLESSING", "no": 8, "odds": 2.1},
+      "favourite_won": false,
+      "dead_heat": false,
+      "void": false,
+      "sources": [
+        {
+          "url": "https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx?RaceDate=2026/11/01&Racecourse=HV&RaceNo=8",
+          "sha256": "586403de6e359a4a8c4f239418e340501f1acb48cd2e8e3bccdca5631a133daa",
+          "fetched_at": "2026-11-01T09:20:01Z"
+        },
+        {
+          "url": "https://hkjc.guru/race/2026-11-01/HV/8",
+          "sha256": "03e9ce5d2605e518559cb461de164b6a13d8d7a5bfa6cccbc1e4aa341cb294d3",
+          "fetched_at": "2026-11-01T09:20:01Z"
+        }
+      ]
+    }
+  ],
+  "retrieval_notes": [
+    "Raw curl -sL response bodies are saved without editing as transcripts/evidence/hkjc-20261101/results-race-<race>.html and results-race-<race>-guru.html. fetched_at is each output file's modification time in UTC, truncated to seconds.",
+    "HKJC redirects the requested LocalResults.aspx URLs to /en-us/local/information/localresults with the same RaceDate, Racecourse and RaceNo parameters. Both official pages contain completed placings, finish times, full-field Win Odds and paid WIN dividends.",
+    "The favourite is determined from the minimum final Win Odds across all 10 finishers in race 7 and all 12 finishers in race 8 in HKJC's performance table, not from the winner's dividend. Each race has a unique favourite and a single first-place finisher.",
+    "Both guru responses remain pre-race cards marked EventScheduled and state that the race has not been run yet. They are retained and hashed as retrieval evidence only; no verdict or final odds are taken from them. The official HKJC completed results are the resolution source."
+  ]
+}
