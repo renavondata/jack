@@ -391,3 +391,118 @@ the promote (issue 7); counsel's L0–L5 at seqs 180–185, L0's end `2026-11-14
 committed with its provenance; the ratio at 3.97 : 1 and the Happy Valley meeting of 1 November as the
 next object entries. The sovereign's remaining acts in C1b: `decision promote C1b` when its criteria
 hold, and `decision fix "<what>"` whenever he repairs by hand.
+
+
+# C1b report — the clerk, and a court with a litigant
+
+Counsel's exit report, 1 November 2026. Proposer: counsel `claude-fable-5-1`, session
+`session_013Ce38BiYZ9xMbMtFh7wzxX`. **Exit prefix: seq 337**, the sovereign's `decision promote C1b` at
+`2026-11-01T11:31:58Z`, commit `7814940b9bfc538959ba7ab000a2f4c6394fcd90`, `log.jsonl` SHA-256
+`8c9d210813fd094cda7652706b6850afd913420a6c0256721117692d6d93284a` at that commit. **The tests run that counts: 41299806101** (`tests`, `push` to `main`, on
+`b8f08bf`, the tree the verb assessed at the instant it signed, success); the decision commit's own run,
+41302307974, is also green. The window opened at seq 188 (`2026-10-31T10:42:10Z`) and closed **24 h 50 m**
+later under A5, on day two of its fourteen; the stated end, `2026-11-14T09:00:00Z` (L0's `resolves_by`), was
+not reached and is not moved. The brief is `transcripts/BRIEF-C1b-draft.md` v7 with Amendments 1 and 2.
+
+## 1. Verdict against BRIEF-C1b's pre-stated criteria, on the exit prefix
+
+`python3 tools/status.py --as-of 2026-11-01T11:31:58Z --runs transcripts/evidence/runs-tests-20261101b.json
+--acts transcripts/evidence/acts-20261101.csv` (the runs file refreshed after the exit, in this pull request;
+the one saved at 10:33Z predates the run that verified the prefix, which is why `status.py` on that file
+prints a REPAIR line for seq 337 — evidence not supplied is unverified, never a verdict):
+
+| # | criterion | state | evidence |
+|---|---|---|---|
+| 1 | every pin KILLED with a passing twin in the `tests` run on `main` at the exit prefix | **MET** | run 41299806101 verified field by field (path, event, branch, sha, conclusion): 70 pins, 94 mutants KILLED, 0 SURVIVED/STALE/TWIN FAILED |
+| 2 | both checkers agree on the exit prefix and the committed seeds | **MET** | the same run's self-check |
+| 3 | counted lines within 6,900 (Amendment 1); kernel within 500; `judge/scope.json` and SPEC §10 unchanged since the push at seq 197 | **MET** | 6,882 / 6,900; 450 / 500; scope equals SPEC |
+| 4 | the attack test green on `main` before the first counted item | **MET** | `tests/test_clerk.py` first green on `main` at 2026-10-31T13:32:21Z; first item 15:50:40Z |
+| 5 | liveness E ≥ 20 under the brief's statistic | **MET** | nine items, all Y = 1, **E = 214358881/8398080 ≈ 25.52**; p₀ = 6/11; the item table is §2 |
+| 6 | no `decision` of kind `veto` with subject `C1b` | **MET** | none |
+| 7 | the enforcement map rows C1b moves read `code` | **MET** | A5, W1, W3, W4 rows: `code` |
+| W4 | late-reported repairs; off-log repairs; A3.4 ratio | **MET** | 0; 0 (`acts-20261101.csv`, Amendment 2's attribution — six closures were counsel's under the sovereign's login, raw file beside it); 67 : 82 |
+
+J7: 0 of 48 window forecasts unresolved past `resolves_by`. No stop condition fired. No sovereign repair in
+the window, on the log or off it: the sovereign's acts were two `key` revocations (decisions under §7) and the
+`promote`.
+
+## 2. What the window produced
+
+**The items** (the herald's acts landing timely resolutions; stake λ by A4's Laplace rule, exact):
+
+| seq | UTC | writs landed | Y | stake | E after |
+|---|---|---|---|---|---|
+| 215 | 31 Oct 15:50 | 198, 202 (proposal.ci) | 1 | 0 | 1 |
+| 268 | 1 Nov 02:00 | 251–253 (freshness 08:00 HKT) | 1 | 22/45 | 11/9 |
+| 276 | 03:10 | 256–258 | 1 | 33/40 | 121/72 |
+| 284 | 04:10 | 264–266 | 1 | 77/75 | 1331/540 |
+| 292 | 05:10 | 272–274 | 1 | 209/180 | 14641/3888 |
+| 306 | 06:29 | races 1–3 ×2 proposers; freshness 12:00 and 13:00 HKT | 1 | 44/35 | 161051/27216 |
+| 314 | 08:10 | races 4–6 ×2 | 1 | 319/240 | 1771561/186624 |
+| 320 | 09:40 | races 7–8 ×2 | 1 | 187/135 | 19487171/1259712 |
+| 332 | 10:23 | races 9–10 ×2 | 1 | 143/100 | **214358881/8398080** |
+
+**The clerk** (`tools/clerk.py`, `tools/status.py`, the `decision` verb; PRs #63, #65, #66, #69): W1/W3/W4
+writs from state and clock; the item process and the `promote` line; 24 brief-named pins, 30 mutants, all
+KILLED. Built in three builder sessions and two reviewer sessions on steel, every one unattended; the cap
+moved once, by a measured push (6,200 → 6,900 at seq 197) — the brief's own rule, and the mid-window
+sovereign act the C2a brief is written to avoid.
+
+**Custody.** The herald's key moved from counsel's session to steel (`herald-2`, seq 201; the `herald`
+workflow in `renavondata/opencode-runner`, ticked by the sovereign's timer because GitHub's schedule fired
+zero times in a day); `herald-1` and `builder-3` revoked (seqs 216–217). Twenty merges in the window, the last
+fourteen by `herald-2` with no hand on them. The move exposed a defect the shortcut had hidden — the merge
+verb's party whitelist refused the herald's key (COUNSEL-OPEN 18) — fixed by a builder session in 25 minutes.
+
+**A litigant.** The window opened at 32 : 0 procedure : object and closed at 67 : 82. Two object streams
+were pre-stated and run: the HKJC per-race stream (ten races, two proposers, four resolver batches inside
+every deadline, from hashed results pages) and the renavon freshness stream (hourly, three datasets,
+`dateModified` of the public page). 149 entries in the window: 56 resolutions, 48 forecasts (38 world-typed),
+20 proposals, 20 merges, 3 keys, 1 push, 1 decision. Forecasts by reviewer 23, counsel 16, builder 9;
+resolutions by builder 38, counsel 6, reviewer 6, herald 6.
+
+**Models.** gpt-6-astra for builds, reads and race resolution; `gpt-5.4-mini` from 02:50Z for the freshness
+stream after fourteen astra sessions cost ~$50; the templates stopped sessions reading the whole log.
+Which model acts in which procedure is C2's election to decide; today it was counsel's call.
+
+## 3. Forecasts resolved at and after exit
+
+At exit: 77, 78, 79, 87, 88, 89 (the M2 meeting claims: favourites won 4 of 10, races 1, 3, 6, 7 — ≥3 and ≥4
+both 1; race 10 won at 32, so a winner at 20+ — all from `hkjc-20261101-m2-claims.json`, hashed), the twenty
+per-race forecasts, eighteen freshness forecasts, 198, 202, 153, 165, 171, 177 (the four reads' cap bets, 0 on
+the push). In the procedure session that followed (PR #84):
+L1 (181), L5 (185, 0 on the push), 116, 205, 218, H2-1 (211), H2-2 (212), S3-1 (213). **Still open:** 80 and
+90 (hkjc.guru's picks' settled return — the picks page was behind a challenge; a reviewer session resolves them
+from the settlement page, deadline 8 Nov), 111 (depends on them), L2, L3, L4 (counsel's bets on the window's
+shape: L2 and L3 resolve 1 and 0 respectively on this prefix — E ≥ 20 within 7 days, yes; a Y = 0 item,
+none — by a key other than counsel's), the C2 forecasts C2-1, D-1, R-1, and the reviews' bets on the window
+(142, 164, 170, 176: promotion, yes).
+
+## 4. Precedents and counsel's errors, for the record
+
+1. **The statistic was pre-stated before the world was.** A window whose item is "a herald act landing a
+   timely resolution" runs at the cadence of outcomes, and nobody chose the cadence: it defaulted to two race
+   meetings a week, which would have spent the fourteen days. The hourly stream fixed it on day two. C2a's
+   brief names its streams and their cadence beside its statistic.
+2. **One identity for two parties.** Counsel's and steel's GitHub acts run under the sovereign's login; the
+   acts classifier attributed six of counsel's closures to him. Amendment 2 attributes by declaration; a GitHub
+   identity per party is a C2b obligation (COUNSEL-OPEN 17, 20).
+3. **A forecast of a window already begun** (stream 6, seqs 288–290, a mini model misreading the hour):
+   lawful, timely, worthless. C1b's statistic counts it; C2a's `fixed_before_resolution` pin is what punishes it.
+4. **Six proposals closed unmerged in a day** (#57, #59, #60, #61, #64, #68 — staled by `main` gaining
+   entries under the byte-prefix rule, or superseded), each rebuilt by hand or by a session; the forty-second
+   window between the sovereign's two key revocations staled one on its own. Automatic re-proposal is a C2a item.
+5. **The evidence file preceded the event.** The runs file saved at 10:33Z could not contain the 10:58Z run
+   that verified the prefix; on it `status.py` prints a REPAIR line for seq 337. The rule — evidence not
+   supplied is unverified — is right; the operational lesson is that the exit evidence is saved *after* the
+   run of the prefix, not before, and this report carries it.
+6. **Counsel idle with a window open** (31 Oct evening, 1 Nov morning): the clerk's writs should file their
+   own sessions; a clerk → issue bridge is a C2a item.
+
+## 5. What C2a opens with
+
+`transcripts/BRIEF-C2a-draft.md` v1 (the value statistic as a likelihood ratio, the Bayes mixture as the
+aggregate, the streams and cadence pre-stated, a budget of 7,300 counted lines raised by one push at the
+opening with the CI skip for log-only heads), its first cold read in the record; the liveness process
+continued from E ≈ 25.5 (A4); the two streams running; the sovereign's acts: the opening `push` and, at
+the crossing, `decision promote C2a`.
