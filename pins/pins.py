@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 70
+EXPECTED = 88
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -948,3 +948,98 @@ C1B_PINS = [
                'mapping.get(k, {}).get("enforcer", "").startswith(("code:", "hand:"))')]),
 ]
 PINS += C1B_PINS
+
+
+# --- value pins (BRIEF-C2a v2, Amendment 1; REVIEW-C2a-v2 F7/F9) ---------------
+
+value_tests = functools.partial(fixture_tests, "test_value.Value")
+value_attacks = functools.partial(fixture_tests, "test_value.Attacks")
+
+
+def c2a_cases(*methods):
+    def test(root):
+        names = [f"pins.c2a.Cases.test_{method}" for method in methods]
+        r = subprocess.run([sys.executable, "-E", "-s", "-m", "unittest", "-q", *names],
+                           cwd=root, capture_output=True, text=True)
+        assert r.returncode == 0, r.stdout + r.stderr
+    return test
+
+
+def t_value_worked(root):
+    """The immutable published fixture is data; run.py omits transcripts from disposable copies."""
+    rel = "transcripts/evidence/value-fixture-20261101.json"
+    os.makedirs(os.path.dirname(os.path.join(root, rel)), exist_ok=True)
+    shutil.copyfile(os.path.join(os.path.dirname(os.path.dirname(__file__)), rel), os.path.join(root, rel))
+    value_tests("worked_table")(root)
+
+
+TERMINAL_Q = '''        terminal = dict.fromkeys(roster, Fraction(1))
+        for tr, tf, tb, _ in rates:
+            ident = event(tf)
+            if ident is None:
+                continue
+            tg = groups[ident[0]]
+            if tr != tg["resolution"] or tg["cutoff"] <= opening or not no_attack_gate and (attack_green is None or tg["cutoff"] <= attack_green):
+                continue
+            for k in roster:
+                terminal[k] *= likelihood(tg["forecasts"].get(k, (None, clip(tb)))[1], tr["body"]["outcome"])
+        q = sum((normalize(terminal)[k] * ps[k] for k in roster), Fraction(0))'''
+CLAIM_EVENT = '''def event(f):
+    identity = physical_event(f)
+    return ((f["body"]["type"], f["body"]["claim"]), identity[1]) if identity else None
+
+
+def physical_event(f):'''
+PROMOTE_GUARD = '        lines == [f"promote {a.subject}: lawful"] or refuse("\\n".join(lines) or "status returned no promotion verdict")'
+
+C2A_PINS = [
+    Pin("worked_table", t_value_worked, [
+        Mutant("laplace_n_plus_3", "tools/entry.py", "fractions.Fraction(s + 1, n + 2)", "fractions.Fraction(s + 1, n + 3)")]),
+    Pin("forecast_before_cutoff", value_tests("forecast_before_cutoff"), [
+        Mutant("latest_forecast", "tools/value.py", 'for f in g["candidates"]:', 'for f in reversed(g["candidates"]):')]),
+    Pin("rigged", lambda root: (value_tests("rigged")(root), c2a_cases("rigged_record")(root), value_attacks("three_refused")(root)), [
+        Mutant("cutoff_forecast_included", "tools/value.py", 'if f["ts"] >= g["cutoff"] or r is not None and', 'if r is not None and')]),
+    Pin("revision", value_tests("revision"), [
+        Mutant("second_replaces_first", "tools/value.py", 'elif who in g["forecasts"]:', 'elif False and who in g["forecasts"]:')]),
+    Pin("weights_from_resolved_prefix", value_tests("weights_from_resolved_prefix"), [
+        Mutant("terminal_weights", "tools/value.py", '        q = sum((weights[k] * ps[k] for k in roster), Fraction(0))', TERMINAL_Q)]),
+    Pin("abstention_is_base", value_tests("abstention_is_base"), [
+        Mutant("abstention_half", "tools/value.py", '(None, b))[1] for k in roster', '(None, Fraction(1, 2)))[1] for k in roster')]),
+    Pin("one_event_one_key", value_tests("one_event_one_key"), [
+        Mutant("grouped_by_claim", "tools/value.py", 'def event(f):', CLAIM_EVENT)]),
+    Pin("grouping_by_principal", lambda root: (value_tests("grouping_by_principal")(root), value_attacks("three_refused")(root)), [
+        Mutant("two_keys_two_entrants", "tools/value.py", 'list(dict.fromkeys(d["principal"] for d in keys.values() if "forecast" in d["powers"]))',
+               '[d["key_id"] for d in keys.values() if "forecast" in d["powers"]]')]),
+    Pin("uniform_prior", value_tests("uniform_prior"), [
+        Mutant("counsel_double", "tools/value.py", 'weights = {k: Fraction(1, len(roster)) for k in roster}',
+               'weights = normalize({k: Fraction(2 if k == "counsel" else 1) for k in roster})')]),
+    Pin("no_learning_rate", value_tests("no_learning_rate"), [
+        Mutant("eta_half", "tools/value.py", 'weights = normalize({k: weights[k] * ls[k] for k in roster})',
+               'weights = normalize({k: weights[k] * math.sqrt(ls[k]) for k in roster})')]),
+    Pin("exact_probabilities", value_tests("exact_probabilities"), [
+        Mutant("one_float_division", "tools/value.py", 'return {k: v / total for k, v in values.items()}',
+               'return {k: v / float(total) for k, v in values.items()}')]),
+    Pin("per_type_base", lambda root: (value_tests("per_type_base")(root), c2a_cases("per_dataset")(root)), [
+        Mutant("base_per_dataset", "tools/entry.py", 'typ = f["body"].get("type", "free")',
+               'typ = (f["body"].get("type", "free"), f["body"].get("args", {}).get("dataset"))')]),
+    Pin("bounded_difference", value_tests("bounded_difference"), [
+        Mutant("no_clip", "tools/value.py", 'return min(Fraction(999, 1000), max(Fraction(1, 1000), p))', 'return p')]),
+    Pin("lambda_predictable", value_tests("lambda_predictable"), [
+        Mutant("current_item_in_lambda", "tools/value.py", 'x, lam = difference(q, b, y), stake(prior)',
+               'x, lam = difference(q, b, y), stake(prior + [difference(q, b, y)])')]),
+    Pin("factor_algebra", c2a_cases("factor_tree"), [
+        Mutant("factor_plus_one_fiftieth", "tools/value.py", 'return 1 + lam * x', 'return 1 + lam * x + 1/50')]),
+    Pin("window_from_the_push", c2a_cases("opening_merge"), [
+        Mutant("from_brief_merge", "tools/value.py", 'return next(e for e in es if e["type"] == "push" and e["seq"] > 337)',
+               'return next(e for e in es if e["type"] == "merge" and e["seq"] > 337)')]),
+    Pin("wealth_continues", c2a_cases("second_window"), [
+        Mutant("reset_at_second_window", "tools/value.py", '        wealth *= step',
+               '        wealth = (1.0 if cutoff > window_opening and not any(row["cutoff"] > window_opening for row in rows) else wealth) * step')]),
+    Pin("promote_refused_value", value_attacks("promote_refused_value"), [
+        Mutant("signs_below_twenty", "tools/jack", PROMOTE_GUARD, '        pass')]),
+]
+# Expose the precise single-occurrence rule guard in each pin test's docstring.
+for pin in C2A_PINS:
+    pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2a named fixture and passing twin.") + "\n" + "\n".join(
+        f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
+PINS += C2A_PINS
