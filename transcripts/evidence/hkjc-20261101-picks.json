@@ -1,0 +1,56 @@
+{
+  "meeting": "M2",
+  "race_id_prefix": "HV_20261101_",
+  "rule": "transcripts/world-types.md:27-61; ledger's own stakes and settled payouts; outcome 1 iff payouts minus stakes is strictly positive",
+  "source_url": "https://hkjc.guru/proofing",
+  "fetch_time_utc": "2026-11-01T16:18:09Z",
+  "page_path": "transcripts/evidence/hkjc-20261101/proofing-20261101T161809Z.html",
+  "page_sha256": "71f7f8f26d83139c7b447436c0bf9400c4022903a53f4875580a4bf5d6cb43f1",
+  "rows": [
+    {
+      "race": "HV_20261101_R07",
+      "horse": "HK_2024_K533",
+      "overnight_odds": 3.20,
+      "stake_units": 2,
+      "result": "Won",
+      "settle_price": 3.10,
+      "payout_units": 6.20
+    }
+  ],
+  "row_count": 1,
+  "sum_stakes_units": 2,
+  "sum_payouts_units": 6.20,
+  "return_units": 4.20,
+  "outcome": 1,
+  "ledger_cross_check": {
+    "available": true,
+    "publish_directory": "r2:hkdata/hkjcguru-ledger/publish/2026-11-01/",
+    "settle_directory": "r2:hkdata/hkjcguru-ledger/settle/2026-11-01/",
+    "publish_files": [
+      {
+        "name": "2026-11-01T03:16:32+00:00.jsonl",
+        "path": "transcripts/evidence/hkjc-20261101/ledger-publish-2026-11-01T03:16:32+00:00.jsonl",
+        "sha256": "62ef86e1e30958117e544787217030deb7decce8c9941b9a4baf8568bce9a12e"
+      }
+    ],
+    "settle_files": [
+      {
+        "name": "2026-11-01T15:17:30+00:00.jsonl",
+        "path": "transcripts/evidence/hkjc-20261101/ledger-settle-2026-11-01T15:17:30+00:00.jsonl",
+        "sha256": "0d81a90e1c6202f002cdfe6fa259761fc2b7697c0a96253b4828d06a3ca69d2a"
+      }
+    ],
+    "published_m2_race_rows": 1,
+    "published_m2_pick_rows": 1,
+    "settled_m2_pick_rows": 1,
+    "page_m2_pick_rows": 1,
+    "all_published_picks_settled": true,
+    "unsettled_picks": [],
+    "matching_key": ["race_id", "horse_id"],
+    "published_at": "2026-11-01T03:16:32+00:00",
+    "settled_at": "2026-11-01T15:17:30+00:00",
+    "settlement_pick_id": 58,
+    "settlement_price_basis": "WIN_DIVIDEND",
+    "note": "The publish file contains one race object with one pick; board_rows are model rankings, not published picks. The pick's identity, odds and stake match the page, and its WON settlement, settle price and payout match the page. All files returned by both rclone lsf listings are saved."
+  }
+}
