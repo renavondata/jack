@@ -1,0 +1,73 @@
+{
+  "meeting": "M2",
+  "date": "2026-11-01",
+  "venue": "Happy Valley",
+  "method": "Use each saved HKJC results page's performance table: placing 1 identifies the winner; the minimum final Win Odds across all 12 runners identifies the favourite. Published WIN dividends confirm the winning numbers. All three races have unique favourites and no dead heats or voids.",
+  "fetched_at_definition": "UTC completion time from each curl output file's modification time, truncated to seconds; raw response bodies have not been edited.",
+  "guru_note": "All three saved hkjc.guru responses still show EventScheduled and pre-race cards. They are retained as retrieval evidence only, not used for any verdict. HKJC supplies the completed results, dividends and full-field final WIN odds for all three races.",
+  "races": [
+    {
+      "race": 4,
+      "winner": "SUPERB KING",
+      "winner_no": 5,
+      "shortest_final_win_odds": {"runner": "GEORGIAN SIGMA", "no": 2, "odds": 3.9},
+      "favourite_won": false,
+      "dead_heat": false,
+      "void": false,
+      "sources": [
+        {
+          "url": "https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx?RaceDate=2026/11/01&Racecourse=HV&RaceNo=4",
+          "sha256": "ef593b2955a5ddf578d61bc68e8343c7bf960dbf205e3eabb1a580fd7923a50e",
+          "fetched_at": "2026-11-01T07:55:16Z"
+        },
+        {
+          "url": "https://hkjc.guru/race/2026-11-01/HV/4",
+          "sha256": "1ae223f64c5e4e0ebea7fd8e0a7aee9da034cfeaf15750b264151c1aa9b720c5",
+          "fetched_at": "2026-11-01T07:55:17Z"
+        }
+      ]
+    },
+    {
+      "race": 5,
+      "winner": "SAME TO YOU",
+      "winner_no": 12,
+      "shortest_final_win_odds": {"runner": "TIN FOOK", "no": 6, "odds": 2.3},
+      "favourite_won": false,
+      "dead_heat": false,
+      "void": false,
+      "sources": [
+        {
+          "url": "https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx?RaceDate=2026/11/01&Racecourse=HV&RaceNo=5",
+          "sha256": "442c5410db6a1a420c47cd842edd81377ebad9c6d65e86ba0f54450965908136",
+          "fetched_at": "2026-11-01T07:55:31Z"
+        },
+        {
+          "url": "https://hkjc.guru/race/2026-11-01/HV/5",
+          "sha256": "68bb84ec6673f4fb07816a379c035f4146c93be778475472363672f3e642665f",
+          "fetched_at": "2026-11-01T07:55:31Z"
+        }
+      ]
+    },
+    {
+      "race": 6,
+      "winner": "FAST SPEED",
+      "winner_no": 10,
+      "shortest_final_win_odds": {"runner": "FAST SPEED", "no": 10, "odds": 5.2},
+      "favourite_won": true,
+      "dead_heat": false,
+      "void": false,
+      "sources": [
+        {
+          "url": "https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx?RaceDate=2026/11/01&Racecourse=HV&RaceNo=6",
+          "sha256": "a121a156b5500184f2c44f653ae03dda8655ef8f20e7fdd0f014261668db47ad",
+          "fetched_at": "2026-11-01T07:55:39Z"
+        },
+        {
+          "url": "https://hkjc.guru/race/2026-11-01/HV/6",
+          "sha256": "0090a707827e7b47ec7c332e5935a004c796553d80c52d112e06c97e81dc8dc9",
+          "fetched_at": "2026-11-01T07:55:40Z"
+        }
+      ]
+    }
+  ]
+}
