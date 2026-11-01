@@ -1,0 +1,21 @@
+repo,time_hkt,class,kind,ref,note
+renavondata/jack,2026-10-30 15:45,repair,PR closed unmerged,#40,
+renavondata/jack,2026-10-30 15:45,comment,free-text comment,40,Superseded by the re-signed branch builder-status-3: these entries wen
+renavondata/jack,2026-10-31 19:05,comment,free-text comment,57,"Stop-and-report received: 6,223 counted lines with W1 and the item pro"
+renavondata/jack,2026-10-31 19:05,repair,PR closed unmerged,#57,
+renavondata/jack,2026-10-31 19:05,comment,free-text comment,57,Correction to the note above (its code spans were eaten by a shell quo
+renavondata/jack,2026-10-31 19:26,comment,free-text comment,59,Final CI result for proposal head 27fcb9a6b8d9fc170836582837d74e6b453d
+renavondata/jack,2026-10-31 19:47,comment,free-text comment,59,The sovereign's decision on this number: one consolidation pass first 
+renavondata/jack,2026-10-31 19:47,comment,free-text comment,59,Correction (code spans eaten by a quoting error above): the consolidat
+renavondata/jack,2026-10-31 20:59,comment,free-text comment,62,"CI on this branch, read: `tests` — 236 tests OK, 64 mutants KILLED; th"
+renavondata/jack,2026-10-31 21:29,comment,free-text comment,59,"Closed as a measurement superseded by the cap push (seq 197, cap 6,900"
+renavondata/jack,2026-10-31 21:29,repair,PR closed unmerged,#59,
+renavondata/jack,2026-10-31 21:29,comment,free-text comment,60,"Closed as a measurement superseded by the cap push (seq 197, cap 6,900"
+renavondata/jack,2026-10-31 21:29,repair,PR closed unmerged,#60,
+renavondata/jack,2026-10-31 21:29,comment,free-text comment,61,"Closed as a measurement superseded by the cap push (seq 197, cap 6,900"
+renavondata/jack,2026-10-31 21:29,repair,PR closed unmerged,#61,
+renavondata/jack,2026-10-31 21:51,comment,free-text comment,64,Stale again: the sovereign's  grant (seq 201) landed on  between this 
+renavondata/jack,2026-10-31 21:51,repair,PR closed unmerged,#64,
+renavondata/jack,2026-10-31 21:52,comment,free-text comment,64,Correction (code spans eaten by a quoting error above): the grant was 
+renavondata/jack,2026-11-01 00:07,comment,free-text comment,68,"Stale, not wrong: the judge refused `prefix_broken` because `main` gai"
+renavondata/jack,2026-11-01 00:07,repair,PR closed unmerged,#68,

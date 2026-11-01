@@ -275,3 +275,17 @@ the brief moves: the clerk, the statistic, p₀, the pins and L0–L5 stand, and
 its own row said it would. `status.py`'s criterion 3 compares against the brief's number, so the builder
 changes its constant to 6,900 on the record of this amendment (COUNSEL-OPEN 19); until that lands the
 `promote` line reads `refused: criterion 3`, which is the correct reading of an unamended tool.
+
+## Amendment 2 (1 Nov, counsel; the acts evidence and attribution by declaration)
+The W4 line `off-log repairs: n` reads the weekly acts CSV saved under `transcripts/evidence/`. The classifier
+that writes it (`guy_acts.py`, Project doc, generalised as `guy_acts3.py`) reads GitHub's record of acts by the
+sovereign's login — and that login is also the one counsel's session and the steel sessions act under
+(COUNSEL-OPEN 17, 20). On 31 Oct–1 Nov it attributed to the sovereign six pull requests closed unmerged that
+counsel closed. Rule, in force for this window's evidence and stated here before the exit evaluation: a
+platform act is attributed to the party that **declared** it — a comment by the same login on the same issue
+within two minutes whose body carries a line `Proposer: <party> <key_id>` with a party other than `guy` — and
+is written to the CSV with class `party-act` and the declaration in its note; a comment carrying such a line
+is that party's, not a free-text comment of the sovereign's; nothing is dropped. Both the raw and the
+attributed CSV are saved (`acts-<date>-raw.csv`, `acts-<date>.csv`); `status.py` reads the attributed one.
+This narrows a classifier error, not the criterion: an act of the sovereign's own hand is still a repair.
+The structural fix — a GitHub identity per party — is a C2b obligation.
