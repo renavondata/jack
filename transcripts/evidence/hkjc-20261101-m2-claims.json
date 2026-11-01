@@ -1,0 +1,50 @@
+{
+  "meeting": "M2",
+  "date": "2026-11-01",
+  "venue": "Happy Valley",
+  "resolves_by": "2026-11-08T12:00:00Z",
+  "method": "Count favourite_won in the four saved per-race results JSONs. Cross-check winners and minimum final Win Odds against every saved HKJC performance table. Read each winner's final Win Odds from that table, not from overnight prices or the WIN dividend. All ten races ran, with no voids or winning dead heats.",
+  "prior_results_jsons": [
+    {"file": "transcripts/evidence/hkjc-20261101-results-1-3.json", "sha256": "f16e6046f2319e9e3effe135e34e59ebf0ec7c4a34b96f8a53022ceebeb947a9"},
+    {"file": "transcripts/evidence/hkjc-20261101-results-4-6.json", "sha256": "8b13e4564e94e498ea1f40de054107f48908317e26fc5563f2d6a540e8e07df7"},
+    {"file": "transcripts/evidence/hkjc-20261101-results-7-8.json", "sha256": "76576fbc4e16bced67ec5daaf6a4aff6d3ce19cefdff3a0c9ff4b2c351a34dbb"}
+  ],
+  "current_results_json": "transcripts/evidence/hkjc-20261101-results-9-10.json",
+  "race_source_directory": "transcripts/evidence/hkjc-20261101/",
+  "races": [
+    {"race": 1, "winner": "FALCON HUNTER", "winner_no": 1, "winner_final_win_odds": 1.3, "win_dividend_hkd": 13.5, "favourite_won": true, "source_file": "results-race-1.html", "sha256": "948ade582a5e018fdfba52f69ac10af7e049d99214e3ae0e701917e05926ce1b"},
+    {"race": 2, "winner": "GRIT SPIRIT", "winner_no": 3, "winner_final_win_odds": 17, "win_dividend_hkd": 179.5, "favourite_won": false, "source_file": "results-race-2.html", "sha256": "1af7b3fb47cc5455cc112769f9545fcf78a14e279d21283b24da3056185f2173"},
+    {"race": 3, "winner": "INCREDIBLE MOMENT", "winner_no": 4, "winner_final_win_odds": 2, "win_dividend_hkd": 20.5, "favourite_won": true, "source_file": "results-race-3.html", "sha256": "8b6a5d04580a7325614054ee2c80bfcc55bceb4116bc18b7ea6b209aed6f4711"},
+    {"race": 4, "winner": "SUPERB KING", "winner_no": 5, "winner_final_win_odds": 7.8, "win_dividend_hkd": 78.5, "favourite_won": false, "source_file": "results-race-4.html", "sha256": "ef593b2955a5ddf578d61bc68e8343c7bf960dbf205e3eabb1a580fd7923a50e"},
+    {"race": 5, "winner": "SAME TO YOU", "winner_no": 12, "winner_final_win_odds": 11, "win_dividend_hkd": 117.5, "favourite_won": false, "source_file": "results-race-5.html", "sha256": "442c5410db6a1a420c47cd842edd81377ebad9c6d65e86ba0f54450965908136"},
+    {"race": 6, "winner": "FAST SPEED", "winner_no": 10, "winner_final_win_odds": 5.2, "win_dividend_hkd": 52.5, "favourite_won": true, "source_file": "results-race-6.html", "sha256": "a121a156b5500184f2c44f653ae03dda8655ef8f20e7fdd0f014261668db47ad"},
+    {"race": 7, "winner": "TURQUOISE VELOCITY", "winner_no": 4, "winner_final_win_odds": 3.1, "win_dividend_hkd": 31, "favourite_won": true, "source_file": "results-race-7.html", "sha256": "882022274186a5299f46af77b6cb19deff82b41165bcb56a3fb78beefa155e2f"},
+    {"race": 8, "winner": "ETERNAL FORTUNE", "winner_no": 7, "winner_final_win_odds": 10, "win_dividend_hkd": 103, "favourite_won": false, "source_file": "results-race-8.html", "sha256": "586403de6e359a4a8c4f239418e340501f1acb48cd2e8e3bccdca5631a133daa"},
+    {"race": 9, "winner": "THE BOOM BOX", "winner_no": 6, "winner_final_win_odds": 4.9, "win_dividend_hkd": 49.5, "favourite_won": false, "source_file": "results-race-9.html", "sha256": "61ff3511473954a1a72e4955e18aef4ced4e6933876d2c16d3714b5a76d68847"},
+    {"race": 10, "winner": "ON THE WAY", "winner_no": 5, "winner_final_win_odds": 32, "win_dividend_hkd": 328, "favourite_won": false, "source_file": "results-race-10.html", "sha256": "e2ebe87668d496a240dd9f624f2e56dda26b3c3ed0c1d2f1c3ae97e56811db67"}
+  ],
+  "races_run": 10,
+  "favourite_wins": 4,
+  "favourite_winning_races": [1, 3, 6, 7],
+  "winner_odds_threshold": 20,
+  "winner_odds_at_least_20_races": [10],
+  "claims": [
+    {"claim": "market favourite wins at least 3 races", "forecasts": [77, 87], "threshold": 3, "observed": 4, "outcome": 1},
+    {"claim": "market favourite wins at least 4 races", "forecasts": [78, 88], "threshold": 4, "observed": 4, "outcome": 1},
+    {"claim": "at least one winner at final WIN odds of 20 or more", "forecasts": [79, 89], "threshold": 20, "qualifying_winners": 1, "outcome": 1},
+    {"claim": "hkjc.guru published picks show a positive settled flat return", "forecasts": [80, 90], "outcome": null, "status": "unresolved", "reason": "No retrievable source states the published selections for this meeting. The meeting page is a stale pre-race race index; its linked free race-1 board lists model ratings rather than meeting-wide picks; the advisory page returns a Cloudflare challenge. Races 9 and 10 also say full-meeting boards arrive with the advisory (launching soon). Do not treat missing picks as an empty bet set or substitute model ranks for published picks."}
+  ],
+  "guru_flat_return": {
+    "stake_per_pick_units": 1,
+    "formula": "sum(final WIN odds for each winning published pick, zero for losing picks) minus total stake",
+    "picks": null,
+    "total_stake_units": null,
+    "total_return_units": null,
+    "net_return_units": null,
+    "sources": [
+      {"file": "transcripts/evidence/hkjc-20261101/m2-guru-picks-meeting.html", "url": "https://hkjc.guru/meeting/2026-11-01/HV", "sha256": "39070af88c73e865b3acabd6f20e1fd051b5ed8b3149329bbfe0fd8c3719e8b1", "fetched_at": "2026-11-01T10:10:05Z", "observation": "10 races, none run yet; links to race boards; no published selections."},
+      {"file": "transcripts/evidence/hkjc-20261101/m2-guru-picks-advisory.html", "url": "https://hkjc.guru/advisory", "sha256": "6df53c0867397dbd15aa15525ca0caa4727e0fdabbe00bae6926ce7bd1589d7c", "fetched_at": "2026-11-01T10:10:27Z", "observation": "Cloudflare challenge: Just a moment... Enable JavaScript and cookies to continue."},
+      {"file": "transcripts/evidence/hkjc-20261101/m2-guru-picks-race-1.html", "url": "https://hkjc.guru/race/2026-11-01/HV/1", "sha256": "e75b2fcd91209df15f1b7cb1c18fae7488881aaabf6ac655bfb37ee934065dfa", "fetched_at": "2026-11-01T10:10:28Z", "observation": "Pre-race card and Model ratings Live v20260717; rank, Win %, Rated price for all entries, not published meeting selections."}
+    ]
+  }
+}
