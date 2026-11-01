@@ -1,0 +1,55 @@
+{
+  "meeting": "M2",
+  "date": "2026-11-01",
+  "venue": "Happy Valley",
+  "races": [
+    {
+      "race": 9,
+      "winner": "THE BOOM BOX",
+      "winner_no": 6,
+      "shortest_final_win_odds": {"runner": "DAZZLING FIT", "no": 1, "odds": 4.3},
+      "favourite_won": false,
+      "dead_heat": false,
+      "void": false,
+      "sources": [
+        {
+          "url": "https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx?RaceDate=2026/11/01&Racecourse=HV&RaceNo=9",
+          "sha256": "61ff3511473954a1a72e4955e18aef4ced4e6933876d2c16d3714b5a76d68847",
+          "fetched_at": "2026-11-01T10:10:05Z"
+        },
+        {
+          "url": "https://hkjc.guru/race/2026-11-01/HV/9",
+          "sha256": "93e41c10a1e0dadb0ac38161475faad48f2c7db1411e4bb9f542595fa24d7435",
+          "fetched_at": "2026-11-01T10:10:05Z"
+        }
+      ]
+    },
+    {
+      "race": 10,
+      "winner": "ON THE WAY",
+      "winner_no": 5,
+      "shortest_final_win_odds": {"runner": "DANICA'S CHOICE", "no": 4, "odds": 3.8},
+      "favourite_won": false,
+      "dead_heat": false,
+      "void": false,
+      "sources": [
+        {
+          "url": "https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx?RaceDate=2026/11/01&Racecourse=HV&RaceNo=10",
+          "sha256": "e2ebe87668d496a240dd9f624f2e56dda26b3c3ed0c1d2f1c3ae97e56811db67",
+          "fetched_at": "2026-11-01T10:10:21Z"
+        },
+        {
+          "url": "https://hkjc.guru/race/2026-11-01/HV/10",
+          "sha256": "60b92b96675acac5fae9ee513393988ff3df0d9c85f84e7243a44ae2652396d1",
+          "fetched_at": "2026-11-01T10:10:21Z"
+        }
+      ]
+    }
+  ],
+  "retrieval_notes": [
+    "Raw curl -sL --max-time 90 response bodies are saved without editing as transcripts/evidence/hkjc-20261101/results-race-<race>.html and results-race-<race>-guru.html. fetched_at is each output file's modification time in UTC, truncated to seconds.",
+    "Both official HKJC pages identify 01/11/2026 Happy Valley and the requested race, and contain completed placings, finish times, full-field Win Odds and paid WIN dividends. Race 9 has 11 finishers and withdrawn number 5 MEANINGFUL DRAGON with no odds; race 10 has 12 finishers. The minimum numeric final Win Odds identifies a unique favourite in each race. Both races have a single first-place finisher.",
+    "Race 9 winner final WIN odds are 4.9 and WIN dividend HK$49.50; race 10 winner final WIN odds are 32 and WIN dividend HK$328.00. Dividends are a cross-check, not the source for identifying the favourite.",
+    "Both guru responses still show pre-race cards and explicitly state the race has not run. Their O/N odds are overnight prices, not final prices. They are retained and hashed as retrieval evidence only; all results and final odds used here come from HKJC's completed results tables."
+  ]
+}
