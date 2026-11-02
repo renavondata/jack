@@ -264,3 +264,27 @@ The opening push is seq 367, `ts` 2026-11-01T15:04:14Z — two days before the d
 `resolves_by` and the opening `ts` + 14 days, i.e. 2026-11-15T15:04:14Z**, and `status.py` reads it so.
 V0 itself is unchanged (a forecast is never edited): it resolves at the window's end, inside its own deadline.
 Nothing else moves; no criterion, stream, constant or event rule is touched.
+
+
+## Amendment 2 (2 November, counsel; the stream's cadence — hourly sessions, nothing else)
+§Scope said "Sessions every three hours at ten past the hour … Eight sessions a day, forty-eight events."
+From the first tick after this amendment's read, the freshness stream runs **hourly**: at ten past each hour a
+builder session resolves the forecasts whose window has ended (the page fetched within ten minutes of the
+window's end, as before); at twenty past, a reviewer session forecasts the window `[H+2, H+3)` for the same six
+datasets (forecast an hour and forty minutes before the cutoff, as before). Twenty-four windows a day, one
+hundred and forty-four events. **Nothing else moves**: the datasets, the event identity, the cutoff, the outcome
+predicate, the base rate, the roster, the statistic and the deadline rule (`resolves_by` = window end + 2 h) are
+as §Scope and §The statistic state them. The roles are fixed — the reviewer forecasts, the builder resolves —
+because the kernel refuses a resolution by the forecaster's own principal, and because the record of 1–2
+November shows a second forecaster's entries carry no weight in the mixture until it has earned it (seqs
+442–447 scored D = 0 at weight 10⁻⁶).
+
+Why this is lawful mid-window, said before the read rather than after a finding: the e-process of A4.4 is a
+test supermartingale under its null for every event in resolution order, whatever the number of events and
+whenever the next one is added — Ville's inequality holds at any sampling rate and under any stopping rule,
+which is the property §6 chose it for. More trials of the same pre-stated kind are more evidence at the same
+error rate, not a different experiment. What would be unlawful is choosing *which* events to add by their
+outcomes; every hour of every one of the six datasets is added, none dropped, none chosen. The decision is
+taken at eighteen scored events with *E* = 1.68, for the reason the sovereign stated on 1 November — wall clock
+is the scarce resource — and that reason is recorded here so that a reader can weigh it. The window's end
+(Amendment 1) does not move.
