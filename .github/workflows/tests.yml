@@ -6,11 +6,6 @@
 # merge); the gate job keeps the check's name, `tests`, and fails unless all three
 # succeeded. The same commands, each once (BRIEF-C2b §Scope, the opening push's
 # second change; pin workflow_steps_preserved).
-# The `antecedent` job (the push's third change, REVIEW-C2a-v1 F8's contract)
-# publishes the identity of the tree this run tests (every file but log.jsonl —
-# the complete input of all five steps) as an artifact, and lets the workers reuse
-# an earlier successful run that published the same identity, naming it. The log
-# is replayed through both checkers by the `judge` workflow on every head.
 name: tests
 on:
   pull_request:
@@ -20,87 +15,42 @@ on:
 permissions:
   contents: read
 jobs:
-  antecedent:
-    runs-on: ubuntu-latest
-    outputs:
-      skip: ${{ steps.ante.outputs.skip }}
-      sha: ${{ steps.ante.outputs.sha }}
-      run: ${{ steps.ante.outputs.run }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        with:
-          python-version: "3.12"
-      - name: The identity of the tree this run tests (every file but log.jsonl)
-        id: ident
-        run: |
-          ID=$(python3 .github/scripts/antecedent.py identity)
-          echo "id=$ID" >> "$GITHUB_OUTPUT"
-          mkdir -p tree-identity && printf 'tree=%s\nhead=%s\nrun=%s\n' "$ID" "$GITHUB_SHA" "$GITHUB_RUN_ID" > tree-identity/identity.txt
-      - name: Publish it, so later runs can name this one
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: tree-${{ steps.ident.outputs.id }}
-          path: tree-identity/identity.txt
-          retention-days: 90
-      - name: Is there a completed successful run that published this identity?
-        id: ante
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: python3 .github/scripts/antecedent.py decide "${{ steps.ident.outputs.id }}" "$GITHUB_RUN_ID"
   unit:
-    needs: antecedent
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
-      - name: Reused from the antecedent run
-        if: needs.antecedent.outputs.skip == 'true'
-        run: 'echo "antecedent run ${{ needs.antecedent.outputs.run }} on ${{ needs.antecedent.outputs.sha }} tested this tree: unit tests and kernel line count reused"'
       - name: Unit tests
-        if: needs.antecedent.outputs.skip != 'true'
         run: python3 -m unittest discover -s tests -t . -v
       - name: Kernel line count (CHARTER §9 criterion 3)
-        if: needs.antecedent.outputs.skip != 'true'
         run: python3 tools/count_kernel.py
   pins:
-    needs: antecedent
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
-      - name: Reused from the antecedent run
-        if: needs.antecedent.outputs.skip == 'true'
-        run: 'echo "antecedent run ${{ needs.antecedent.outputs.run }} on ${{ needs.antecedent.outputs.sha }} tested this tree: pins reused"'
       - name: Pins (every mutant KILLED, twin passing; checker_drift PENDING until kernel2 exists)
-        if: needs.antecedent.outputs.skip != 'true'
         run: python3 pins/run.py
   sample:
-    needs: antecedent
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
-      - name: Reused from the antecedent run
-        if: needs.antecedent.outputs.skip == 'true'
-        run: 'echo "antecedent run ${{ needs.antecedent.outputs.run }} on ${{ needs.antecedent.outputs.sha }} tested this tree: self-check and sample reused"'
       - name: Judge self-check (the production path, trunk against itself; kernel2 must run)
-        if: needs.antecedent.outputs.skip != 'true'
         run: python3 judge/selfcheck.py
       - name: Simulator sample through both checkers (first 2,000 committed seeds; §9 criterion 2)
-        if: needs.antecedent.outputs.skip != 'true'
         run: python3 harness/diff.py --seeds 300 --b kernel2/check 'spec/vectors/logs/*.jsonl'
   tests:
-    needs: [antecedent, unit, pins, sample]
+    needs: [unit, pins, sample]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: All green, or this check is red
+      - name: All three green, or this check is red
         run: |
-          test "${{ needs.antecedent.result }}" = success && test "${{ needs.unit.result }}" = success && test "${{ needs.pins.result }}" = success && test "${{ needs.sample.result }}" = success
+          test "${{ needs.unit.result }}" = success && test "${{ needs.pins.result }}" = success && test "${{ needs.sample.result }}" = success
