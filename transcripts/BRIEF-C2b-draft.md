@@ -1,13 +1,14 @@
-# BRIEF-C2b — the election (draft v5, counsel, 2 November 2026)
+# BRIEF-C2b — the election (draft v6, counsel, 2 November 2026)
 
-v5 answers `transcripts/REVIEW-C2b-v4.md` (gpt-6-astra, BLOCK on F15 alone; obligations F1–F14) as
+v6 answers `transcripts/REVIEW-C2b-v5.md` (gpt-6-astra, BLOCK on F16–F19, all on the antecedent job v5 added)
+by withdrawing that job: its exclusion of the log was not an exclusion of a non-input (the self-check and two unit
+tests read it), an artifact's name was a claim and not a proof, `.github/scripts/` is not in the trusted digest, and
+the preservation pin forbade the conditions it needed. The opening push carries two changes again — the cap and
+the parallel workflow — and nothing else. v5 answered `transcripts/REVIEW-C2b-v4.md` (gpt-6-astra, BLOCK on F15 alone; obligations F1–F14) as
 `transcripts/REPLY-REVIEW-C2b-v4.md` sets out: the round's gain is a binary64 number computed in the stable
 mean-ln-*n* form and stored exactly as the rational it is (`Fraction(float)`); exactness is claimed for the grid
 probability and for the accumulation of those *represented* gains, not for ln 2 / ln 999; the W5 pin count
-reads five everywhere; the 150-line consequence is spelt out. v5 also adds a third change to the opening push,
-measured this morning: the `tests` workers reuse an earlier successful run when the head's tree is identical
-in every file but `log.jsonl` — REVIEW-C2a-v1 F8's "useful candidate antecedent", under F8's contract, with
-the whole tree as the input and never a list of paths. v4 answered `transcripts/REVIEW-C2b-v3.md` (gpt-6-astra, BLOCK on F3, F13, F14; obligations F1, F2, F4–F12) as
+reads five everywhere; the 150-line consequence is spelt out. v4 answered `transcripts/REVIEW-C2b-v3.md` (gpt-6-astra, BLOCK on F3, F13, F14; obligations F1, F2, F4–F12) as
 `transcripts/REPLY-REVIEW-C2b-v3.md` sets out: the draw's non-anticipation assumption is stated about the
 reward vector, not about σ; the simulator-sample skip is withdrawn (the parallel workflow leaves it forty-five
 seconds of critical path, and its in-window workflow edit would have been the second push the brief forbids);
@@ -59,9 +60,18 @@ unresolved while counsel was not looking) are caught by code the next time.
   the window; a new pair enters at the next window's brief. The base-rate forecaster is **not** an arm: it
   has no key and no session (REVIEW-C2b-v1 F9); it is the comparator of the success event below. A model
   string is the `args.model` of the forecast entry.
-- **Rounds.** One round per freshness window of BRIEF-C2a Amendment 2 (hourly, six datasets, the window
-  `[H+2, H+3)`), from the first invite after the opening to the window's end. HKJC per race is **outside the
+- **Rounds.** One round per freshness window of BRIEF-C2a (an hourly window `[H+2, H+3)`, six datasets),
+  from the first invite after the opening to the window's end. HKJC per race is **outside the
   election** (two forecasters per race, as C2a); its forecasts are not rounds and are not importance-weighted.
+  **The clock under BRIEF-C2a Amendment 3** (read 2 November, ACCEPT WITH OBLIGATIONS): Amendment 3's
+  three-window forecast session is the stream's shape *until the first invite*. From the first invite, each
+  round's forecasts come from the invited arm's own session, filed per invite — one session per window, at
+  about H+0:20 for `[H+2, H+3)`, the per-window clock the delay analysis below is written for — because the
+  invited arm differs from window to window and a session runs under one key; the resolve sessions stay hourly
+  at :10; and every deadline in the election (the invite's, the arm's six forecasts') is **window end + 4 h**,
+  Amendment 3's. This returns the stream to an hourly arrival of proposals, which is what the opening push's
+  parallel workflow is for (X5 prices it); a round the merge path cannot carry in time is skipped under the
+  rule below, reported and never dropped.
 - **The round's gain.** For the invited arm *k* at round *t*, ℓₖ,ₜ = the mean over the six events of the
   per-mille-clipped log-loss ℓ(*q*, *Y*) = −ln *q*(*Y*) = ln 1000 − ln *n*, where *n* ∈ {1, …, 999} is the
   per-mille probability the forecast gave the outcome that occurred; a missing forecast, a missing evidence
@@ -156,7 +166,8 @@ unresolved while counsel was not looking) are caught by code the next time.
   REVIEW-C2b-v2 F4), `args.sigma`, `args.gamma` and `args.eta` (shortest-repr float strings: SPEC §5 admits no
   JSON float anywhere in `args`, REVIEW-C2b-v3 F4), `args.roster`, `args.round` (the hourly slot index *t* from
   the opening, kept across skips);
-  `args.window_utc`, `args.stream`, `args.principal`, `args.model`; `resolves_by` = window end + 2 h. The
+  `args.window_utc`, `args.stream`, `args.principal`, `args.model`; `resolves_by` = window end + 4 h
+  (BRIEF-C2a Amendment 3; the arm's six forecasts carry the same deadline). The
   invite's key is (stream, W0): the first invite for a key stands and a second is a `revision`, not a round. The
   event's cutoff is `W0` (the invite is entered at about H+0:15, the window starts at H+2). The diary files the
   forecasting session for that principal and model with the invite's seq in the issue, after the invite is on
@@ -224,7 +235,7 @@ unresolved while counsel was not looking) are caught by code the next time.
   (c) COUNSEL-OPEN 13's rule — every recommendation to the sovereign that asks an act is a forecast — stays
   as it is, a standing rule; `status.py` prints, under its honest name, "sovereign acts in the window with no
   counsel forecast naming them before the act" as a reported line, not a W4 count (REVIEW-C2b-v1 F7).
-- **The cap, and the opening push's second and third changes.** The budget is **9,000** (7,650 counted today; four EXP3
+- **The cap, and the opening push's second change.** The budget is **9,000** (7,650 counted today; four EXP3
   instances with replay, the signed draw, the invite verb, the resolver routing, W5 and its tick evidence,
   status and decision integration, tests, two simulator kinds and some twenty-five pins — REVIEW-C2b-v1 priced
   750 lines as too thin), raised by the opening push; never again inside the window. The read gate lands under
@@ -249,31 +260,12 @@ unresolved while counsel was not looking) are caught by code the next time.
   `trusted_base_unrecorded`, which every push branch shows until its push entry records the digest, and the
   gate red because one worker was, the fail-closed witness itself — and the `tests` run on `main` for the push
   head, which X4 forecasts and which is entered before the push, with X0–X3.
-  **The third change — reuse of a run on an identical tree** (REVIEW-C2a-v1 F8: "at the second merge-entry
-  head there is a useful candidate antecedent: the first head whose CI the verb already awaited; specify and
-  verify that link"). An `antecedent` job, `.github/scripts/antecedent.py` (trusted base, in the push; not
-  counted), runs before the three workers: it computes the identity of the tree this run tests with
-  `log.jsonl` removed (SHA-256 over `git ls-tree -r HEAD` less the log's line), **publishes it as an artifact
-  named `tree-<identity>`** — so what each run tested is the run's own statement, kept 90 days, not a
-  reconstruction from commits — and looks for a completed, successful run of this workflow file that
-  published the same name; if one exists, each worker prints `antecedent run <id> on <sha>` in its own log and
-  exits green without running its steps; otherwise every step runs. The contract, F8's verbatim: the **complete input tree** is identical — every file but the log, which
-  covers the checkers, the generator, the seeds, the harness, the vectors, the weak-key vector, the workflow
-  itself and the tests, so a change to any of them runs everything (REVIEW-C2b-v3 F13's incomplete list is
-  not this: there is no list); the **fresh log is replayed** on every head by the `judge` workflow, trunk's
-  kernel and kernel2 over the appended entries, which reuses nothing; the antecedent is **named**; a reused
-  run that was itself a reuse is sound because tree identity is transitive and each link names its own
-  antecedent, so a full run on that tree exists; an API failure decides `skip=false`. What
-  is reused is the earlier run's evidence *as it stands*: the sample's `ssh-keygen` keys were fresh in that
-  run and are not regenerated, which is the explicit evidence policy F8 allowed when stated, and the runner
-  image (`ubuntu-latest`, Python 3.12) is the same assumption every re-run of an unchanged tree already
-  makes. The readers of run metadata see a workflow-level `success` with the same name and path; the reused
-  jobs' logs say which run's evidence they stand on. Pin `tests_reuse_needs_antecedent` (delivered with W5,
-  counted): the decision function with a faked API — mutants: reuses when a non-log file differs; reuses when
-  the antecedent's conclusion is not `success`; twin: an identical tree with a green antecedent reuses and
-  names it. Measured 2 November: every merge waited twice for 8 m 17 s, the second time on a tree already
-  tested, and the slot sat idle meanwhile; forecast X5 below prices the change.
-- **The simulator-sample skip is withdrawn** (REVIEW-C2b-v3 F13, F14). With the workflow parallel the sample
+- **The simulator-sample skip is withdrawn** (REVIEW-C2b-v3 F13, F14), **and so is v5's reuse of a run on an
+  identical tree** (REVIEW-C2b-v5 F16–F19: the self-check and two unit tests read the log; an artifact's name
+  proves nothing about the tree its publisher tested; `.github/scripts/` is outside the trusted digest; the
+  preservation pin and the conditional steps could not both bind). Measured again with the reviewer's inputs,
+  the reusable part is the sample command alone, forty-seven seconds of a parallel run's critical path, which
+  does not pay for a coverage contract. With the workflow parallel the sample
   job is 3:36 against the unit job's 2:52, so the skip would buy forty-five seconds of critical path; its
   equality contract needed `sim/`, `tests/vectors/weak_keys.json` and a statement about `ssh-keygen`'s fresh
   keys, and its workflow edit inside the window would have been the second trusted-base push the brief
@@ -288,11 +280,11 @@ unresolved while counsel was not looking) are caught by code the next time.
    C2a runs.
 2. This brief merged with a read that returns no BLOCK; counsel enters X0–X5 and seeds `COUNSEL-DUE.jsonl`.
 3. The sovereign, one paste: `decision promote C2a` (when `lawful`), `key herald-2 … --powers
-   merge,forecast`, the opening `push` (cap 9,000, the parallel tests workflow and its antecedent job) —
-   which the gate of step 1 admits because step 2 is on `main`. The opening is the first `push` entry after `decision promote C2a`; the window is (opening `ts`,
+   merge,forecast`, the opening `push` (cap 9,000 and the parallel tests workflow) — which the gate of step 1
+   admits because step 2 is on `main`. The opening is the first `push` entry after `decision promote C2a`; the window is (opening `ts`,
    min(X0's `resolves_by`, opening + 14 d)].
-4. The builder builds W5 (`tools/due.py`, with `workflow_steps_preserved`'s and `tests_reuse_needs_antecedent`'s
-   tests, the first item under C2b's cap), then `tools/elect.py`; the reviewer
+4. The builder builds W5 (`tools/due.py`, with `workflow_steps_preserved`'s test, the first item under C2b's
+   cap), then `tools/elect.py`; the reviewer
    pins each; the herald merges; the diary consults `elect.py` before every forecast session from the first
    green `tests` run on `main` holding `tests/test_elect.py` — invites before that instant are not rounds
    (criterion 4).
@@ -316,8 +308,7 @@ before the first round (criterion 4).
 1. Every pin below KILLED with a passing twin in the `tests` run on `main` at the exit prefix.
 2. Both checkers agree on the exit prefix and the committed seeds.
 3. Counted lines within 9,000; the kernel within 500 and byte-identical to C2a's; `judge/scope.json`,
-   SPEC §10, `.github/workflows/tests.yml` and `.github/scripts/antecedent.py` unchanged since the opening
-   push.
+   SPEC §10 and `.github/workflows/tests.yml` unchanged since the opening push.
 4. The attack tests green on `main` before the first round's invite.
 5. Value continued: *E*ᵥ ≥ 20.
 6. Liveness continued: ≥ 20.
@@ -355,7 +346,6 @@ likelihoods, prior differences and wealth carried across the boundary; mutant: u
 `push_without_read_refused` · `read_of_this_text` · `read_not_counsels` · `w5_overdue_escalates` ·
 `w5_escalation_history` (a late discharge keeps ESCALATED; mutant: cleared) ·
 `w5_done_is_an_entry` · `w5_rows_append_only` · `w5_inventory` · `workflow_steps_preserved` ·
-`tests_reuse_needs_antecedent` ·
 `window_from_the_push` · `wealth_continues` ·
 `promote_refused` (the verb signs nothing when any criterion is unmet; mutant: value alone).
 
@@ -401,4 +391,4 @@ types if a witness has appeared, the GitHub identities) at exit.
 | X2 | at the exit (reviewer, `gpt-6-astra-fast`) has been invited at least once and its mean gain exceeds (reviewer, mini)'s | 0.4 |
 | X3 | no second push inside the window | 0.7 |
 | X4 | the `tests` run on the opening push's commit on `main` completes in under five minutes and is green | 0.75 |
-| X5 | over the 24 hours after the opening push, the median time from a `proposal` entry's `ts` to its `merge` entry's `ts` is under eight minutes (2 November 00:00–12:00Z: about twenty) | 0.6 |
+| X5 | over the 24 hours after the opening push, the median time from a `proposal` entry's `ts` to its `merge` entry's `ts` is under twelve minutes (2 November 00:00–12:00Z: about twenty) | 0.5 |
