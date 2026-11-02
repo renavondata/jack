@@ -1043,3 +1043,19 @@ for pin in C2A_PINS:
     pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2a named fixture and passing twin.") + "\n" + "\n".join(
         f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
 PINS += C2A_PINS
+
+
+# --- opening read gate pins (BRIEF-C2b §Counsel bound (a); REVIEW-C2b-v1 F7) ---
+push_gate_tests = functools.partial(fixture_tests, "test_push_gate.PushGate")
+C2B_GATE_PINS = [
+    Pin("push_without_read_refused", push_gate_tests("push_without_read_refused"), [
+        Mutant("gate_always_admits", "tools/jack", 'def push_read_gate(branch, layer, repo=ROOT):', 'def push_read_gate(branch, layer, repo=ROOT):\n    return')]),
+    Pin("read_of_this_text", push_gate_tests("read_of_this_text"), [
+        Mutant("brief_bytes_unchecked", "tools/jack", 'if tree_bytes(repo, commit, brief) != current:', 'if False:')]),
+    Pin("read_not_counsels", push_gate_tests("read_not_counsels"), [
+        Mutant("proposer_unchecked", "tools/jack", 'principal_at(entries, i, signer_blob(e)) not in (None, "counsel")', 'True')]),
+]
+for pin in C2B_GATE_PINS:
+    pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
+        f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
+PINS += C2B_GATE_PINS
