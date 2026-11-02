@@ -4,6 +4,7 @@ the effects the entry authorises. Untrusted; not kernel. --dry-run, gh run watch
 import argparse, contextlib, functools, hashlib, io, itertools, json, os, re, shutil, subprocess, sys, tempfile, time  # noqa: E401
 sys.path.insert(0, ROOT := os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from judge.judge import changed_by, commits_of, digest as commit_digest  # noqa: E402  SPEC §10.7's own functions
+from judge.judge import principal_at, signer_blob, show as tree_bytes
 from kernel import check, log  # noqa: E402
 from tools import entry  # noqa: E402
 from tools.digest import digest  # noqa: E402  the same digest, of the working tree
@@ -173,12 +174,58 @@ def make_run(tmp, head):  # never accepted from BRANCH: kernel2/check built once
                "0 disagreements, 0 uncompared")
     return made
 
+def push_read_gate(branch, layer, repo=ROOT):
+    g = functools.partial(git, cwd=repo)
+    ancestor = lambda x, y: not fails("git", "merge-base", "--is-ancestor", x, y, cwd=repo)
+    changed = fails("git", "diff", "--quiet", "origin/main", branch, "--", "judge/scope.json", cwd=repo)
+    if not changed:
+        if layer is not None: refuse("judge/scope.json: --opens is meaningless without a scope change")
+        return
+    if not layer: refuse("judge/scope.json: scope changes require --opens LAYER")
+    if not re.fullmatch(r"[A-Za-z0-9_-]+", layer): refuse("judge/scope.json: invalid --opens LAYER")
+    brief, pattern = f"transcripts/BRIEF-{layer}-draft.md", f"transcripts/REVIEW-{layer}-*.md"
+    current = tree_bytes(repo, "origin/main", brief)
+    if current is None: refuse(f"{brief}: missing on origin/main")
+    reviews = g("ls-tree", "-r", "--name-only", "origin/main", "--", "transcripts/").splitlines()
+    reviews = [p for p in reviews if re.fullmatch(rf"transcripts/REVIEW-{re.escape(layer)}-.*\.md", p)]
+    if not reviews: refuse(f"{pattern}: missing review on origin/main")
+    lines = check.read_lines(tree_bytes(repo, "origin/main", "log.jsonl") or b"")
+    verdict = check.check(lines)
+    if not lines or not verdict["ok"]: refuse(f"log.jsonl: invalid signed provenance: {verdict}")
+    entries, errors = list(map(json.loads, lines)), []
+    proposals = [e for i, e in enumerate(entries) if e["type"] == "proposal" and
+                 principal_at(entries, i, signer_blob(e)) not in (None, "counsel")]
+    for review in reviews:
+        try:
+            text = tree_bytes(repo, "origin/main", review).decode("utf-8", "replace").split("\n")
+            if text[0] not in ("VERDICT: ACCEPT", "VERDICT: ACCEPT WITH OBLIGATIONS"):
+                refuse(f"{review}: missing or non-accepting verdict")
+            header = next((s for s in text if s.startswith("Reviewed tree:")), "")
+            tokens = re.findall(r"\b[0-9a-fA-F]{40}\b", header) or re.findall(r"\b[0-9a-fA-F]{12}\b", header)
+            commit = g("rev-parse", "--verify", tokens[0] + "^{commit}", ok=False) if tokens else ""
+            if not commit or not ancestor(commit, "origin/main"): refuse(f"{review}: Reviewed tree is not a commit on origin/main")
+            if tree_bytes(repo, commit, brief) != current: refuse(f"{review}: Reviewed tree has different bytes for {brief}")
+            additions = g("log", "--diff-filter=A", "--format=%H", "origin/main", "--", review).splitlines()
+            merged = g("log", "--first-parent", "-1", "--format=%H", "origin/main", "--", review)
+            at_merge = check.read_lines(tree_bytes(repo, merged, "log.jsonl") or b"")
+            blob = g("rev-parse", "origin/main:" + review)
+            for proposal in proposals:
+                if log.canonical(proposal) not in at_merge: continue  # a later endorsement did not bring the file to main
+                head = proposal["body"]["commit"]
+                if any(x == head or ancestor(x, head) and not ancestor(x, merged + "^1") for x in additions):
+                    if g("rev-parse", "--verify", head + ":" + review, ok=False) == blob: return
+            refuse(f"{review}: no non-counsel signed proposal with the adding commit and identical review blob in log.jsonl")
+        except Refused as x:
+            errors.append(str(x))
+    refuse("\n".join(errors))
+
 def v_push(a):
     begin(a, True)
     if (b := a.target).startswith("+") or fails("git", "rev-parse", "-q", "--verify", f"refs/heads/{b}"):
         refuse(f"{b} is not a local branch")
     if fails("git", "merge-base", "--is-ancestor", "origin/main", b):
         refuse(f"{b} does not contain origin/main")
+    push_read_gate(b, a.opens)
     if commit_digest(ROOT, b) == commit_digest(ROOT, "HEAD"):
         refuse("nothing to push: propose and merge")
     if bare := [s[:12] for s in git("rev-list", f"origin/main..{b}").split() if not trailer(s)]:
@@ -259,7 +306,7 @@ def main(argv):
     for verb in ("status", "clerk"):
         sub.add_parser(verb, help=f"read-only {verb}; jack {verb} --help lists evidence inputs")
     for verb, specs in (("key", "declared --principal= --powers= --pubkey="), ("proposal", "--title"), ("merge", "n:int"),
-                        ("spec_conflict", "--section= --text="), ("push", "target --review="), ("decision", "kind subject --acts"),
+                        ("spec_conflict", "--section= --text="), ("push", "target --review= --opens"), ("decision", "kind subject --acts"),
                         ("amend", "id file --activate-at:int"), ("forecast", "claim --p:int= --by= --type --args"),
                         ("resolve", "seq:int --outcome:int= --evidence="), ("score", "--as-of")):
         p = sub.add_parser(verb)
