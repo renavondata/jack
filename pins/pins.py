@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 88
+EXPECTED = 91
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
