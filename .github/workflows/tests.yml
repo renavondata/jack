@@ -6,6 +6,10 @@
 # merge); the gate job keeps the check's name, `tests`, and fails unless all three
 # succeeded. The same commands, each once (BRIEF-C2b §Scope, the opening push's
 # second change; pin workflow_steps_preserved).
+# The `antecedent` job (the push's third change, REVIEW-C2a-v1 F8's contract) lets
+# the three workers reuse an earlier successful run when this head's tree is
+# identical in every file but log.jsonl — the complete input of all five steps —
+# naming that run; the log is replayed by the `judge` workflow on every head.
 name: tests
 on:
   pull_request:
@@ -15,42 +19,77 @@ on:
 permissions:
   contents: read
 jobs:
+  antecedent:
+    runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.ante.outputs.skip }}
+      sha: ${{ steps.ante.outputs.sha }}
+      run: ${{ steps.ante.outputs.run }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Is there a successful tests run on an identical tree (but for log.jsonl)?
+        id: ante
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/antecedent.py "$GITHUB_SHA"
   unit:
+    needs: antecedent
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+      - name: Reused from the antecedent run
+        if: needs.antecedent.outputs.skip == 'true'
+        run: echo "antecedent ${{ needs.antecedent.outputs.sha }} run ${{ needs.antecedent.outputs.run }}: unit tests and kernel line count reused"
       - name: Unit tests
+        if: needs.antecedent.outputs.skip != 'true'
         run: python3 -m unittest discover -s tests -t . -v
       - name: Kernel line count (CHARTER §9 criterion 3)
+        if: needs.antecedent.outputs.skip != 'true'
         run: python3 tools/count_kernel.py
   pins:
+    needs: antecedent
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+      - name: Reused from the antecedent run
+        if: needs.antecedent.outputs.skip == 'true'
+        run: echo "antecedent ${{ needs.antecedent.outputs.sha }} run ${{ needs.antecedent.outputs.run }}: pins reused"
       - name: Pins (every mutant KILLED, twin passing; checker_drift PENDING until kernel2 exists)
+        if: needs.antecedent.outputs.skip != 'true'
         run: python3 pins/run.py
   sample:
+    needs: antecedent
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+      - name: Reused from the antecedent run
+        if: needs.antecedent.outputs.skip == 'true'
+        run: echo "antecedent ${{ needs.antecedent.outputs.sha }} run ${{ needs.antecedent.outputs.run }}: self-check and sample reused"
       - name: Judge self-check (the production path, trunk against itself; kernel2 must run)
+        if: needs.antecedent.outputs.skip != 'true'
         run: python3 judge/selfcheck.py
       - name: Simulator sample through both checkers (first 2,000 committed seeds; §9 criterion 2)
+        if: needs.antecedent.outputs.skip != 'true'
         run: python3 harness/diff.py --seeds 300 --b kernel2/check 'spec/vectors/logs/*.jsonl'
   tests:
-    needs: [unit, pins, sample]
+    needs: [antecedent, unit, pins, sample]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: All three green, or this check is red
         run: |
-          test "${{ needs.unit.result }}" = success && test "${{ needs.pins.result }}" = success && test "${{ needs.sample.result }}" = success
+          test "${{ needs.antecedent.result }}" = success && test "${{ needs.unit.result }}" = success && test "${{ needs.pins.result }}" = success && test "${{ needs.sample.result }}" = success
