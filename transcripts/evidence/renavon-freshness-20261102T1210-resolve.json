@@ -1,91 +1,7 @@
 [
   {
     "dataset": "hk_property_poi",
-    "fetched_at": "2026-11-02T12:14:15Z",
-    "forecast": 442,
-    "last_updated": "2026-11-02T11:33:13+00:00",
-    "last_updated_utc": "2026-11-02T11:33:13Z",
-    "outcome": 1,
-    "sha256": "cbbf9b463dd78f220678cb0c1fd9a180f024cc6bdd47e404cd8330f9958f520d",
-    "url": "https://renavon.com/data/property/hk_property_poi",
-    "window_utc": [
-      "2026-11-02T02:00:00Z",
-      "2026-11-02T03:00:00Z"
-    ]
-  },
-  {
-    "dataset": "hkex_disclosures",
-    "fetched_at": "2026-11-02T12:14:15Z",
-    "forecast": 443,
-    "last_updated": "2026-11-02T11:28:25+00:00",
-    "last_updated_utc": "2026-11-02T11:28:25Z",
-    "outcome": 1,
-    "sha256": "3b52bb38a631480a501178bd3832b1b7e4361b108517af8b56d3439303863662",
-    "url": "https://renavon.com/data/hkex/hkex_disclosures",
-    "window_utc": [
-      "2026-11-02T02:00:00Z",
-      "2026-11-02T03:00:00Z"
-    ]
-  },
-  {
-    "dataset": "hkex_disclosure_interests",
-    "fetched_at": "2026-11-02T12:14:15Z",
-    "forecast": 444,
-    "last_updated": "2026-11-02T11:28:25+00:00",
-    "last_updated_utc": "2026-11-02T11:28:25Z",
-    "outcome": 1,
-    "sha256": "5b25ddc2db87009a8839799e8cedb827735a6a7a07c23d7e216b738cde5ba0f9",
-    "url": "https://renavon.com/data/hkex/hkex_disclosure_interests",
-    "window_utc": [
-      "2026-11-02T02:00:00Z",
-      "2026-11-02T03:00:00Z"
-    ]
-  },
-  {
-    "dataset": "crhk_companies",
-    "fetched_at": "2026-11-02T12:14:15Z",
-    "forecast": 445,
-    "last_updated": "2026-11-02T10:28:49+00:00",
-    "last_updated_utc": "2026-11-02T10:28:49Z",
-    "outcome": 1,
-    "sha256": "d1340e0618dab0b804380273f1137025fa5458a87fb2248fa70a42acf79a27f7",
-    "url": "https://renavon.com/data/crhk/crhk_companies",
-    "window_utc": [
-      "2026-11-02T02:00:00Z",
-      "2026-11-02T03:00:00Z"
-    ]
-  },
-  {
-    "dataset": "sfc_licences",
-    "fetched_at": "2026-11-02T12:14:15Z",
-    "forecast": 446,
-    "last_updated": "2026-10-31T04:32:32+00:00",
-    "last_updated_utc": "2026-10-31T04:32:32Z",
-    "outcome": 0,
-    "sha256": "3c52a34ce84fd0f83a08cd446511cde9a3957e853ea296cdbebbb94b917c28eb",
-    "url": "https://renavon.com/data/sfc/sfc_licences",
-    "window_utc": [
-      "2026-11-02T02:00:00Z",
-      "2026-11-02T03:00:00Z"
-    ]
-  },
-  {
-    "dataset": "hk_property_transactions",
-    "fetched_at": "2026-11-02T12:14:15Z",
-    "forecast": 447,
-    "last_updated": "2026-11-02T11:28:17+00:00",
-    "last_updated_utc": "2026-11-02T11:28:17Z",
-    "outcome": 1,
-    "sha256": "57d18deae3550abf3e0c3bcd6e9bbc383db7d11bae1fe9f3174c5dc46b19a664",
-    "url": "https://renavon.com/data/property/hk_property_transactions",
-    "window_utc": [
-      "2026-11-02T02:00:00Z",
-      "2026-11-02T03:00:00Z"
-    ]
-  },
-  {
-    "dataset": "hk_property_poi",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 479,
     "last_updated": "2026-11-02T11:33:13+00:00",
     "last_updated_utc": "2026-11-02T11:33:13Z",
@@ -99,7 +15,7 @@
   },
   {
     "dataset": "hkex_disclosures",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 480,
     "last_updated": "2026-11-02T11:28:25+00:00",
     "last_updated_utc": "2026-11-02T11:28:25Z",
@@ -113,7 +29,7 @@
   },
   {
     "dataset": "hkex_disclosure_interests",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 481,
     "last_updated": "2026-11-02T11:28:25+00:00",
     "last_updated_utc": "2026-11-02T11:28:25Z",
@@ -127,7 +43,7 @@
   },
   {
     "dataset": "crhk_companies",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 482,
     "last_updated": "2026-11-02T10:28:49+00:00",
     "last_updated_utc": "2026-11-02T10:28:49Z",
@@ -141,7 +57,7 @@
   },
   {
     "dataset": "sfc_licences",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 483,
     "last_updated": "2026-10-31T04:32:32+00:00",
     "last_updated_utc": "2026-10-31T04:32:32Z",
@@ -155,7 +71,7 @@
   },
   {
     "dataset": "hk_property_transactions",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 484,
     "last_updated": "2026-11-02T11:28:17+00:00",
     "last_updated_utc": "2026-11-02T11:28:17Z",
@@ -169,7 +85,7 @@
   },
   {
     "dataset": "hk_property_poi",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 509,
     "last_updated": "2026-11-02T11:33:13+00:00",
     "last_updated_utc": "2026-11-02T11:33:13Z",
@@ -183,7 +99,7 @@
   },
   {
     "dataset": "hkex_disclosures",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 510,
     "last_updated": "2026-11-02T11:28:25+00:00",
     "last_updated_utc": "2026-11-02T11:28:25Z",
@@ -197,7 +113,7 @@
   },
   {
     "dataset": "hkex_disclosure_interests",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 511,
     "last_updated": "2026-11-02T11:28:25+00:00",
     "last_updated_utc": "2026-11-02T11:28:25Z",
@@ -211,7 +127,7 @@
   },
   {
     "dataset": "crhk_companies",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 512,
     "last_updated": "2026-11-02T10:28:49+00:00",
     "last_updated_utc": "2026-11-02T10:28:49Z",
@@ -225,7 +141,7 @@
   },
   {
     "dataset": "sfc_licences",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 513,
     "last_updated": "2026-10-31T04:32:32+00:00",
     "last_updated_utc": "2026-10-31T04:32:32Z",
@@ -239,7 +155,7 @@
   },
   {
     "dataset": "hk_property_transactions",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 514,
     "last_updated": "2026-11-02T11:28:17+00:00",
     "last_updated_utc": "2026-11-02T11:28:17Z",
@@ -253,7 +169,7 @@
   },
   {
     "dataset": "hk_property_poi",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 526,
     "last_updated": "2026-11-02T11:33:13+00:00",
     "last_updated_utc": "2026-11-02T11:33:13Z",
@@ -267,7 +183,7 @@
   },
   {
     "dataset": "hkex_disclosures",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 527,
     "last_updated": "2026-11-02T11:28:25+00:00",
     "last_updated_utc": "2026-11-02T11:28:25Z",
@@ -281,7 +197,7 @@
   },
   {
     "dataset": "hkex_disclosure_interests",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 528,
     "last_updated": "2026-11-02T11:28:25+00:00",
     "last_updated_utc": "2026-11-02T11:28:25Z",
@@ -295,7 +211,7 @@
   },
   {
     "dataset": "crhk_companies",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 529,
     "last_updated": "2026-11-02T10:28:49+00:00",
     "last_updated_utc": "2026-11-02T10:28:49Z",
@@ -309,7 +225,7 @@
   },
   {
     "dataset": "sfc_licences",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 530,
     "last_updated": "2026-10-31T04:32:32+00:00",
     "last_updated_utc": "2026-10-31T04:32:32Z",
@@ -323,7 +239,7 @@
   },
   {
     "dataset": "hk_property_transactions",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 531,
     "last_updated": "2026-11-02T11:28:17+00:00",
     "last_updated_utc": "2026-11-02T11:28:17Z",
@@ -337,7 +253,7 @@
   },
   {
     "dataset": "hk_property_poi",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 534,
     "last_updated": "2026-11-02T11:33:13+00:00",
     "last_updated_utc": "2026-11-02T11:33:13Z",
@@ -351,7 +267,7 @@
   },
   {
     "dataset": "hkex_disclosures",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 535,
     "last_updated": "2026-11-02T11:28:25+00:00",
     "last_updated_utc": "2026-11-02T11:28:25Z",
@@ -365,7 +281,7 @@
   },
   {
     "dataset": "hkex_disclosure_interests",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 536,
     "last_updated": "2026-11-02T11:28:25+00:00",
     "last_updated_utc": "2026-11-02T11:28:25Z",
@@ -379,7 +295,7 @@
   },
   {
     "dataset": "crhk_companies",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 537,
     "last_updated": "2026-11-02T10:28:49+00:00",
     "last_updated_utc": "2026-11-02T10:28:49Z",
@@ -393,7 +309,7 @@
   },
   {
     "dataset": "sfc_licences",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 538,
     "last_updated": "2026-10-31T04:32:32+00:00",
     "last_updated_utc": "2026-10-31T04:32:32Z",
@@ -407,7 +323,7 @@
   },
   {
     "dataset": "hk_property_transactions",
-    "fetched_at": "2026-11-02T12:14:15Z",
+    "fetched_at": "2026-11-02T12:14:59Z",
     "forecast": 539,
     "last_updated": "2026-11-02T11:28:17+00:00",
     "last_updated_utc": "2026-11-02T11:28:17Z",
