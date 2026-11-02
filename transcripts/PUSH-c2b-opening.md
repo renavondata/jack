@@ -9,9 +9,10 @@ ones that ran on 2 November, each once, in the same relative order where order m
 the checker the sample uses); the workflow's name, triggers and single conclusion are unchanged, so
 `status.py`'s `run_verified`, W3 and the merge verb read what they read before. Measured on the merge of PR
 121: 8 m 17 s serial, waited for twice per merge; the parallel run is the longest step, about 3½ minutes.
-**Three:** an `antecedent` job and `.github/scripts/antecedent.py`: the three workers reuse an earlier
-successful `tests` run — naming its commit and run id in their own log — when this head's tree is identical
-in every file but `log.jsonl`, which is the complete input of all five steps (none reads the log; the log is
+**Three:** an `antecedent` job and `.github/scripts/antecedent.py`: every run publishes the identity of the
+tree it tests (every file but `log.jsonl`) as an artifact, and the three workers reuse an earlier completed
+successful run that published the same identity — naming its run id and head in their own log — because that
+tree is the complete input of all five steps (none reads the log; the log is
 replayed through both checkers by the `judge` workflow on every head, which never reuses anything). A head
 that changes any other file runs everything. This is REVIEW-C2a-v1 F8's "useful candidate antecedent" —
 the merge-entry head differs from the proposal head the verb already awaited by one log line — under F8's

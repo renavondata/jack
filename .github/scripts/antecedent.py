@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""Antecedent: may this head reuse an earlier `tests` run as its evidence? (BRIEF-C2b, the opening push's
+"""Antecedent: may this run reuse an earlier `tests` run as its evidence? (BRIEF-C2b, the opening push's
 third change; REVIEW-C2a-v1 F8's contract.)
 
-The answer is yes only when a completed, successful `tests` run exists for a commit whose tree is identical
-to this head's in every file but `log.jsonl` — the complete input of the unit tests, the pins, the self-check
-build and the simulator sample, none of which reads the log — and that run was made by this same workflow
-file (the workflow is part of the tree, so equality covers it). The log itself is replayed through both
-checkers on every head by the `judge` workflow, which never skips. A run that was itself a reuse counts,
-because tree equality is transitive and every link names its antecedent in its own log.
+Every run of this workflow computes the identity of the tree it tests — SHA-256 over `git ls-tree -r HEAD`
+with `log.jsonl`'s line removed: the complete input of the unit tests, the pins, the self-check build and the
+simulator sample, none of which reads the log — and publishes it as an artifact named `tree-<identity>`, so
+the record of what each run tested is the run's own statement, not a reconstruction. A later run on the same
+identity may reuse a completed, successful run that published that name: each worker then prints the
+antecedent's run id and head and exits green. The log itself is replayed through both checkers on every head
+by the `judge` workflow, which never reuses anything. A run that was itself a reuse counts, because tree
+identity is transitive and every link names its antecedent in its own log.
 
-Prints `skip=true` and the antecedent (`sha`, `run`) for the job's outputs, or `skip=false` with the reason.
-Exits 0 either way; any failure to decide is `skip=false`. No secret: the token is GitHub's read-only one.
+`identity` prints the identity; `decide <identity> <this run id>` prints `skip=…`, `sha=…`, `run=…` for the
+job's outputs. Exits 0 either way; any failure to decide is `skip=false`. No secret: GitHub's read-only token.
 """
 import hashlib, json, os, subprocess, sys, urllib.request
 
@@ -19,11 +21,9 @@ WORKFLOW = ".github/workflows/tests.yml"
 LOG = "log.jsonl"
 
 
-def tree_without_log(sha):
-    """SHA-256 over `git ls-tree -r` of the commit with the log's line removed: the test inputs' identity."""
-    out = subprocess.check_output(["git", "ls-tree", "-r", sha], text=True)
-    lines = [l for l in out.splitlines() if not l.endswith("\t" + LOG)]
-    return hashlib.sha256("\n".join(lines).encode()).hexdigest()
+def identity(rev="HEAD"):
+    out = subprocess.check_output(["git", "ls-tree", "-r", rev], text=True)
+    return hashlib.sha256("\n".join(l for l in out.splitlines() if not l.endswith("\t" + LOG)).encode()).hexdigest()
 
 
 def api(path):
@@ -34,30 +34,27 @@ def api(path):
         return json.load(r)
 
 
-def decide(head):
-    want = tree_without_log(head)
-    runs = api(f"/repos/{REPO}/actions/workflows/tests.yml/runs?status=success&per_page=100")["workflow_runs"]
-    for run in runs:  # newest first
-        if run.get("path") != WORKFLOW or run.get("conclusion") != "success" or run["head_sha"] == head:
+def decide(ident, this_run):
+    arts = api(f"/repos/{REPO}/actions/artifacts?name=tree-{ident}&per_page=100")["artifacts"]
+    for a in arts:  # newest first
+        run_id = a.get("workflow_run", {}).get("id")
+        if not run_id or str(run_id) == str(this_run) or a.get("expired"):
             continue
-        try:
-            subprocess.run(["git", "cat-file", "-e", run["head_sha"] + "^{commit}"], check=True, capture_output=True)
-        except subprocess.CalledProcessError:
-            subprocess.run(["git", "fetch", "-q", "--depth=1", "origin", run["head_sha"]], capture_output=True)
-            if subprocess.run(["git", "cat-file", "-e", run["head_sha"] + "^{commit}"], capture_output=True).returncode:
-                continue
-        if tree_without_log(run["head_sha"]) == want:
-            return True, run["head_sha"], run["id"], "tree identical but for log.jsonl"
-    return False, "", "", "no successful tests run with an identical tree"
+        run = api(f"/repos/{REPO}/actions/runs/{run_id}")
+        if run.get("path") == WORKFLOW and run.get("status") == "completed" and run.get("conclusion") == "success":
+            return True, run["head_sha"], run_id, "a successful run published this tree identity"
+    return False, "", "", "no successful run published this tree identity"
 
 
 def main():
-    head = sys.argv[1] if len(sys.argv) > 1 else subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    if sys.argv[1:2] == ["identity"]:
+        print(identity()); return
+    ident, this_run = sys.argv[2], sys.argv[3]
     try:
-        skip, sha, run, why = decide(head)
+        skip, sha, run, why = decide(ident, this_run)
     except Exception as e:  # any failure to decide runs the tests
         skip, sha, run, why = False, "", "", f"undecided: {e!r}"
-    print(f"antecedent for {head}: skip={'true' if skip else 'false'} sha={sha} run={run} ({why})")
+    print(f"antecedent for tree {ident[:16]}: skip={'true' if skip else 'false'} sha={sha} run={run} ({why})")
     if out := os.environ.get("GITHUB_OUTPUT"):
         with open(out, "a") as f:
             f.write(f"skip={'true' if skip else 'false'}\nsha={sha}\nrun={run}\n")
