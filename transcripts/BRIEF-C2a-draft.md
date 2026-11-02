@@ -288,3 +288,38 @@ outcomes; every hour of every one of the six datasets is added, none dropped, no
 taken at eighteen scored events with *E* = 1.68, for the reason the sovereign stated on 1 November — wall clock
 is the scarce resource — and that reason is recorded here so that a reader can weigh it. The window's end
 (Amendment 1) does not move.
+
+
+## Amendment 3 (2 November, counsel; the sessions' shape under a saturated merge path — three windows a forecast session, hourly resolutions, four hours to resolve)
+
+What the record of 2 November shows, 00:00–13:30Z: 57 proposals opened, 24 merged, 29 closed unmerged as
+stale (`main` gained entries while they waited for the two `tests` runs a merge takes, about twenty minutes
+each); two windows (08:00 and 11:00) scored nothing, because their forecasts were re-signed by a re-proposal
+after the window had begun and the scorer rightly listed them as `rigged`; twelve forecasts (442–447,
+479–484) expired unresolved, because their resolutions sat in stale proposals past the two-hour deadline,
+and the liveness process priced them from 606 to 0.27. Hourly sessions produce two proposals an hour; the
+merge path clears about three an hour at best and every merge stales the others. The cadence Amendment 2
+chose for wall clock is, on this path, costing wall clock.
+
+From the first tick after this amendment's read:
+- **Forecast sessions every three hours**, at twenty past 00, 03, 06, 09, 12, 15, 18 and 21 UTC; each enters
+  six forecasts for **each of the three windows** `[H+2, H+3)`, `[H+3, H+4)` and `[H+4, H+5)` — eighteen
+  forecasts, one proposal. A delayed session forecasts whichever of its three windows has not yet begun and
+  is not yet forecast on `main`, and nothing else. The windows, the datasets, the cutoff (`W0`), the outcome
+  predicate and the base rate are unchanged: every hour of every one of the six datasets is still an event,
+  none dropped, none chosen; only how many a session signs at once changes.
+- **Resolve sessions hourly** at ten past, as Amendment 2 states (the page fetched within ten minutes of the
+  window's end), resolving every forecast whose window has ended and whose W1 line names the builder's key.
+- **`resolves_by` = window end + 4 h** for forecasts entered after this amendment's read (was + 2 h): room
+  for two stale cycles of the merge path. Deadlines already entered do not move; a forecast's deadline is its
+  own field, set when it is signed, and A4.1's wealth is untouched by it.
+- **Nothing else moves**: the statistic, the roster, the mixture, the attack list, the window's end.
+
+Why this is lawful mid-window: as Amendment 2 said, A4.4's e-process is a test supermartingale under its
+null in resolution order whatever the rate at which events of the pre-stated kind arrive, and no event is
+chosen by its outcome here — a session that forecasts three windows at once forecasts all of them, and the
+hours it misses are missed, not dropped. The deadline rule is a liveness term, not a value term: lengthening
+it for future writs changes what the liveness process will count as timely from now on, which is the kind of
+decision a brief may take before the writs exist (C1b's own rule), and cannot touch a writ already issued.
+The change is taken at value *E* = 0.95 over 48 events and liveness *E* = 0.27, for the reason the record
+above states, so that a reader can weigh it.
