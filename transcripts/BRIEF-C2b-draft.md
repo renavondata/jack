@@ -1,16 +1,22 @@
-# BRIEF-C2b — the election (draft v1, counsel, 2 November 2026)
+# BRIEF-C2b — the election (draft v2, counsel, 2 November 2026)
+
+v2 answers `transcripts/REVIEW-C2b-v1.md` (gpt-6-astra, BLOCK on F2, F3, F4, F6, F9; obligations F1, F5, F7,
+F8, F10) as `transcripts/REPLY-REVIEW-C2b-v1.md` sets out. The gain is normalised to [0, 1] from the legal
+loss endpoints; the draw is a verifiable random function of the clerk's key, not the public clock; delayed
+feedback is handled by the interleaving reduction with its own bound; the roster is fixed at the opening and
+holds no base arm; the invitation's `p` forecasts the success event and the selection propensity travels
+separately in `args`; the procedure types leave the value statistic; the resolver is routed away from the
+elected principal; the gates that bind counsel are built *before* the opening, under C2a's cap, so that the
+opening push is the first act they gate.
 
 C2's third word. CHARTER §8: "C2: forecasts, proper scores, election"; §5: "Which proposer is invited is an
 election by Hedge or Fixed Share on proper scores (… EXP3 under bandit feedback, Auer et al. 2002): an
-entrant, not law"; PLAN §4: elections of proposers, "no witness yet". C2a produced the record — weights per
-entrant, prequentially, on events with identity and cutoff. C2b makes the record **choose who proposes next**,
-and makes the choice an entry that is scored like any other. It changes no kernel: an invitation is a
-`forecast` of type `election.invite` signed by the clerk's key, whose claim is that the invited entrant's
-log-loss on the window it is invited to beats the base rate's; the kernel reads neither `type` nor `args`
-(SPEC §5) and nothing new is admitted. The one kernel change C2a's text promised for C2b — `invite`/`accept`/
-`wish` as types — is deferred to the first witness that a forecast cannot carry an invitation; none has
-appeared, and §4's rule is to codify at the witness, never in anticipation. C2b also binds **counsel**
-mechanically in the two places the record shows it was bound only by habit (REVIEW-C2a-v1 F1: a statistic the charter forbids, caught by a read and by nothing else; 31 October–2 November: windows unresolved and proposals stale while counsel was not looking).
+entrant, not law"; PLAN §4: elections of proposers, "no witness yet". C2a produced the record; C2b makes the
+record **choose who forecasts next**, and makes the choice an entry that is scored like any other. It changes
+no kernel: an invitation is a `forecast` of type `election.invite` signed by the clerk's key, and the kernel
+reads neither `type` nor `args` (SPEC §5). The kernel types C2a's text promised (`invite`/`accept`/`wish`) are
+deferred to the first witness that a forecast cannot carry an invitation (PLAN §4: codify at the witness); that
+deferral is recorded here and in the C2b report, and any forecast of their delivery resolves on its own terms.
 
 C2b opens at the `ts` of its opening `push` (§Order of acts), after `decision promote C2a` and this brief's
 read; its exit is a crossing (A5), its window a maximum of fourteen days; its value and liveness wealth
@@ -18,159 +24,223 @@ continue from C2a's (A4.1).
 
 ## Precondition
 C2a promoted (`decision promote C2a` entered while `status.py` printed `lawful`); this brief and its read on
-`main`; counsel's forecasts X0–X3 entered; the opening push in force (the cap, and `forecast` power for the
-clerk's key `herald-2`, which the sovereign grants with the same paste — a key act, §7).
+`main`; the two gates of §Counsel bound merged on `main` under C2a's cap, before the push; counsel's
+forecasts X0–X3 entered; `transcripts/COUNSEL-DUE.jsonl` seeded; the opening push in force (the cap), preceded
+in the same paste by the sovereign's `key herald-2 --principal herald --powers merge,forecast --pubkey
+~/.ssh/jack-herald.pub` (a re-declaration of the existing key, SPEC §7; no new identity).
 
 ## Purpose
 Three things the record cannot yet show. **(1) An election that acts:** who forecasts a stream's next window
 is chosen by a pre-stated algorithm from the entrants' proper scores, and the choice is an entry before the
 session runs. **(2) Entrants that are models, not only principals:** every session forecast carries
-`args.model` since 1 November; the entrant the election chooses is a (principal, model) pair, so the ledger
-can say whether `gpt-5.4-mini` or `gpt-6-astra-fast` forecasts freshness better under the reviewer's key — the
-question COUNSEL-OPEN 22 left to "C2's election". **(3) Counsel under the clerk:** the opening push refuses a
-brief that has no read, and counsel's dated obligations are writs, so the two failures of 31 October–2
-November (a brief proposing a statistic the charter forbids; counsel idle with a window open) are caught by
-code the next time.
+`args.model` since 1 November; the entrant the election chooses is a (principal, model) pair, so the ledger can
+say whether `gpt-5.4-mini` or `gpt-6-astra-fast` forecasts freshness better under a given key — the question
+COUNSEL-OPEN 22 left to "C2's election". **(3) Counsel under the clerk:** the opening push refuses a brief
+whose current text has no independent non-BLOCK read, and counsel's dated obligations are writs, so the two
+failures of 31 October–2 November (a statistic the charter forbids, caught by a read and nothing else; windows
+unresolved while counsel was not looking) are caught by code the next time.
 
 ## Scope
-- **The entrants.** A (principal, model) pair that has at least one resolved forecast of the stream on the
-  log, plus the base-rate forecaster. At the opening: (reviewer, `openai/gpt-5.4-mini`) and (builder,
-  `openai/gpt-5.4-mini`) from C2a's record; (reviewer, `openai/gpt-6-astra-fast`) enters by the exploration
-  rule below. A model string is the `args.model` of the forecast entry; a forecast without one is the pair
-  (principal, `unknown`).
-- **The election** (per stream, per window): **EXP3** (Auer, Cesa-Bianchi, Freund, Schapire 2002) over the
-  *K* entrants of the stream, since only the invited entrant forecasts a window (bandit feedback): weight
-  *wₖ* ∝ exp(η Ĝₖ), Ĝₖ the sum of importance-weighted gains *gₖ,ₜ* / *pₖ,ₜ* over the windows *k* was invited
-  to, gain *gₖ,ₜ* = 1 − ℓ(*qₖ,ₜ*, *Yₜ*)/*B* ∈ [0, 1] (log-loss under per-mille clipping, *B* = ln 999, so the
-  gain is bounded as the theorem requires), probability *pₖ,ₜ* = (1 − γ) *wₖ*/Σ*w* + γ/*K*, with
-  γ = min(1, √(*K* ln *K* / ((e − 1) *g*))) and η = γ/*K*, *g* = the number of windows in the layer's window
-  (14 × 24 = 336 at the opening; a constant derived from the bound, A4's maxim). The regret bound is
-  2√((e − 1) *g K* ln *K*) against the best single entrant in hindsight. Exploration is the γ/*K* term and
-  nothing else: no hand-chosen floor. A new entrant enters with Ĝ = 0 (the uniform share), which is the
-  **recovery and coverage policy** REVIEW-C2a-am2 F3 asked for: an abstaining or low-weight entrant is
-  invited with probability at least γ/*K*, forecasts, and earns or loses on its own record — **without
-  touching C2a's mixture**, which continues unchanged on every forecast made (the mixture is the value test's
-  aggregate; the election is who gets to forecast).
-- **The invitation.** Before each forecasting session, the clerk draws the entrant with the seed = the
-  window's `W0` (so the draw is reproducible from the log and the pin can replay it) and enters a `forecast`
-  of type `election.invite`: claim "the entrant <principal, model> forecasts stream <s> window <W0>; its
-  log-loss on that window is below the base rate's", `p` = *pₖ,ₜ* in per mille (the election's own
-  probability of its choice: a proper-scored statement of how confident the record is), `args` = {stream,
-  window_utc, principal, model, weights, gamma, seed}, `resolves_by` = window end + 2 h. The diary files the
-  session for that principal and model; the session's forecasts carry `args.invite` = the invite's seq. The
-  invite resolves 1 iff the invited entrant's log-loss on the window's six events is below the base rate's
-  — by the builder's resolve session, from the same evidence as the events.
-- **Streams.** The freshness stream as BRIEF-C2a Amendment 2 leaves it: hourly, six datasets, the window
-  `[H+2, H+3)`. HKJC per race as C2a. Nothing added.
-- **Counsel bound.** (a) `jack push` refuses an opening push for a layer whose brief
-  `transcripts/BRIEF-<layer>-draft.md` has no `transcripts/REVIEW-<layer>-*.md` on `main` whose "Reviewed
-  tree" line names a commit at which the brief's bytes equal the current bytes and whose verdict is not
-  BLOCK (the read is of *this* text, not an earlier one). (b) The clerk gains W5: every row of
-  `transcripts/COUNSEL-DUE.jsonl` ({"id", "due", "what", "done": seq or null}) is a writ held by counsel,
-  ESCALATED past `due` like any other; counsel's dated obligations from COUNSEL-OPEN move into that file at
-  the opening. (c) Every counsel recommendation to the sovereign that asks an act carries a forecast
-  (COUNSEL-OPEN 13) — already the rule; now a pin: `status.py` lists sovereign acts in the window with no
-  counsel forecast naming them, and W4 counts them.
-- **Event contracts for the procedure types**, so that every forecast enters the value statistic
-  (REVIEW-C2a-v1 F2): `proposal.ci` and `proposal.count` — identity (branch head commit from the proposal
-  entry the forecast precedes on its branch), cutoff the proposal entry's `ts`; `counsel.programme`,
-  `review.forecast`, `election.invite` — identity `args.id` where present else the claim, cutoff the
-  forecast's own `ts` (the outcome is by construction unknown at entry), one forecast per principal per
-  identity. `tools/value.py` scores them in the same ledger from the opening of C2b; nothing before.
-- **The cap.** The budget is **8,400** (7,650 counted today; `tools/elect.py`, its tests, the W5 and
-  push-gate code, the pins and the simulator kinds are of C2a's size), raised by the opening push with
-  nothing else in it but the `forecast` grant to `herald-2`; never again inside the window.
-- **Not in C2b:** kernel or kernel2 changes; `wish` entries (the sovereign's wishes remain issues in the
-  runner labelled `wish`, each answered by a counsel forecast of his decision); a GitHub identity per party
-  (COUNSEL-OPEN 17, 20 — an infrastructure act of the sovereign's, asked for in the C2b report if the acts
-  table shows a misattribution the declaration rule missed); the CI skip (REVIEW-C2a-v1 F8's contract stands
-  for whoever wants the three minutes); automatic promotion (§7 keeps the boundary decision the sovereign's).
+- **The entrants (arms).** A fixed roster declared here, *K* = 3: (reviewer, `openai/gpt-5.4-mini`),
+  (builder, `openai/gpt-5.4-mini`), (reviewer, `openai/gpt-6-astra-fast`). The roster does not change inside
+  the window; a new pair enters at the next window's brief. The base-rate forecaster is **not** an arm: it
+  has no key and no session (REVIEW-C2b-v1 F9); it is the comparator of the success event below. A model
+  string is the `args.model` of the forecast entry.
+- **Rounds.** One round per freshness window of BRIEF-C2a Amendment 2 (hourly, six datasets, the window
+  `[H+2, H+3)`), from the first invite after the opening to the window's end. HKJC per race is **outside the
+  election** (two forecasters per race, as C2a); its forecasts are not rounds and are not importance-weighted.
+- **The round's gain.** For the invited arm *k* at round *t*, ℓₖ,ₜ = the mean over the six events of the
+  per-mille-clipped log-loss ℓ(*q*, *Y*) = −ln *q*(*Y*) = ln 1000 − ln *n*, where *n* ∈ {1, …, 999} is the
+  per-mille probability the forecast gave the outcome that occurred; a missing forecast, a missing evidence
+  page or an event unresolved by the invite's deadline counts at the maximum ln 1000 (*n* = 1) — a bad round
+  is never discarded. Gain *gₖ,ₜ* = (ln 1000 − ℓₖ,ₜ) / ln 999 = (mean of the six ln *nᵢ*) / ln 999 ∈ [0, 1]
+  exactly, in floating point too, because it is computed in the second form (*n* = 1 gives 0, *n* = 999 gives
+  ln 999 / ln 999 = 1; REVIEW-C2b-v1 F2). *B* = ln 999 of A4.4 is untouched by this: it bounds a loss
+  *difference* in the value statistic, and this is a different quantity in a different test.
+- **The election: EXP3, interleaved for delayed feedback.** A round's six outcomes resolve about three hours
+  after its invite (forecast at H+0:20 for `[H+2, H+3)`, resolved at H+3:10), so three later invites are drawn
+  before its gain is known (its resolution reaches `main` at about H+3:25, after the resolve session's PR has
+  passed the tests). The clerk therefore runs **D + 1 = 4 independent EXP3 instances**, round *t* (the *t*-th
+  hourly window after the opening) using instance *t* mod 4, so one instance's consecutive rounds are four
+  hours apart and the earlier one is resolved before the later one draws (Joulani, György & Szepesvári 2013,
+  the black-box reduction for delayed bandit feedback: *D* + 1 interleaved instances carry the undelayed
+  bound each; the same construction as Weinberger & Ordentlich 2002 for full information). If an instance's
+  previous round is not yet resolved when its next draw is due, the draw waits until it is; if it is still
+  unresolved at W0 the round is **skipped** — no invite, no session, the hour reported as skipped — because an
+  invite drawn on stale weights is outside the theorem (pin `instance_feedback_complete`). Each instance *j*
+  runs over *K* = 3 arms with horizon *gⱼ* = ⌈336/4⌉ = 84 rounds, an upper bound on its rounds in a
+  fourteen-day window of hourly rounds (early exit only shortens it; the window cannot be longer):
+  weights *wₖ* = exp(η Ĝₖ), Ĝₖ = Σ over the instance's past rounds where *k* was invited of *gₖ,ₜ* / *πₖ,ₜ*,
+  *πₖ,ₜ* = (1 − γ) *wₖ*/Σ*w* + γ/*K* the **selection propensity**, γ = min(1, √(*K* ln *K* / ((e − 1) *gⱼ*)))
+  = 0.15111, η = γ/*K* = 0.05037 (Auer, Cesa-Bianchi, Freund & Schapire 2002, Theorem 3.1; every constant is
+  the theorem's, printed here only so the pin has a number to kill). The importance weight uses the
+  propensity saved in the invite, never a later one. Expected weak regret per instance
+  ≤ 2√((e − 1) *gⱼ K* ln *K*) = 43.62 gain units; over the four instances ≤ 174.5 against the best fixed arm
+  in at most 336 rounds — stated as what it is, a bound on expectation under the theorem's assumptions, which
+  the next two items secure, and loose, as every EXP3 bound at this horizon is; the election is an entrant
+  (§5), and its record, not its bound, is what the report shows.
+- **The draw.** The theorem needs a draw the entrants cannot anticipate and the record can replay. The
+  clerk's draw at round *t* is the uniform variate *u* = SHA-256(σ)/2²⁵⁶, σ = the 64 raw bytes of the clerk
+  key's Ed25519 signature (`ssh-keygen -Y sign -n jack-election`, namespace fixed) over the ASCII string
+  `election.invite <stream> <W0>` — `herald-2` is `ssh-ed25519` (log seq 201) and Ed25519 signing is
+  deterministic (RFC 8032 §5.1.6), so σ is a function of the key and the round and nothing else,
+  unpredictable to anyone without the private half and verifiable by anyone from the public half (a
+  verifiable random function in its signature form, Micali, Rabin & Vadhan 1999). σ is recorded in the
+  invite's `args.sigma` (base64); the arm is the one whose cumulative propensity interval contains *u* (arms
+  in roster order, half-open intervals). Pin `draw_replays_from_prefix`: the replay recomputes Ĝ, *π* and *u*
+  from the signed prefix (ordered by `seq`, never by `ts`) and σ, verifying σ against `herald-2`'s pubkey and
+  requiring the recomputed `args` (weights, propensity, instance) to equal the recorded ones byte for byte;
+  an invite whose draw does not replay is `rigged_election` and the diary files no session on it.
+- **The invitation.** Before each forecasting session the clerk enters a `forecast` of type `election.invite`:
+  claim "stream <s>, window <W0>: the invited entrant <principal, model> achieves a mean clipped log-loss on
+  the window's six events below the base rate's" (the base rate at each event's resolution as `tools/value.py`
+  defines it; the comparison strict; a tie or a missing event is 0); `p` = **the clerk's forecast of that
+  success event**: the prequential Laplace rate of the invited arm's past rounds' successes, (*s* + 1)/(*n* + 2)
+  in per mille, clipped to 1–999 — a proper-scored statement about the event the resolution decides
+  (REVIEW-C2b-v1 F4), and *not* the selection propensity, which travels as `args.propensity` (the float's
+  shortest round-trip repr, the quantity the importance weight divides by; never the rounded `p`) with
+  `args.instance`, `args.weights` (Ĝ per arm before the draw, same repr), `args.sigma`, `args.gamma`,
+  `args.eta`, `args.roster`; `args.window_utc`, `args.stream`, `args.principal`, `args.model`; `resolves_by`
+  = window end + 2 h. The invite's key is (stream, W0): the first invite for a key stands and a second is a
+  `revision`, not a round. The event's cutoff is `W0` (the invite is entered at about H+0:15, the window starts
+  at H+2). The diary files the forecasting session for that principal and model with the invite's seq in the
+  issue; the session's six forecasts carry `args.invite` = that seq. An invite whose session did not run, or
+  ran under another key or model, still resolves — at the maximum loss, 0 — and counts in the round
+  (criterion 7).
+- **Resolution routing (REVIEW-C2b-v1 F9).** The six events of a round are resolved by a principal other
+  than the invited one: the diary's resolve session at :10 runs under the **builder** key when the round's
+  invite named the reviewer, and under the **reviewer** key when it named the builder; the invite itself is
+  resolved by that same session (its forecaster is the herald, so either may). No principal ever meets its
+  own forecast; pin `resolver_not_forecaster`.
+- **C2a's value statistic is untouched and continues**: the roster of its mixture (guy, counsel, reviewer,
+  builder, base) and its likelihood history carry across the boundary (REVIEW-C2a-v2 F7); the election changes
+  which principal forecasts a window and nothing in the mixture's algorithm; the choice is *F*ᵢ₋₁-measurable,
+  so A4.4's conditional null is undisturbed (REVIEW-C2b-v1 F5). The herald's invites are **not** events of the
+  value statistic and the herald is not added to the mixture's roster; they are scored by `jack score` under
+  their type and reported by the election line (REVIEW-C2b-v1 F6). **The procedure types** (`proposal.ci`,
+  `proposal.count`, `counsel.programme`, `review.forecast`) **stay out of the promotion statistic**, in C1's
+  reported scores, until a contract with a genuine pre-outcome boundary exists for each (REVIEW-C2b-v1 F6: an
+  own-`ts` cutoff admits forecasts of outcomes already public); writing those contracts is a C2c item.
+- **Counsel bound** — built **before the opening**, as ordinary tools proposals under C2a's cap, so the
+  opening push is the first act the gate refuses or admits (REVIEW-C2b-v1 F7):
+  (a) `jack push` refuses a push whose branch changes `judge/scope.json`'s `layer` or `cap` (an opening) unless
+  `main` holds, for the layer's `transcripts/BRIEF-<layer>-draft.md`, a `transcripts/REVIEW-<layer>-*.md`
+  whose `VERDICT:` line is `ACCEPT` or `ACCEPT WITH OBLIGATIONS`, whose `Reviewed tree:` names a commit on
+  `main` at which the brief's bytes equal the current bytes, and whose entry commit carries a `Proposer:`
+  trailer of a party other than counsel; an empty file, a missing verdict or a counsel-authored review does
+  not count. Pins `push_without_read_refused`, `read_of_this_text`, `read_not_counsels`.
+  (b) The clerk gains W5: every row of `transcripts/COUNSEL-DUE.jsonl` — `{"id", "due", "what", "done":
+  {"seq": n, "what": "<the act>"} or null}` — is a writ held by counsel, ESCALATED past `due`; a row is
+  discharged only by a `done` whose seq is a valid entry on the prefix (not by a bare integer, not by deleting
+  the row — rows are append-only and the clerk refuses a file whose earlier rows changed); the file is seeded
+  at the opening with every dated row of COUNSEL-OPEN (items 23's diary, the C2a report, the C2b brief's
+  reads, the acts tables), and pin `w5_inventory` checks the seeded rows are present; escalation history is
+  kept in the clerk's output (a row completed late shows ESCALATED-then-done). Pins `w5_overdue_escalates`,
+  `w5_done_is_an_entry`, `w5_rows_append_only`, `w5_inventory`.
+  (c) COUNSEL-OPEN 13's rule — every recommendation to the sovereign that asks an act is a forecast — stays
+  as it is, a standing rule; `status.py` prints, under its honest name, "sovereign acts in the window with no
+  counsel forecast naming them before the act" as a reported line, not a W4 count (REVIEW-C2b-v1 F7).
+- **The cap.** The budget is **8,900** (7,650 counted today; four EXP3 instances with replay, the VRF draw,
+  the invite verb, the resolver routing, the two gates, status and decision integration, tests, two simulator
+  kinds and some twenty pins — REVIEW-C2b-v1 priced 750 lines as too thin), raised by the opening push with
+  nothing else in it; never again inside the window. The gates land under C2a's 7,800 before it.
+- **Not in C2b:** kernel or kernel2 changes; `wish` entries (the sovereign's wishes remain issues labelled
+  `wish` in the runner, each answered by a counsel forecast of his decision); a GitHub identity per party
+  (COUNSEL-OPEN 17, 20: the report says what the acts table shows and asks only if the declaration rule missed
+  an act); the CI skip; automatic promotion; contracts for the procedure types.
 
 ## Order of acts, and the clock
-1. This brief merged with a read that returns no BLOCK; counsel enters X0–X3 and `transcripts/COUNSEL-DUE.jsonl`.
-2. The sovereign: `decision promote C2a` (if not already), `jack key herald-2 --powers merge,forecast`, the
-   opening `push` (cap 8,400). The opening is the first `push` entry after `decision promote C2a`; the window
-   is (opening `ts`, min(X0's `resolves_by`, opening + 14 d)].
-3. The builder builds `tools/elect.py` and the gates; the reviewer pins; the herald merges; the diary consults
-   `elect.py` before every forecast session from the first green `tests` run on `main` holding
-   `tests/test_elect.py` — invites before that instant are not scored (criterion 4, as before).
-4. `status.py` prints the election line and `promote C2b: lawful | refused: …`; the sovereign's
+1. The two gates and W5 merged on `main` under C2a's cap (builder proposals, reviewer pins), while C2a runs.
+2. This brief merged with a read that returns no BLOCK; counsel enters X0–X3 and seeds `COUNSEL-DUE.jsonl`.
+3. The sovereign, one paste: `decision promote C2a` (when `lawful`), `key herald-2 … --powers
+   merge,forecast`, the opening `push` (cap 8,900) — which the gate of step 1 admits because step 2 is on
+   `main`. The opening is the first `push` entry after `decision promote C2a`; the window is (opening `ts`,
+   min(X0's `resolves_by`, opening + 14 d)].
+4. The builder builds `tools/elect.py`; the reviewer pins; the herald merges; the diary consults `elect.py`
+   before every forecast session from the first green `tests` run on `main` holding `tests/test_elect.py` —
+   invites before that instant are not rounds (criterion 4).
+5. `status.py` prints the election line and `promote C2b: lawful | refused: …`; the sovereign's
    `decision promote C2b` at the crossing.
 
 ## Statistics
-- **Value continued**: *E*ᵥ of BRIEF-C2a §The statistic, one ledger, now over every typed forecast with a
-  contract (above). Criterion: ≥ 20 at the exit prefix.
+- **Value continued**: *E*ᵥ of BRIEF-C2a §The statistic, one ledger, unchanged events. Criterion: ≥ 20 at
+  the exit prefix.
 - **Liveness continued**: C1b's process, unchanged. Criterion: ≥ 20 at the exit prefix.
-- **The election's own score**: the invites are forecasts; their log-loss against the base rate of type
-  `election.invite` is reported by `jack score` and enters *E*ᵥ like any other type. No separate threshold:
-  the election is an entrant in the value test, which is what §5 says it is.
+- **The election's record**: per arm, Ĝ, rounds invited, mean gain, successes; the invites' log-loss against
+  the base rate of type `election.invite` by `jack score`. Reported; no threshold.
 
-## Safety: two attack kinds before any invite counts
-`self_invite` (an entrant's key signing an `election.invite` naming itself: the kernel's powers are per entry
-type, not per `type` field, so the refusal is the tools' — an invite is an invitation only under the clerk's key
-`herald-2`; `value.py` lists any other as `unkeyed` and the diary files no session on it) and `rigged_election` (weights computed from events resolved after the
-invite's `ts`: refused by `elect.py`'s replay from the invite's own `args.weights` and seed — a pin
-recomputes the draw and refuses a mismatch). Green on `main` before the first scored invite.
+## Safety: two attack kinds before any round counts
+`self_invite` (an `election.invite` not signed by `herald-2`: the tools treat it as `unkeyed`, the diary files
+no session on it) and `rigged_election` (an invite whose Ĝ, *π* or *u* do not replay from the signed prefix
+and its σ — forged `args.weights`, a σ that does not verify, a draw from a later prefix). Green on `main`
+before the first round (criterion 4).
 
 ## Pre-stated criteria for C2b, evaluated on the exit prefix
 1. Every pin below KILLED with a passing twin in the `tests` run on `main` at the exit prefix.
 2. Both checkers agree on the exit prefix and the committed seeds.
-3. Counted lines within 8,400; the kernel within 500 and byte-identical to C2a's; `judge/scope.json` and
+3. Counted lines within 8,900; the kernel within 500 and byte-identical to C2a's; `judge/scope.json` and
    SPEC §10 unchanged since the opening push.
-4. The attack tests green on `main` before the first scored invite's `ts`.
+4. The attack tests green on `main` before the first round's invite.
 5. Value continued: *E*ᵥ ≥ 20.
 6. Liveness continued: ≥ 20.
-7. **Elections witnessed**: at least 24 forecasting sessions filed on an `election.invite` entered before
-   them by the clerk's key, each invite reproducible from its `args` by `elect.py --replay`; at least one
-   invite naming an entrant other than the one named by the previous invite of that stream (the election
-   changed an act); every invite resolved by its deadline.
-8. **Counsel bound**: pin `push_without_read_refused` KILLED; W5 printed by the clerk with every row of
-   `COUNSEL-DUE.jsonl`; no row ESCALATED at the exit prefix.
+7. **Elections witnessed**: at least 24 rounds (one day of hours — an exercise budget the opening push
+   authorises, not a constant in any score) whose invite is on the log before the session, replays from the
+   prefix, and is resolved by its deadline; the four instances' rounds interleaved as stated.
+8. **Counsel bound**: the three gate pins and the four W5 pins KILLED; no `COUNSEL-DUE` row ESCALATED and
+   undone at the exit prefix.
 9. No `decision` of kind `veto` with subject `C2b`; off-log repairs 0; A3.4 at or under 5 : 1.
+**Reported, not gating**: whether any round's invite named an arm other than the previous round's of the
+same instance (a switch is evidence of exploration or of a changed record, not of value — REVIEW-C2b-v1 F8);
+each arm's record; sovereign acts without a prior counsel forecast.
 
 ## Pins (the reviewer's), each with its named mutant and passing twin
-`exp3_weights` (Ĝ importance-weighted by *pₖ,ₜ*; mutant: by 1) · `exp3_gamma_derived` (γ from *K*, *g*;
-mutant: γ = 0.1) · `gain_bounded` (gain in [0, 1] by the per-mille clip; mutant: unclipped) ·
-`draw_reproducible` (the draw from `args.seed` and `args.weights` replays; mutant: seed ignored) ·
-`invite_before_session` (a session's forecasts carry `args.invite` = a seq earlier than their own; mutant:
-later accepted) · `self_invite` (an invite not signed by the clerk's key is `unkeyed`; mutant: scored) ·
-`rigged_election` (weights from events resolved after the invite's `ts` refused on replay; mutant: accepted)
-· `new_entrant_uniform` (an entrant with no record enters at Ĝ = 0; mutant: at the minimum) ·
-`mixture_untouched` (C2a's mixture over principals is byte-identical in output on C2a's fixture; mutant:
-the mixture reads the election's weights) · `invite_resolution` (the invite resolves 1 iff the entrant's
-window log-loss < the base's; mutant: ≤) · `procedure_contracts` (a `proposal.ci` forecast after its
-proposal entry is `rigged`; mutant: scored) · `push_without_read_refused` (the verb refuses with no matching
-REVIEW; mutant: pushes) · `read_of_this_text` (a REVIEW whose "Reviewed tree" holds different brief bytes
-does not count; mutant: any REVIEW counts) · `w5_from_file` (every `COUNSEL-DUE` row is a writ, ESCALATED
-past `due`; mutant: not past due) · `recommendation_forecast` (a sovereign act in the window with no counsel
-forecast naming it counts in W4; mutant: ignored) · `elections_changed_an_act` (criterion 7's third clause;
-mutant: always true) · `window_from_the_push` · `wealth_continues`.
+`gain_in_unit_interval` (the legal endpoints map to 1 and 0; mutant: divide by ln 1000) · `round_loss_is_mean`
+(six losses averaged, a missing one at ln 1000; mutant: summed) · `bad_round_kept` (an unresolved event gives
+the round gain 0 and the invite 0; mutant: round dropped) · `exp3_importance` (Ĝ by the saved propensity;
+mutant: by today's) · `exp3_constants` (γ, η from *K* and *gⱼ*; mutant: γ = 0.1) · `instance_feedback_complete`
+(instance *t* mod 4's previous round is resolved before its draw, or the draw waits; mutant: draws anyway) ·
+`draw_replays_from_prefix` (Ĝ, *π*, *u* recomputed from the prefix and σ; mutant: from `args.weights`) ·
+`sigma_verifies` (σ verifies against `herald-2`'s pubkey over the round string; mutant: unchecked) ·
+`roster_fixed` (an arm outside the opening roster refused; mutant: admitted) · `invite_before_session`
+(forecasts carry `args.invite` earlier than their `ts`; mutant: later accepted) · `invite_cutoff_W0` (an invite
+with `ts` ≥ W0 is `rigged`; mutant: scored) · `invite_p_is_success_rate` (`p` = the Laplace success rate of the
+arm, not the propensity; mutant: the propensity) · `invite_resolution_strict` (1 iff mean loss < base's; mutant:
+≤) · `resolver_not_forecaster` (a round's events resolved by a principal other than the invited; mutant: the
+same) · `self_invite` · `rigged_election` · `mixture_untouched_and_continued` (C2a's fixture byte-identical;
+likelihoods, prior differences and wealth carried across the boundary; mutant: uniform restart) ·
+`procedure_types_out` (a `counsel.programme` forecast is not a value event; mutant: scored) ·
+`push_without_read_refused` · `read_of_this_text` · `read_not_counsels` · `w5_overdue_escalates` ·
+`w5_done_is_an_entry` · `w5_rows_append_only` · `w5_inventory` · `window_from_the_push` · `wealth_continues` ·
+`promote_refused` (the verb signs nothing when any criterion is unmet; mutant: value alone).
 
 ## Refusal list
-No kernel change; no LLM in `elect.py`; no constant in the election but *K*, *g*, *B* and the EXP3 formulas;
-no invite entered after its session starts; no entrant invited by hand (counsel's HKJC forecasts are entries
-under counsel's key and are not invitations); no change to C2a's statistic, mixture or clerk; no second push
-inside the window; no event or invite chosen after its outcome is known.
+No kernel change; no LLM in `elect.py`; no constant in the election but *K*, *gⱼ*, *D* and the theorem's
+formulas; no draw from a public seed; no invite entered after its session starts or after `W0`; no round
+dropped; no entrant invited by hand; no principal resolving a round it forecast; no change to C2a's statistic,
+mixture or clerk; no second push inside the window; no event or invite chosen after its outcome is known.
 
 ## Stop and report if
-the build does not fit under 8,400; the two checkers disagree; the clerk's key cannot sign a forecast (the
-grant missing: the window has not opened, say so); a stream's public evidence disappears; an invite's draw
-cannot be reproduced from its own `args` (a defect in the brief's algorithm, fixed by amendment before any
-invite is scored).
+the build does not fit under 8,900; the two checkers disagree; the clerk's key cannot sign a forecast (the
+grant missing: the window has not opened); a stream's public evidence disappears; an invite's draw cannot be
+replayed from the prefix (a defect in this brief's algorithm, fixed by amendment before any round counts); the
+interleaving's assumption fails (a round unresolved when its instance draws again: the draw waits, and the
+report says how often).
 
 ## Deliverables
-`tools/elect.py` (`--invite <stream> <W0>` prints the entry body; `--replay <seq>` recomputes a draw;
-`--table` the per-entrant Ĝ, *pₖ* and record); the diary consulting it (runner side; the prompt and the
-invite are the record's, `transcripts/sessions/`); `tools/clerk.py` W5; `tools/jack push` gate;
-`tools/value.py` procedure contracts and `election.invite`; `tools/status.py` the election line, criteria
-1–9 and `promote C2b`; `tests/test_elect.py`; the two simulator kinds; the pins; RUNBOOK `## jack elect`;
-`transcripts/COUNSEL-DUE.jsonl`; counsel's X0–X3; the C2b report; the C3 brief's precondition section
-(what assize's sealed judge must deliver) at exit.
+Before the opening: `tools/jack push` gate (a), `tools/clerk.py` W5 (b), their tests and pins, under C2a's
+cap. In the window: `tools/elect.py` (`--invite <stream> <W0>` prints the entry body and σ; `--replay <seq>`;
+`--table`); the diary consulting it and routing the resolver (runner side, prompts in `transcripts/sessions/`);
+`tools/value.py` unchanged but for `procedure_types_out`; `tools/status.py` the election line, criteria 1–9
+and `promote C2b`; `tools/jack decision` dispatching `C2b`; `tests/test_elect.py`; the two simulator kinds;
+the pins; RUNBOOK `## jack elect`; `transcripts/COUNSEL-DUE.jsonl`; counsel's X0–X3; the C2b report, which
+disposes explicitly of COUNSEL-OPEN 15–20 (recorder and identities: delivered, carried, or dropped with the
+reason) and of the deferred kernel types; the C2c brief's first section (the procedure contracts, the kernel
+types if a witness has appeared, the GitHub identities) at exit.
 
 ## Counsel's forecasts on this window (entered after the read, before the opening push)
 | id | claim | p |
 |---|---|---|
-| X0 | the promotion forecast: every criterion holds on the exit prefix by the window's end | 0.5 |
-| X1 | criterion 7 met within 3 days of the opening push | 0.6 |
-| X2 | at the exit the election has invited `gpt-6-astra-fast` at least once and its Ĝ is above mini's on the invited windows | 0.4 |
-| X3 | no second push inside the window | 0.75 |
+| X0 | the promotion forecast: every criterion holds on the exit prefix by the window's end | 0.45 |
+| X1 | criterion 7 met within 3 days of the opening push | 0.55 |
+| X2 | at the exit (reviewer, `gpt-6-astra-fast`) has been invited at least once and its mean gain exceeds (reviewer, mini)'s | 0.4 |
+| X3 | no second push inside the window | 0.7 |
