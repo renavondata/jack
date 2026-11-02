@@ -12,8 +12,11 @@ the checker the sample uses); the workflow's name, triggers and single conclusio
 This is a trusted-base change carried by the opening push under A2.6, as REVIEW-C2a-v1 F8 asked that the
 "two trusted-base changes" be named; the simulator-sample skip F8 specified is **not** in this push — it is an
 in-window item under F8's preserved-coverage contract (BRIEF-C2b v3 §Scope). No kernel source changes; no run
-of record is due. The branch was opened as a pull request before the push so the restructured workflow ran on
-it first; the run is named in the C2b report.
+of record is due. The branch was opened as pull request #125 before the push so the restructured workflow ran on it first:
+run 41405822622 — `unit` green in 2:52, `pins` green in 1:29, `sample` red at the judge self-check with
+`trusted_base_unrecorded`, which every push branch shows until its push entry records the new trusted digest
+(the opening's own run on `main` is the one that counts, as C2a's was: 64d2e720, success), and the gate job
+red because one of its three was — the structure's own witness that it fails closed.
 
 9,000 is the budget two reads priced (REVIEW-C2b-v1: 750 lines "too thin"; REVIEW-C2b-v2: "150 lines before
 opening and 1,250 total … pre-opening gates consume part of that same total"): four EXP3 instances with
