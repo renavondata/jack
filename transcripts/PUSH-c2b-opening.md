@@ -1,7 +1,7 @@
 # The opening push of C2b (counsel's note for the sovereign's `jack push --opens C2b`)
 
 Two changes, pre-stated in BRIEF-C2b §Scope ("the cap, and the opening push's second change"; v3 named them,
-v6 — the read that accepted, REVIEW-C2b-v6 — confirmed them by diff against this branch) and nothing else. **One:** `judge/scope.json` `cap` 7800 → 9000 and the identical block in SPEC §10, with one clause added
+v6 — the read that accepted, REVIEW-C2b-v6 — confirmed them by diff against this branch) and nothing else. **One:** `judge/scope.json` `cap` 7800 → 9800 and the identical block in SPEC §10, with one clause added
 to the cap's history. **Two:** `.github/workflows/tests.yml` restructured from one serial job into three
 parallel jobs — `unit` (unit tests, kernel line count), `pins`, `sample` (judge self-check, then the simulator
 sample) — behind a gate job named `tests` that fails unless all three succeeded. The five commands are the
@@ -18,7 +18,7 @@ run 41405822622 — `unit` green in 2:52, `pins` green in 1:29, `sample` red at 
 (the opening's own run on `main` is the one that counts, as C2a's was: 64d2e720, success), and the gate job
 red because one of its three was — the structure's own witness that it fails closed.
 
-9,000 is the budget two reads priced (REVIEW-C2b-v1: 750 lines "too thin"; REVIEW-C2b-v2: "150 lines before
+9,800 is the budget (9,000 from v3, two reads having priced 750 lines as too thin; raised to 9,800 by Amendment 1 before the opening, when the gate had measured 120 counted lines for one paragraph of scope and the sixth read had priced the fit under 9,000 at 0.40); the earlier figure was (REVIEW-C2b-v1: 750 lines "too thin"; REVIEW-C2b-v2: "150 lines before
 opening and 1,250 total … pre-opening gates consume part of that same total"): four EXP3 instances with
 replay, the signed draw, the invite verb, resolver routing, W5, status and decision
 integration, tests, two simulator kinds and some twenty-five pins. It is a resource constant the sovereign
@@ -29,3 +29,5 @@ next window (A4.1).
 C2b's window opens at this entry's `ts`: the first `push` entry after `decision promote C2a`.
 
 Reconciled with v6 on 2 November after REVIEW-C2b-v6 F21 (prose only: this note and the cap-history clause in SPEC §10; the three trusted files' functional content is byte-for-byte what that read diffed against 606d276).
+
+Amendment 1 (3 November) raised the cap this push carries to 9,800 before the opening; `scope.json`, SPEC §10's mirror and its history clause say 9,800, the workflow is unchanged since the read of v6.
