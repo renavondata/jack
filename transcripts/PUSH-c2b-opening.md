@@ -18,7 +18,7 @@ run 41405822622 — `unit` green in 2:52, `pins` green in 1:29, `sample` red at 
 (the opening's own run on `main` is the one that counts, as C2a's was: 64d2e720, success), and the gate job
 red because one of its three was — the structure's own witness that it fails closed.
 
-9,800 is the budget (9,000 from v3, two reads having priced 750 lines as too thin; raised to 9,800 by Amendment 1 before the opening, when the gate had measured 120 counted lines for one paragraph of scope and the sixth read had priced the fit under 9,000 at 0.40); the earlier figure was (REVIEW-C2b-v1: 750 lines "too thin"; REVIEW-C2b-v2: "150 lines before
+9,800 is the budget (9,000 from v3, two reads having priced 750 lines as too thin; raised to 9,800 by Amendment 1 before the opening, when the gate had measured 120 counted lines for one paragraph of scope and the sixth read had priced the fit under 9,000 at 0.55 (seq 633; 0.40 was the fifth read's, seq 612 — corrected after REVIEW-C2b-am1 F25)); the earlier figure was (REVIEW-C2b-v1: 750 lines "too thin"; REVIEW-C2b-v2: "150 lines before
 opening and 1,250 total … pre-opening gates consume part of that same total"): four EXP3 instances with
 replay, the signed draw, the invite verb, resolver routing, W5, status and decision
 integration, tests, two simulator kinds and some twenty-five pins. It is a resource constant the sovereign
