@@ -1,0 +1,53 @@
+Evidence collected 2026-11-03T11:10:37Z through 2026-11-03T11:11:49Z (UTC).
+Repository: renavondata/jack
+Resolver: reviewer
+
+Full forecasts read individually from log.jsonl: 370, 371, 652, 653.
+370 and 652 claim: the tests workflow is green on the first run of this branch's proposal head
+371 and 653 claim: the counted lines of this branch's proposal head are at most 7,800
+370 and 371 resolves_by: 2026-11-04T00:00:00Z
+652 and 653 resolves_by: 2026-11-05T00:00:00Z
+
+The supplied Python lookup selects the first later proposal by the same proposer:
+370 -> proposal 372, commit f6d830b983cfc729d508b6062731c452fd7cfcb9
+371 -> proposal 372, commit f6d830b983cfc729d508b6062731c452fd7cfcb9
+652 -> proposal 654, commit e40421237db4d68308ae82fcfdcb7e07fd65e59e
+653 -> proposal 654, commit e40421237db4d68308ae82fcfdcb7e07fd65e59e
+
+$ gh api "repos/renavondata/jack/commits/f6d830b983cfc729d508b6062731c452fd7cfcb9/pulls" --jq '.[] | "\(.number) \(.head.ref) \(.state)"'
+92 builder-value closed
+
+$ gh api "repos/renavondata/jack/commits/e40421237db4d68308ae82fcfdcb7e07fd65e59e/pulls" --jq '.[] | "\(.number) \(.head.ref) \(.state)"'
+182 builder-gate-2-r closed
+
+$ gh api "repos/renavondata/jack/actions/runs?branch=builder-value&event=pull_request&per_page=50" --jq '[.workflow_runs[] | select(.name=="tests")] | sort_by(.created_at) | .[0] | "\(.id) attempt \(.run_attempt) head \(.head_sha) created \(.created_at) \(.conclusion)"'
+41322216212 attempt 1 head 5630f4ddac549b889132476cc18fe00960db0499 created 2026-11-01T15:38:05Z success
+
+$ gh api "repos/renavondata/jack/actions/runs?branch=builder-gate-2-r&event=pull_request&per_page=50" --jq '[.workflow_runs[] | select(.name=="tests")] | sort_by(.created_at) | .[0] | "\(.id) attempt \(.run_attempt) head \(.head_sha) created \(.created_at) \(.conclusion)"'
+41491250899 attempt 1 head 8a83f186002f1ab4b0798454bbaf6d9f8654977e created 2026-11-02T17:26:48Z success
+
+$ gh api repos/renavondata/jack/actions/runs/41322216212/attempts/1 --jq '{id,run_attempt,head_sha,created_at,status,conclusion}'
+{"conclusion":"success","created_at":"2026-11-01T15:38:05Z","head_sha":"5630f4ddac549b889132476cc18fe00960db0499","id":41322216212,"run_attempt":1,"status":"completed"}
+
+$ gh api repos/renavondata/jack/actions/runs/41491250899/attempts/1 --jq '{id,run_attempt,head_sha,created_at,status,conclusion}'
+{"conclusion":"success","created_at":"2026-11-02T17:26:48Z","head_sha":"8a83f186002f1ab4b0798454bbaf6d9f8654977e","id":41491250899,"run_attempt":1,"status":"completed"}
+
+$ git log --oneline f6d830b983cfc729d508b6062731c452fd7cfcb9..5630f4ddac549b889132476cc18fe00960db0499
+5630f4d proposal: C2a: tools/value.py (events, the Bayes mixture, A4.4's bet), status criteria 1-7, rigged/colluding/revision refused, test_value
+208ee8c forecast: the counted lines of this branch's proposal head are at most
+c20e16c forecast: the tests workflow is green on the first run of this branch'
+
+$ git log --oneline e40421237db4d68308ae82fcfdcb7e07fd65e59e..8a83f186002f1ab4b0798454bbaf6d9f8654977e
+8a83f18 proposal: C2b read gate under C2a's cap: jack push --opens, tests (re-proposed: PR #181 went stale)
+cf00200 forecast: the counted lines of this branch's proposal head are at most
+b9a1bbd forecast: the tests workflow is green on the first run of this branch'
+
+Counts use body.commit as explicitly prescribed by the resolution procedure:
+$ git fetch -q origin f6d830b983cfc729d508b6062731c452fd7cfcb9 && PYTHONDONTWRITEBYTECODE=1 python3 -c 'from judge.judge import counted_lines; print(counted_lines(".", "f6d830b983cfc729d508b6062731c452fd7cfcb9", ["sim/", "harness/", "tests/", "pins/", "tools/"]))'
+7462
+
+$ git fetch -q origin e40421237db4d68308ae82fcfdcb7e07fd65e59e && PYTHONDONTWRITEBYTECODE=1 python3 -c 'from judge.judge import counted_lines; print(counted_lines(".", "e40421237db4d68308ae82fcfdcb7e07fd65e59e", ["sim/", "harness/", "tests/", "pins/", "tools/"]))'
+7768
+
+Decisions: 370=1; 371=1 (7462 <= 7800); 652=1; 653=1 (7768 <= 7800).
+Left undecided: none.
