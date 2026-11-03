@@ -1,0 +1,40 @@
+Base: origin/main 7774c0712b2a177b7be184da020511d78b6368bb.
+
+Crossing computation:
+The supplied entry-instant computation was run with START=2026-11-01T15:04:14Z
+and END=2026-11-03T18:00:00Z, using runs-tests-20261103T2210.json (660 runs).
+tools/status.py assess_value lines 257-261 confirms the attack_start,
+value, item_process and score_items calls used in the supplied procedure.
+The log passed kernel.check before evaluation.
+Value gate: 2026-11-01T15:59:44Z.
+Continued liveness gate: 2026-10-31T13:32:21Z.
+C1b opening seq: 188.
+Joint maximum: 7.924392 at 2026-11-03T17:36:30Z, below 20.
+The supplied table also includes END itself; even that inclusive upper
+bound is below 20, so the claims' strict-before bound is false.
+
+Command: PYTHONDONTWRITEBYTECODE=1 python3 tools/value.py --as-of 2026-11-03T17:36:30Z --attack-green 2026-11-01T15:59:44Z
+Output:
+value: E 202.638792 over 186 events; window events 186
+
+Command: PYTHONDONTWRITEBYTECODE=1 python3 tools/status.py --as-of 2026-11-03T17:36:30Z --runs transcripts/evidence/runs-tests-20261103T2210.json | grep '^liveness continued'
+Output:
+liveness continued: E 20796505671840591460586660430317517562942313712635618374561/2624366251514516578856167864937895847526400000000000000000 over 58 items (including projected expiries)
+
+RM-3c (627) shorthand was traced through RM-2c (626), RM-2b (624),
+RM-2 (518), and RM-1 (517). RM-1 explicitly defines the same joint
+value-E/continued-liveness-E crossing at 20. RM-3d (628) and RM-7 (792)
+state it explicitly. All three use the same 2026-11-03T18:00:00Z bound.
+
+Freshness acquisition:
+Each of the six args.url pages was fetched with curl -sL after the window
+ended. Raw stdout bytes were saved without modification under
+transcripts/evidence/renavon-freshness/20261103T2210/.
+The exact last_updated strings recorded in the JSON manifest are the
+page's Dataset dateModified timestamps, including their explicit +00:00
+offset. The visual summary now labels the corresponding field "Last
+refreshed" and gives a date plus rounded relative age. The separate
+"Data through" date describes data coverage, not the last refresh.
+No instant was inferred from a rounded relative age or from row samples.
+SHA-256 is over the saved raw bytes; fetched_at is UTC immediately after
+curl returned. Outcome compares dateModified to the window's start.

@@ -1,0 +1,22 @@
+Forecast 640 (X4): LEFT UNDECIDED.
+Base inspected: origin/main 7774c0712b2a177b7be184da020511d78b6368bb.
+
+The claim's args.brief names BRIEF-C2b-draft.md v6. Its Order of acts
+defines the C2b opening as the first push after decision promote C2a.
+The earlier C2a opening at seq 367 is not the opening named by X4.
+
+Command: git show origin/main:log.jsonl | grep '"kind":"promote"'
+Output (seq, ts, body extracted from the two matching signed entries):
+188 2026-10-31T10:42:10Z {"kind":"promote","subject":"C1a"}
+337 2026-11-01T11:31:58Z {"kind":"promote","subject":"C1b"}
+
+Command: git log origin/main -1 --format='%H %s' --grep='^push:'
+Output:
+64d2e72095636e5774831d8bd6279d7fd1a2cdc1 push: push-c2a-7800
+
+There is no promote C2a decision or subsequent C2b opening push in this
+prefix. No corresponding main tests run can yet decide X4. Its resolves_by
+2026-11-04T00:00:00Z is still ahead of the session's observation time.
+To decide: identify the C2b opening push's entry-bearing head, obtain its
+main tests run from the Actions API, and save conclusion, run_started_at,
+and updated_at. The claim requires success and elapsed time < 300 seconds.
