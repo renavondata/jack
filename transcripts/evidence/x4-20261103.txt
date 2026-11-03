@@ -1,0 +1,40 @@
+X4 (forecast seq 640): opening-push evidence
+
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-11-03T23:17:29Z
+
+$ grep -c '"type":"push"' log.jsonl
+7
+
+$ python3 -c "import json; E=[json.loads(l) for l in open('log.jsonl')]; print([(e['seq'],e['ts']) for e in E if e['type']=='push'])"
+[(2, '2026-10-18T14:42:38Z'), (5, '2026-10-19T04:36:23Z'), (9, '2026-10-19T06:00:46Z'), (12, '2026-10-20T02:06:48Z'), (29, '2026-10-25T16:16:20Z'), (197, '2026-10-31T13:04:49Z'), (367, '2026-11-01T15:04:14Z')]
+
+$ python3 -c "import json; E=[json.loads(l) for l in open('log.jsonl')]; print([(e['seq'],e['ts'],e['body'].get('subject')) for e in E if e['type']=='decision' and e['body'].get('kind')=='promote'])"
+[(188, '2026-10-31T10:42:10Z', 'C1a'), (337, '2026-11-01T11:31:58Z', 'C1b')]
+
+$ python3 tools/status.py 2>&1 | grep -E '^promote|^value|^liveness continued' | cut -c1-200
+promote C1b: refused: criterion 1: pins and twins in verified tests run; criterion 2: checker agreement in verified tests run; criterion 4: attack green on main before first item: unverified; criterio
+value: E 1.000000 over 0 events; window events 0
+liveness continued: E 1 over 0 items (including projected expiries)
+promote C2a: refused: criterion 1: C2a pins and twins in verified tests run; criterion 2: checker agreement in verified tests run; criterion 4: attack green on main before first scored cutoff: unverif
+
+$ git log --format='%H %cI %s' -3 origin/main -- judge/scope.json
+cd9d8eba36180401c0c1bc4c23e52ded4eef9fd9 2026-11-01T14:58:40Z push: C2a opening — cap 7800
+770d233407aafdb3c4f87d69d405e6911f836a5a 2026-10-31T12:13:33Z cap 6200 -> 6900: the measured need of the C1b clerk, its tests and pins (6,874; PRs #60, #61)
+6e989f39ad2e1a3a731af72f2e8d4e809b267440 2026-10-25T14:20:55+02:00 judge/scope.json, SPEC §10: C1a cap 6200 (counsel's ruling of 25 October; BUILD-C1a §0)
+
+$ git rev-parse HEAD origin/main
+ba0586548c114351d7bb3297f99f044b03a284a2
+ba0586548c114351d7bb3297f99f044b03a284a2
+
+$ git diff --exit-code origin/main -- log.jsonl
+(no output; exit 0)
+
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-11-03T23:18:07Z
+
+No push entry after seq 367 exists in this main snapshot, and no decision
+promote C2a exists. The promotion check refuses C2a. The latest scope change
+predates seq 367. Consequently C2b has not opened, and the tests workflow run
+named by X4 does not exist at the observation time above.
+Deadline: 2026-11-04T00:00:00Z.
