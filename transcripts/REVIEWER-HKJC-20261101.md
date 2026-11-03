@@ -110,3 +110,149 @@ The work commit comes before the forecast verbs because RUNBOOK requires a
 clean tree; this table therefore precedes all ten signed entries. Before each
 entry, check the clock against both first off and its deadline. The subsequent
 proposal pushes the evidence and signed forecasts together.
+
+---
+
+# HV-20261104: fixtures, the 4 November card and nine forecasts
+
+Reviewer `reviewer-2`, model `openai/gpt-6-astra`, branch
+`review-hv-20261104`. This section and its probability table are written and
+committed before entering any of these nine forecasts, on 3 November 2026.
+The earlier M2 section above is the prior record, not this meeting's table.
+
+## Fixture custody and the window discrepancy
+
+[`evidence/hkjc-fixtures-20261103.json`](evidence/hkjc-fixtures-20261103.json)
+records HKJC's published 2026/27 fixtures, fetched directly with
+`curl -sL --max-time 90 URL -o FILE`. The raw directory contains the November
+page, its legacy season-fixtures URL, the ten other monthly pages linked in
+the September 2026–July 2027 season navigation, and the separate racing-calendar
+shell (not used for extraction). Each response is hashed and timestamped.
+
+All meetings from 4 through 30 November are:
+
+| Date (HKT) | Venue | Day/night | Inside recorded C2a dates | Inside task's stated dates |
+|---|---|---|---|---|
+| 2026-11-04 | Happy Valley | Night | Yes | No |
+| 2026-11-08 | Sha Tin | Day | Yes | Yes |
+| 2026-11-11 | Happy Valley | Night | Yes | Yes |
+| 2026-11-14 | Sha Tin | Day | Yes | Yes |
+| 2026-11-18 | Happy Valley | Night | No | No |
+| 2026-11-22 | Sha Tin | Day | No | No |
+| 2026-11-25 | Happy Valley | Night | No | No |
+| 2026-11-29 | Sha Tin | Day | No | No |
+
+The task says opening **2026-11-04T15:04:14Z** and end
+**2026-11-15T15:04:14Z**. Under those dates only 8, 11 and 14 November fall
+inside: all nine 4 November offs precede that opening. But the actual opening
+push, **seq 367**, has `ts = 2026-11-01T15:04:14Z`, exactly as BRIEF-C2a
+Amendment 1 says. Under the recorded dates 4 November is included too. The
+end agrees in both accounts. Future cards still need their precise offs;
+the separate first-green attack-test condition is not established by fixtures.
+
+**Custody limitation:** this list was saved on 3 November, after the recorded
+opening. It supplies prospective evidence before all four upcoming meetings,
+but cannot make true Scope's requirement that the fixture list was saved
+*at the opening*. This late capture does not itself amend that requirement.
+
+## Card and source checks
+
+[`evidence/hkjc-20261104-card.json`](evidence/hkjc-20261104-card.json)
+identifies **Happy Valley, Turf, A course, Good as published**, nine races.
+First off is **18:40 HKT = 2026-11-04T10:40:00Z**, not the task's approximate
+18:45. The meeting page, all nine guru race pages and all nine official HKJC
+cards were saved unchanged under `evidence/hkjc-20261104/`. All nine guru
+SportsEvent timestamps agree with the visible official card times.
+
+Every official `racecardlist` has **12 declared starters**. The separate
+`standbylist` and guru's number-0 reserves do not count as starters. Counts
+are the retrieved declarations, subject to later withdrawals. Guru's model
+Win % / Rated price is not a public WIN-market quote; it does not establish
+the closing favourite or a market-shape adjustment.
+
+## Refreshed, measured favourite history
+
+The saved guru 2026/27 season page links seven completed Happy Valley meetings
+before 4 November: all **62 races** in those meetings were retrieved. Guru
+returned usable all-runner results for the first 32 races, then `error code:
+1015` for the remaining 30. Those failed bodies are retained and hashed;
+the corresponding 30 official HKJC results/dividends pages supply the missing
+all-runner final WIN odds. No failed request is counted as a loss or omitted
+from the intended seven-meeting population.
+
+| Meeting | Races | Favourite wins | Winning-favourite races |
+|---|---:|---:|---|
+| 2026-09-09 | 8 | 2 | 4, 7 |
+| 2026-09-16 | 8 | 4 | 4, 5, 6, 8 |
+| 2026-09-23 | 9 | 1 | 8 |
+| 2026-10-07 | 9 | 1 | 9 |
+| 2026-10-14 | 9 | 2 | 2, 8 |
+| 2026-10-21 | 9 | 2 | 1, 4 |
+| 2026-11-01 | 10 | 4 | 1, 3, 6, 7 |
+| **Total** | **62** | **16** | |
+
+The measured rate is **16/62 = 25.80645%, rounded to 258 per mille**.
+Population: Happy Valley turf, the seven fetched 2026/27 meetings listed
+above, including the 1 November day meeting. It is not a multi-season rate
+or a claim that guru's season index is exhaustive of all HKJC history.
+
+Reproduction: select each guru results table with headers `Pos`, `No.`, …,
+`Odds`, or the official table headed `Pla.`, `Horse No.`, …, `Win Odds` for
+the 30 failed guru requests. Among positive-numbered starters with positive
+numeric final odds, find the minimum. A first-place runner at that minimum
+gives outcome 1, otherwise 0. Exclude reserves and withdrawn horses without
+numeric odds from field size. All numbered finishers have numeric odds and
+every race has a winner. A winning joint favourite or first-place dead heat
+counts; both joint-minimum races in this sample (9 September R6 and 14 October
+R9) lost, and there is no winning dead heat. The JSON lists each meeting's
+outcomes and field sizes in race order, the full source set and hashes.
+
+## Pre-entry rule and nine probabilities
+
+Retain the prior reviewer's conservative **80% overall / 20% exact-field-size**
+weighting, a judgmental shrinkage choice rather than a fitted coefficient:
+
+**p = round(0.8 × 1000 × 16/62 + 0.2 × 1000 × 9/47) = 245.**
+
+The 12-starter subgroup now has **9 wins / 47 races (191.489‰)**; the other
+groups are 10 starters: 3/9, 11: 4/5, and 9: 0/1. All nine new races select
+the 12-starter group, so all nine receive the same probability. The subgroup
+overlaps the overall sample. I make no separately calibrated class, distance,
+course, going or day/night adjustment, and no unsupported market adjustment.
+`base_rate_permille = 258` records my empirical reference rate; C2a's scorer
+still computes its own pooled, sequential C1 base rate as the brief requires.
+
+Every row below is on **2026-11-04**. Deadlines are **off + four hours** as
+requested for this session under Amendment 3. All `p` values are per mille.
+
+| Race | Off HKT | off_utc | Runners | p | resolves_by (UTC) | One-line justification |
+|---|---|---|---:|---:|---|---|
+| 1 | 18:40 | 2026-11-04T10:40:00Z | 12 | 245 | 2026-11-04T14:40:00Z | Class 5, 1000m A: 12 declared starters select 9/47, shrunk 80% toward the overall 16/62. |
+| 2 | 19:10 | 2026-11-04T11:10:00Z | 12 | 245 | 2026-11-04T15:10:00Z | Class 5, 1650m A: the same 12-starter reference class supports the modest reduction from 258 to 245. |
+| 3 | 19:40 | 2026-11-04T11:40:00Z | 12 | 245 | 2026-11-04T15:40:00Z | Class 4, 1200m A: 12 starters give the 9/47 subgroup; model rated prices are not market odds. |
+| 4 | 20:10 | 2026-11-04T12:10:00Z | 12 | 245 | 2026-11-04T16:10:00Z | Class 4, 1650m A: apply only the measured field-size adjustment, with no calibrated distance effect. |
+| 5 | 20:40 | 2026-11-04T12:40:00Z | 12 | 245 | 2026-11-04T16:40:00Z | Class 4, 1200m A: the full 12-runner declaration selects the same 80/20 estimate of 245. |
+| 6 | 21:10 | 2026-11-04T13:10:00Z | 12 | 245 | 2026-11-04T17:10:00Z | Class 4, 1200m A: 12 starters again select 9/47; no independent course or going uplift is measured. |
+| 7 | 21:45 | 2026-11-04T13:45:00Z | 12 | 245 | 2026-11-04T17:45:00Z | Class 3, 1650m A: retain the measured 12-starter adjustment without an unestimated class correction. |
+| 8 | 22:15 | 2026-11-04T14:15:00Z | 12 | 245 | 2026-11-04T18:15:00Z | Class 3, 1200m A: 12 official starters, excluding reserves, give the same 245 probability. |
+| 9 | 22:50 | 2026-11-04T14:50:00Z | 12 | 245 | 2026-11-04T18:50:00Z | Class 3, 1200m A: use the 12-starter subgroup at 20% weight and the overall rate at 80%. |
+
+## Entry contract
+
+One `world.hkjc` forecast per race, event identity `(HV-20261104, race,
+favourite_wins)` (default kind), cutoff `args.off_utc`, incumbent `the closing
+WIN market`, with `args.model = openai/gpt-6-astra`. Each claim is:
+
+> At the HKJC meeting of 2026-11-04 (HKT), race <r>: the runner with the shortest final WIN odds wins (a dead-heat involving it counts as a win; a race not run, or run without a WIN market, resolves 0)
+
+Evidence is `transcripts/evidence/hkjc-20261104-card.json`; resolution evidence
+is the HKJC results and dividends page for that race, to be saved and hashed
+under `transcripts/evidence/hkjc-20261104/`. The builder resolves after racing;
+counsel is the second proposer specified by Scope. Abandonment resolves the
+claim to 0 but the abandoned race is no event of C2a's value statistic.
+
+Commit evidence and this table first because forecast verbs require a clean
+tree. Check `date -u` before each entry and refuse if either first off or the
+race's own off has arrived. Sign the nine forecasts one verb at a time, then
+propose the work and log together. At initial clock check,
+`2026-11-03T03:55:00Z`, the verified first off was 30h45m ahead.

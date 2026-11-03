@@ -1,0 +1,48 @@
+{
+  "saved_at": "2026-11-03T03:59:10Z",
+  "season": "2026/27",
+  "source": {"file":"hkjc-fixtures-november.html","url":"https://racing.hkjc.com/en-us/local/information/fixture?calyear=2026&calmonth=11","sha256":"dcc2548cf89aa495e4ab9812503157e058bab910e4c56e6c1f69498e271c75f5","fetched_at":"2026-11-03T03:55:20Z"},
+  "source_files_relative_to": "transcripts/evidence/hkjc-fixtures-20261103/",
+  "fetched_at_definition": "UTC completion time from each curl output file's modification time, truncated to seconds. Raw response bodies are unedited.",
+  "meetings": [
+    {"date":"2026-11-04","venue":"Happy Valley","day_night":"night"},
+    {"date":"2026-11-08","venue":"Sha Tin","day_night":"day"},
+    {"date":"2026-11-11","venue":"Happy Valley","day_night":"night"},
+    {"date":"2026-11-14","venue":"Sha Tin","day_night":"day"},
+    {"date":"2026-11-18","venue":"Happy Valley","day_night":"night"},
+    {"date":"2026-11-22","venue":"Sha Tin","day_night":"day"},
+    {"date":"2026-11-25","venue":"Happy Valley","day_night":"night"},
+    {"date":"2026-11-29","venue":"Sha Tin","day_night":"day"}
+  ],
+  "extraction": "Every November calendar cell bearing a local venue icon, from 4 through 30 inclusive. HV = Happy Valley; ST = Sha Tin; N = night; D = day. The 1 November cell is outside the requested extract. Dates and classifications come from the published fixtures, not inferred weekday patterns.",
+  "window": {
+    "opening_utc_on_log": "2026-11-01T15:04:14Z",
+    "opening_seq": 367,
+    "end_utc": "2026-11-15T15:04:14Z",
+    "meeting_dates_after_recorded_opening_through_end": ["2026-11-04","2026-11-08","2026-11-11","2026-11-14"],
+    "opening_utc_in_task": "2026-11-04T15:04:14Z",
+    "meeting_dates_after_task_opening_through_end": ["2026-11-08","2026-11-11","2026-11-14"],
+    "note": "BRIEF-C2a Amendment 1 and push seq 367 agree on 1 November, not 4 November. The 4 November card's first off is 10:40Z and its last off is 14:50Z, both before the task's stated opening. Future cards must supply their exact cutoffs. Fixture inclusion alone does not establish the separate attack-test gate.",
+    "custody_limitation": "Fetched on 3 November, after the recorded opening. This is a late-saved fixture list, not evidence that a list was saved at the opening as Scope requires; it cannot retroactively establish that custody condition. All four listed meetings are still future at retrieval."
+  },
+  "sources": [
+    {"file":"hkjc-fixtures-2026-09.html","url":"https://racing.hkjc.com/en-us/local/information/fixture?calyear=2026&calmonth=09","sha256":"26495723671589f578a7f405e9149301fbcc04c0038b4cc1b1dfb51c16df518f","fetched_at":"2026-11-03T03:58:54Z"},
+    {"file":"hkjc-fixtures-2026-10.html","url":"https://racing.hkjc.com/en-us/local/information/fixture?calyear=2026&calmonth=10","sha256":"f3733fd2f0ddaa9297a0e288e617c51dd29ab89b876b7534f086e7aaac9445a6","fetched_at":"2026-11-03T03:58:57Z"},
+    {"file":"hkjc-fixtures-november.html","url":"https://racing.hkjc.com/en-us/local/information/fixture?calyear=2026&calmonth=11","sha256":"dcc2548cf89aa495e4ab9812503157e058bab910e4c56e6c1f69498e271c75f5","fetched_at":"2026-11-03T03:55:20Z"},
+    {"file":"hkjc-fixtures-2026-12.html","url":"https://racing.hkjc.com/en-us/local/information/fixture?calyear=2026&calmonth=12","sha256":"cda03937df568157f63f872e50b53e5eefa3d6d75a46d99fe6bf3f9abf324568","fetched_at":"2026-11-03T03:58:59Z"},
+    {"file":"hkjc-fixtures-2027-01.html","url":"https://racing.hkjc.com/en-us/local/information/fixture?calyear=2027&calmonth=01","sha256":"6cb61a3f75f2fca6c207fa477c99ca2cf13267c42b115b7f99727478473540c3","fetched_at":"2026-11-03T03:59:01Z"},
+    {"file":"hkjc-fixtures-2027-02.html","url":"https://racing.hkjc.com/en-us/local/information/fixture?calyear=2027&calmonth=02","sha256":"1335965c7c25ece4ef55d10b623c1f6382237a7f9a4aea78253ee1e13bc9300f","fetched_at":"2026-11-03T03:59:03Z"},
+    {"file":"hkjc-fixtures-2027-03.html","url":"https://racing.hkjc.com/en-us/local/information/fixture?calyear=2027&calmonth=03","sha256":"b05a7c1a1c1bf967b026aff1a75bd3c0c760e6a1f092ec61add9c3b7b9dd9f5d","fetched_at":"2026-11-03T03:59:05Z"},
+    {"file":"hkjc-fixtures-2027-04.html","url":"https://racing.hkjc.com/en-us/local/information/fixture?calyear=2027&calmonth=04","sha256":"fd5edaa150b8b675e43de3a06dd0e1b04c517f1023d001a3872b037f4120cc78","fetched_at":"2026-11-03T03:59:06Z"},
+    {"file":"hkjc-fixtures-2027-05.html","url":"https://racing.hkjc.com/en-us/local/information/fixture?calyear=2027&calmonth=05","sha256":"b3d5092268439566a27900d4953dac8697cbb0c76d9f4976d845a5100917a311","fetched_at":"2026-11-03T03:59:07Z"},
+    {"file":"hkjc-fixtures-2027-06.html","url":"https://racing.hkjc.com/en-us/local/information/fixture?calyear=2027&calmonth=06","sha256":"16759e0421d5b6247703cd86c993c168503624b87d4a4deb62b97e956cb962c4","fetched_at":"2026-11-03T03:59:09Z"},
+    {"file":"hkjc-fixtures-2027-07.html","url":"https://racing.hkjc.com/en-us/local/information/fixture?calyear=2027&calmonth=07","sha256":"7f5b86eefc1502cf88b70937df15e9587b2852554b1248b4d210de86a08fbc95","fetched_at":"2026-11-03T03:59:10Z"},
+    {"file":"hkjc-fixtures-season.html","url":"https://racing.hkjc.com/racing/information/English/Racing/Fixture.aspx","sha256":"dcc2548cf89aa495e4ab9812503157e058bab910e4c56e6c1f69498e271c75f5","fetched_at":"2026-11-03T03:57:01Z"},
+    {"file":"hkjc-season-calendar.html","url":"https://racing.hkjc.com/en-us/pattern-races/racing-calendar","sha256":"67af80694e7fec2c2a8b80b478c048fad560fe9ca8d04d3a16f56e2ae17dd43b","fetched_at":"2026-11-03T03:55:58Z","status":"client-rendered shell; not used for meeting extraction"}
+  ],
+  "retrieval_notes": [
+    "Saved with curl -sL --max-time 90 URL -o FILE; bytes were not edited.",
+    "The legacy season-fixtures URL returned the same November page as the explicit November URL. All ten other monthly links in its September 2026 through July 2027 season navigation were fetched as well.",
+    "The separate Download Racing Calendar link yielded a client-rendered shell. The server-rendered fixture pages supply the evidence."
+  ]
+}
