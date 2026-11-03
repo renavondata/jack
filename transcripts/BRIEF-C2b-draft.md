@@ -235,7 +235,7 @@ unresolved while counsel was not looking) are caught by code the next time.
   (c) COUNSEL-OPEN 13's rule — every recommendation to the sovereign that asks an act is a forecast — stays
   as it is, a standing rule; `status.py` prints, under its honest name, "sovereign acts in the window with no
   counsel forecast naming them before the act" as a reported line, not a W4 count (REVIEW-C2b-v1 F7).
-- **The cap, and the opening push's second change.** The budget is **9,000** (7,650 counted today; four EXP3
+- **The cap, and the opening push's second change.** The budget is **9,800** (9,000 in v6, raised by Amendment 1 before the opening; 7,650 counted when v6 was written; four EXP3
   instances with replay, the signed draw, the invite verb, the resolver routing, W5 and its tick evidence,
   status and decision integration, tests, two simulator kinds and some twenty-five pins — REVIEW-C2b-v1 priced
   750 lines as too thin), raised by the opening push; never again inside the window. The read gate lands under
@@ -280,7 +280,7 @@ unresolved while counsel was not looking) are caught by code the next time.
    C2a runs.
 2. This brief merged with a read that returns no BLOCK; counsel enters X0–X5 and seeds `COUNSEL-DUE.jsonl`.
 3. The sovereign, one paste: `decision promote C2a` (when `lawful`), `key herald-2 … --powers
-   merge,forecast`, the opening `push` (cap 9,000 and the parallel tests workflow) — which the gate of step 1
+   merge,forecast`, the opening `push` (cap 9,800 and the parallel tests workflow) — which the gate of step 1
    admits because step 2 is on `main`. The opening is the first `push` entry after `decision promote C2a`; the window is (opening `ts`,
    min(X0's `resolves_by`, opening + 14 d)].
 4. The builder builds W5 (`tools/due.py`, with `workflow_steps_preserved`'s test, the first item under C2b's
@@ -307,7 +307,7 @@ before the first round (criterion 4).
 ## Pre-stated criteria for C2b, evaluated on the exit prefix
 1. Every pin below KILLED with a passing twin in the `tests` run on `main` at the exit prefix.
 2. Both checkers agree on the exit prefix and the committed seeds.
-3. Counted lines within 9,000; the kernel within 500 and byte-identical to C2a's; `judge/scope.json`,
+3. Counted lines within 9,800; the kernel within 500 and byte-identical to C2a's; `judge/scope.json`,
    SPEC §10 and `.github/workflows/tests.yml` unchanged since the opening push.
 4. The attack tests green on `main` before the first round's invite.
 5. Value continued: *E*ᵥ ≥ 20.
@@ -356,7 +356,7 @@ dropped; no entrant invited by hand; no principal resolving a round it forecast;
 mixture or clerk; no second push inside the window; no event or invite chosen after its outcome is known.
 
 ## Stop and report if
-the build does not fit under 9,000; **the read gate, its tests and its three pins do not fit in the 150 lines
+the build does not fit under 9,800; **the read gate, its tests and its three pins do not fit in the 150 lines
 under C2a's 7,800** — then C2a's own rule applies (BRIEF-C2a §Stop and report: the shortfall in lines, C2a's cap
 not raised mid-window) and C2b does not open to fund its own prerequisite; counsel reports the shortfall and
 the lawful route, which is a smaller gate or a later opening, never a second C2a push; the two checkers
@@ -392,3 +392,35 @@ types if a witness has appeared, the GitHub identities) at exit.
 | X3 | no second push inside the window | 0.7 |
 | X4 | the `tests` run on the opening push's commit on `main` completes in under five minutes and is green | 0.75 |
 | X5 | over the 24 hours after the opening push, the median time from a `proposal` entry's `ts` to its `merge` entry's `ts` is under twelve minutes (2 November 00:00–12:00Z: about twenty) | 0.5 |
+
+
+## Amendment 1 (3 November, counsel; the cap 9,000 → 9,800, before the opening)
+
+What the record shows since v6 was read: the read gate landed at 120 counted lines (49 in `tools/jack`, 71 of
+tests, PR #182) and its three pins at 18 (PR #183), for one paragraph of §Scope; `main` stands at 7,784 of
+C2a's 7,800. Under 9,000 the window would have 1,216 lines for everything the brief still names: W5 and its
+`status.py` line, `tests/test_due.py`, `tests/test_workflow.py` and five pins (counsel's count from the gate's
+density, about 250); `tools/elect.py` with the four instances, the signed draw and its replay, the invite, the
+resolver routing and the table, `tests/test_elect.py`, the two simulator kinds, some twenty pins, and the
+`status.py`, `jack decision` and `value.py` changes (about 860). That is a margin under a hundred lines on
+counsel's own count, and REVIEW-C2b-v6 priced the fit at 0.40. A window that fails on criterion 3 costs its
+fourteen days' wealth nothing (A4.1) and the programme several days of wall clock.
+
+From this amendment's read:
+- **The budget is 9,800.** It is the same kind of number it was — a resource constant the sovereign
+  authorises at the opening, entering no score — set once more *before* the opening and, as v6 says, never
+  again inside the window. Criterion 3 reads "counted lines within 9,800"; §Stop and report reads "the build
+  does not fit under 9,800"; §Scope's paragraph *The cap* reads 9,800 where it read 9,000. The opening push
+  still carries **two trusted-base changes and no other**: `judge/scope.json` `cap` 7800 → 9800 with the
+  identical block in SPEC §10 and one clause of the cap's history, and the parallel `tests` workflow,
+  unchanged since the read of v6 diffed it against `606d276`.
+- **Nothing else moves**: the roster, the statistic, the election, W5, the gate, the order of acts, the
+  twenty-four rounds, X0–X5 (the reviewer's forecast "fit under 9,000" and counsel's X3 resolve on their own
+  terms against the count at the exit prefix; a cap of 9,800 does not make a count under 9,000 more or less
+  likely).
+
+Why this is lawful before the opening: the brief is counsel's draft until the push that opens the window, and
+is amended the way BRIEF-C2a was amended three times — in writing, read cold, with the push branch's bytes
+diffed by the read; the gate admits the opening on the read whose `Reviewed tree:` holds this text. A cap
+raised *inside* the window would be the second push the brief forbids; raised before it, it is the number the
+window is pre-stated with.
