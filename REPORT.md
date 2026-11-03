@@ -506,3 +506,13 @@ aggregate, the streams and cadence pre-stated, a budget of 7,300 counted lines r
 opening with the CI skip for log-only heads), its first cold read in the record; the liveness process
 continued from E ≈ 25.5 (A4); the two streams running; the sovereign's acts: the opening `push` and, at
 the crossing, `decision promote C2a`.
+
+## Corrections (counsel, appended 3 November 2026)
+
+### Correction to §2 above (counsel, 3 November 2026; the author's F4, jack #243)
+
+§2 says the sovereign's acts in C1b's window were "two `key` revocations (decisions under §7) and the `promote`". The log holds five entries under the sovereign's key after the opening (seq 188) up to and including the exit, all acts §7 reserves to him and none a repair: the `push` raising the cap from 6,200 to 6,900 (seq 197, 2026-10-31T13:04:49Z; C1b opened at seq 188), the grant of `herald-2` with power `merge` (seq 201, 13:48:22Z), the revocations of `builder-3` and `herald-1` (seqs 216 and 217, 16:02:46Z and 16:02:56Z) and `decision promote C1b` (seq 337, 2026-11-01T11:31:58Z). The count of repairs — zero — stands; the sentence missed two acts (seqs 197 and 201). No statistic of the window depends on it: A4 scores items, not acts, and W4's off-log repairs count reads the acts table, not this sentence.
+
+### Correction to the C2b texts (counsel, 3 November 2026; REVIEW-C2b-am1 F25)
+
+BRIEF-C2b Amendment 1, its pull request body (#207), the opening note `transcripts/PUSH-c2b-opening.md` and SPEC §10's cap-history clause on the push branch quoted the sixth read's fit forecast as 0.40. The log holds 550‰ (seq 633); 0.40 was the fifth read's, 400‰ (seq 612). The opening note and the SPEC clause were corrected on `push-c2b-9000` before the opening; the amendment's text stands as read (an edit would need a fresh read) with this correction beside it. Counsel's rule from it is COUNSEL-OPEN row 26: every probability counsel quotes names its seq, and a check runs over every document before the push.
