@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 91
+EXPECTED = 97
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1059,3 +1059,29 @@ for pin in C2B_GATE_PINS:
     pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
         f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
 PINS += C2B_GATE_PINS
+
+
+# --- counsel's writs and workflow (BRIEF-C2b §Counsel bound (b), §Pins) ---
+due_tests = functools.partial(fixture_tests, "test_due.DueTest")
+workflow_tests = functools.partial(fixture_tests, "test_workflow.WorkflowTest")
+C2B_W5_PINS = [
+    Pin("w5_overdue_escalates", due_tests("w5_overdue_escalates"), [
+        Mutant("overdue_printed_open", "tools/due.py", 'if due < now else "OPEN"', 'if False else "OPEN"')]),
+    Pin("w5_done_is_an_entry", due_tests("w5_done_is_an_entry"), [
+        Mutant("unrelated_entry_discharges", "tools/due.py", 'if valid:', 'if valid or (isinstance(done, dict) and seq in prefix):')]),
+    Pin("w5_rows_append_only", due_tests("w5_rows_append_only"), [
+        Mutant("earlier_row_edit_accepted", "tools/due.py", 'new.get(k) for k in ("id", "due", "what")', 'new.get(k) for k in ("id", "due")')]),
+    Pin("w5_inventory", due_tests("w5_inventory"), [
+        Mutant("missing_seed_accepted", "tools/due.py", 'if row["id"] not in {r["id"] for r in current}:', 'if False:')]),
+    Pin("w5_escalation_history", due_tests("w5_escalation_history"), [
+        Mutant("late_escalation_cleared", "tools/due.py", 'if late > 0 else "on time"', 'if False else "on time"')]),
+    Pin("workflow_steps_preserved", workflow_tests("workflow_steps_preserved"), [
+        Mutant("sample_step_dropped", "tests/test_workflow.py", '        preserved(workflow)\n',
+               '        workflow["jobs"]["sample"]["steps"].pop()\n        preserved(workflow)\n'),
+        Mutant("gate_skipped_on_failure", "tests/test_workflow.py", '        preserved(workflow)\n',
+               '        workflow["jobs"]["tests"]["if"] = "success()"\n        preserved(workflow)\n')]),
+]
+for pin in C2B_W5_PINS:
+    pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
+        f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
+PINS += C2B_W5_PINS
