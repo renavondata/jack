@@ -51,3 +51,59 @@ $ git fetch -q origin e40421237db4d68308ae82fcfdcb7e07fd65e59e && PYTHONDONTWRIT
 
 Decisions: 370=1; 371=1 (7462 <= 7800); 652=1; 653=1 (7768 <= 7800).
 Left undecided: none.
+
+Forecasts 397 and 398 map to proposal seq 399, content commit
+859270554eae7fb65dee27ec8e7e8611cbb6b9a0.
+Forecast 656 maps to proposal seq 657, content commit
+5e0e895f7b09ffa0a836af3ee4ad2195bd24a885.
+
+gh api repos/renavondata/jack/commits/859270554eae7fb65dee27ec8e7e8611cbb6b9a0/pulls
+99 review-c2a-pins-r-r closed
+gh api repos/renavondata/jack/commits/5e0e895f7b09ffa0a836af3ee4ad2195bd24a885/pulls
+183 review-gates-pins closed
+
+First tests workflow run, event pull_request, sorted by created_at:
+review-c2a-pins-r-r:
+41338939017 attempt 1 head b965a755f7c7bd4e983a2be0808fd372d82b6e84 created 2026-11-01T18:53:46Z success
+review-gates-pins:
+41495772422 attempt 1 head 7bb076b4228670a0f8f65060206bfb4327002246 created 2026-11-02T17:56:01Z success
+
+git fetch -q origin 859270554eae7fb65dee27ec8e7e8611cbb6b9a0
+python3 -c 'from judge.judge import counted_lines; print(counted_lines(".", "859270554eae7fb65dee27ec8e7e8611cbb6b9a0", ["sim/", "harness/", "tests/", "pins/", "tools/"]))'
+7650
+
+git log --format='%h %s' 859270554eae7fb65dee27ec8e7e8611cbb6b9a0..b965a755f7c7bd4e983a2be0808fd372d82b6e84
+b965a75 proposal: C2a pins: 18 registered, 18 mutants KILLED (7650 counted lines) (re-proposed: PR #97 went stale)
+90c77cb forecast: the counted lines of this branch's proposal head are at most
+265d19d forecast: the tests workflow is green on the first run of this branch'
+git diff --stat 859270554eae7fb65dee27ec8e7e8611cbb6b9a0 b965a755f7c7bd4e983a2be0808fd372d82b6e84
+ log.jsonl | 3 +++
+ 1 file changed, 3 insertions(+)
+
+git show -s --format='%H %P %s' 7bb076b4228670a0f8f65060206bfb4327002246
+7bb076b4228670a0f8f65060206bfb4327002246 5e0e895f7b09ffa0a836af3ee4ad2195bd24a885 proposal: pins: the read gate, three KILLED with passing twins
+
+gh run view 41495772422 -R renavondata/jack --log 2>/dev/null | grep -iE 'KILLED|SURVIVED|twin' | tail -20
+tests UNKNOWN STEP 2026-11-02T17:59:27.3308194Z rigged                           cutoff_forecast_included     KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3308446Z revision                         second_replaces_first        KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3308725Z weights_from_resolved_prefix     terminal_weights             KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3309016Z abstention_is_base               abstention_half              KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3309292Z one_event_one_key                grouped_by_claim             KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3309569Z grouping_by_principal            two_keys_two_entrants        KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3309843Z uniform_prior                    counsel_double               KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3310101Z no_learning_rate                 eta_half                     KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3310369Z exact_probabilities              one_float_division           KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3310637Z per_type_base                    base_per_dataset             KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3310899Z bounded_difference               no_clip                      KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3311169Z lambda_predictable               current_item_in_lambda       KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3311447Z factor_algebra                   factor_plus_one_fiftieth     KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3311719Z window_from_the_push             from_brief_merge             KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3311991Z wealth_continues                 reset_at_second_window       KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3312268Z promote_refused_value            signs_below_twenty           KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3312554Z push_without_read_refused        gate_always_admits           KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3312832Z read_of_this_text                brief_bytes_unchecked        KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3313106Z read_not_counsels                proposer_unchecked           KILLED  (FAILED (failures=1))
+tests UNKNOWN STEP 2026-11-02T17:59:27.3313370Z KILLED 115, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0
+
+Original downloaded run-log archive retained as:
+transcripts/evidence/due-20261103T1110-656-run-41495772422.zip
