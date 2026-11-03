@@ -433,8 +433,10 @@ def report(**context):
 
 
 def main(argv=None):
+    from tools import clerk, due
     ap = parser(__doc__)
     ap.add_argument("--json", action="store_true", help="structured status, exact fractions encoded as strings")
+    ap.add_argument("--inventory", metavar="COMMIT", help="W5 opening inventory commit")
     a = ap.parse_args(argv)
     try:
         context = inputs(a)
@@ -442,9 +444,20 @@ def main(argv=None):
             context["subject"] = "C2a"
         s = report(**context)
         print(json.dumps(s, indent=1, default=str) if a.json else render(s))
+        if not a.json:
+            try:
+                precedents = tree_bytes(a.root, context["rev"], "transcripts/COUNSEL-OPEN.md").decode()
+            except (FileNotFoundError, subprocess.CalledProcessError):
+                precedents = ""
+            es, runs = context["es"], context["runs"]
+            forecasts = clerk.forecast_writs(es, runs, a.as_of) if s["subject"] == "C1b" else []
+            print(clerk.render(forecasts + clerk.merge_writs(es, runs, a.as_of, s["end"], precedents) +
+                               clerk.window_writs(es, s, a.as_of)))
+            return due.main(["--root", a.root, "--rev", context["rev"], "--as-of", a.as_of] +
+                            (["--inventory", a.inventory] if a.inventory else []))
     except (StopIteration, OSError, ValueError, subprocess.CalledProcessError) as exc:
         raise SystemExit(f"status unverified: {exc or 'window opening or L0 missing'}")
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
