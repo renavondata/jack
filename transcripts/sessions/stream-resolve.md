@@ -6,16 +6,23 @@ branch: ops-resolve-{STAMP}
 
 You are the **builder** (`JACK_KEY=~/.ssh/jack-builder`, party `builder`), in the worktree `~/git/worktrees/jack/ops-resolve-{STAMP}` on branch `ops-resolve-{STAMP}`, cut from `origin/main` now. Do not read `~/git/jack` or anything outside this worktree; never `Read`/`Glob` a path outside it. Your paths: `transcripts/`, `log.jsonl`. No code; edit no existing file. Read RUNBOOK `## jack resolve` only. Run the `tools/jack` verbs one at a time, each after the previous has printed its result — two run together take the same sequence number and the branch is unusable. Do not read `log.jsonl` whole — `python3 tools/clerk.py` lists every open writ with its forecast seq; one entry is `grep -n '"seq":<n>,' log.jsonl` (canonical JSON has no spaces).
 
+**Election routing overrides this template's builder defaults:** the diary files the session under the key named by `python3 tools/elect.py --resolve-plan <invite-seq>` (builder for a reviewer invite, reviewer for a builder invite); resolve only rounds whose plan names your principal, and stop if replay fails. Every reference to builder below means that routed principal; `JACK_KEY` must already name its key when the session starts.
+**Resolve the invite too:** after the six event resolutions, use `tools.elect.round_result` on the current prefix to obtain its settled success (strict mean loss below base, any missing event is failure); if still unsettled, retry later. Resolve the invite with that outcome by its deadline, under the routed key; a deadline-imputed round is 0, with the missing events reported, never dropped. Preserve the original evidence timing: a four-hour deadline is not permission to fetch a replacement page four hours late.
+
 **Resolve what is due, nothing else — and all of it.** List what is due with this command — not from `status.py`, whose W1 lines show only writs already past their deadline (on 2 November the 16:10 session read those, found only the builder's own expired 442–447, and resolved nothing while the 15:00 window sat due):
 ```
 python3 - <<'EOF'
-import json,datetime
+import json,datetime,os
+from tools.elect import resolver, audit, verify_sigma
+principal=os.path.basename(os.environ['JACK_KEY']).removeprefix('jack-')
 now=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 E=[json.loads(l) for l in open('log.jsonl')]
 done={e['body']['forecast'] for e in E if e['type']=='resolution'}
+rounds,errors=audit(E,verify_sigma)
+allowed={f['seq'] for f in rounds if resolver(f)==principal}
 for e in E:
     b=e['body']
-    if e['type']=='forecast' and b.get('type')=='world.renavon' and b.get('args',{}).get('stream')=='freshness' and e['seq'] not in done and b['args']['window_utc'][1]<=now and e['proposer']!='builder':
+    if e['type']=='forecast' and b.get('type')=='world.renavon' and b.get('args',{}).get('stream')=='freshness' and e['seq'] not in done and b['args']['window_utc'][1]<=now and e['proposer']!=principal and ('invite' not in b['args'] or b['args']['invite'] in allowed):
         print(e['seq'], e['proposer'], b['args']['dataset'], b['args']['window_utc'], 'due', b['resolves_by'])
 EOF
 ```

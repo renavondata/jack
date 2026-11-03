@@ -18,6 +18,7 @@ sys.path.insert(0, ROOT)
 from kernel import check  # noqa: E402
 from judge.judge import counted_lines, signer_blob  # noqa: E402
 from tools import value as val  # noqa: E402
+from tools import elect  # noqa: E402
 
 FMT = "%Y-%m-%dT%H:%M:%SZ"
 P0 = Fraction(6, 11)  # BRIEF-C1b v7; never estimated from the live window
@@ -133,8 +134,8 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None):
     """The figures BRIEF-C1 evaluates on the exit prefix, on the prefix as of `as_of` (an instant string)."""
     now = instant(as_of)
     es = [e for e in es if instant(e["ts"]) <= now]
-    if subject in ("C1b", "C2a"):
-        opening, start, end = (c2a_window if subject == "C2a" else c1b_window)(es)
+    if subject in ("C1b", "C2a", "C2b"):
+        opening, start, end = {"C1b": c1b_window, "C2a": c2a_window, "C2b": elect.window}[subject](es)
         start, end = instant(start), instant(end)
         window = subject
     else:
@@ -290,7 +291,9 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
               (verified, "criterion 2: checker agreement in verified tests run"),
               (facts["counted"] <= 6900 and facts["kernel"] <= 500 and facts["scope"],
                f"criterion 3: counted {facts['counted']}/6900; kernel {facts['kernel']}/500; scope equals SPEC: {facts['scope']}")]
-    if subject == "C2a":
+    if subject == "C2b":
+        checks = assess_election(s, facts, verified, root, rev, runs)
+    elif subject == "C2a":
         checks = assess_value(s, facts, verified, root, rev, runs, acts)
     elif subject == "C1b":
         process = item_process(s["prefix"], s["opening"])
@@ -341,6 +344,61 @@ def prefix_tree(root, head, prefix):
     return None
 
 
+def election_tree_evidence(root, rev, prefix, opening):
+    """Opening cap, immutable trusted bytes through every intervening commit."""
+    start = prefix_tree(root, rev, [e for e in prefix if e["seq"] <= opening])
+    if start is None:
+        return False, False
+    revisions = [rev] + git_bytes(root, "rev-list", f"{start}..{rev}").decode().split()
+    def protected(sha):
+        return (tree_bytes(root, sha, "judge/scope.json"), tree_bytes(root, sha, WORKFLOW),
+                tree_bytes(root, sha, "SPEC.md").split(b"## 10.", 1)[1],
+                git_bytes(root, "ls-tree", "-r", sha, "kernel/"))
+    initial = protected(start)
+    c2a = prefix_tree(root, rev, [e for e in prefix if e["seq"] <= val.opening_push(prefix)["seq"]])
+    unchanged = (all(protected(c) == initial for c in revisions) and c2a is not None and
+                 git_bytes(root, "ls-tree", "-r", c2a, "kernel/") == initial[-1] and
+                 not any(e["type"] == "push" and e["seq"] > opening for e in prefix))
+    names = elect.PINS + ("push_without_read_refused read_of_this_text read_not_counsels w5_overdue_escalates "
+                         "w5_escalation_history w5_done_is_an_entry w5_rows_append_only w5_inventory "
+                         "workflow_steps_preserved window_from_the_push wealth_continues promote_refused").split()
+    registered = tree_bytes(root, rev, "pins/pins.py").decode()
+    return unchanged, all(f'Pin("{name}"' in registered or f"Pin('{name}'" in registered for name in names)
+
+
+def assess_election(s, facts, verified, root, rev, runs):
+    end = min(s["as_of"], s["end"])
+    scope = json.loads(tree_bytes(root, rev, "judge/scope.json"))
+    try:
+        unchanged, registered = election_tree_evidence(root, rev, s["prefix"], s["opening"])
+    except (OSError, ValueError, IndexError, subprocess.CalledProcessError):
+        unchanged, registered = False, False
+    rounds, errors = elect.audit(s["prefix"], elect.verify_sigma)
+    rounds = [f for f in rounds if f["seq"] > s["opening"]]
+    gate = attack_start(root, runs, end, "tests/test_elect.py")
+    resolutions = {e["body"]["forecast"]: e for e in s["prefix"] if e["type"] == "resolution"}
+    witnessed = []
+    for f in rounds:
+        result, r = elect.round_result(s["prefix"], f, end), resolutions.get(f["seq"])
+        if (r and result["settled"] and result["settled_at"] <= r["ts"] <= f["body"]["resolves_by"] and
+                r["body"]["outcome"] == result["success"] and r["proposer"] in ("builder", "reviewer")):
+            witnessed.append(f["seq"])
+    summary = elect.summary(s["prefix"], rounds, end)
+    from tools.entry import score
+    summary["invite_scores"] = [line for line in score([elect.log.canonical(e) for e in s["prefix"]]).splitlines()
+                                if "election.invite" in line]
+    summary["refused"] = errors
+    s["election"] = summary
+    return [(verified and registered, "criterion 1: C2b pins and twins in verified tests run"),
+            (verified, "criterion 2: checker agreement in verified tests run"),
+            (facts["counted"] <= scope["cap"] and facts["kernel"] <= 500 and facts["scope"] and unchanged,
+             f"criterion 3: counted {facts['counted']}/{scope['cap']}; kernel {facts['kernel']}/500; opening trusted bytes unchanged: {unchanged}"),
+            (gate is not None and all(gate < f["ts"] for f in elect.invites(s["prefix"])),
+             f"criterion 4: election attacks green before first invite: {gate or 'unverified'}"),
+            (len(witnessed) >= 24 and not errors, f"criterion 7: elections witnessed {len(witnessed)}/24; refused invites {len(errors)}"),
+            (False, "criteria 5, 6, 8, 9: full C2b exit assessment not yet delivered (this build covers 1–4 and 7)")]
+
+
 def unmet(s):
     return [text for ok, text in s["checks"] if not ok]
 
@@ -363,6 +421,8 @@ def render(s):
         lines += [f"value: E {v['E_value']:.6f} over {v['events']} events; window events {v['window_events']}",
                   "elections: " + " / ".join(f"{k} {float(w):.6f}" for k, w in weights.items()) + f"; below base: {below}",
                   f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
+    if "election" in s:
+        lines.append(elect.summary_line(s["election"]))
     lines = s.get("history", []) + lines
     return "\n".join(lines + s.get("repairs", []) + [promotion_line(s)])
 
@@ -372,7 +432,7 @@ def parser(description):
     ap.add_argument("--log", default=os.path.join(ROOT, "log.jsonl"), help="kernel-checked log (default repository log.jsonl)")
     ap.add_argument("--root", default=ROOT, help="local git repository for tree/history evidence (default this repository)")
     ap.add_argument("--as-of", default=dt.datetime.now(dt.timezone.utc).strftime(FMT), help="UTC YYYY-MM-DDTHH:MM:SSZ; default now")
-    ap.add_argument("--subject", choices=("C1a", "C1b", "C2a"), help="status defaults to the latest opened window")
+    ap.add_argument("--subject", choices=("C1a", "C1b", "C2a", "C2b"), help="status defaults to the latest opened window")
     ap.add_argument("--run", metavar="FILE", help="one Actions workflow-run JSON object for HEAD: tests.yml path, push event, main branch, "
                     "exact SHA, success conclusion, updated_at by as-of; absent leaves criteria 1/2 unverified")
     ap.add_argument("--runs", metavar="FILE", help="JSON array of Actions workflow_runs: historical promotion, attack and W3 witnesses; default empty")
@@ -415,7 +475,7 @@ def inputs(a):
 
 def report(**context):
     decisions = [e for e in context["es"] if e["ts"] <= context["as_of"] and
-                 any(promotes(e, w) for w in ("C1a", "C1b", "C2a"))]
+                 any(promotes(e, w) for w in ("C1a", "C1b", "C2a", "C2b"))]
     closing = next((e for e in decisions if promotes(e, context["subject"])), None)
     s = assess(**context, decision=closing)
     s["repairs"] = []
@@ -442,8 +502,10 @@ def main(argv=None):
         context = inputs(a)
         if a.subject is None and any(e["type"] == "push" and e["seq"] > 337 for e in context["es"]):
             context["subject"] = "C2a"
+            if any(promotes(e, "C2a") for e in context["es"]):
+                context["subject"] = "C2b"
         s = report(**context)
-        print(json.dumps(s, indent=1, default=str) if a.json else render(s))
+        print(json.dumps(s, indent=1, default=str) if a.json else render(s).rsplit("\n", 1)[0])
         if not a.json:
             try:
                 precedents = tree_bytes(a.root, context["rev"], "transcripts/COUNSEL-OPEN.md").decode()
@@ -453,8 +515,11 @@ def main(argv=None):
             forecasts = clerk.forecast_writs(es, runs, a.as_of) if s["subject"] == "C1b" else []
             print(clerk.render(forecasts + clerk.merge_writs(es, runs, a.as_of, s["end"], precedents) +
                                clerk.window_writs(es, s, a.as_of)))
-            return due.main(["--root", a.root, "--rev", context["rev"], "--as-of", a.as_of] +
-                            (["--inventory", a.inventory] if a.inventory else []))
+            result = due.main(["--root", a.root, "--rev", context["rev"], "--as-of", a.as_of] +
+                              (["--inventory", a.inventory] if a.inventory else []))
+            if result == 0:
+                print(promotion_line(s))
+            return result
     except (StopIteration, OSError, ValueError, subprocess.CalledProcessError) as exc:
         raise SystemExit(f"status unverified: {exc or 'window opening or L0 missing'}")
 

@@ -18,7 +18,8 @@ Case = namedtuple("Case", "seed kind lines expected")
 KINDS = ("benign", "retroactive", "forged", "rewriting", "forking", "unattributed", "unsigned_change", "revoked",
          "weak_key", "duplicate_key", "self_judging", "stalling", "flooding", "schema", "structure",
          "ts_decreasing", "forecast_valid", "resolution_valid", "resolution_self", "resolution_dangling", "resolution_double",
-         "forecast_past", "forecast_permille_0", "forecast_permille_1000", "forecast_boolean", "rigged", "colluding")
+         "forecast_past", "forecast_permille_0", "forecast_permille_1000", "forecast_boolean", "rigged", "colluding",
+         "self_invite", "rigged_election")
 TITLES = ("alpha", "beta", "gamma", "delta", "epsilon", "zeta")
 CHECKER = "33" * 32  # the checker digest genesis records in simulated logs
 EPOCH, FMT = datetime.datetime(2026, 1, 1), "%Y-%m-%dT%H:%M:%SZ"
@@ -150,6 +151,10 @@ class Sim:
 
 
 def generate_kind(kind, rng, pool):
+    if kind in ("self_invite", "rigged_election"):
+        from sim.election import attack
+        lg, _ = attack(pool, kind, rng.choice(("gains", "sigma", "later_prefix")))
+        return Case(None, kind, lg.lines, {"ok": True, "entries": len(lg.lines)})
     s = Sim(rng, pool)
     m, lg = s.model, s.lg
     s.prefix()

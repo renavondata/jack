@@ -10,6 +10,8 @@ You are the **reviewer** (`JACK_KEY=~/.ssh/jack-reviewer`, party `reviewer`), in
 
 **The six datasets** (BRIEF-C2a §Scope; urls in `transcripts/evidence/renavon-freshness-20261031-base.json`): `hk_property_poi`, `hkex_disclosures`, `hkex_disclosure_interests`, `crhk_companies`, `sfc_licences`, `hk_property_transactions`.
 
+**Invitation precedence.** The uncovered-hour fallback above applies only to a session filed without an invite. An invited session uses `election-forecast.md`, one window exactly as its invite states, and never replaces W0 with a current-hour window.
+
 **The record first.** Print each dataset's resolved windows so far — how many advanced, and in which hours (UTC) it advanced:
 ```
 python3 - <<'EOF'

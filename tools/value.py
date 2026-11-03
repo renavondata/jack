@@ -26,6 +26,8 @@ def event(f):
     """Physical key and cutoff, or None. Claim prose never supplies an identity."""
     body = f["body"]
     a, typ = body.get("args", {}), body.get("type")
+    if typ in ("counsel.programme", "proposal.ci", "proposal.count", "review.forecast"):
+        return None  # procedure_types_out: jack score only; no pre-outcome value contract
     if typ == "world.renavon" and a.get("stream") == "freshness":
         w = a.get("window_utc")
         if isinstance(a.get("dataset"), str) and isinstance(w, (list, tuple)) and len(w) == 2 and all(log.instant(t) for t in w) and w[0] < w[1]:

@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 91
+EXPECTED = 93
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1059,3 +1059,17 @@ for pin in C2B_GATE_PINS:
     pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
         f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
 PINS += C2B_GATE_PINS
+
+# Simulator attack registration; the election's remaining pins belong to its read.
+elect_attacks = functools.partial(fixture_tests, "test_elect.Election")
+PINS += [
+    Pin("self_invite", elect_attacks("self_invite"), [
+        Mutant("non_clerk_invite_admitted", "tools/elect.py",
+               'if not declaration or public != base64.b64decode(declaration["pubkey"].split()[1]):', 'if False:')]),
+    Pin("rigged_election", elect_attacks("rigged_election"), [
+        Mutant("recorded_gains_trusted", "tools/elect.py",
+               '    for field in sorted(set(a) | set(expected["args"])):',
+               '    expected["args"]["gains"] = a["gains"]\n    for field in sorted(set(a) | set(expected["args"])):'),
+        Mutant("sigma_unchecked", "tools/elect.py",
+               'if not verifies(declaration["pubkey"], round_string(a["stream"], a["window_utc"][0]), a["sigma"]):', 'if False:')]),
+]
