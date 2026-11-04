@@ -9,6 +9,7 @@ import datetime as dt
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from fractions import Fraction
@@ -284,6 +285,18 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
             raise ValueError("historical tree unverified")
         run = next((r for r in runs if run_verified(r, rev) and completed_by(r, as_of)), None)
         mapping = None
+    if subject == "C2b":
+        try:
+            elect.window([e for e in es if e["ts"] <= as_of])
+        except StopIteration:
+            promoted = next((e for e in es if promotes(e, "C2a") and e["ts"] <= as_of), None)
+            opened = promoted and any(e["type"] == "push" and e["seq"] > promoted["seq"] and e["ts"] <= as_of for e in es)
+            reason = "C2b window unverified: X0 missing" if opened else "C2b has not opened: no opening push after promote C2a"
+            names = ("pins and twins", "checker agreement", "counted lines and trusted bytes", "attack tests",
+                     "value continued", "liveness continued", "elections witnessed", "counsel bound", "veto, off-log repairs and A3.4")
+            return dict(subject=subject, start=as_of, end=as_of, as_of=as_of, prefix_last_seq=None,
+                        j7_unresolved_past_due=0, j7_denominator=0, overdue=[],
+                        checks=[(False, f"criterion {i}: {name}: {reason}") for i, name in enumerate(names, 1)])
     s = status(es, "A3", 14, as_of, root, subject, rev)
     facts = tree_facts(root, rev)
     verified = run_verified(run, rev) and completed_by(run, as_of)
@@ -292,7 +305,10 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
               (facts["counted"] <= 6900 and facts["kernel"] <= 500 and facts["scope"],
                f"criterion 3: counted {facts['counted']}/6900; kernel {facts['kernel']}/500; scope equals SPEC: {facts['scope']}")]
     if subject == "C2b":
-        checks = assess_election(s, facts, verified, root, rev, runs)
+        checks = assess_election(s, facts, verified and completed_by(run, min(as_of, s["end"])), root, rev, runs)
+        checks += assess_c2b_exit(s, verified and completed_by(run, min(as_of, s["end"])), root, rev, runs, acts)
+        s.update(subject=subject, checks=sorted(checks, key=lambda c: int(c[1].split(":", 1)[0].split()[-1])))
+        return s
     elif subject == "C2a":
         checks = assess_value(s, facts, verified, root, rev, runs, acts)
     elif subject == "C1b":
@@ -395,8 +411,101 @@ def assess_election(s, facts, verified, root, rev, runs):
              f"criterion 3: counted {facts['counted']}/{scope['cap']}; kernel {facts['kernel']}/500; opening trusted bytes unchanged: {unchanged}"),
             (gate is not None and all(gate < f["ts"] for f in elect.invites(s["prefix"])),
              f"criterion 4: election attacks green before first invite: {gate or 'unverified'}"),
-            (len(witnessed) >= 24 and not errors, f"criterion 7: elections witnessed {len(witnessed)}/24; refused invites {len(errors)}"),
-            (False, "criteria 5, 6, 8, 9: full C2b exit assessment not yet delivered (this build covers 1–4 and 7)")]
+            (len(witnessed) >= 24 and not errors, f"criterion 7: elections witnessed {len(witnessed)}/24; refused invites {len(errors)}")]
+
+
+COUNSEL_PINS = ("push_without_read_refused read_of_this_text read_not_counsels w5_overdue_escalates "
+                "w5_done_is_an_entry w5_rows_append_only w5_inventory w5_escalation_history").split()
+
+
+def liveness_unchanged(root, rev, prefix):
+    start = prefix_tree(root, rev, [e for e in prefix if e["seq"] <= val.opening_push(prefix)["seq"]])
+    if start is None:
+        return False
+    def process(sha):
+        return [ast.dump(n) for n in ast.parse(tree_bytes(root, sha, "tools/status.py")).body
+                if getattr(n, "name", None) in ("item_process", "score_items", "sovereign_keys") or
+                isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "P0" for t in n.targets)]
+    return process(start) == process(rev)
+
+
+def counsel_bound(s, verified, root, rev):
+    """Read committed tick witnesses, never regenerate a missing historical escalation."""
+    from tools import due
+    end = min(s["as_of"], s["end"])
+    try:
+        pins = tree_bytes(root, rev, "pins/pins.py").decode()
+        registered = all(f'Pin("{name}"' in pins or f"Pin('{name}'" in pins for name in COUNSEL_PINS)
+        start = prefix_tree(root, rev, [e for e in s["prefix"] if e["seq"] <= s["opening"]])
+        if start is None:
+            raise ValueError("opening inventory unverified")
+        text = tree_bytes(root, start, due.FILE)
+        due.fold(due.rows(text))
+        for sha in git_bytes(root, "rev-list", "--reverse", "--first-parent", f"{start}..{rev}").decode().split():
+            current = tree_bytes(root, sha, due.FILE)
+            due.unchanged(text, current)
+            due.fold(due.rows(current))
+            text = current
+        current = tree_bytes(root, rev, due.FILE)
+        due.unchanged(text, current)
+        rows = due.fold(due.rows(current))
+        lines, malformed = due.project(rows, s["prefix"], end)
+        overdue = [r["id"] for r, line in zip(rows, lines) if r["due"] < end and
+                   not line.startswith(f"W5 {r['id']} due {r['due']} {r['what']}: done seq ")]
+        ticks = []
+        paths = git_bytes(root, "ls-tree", "-r", "--name-only", rev, "transcripts/evidence/w5/").decode().splitlines()
+        for path in paths:
+            text = tree_bytes(root, rev, path).decode()
+            stamps = re.findall(r"\bas[- ]of[: ]+([0-9T:+Z.-]+)", text)
+            if len(stamps) != 1:
+                raise ValueError(f"tick has no unique as-of: {path}")
+            when = due.instant(stamps[0]).strftime(FMT)
+            if when <= end:
+                ticks.append((when, path, text.splitlines()))
+        ticks.sort()
+        missing = []
+        for row in rows:
+            if row["due"] >= end:
+                continue
+            first = next((tick for tick in ticks if tick[0] > row["due"]), None)
+            marker = f"W5 {row['id']} due {row['due']} {row['what']}: "
+            if first is None or not any(line.startswith(marker) and
+                                       re.search(r"\bESCALATED\b", line[len(marker):]) for line in first[2]):
+                missing.append(row["id"])
+        ok = verified and registered and not malformed and not overdue and not missing
+        return ok, (f"criterion 8: counsel bound: gate/W5 pins in verified tests {verified and registered}; "
+                    f"overdue undone {overdue}; first-tick escalation missing {missing}; malformed {malformed}")
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, subprocess.CalledProcessError) as exc:
+        return False, f"criterion 8: counsel bound unverified: {exc}"
+
+
+def assess_c2b_exit(s, verified, root, rev, runs, acts):
+    end, prefix = min(s["as_of"], s["end"]), s["prefix"]
+    try:
+        gate = attack_start(root, runs, end, "tests/test_value.py")
+        v = val.value(prefix, as_of=end, attack_green=gate, window_opening=s["start"])
+        value_check = (v["E_value"] >= 20, f"criterion 5: value continued E {v['E_value']:.6f} >= 20")
+        s["value"] = v
+    except (StopIteration, OSError, ValueError, subprocess.CalledProcessError) as exc:
+        value_check = (False, f"criterion 5: value continued unverified: {exc}")
+    try:
+        gate = attack_start(root, runs, end)
+        process = item_process(prefix, c1b_window(prefix)[0], end)
+        live = score_items(i for i in process["items"] if gate is not None and gate < i["ts"])
+        same = liveness_unchanged(root, rev, prefix)
+        s.update(continued_liveness=live, late_reports=process["late_reports"])
+        live_check = (same and gate is not None and live["E"] >= 20 and not process["late_reports"],
+                      f"criterion 6: liveness continued E {live['E']} >= 20; unchanged {same}; "
+                      f"attack {gate or 'unverified'}; late repairs {len(process['late_reports'])}")
+    except (StopIteration, OSError, ValueError, subprocess.CalledProcessError) as exc:
+        live_check = (False, f"criterion 6: liveness continued unverified: {exc}")
+    off = off_log_repairs(acts, s["start"], end)
+    procedure = s["procedure"] + int(not any(promotes(e, "C2b") for e in prefix))
+    return [value_check, live_check, counsel_bound(s, verified, root, rev),
+            (not s["veto"] and off == 0 and procedure <= 5 * s["object"],
+             f"criterion 9: veto on C2b: {'YES' if s['veto'] else 'none'}; "
+             f"off-log repairs: {off if off is not None else 'unknown (no acts file)'}; "
+             f"A3.4 at promote {procedure} : {s['object']} (maximum 5:1)")]
 
 
 def unmet(s):
@@ -414,7 +523,7 @@ def render(s):
     lines += [f"map {k}: {v['principle']} | {v['enforcer']}" for k, v in sorted(s.get("map", {}).items())]
     lines += [f"J7: {s['j7_unresolved_past_due']} of {s['j7_denominator']} window forecasts unresolved past resolves_by"]
     lines += [f"overdue forecast {seq} ({who}) due {by}; evidence {ev or '-'}" for by, seq, who, ev in s["overdue"]]
-    if "value" in s:
+    if "value" in s and "continued_liveness" in s:
         v, live = s["value"], s["continued_liveness"]
         weights = v["window_weights"]
         below = ", ".join(k for k in weights if weights[k] < weights["base"]) or "none"

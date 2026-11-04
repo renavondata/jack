@@ -351,7 +351,7 @@ class Election(unittest.TestCase):
             self.lg.add("resolution", who, dict(forecast=f["seq"], outcome=1, evidence="six events below base"), key, ts=settled)
         es = self.entries()
         opening, start, end = e.window(es)
-        s = dict(prefix=es, opening=opening, start=start, end=end, as_of=settled, subject="C2b")
+        s = dict(prefix=es, opening=opening, start=start, end=end, as_of=settled, subject="C2b", procedure=0, object=1, veto=False)
         facts = dict(counted=9800, kernel=450, scope=True)
         with patch.object(st, "tree_bytes", return_value=b'{"cap":9800}'), \
                 patch.object(st, "election_tree_evidence", return_value=(True, True)), \
@@ -359,7 +359,7 @@ class Election(unittest.TestCase):
             checks = st.assess_election(s, facts, True, e.ROOT, "head", [])
             self.assertTrue(all(ok for ok, text in checks if text.startswith(tuple(f"criterion {i}:" for i in (1, 2, 3, 4, 7)))))
             self.assertIn("elections witnessed 24/24", checks[4][1])
-            s["checks"] = checks
+            s["checks"] = checks + st.assess_c2b_exit(s, True, e.ROOT, "head", [], None)
             self.assertIn("refused", st.promotion_line(s))  # remaining exit criteria cannot silently pass
             missing = dict(s, prefix=es[:-1])
             self.assertIn("elections witnessed 23/24", st.assess_election(missing, facts, True, e.ROOT, "head", [])[4][1])
