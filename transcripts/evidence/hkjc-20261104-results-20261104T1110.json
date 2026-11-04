@@ -1,0 +1,10 @@
+{
+  "race": 1,
+  "winner": "COMET RADIANCE",
+  "winner_no": 2,
+  "shortest_final_win_odds": {"runner": "MAPOGO", "no": 4, "odds": 3.7},
+  "favourite_won": false,
+  "dead_heat": false,
+  "void": false,
+  "sources": [{"url": "https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx?RaceDate=2026/11/04&Racecourse=HV&RaceNo=1", "sha256": "0dbe0a0784c13edd2185b97bc28dbe9a89b6c0376be7ca8edcf55bfc2b2a0d0f", "fetched_at": "2026-11-04T11:11:06Z"}]
+}

@@ -202,17 +202,12 @@ was ruled: at a failed window's boundary, A2.6 governs over BRIEF-C1b, and the f
    Until then this judgment is the record of Guy's answer, and his direction ("so it becomes case law") is that
    it be followed. No text ranks a ruling or says how one is displaced. It decides no question of validity
    (§3), and reaches code only through its orders. p(stands) = 0.8.
-5. **C2a's stated end** (appended later on 4 November, after the cold read of BRIEF-C2a-prime v3).
-   - **What correction 2 got wrong.** Correction 2 and `transcripts/CASES.md` said C2a's stated end is read two ways and is unruled. They traced the earlier reading to BRIEF-C2a Amendment 1 (seq 368, entered after the opening) and to the budget's fourteen days (seq 50). Those sources were wrong.
-   - **The pre-stated text.** BRIEF-C2a was read and merged before the opening: commit 2d30745 at 2026-11-01T13:43:17Z, against the opening push, seq 367, at 15:04:14Z. Its text says "its window a maximum of fourteen days" and "C2a's window is (opening `ts`, V0's `resolves_by`], fourteen days at most". `status.py`'s `c2a_window` reads it so.
-   - **The law.** A5.2 makes a stated end "the `resolves_by` of the promotion forecast the window's brief names". A2.4 lets a brief "tighten the charter's bounds, never loosen them".
-   - **The reading.** The reading that gives effect to every pre-stated word is the earlier one: V0's `resolves_by` (2026-11-17T12:00:00Z), bounded by the brief's fourteen days. C2a's window is therefore (2026-11-01T15:04:14Z, 2026-11-15T15:04:14Z]. The same form, min(the promotion forecast's `resolves_by`, opening + 14 d), is in BRIEF-C2b §Order of acts step 3, read by `transcripts/REVIEW-C2b-v6.md`.
-   - **Who decides.** Asked to rule, the sovereign replied: "Another judgement, do you need me?" Counsel decides the question under the direction quoted above.
-   - **Counsel's interest.** V0, V2 and V3 are counsel's forecasts, each with `resolves_by` 2026-11-17T12:00:00Z. Under this reading their outcomes are fixed at 2026-11-15T15:04:14Z and they can be resolved before that deadline. Under the other reading they would expire, and each expiry would multiply continued liveness *E* by about 0.48 at the current estimate.
-   - **What follows.**
-     - C2a's stated end is not read two ways in correction 2's sense.
-     - Correction 2's last sentence ("C2a's `fix` is entered only after 2026-11-17T12:00:00Z") is withdrawn.
-     - C2a's `fix` is entered after 2026-11-15T15:04:14Z and before C2a-prime's opening push.
-     - The paste Order 3 prescribes stands as written.
-     - Correction 2's rule for a stated end that is read two ways and unruled stands for any later case.
-   - **Probability.** p(stands) = 0.75.
+5. **The sources of C2a's earlier reading** (appended 4 November, after two cold reads of BRIEF-C2a-prime).
+   - **What correction 2 relied on.** Correction 2 relied on `transcripts/CASES.md`, which traced the fourteen days to BRIEF-C2a Amendment 1 (seq 368) and to the budget (seq 50).
+   - **Where the fourteen days actually are.** They are in BRIEF-C2a v2 itself, before the opening: proposed at seq 355, merged at seq 356, and read by `transcripts/REVIEW-C2a-v2.md` (merged at seq 360).
+   - **The texts that point the other way.**
+     - The same brief says "V0's `resolves_by` is the window's end", and V0's claim says the same (seq 361).
+     - A5.2 ends "a brief states no other date".
+     - `transcripts/REVIEW-C1b-A5.md` F8 applied that clause to a brief's fourteen-day maximum, and counsel accepted the finding (`transcripts/REPLY-REVIEW-C1b-A5.md`).
+   - **Whether the question needs deciding.** Whether A2.4 survives that clause is a question of what the charter allows (A2.10), and counsel holds an interest in the answer. Counsel does not decide it, and no act needs it decided.
+   - **What follows.** Correction 2's rule governs C2a, and its last sentence stands. C2a's `fix`, and every opening after it, come after 2026-11-17T12:00:00Z, which is after both instants.
