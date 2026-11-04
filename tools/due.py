@@ -22,31 +22,42 @@ def rows(text):
 
 
 def unchanged(previous, current):
-    for i, old in enumerate(previous):
-        new = current[i] if i < len(current) else {}
-        if any(old.get(k) != new.get(k) for k in ("id", "due", "what")) or not (
-                old.get("done") == new.get("done") or
-                old.get("done") is None and isinstance(new.get("done"), dict)):
-            raise ValueError(f"rows changed: {old['id']}")
+    current = current.splitlines(keepends=True)
+    for i, old in enumerate(previous.splitlines(keepends=True)):
+        if i >= len(current) or old != current[i]:
+            raise ValueError(f"rows changed: {json.loads(old)['id']}")
+
+
+def fold(records):
+    result = {}
+    for row in records:
+        if not isinstance(row, dict) or not isinstance(row.get("id"), str):
+            raise ValueError("malformed COUNSEL-DUE file")
+        key = row["id"]
+        if set(row) == {"id", "due", "what", "done"} and key not in result and row["done"] is None and all(
+                isinstance(row[k], str) for k in ("due", "what")):
+            result[key] = dict(row)
+        elif set(row) == {"id", "done"} and key in result and result[key]["done"] is None and row["done"] is not None:
+            result[key] = dict(result[key], done=row["done"])
+        else:
+            raise ValueError("malformed COUNSEL-DUE file")
+    return list(result.values())
 
 
 def project(current, entries, as_of):
     """Return rendered rows and whether any completion is malformed; overdue is not an error."""
-    now, seen, lines, malformed = instant(as_of), set(), [], False
-    prefix = {e["seq"]: instant(e["ts"]) for e in entries if instant(e["ts"]) <= now}
+    now, lines, malformed = instant(as_of), [], False
+    prefix = {e["seq"]: e for e in entries if instant(e["ts"]) <= now}
     for row in current:
-        if not isinstance(row, dict) or set(row) != {"id", "due", "what", "done"} or not all(
-                isinstance(row[k], str) for k in ("id", "due", "what")) or row["id"] in seen:
-            raise ValueError("malformed COUNSEL-DUE file")
-        seen.add(row["id"])
         due, done = instant(row["due"]), row["done"]
         state = f"ESCALATED {(now - due).total_seconds() / 3600:g}h past due" if due < now else "OPEN"
         if done is not None:
             seq = done.get("seq") if isinstance(done, dict) else done
             valid = (isinstance(done, dict) and set(done) == {"seq", "what"} and
-                     type(seq) is int and isinstance(done["what"], str) and seq in prefix)
+                     type(seq) is int and isinstance(done["what"], str) and seq in prefix and
+                     row["id"] in json.dumps(prefix[seq].get("body", {}), sort_keys=True, separators=(",", ":"), ensure_ascii=True))
             if valid:
-                late = (prefix[seq] - due).total_seconds() / 3600
+                late = (instant(prefix[seq]["ts"]) - due).total_seconds() / 3600
                 state = f"done seq {seq} " + (f"ESCALATED {late:g}h late" if late > 0 else "on time")
             else:
                 malformed = True
@@ -56,7 +67,7 @@ def project(current, entries, as_of):
 
 
 def blob(root, rev, path, optional=False):
-    result = subprocess.run(["git", "-C", str(root), "show", f"{rev}:{path}"], capture_output=True, text=True)
+    result = subprocess.run(["git", "-C", str(root), "show", f"{rev}:{path}"], capture_output=True)
     if result.returncode and not optional:
         raise ValueError(f"cannot read {rev}:{path}")
     return None if result.returncode else result.stdout
@@ -73,13 +84,12 @@ def main(argv=None):
         rev = subprocess.run(["git", "-C", a.root, "rev-parse", "--verify", f"{a.rev}^{{commit}}"],
                              capture_output=True, text=True, check=True).stdout.strip()
         text = blob(a.root, rev, FILE, optional=True)
-        current = rows(text or "")
-        previous = rows(blob(a.root, rev + "~1", FILE, optional=True) or "")
+        unchanged(blob(a.root, rev + "~1", FILE, optional=True) or b"", text or b"")
+        current = fold(rows(text or b""))
         if a.inventory:
-            for row in rows(blob(a.root, a.inventory, FILE)):
+            for row in fold(rows(blob(a.root, a.inventory, FILE))):
                 if row["id"] not in {r["id"] for r in current}:
                     raise ValueError(f"missing {row['id']}")
-        unchanged(previous, current)
         if text is None:
             print("W5: no COUNSEL-DUE file")
             return 0
