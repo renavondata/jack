@@ -1,0 +1,34 @@
+[
+  {
+    "race": 7,
+    "winner": "DO YOUR PART",
+    "winner_no": 8,
+    "shortest_final_win_odds": {"runner": "DO YOUR PART", "no": 8, "odds": 3},
+    "favourite_won": true,
+    "dead_heat": false,
+    "void": false,
+    "sources": [
+      {
+        "url": "https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx?RaceDate=2026/11/04&Racecourse=HV&RaceNo=7",
+        "sha256": "5ef10fd795c6aba45126e175a1d82f1dd3437741da82c4f72074cd1c92dc9a32",
+        "fetched_at": "2026-11-04T15:11:10Z"
+      }
+    ]
+  },
+  {
+    "race": 8,
+    "winner": "TARGET AUDIENCE",
+    "winner_no": 2,
+    "shortest_final_win_odds": {"runner": "LIVE WIRE", "no": 9, "odds": 3.2},
+    "favourite_won": false,
+    "dead_heat": false,
+    "void": false,
+    "sources": [
+      {
+        "url": "https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx?RaceDate=2026/11/04&Racecourse=HV&RaceNo=8",
+        "sha256": "dbdab388344890b9782320e37328ee5ea762f3141b4b1c0c9ab099694a3d2b9c",
+        "fetched_at": "2026-11-04T15:11:10Z"
+      }
+    ]
+  }
+]
