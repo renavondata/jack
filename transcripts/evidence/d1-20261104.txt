@@ -1,0 +1,72 @@
+212 2026-11-03T21:20:12Z DIARY reviewer: freshness stream 37 — six forecasts for the window two hours ahead (gpt-5.4-mini, reviewer key)
+208 2026-11-03T18:20:13Z DIARY reviewer: freshness stream 36 — six forecasts for the window two hours ahead (gpt-5.4-mini, reviewer key)
+206 2026-11-03T17:24:48Z DIARY builder: re-propose PR #250 (due-builder-20261103T1710) on a fresh prefix (gpt-5.4-mini, builder key)
+204 2026-11-03T16:26:10Z DIARY builder: re-propose PR #246 (due-builder-20261103T1610) on a fresh prefix (gpt-5.4-mini, builder key)
+201 2026-11-03T15:59:47Z DIARY reviewer: re-propose PR #241 (ops-stream-35-r) on a fresh prefix (gpt-5.4-mini, reviewer key)
+200 2026-11-03T15:34:35Z DIARY reviewer: re-propose PR #239 (ops-stream-35) on a fresh prefix (gpt-5.4-mini, reviewer key)
+199 2026-11-03T15:34:25Z DIARY builder: re-propose PR #238 (due-builder-20261103T1520) on a fresh prefix (gpt-5.4-mini, builder key)
+197 2026-11-03T15:20:12Z DIARY reviewer: freshness stream 35 — six forecasts for the window two hours ahead (gpt-5.4-mini, reviewer key)
+195 2026-11-03T14:22:27Z DIARY builder: re-propose PR #234 (due-builder-20261103T1410) on a fresh prefix (gpt-5.4-mini, builder key)
+194 2026-11-03T14:22:00Z DIARY builder: re-propose PR #233 (due-builder-20261103T1404) on a fresh prefix (gpt-5.4-mini, builder key)
+191 2026-11-03T14:02:22Z DIARY builder: re-propose PR #229 (due-builder-20261103T1210) on a fresh prefix (gpt-5.4-mini, builder key)
+187 2026-11-03T12:20:42Z DIARY reviewer: freshness stream 34 — six forecasts for the window two hours ahead (gpt-5.4-mini, reviewer key)
+185 2026-11-03T11:36:45Z DIARY builder: re-propose PR #227 (due-builder-20261103T1110) on a fresh prefix (gpt-5.4-mini, builder key)
+182 2026-11-03T10:45:22Z DIARY builder: re-propose PR #224 (ops-resolve-20261103T1010-r) on a fresh prefix (gpt-5.4-mini, builder key)
+180 2026-11-03T10:23:32Z DIARY builder: re-propose PR #222 (ops-resolve-20261103T1010) on a fresh prefix (gpt-5.4-mini, builder key)
+179 2026-11-03T10:10:13Z DIARY builder: freshness resolve 20261103T1010 — the forecasts now due (gpt-5.4-mini, builder key)
+178 2026-11-03T09:41:33Z DIARY reviewer: re-propose PR #219 (ops-stream-33) on a fresh prefix (gpt-5.4-mini, reviewer key)
+177 2026-11-03T09:20:20Z DIARY reviewer: freshness stream 33 — six forecasts for the window two hours ahead (gpt-5.4-mini, reviewer key)
+176 2026-11-03T09:18:19Z DIARY builder: re-propose PR #217 (ops-resolve-20261103T0910) on a fresh prefix (gpt-5.4-mini, builder key)
+175 2026-11-03T09:10:11Z DIARY builder: freshness resolve 20261103T0910 — the forecasts now due (gpt-5.4-mini, builder key)
+171 2026-11-03T08:10:10Z DIARY builder: freshness resolve 20261103T0810 — the forecasts now due (gpt-5.4-mini, builder key)
+170 2026-11-03T07:10:15Z DIARY builder: freshness resolve 20261103T0710 — the forecasts now due (gpt-5.4-mini, builder key)
+168 2026-11-03T06:20:12Z DIARY reviewer: freshness stream 32 — six forecasts for the window two hours ahead (gpt-5.4-mini, reviewer key)
+167 2026-11-03T06:10:12Z DIARY builder: freshness resolve 20261103T0610 — the forecasts now due (gpt-5.4-mini, builder key)
+166 2026-11-03T05:35:27Z DIARY reviewer: re-propose PR #211 (review-c2b-am1) on a fresh prefix (gpt-5.4-mini, reviewer key)
+165 2026-11-03T05:35:19Z DIARY reviewer: re-propose PR #210 (ops-stream-31-r-r-r-r-r) on a fresh prefix (gpt-5.4-mini, reviewer key)
+163 2026-11-03T05:11:53Z DIARY reviewer: re-propose PR #208 (ops-stream-31-r-r-r-r) on a fresh prefix (gpt-5.4-mini, reviewer key)
+162 2026-11-03T05:10:11Z DIARY builder: freshness resolve 20261103T0510 — the forecasts now due (gpt-5.4-mini, builder key)
+161 2026-11-03T04:51:37Z DIARY reviewer: re-propose PR #206 (ops-stream-31-r-r-r) on a fresh prefix (gpt-5.4-mini, reviewer key)
+160 2026-11-03T04:27:16Z DIARY builder: re-propose PR #204 (ops-resolve-20261103T0410) on a fresh prefix (gpt-5.4-mini, builder key)
+159 2026-11-03T04:26:57Z DIARY reviewer: re-propose PR #203 (ops-stream-31-r-r) on a fresh prefix (gpt-5.4-mini, reviewer key)
+158 2026-11-03T04:12:16Z DIARY builder: freshness resolve 20261103T0410 — the forecasts now due (gpt-5.4-mini, builder key)
+157 2026-11-03T03:55:35Z DIARY reviewer: re-propose PR #201 (ops-stream-31-r) on a fresh prefix (gpt-5.4-mini, reviewer key)
+152 2026-11-03T03:39:21Z COUNSEL reviewer: re-propose PR #198 (ops-stream-31) again — the first re-proposal skipped every forecast on a clock e
+151 2026-11-03T03:33:56Z DIARY reviewer: re-propose PR #198 (ops-stream-31) on a fresh prefix (gpt-5.4-mini, reviewer key)
+150 2026-11-03T03:20:12Z DIARY reviewer: freshness stream 31 — six forecasts for the window two hours ahead (gpt-5.4-mini, reviewer key)
+149 2026-11-03T03:10:11Z DIARY builder: freshness resolve 20261103T0310 — the forecasts now due (gpt-5.4-mini, builder key)
+148 2026-11-03T02:10:10Z DIARY builder: freshness resolve 20261103T0210 — the forecasts now due (gpt-5.4-mini, builder key)
+147 2026-11-03T01:10:12Z DIARY builder: freshness resolve 20261103T0110 — the forecasts now due (gpt-5.4-mini, builder key)
+146 2026-11-03T00:30:20Z DIARY reviewer: re-propose PR #193 (ops-stream-30) on a fresh prefix (gpt-5.4-mini, reviewer key)
+145 2026-11-03T00:20:11Z DIARY reviewer: freshness stream 30 — six forecasts for the window two hours ahead (gpt-5.4-mini, reviewer key)
+144 2026-11-03T00:10:12Z DIARY builder: freshness resolve 20261103T0010 — the forecasts now due (gpt-5.4-mini, builder key)
+
+# Scope audit: the prescribed title filter above is not exhaustive.
+# A paginated query of the same endpoint returned 72 issues created in the day.
+# The following additional issues are freshness resolvers: their actual due lists
+# contain the world.renavon sequences recorded below (not just template examples).
+214 2026-11-03T23:10:12Z DIARY builder: resolve the writs due; freshness seqs 1045,1046,1047,1048,1049,1050
+213 2026-11-03T22:10:13Z DIARY builder: resolve the writs due; freshness seqs 1039,1040,1041,1042,1043,1044
+211 2026-11-03T21:10:14Z DIARY builder: resolve the writs due; freshness seqs 1033,1034,1035,1036,1037,1038
+210 2026-11-03T20:10:11Z DIARY builder: resolve the writs due; freshness seqs 997,998,999,1000,1001,1002
+209 2026-11-03T19:10:13Z DIARY builder: resolve the writs due; freshness seqs 991,992,993,994,995,996
+207 2026-11-03T18:10:14Z DIARY builder: resolve the writs due; freshness seqs 985,986,987,988,989,990
+205 2026-11-03T17:10:13Z DIARY builder: resolve the writs due; freshness seqs 943,944,945,946,947,948
+202 2026-11-03T16:10:14Z DIARY builder: resolve the writs due; freshness seqs 937,938,939,940,941,942
+198 2026-11-03T15:20:44Z COUNSEL builder: resolve the 13:00 window (894–899, due 18:00Z) — #236 is a stale draft; freshness seqs 894,895,896,897,898,899
+196 2026-11-03T15:10:13Z DIARY builder: resolve the writs due; freshness seqs 931,932,933,934,935,936
+193 2026-11-03T14:10:12Z DIARY builder: resolve the writs due; freshness seqs 894,895,896,897,898,899
+192 2026-11-03T14:04:47Z COUNSEL builder: resolve the 11:00 window now (882–887, due 16:00Z) — #191 skipped them; freshness seqs 882,883,884,885,886,887
+189 2026-11-03T13:10:13Z DIARY builder: resolve the writs due; freshness seqs 888,889,890,891,892,893
+186 2026-11-03T12:10:13Z DIARY builder: resolve the writs due; freshness seqs 882,883,884,885,886,887
+183 2026-11-03T11:10:14Z DIARY builder: resolve the writs due; freshness seqs 849,850,851,852,853,854
+# Issues 152, 192 and 198 end with:
+# _Generated by [Claude Code](https://claude.ai/code)_
+# Issue 152 re-files stream 31's forecasts. Issues 192 and 198 explicitly say
+# "filed by counsel" and re-file freshness-window resolutions.
+# Exclude 166 from the title-filter results: review-c2b-am1 is not a freshness session.
+# Exclude 184: its due list is 370,371,652,653, with no world.renavon forecast.
+# Exclude counsel's roadmap resolvers 169,172,173,215 and other non-session issues.
+# Counted issue numbers:
+# 144,145,146,147,148,149,150,151,152,157,158,159,160,161,162,163,165,167,168,170,171,175,176,177,178,179,180,182,183,185,186,187,189,191,192,193,194,195,196,197,198,199,200,201,202,204,205,206,207,208,209,210,211,212,213,214
+# Total: 56 freshness-stream issues; 53 diary, 3 counsel (152,192,198).
