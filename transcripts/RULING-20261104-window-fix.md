@@ -211,3 +211,19 @@ was ruled: at a failed window's boundary, A2.6 governs over BRIEF-C1b, and the f
      - `transcripts/REVIEW-C1b-A5.md` F8 applied that clause to a brief's fourteen-day maximum, and counsel accepted the finding (`transcripts/REPLY-REVIEW-C1b-A5.md`).
    - **Whether the question needs deciding.** Whether A2.4 survives that clause is a question of what the charter allows (A2.10), and counsel holds an interest in the answer. Counsel does not decide it. No act BRIEF-C2a-prime or BRIEF-C2b prescribes needs it decided; if V2's outcome differs on the two exit prefixes, its resolution goes to the sovereign.
    - **What follows.** Correction 2's rule governs C2a, and its last sentence stands. C2a's `fix`, and every opening after it, come after 2026-11-17T12:00:00Z, which is after both instants.
+6. **Order 1's timing, again** (appended 4 November, after the formal read `transcripts/REVIEW-C2a-prime-astra.md`, finding F1, of BRIEF-C2a-prime v6).
+   - **What correction 3 got wrong.** Correction 3 landed the rule's code as a proposal after the opening. Between the `fix` and that merge, writs would be finalised under the code then in force, and the merge would recompute them. That runs against BRIEF-C1b §Liveness: "An item once finalised is never regrouped: no later entry, evidence string or merge changes an earlier item or any bet already placed (A4.3)."
+   - **Where the code lands now.** The code lands with the opening push, which carries it, since `jack push` fast-forwards `main` to its branch.
+   - **When the rule takes effect.** At that push. A writ finalised between the `fix` and the push keeps the taint the code of its time gave it, and the `fix` frees only writs finalised after the push.
+   - **Why the interval remains.** The `fix` must still precede the push (condition 3), and C2a's cap leaves no room for the code before it. So the interval cannot be removed. It can only be made non-retroactive, and normally empty by pasting when no pull request is open (BRIEF-C2a-prime §Order of acts step 2).
+   - **What stands.** Correction 3 stands, but for two clauses:
+     - "as the first proposal after C2a-prime's opening" reads "with the opening push";
+     - "until then no promotion, writ disposition or report relies on its typing of that `fix`" reads "until then no promotion relies on it, and a writ finalised before the push keeps the item that typing gave it".
+
+     The ruling's typing governs every item finalised after the push. Items finalised before it are not reopened (§3; A2.7, "never over earlier entries"; A4.3).
+   - **Reading before coding.** Correction 3's last sentence reads "corrections 2, 3 and 6": the builder codes them only once Guy has read them (A2.10).
+   - **Basis and probability.** Counsel's decision under the direction quoted above. Precedent: BRIEF-C1b §Liveness and A4.3. p(stands) = 0.8.
+7. **Reasoning 6's word** (appended 4 November, after the formal read `transcripts/REVIEW-C2a-prime-astra.md`, finding F2).
+   - **The change.** In Reasoning 6, "Narrowness closes the re-typing route" reads "Narrowness bounds the re-typing route".
+   - **Why.** The four conditions admit one decision per failed window, between its late end and the next push. An ordinary repair can still be entered as that one boundary decision, just as a false `grant` could misdescribe a repair, and a distinct kind (R2) would type the entry, not the work of the hand behind it. The C2a report reads the `fix`'s `subject` against the acts table of its interval.
+   - **Basis and probability.** Counsel's decision under the direction quoted above. p(stands) = 0.85.
