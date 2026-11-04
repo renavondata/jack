@@ -94,10 +94,10 @@ Judgment: `transcripts/RULING-20261104-window-fix.md` (PR #290), with the correc
   Conditions (1), (3) and (4) are not in A2.6's words. Order 2 puts to the reads of BRIEF-C2a-prime (a draft
   on `main` since #292, seq 1265, unread) whether R1 admits a re-typing route of the kind §12 warns against.
 - **Enforced by.** `tools/status.py` `item_process` and pin `window_fix_is_decision` — **not built**. Lands as
-  the window code's proposal after C2a-prime's opening (correction 3's "first proposal" read as the first proposal
-  of code, BRIEF-C2a-prime §The code) if that brief exempts it from its refusals, else the question goes
-  to the sovereign (correction 3). Until it lands `status.py` types every `fix` as a repair, and no promotion,
-  writ disposition or report relies on that typing of the boundary `fix`.
+  part of C2a-prime's opening push, in force from that push and not retroactive (correction 6), if that brief
+  exempts it from its refusals, else the question goes
+  to the sovereign (correction 3). Until it lands `status.py` types every `fix` as a repair, and an item finalised
+  before it lands keeps that typing (correction 6).
 - **Not decided.** A distinct kind for the boundary act; rulings as entries; a judge below the sovereign; the
   court's reach outside `renavondata/jack` (BRIEF-C2c's draft items 13 and 14, on no branch yet).
 
