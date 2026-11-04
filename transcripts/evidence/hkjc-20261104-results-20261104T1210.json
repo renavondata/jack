@@ -1,0 +1,42 @@
+[
+  {
+    "race": 2,
+    "winner": "WINNING DIAMOND",
+    "winner_no": 12,
+    "shortest_final_win_odds": {
+      "runner": "TELECOM POWER",
+      "no": 10,
+      "odds": 4
+    },
+    "favourite_won": false,
+    "dead_heat": false,
+    "void": false,
+    "sources": [
+      {
+        "url": "https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx?RaceDate=2026/11/04&Racecourse=HV&RaceNo=2",
+        "sha256": "9abef7e95c884564b87f752ae2efa5e7c05a152f31206727844a5ec91f583334",
+        "fetched_at": "2026-11-04T12:11:24Z"
+      }
+    ]
+  },
+  {
+    "race": 3,
+    "winner": "BROWNNEEDSFURTHER",
+    "winner_no": 1,
+    "shortest_final_win_odds": {
+      "runner": "TOURBILLON GOLFER",
+      "no": 6,
+      "odds": 4.3
+    },
+    "favourite_won": false,
+    "dead_heat": false,
+    "void": false,
+    "sources": [
+      {
+        "url": "https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx?RaceDate=2026/11/04&Racecourse=HV&RaceNo=3",
+        "sha256": "c440309edb1d18f18cf02c8f16f7d044853defc1fd3caaeca9b484b59556b6d8",
+        "fetched_at": "2026-11-04T12:11:36Z"
+      }
+    ]
+  }
+]

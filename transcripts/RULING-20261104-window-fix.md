@@ -202,3 +202,12 @@ was ruled: at a failed window's boundary, A2.6 governs over BRIEF-C1b, and the f
    Until then this judgment is the record of Guy's answer, and his direction ("so it becomes case law") is that
    it be followed. No text ranks a ruling or says how one is displaced. It decides no question of validity
    (§3), and reaches code only through its orders. p(stands) = 0.8.
+5. **The sources of C2a's earlier reading** (appended 4 November, after cold reads of BRIEF-C2a-prime).
+   - **What correction 2 relied on.** Correction 2 relied on `transcripts/CASES.md`, which traced the fourteen days to BRIEF-C2a Amendment 1 (seq 368) and to the budget (seq 50).
+   - **Where the fourteen days actually are.** They are in BRIEF-C2a v2 itself, before the opening: proposed at seq 355, merged at seq 356, and read by `transcripts/REVIEW-C2a-v2.md` (merged at seq 360).
+   - **The texts that point the other way.**
+     - The same brief says "V0's `resolves_by` is the window's end", and V0's claim says the same (seq 361).
+     - A5.2 ends "a brief states no other date".
+     - `transcripts/REVIEW-C1b-A5.md` F8 applied that clause to a brief's fourteen-day maximum, and counsel accepted the finding (`transcripts/REPLY-REVIEW-C1b-A5.md`).
+   - **Whether the question needs deciding.** Whether A2.4 survives that clause is a question of what the charter allows (A2.10), and counsel holds an interest in the answer. Counsel does not decide it. No act BRIEF-C2a-prime or BRIEF-C2b prescribes needs it decided; if V2's outcome differs on the two exit prefixes, its resolution goes to the sovereign.
+   - **What follows.** Correction 2's rule governs C2a, and its last sentence stands. C2a's `fix`, and every opening after it, come after 2026-11-17T12:00:00Z, which is after both instants.
