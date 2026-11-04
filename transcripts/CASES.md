@@ -33,10 +33,12 @@ Rulings are not entries on the log (BRIEF-C2c's draft item 13, on no branch yet,
   bind (BRIEF-C2b Amendment 1 reads a brief as counsel's draft until the push that opens its window); the charter
   requires a window, α, p₀ and the attack list to be committed before the window opens (§6; A4.2 for p₀), and its
   stated end is the `resolves_by` of the brief's promotion forecast (A5.2), which may not be moved (A5.1) — C2a's
-  is read two ways: 2026-11-15T15:04:14Z by BRIEF-C2a Amendment 1 (seq 368, entered after the opening, unread)
-  and `status.py`, as min(V0's `resolves_by`, opening + 14 d), the fourteen days from the budget (seq 50); and
-  2026-11-17T12:00:00Z by A5.2's letter and V0's own claim (seq 361: "this forecast's resolves_by, which is the
-  window's end"). That question is unruled; counsel takes no act that depends on it before the later instant,
+  is read two ways: 2026-11-15T15:04:14Z by BRIEF-C2a's own pre-opening "fourteen days at most" (proposed at
+  seq 355, merged at seq 356), which BRIEF-C2a Amendment 1 (seq 368) and `status.py` read as min(V0's
+  `resolves_by`, opening + 14 d); and 2026-11-17T12:00:00Z by A5.2's letter ("a brief states no other date",
+  applied to a brief's fourteen-day maximum by `REVIEW-C1b-A5.md` F8, which counsel accepted), by BRIEF-C2a's
+  "V0's `resolves_by` is the window's end", and by V0's own claim (seq 361: "this forecast's resolves_by, which
+  is the window's end"). That question is unruled (correction 5 to the window-fix judgment); counsel takes no act that depends on it before the later instant,
   and recommends no act of another's that depends on it — V0's resolution, the boundary `fix`, the next opening
   push — before that instant; other brief text has been
   amended inside windows (BRIEF-C1b Amendments 1–2; BRIEF-C2a Amendments 1–3).
@@ -92,7 +94,8 @@ Judgment: `transcripts/RULING-20261104-window-fix.md` (PR #290), with the correc
   Conditions (1), (3) and (4) are not in A2.6's words. Order 2 puts to the reads of BRIEF-C2a-prime (a draft
   on `main` since #292, seq 1265, unread) whether R1 admits a re-typing route of the kind §12 warns against.
 - **Enforced by.** `tools/status.py` `item_process` and pin `window_fix_is_decision` — **not built**. Lands as
-  the first proposal after C2a-prime's opening if that brief exempts it from its refusals, else the question goes
+  the window code's proposal after C2a-prime's opening (correction 3's "first proposal" read as the first proposal
+  of code, BRIEF-C2a-prime §The code) if that brief exempts it from its refusals, else the question goes
   to the sovereign (correction 3). Until it lands `status.py` types every `fix` as a repair, and no promotion,
   writ disposition or report relies on that typing of the boundary `fix`.
 - **Not decided.** A distinct kind for the boundary act; rulings as entries; a judge below the sovereign; the
@@ -115,4 +118,5 @@ A4 and A5 are counsel's texts, not rulings (seqs 66–67, 136–137; `transcript
 SPEC §10.7–10 as the judge's grounds, adopted on 16 October 2026 (recorded in A2.3);
 the budget, `decision` seq 50; COUNSEL-OPEN row 33 (no amendment now; C2a fails at its stated end; C2a-prime
 pre-stated; the identity fix first; amendments judged as jack judges everything else) and row 34 (the direction
-of 4 November 2026 quoted under "How a case enters").
+of 4 November 2026 quoted under "How a case enters"); row 35 (the sovereign's reading of corrections 1–4, and his
+direction of the same day on his attention and wall-clock time).
