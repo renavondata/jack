@@ -80,11 +80,11 @@ C2a-prime opens at the first `push` entry whose `ts` is after 2026-11-17T12:00:0
 The window is (opening `ts`, V5's `resolves_by`], where V5 is counsel's forecast with `args.id` `V5` and a `seq` below the opening's. A5.2 names that date, and this brief states no other. V5's `resolves_by` is 2026-11-30T00:00:00Z, so every opening after 2026-11-17T12:00:00Z makes the window shorter than fourteen days.
 
 The push is made by `jack push <branch> --opens C2a-prime --review <file>`. The branch is brought up to `main` after the `grant` and the `fix`, because `tools/jack` refuses a branch that does not contain `origin/main`. The push changes exactly three things:
-- `judge/scope.json`'s `cap`, from 7,800 to **8,000**;
+- `judge/scope.json`'s `cap`, from 7,800 to **8,400**;
 - SPEC §10's block, to match;
-- one clause of SPEC §10's cap history: "8,000 at C2a-prime's opening, for the window code".
+- one clause of SPEC §10's cap history: "8,400 at C2a-prime's opening, for the window code".
 
-8,000 is a resource constant of the 7,800 kind (BRIEF-C2a §The cap). It enters no score, and it is fixed here, not at the push. There is no second push inside the window.
+8,400 is a resource constant of the 7,800 kind (BRIEF-C2a §The cap). It enters no score, and it is fixed here, not at the push. It is measured: the builder's draft of the window code to v4 (opencode-runner #242) stopped at 8,022 counted lines, 126 of code and 112 of tests, before v5's additions and before the reviewer's pins; 8,400 leaves room for those and no more than that. There is no second push inside the window.
 
 ### The subject
 The promotion is `decision promote C2a`, entered by `jack decision` with body `{kind, subject}`. The subject stays `C2a` because BRIEF-C2b keys its opening on "the first `push` entry after `decision promote C2a`", and its read is on the record.
@@ -108,7 +108,7 @@ The code is the builder's: one branch, pre-built before the opening and proposed
 
 **Change 1, the window.** When C2a-prime's opening push is on the prefix and no `promote C2a` has `ts` at or before 2026-11-17T12:00:00Z, the C2a assessment reads C2a-prime's window:
 - the opening and V5 by the rules above;
-- criterion 3 against 8,000, and "unchanged since the opening" against that push;
+- criterion 3 against 8,400, and "unchanged since the opening" against that push;
 - criterion 7's acts interval from the opening;
 - the window line.
 
@@ -142,7 +142,7 @@ The test is computed outside `item_process`, which receives the set of `seq`s th
   - every top-level function of `tools/status.py` that change 2's functions reference by name, transitively;
   - every call of `item_process`, compared by `ast.dump`.
 
-**Tests and size.** The new pins join `VALUE_PINS`, so criterion 1 requires them. There is a test for each change. A further test shows that on the real `log.jsonl`, `item_process` returns the same items with the set change 2 computes as with no set passed. Counted lines after the window code and the reviewer's pins together: at most 8,000.
+**Tests and size.** The new pins join `VALUE_PINS`, so criterion 1 requires them. There is a test for each change. A further test shows that on the real `log.jsonl`, `item_process` returns the same items with the set change 2 computes as with no set passed. Counted lines after the window code and the reviewer's pins together: at most 8,400.
 
 ### Between the `fix` and that merge
 `status.py` as it then stands assesses `promote C2a` against C2a's first window, and no `promote` can pass:
@@ -187,7 +187,7 @@ The off-log acts between C2a's stated end and C2a-prime's opening fall inside no
    jack decision fix "C2a: criterion 7 unmet at the stated end — nine off-log repair rows (acts-20261103T2144); the court's platform acts moved to a GitHub App (opencode-runner #227)"
    ```
 
-   The `fix` is the ruling's Order 3 paste, word for word. Then the push branch is brought up to `main`, and the opening `push` follows (`jack push <branch> --opens C2a-prime --review <file>`, cap 8,000). Counsel writes the exact commands into the opening note before that day.
+   The `fix` is the ruling's Order 3 paste, word for word. Then the push branch is brought up to `main`, and the opening `push` follows (`jack push <branch> --opens C2a-prime --review <file>`, cap 8,400). Counsel writes the exact commands into the opening note before that day.
 3. **The window code.** The builder proposes it (title beginning `C2a-prime window code`), the herald merges it, and the `tests` run on `main` verifies it.
 4. **The promotion.** `status.py` prints the window line, the value line, the liveness line and `promote C2a: lawful | refused: …`. Counsel commits the acts evidence. When the line reads `lawful`, the sovereign enters `decision promote C2a --acts <file>` (A5: at the crossing).
 5. **C2b.** BRIEF-C2b's order of acts then begins at its step 3. Its `decision promote C2a` is the entry of step 4 above and is not entered again.
@@ -196,7 +196,7 @@ The off-log acts between C2a's stated end and C2a-prime's opening fall inside no
 C2a's seven, read on C2a-prime's window:
 1. Every pin of BRIEF-C2a's list and of §Pins below is KILLED, with a passing twin, in the `tests` run on `main` at the exit prefix.
 2. Both checkers agree on the exit prefix and the committed seeds.
-3. Counted lines are within 8,000 and the kernel within 500. `judge/scope.json` and SPEC §10's block are unchanged since C2a-prime's opening push.
+3. Counted lines are within 8,400 and the kernel within 500. `judge/scope.json` and SPEC §10's block are unchanged since C2a-prime's opening push.
 4. The attack tests are green on `main` before the first scored event's cutoff (unchanged: 2026-11-01T15:59:44Z).
 5. **Value**: *E*ᵥ ≥ 20 on the one ledger, by `tools/value.py`, wealth continued.
 6. **Liveness continued**: C1b's process, with the ruling's rule, at or above 20 on the exit prefix, wealth continued.
@@ -265,13 +265,13 @@ C2a's, entire, but for §The exemption, plus:
 - **counsel's platform acts on `renavondata/jack` in the window are `jack` verbs and declared closes of its own stale proposals, nothing else**: no labels, no edits, no closing keywords, no reviews, no re-runs.
 
 ## Stop and report if
-- **The window code and the pins do not fit under 8,000.** Report the shortfall.
+- **The window code and the pins do not fit under 8,400.** Report the shortfall.
 - **The two checkers disagree.**
 - **A `repair` row appears in C2a-prime's acts evidence.** The window has failed. The report names the row and its hand, and the next window is pre-stated by the same procedure.
 - **V5's `resolves_by` passes with a criterion unmet, or with no opening push.** If C2a-prime fails on criteria 1–6 or on A3.4 alone, with no `repair` row and no veto, no `fix` names it until the sovereign has answered whether it failed (correction 2).
 - **A `decision fix` naming C2a meets condition 1 but not the rest.** For example: entered at or before 2026-11-17T12:00:00Z, entered after the opening push, or naming no attributed acts file. It is a repair permanently (condition 4), and a late report that refuses criterion 6 at every later prefix. Stop; the question goes to the sovereign before any other act.
 - **A `push` lands between 2026-11-15T15:04:14Z and 2026-11-17T12:00:00Z.** On the late reading it is a second push inside C2a's window. Stop and report before any other act.
-- **A `push` after 2026-11-17T12:00:00Z precedes V5 or the `decision fix`, or does not set the cap to 8,000.** It opens a window with no end, no recorded fix or no room. Stop; the next window is pre-stated afresh by the same procedure.
+- **A `push` after 2026-11-17T12:00:00Z precedes V5 or the `decision fix`, or does not set the cap to 8,400.** It opens a window with no end, no recorded fix or no room. Stop; the next window is pre-stated afresh by the same procedure.
 - **The reads find §The exemption beyond this brief's power.** The question goes to the sovereign before the opening.
 
 ## Deliverables

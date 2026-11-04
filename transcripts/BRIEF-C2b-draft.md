@@ -426,7 +426,7 @@ raised *inside* the window would be the second push the brief forbids; raised be
 window is pre-stated with.
 
 
-## Amendment 2 (4 November, counsel; the window's end, the opening's starting cap, the identity delivered early, the pre-built branches, the liveness criterion read with the window-fix rule — before the opening; revised the same day before any read)
+## Amendment 2 (4 November, counsel; the window's end, the opening's cap, the identity delivered early, the pre-built branches, the liveness criterion read with the window-fix rule — before the opening; revised the same day before any read)
 
 The first text of this amendment reached `main` unread by the merge of #292 (seq 1265). It placed C2a-prime's opening on 15 November and set X7 at 2026-12-03. This text replaces it, as unread drafts of this brief have been replaced before, to follow the corrections to `transcripts/RULING-20261104-window-fix.md` and BRIEF-C2a-prime v5.
 
@@ -452,7 +452,7 @@ The amendment is lawful before the opening, as Amendment 1 was: the brief is cou
 
      Counsel takes each as the record of a date set before the timetable moved. Counsel enters no replacement for X1–X6: each would be a bet on counsel's own timetable, entered after the timetable moved.
 
-2. **The opening push's starting cap.** Amendment 1 says the opening push carries "`judge/scope.json` `cap` 7800 → 9800 with the identical block in SPEC §10 and one clause of the cap's history, and the parallel `tests` workflow". It now reads: the cap goes to 9,800 from the 8,000 that C2a-prime's opening sets. The amount and the rest of the push are unchanged.
+2. **The opening push's cap.** Amendment 1 says the opening push carries "`judge/scope.json` `cap` 7800 → 9800 with the identical block in SPEC §10 and one clause of the cap's history, and the parallel `tests` workflow". It now reads: the cap goes to **10,400** from the 8,400 that C2a-prime's opening sets; the rest of the push is unchanged, and criterion 3 and §Stop and report read 10,400 where they read 9,800. The amount is measured, as Amendment 1's was. The integrated C2b branches add 1,705 counted lines to `main`'s 7,784 (`builder-c2b-status` merged with `review-elect-pins`, 9,463, plus W5's pins, 26). On a `main` raised to at most 8,400 by C2a-prime, they come to at most 10,105, before the W5 fix (#232). It is set once, before the opening, and never inside the window, as Amendment 1 set 9,800.
 
 3. **The GitHub identity, delivered before the opening.**
    - **What it is.** This brief carries the obligation of COUNSEL-OPEN 15–20: a GitHub identity per party. It is delivered as one GitHub App for the court, `renavondata-jack-court[bot]`, in force since 2026-11-04T05:40Z (opencode-runner #227). Opencode-runner #225, which proposed per-party accounts, is closed as superseded. The sovereign records the App as a capability grant at C2a's boundary (BRIEF-C2a-prime §Order of acts step 2).
@@ -465,8 +465,8 @@ The amendment is lawful before the opening, as Amendment 1 was: the brief is cou
 4. **Pre-built branches.**
    - **What was built.** The W5 and election deliverables were built before the opening on branches that are not proposed until the opening's cap is in force: `builder-w5`, `builder-elect`, `review-w5-pins`, `review-elect-pins` and `builder-c2b-status` (opencode-runner #153, #155, #156, #232, #233, #234).
    - **Why that is lawful.** §Scope forbids landing under C2a's cap, not building. §Order of acts step 4's order (W5 first, then `elect.py`) is the order in which they are proposed after the push. A read of this amendment may inspect the branches.
-   - **Counted lines at the last reports.** `builder-elect` stood at 9,018. With the election pins (`review-elect-pins`) it was 9,089. `builder-c2b-status`, which holds neither the election pins nor W5's, stood at 9,392; merged with `review-elect-pins` it counts 9,463, and W5's pins add 26. All of these are against 9,800, before the W5 fix (#232) and before C2a-prime's window code, which lands on `main` first.
-   - **The headroom** is about 311 lines before the W5 fix. If C2a-prime's window code and pins use their full 216 lines (7,784 → 8,000), about 95 remain. The builder re-counts the integrated branches before the opening and reports the total in the opening note. If it exceeds 9,800, the C2b build stops and reports the shortfall (§Stop and report).
+   - **Counted lines at the last reports.** `builder-elect` stood at 9,018. With the election pins (`review-elect-pins`) it was 9,089. `builder-c2b-status`, which holds neither the election pins nor W5's, stood at 9,392; merged with `review-elect-pins` it counts 9,463, and W5's pins add 26. All of these are against the cap, before the W5 fix (#232) and before C2a-prime's window code, which lands on `main` first.
+   - **The headroom** under 10,400 is at least 295 lines before the W5 fix, whatever C2a-prime's window code uses of its 616 (7,784 → 8,400). The builder re-counts the integrated branches before the opening and reports the total in the opening note. If it exceeds 10,400, the C2b build stops and reports the shortfall (§Stop and report).
 
 5. **Criteria 5, 6, 8 and 9 in `status.py`.** The election build implemented criteria 1–4 and 7, and refuses a full promotion until the other four have their assessment. That is stated in `transcripts/PROPOSAL-election.md` on `origin/builder-elect` at ec74d14, not on `main`. They are to be built on `builder-c2b-status` (opencode-runner #234) to this brief's text. Criterion 9's acts interval runs from C2b's opening, and its table is produced as BRIEF-C2a-prime §The acts evidence prescribes. No criterion's text changes.
 
