@@ -426,64 +426,50 @@ raised *inside* the window would be the second push the brief forbids; raised be
 window is pre-stated with.
 
 
-## Amendment 2 (4 November, counsel; the window's end, the opening's starting cap, the identity delivered early, the pre-built branches — before the opening)
+## Amendment 2 (4 November, counsel; the window's end, the opening's starting cap, the identity delivered early, the pre-built branches, the liveness criterion read with the window-fix rule — before the opening; revised the same day before any read)
 
-Lawful before the opening as Amendment 1 was: the brief is counsel's draft until the push that opens the
-window, and nothing below is a criterion, a statistic or a stream. Its read must satisfy the opening gate as
-Amendment 1's did: a `transcripts/REVIEW-C2b-am2*.md` whose first line is a `VERDICT` of ACCEPT or ACCEPT WITH
-OBLIGATIONS, whose `Reviewed tree:` is a `main` commit at which this text's bytes equal `main`'s, carried to
-`main` by a proposal signed by a non-counsel key.
+The first text of this amendment reached `main` unread by the merge of #292 (seq 1265). It placed C2a-prime's opening on 15 November and set X7 at 2026-12-03. This text replaces it, as unread drafts of this brief have been replaced before, to follow corrections 2–5 to `transcripts/RULING-20261104-window-fix.md` and BRIEF-C2a-prime v4.
 
-1. **The window's end.** §Order of acts step 3 reads the window as (opening `ts`, min(X0's `resolves_by`,
-opening + 14 d)]. X0 (seq 636) was entered on 2 November with `resolves_by` 2026-11-18T00:00:00Z against an
-opening expected on 3 or 4 November. C2a's first window fails at its stated end (2026-11-15T15:04:14Z;
-BRIEF-C2a-prime), so C2b opens on or after 15 November and X0's date would close it inside two days — almost certainly
-short of criterion 7's 24 rounds (57 hours from C2a's stated end, against roughly 28 after `elect.py` is green
-for 24 hourly rounds and their four-hour deadlines, before any merge-path delay). A5.2: a window's stated end is "the `resolves_by` of the promotion
-forecast the window's brief names, entered before the window opens". This amendment names **X7**, entered by
-counsel after this amendment's read and before the opening: "the promotion forecast: every pre-stated
-criterion of BRIEF-C2b holds on the exit prefix by this forecast's `resolves_by`, 2026-12-03T00:00:00Z", at p
-0.55. With C2a-prime promoting on 16 or 17 November, opening + 14 d (30 November or 1 December) is the binding
-end and X7's date governs only if C2b opens after 19 November; if C2a-prime runs late and C2b opens close to
-3 December, the window is short, and this amendment accepts that rather than set a later date now. The window is (opening `ts`, min(X7's `resolves_by`, opening + 14 d)];
-`status.py` reads X7 by `args.id`. X0 is not edited and resolves on its own words at 2026-11-18T00:00:00Z: it
-is 0 unless C2b has promoted by then, and counsel takes the loss as the record of a date set two weeks early.
-The same early dates decide counsel's other C2b forecasts: X4 is already 0 (seq 1108); X5 (seqs 641 and 685,
-by 6 November) and X1 (by 7 November) resolve 0 because C2b has not opened; X6 ("at most 9,000 counted lines at
-the exit prefix", by 18 November) resolves 0 for the same reason. X2 and X3 stand. Counsel enters no
-replacement for them: each would be a bet on counsel's own timetable, entered after the timetable moved.
+The amendment is lawful before the opening, as Amendment 1 was: the brief is counsel's draft until the push that opens the window, and nothing below is a criterion, a statistic or a stream. Its read must satisfy the opening gate as Amendment 1's did. That read is a `transcripts/REVIEW-C2b-am2*.md`:
+- whose first line is a `VERDICT` of ACCEPT or ACCEPT WITH OBLIGATIONS;
+- whose `Reviewed tree:` is a `main` commit at which this text's bytes equal `main`'s;
+- carried to `main` by a proposal signed by a non-counsel key.
 
-2. **The opening push's starting cap.** The push "changes `judge/scope.json`'s `cap`, SPEC §10's block and one clause of its cap history,
-and `.github/workflows/tests.yml`, and nothing else" — the cap **to 9,800** from whatever C2a-prime's opening
-set (8,000 under BRIEF-C2a-prime, 7,800 if that brief is not in force). The amount is unchanged; the starting
-value is a fact of the tree at the push.
+1. **The window's end.**
+   - **The rule as it stands.** §Order of acts step 3 reads the window as (opening `ts`, min(X0's `resolves_by`, opening + 14 d)]. X0 (seq 636) was entered on 2 November with `resolves_by` 2026-11-18T00:00:00Z, against an opening expected on 3 or 4 November.
+   - **Why X0 no longer fits.** C2a's first window ends at 2026-11-15T15:04:14Z without a promotion (correction 5). C2a-prime opens after that, and C2b opens after C2a-prime's promotion. X0's date would close C2b's window within days of its opening, or before it.
+   - **The new forecast, X7.** A5.2: a window's stated end is "the `resolves_by` of the promotion forecast the window's brief names, entered before the window opens". This amendment names **X7**, entered by counsel after this amendment's read and before the opening, at p 0.55: "the promotion forecast: every pre-stated criterion of BRIEF-C2b holds on the exit prefix by this forecast's `resolves_by`, 2026-12-01T12:00:00Z".
+   - **The window.** It is (opening `ts`, min(X7's `resolves_by`, opening + 14 d)].
+     - The brief's fourteen days tighten A5.2's end (A2.4), as correction 5 reads BRIEF-C2a's, so the end is one instant whatever the opening.
+     - For an opening after 2026-11-17T12:00:00Z, the end is X7's `resolves_by`. For an earlier opening, it is opening + 14 d.
+     - If C2a-prime runs late and C2b opens close to 1 December, the window is short. This amendment accepts that rather than set a later date now.
+     - `status.py` reads X7 by `args.id`.
+   - **The earlier forecasts.** X0 is not edited and resolves on its own words. So do counsel's other C2b forecasts. Each was set to a date that assumed an opening in early November:
+     - X1, by 7 November;
+     - X4, by 4 November, already resolved 0 (seq 1108);
+     - X5, both entries (seqs 641 and 685), by 6 November;
+     - X2, X3 and X6 (seqs 638, 639 and 815), which carry X0's `resolves_by` and speak of C2b's exit prefix, which cannot exist by then.
 
-3. **The GitHub identity, delivered before the opening.** The obligation this brief carries from COUNSEL-OPEN
-15–20 (a GitHub identity per party) is delivered as one GitHub App for the court, `renavondata-jack-court[bot]`,
-in force since 2026-11-04T05:40Z (opencode-runner #227; #225, which proposed
-per-party accounts, is closed as superseded before the opening): one App rather than an account per party because
-GitHub's terms allow one free machine account per person, and because what criterion 9's acts table needs is
-only that the sovereign's acts be told from the court's — the parties are distinguished where they always
-were, on the log by signing key. Counsel's own acts stay under the owner's login with their declaration
-(BRIEF-C1b Amendment 2); an App credential in counsel's session would pass a secret through a prompt. The
-C2b report disposes of 15–20 as delivered on this date; §Deliverables' "the GitHub identities" in the C2c
-brief's first section becomes a record of what was done, not an item.
+     Counsel takes each as the record of a date set before the timetable moved. Counsel enters no replacement for X1–X6: each would be a bet on counsel's own timetable, entered after the timetable moved.
 
-4. **Pre-built branches.** The W5 and election deliverables were built before the opening on branches that
-are not proposed until the opening's cap is in force (`builder-w5`, `builder-elect`, `review-w5-pins`,
-`review-elect-pins`, `builder-c2b-status`; opencode-runner #153, #155, #156, #232, #233, #234). §Scope
-forbids landing under C2a's cap, not building; §Order of acts step 4's order (W5 first, then `elect.py`) is
-the order in which they are proposed after the push. A read of this amendment may inspect the branches. Counted lines at the last
-reports: `builder-elect` 9,018, with the election pins (`review-elect-pins`) 9,089, against 9,800 — before the
-W5 fix (#232), the four criteria of item 5 (#234) and C2a-prime's window code, which lands on `main` first. The
-headroom is a few hundred lines; the builder re-counts the integrated branches before the opening and reports
-the total in the opening note, and if it exceeds 9,800 the C2b build stops and reports the shortfall
-(§Stop and report).
+2. **The opening push's starting cap.** Amendment 1 says the opening push carries "`judge/scope.json` `cap` 7800 → 9800 with the identical block in SPEC §10 and one clause of the cap's history, and the parallel `tests` workflow". It now reads: the cap goes to 9,800 from the 8,000 that C2a-prime's opening sets. The amount and the rest of the push are unchanged.
 
-5. **Criteria 5, 6, 8 and 9 in `status.py`.** The election build implemented criteria 1–4 and 7 and refuses
-a full promotion until the other four have their assessment (`transcripts/PROPOSAL-election.md`); they are
-to be built on `builder-c2b-status` (opencode-runner #234) to this brief's text, with criterion 9's acts interval from C2b's opening
-and its table produced as BRIEF-C2a-prime §Scope prescribes. No criterion's text changes.
+3. **The GitHub identity, delivered before the opening.**
+   - **What it is.** This brief carries the obligation of COUNSEL-OPEN 15–20: a GitHub identity per party. It is delivered as one GitHub App for the court, `renavondata-jack-court[bot]`, in force since 2026-11-04T05:40Z (opencode-runner #227). Opencode-runner #225, which proposed per-party accounts, is closed as superseded. The sovereign records the App as a capability grant at C2a's boundary (BRIEF-C2a-prime §Order of acts step 2).
+   - **Why one App and not an account per party.**
+     - GitHub's terms allow one free machine account per person.
+     - Criterion 9's acts table needs only that the sovereign's acts be told from the court's. The parties are distinguished where they always were: on the log, by signing key.
+   - **Counsel's acts.** Counsel's own acts stay under the owner's login, with their declaration (BRIEF-C1b Amendment 2). An App credential in counsel's session would pass a secret through a prompt.
+   - **In the reports.** The C2b report disposes of 15–20 as delivered on this date. In the C2c brief's first section, §Deliverables' "the GitHub identities" becomes a record of what was done, not an item.
 
-Nothing else moves: the statistics, the four instances, the streams, the roster and the pins stand; X1–X6
-stand as entered and resolve on their own words (item 1).
+4. **Pre-built branches.**
+   - **What was built.** The W5 and election deliverables were built before the opening on branches that are not proposed until the opening's cap is in force: `builder-w5`, `builder-elect`, `review-w5-pins`, `review-elect-pins` and `builder-c2b-status` (opencode-runner #153, #155, #156, #232, #233, #234).
+   - **Why that is lawful.** §Scope forbids landing under C2a's cap, not building. §Order of acts step 4's order (W5 first, then `elect.py`) is the order in which they are proposed after the push. A read of this amendment may inspect the branches.
+   - **Counted lines at the last reports.** `builder-elect` 9,018; with the election pins (`review-elect-pins`), 9,089; `builder-c2b-status`, 9,392. All are against 9,800, and all are before the W5 fix (#232) and C2a-prime's window code, which lands on `main` first.
+   - **The headroom** is about four hundred lines. The builder re-counts the integrated branches before the opening and reports the total in the opening note. If it exceeds 9,800, the C2b build stops and reports the shortfall (§Stop and report).
+
+5. **Criteria 5, 6, 8 and 9 in `status.py`.** The election build implemented criteria 1–4 and 7, and refuses a full promotion until the other four have their assessment. That is stated in `transcripts/PROPOSAL-election.md` on `origin/builder-elect` at ec74d14, not on `main`. They are to be built on `builder-c2b-status` (opencode-runner #234) to this brief's text. Criterion 9's acts interval runs from C2b's opening, and its table is produced as BRIEF-C2a-prime §The acts evidence prescribes. No criterion's text changes.
+
+6. **Liveness continued, read with the window-fix rule.** §Statistics' "C1b's process, unchanged" is C1b's process as `status.py` computes it once C2a-prime's window code has merged, with the ruling's rule (BRIEF-C2a-prime §The exemption). "Unchanged" is read from C2b's opening.
+
+Nothing else moves: the statistics, the four instances, the streams, the roster and the pins stand. X0–X6 stand as entered and resolve on their own words (item 1).
