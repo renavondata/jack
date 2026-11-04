@@ -1,0 +1,113 @@
+VERDICT: ACCEPT WITH OBLIGATIONS
+Reviewed tree: f4860fe785c14e8123581140fa54683eb51d83c9
+Reader: reviewer reviewer-2; model openai/gpt-6-astra; 2026-11-04 (UTC)
+
+F1: V7 answers the v6 blocking finding in its specification; the opening code must prove preservation at the actual push boundary — severity: OBLIGATION — witness: transcripts/BRIEF-C2a-prime-draft.md:128–169,246–287; transcripts/RULING-20261104-window-fix.md:214–225; transcripts/BRIEF-C1b-draft.md:91–118; tools/status.py:65–114.
+
+The governing sentence is BRIEF-C1b §Liveness: "An item once finalised is never regrouped: no later entry, evidence string or merge changes an earlier item or any bet already placed (A4.3)." The sentence in v7 is now: "A writ open at the `fix` and finalised before the push is the item the code then in force made of it, tainted by the `fix`, and stays so; its `Y`, its stake and the wealth after it are unchanged by the push." These agree. V6 instead expressly recomputed the intervening items. Correction 6 withdraws that timing rule, and v7 supplies the distinguishing `window_fix_not_retroactive` fixture: one intervening batch remains zero while a later batch is freed. Moving the code to the opening push alone would not have answered the objection; preserving the intervening items does.
+
+The existing code expires writs BEFORE processing each entry, removes a writ from `opened` at resolution, and clears pending resolutions at a sovereign boundary. The implementation and its code read must preserve those rules too. In particular:
+
+- A deadline strictly before the opening push's timestamp expires before that push can remove a qualifying fix. Preserve its repair list as well as its zero outcome and stake. A deadline equal to the timestamp does not expire there.
+- A resolution pending before the sovereign push is not an open writ. Do not resurrect the batch the existing sovereign-boundary rule clears, nor invent a later expiry for it.
+- Removing a qualifying fix must leave every other repair intact. Compare complete earlier `(seq, forecasts, repairs, Y, stake, E)` rows, not terminal wealth alone.
+- The no-open-PR instruction reduces batch finalisations, not clock-driven expiries. `jack push` runs the suite before it signs; the interval can exceed the "minutes" the prose anticipates. Its length must not affect preservation.
+
+These are boundary witnesses for the specified rule, not permission to change it. The current tree has no implementation or killed pin for v7. The real-log equivalence test ending before the first fix cannot substitute for the synthetic intervening-item witness. Until the opening, ordinary late-report output remains what the old code computes; v7 expressly permits only its subsequent non-item reclassification, not a changed historical outcome or bet. I find no remaining conflict with the quoted finalisation rule.
+
+F2: The exemption is within the new brief's power on the corrected, non-retroactive reading; preserve the failed window and distinguish the author's benefit from a rescue of its old forecast — severity: OBLIGATION — witness: CHARTER.md:41–44,102,272–286,295–300,313–317,342–360,376–384; transcripts/BRIEF-C2a-prime-draft.md:15–28,79–114,171–183,345–356; transcripts/COUNSEL-OPEN.md:42; log.jsonl:362,368.
+
+The strongest adverse case is that counsel caused one repair, tried an in-place restart, then proposed a new short window which carries already-earned wealth, drops the nine old rows from criterion 7's interval, and removes the otherwise permanent liveness veto of the required fix. V5 and V7 benefit. Keeping p₀ and the staking formula fixed alone would not answer A4.1: the repair term of Y is part of the statistic.
+
+The applicable clauses are A2.4, "They bind that layer only, and may tighten the charter's bounds, never loosen them"; A3.2, "A window that fails is a precedent, fixed by a lawful change and followed by a new pre-stated window; it is never patched in place (§6)"; and A4.1, "A window that fails and is followed by a new one continues the same wealth process on the same statistic under the same null; *E* is never set back to 1 and no α is split." A2.6 supplies the narrower reason for the classification correction: "Veto, promotion, budget, grant, transmutation and the fix of a failed window are `decision` entries signed by a key declared in genesis (§10.14)."
+
+V7 defeats the in-place-rescue case: it waits past both possible old ends; preserves the nine rows and the old failure; continues the value ledger and C1b liveness history; preserves intervening finalised items; and does not edit V0–V3 or advance their resolutions to save the liveness expiries they risk. V0's actual claim ends "C2a promoted, not failed". A second-window promotion must not resolve that first-window claim 1. A2.6 plus the sovereign's recorded R1 answer supports treating the actual boundary recording as a decision, rather than inventing a different success statistic for ordinary repairs. Correction 4 does not give this ruling amendment-free supremacy: it decides no validity question and is still to be recorded in the charter. The exemption cannot be generalised beyond the stated boundary case.
+
+The 8,400 cap is a resource budget pre-stated for a new window, not an α, p₀, stake or hand-picked minimum observation period. Twenty, 6/11 and the A4 stake rules remain fixed; the deadline is V5's pre-opening `resolves_by`. No minimum duration follows from A5.1. Carrying wealth into a short, genuinely new window is what A4.1 requires, not independent re-testing from E = 1. I find no blocking conflict in that arrangement. The obligation is to keep those distinctions in the implementation and in the resolutions, not to assert that counsel has no interest.
+
+F3: Order 2's re-typing route remains possible, and v7 now states its limitation accurately — severity: OBLIGATION — witness: CHARTER.md:106–111,185–190; transcripts/RULING-20261104-window-fix.md:49–59,157–186,226–229; transcripts/BRIEF-C2a-prime-draft.md:128–151,246–279,290–301.
+
+Construct a genuinely failed window, a genuine attributed repair file committed before the fix, no timely promotion, and the interval after its late end but before the next push. The sovereign performs a NEW runner repair and enters his first `decision fix` with subject `C2a: repaired the runner; acts-20261103T2144`. All four conditions can hold. The entry is exempted after the push even though it describes work of the sovereign's hands, not merely recording the old failure. The veto alternative can establish failure without a file. Thus the rule does not prove the substantive absence of a repair. CHARTER §12's warning is exactly: "Repairs fall only because acts are re-typed as decisions (Goodhart 1975)."
+
+V7 and correction 7 correctly change "closes" to "bounds". They disclose the counterexample rather than claim that the pin defeats it. The bound is substantial: one first fix per genuinely failed window, after the late end, before the next push, without erasing the failure witness. A distinct kind would make typing cleaner but would not establish the truth of the entry's description. The prescribed paste records the failed-window judgement; I have no witness that it itself performs the constructed laundering. This residual semantic route is an obligation to inspect the interval's acts and report the result, not a demonstrated conflict in the prescribed act.
+
+V7 also answers the old filename finding: its delimiter rule and the raw-only twin with a nonempty attributed sibling distinguish `acts-X-raw` from `acts-X`. Keep both that twin and the carrying-commit witness. A matching classifier hash and a raw sibling still do not attest that the classifier generated the table; v7 now acknowledges this. Do not describe `window_fix_is_decision` as proving whose hands did the work or proving the truth of CSV rows.
+
+F4: Criterion 7 is a bounded platform measurement, with no unavoidable normal-operation false-positive found under the stated operating restrictions; freshness and provenance remain obligations at promotion — severity: OBLIGATION — witness: transcripts/BRIEF-C2a-prime-draft.md:68–75,119–123,185–200,239–241,290–299,312; transcripts/evidence/guy_acts3.py:52–70,72–141,143–206; tools/jack:70–95,222–272; tools/status.py:215–221,388–410.
+
+The App login is excluded by the classifier's sovereign-login actor tests. The prescribed `grant`, `fix`, opening `push` and promotion push commits; ordinary first-attempt push workflows are neither dispatches nor re-runs. A correctly declared counsel close is a `party-act`. The ban on counsel's labels, edits, closing keywords, reviews and re-runs removes the known routes by which its normal work created sovereign repair rows. I find no act those exact pastes or compliant normal operations must perform that this classifier must type as a sovereign repair. The App rollout and its continuing custody are assertions in the local record, not facts independently established by reading the classifier.
+
+The broader sentence "the criterion measure[s] what §7 means" must be read with §The acts evidence's express limits. The classifier does not inspect log signatures, does not count ordinary sovereign free-text comments as acts, treats issue creation as a decision/instruction, and cannot see the runner repository. A declaration within two minutes can wrongly absorb a neighbouring sovereign act. Conversely, a missing or late declaration on counsel's close, or a re-run still using the owner's credential, remains a repair row. The hash fixes this instrument; it does not cure its omissions. Report a measured zero, not a proof of zero sovereign repairs everywhere.
+
+The minute-edge correction is appropriate. A repair at 00:00:31Z in a window opened at 00:00:30Z becomes a CSV minute beginning at 00:00:00Z. The old `off_log_repairs` loses it; the new overlap rule and named mutant must count it. Do not reuse correction 2's whole-minute containment test: that is a sufficient witness of failure, whereas criterion 7 must conservatively test zero. Also exercise the closing edge. The collector uses `start <= t < end`, while the window is stated `(opening, end]`; a collection ending exactly at a decision timestamp cannot alone attest events in that last second. The report's recollection should cover that endpoint and identify boundary uncertainty rather than declare completeness from the printed minute.
+
+V7 fixes the former impossible chronology by specifying both collectors, a committed table, a post-merge re-run, and a report to the promotion. The signed decision still stores only `{kind, subject}`; the verb accepts an arbitrary `--acts` path, and neither coverage nor provenance is checked. Before signing, counsel must identify the committed table, raw twin and hash, retain the post-merge check's coverage/result in the opening/exit evidence, and refresh on any newly discovered repair. The interval after that check remains a detection gap, not a mechanically certified clean interval. A later discovered pre-promotion repair is a finding against the evidence used, not permission to say the true count was zero. The absence of an undo verb does not establish that every criterion actually held under A5.1. These are the explicitly unpinned evidentiary obligations, not additional code claimed to exist.
+
+F5: The computational core has decidable predicates and named mutants, but not every binding instruction is pinned or decidable from this tree — severity: OBLIGATION — witness: transcripts/BRIEF-C2a-prime-draft.md:37–49,92–95,116–160,228–301,314–324; tools/status.py:224–251; tools/jack:177–220; judge/scope.json:1–9.
+
+The rule-to-pin map is concrete:
+
+| Rule | Named killing witness |
+|---|---|
+| First push after the late end, not after the early end or C1b promotion | `second_window_from_the_end` |
+| V5 before opening; end from V5 | `second_window_end_is_v5` |
+| New cap and no later scope change | `second_window_cap` |
+| New acts interval, including a minute straddling its opening | `offlog_from_second_opening` |
+| Old assessment before opening; new-window veto attribution | `promote_refused_before_end` |
+| Four-condition fix, sufficient failure evidence, carrying commit, filename and attribution checks | `window_fix_is_decision` |
+| Earlier finalised items and bets preserved | `window_fix_not_retroactive` |
+| Protected process, local dependencies, callers, assignments and opening-tree tuple | `process_unchanged_from_opening` |
+| Continuing wealth | inherited `wealth_continues` |
+
+These predicates are computable from the log and the necessary git trees. The fixture and mutant lists are specifications for the next code read; `VALUE_PINS` in this reviewed tree still has only the eighteen original names. V7 improves the guard by including global assignments and fixing its name tuple at the opening tree. Check that the implementation follows the specified dependency closure and cannot remove a protected name by editing today's tuple. That closure is not a proof against every possible Python indirection or imported helper; the narrower no-other-code rule and code review still matter.
+
+Prose-only or manually evidenced rules remain: two different-family reads (the gate accepts one); the sovereign's reading before coding; external App custody and the hand behind an act; counsel's operating restrictions; no row re-attribution; actual classifier execution, table completeness and freshness; the pre-push line-count/scope/code-read checks; and the stop-and-report instructions. A file recording a reading is decidable evidence that someone recorded it, not proof that the sovereign read or that models were independent. The brief itself now lists most of these at lines 290–299. Its cap/party checks at lines 92–95 must also be treated as obligations, not as checks `jack push` enforces. No claim that *every* rule already has an enforcing mutant is warranted.
+
+F6: The prescribed boundary sequence is mechanically possible; the opening note and code read must respect the verbs' actual preconditions and the unchanged value/clerk anchors — severity: OBLIGATION — witness: tools/jack:31–49,97–105,177–272; tools/status.py:132–169,229–273,276–327,416–443; tools/value.py:40–41,74–80; tools/clerk.py:53–56,65–82; transcripts/BRIEF-C2a-prime-draft.md:79–106,202–224; transcripts/BRIEF-C2b-draft.md:278–292.
+
+The order, walked against the code:
+
+1. Merge the exact v7 brief and two accepting reads under non-counsel signed proposals, then enter V5–V7. This filename and header can satisfy `push_read_gate`; it checks brief bytes at the reviewed commit and proposal provenance, not model-family independence. Recheck bytes at opening, not merely today's verdict. Record the sovereign's required reading before the builder codes the timing change.
+2. Wait STRICTLY past 2026-11-17T12:00:00Z and check the old promotion/push preconditions. `decision grant` and `decision fix` run on clean, current `main` with the sovereign key. They do not evaluate the four-condition exemption; the exact subject and evidence contract matter. Each command appends and pushes, so a moving `main` can refuse either command. Do not enter a second fix to repair a refused later step: condition 4 makes repetition consequential.
+3. Bring the prebuilt branch up to `main` after both decisions, preserving their log entries. Every new commit needs a filled `Proposer:` trailer, including the merge commit. Use the local ASCII `C2a-prime` name and the existing code-review path. The cap/SPEC edits change the trusted digest, so the verb does not refuse "nothing to push". Builder code and reviewer pins can ride this sovereign push: the verb fast-forwards the entire branch and runs its tests before the effect. It does not apply proposal party scopes, count the whole budget, or interpret the code-review verdict; perform and record the promised checks at the exact branch head. A failure after the fix does not undo that earlier signed fix.
+4. Only the opening push activates the new window and frees qualifying fixes from still-open writs. `status.py` must route both live and historical `C2a` assessments, prefix clipping, vetoes and the promotion line consistently. Merely changing `c2a_window` while leaving an old closing-entry search would not implement §The subject. Preserve `value.opening_push` at seq 367, its roster and resolved-prefix weights; use a new opening only for window diagnostics. Preserve the liveness start at C1b, its attack gate and all prior wealth. The current value API already separates `window_opening` from its ledger opening.
+5. Wait for the exact push/evidence-head `tests` run on `main`, not a branch run. Commit the acts evidence and perform the freshness check. `decision promote C2a --acts <file>` fetches current/history runs, chooses one assessment timestamp, and signs only the exact `promote C2a: lawful` line. It does not admit `promote C2a-prime`. Current code cannot promote the second window; the specified dispatch changes are necessary. The unchanged clerk's `window_writs` uses the supplied assessment's `end`; its default caller currently selects C1b through `status.inputs`, so the operational command must explicitly use `--subject C2a` to obtain C2a-prime's W4 deadline without a clerk edit.
+6. C2b uses that SAME promotion, not another. Its steps 1–2 (its own build/read/forecast prerequisites) must already be satisfied before proceeding at step 3 to the herald key and its opening push. This read does not approve C2b's amendments or certify that C2b's promotion support is built.
+
+Neither this sequence nor the failure witness chooses C2a's disputed end: promotion absence is tested late, repair containment early, and the fix/opening occur after both. V7 also corrects the old unconditional no-window-gap claim by reporting the interval under both readings. Historical `status.py` still reads the early end; that does not settle the law. If V2 differs between exit prefixes, correction 5's referral remains necessary. Waiting late avoids a premature act, not the difference between those outcomes.
+
+F7: The local factual grounds support this prospective acceptance; external and future grounds must be checked again before opening, and the inherited stream/report commitments remain visible — severity: OBLIGATION — witness: log.jsonl:4,29–30,51,67,137,189,338,362,368,1077; transcripts/evidence/acts-20261103T2144.csv:79,137–155; transcripts/evidence/acts-20261103T2144-classifier.sha256:1; transcripts/COUNSEL-OPEN.md:39,44; transcripts/BRIEF-C2a-draft.md:53–61; commands below.
+
+I ran the requested command unchanged:
+
+```
+python3 tools/status.py 2>&1 | grep -E '^promote|^value|^liveness continued|criterion' | cut -c1-200
+```
+
+It reports `counted 7784/7800; kernel 450/500; scope equals SPEC and unchanged: True`, value `1.000000` over zero events, continued liveness 1 over zero counted items, off-log repairs `unknown (no acts file)`, and promotion refused. The ones and zeros are missing-run-input results, not measured collapse of the live processes.
+
+With the committed evidence:
+
+```
+PYTHONDONTWRITEBYTECODE=1 python3 tools/status.py --subject C2a --as-of 2026-11-03T21:26:25Z --acts transcripts/evidence/acts-20261103T2144.csv --runs transcripts/evidence/runs-tests-20261103T2144.json 2>&1 | grep -E '^promote|^value|^liveness continued|criterion' | cut -c1-200
+```
+
+The output includes:
+
+```
+criterion 3: counted 7784/7800; kernel 450/500; scope equals SPEC and unchanged: True met
+criterion 4: attack green on main before first scored cutoff: 2026-11-01T15:59:44Z met
+criterion 5: value E 386.009170 >= 20 met
+criterion 7: off-log repairs: 9 SHORT
+value: E 386.009170 over 210 events; window events 210
+```
+
+Continued liveness is `3349298034955599095318942248963066521029422565733678974841423611/136566436648336993276433405036982023734532505600000000000000000` over 62 items, approximately 24.53. Criteria 1–2 lack a verified run on this assessed current tree at that historical instant; they are not a second measured historical failure. The nine repair rows, earliest 2026-11-02 22:11 HKT, are present independently. `sha256sum transcripts/evidence/guy_acts3.py` returns the stated `ed0d37ba919412c32ab774ae5217a56e8cbf3c9c5ebe3632c687b18c96a1725b`; the raw twin and hash file exist. Targeted searches of decision entries in the reviewed log and `git show 41f0d6c:log.jsonl` confirm four transmutes, one budget, two promotions and no fix. Thus the exemption is inert on those actual earlier items. It does not follow that the opening-day log will still have no disqualifying entry.
+
+The local record supports that corrections 1–4 were read (COUNSEL-OPEN row 35 quotes "Read and approved"); reading correction 6 and the new timing sections remains a future precondition. I have not independently verified the external 8,022-line draft or the App deployment. The current arithmetic leaves 616 counted lines at 8,400 for the new implementation, tests and pins; actual fit and a passing code read are required, not promised by that allowance.
+
+One qualification to "no stream changes": v7 line 114 acknowledges the HKJC stream's cessation, and COUNSEL-OPEN row 30 expressly says the 8 November meeting will not be forecast. BRIEF-C2a's original commitment says, "Two proposers (reviewer and counsel) forecast every race of every meeting in the window before its first race"; its meeting rule is every meeting on the saved fixture list. Row 30 itself discloses the adverse reading that this is a commitment requiring an amendment. This is an existing first-window departure, not a new order by v7 to select already-known outcomes, and the new brief openly pre-states the cessation for its future window. I do not convert that report issue into a fresh blocking clause against v7, but acceptance here does not ratify counsel's claim that having no criterion for continuation discharged the old scope promise. The C2a report must identify missed contracted meetings and the decision's basis, rather than describe the first window as having run its original stream programme unchanged.
+
+No additional blocking conflict is established by this read. Acceptance is of this pre-stated v7 text, with the implementation, evidence and opening obligations above; it is not a certificate that the future opening or promotion already satisfies them.
+
+forecast: p = 0.60 that C2a-prime promotes before its stated end, 2026-11-30T00:00:00Z. Outcome 1 requires a sovereign `decision promote C2a` naming the second window under its pre-stated mapping, with ts strictly before that end; otherwise, including no opening, outcome 0. Resolves by 2026-12-15T00:00:00Z.
