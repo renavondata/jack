@@ -57,15 +57,15 @@ important limitation of that kill, and the separate SURVIVED coverage probe.
 `git diff --check` passed. Registry checks confirmed exact equality between the
 19 names in `tools.elect.PINS` and `C2B_ELECTION_PINS`, and 110 total registrations.
 
-Counted total for the final Python tree: **9,085**. The report adds no counted
+Counted total for the final Python tree: **9,089**. The report adds no counted
 lines. The required post-commit command is:
 
 ```sh
 python3 -c 'from judge.judge import counted_lines; print(counted_lines(".", "HEAD", ["sim/", "harness/", "tests/", "pins/", "tools/"]))'
 ```
 
-This pre-build is 1,285 above the still-live 7,800 cap, 85 above the branch-local
-v6 brief's 9,000, and 715 below the handoff's anticipated 9,800. It cannot be
+This pre-build is 1,289 above the still-live 7,800 cap, 89 above the branch-local
+v6 brief's 9,000, and 711 below the handoff's anticipated 9,800. It cannot be
 proposed under C2a's cap.
 
 ## Election pins table
