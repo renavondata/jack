@@ -1,0 +1,12 @@
+repo,time_hkt,class,kind,ref,note
+renavondata/assize,2026-10-28 16:27,comment,free-text comment,365,Superseded by the PR on license-mit-2 (P0m: unsigned `Proposer: guy`).
+renavondata/assize,2026-10-28 16:27,repair,PR closed unmerged,#365,
+renavondata/assize,2026-10-28 18:04,decision,instruction filed,#367,Add an MIT LICENSE before the repository is archived again
+renavondata/assize,2026-10-28 18:04,repair,issue event (assigned),#367,
+renavondata/assize,2026-10-28 18:05,comment,free-text comment,366,Superseded by the PR for instruction #367 (P0bj: builder party not aut
+renavondata/assize,2026-10-28 18:05,repair,PR closed unmerged,#366,
+renavondata/assize,2026-10-28 18:17,comment,free-text comment,368,Reopened by assize-builder: a gfrmin-authored PR's synthetic merge is 
+renavondata/assize,2026-10-28 18:17,repair,PR closed unmerged,#368,
+renavondata/assize,2026-10-28 20:57,decision,Accept,PR #369,
+renavondata/assize,2026-10-28 20:58,comment,free-text comment,367,Merged in #369.
+renavondata/assize,2026-10-28 20:58,repair,own issue closed,#367,
