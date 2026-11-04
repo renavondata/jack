@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 93
+EXPECTED = 110
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1060,9 +1060,68 @@ for pin in C2B_GATE_PINS:
         f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
 PINS += C2B_GATE_PINS
 
-# Simulator attack registration; the election's remaining pins belong to its read.
+# Election pins owned by the reviewer (BRIEF-C2b §Pins).
 elect_attacks = functools.partial(fixture_tests, "test_elect.Election")
-PINS += [
+
+
+def t_election_continued(root):
+    # Restore the immutable data omitted by run.py, and check the worked table too.
+    t_value_worked(root)
+    elect_attacks("mixture_untouched_and_continued")(root)
+
+
+ELECTION_COMPARE = '    for field in sorted(set(a) | set(expected["args"])):'
+ELECTION_SIGMA = 'if not verifies(declaration["pubkey"], round_string(a["stream"], a["window_utc"][0]), a["sigma"]):'
+# Today's distribution includes all settled feedback, unlike the saved draw mass.
+TODAYS_IMPORTANCE = '''            today = [sum((round_result(es, past, as_of)["gain"] / Fraction(past["body"]["args"]["propensity"])
+                          for past in rounds if past["body"]["args"]["instance"] == instance and
+                          (past["body"]["args"]["principal"], past["body"]["args"]["model"]) == pair and
+                          round_result(es, past, as_of)["settled"]), Fraction(0)) for pair in ROSTER]
+            G[k] += r["gain"] / propensity(k, cuts(today))'''
+C2B_ELECTION_PINS = [
+    Pin("gain_in_unit_interval", elect_attacks("gain_in_unit_interval"), [
+        Mutant("divide_by_ln1000", "tools/elect.py", '/ 6 / math.log(999)', '/ 6 / math.log(1000)')]),
+    Pin("round_loss_is_mean", elect_attacks("round_loss_is_mean"), [
+        Mutant("six_losses_summed", "tools/elect.py", '/ 6 / math.log(999)', '/ math.log(999)')]),
+    # Missing builder witness: Election.test_missing_evidence_page_imputed (review F3).
+    Pin("bad_round_kept", elect_attacks("bad_round_kept"), [
+        Mutant("incomplete_round_dropped", "tools/elect.py", 'if a["instance"] == instance and r["settled"]:',
+               'if a["instance"] == instance and r["settled"] and r["complete"]:'),
+        Mutant("missing_event_out_of_mean", "tools/elect.py", 'gain=gain(ns), success=success',
+               'gain=Fraction(math.fsum(math.log(n) for n in ns) / (len(bases) or 6) / math.log(999)), success=success')]),
+    Pin("exp3_importance", elect_attacks("exp3_importance"), [
+        Mutant("todays_propensity", "tools/elect.py", '            G[k] += r["gain"] / Fraction(a["propensity"])', TODAYS_IMPORTANCE)]),
+    Pin("exp3_constants", elect_attacks("exp3_constants"), [
+        Mutant("gamma_point_one", "tools/elect.py", 'GAMMA = min(1, math.sqrt(K * math.log(K) / ((math.e - 1) * GJ)))', 'GAMMA = 0.1')]),
+    Pin("instance_feedback_complete", elect_attacks("instance_feedback_complete"), [
+        Mutant("draw_on_stale_feedback", "tools/elect.py", 'if any(not round_result(es, f, as_of)["settled"] for f in previous):', 'if False:')]),
+    # Missing builder witness: Election.test_draw_replays_coherent_forgery (review F7).
+    Pin("draw_replays_from_prefix", elect_attacks("draw_replays_from_prefix"), [
+        Mutant("from_args_gains", "tools/elect.py",
+               '    expected = invite_body(es, rounds, a["stream"], a["window_utc"][0], f["ts"], a["sigma"])',
+               '    from types import FunctionType\n'
+               '    draw = FunctionType(invite_body.__code__, dict(globals(), state=lambda *_: list(map(Fraction, a["gains"]))))\n'
+               '    expected = draw(es, rounds, a["stream"], a["window_utc"][0], f["ts"], a["sigma"])')]),
+    Pin("sigma_verifies", elect_attacks("sigma_verifies"), [
+        Mutant("sigma_unchecked", "tools/elect.py", ELECTION_SIGMA, 'if False:')]),
+    Pin("draw_on_the_grid", elect_attacks("draw_on_the_grid"), [
+        Mutant("float_u_unassigned", "tools/elect.py", 'if cs[k] <= U < cs[k + 1]', 'if cs[k] / GRID <= U / GRID < cs[k + 1] / GRID')]),
+    Pin("roster_fixed", elect_attacks("roster_fixed"), [
+        Mutant("outside_roster_admitted", "tools/elect.py", ELECTION_COMPARE,
+               '    for field in sorted((set(a) | set(expected["args"])) - {"principal", "model", "roster"}):')]),
+    # Missing builder witness: Election.test_criterion7_session_start_order (review F1).
+    Pin("invite_before_session", elect_attacks("invite_before_session"), [
+        Mutant("later_invite_accepted", "tools/elect.py", 'invite["ts"] < f["ts"] < a["window_utc"][0]', 'f["ts"] < a["window_utc"][0]')]),
+    Pin("invite_cutoff_W0", elect_attacks("invite_cutoff_W0"), [
+        Mutant("late_invite_scored", "tools/elect.py", 'return "rigged_election: rigged: ts >= W0"', 'return None')]),
+    Pin("invite_p_is_success_rate", elect_attacks("invite_p_is_success_rate"), [
+        Mutant("p_is_propensity", "tools/elect.py", 'p=success_rate(es, rounds, k, as_of)',
+               'p=min(999, max(1, math.floor(1000 * propensity(k, cs) + Fraction(1, 2))))')]),
+    Pin("invite_resolution_strict", elect_attacks("invite_resolution_strict"), [
+        Mutant("tie_is_success", "tools/elect.py", 'for n in ns) > math.prod(bases)', 'for n in ns) >= math.prod(bases)')]),
+    # Missing builder witness: Election.test_criterion7_invite_resolver_routed (review F2).
+    Pin("resolver_not_forecaster", elect_attacks("resolver_not_forecaster"), [
+        Mutant("same_principal_resolves", "tools/elect.py", 'return "builder" if who == "reviewer" else "reviewer"', 'return who')]),
     Pin("self_invite", elect_attacks("self_invite"), [
         Mutant("non_clerk_invite_admitted", "tools/elect.py",
                'if not declaration or public != base64.b64decode(declaration["pubkey"].split()[1]):', 'if False:')]),
@@ -1072,4 +1131,16 @@ PINS += [
                '    expected["args"]["gains"] = a["gains"]\n    for field in sorted(set(a) | set(expected["args"])):'),
         Mutant("sigma_unchecked", "tools/elect.py",
                'if not verifies(declaration["pubkey"], round_string(a["stream"], a["window_utc"][0]), a["sigma"]):', 'if False:')]),
+    Pin("mixture_untouched_and_continued", t_election_continued, [
+        Mutant("uniform_restart", "tools/value.py", '        q = sum((weights[k] * ps[k] for k in roster), Fraction(0))',
+               '        if cutoff > window_opening and not any(row["cutoff"] > window_opening for row in rows):\n'
+               '            weights = {k: Fraction(1, len(roster)) for k in roster}\n'
+               '            prior, wealth, mixture_lr = [], 1.0, Fraction(1)\n'
+               '            own = dict.fromkeys(roster, Fraction(1))\n'
+               '        q = sum((weights[k] * ps[k] for k in roster), Fraction(0))')]),
+    Pin("procedure_types_out", elect_attacks("procedure_types_out"), [
+        Mutant("counsel_programme_scored", "tools/value.py",
+               '        return None  # procedure_types_out: jack score only; no pre-outcome value contract',
+               '        return ((typ, body["claim"]), f["ts"]) if typ == "counsel.programme" else None')]),
 ]
+PINS += C2B_ELECTION_PINS
