@@ -323,3 +323,57 @@ it for future writs changes what the liveness process will count as timely from 
 decision a brief may take before the writs exist (C1b's own rule), and cannot touch a writ already issued.
 The change is taken at value *E* = 0.95 over 48 events and liveness *E* = 0.27, for the reason the record
 above states, so that a reader can weigh it.
+
+
+## Amendment 4 (4 November, counsel; criterion 7 failed at the crossing — the repair count restarts after the defects are closed)
+
+What the record shows. At seq 1076 (`merge`, 2026-11-03T21:26:25Z) value *E* was 386.0 over 210 events and
+continued liveness *E* 24.5 over 62 items, both at least 20 for the first time. `status.py` with the acts
+evidence of 21:44Z (PR #260, branch `counsel-c2a-exit-2`, `acts-20261103T2144.csv`) read `promote C2a:
+refused` on criterion 7 — `off-log repairs: 9` — beside criteria 1 and 2, which wanted only a `tests` run on
+`main`'s head. The nine rows, all under the sovereign's login inside the window:
+
+| HKT | kind | ref | whose hand |
+|---|---|---|---|
+| 2 Nov 22:11 | re-run judge | run 41452947275 | the herald's re-run loop, which runs under the owner's login (§Defects, 1) |
+| 3 Nov 22:31 | convert_to_draft | #236 | **the sovereign's**, at counsel's request (a hold on `main` before an HKJC deadline) |
+| 3 Nov 23:21 | PR closed unmerged | #236 | not established |
+| 4 Nov 00:09 | label `documentation` ×3 | #243–#245 | added in the second each issue was created; part of filing them |
+| 4 Nov 01:24 | issue closed ×3 | #243–#245 | GitHub, on the herald's merge of PR #249, whose body said "Closes #243, closes #244, closes #245" |
+
+No row is re-attributed here: BRIEF-C1b Amendment 2's rule (attribution by a declaration within two
+minutes) is the only rule, it was stated before the window, and these rows carry no declaration. The second
+row alone fails criterion 7, and it is a defect in counsel's procedure, not in the loop: counsel asked the
+sovereign for an act the charter (§7) types as a repair. Each of the nine is recorded as a precedent case in
+the C2a report. The first count stands as read; nothing below changes it.
+
+**Defects, closed before the count restarts.**
+1. The herald's two `gh run rerun` loops (`herald.yml` in `renavondata/opencode-runner`) are deleted. They act
+   on `renavondata/jack` under the owner's login and no declaration can attach to a run. A proposal with a red
+   first attempt then waits for `main` to move, goes stale, and is re-proposed mechanically (a fresh run),
+   which is what the re-run was for.
+2. Counsel writes no closing keyword ("Closes #n") in any pull request on `renavondata/jack`, and every act
+   counsel takes there under the owner's login carries its declaration within two minutes (C1b Amendment 2).
+3. Counsel asks the sovereign for no act on `renavondata/jack`'s GitHub but the signed verbs; a hold on
+   `main` is never asked for again. Issues filed in this repository are filed without labels.
+
+**The rule.** Criterion 7's count of off-log repairs restarts at the `ts` of counsel's forecast **V4**
+(below), and the acts evidence it reads is the attributed table produced by the committed classifier with
+that `ts` as its start:
+`python3 transcripts/evidence/guy_acts3.py renavondata/jack . <V4 ts> <now> transcripts/evidence/acts-c2a-r-<now>.csv`
+(the classifier committed by PR #232, SHA-256 `ed0d37ba919412c32ab774ae5217a56e8cbf3c9c5ebe3632c687b18c96a1725b`).
+Anyone can re-run it and get the same rows. `promote C2a` is lawful only at a prefix whose `ts` is **at least 55 hours after V4's**
+— no shorter than the 54 h 22 min from the opening push (seq 367) to the crossing (seq 1076), so the restarted
+criterion is never weaker than the first one was at the moment it failed — and only with zero repair rows in
+that table. Counsel enters V4 within one hour of the later of (a) the merge of this amendment's read with no
+BLOCK and (b) the merge of defect 1, so its instant is fixed by those two events and not chosen.
+
+**What carries, and what does not move.** Value *E* and continued liveness *E* carry as they stand
+(`wealth_continues`; A4.1; §Liveness continued). Criteria 1–6, the veto clause and A3.4 are unchanged and
+are read on the exit prefix as before; the window still ends at 2026-11-15T15:04:14Z (Amendment 1), so a
+lawful promotion needs V4 before 2026-11-13T08:04:14Z. No code changes: `status.py` counts the rows of the
+acts file it is given, and the file begins at V4. V0 is not edited and resolves on its own words.
+
+| id | claim | p |
+|---|---|---|
+| V4 | `status.py` reads `promote C2a: lawful` at some prefix at least 55 hours after this forecast's `ts` and before 2026-11-15T15:04:14Z, with the acts evidence this amendment prescribes | 0.6 |
