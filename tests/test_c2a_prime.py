@@ -1,4 +1,4 @@
-"""BRIEF-C2a-prime v6: boundary witnesses, disposable history, and inert-prefix oracle."""
+"""BRIEF-C2a-prime v7: boundary witnesses, disposable history, and inert-prefix oracle."""
 import hashlib
 import json
 from unittest.mock import patch
@@ -26,7 +26,7 @@ def log(es):
     return "\n".join(map(json.dumps, es)) + "\n"
 
 
-@pytest.mark.parametrize("case", ["decision", "stem", "free", "unnamed", "later-file", "raw-only", "outside", "partial-minute",
+@pytest.mark.parametrize("case", ["decision", "stem", "free", "unnamed", "later-file", "raw-only", "raw-both", "outside", "partial-minute",
                                   "promoted", "early", "after-push", "second-fix", "history", "veto", "replacement", "bad-header", "bad-hash",
                                   "late-promote", "late-veto", "between", "veto-history", "wrong-classifier", "missing-raw", "missing-classifier"])
 def test_window_fix_is_decision(case, capsys):
@@ -46,7 +46,7 @@ def test_window_fix_is_decision(case, capsys):
         files.update({"transcripts/evidence/other.py": "classifier", "transcripts/evidence/guy_acts3.py": "different"})
     if case in ("missing-raw", "missing-classifier"):
         del files[PATH + "-raw.csv" if case == "missing-raw" else "transcripts/evidence/guy_acts3.py"]
-    if case == "raw-only":
+    if case in ("raw-only", "raw-both"):
         fix["body"]["subject"] = "C2a: acts-raw.csv"
         files.update({PATH + "-raw-raw.csv": HEADER + ROW, PATH + "-raw-classifier.sha256": files[PATH + "-classifier.sha256"]})
     with tree(dict({} if case in ("later-file", "veto") else files, **{"log.jsonl": log(before)})) as (root, _):
@@ -66,6 +66,47 @@ def test_window_fix_is_decision(case, capsys):
         if case in ("history", "veto-history", "missing-raw", "missing-classifier"):
             assert f"window fix {fix['seq']}: unverified —" in capsys.readouterr().err
         assert st.carrying_commit(root, head, fix) == carrier
+
+
+def test_window_fix_not_retroactive():
+    es = base() + [e(368, "forecast", ts=END, resolves_by=V5)]
+    es.insert(8, e(361, "resolution", ts=OPEN, forecast=360))  # V0 leaves the open set before the boundary.
+    files = {"log.jsonl": log(es), PATH + ".csv": HEADER + ROW, PATH + "-raw.csv": HEADER + ROW,
+             PATH + "-classifier.sha256": hashlib.sha256(b"classifier").hexdigest(), "transcripts/evidence/guy_acts3.py": "classifier"}
+    with tree(files) as (root, _), patch.object(st, "signer_blob", side_effect=lambda e: e["proposer"]):
+        es.append(e(369, "decision", "guy", FIX, kind="fix", subject="C2a: acts"))
+        commit(root, {"log.jsonl": log(es)})
+        es += [e(370, "resolution", ts=FIX, forecast=6), e(371, "merge", ts=FIX), e(372, "push", "guy", PUSH),
+               e(373, "resolution", ts=AFTER, forecast=368), e(374, "merge", ts=AFTER)]
+        head = commit(root, {"log.jsonl": log(es)})
+        for stop in range(12, len(es) + 1):
+            prefix = es[:stop]
+            fixes = st.window_fix_seqs(prefix, root, head)
+            assert fixes == {369}
+            result = st.item_process(prefix, 2, window_fixes=fixes)
+            old = st.item_process(prefix, 2)
+            assert result["items"][:2] == old["items"][:2]  # Y, repairs, stake and wealth before push
+            assert result["late_reports"] == [] and old["late_reports"] == [369]
+        assert [i["Y"] for i in result["items"]] == [1, 0, 1]
+        assert [i["repairs"] for i in result["items"]] == [(), (369,), ()]
+        assert old["items"][-1]["repairs"] == (369,) and old["items"][-1]["Y"] == 0
+        assert [i["stake"] for i in result["items"]] == [0, st.Fraction(22, 45), 0]
+        assert result["E"] == st.Fraction(11, 15)
+
+
+@pytest.mark.parametrize("subject, expected", [("(acts-20261103)", True), ("acts-20261103.csv", True),
+    ("acts-20261103-raw", False), ("acts-20261103-raw.csv", False), ("acts-20261103T2144.csv", False),
+    ("xacts-20261103", False), ("1acts-20261103", False), ("_acts-20261103", False), ("-acts-20261103", False),
+    ("acts-20261103_x", False), ("éacts-20261103", False), ("acts-20261103é", False)])
+def test_file_name_boundaries(subject, expected):
+    stem = PATH + "-20261103"
+    with tree({stem + ".csv": HEADER + ROW, stem + "-raw.csv": HEADER + ROW,
+               stem + "-classifier.sha256": hashlib.sha256(b"classifier").hexdigest(), "transcripts/evidence/guy_acts3.py": "classifier"}) as (root, head):
+        if expected:
+            assert st.attributed_failure(root, head, subject, OPEN, END)
+        else:
+            with pytest.raises(ValueError, match="named attributed acts file missing"):
+                st.attributed_failure(root, head, subject, OPEN, END)
 
 
 def test_second_window():
@@ -134,45 +175,39 @@ def test_assessment_cap_and_first_window_refusal():
             second = st.status(es, "A3", 14, PUSH, subject="C2a")
             checks = st.assess_value(second, dict(counted=count, kernel=500, scope=True), True, st.ROOT, None, [], acts)
             assert checks[2][0] == permitted and checks[-1][0]
-        with patch.object(st, "c2a_tree_evidence", return_value=(True, None, True)):
-            checks = st.assess_value(second, dict(counted=st.C2A_PRIME_CAP, kernel=500, scope=True), True, st.ROOT, None, [], acts)
-            assert not checks[5][0] and "unchanged: pending the window code's merge" in checks[5][1]
+        es[-1]["ts"] = "2026-11-18T00:00:30Z"
+        second = st.status(es, "A3", 14, "2026-11-18T00:05:00Z", subject="C2a")
+        boundary = [dict(repo="renavondata/jack", **{"class": "repair", "time_hkt": "2026-11-18 08:00"})]
+        checks = st.assess_value(second, dict(counted=st.C2A_PRIME_CAP, kernel=500, scope=True), True, st.ROOT, None, [], boundary)
+        assert not checks[-1][0] and checks[-1][1] == "criterion 7: off-log repairs: 1"
+        assert st.off_log_repairs(boundary, second["start"], second["as_of"]) == 0  # first-window rule unchanged
+        assert st.off_log_repairs(boundary, second["start"], second["start"], minute_overlap=True) == 0
+        for minute, expected in [("07:59", 0), ("08:00", 1), ("08:05", 1), ("08:06", 0)]:
+            boundary[0]["time_hkt"] = "2026-11-18 " + minute
+            assert st.off_log_repairs(boundary, second["start"], second["as_of"], minute_overlap=True) == expected
+        boundary[0]["time_hkt"] = "2026-11-18 07:59"
+        assert st.off_log_repairs(boundary, "2026-11-18T00:00:00Z", second["as_of"], minute_overlap=True) == 0
 
 
-@pytest.mark.parametrize("opening_guard", [None, "score_items", "sovereign_keys", "P0", "clerk"])
-def test_process_unchanged_from_window_code(opening_guard):
+def test_process_unchanged_from_opening():
     es = base() + [e(368, "forecast", ts=END, args={"id": "V5"}, resolves_by=V5), e(369, "push", "guy", PUSH)]
     scope = json.dumps({"cap": st.C2A_PRIME_CAP, "counted": ["tools/"]})
     source = st.tree_bytes(st.ROOT, None, "tools/status.py").decode()
-    source += "\ndef fix_caller(es, root, rev):\n    qualified = window_fix_seqs(es, root, rev)\n    return qualified\n"
+    source += "\nFIX_TOGGLE = 0\ndef fix_caller(es, root, rev):\n    qualified = window_fix_seqs(es, root, rev)\n    return qualified if FIX_TOGGLE == 0 else set()\n"
     files = {"judge/scope.json": scope, "SPEC.md": "at C1 it is:\n```\n" + scope + "\n```", "tools/clerk.py": "",
              "pins/pins.py": "\n".join(f'Pin("{p}"' for p in st.VALUE_PINS), "log.jsonl": log(es),
-             "tools/status.py": source.replace("if repair and seq not in window_fixes:", "if repair:")}
+              "tools/status.py": source}
     with tree(files) as (root, opening):
-        assert st.c2a_tree_evidence(root, opening, es, 369, True) == (True, None, True)
-        before, after = {None: ("", ""), "score_items": ('successes += item["Y"]', 'successes += 1'),
-                         "sovereign_keys": ('d["pubkey"].split()[1]', 'd["pubkey"].split()[0]'), "P0": ('Fraction(6, 11)', 'Fraction(1, 2)'),
-                         "clerk": ("", "")}[opening_guard]
-        source = source.replace(before, after)
-        code = commit(root, {"tools/status.py": source.replace("BRIEF-C1b §Liveness", "pre-merge process"),
-                             "tools/clerk.py": "changed" if opening_guard == "clerk" else ""})
-        es.append(e(370, "proposal", ts=PUSH, title="C2a-prime window code: fixture", commit=code))
-        es.append(e(371, "proposal", ts=PUSH, title="unrelated later proposal", commit=opening))
-        proposal = commit(root, {"log.jsonl": log(es)})
-        es.append(e(372, "merge", ts=PUSH, proposal=999, commit=opening))
-        unrelated = commit(root, {"log.jsonl": log(es)})
-        assert st.c2a_tree_evidence(root, unrelated, es, 369, True)[1] is None
-        es.append(e(373, "merge", ts=PUSH, proposal=999, commit=proposal))
-        merged = commit(root, {"log.jsonl": log(es), "tools/status.py": source})
-        assert st.c2a_tree_evidence(root, merged, es, 369, True) == (True, opening_guard is None, True)
-        if opening_guard is not None:
-            return
+        assert st.c2a_tree_evidence(root, opening, es, 369, True) == (True, True, True)
         for before, after in [('r["class"] == "repair"', 'True'), ('end, fixes)', 'end, fixes | {999})'),
                               ('fixes = window_fix_seqs(s["prefix"], root, rev)', 'fixes = window_fix_seqs(s["prefix"], root, rev) | {999}'),
-                              ('return qualified\n', 'return qualified | {999}\n'),
+                              ('return qualified if', 'return qualified | {999} if'),
                               ('dt.datetime.strptime(s, FMT)', 'dt.datetime.strptime(s, FMT) + dt.timedelta(seconds=1)'),
                               ('capture_output=True', 'capture_output=False'),
-                              ('"attributed_failure", "window_fix_seqs")', '"window_fix_seqs",)')]:
+                              ('"attributed_failure", "window_fix_seqs")', '"window_fix_seqs",)'),
+                              ('FIX_TOGGLE = 0', 'FIX_TOGGLE = 1'), ('C2A_PRIME_CAP = 8400', 'C2A_PRIME_CAP = 8401'),
+                              ('FMT = "%Y-%m-%dT%H:%M:%SZ"', 'FMT = "%Y-%m-%dT%H:%M:%S%z"')]:
+            assert before in source
             changed = commit(root, {"tools/status.py": source.replace(before, after)})
             assert st.c2a_tree_evidence(root, changed, es, 369, True)[1] is False
         for node in st.ast.parse(source).body:
@@ -190,6 +225,8 @@ def test_process_unchanged_from_window_code(opening_guard):
             assert st.c2a_tree_evidence(root, changed, es, 369, True)[1] is False
         restored = commit(root, {"tools/status.py": source, "tools/clerk.py": ""})
         assert st.c2a_tree_evidence(root, restored, es, 369, True)[1] is True
+        missing = commit(root, {"pins/pins.py": ""})
+        assert st.c2a_tree_evidence(root, missing, es, 369, True)[2] is False
         changed = commit(root, {"judge/scope.json": scope.replace(str(st.C2A_PRIME_CAP), str(st.C2A_PRIME_CAP + 1))})
         assert st.c2a_tree_evidence(root, changed, es, 369, True)[0] is False
         reverted = commit(root, {"judge/scope.json": scope})

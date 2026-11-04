@@ -10,6 +10,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import subprocess
 import sys
 from fractions import Fraction
@@ -119,7 +120,8 @@ def carrying_commit(root, rev, entry, first_parent=False):
 
 def attributed_failure(root, rev, subject, start, end):
     paths = git_bytes(root, "ls-tree", "-r", "--name-only", rev, "transcripts/evidence/").decode().splitlines()
-    named = [p for p in paths if p.endswith(".csv") and not p.endswith("-raw.csv") and os.path.basename(p)[:-4] in subject]
+    named = [p for p in paths if p.endswith(".csv") and not p.endswith("-raw.csv") and
+             re.search(r"(?<![\w-])" + re.escape(os.path.basename(p)[:-4]) + r"(?:\.csv)?(?![\w-])", subject)]
     if not named:
         raise ValueError("named attributed acts file missing at carrying commit")
     for path in named:
@@ -209,11 +211,14 @@ def item_process(es, after_seq=-1, promotion_at=None, window_fixes=()):
         royal = signer_blob(e) in sovereign
         repair = royal and typ not in ("genesis", "key", "amend", "push", "proposal") and not (
             typ == "decision" and body["kind"] != "fix")
-        if repair and seq not in window_fixes:
-            if items:
+        if repair:
+            if items and seq not in window_fixes:
                 late_reports.append(seq)
             for _, repairs in opened.values():
                 repairs.append(seq)
+        if typ == "push":
+            for _, repairs in opened.values():
+                repairs[:] = [r for r in repairs if r not in window_fixes]
         if typ == "forecast" and seq > after_seq:
             opened[seq] = (e, [])
         if typ == "resolution" and body["forecast"] in opened:
@@ -332,21 +337,24 @@ def attack_start(root, runs, as_of, path="tests/test_clerk.py"):
     return min(times, default=None)
 
 
-def off_log_repairs(acts, start, end):
+def off_log_repairs(acts, start, end, minute_overlap=False):
     if acts is None:
         return None
+    if minute_overlap and instant(end) <= instant(start):
+        return 0
     hkt = dt.timezone(dt.timedelta(hours=8))  # counsel's weekly CSV contract
-    return sum(row["repo"] == "renavondata/jack" and row["class"] == "repair" and
-               instant(start) <= dt.datetime.strptime(row["time_hkt"], "%Y-%m-%d %H:%M").replace(tzinfo=hkt) <= instant(end)
-               for row in acts)
+    minutes = (dt.datetime.strptime(row["time_hkt"], "%Y-%m-%d %H:%M").replace(tzinfo=hkt)
+               for row in acts if row["repo"] == "renavondata/jack" and row["class"] == "repair")
+    return sum((t + dt.timedelta(minutes=1) > instant(start) if minute_overlap else t >= instant(start)) and
+               t <= instant(end) for t in minutes)
 
 
-# Awaiting the reviewer's registration; add these to VALUE_PINS when registered.
+# The reviewer supplies the registrations; missing pins refuse criterion 1.
 C2A_PRIME_PINS = ("second_window_from_the_end second_window_end_is_v5 second_window_cap offlog_from_second_opening "
-                  "promote_refused_before_end window_fix_is_decision process_unchanged_from_window_code").split()
+                  "promote_refused_before_end window_fix_is_decision window_fix_not_retroactive process_unchanged_from_opening").split()
 VALUE_PINS = ("worked_table forecast_before_cutoff rigged revision weights_from_resolved_prefix abstention_is_base "
               "one_event_one_key grouping_by_principal uniform_prior no_learning_rate exact_probabilities per_type_base "
-              "bounded_difference lambda_predictable factor_algebra window_from_the_push wealth_continues promote_refused_value").split()
+              "bounded_difference lambda_predictable factor_algebra window_from_the_push wealth_continues promote_refused_value").split() + C2A_PRIME_PINS
 
 
 def c2a_tree_evidence(root, rev, prefix, opening, prime=False):
@@ -363,26 +371,18 @@ def c2a_tree_evidence(root, rev, prefix, opening, prime=False):
         unchanged = all(scope_at(c) == original for c in [rev] + git_bytes(root, "rev-list", f"{start}..{rev}").decode().split())
         unchanged = unchanged and json.loads(original[0])["cap"] == (C2A_PRIME_CAP if prime else 7800) and not any(
             e["type"] == "push" and e["seq"] > opening for e in prefix)
-        process_start = start
-        if prime:
-            process_start = None
-            for e in (e for e in prefix if e["type"] == "merge" and e["seq"] > opening):
-                ancestors = git_bytes(root, "rev-list", e["body"]["commit"]).decode().splitlines()
-                if any(p["type"] == "proposal" and p["body"]["title"].startswith("C2a-prime window code") and
-                       p["body"]["commit"] in ancestors for p in prefix):
-                    process_start = carrying_commit(root, rev, e, first_parent=True)
-                    break
-        def process_at(sha, window_code=False):
+        def process_at(sha):
             module = ast.parse(tree_bytes(root, sha, "tools/status.py"))
             nodes = module.body
-            names = {"score_items", "sovereign_keys"} | (set() if prime else {"item_process"})
+            names = {"item_process", "score_items", "sovereign_keys"}
             constants = {"P0"}
-            if window_code:
+            if prime:
                 functions = {n.name: n for n in nodes if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
                 declaration = next(n for n in nodes if isinstance(n, ast.Assign) and
                                    any(isinstance(t, ast.Name) and t.id == "WINDOW_FIX_FUNCTIONS" for t in n.targets))
                 roots = set(ast.literal_eval(declaration.value))
-                names, pending, constants = {"item_process"}, roots, {"WINDOW_FIX_FUNCTIONS"}
+                pending = roots | names
+                constants.add("WINDOW_FIX_FUNCTIONS")
                 while pending:
                     names |= pending
                     pending = {n.id for name in pending for n in ast.walk(functions[name])
@@ -390,10 +390,13 @@ def c2a_tree_evidence(root, rev, prefix, opening, prime=False):
                 names |= {name for name, function in functions.items() if any(isinstance(n, ast.Call) and
                           (isinstance(n.func, ast.Name) and n.func.id in roots | {"item_process"} or
                            isinstance(n.func, ast.Attribute) and n.func.attr in roots | {"item_process"}) for n in ast.walk(function))}
-            return [ast.dump(n) for n in nodes if getattr(n, "name", None) in names or
-                    isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id in constants for t in n.targets)]
-        same = None if process_start is None else (process_at(start) == process_at(rev) and
-               (not prime or process_at(process_start, True) == process_at(rev, True)) and
+                constants |= {n.id for name in names for n in ast.walk(functions[name]) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
+            assignments = [(n, {t.id for target in (n.targets if isinstance(n, ast.Assign) else [n.target])
+                                for t in ast.walk(target) if isinstance(t, ast.Name)})
+                           for n in nodes if isinstance(n, (ast.Assign, ast.AnnAssign, ast.AugAssign))]
+            protected = [n for n, targets in assignments if targets & constants]
+            return [ast.dump(n) for n in nodes if getattr(n, "name", None) in names or n in protected]
+        same = (process_at(start) == process_at(rev) and
                tree_bytes(root, start, "tools/clerk.py") == tree_bytes(root, rev, "tools/clerk.py"))
         pins = tree_bytes(root, rev, "pins/pins.py").decode()
         registered = all(f'Pin("{name}"' in pins or f"Pin('{name}'" in pins for name in VALUE_PINS if prime or name not in C2A_PRIME_PINS)
@@ -413,11 +416,10 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
     fixes = window_fix_seqs(s["prefix"], root, rev)
     process = item_process(s["prefix"], c1b_window(s["prefix"])[0], end, fixes)
     live = score_items(i for i in process["items"] if live_gate is not None and live_gate < i["ts"])
-    off = off_log_repairs(acts, s["start"], end)
-    same_text = ": pending the window code's merge" if same is None else " " + str(same)
+    off = off_log_repairs(acts, s["start"], end, minute_overlap=prime)
     s.update(value=v, continued_liveness=live, late_reports=process["late_reports"])
     if prime:
-        s["fix_typings"] = [f"window fix {e['seq']}: repair before window code; {'decision' if e['seq'] in fixes else 'repair'} after window code"
+        s["fix_typings"] = [f"window fix {e['seq']}: {'decision; taint removed from still-open writs at the next push' if e['seq'] in fixes else 'repair'}"
                             for e in s["prefix"] if e["type"] == "decision" and e["body"].get("kind") == "fix" and signer_blob(e) in sovereign_keys(s["prefix"])]
     return [(verified and registered, "criterion 1: C2a pins and twins in verified tests run"),
             (verified, "criterion 2: checker agreement in verified tests run"),
@@ -427,7 +429,7 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
              f"criterion 4: attack green on main before first scored cutoff: {gate or 'unverified'}"),
             (v["E_value"] >= 20, f"criterion 5: value E {v['E_value']:.6f} >= 20"),
             (same and live_gate is not None and live["E"] >= 20 and not process["late_reports"],
-             f"criterion 6: continued liveness E {live['E']} >= 20; unchanged{same_text}; attack {live_gate or 'unverified'}; late repairs {len(process['late_reports'])}"),
+             f"criterion 6: continued liveness E {live['E']} >= 20; unchanged {same}; attack {live_gate or 'unverified'}; late repairs {len(process['late_reports'])}"),
             (off == 0, f"criterion 7: off-log repairs: {off if off is not None else 'unknown (no acts file)'}")]
 
 
