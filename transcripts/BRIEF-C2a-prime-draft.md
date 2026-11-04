@@ -6,10 +6,11 @@ This file is `transcripts/BRIEF-C2a-prime-draft.md`. Wherever a tool reads a nam
 - v2 answered counsel's cold read of v1. It reached `main` unread: the merge verb signed seq 1265 at 09:04:29Z, counsel withdrew #292 at 09:06:04Z, and GitHub merged it at 09:13:19Z while the verb was still waiting on checks (COUNSEL-OPEN row 34).
 - v3, v4 and v5 were never proposed. Cold reads failed them.
 - v6 reached `main` (#301). Its formal read `REVIEW-C2a-prime-astra.md` blocked it (F1): the window code landed after the `fix`, so items finalised between them would be recomputed, against BRIEF-C1b's "An item once finalised is never regrouped".
-- v7 replaces v6 and v2, as BRIEF-C2b's drafts v1–v6 replaced one another on `main` before their reads. It follows the corrections to `transcripts/RULING-20261104-window-fix.md`:
+- v7, revised after two cold reads, replaces v6 and v2, as BRIEF-C2b's drafts v1–v6 replaced one another on `main` before their reads. It follows the corrections to `transcripts/RULING-20261104-window-fix.md`:
   - correction 2: condition 2 tested on criterion 7 alone; C2a's `fix` after 2026-11-17T12:00:00Z;
-    - correction 3, as correction 6 corrects it: the rule's code lands with the opening push, under the exemption stated here;
-  - correction 5: the sources of C2a's two readings.
+  - correction 3, as correction 6 corrects it: the rule's code lands with the opening push, under the exemption stated here;
+    - correction 5: the sources of C2a's two readings;
+  - correction 7: the ruling's Reasoning 6 bounds the re-typing route rather than closing it.
 
 **Why there is a new window.** C2a's first window cannot now promote: criterion 7 is unmet on its acts evidence, and no later act removes a row. This brief pre-states the window that follows. A3.2 requires it: "a window that fails is a precedent, fixed by a lawful change and followed by a new pre-stated window; it is never patched in place". A4.1 permits it: "a window that fails and is followed by a new one continues the same wealth process on the same statistic under the same null".
 
@@ -43,7 +44,7 @@ This brief never needs the answer. Every act it prescribes at C2a's boundary com
    - first line `VERDICT: ACCEPT` or `VERDICT: ACCEPT WITH OBLIGATIONS`;
    - a `Reviewed tree:` at which this text's bytes equal `main`'s;
    - carried to `main` by a proposal signed by a non-counsel key.
-4. **The ruling is on `main` with its corrections, and the sovereign has read corrections 1–4** (A2.10: "Code is written to a text Guy has read"). His reading is recorded in COUNSEL-OPEN row 35. Those four carry the rule the code implements. Correction 5 corrects a citation in correction 2 and leaves its rule and last sentence standing.
+4. **The ruling is on `main` with its corrections, and the sovereign has read corrections 1–4 and 6, and this brief's §The code and §No item changes, before the builder's code lands** (A2.10: "Code is written to a text Guy has read"). His reading of corrections 1–4 is recorded in COUNSEL-OPEN row 35, and the rest in the row that records it. Those texts carry the rules the code implements. Correction 5 corrects a citation in correction 2 and leaves its rule and last sentence standing; correction 7 corrects a word of the ruling's reasoning.
 5. **Counsel's V5 is entered** after item 3 and before the opening.
 6. **The sovereign's `decision grant` and `decision fix` are entered** as §Order of acts step 2 prescribes.
 
@@ -86,7 +87,12 @@ The push is made by `jack push <branch> --opens C2a-prime --review <file>`. The 
 - SPEC §10's block, to match;
 - one clause of SPEC §10's cap history: "8,400 at C2a-prime's opening, for the window code".
 
-And it carries the window code (§The code), its tests and the reviewer's pins, built on branches before the opening, each commit with its `Proposer:` trailer. Its `--review` file is the reviewer's read of that code, `REVIEW-C2a-prime-code.md`.
+And it carries the window code (§The code), its tests and the reviewer's pins, built on branches before the opening, each commit with its `Proposer:` trailer. Its `--review` file is the reviewer's read of that code, `REVIEW-C2a-prime-code.md`, on the push branch and named by its path in that branch's worktree. Precedent: C1a's installing push (seq 29) carried the builder's code, the reviewer's pins and `REVIEW-C1a-code.md` as its `--review`.
+
+`jack push` checks neither the `--review` verdict, nor counted lines, nor which party's commit touched which path: those checks run on proposals, and the code does not come by one. So the opening note records, at the branch head:
+- the counted lines, `judge.counted_lines` over `counted`, at or under 8,400;
+- each commit's `Proposer:` party against SPEC §10.8's scopes;
+- `REVIEW-C2a-prime-code.md`'s first line, `VERDICT: ACCEPT` or `VERDICT: ACCEPT WITH OBLIGATIONS`.
 
 8,400 is a resource constant of the 7,800 kind (BRIEF-C2a §The cap). It enters no score, and it is fixed here, not at the push. It is measured: the builder's draft of the window code to v4 (opencode-runner #242) stopped at 8,022 counted lines, 126 of code and 112 of tests, before v5's additions and before the reviewer's pins; 8,400 leaves room for those and no more than that. There is no second push inside the window.
 
@@ -140,7 +146,7 @@ The terms used above:
   - C2b's: the stated end and opening BRIEF-C2b gives when C2b opens; where that end is read two ways, (a) and condition 3 at the later instant and (b) at the earlier, as for C2a.
   - C1a and C1b promoted inside their windows (seqs 188 and 337), so no `fix` naming either meets condition 2.
 - **Naming, for other windows.** For any window but C2a and C2a-prime, a `promote` or `veto` names it when its `subject` equals the window's name.
-- **Change 2's functions.** The builder names them in one tuple in `tools/status.py`, which change 3's guard and the pins read.
+- **Change 2's functions.** The builder names them in one tuple in `tools/status.py`, which change 3's guard and the pins read. The guard reads the tuple from the tree of the opening push.
 
 The test is computed outside `item_process`, which receives the set of `seq`s that meet the whole rule. For such a `fix`, `item_process` records it against the writs open at its instant as now, and at the first `push` after it removes it from the writs still open; it is never a late report. So a writ finalised between the `fix` and that push keeps the taint the code of its time gave it, and only writs finalised after the push, when the code is in force, are free of it (§No item changes). If the history or a named file cannot be read, the `fix` is typed a repair and `status.py` prints `window fix <seq>: unverified — <what is missing>`. The `fix` so typed is a late report on every prefix that holds it. Any other sovereign `decision fix` is BRIEF-C1b's repair.
 
@@ -154,12 +160,13 @@ The test is computed outside `item_process`, which receives the set of `seq`s th
 **Tests and size.** The new pins join `VALUE_PINS`, so criterion 1 requires them. There is a test for each change. A further test shows that on the real `log.jsonl`, up to its last entry before the first `decision fix` (the whole log if it holds none), `item_process` returns the same items with the set change 2 computes as with no set passed. Counted lines after the window code and the reviewer's pins together: at most 8,400.
 
 ### No item changes
-BRIEF-C1b §Liveness: "An item once finalised is never regrouped: no later entry, evidence string or merge changes an earlier item or any bet already placed (A4.3)." The `fix` must precede the opening push (condition 3), and C2a's cap leaves no room for the code before that push, so the code lands at the push, minutes after the `fix`. Change 2 therefore takes effect at that push and not before. A writ finalised between the `fix` and the push is the item the code then in force made of it, tainted by the `fix`, and stays so; its `Y`, its stake and the wealth after it are unchanged by the push. The `fix` frees only writs finalised after the push. The sovereign pastes the `fix` and the push in a quiet minute (§Order of acts step 2), so that interval is normally empty.
+BRIEF-C1b §Liveness: "An item once finalised is never regrouped: no later entry, evidence string or merge changes an earlier item or any bet already placed (A4.3)." The `fix` must precede the opening push (condition 3), and C2a's cap leaves no room for the code before that push, so the code lands at the push, minutes after the `fix`. Change 2 therefore takes effect at that push and not before. A writ open at the `fix` and finalised before the push is the item the code then in force made of it, tainted by the `fix`, and stays so; its `Y`, its stake and the wealth after it are unchanged by the push. The `fix` frees only writs finalised after the push. The sovereign pastes the `fix` and the push as §Order of acts step 2 prescribes, so that interval is normally empty.
 
 Until the push, `status.py` as it stands assesses `promote C2a` against C2a's first window, and no `promote` can pass:
-- criterion 3 refuses, since HEAD's `judge/scope.json` differs from the tree at seq 367;
-- criterion 7 refuses on the nine rows;
+- criterion 7 refuses on the nine rows of `acts-20261103T2144` (criterion 3 is met until the push, which is the cap's only change);
 - criterion 6 there does not see the `fix`, so its typing plays no part.
+
+On prefixes between the `fix` and the push, the push changes nothing but criterion 6's late-report count, which is neither an item nor a bet.
 
 ### The exemption
 Change 2 is exempt from three refusals:
@@ -201,7 +208,7 @@ The off-log acts between 2026-11-15T15:04:14Z and C2a-prime's opening fall, on t
    jack decision fix "C2a: criterion 7 unmet at the stated end — nine off-log repair rows (acts-20261103T2144); the court's platform acts moved to a GitHub App (opencode-runner #227)"
    ```
 
-      The `fix` is the ruling's Order 3 paste, word for word. Then the push branch, which carries the cap change, the window code, its tests and the reviewer's pins, is brought up to `main` by a merge commit with the sovereign's `Proposer:` trailer, and the opening `push` follows at once (`jack push <branch> --opens C2a-prime --review transcripts/REVIEW-C2a-prime-code.md`). The paste is made between minutes 35 and 55 of an hour, when no diary session is due, so that no writ is normally finalised between the `fix` and the push (§No item changes). Counsel writes the exact commands into the opening note before that day.
+   The `fix` is the ruling's Order 3 paste, word for word. Then the push branch, which carries the cap change, the window code, its tests and the reviewer's pins, is brought up to `main` by a merge commit with the sovereign's `Proposer:` trailer, and the opening `push` follows at once (`jack push <branch> --opens C2a-prime --review transcripts/REVIEW-C2a-prime-code.md`). The paste is made when no pull request is open on `renavondata/jack`: proposals opened before the `fix` are stale against it, and `jack push` refuses if `main` moves, so a writ finalised in the interval is rare. The clock alone does not ensure it: minutes 35–55 held 14 of the 57 batch items finalised from 2 to 4 November. The C2a report lists any such writ (§No item changes). Counsel writes the exact commands into the opening note before that day.
 3. **The window code.** It is in force from the push. The `tests` run on `main` at the push's commit verifies it.
 4. **The promotion.** `status.py` prints the window line, the value line, the liveness line and `promote C2a: lawful | refused: …`. Counsel commits the acts evidence. When the line reads `lawful`, the sovereign enters `decision promote C2a --acts <file>` (A5: at the crossing).
 5. **C2b.** BRIEF-C2b's order of acts then begins at its step 3. Its `decision promote C2a` is the entry of step 4 above and is not entered again.
@@ -230,7 +237,7 @@ This brief states no minimum length for the window. A5 makes a window a maximum,
   - Requires: criterion 3 reads the cap the opening push set, and refuses a prefix whose tree changes it after the opening.
   - Mutants: 7,800 hard-coded, which refuses every prefix; the cap read at HEAD only, which accepts a later change.
 - **`offlog_from_second_opening`**
-    - Requires: criterion 7 counts rows from C2a-prime's opening, a row counting when its minute overlaps the window at all.
+  - Requires: criterion 7 counts rows from C2a-prime's opening, a row counting when its minute overlaps the window at all.
   - Mutants: from C2a's opening, which counts the nine; a row counted only when its minute begins inside the window, which loses a repair at 00:00:31Z in a window opened at 00:00:30Z.
 - **`promote_refused_before_end`**
   - Requires: a `promote C2a` at a prefix before C2a-prime's opening is assessed against the first window, prints no `window: C2a-prime` line, and is refused on criterion 7; after the opening, a `veto` with subject `C2a-prime` refuses C2a-prime.
@@ -239,11 +246,11 @@ This brief states no minimum length for the window. A5 makes a window a maximum,
 - **`window_fix_is_decision`**
   - Fixture:
     - a synthetic log on which W is C2a (an opening push above seq 337; V0 later than opening + 14 d, so its two readings differ);
-    - one item finalised before the `fix`, and one writ open at its `ts`;
+        - one item finalised before the `fix`, and one writ open at its `ts` and finalised by a timely batch after the next `push`;
     - a temporary git repository holding W's attributed acts file (one `repair` row inside W read early), its raw twin and its classifier hash file, committed before the commit that carries the `fix`;
     - no `promote` naming W by its end read late;
     - then a `fix` whose `subject` begins `C2a:` and names the file, entered after the late end and before the next `push`, and the first `fix` naming W.
-  - Requires: the `fix` taints neither the open writ nor the finalised item, and is no late report.
+    - Requires: the open writ's item holds no `fix` in its repairs; the finalised item is unchanged; the `fix` is no late report.
   - Mutants:
     - the `fix` typed a repair;
     - condition 2 read as "ended without promotion";
@@ -254,12 +261,14 @@ This brief states no minimum length for the window. A5 makes a window a maximum,
     - the next-push bound of condition 3 dropped;
     - condition 4 dropped;
     - the carrying commit taken as the assessed head;
-    - the attributed requirement dropped.
-  - Twins. Each is still a repair, taints the open writ and is a late report:
+        - the attributed requirement dropped;
+    - a file named by substring (`acts-X-raw` naming `acts-X.csv`);
+    - the push removes every `fix`, qualifying or not.
+    - Twins. Each is still a repair: it is in the open writ's repairs at its finalisation after the next push, and it is a late report:
     - a free-text `subject`;
     - a `subject` naming no attributed file;
     - the file committed only after the carrying commit;
-        - a `subject` naming only the raw twin (`…-raw`), whose row lies inside W while the attributed file has none, and its twin in which the attributed file also has such a row and the `subject` still names only the raw twin;
+    - a `subject` naming only the raw twin (`…-raw`), whose row lies inside W while the attributed file has none, and its twin in which the attributed file also has such a row and the `subject` still names only the raw twin;
     - the only `repair` row outside W, or in a minute that ends after W's early end;
     - a `promote` naming W between the two readings;
     - a `veto` naming W only between the two readings, with no file;
@@ -269,24 +278,27 @@ This brief states no minimum length for the window. A5 makes a window a maximum,
     - the history unreadable, which also prints the `unverified` line.
   - Further twin: a `veto` naming W at or before its early end, with no file, makes the `fix` a decision.
 - **`window_fix_not_retroactive`**
-  - Fixture: as `window_fix_is_decision`'s, with a second writ open at the `fix` and finalised before the next `push`, and a third open at the `fix` and finalised after it.
+    - Fixture: as `window_fix_is_decision`'s, with a second writ open at the `fix` and finalised by a timely herald batch before the next `push`, and a third open at the `fix` and finalised by a timely herald batch after the next `push`.
   - Requires: the second writ's item keeps the `fix` in its repairs, with `Y` 0 and the stake and wealth after it as the code before the rule computes them; the third is free of it.
   - Mutants: the rule applied from the `fix` (the second writ freed); the rule never applied (the third writ tainted).
 - **`process_unchanged_from_opening`**
   - Twins: a tree identical to the opening push's reads `unchanged True`; a later tree that edits a change-2 function, a function one references, a caller of `item_process` (a widened set among them) or a top-level assignment one reads reads `unchanged False`.
-  - Mutants of the guard: change 2's functions omitted; the callers omitted; the assignments omitted.
+    - Mutants of the guard: change 2's functions omitted; references not followed transitively; the callers omitted; the assignments omitted; the tuple read at the assessed tree.
+  - Further twin: a later tree that drops a name from the tuple and edits that function reads `unchanged False`.
 - **`wealth_continues`** (C2a's, unchanged).
 
 ## What the pins do not enforce
 These rules bind and are not pinned; the reads and the C2a report check them:
 - two reads by different model families (the gate admits one accepting read);
-- the sovereign's reading of the corrections;
+- the sovereign's reading of corrections 1–4 and 6 and of this brief's §The code and §No item changes;
+- that the `decision`'s `--acts` file is the committed table, complete over the window: the verb takes any path, and the entry stores only `{kind, subject}`;
+- that an attributed file was produced by the classifier from its raw twin: the hash file names the classifier, it does not attest a run;
 - the App's custody of the court's platform acts, and the hand behind an act under the owner's login;
 - counsel's platform acts in the window;
 - no re-attribution of a row;
 - the acts table's freshness, by the re-run of §The acts evidence.
 
-The rule's four conditions bound the re-typing route the ruling's Order 2 asks about; they do not close it. The first `fix` naming a failed window, between its late end and the next push, is a decision whatever its `subject` says the sovereign did. So a fresh repair described as the boundary `fix` would be typed a decision. That route is one entry per failed window, it costs a failed window, and the report reads the `fix`'s `subject` against the acts table of the interval. A distinct kind for the boundary act (R2, BRIEF-C2c) closes it. `window_fix_is_decision` proves the typing, not that the sovereign's hands did no work.
+The rule's four conditions bound the re-typing route the ruling's Order 2 asks about; they do not close it. The first `fix` naming a failed window, between its late end and the next push, is a decision whatever its `subject` says the sovereign did. So a fresh repair described as the boundary `fix` would be typed a decision. That route is one entry per failed window, it costs a failed window, and the report reads the `fix`'s `subject` against the acts table of the interval. R2, a distinct kind for the boundary act (BRIEF-C2c), types the boundary act by kind alone; it does not close the route either, since a repair can be entered under that kind as under a false `grant`. `window_fix_is_decision` proves the typing, not that the sovereign's hands did no work.
 
 ## Refusal list
 C2a's, entire, but for §The exemption, plus:
@@ -300,7 +312,9 @@ C2a's, entire, but for §The exemption, plus:
 - **counsel's platform acts on `renavondata/jack` in the window are `jack` verbs and declared closes of its own stale proposals, nothing else**: no labels, no edits, no closing keywords, no reviews, no re-runs.
 
 ## Stop and report if
-- **The window code and the pins do not fit under 8,400, or are not on the push's branch.** Report the shortfall; the push is not made without them.
+- **The window code and the pins do not fit under 8,400, are not on the push's branch, or the code read does not accept.** Report the shortfall; the push is not made without them.
+- **The opening push is refused after the `fix`.** Stop; the C2a report lists every writ finalised before the push lands, with its taint.
+- **The `tests` run on `main` at the push's commit is not green, or a defect is found in a function change 3 covers.** The window cannot promote on a changed process. Stop; the next window is pre-stated.
 - **The two checkers disagree.**
 - **A `repair` row appears in C2a-prime's acts evidence.** Promotion has become impossible; the window fails at its stated end. The report names the row and its hand, and the next window is pre-stated by the same procedure.
 - **V5's `resolves_by` passes with a criterion unmet, or with no opening push.** If C2a-prime fails on criteria 1–6 or on A3.4 alone, with no `repair` row and no veto, no `fix` names it until the sovereign has answered whether it failed (correction 2).
@@ -323,7 +337,7 @@ C2a's, entire, but for §The exemption, plus:
     - C2a's stated end, read two ways and unruled;
     - the off-log acts between 2026-11-15T15:04:14Z and C2a-prime's opening;
     - the sovereign's acts outside jack on 4 November: three runner merges and a runner label, as off-log repairs the instrument cannot see, and the App as a capability grant;
-    - a section on C2a-prime's exit: its length, its acts count, and any writ finalised between the `fix` and the push, with its taint;
+  - a section on C2a-prime's exit: its length, its acts count, and any writ finalised between the `fix` and the push, with its taint;
 - LAW.md's count of the sovereign's cap-change pushes corrected: seqs 5, 9, 29, 197 and 367, not "two so far", and C2a-prime's opening added.
 
 The first window's acts evidence has been on `main` since #296: `acts-20261103T2144` raw and attributed, its classifier hash, and `runs-tests-20261103T2144.json`.
@@ -336,7 +350,7 @@ The first window's acts evidence has been on `main` since #296: `acts-20261103T2
 | V7 | `decision promote C2a` is entered within 48 hours of C2a-prime's opening push | 0.55 |
 
 V0–V3 are not edited, and each resolves on its own words.
-- **V0, V2 and V3.** They speak of C2a's exit prefix or window end. On the late reading, that instant is their own `resolves_by`, 2026-11-17T12:00:00Z. V0's outcome is fixed on either reading, but when it may be resolved is not. This brief recommends no resolution of any of the three before that instant, and counsel takes the expiry each then risks. That interest is disclosed in the corrections to the ruling.
+- **V0, V2 and V3.** They speak of C2a's exit prefix or window end. On the late reading, that instant is their own `resolves_by`, 2026-11-17T12:00:00Z. V0 resolves 0 on either reading, and a later `decision promote C2a` naming C2a-prime does not make its claim true; but when it may be resolved depends on the reading. This brief recommends no resolution of any of the three before that instant, and counsel takes the expiry each then risks. That interest is disclosed in the corrections to the ruling.
 - **V1** ("within 7 days of the opening push") does not depend on the reading.
 
 Counsel's forecasts on C2b likewise resolve on their own words (BRIEF-C2b Amendment 2).

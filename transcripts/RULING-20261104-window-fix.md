@@ -216,5 +216,14 @@ was ruled: at a failed window's boundary, A2.6 governs over BRIEF-C1b, and the f
    - **Where the code lands now.** The code lands with the opening push, which carries it, since `jack push` fast-forwards `main` to its branch.
    - **When the rule takes effect.** At that push. A writ finalised between the `fix` and the push keeps the taint the code of its time gave it, and the `fix` frees only writs finalised after the push.
    - **Why the interval remains.** The `fix` must still precede the push (condition 3), and C2a's cap leaves no room for the code before it. So the interval cannot be removed. It can only be made non-retroactive, and, by timing the paste, normally empty.
-   - **What stands.** Correction 3 stands otherwise.
+      - **What stands.** Correction 3 stands, but for two clauses:
+     - "as the first proposal after C2a-prime's opening" reads "with the opening push";
+     - "until then no promotion, writ disposition or report relies on its typing of that `fix`" reads "until then no promotion relies on it, and a writ finalised before the push keeps the item that typing gave it".
+
+     The ruling's typing governs every item finalised after the push. Items finalised before it are not reopened (§3; A2.7, "never over earlier entries"; A4.3).
+   - **Reading before coding.** Correction 3's last sentence reads "corrections 2, 3 and 6": the builder codes them only once Guy has read them (A2.10).
    - **Basis and probability.** Counsel's decision under the direction quoted above. Precedent: BRIEF-C1b §Liveness and A4.3. p(stands) = 0.8.
+7. **Reasoning 6's word** (appended 4 November, after the formal read `transcripts/REVIEW-C2a-prime-astra.md`, finding F2).
+   - **The change.** In Reasoning 6, "Narrowness closes the re-typing route" reads "Narrowness bounds the re-typing route".
+   - **Why.** The four conditions admit one decision per failed window, between its late end and the next push. An ordinary repair can still be entered as that one boundary decision, just as a false `grant` could misdescribe a repair, and a distinct kind (R2) would type the entry, not the work of the hand behind it. The C2a report reads the `fix`'s `subject` against the acts table of its interval.
+   - **Basis and probability.** Counsel's decision under the direction quoted above. p(stands) = 0.85.
