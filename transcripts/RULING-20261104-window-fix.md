@@ -136,3 +136,69 @@ The recommendation was counsel's. Counsel has an interest: its request on 3 Nove
 rows; its draft of BRIEF-C2a′ omitted the `fix` entry, which would have protected its own forecasts on
 criterion 6 (cold read F1 called it a rescue by omission); and its forecasts V5–V7 on C2a′ will ride on
 criterion 6. Counsel argued against itself in conversation (the §12 re-typing worry) before Guy ruled.
+
+
+## Corrections (appended by counsel, 4 November 2026; the judgment above is not rewritten)
+
+Counsel's index was read cold, and the builder's session on the window code (opencode-runner #238) stopped on
+condition 2. Both found defects in counsel's drafting of this judgment. Guy's direction the same day: "You
+shouldn't need my decisions for how to write and implement the law, unless there really is no precedent."
+Correction 1 corrects a fact. Corrections 2–4 are counsel's under that direction, each with the precedent it
+rests on and counsel's probability that it stands on the review Order 2 names — the two reads of
+BRIEF-C2a-prime. None changes what
+was ruled: at a failed window's boundary, A2.6 governs over BRIEF-C1b, and the fix is a decision. Order 4 applies to these corrections as to the judgment: counsel's V5 and V7 ride on criterion 6, which correction 3 computes, and V6 on criterion 7, which correction 2 reads; none is entered before these corrections are on `main` and read. Counsel also has a wealth interest in the earlier reading of C2a's stated end (`transcripts/CASES.md`): V0, V2 and V3 resolve by 2026-11-17T12:00:00Z, the same instant their claims fall due, so under the later reading they expire unresolved and each scores an item 0 in the liveness process.
+
+1. **The index.** §Its standing as precedent says the ruling "is listed in `LAW.md` under 'Case law'". No such
+   section was committed: counsel's proposal script staged `transcripts/` only, while the pull request's title
+   (#290) and its `proposal` entry (seq 1262) said "LAW.md gains a Case law section". That claim was false when
+   made. The index is `transcripts/CASES.md`. Counsel's proposal tool now refuses when a file the title names
+   is not among the commit's paths, or the commit's paths differ from those its spec declares (COUNSEL-OPEN
+   row 34).
+2. **Condition 2, made computable.** The builder found that `item_process` receives only log entries, while
+   C2a's failure is evidenced by the acts table, and warned that "ended without promotion" alone would weaken
+   condition 2. Cold reads then showed that three computable stand-ins collapse into that weaker test:
+   recomputing every criterion "as of the stated end" (criteria 1 and 2 read unmet whenever no tests run finished
+   on the exact commit assessed, which after the stated end is always); the window's promotion forecast (V0's
+   claim, seq 361, ends "C2a promoted, not failed", so its resolution cannot separate failure from
+   non-promotion); and `status.py`'s criteria 3 to 6 and its A3.4 line, which read unmet for want of evidence
+   with no `unverified` or `unknown` beside the figure (criterion 5 prints `value E 1.000000 >= 20` with no runs
+   file and falls below 20 with a truncated one; criteria 3 and 6 print `False` on a clone without the history
+   from the opening's commit; criterion 6 moves with `--as-of` on a fixed prefix; the A3.4 line adds a `promote`
+   a failed window never has). Condition 2 is therefore **tested by a sufficient condition on criterion 7
+   alone**: (a) no `decision promote` naming the window has `ts` at or before its stated end; and (b) a
+   `decision veto` naming the window has `ts` at or before its stated end, or the window's acts evidence — the
+   attributed file (BRIEF-C1b Amendment 2), committed under `transcripts/evidence/` no later than the commit that
+   carries the `fix`, and named in the `fix`'s `subject` — holds a row with `repo` `renavondata/jack` and
+   `class` `repair` whose `time_hkt` minute, read as UTC+8, begins at or after the window's opening `ts` and ends
+   at or before its stated end. Both are decided by the log and that file. Where a stated end is read two ways
+   and unruled, (a) is read at the later instant and (b) at the earlier. Where the test is not met — a window
+   failing only on criteria 1 to 6 or on A3.4, or one with every criterion met and no promotion — no `fix` names
+   the window until the sovereign has answered whether it failed; a `fix` entered regardless is a repair; his
+   answer is recorded as a ruling and reaches `status.py` only through an order it carries. For C2a the acts
+   evidence is `acts-20261103T2144.csv` (attributed), with `acts-20261103T2144-raw.csv` and
+   `runs-tests-20261103T2144.json`, committed with these corrections; it holds nine `repair` rows, the earliest
+   at 2026-11-02 22:11 HKT (witness: on the prefix to seq 1273, `status.py --subject C2a --as-of
+   2026-11-04T09:32:30Z --acts acts-20261103T2144.csv --runs runs-tests-20261103T2144.json` prints criteria 3–6
+   met and "criterion 7: off-log repairs: 9 SHORT"; criteria 1 and 2 read SHORT for want of a run on that
+   commit; from `--as-of 2026-11-04T15:00:01Z` the same prefix reads criterion 6 SHORT, writs due at 15:00:00Z
+   being projected as expiries). Because condition 3 requires the `fix` after the stated end, and C2a's stated
+   end is read two ways and unruled (`transcripts/CASES.md`), **C2a's `fix` is entered only after
+   2026-11-17T12:00:00Z**, the later of the two. p(stands) = 0.75.
+3. **Order 1's timing.** Order 1 says the rule is implemented "before C2a′'s opening push". That cannot be
+   carried out: `main` stands at 7,784 of 7,800 counted lines, and only the opening push may raise the cap. The
+   rule's text is fixed before the window opens; only the code that computes it lands inside it, as the first
+   proposal after C2a-prime's opening. `status.py` is a function of the prefix, so after that merge every run
+   types the fix by the rule; until then no promotion, writ disposition or report relies on its typing of that
+   `fix`. This holds only if BRIEF-C2a-prime, before its opening, exempts its window code's `item_process`
+   change from its own "nothing in … `item_process` … changes" and "no change to any criterion's
+   statistic or threshold", and from BRIEF-C2a's "no change to C1's statistics"; otherwise the question goes to the sovereign. The builder codes corrections 2 and 3 only once
+   Guy has read them (A2.10: "Code is written to a text Guy has read"). p(stands) = 0.8.
+4. **Its standing.** §Its standing as precedent says the ruling "needs no amendment" and "binds every later
+   reading — … the sovereign's own — until a later ruling overrules it by name and with reasons". A2.10 says questions of what the charter allows "are
+   put to Guy as rulings and recorded here" — in the charter, which changes only by `decision transmute` and
+   `amend` (A2.7; SPEC §10.2, §10.13). So this ruling is to be recorded by an amendment, and both "needs no
+   amendment" and "binds every later reading … until a later ruling overrules it by name and with reasons" are
+   withdrawn.
+   Until then this judgment is the record of Guy's answer, and his direction ("so it becomes case law") is that
+   it be followed. No text ranks a ruling or says how one is displaced. It decides no question of validity
+   (§3), and reaches code only through its orders. p(stands) = 0.8.
