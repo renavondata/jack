@@ -1,11 +1,11 @@
-# BRIEF-C2a-prime — the second window of C2a (draft v5, 4 November 2026, counsel)
+# BRIEF-C2a-prime — the second window of C2a (draft v6, 4 November 2026, counsel)
 
 This file is `transcripts/BRIEF-C2a-prime-draft.md`. Wherever a tool reads a name the window is called `C2a-prime`, because `jack push --opens` does not admit `′`.
 
 **How this draft came to stand here.**
 - v2 answered counsel's cold read of v1. It reached `main` unread: the merge verb signed seq 1265 at 09:04:29Z, counsel withdrew #292 at 09:06:04Z, and GitHub merged it at 09:13:19Z while the verb was still waiting on checks (COUNSEL-OPEN row 34).
-- v3 and v4 were never proposed. Cold reads failed them.
-- v5 replaces v2, as BRIEF-C2b's drafts v1–v6 replaced one another on `main` before their reads. It follows the corrections to `transcripts/RULING-20261104-window-fix.md`:
+- v3, v4 and v5 were never proposed. Cold reads failed them.
+- v6 replaces v2, as BRIEF-C2b's drafts v1–v6 replaced one another on `main` before their reads. It follows the corrections to `transcripts/RULING-20261104-window-fix.md`:
   - correction 2: condition 2 tested on criterion 7 alone; C2a's `fix` after 2026-11-17T12:00:00Z;
   - correction 3: the rule's code lands inside the window, under the exemption stated here;
   - correction 5: the sources of C2a's two readings.
@@ -16,7 +16,8 @@ This file is `transcripts/BRIEF-C2a-prime-draft.md`. Wherever a tool reads a nam
 - changes criterion 3's number;
 - changes criterion 7's interval;
 - adds §Pins to criterion 1;
-- reads criterion 6 with the ruling's rule (§The exemption).
+- reads criterion 6 with the ruling's rule (§The exemption), its "unchanged" comparison starting at the window code's merge;
+- reads criterion 7's veto clause by §The subject.
 
 Nothing else changes, and no stream changes. The brief also names:
 - the lawful change that fixes the precedent;
@@ -36,7 +37,7 @@ This brief never needs the answer. Every act it prescribes at C2a's boundary com
    - It is after 2026-11-17T12:00:00Z.
    - No `decision promote C2a` has `ts` at or before that instant.
    - No `push` follows seq 367 before it.
-2. **C2a's failure is witnessed as correction 2 tests it.** The attributed acts evidence `transcripts/evidence/acts-20261103T2144.csv` has been on `main` since #296, with its raw twin and `acts-20261103T2144-classifier.sha256` beside it. It holds nine rows with `repo` `renavondata/jack` and `class` `repair` inside C2a's window read early, from seq 367 at 2026-11-01T15:04:14Z to 2026-11-15T15:04:14Z. The earliest is at 2026-11-02 22:11 HKT.
+2. **C2a's failure is witnessed as correction 2 tests it.** The attributed acts evidence `transcripts/evidence/acts-20261103T2144.csv` has been on `main` since #296, with its raw twin and `acts-20261103T2144-classifier.sha256` beside it. It holds nine rows with `repo` `renavondata/jack` and `class` `repair` inside C2a's window read early, from seq 367 at 2026-11-01T15:04:14Z to 2026-11-15T15:04:14Z. The earliest is at 2026-11-02 22:11 HKT. `transcripts/evidence/guy_acts3.py` on `main` has the SHA-256 that is the first token of that hash file, `ed0d37ba919412c32ab774ae5217a56e8cbf3c9c5ebe3632c687b18c96a1725b`.
 3. **This brief and its two reads are on `main`.** The reads are by readers of different model families. Each is a `transcripts/REVIEW-C2a-prime-*.md` in the form `jack push --opens` reads:
    - first line `VERDICT: ACCEPT` or `VERDICT: ACCEPT WITH OBLIGATIONS`;
    - a `Reviewed tree:` at which this text's bytes equal `main`'s;
@@ -63,7 +64,7 @@ The nine rows, by hand:
 The failure is recorded as C2a's precedent in the C2a report. No row is re-attributed.
 
 **The lawful change** (A3.2: "fixed by a lawful change") is to the machinery, not the law:
-- From 2026-11-04T05:40Z every act of the court on jack's platform is made by a GitHub App, `renavondata-jack-court[bot]` (opencode-runner #225, #227). The first merge under it was PR #285 at 06:35:17Z.
+- From 2026-11-04T05:40Z every act of the court on jack's platform is made by a GitHub App, `renavondata-jack-court[bot]` (opencode-runner #227; #225, which proposed accounts per party, superseded). The first merge under it was PR #285 at 06:35:17Z.
 - The herald re-runs nothing (opencode-runner #220).
 - Counsel writes no closing keyword and asks the sovereign for no platform act.
 
@@ -110,6 +111,7 @@ The code is the builder's: one branch, pre-built before the opening and proposed
 - the opening and V5 by the rules above;
 - criterion 3 against 8,400, and "unchanged since the opening" against that push;
 - criterion 7's acts interval from the opening;
+- criterion 7's veto clause by §The subject: a `veto` with subject `C2a` or `C2a-prime` counts only when its `ts` is after C2a-prime's opening;
 - the window line.
 
 Otherwise it reads C2a's first window as now. With no V5 below the opening, it prints `promote C2a: refused: C2a-prime has no promotion forecast before its opening`.
@@ -132,22 +134,27 @@ The terms used above:
 - **Stated ends.**
   - C2a's: early, `c2a_window`'s end; late, V0's `resolves_by`.
   - C2a-prime's: V5's `resolves_by`, the same on both readings.
+    - C2b's: X7's `resolves_by` (BRIEF-C2b Amendment 2), its opening the first `push` after `decision promote C2a`.
   - C1a and C1b promoted inside their windows (seqs 188 and 337), so no `fix` naming either meets condition 2.
+- **Naming, for other windows.** For any window but C2a and C2a-prime, a `promote` or `veto` names it when its `subject` equals the window's name.
+- **Change 2's functions.** The builder names them in one tuple in `tools/status.py`, which change 3's guard and the pins read.
 
 The test is computed outside `item_process`, which receives the set of `seq`s that meet the whole rule and drops those from `repair` (`status.py` line 92). If the history or a named file cannot be read, the `fix` is typed a repair and `status.py` prints `window fix <seq>: unverified — <what is missing>`. The `fix` so typed is a late report on every prefix that holds it. Any other sovereign `decision fix` is BRIEF-C1b's repair.
 
 **Change 3, criterion 6's "unchanged" comparison** (`c2a_tree_evidence`'s `process_at`) for C2a-prime.
-- **Where it starts.** It starts from the tree at the merge of this proposal, not at the opening, because change 2 alters `item_process` and lands after the opening. That merge is the first `merge` entry after the opening whose `commit` has as an ancestor the `commit` of a `proposal` entry whose `title` begins `C2a-prime window code`. Before that merge exists, criterion 6 prints `unchanged: pending the window code's merge`.
-- **What it covers.** In addition to what it covers now:
-  - every top-level function of `tools/status.py` that change 2's functions reference by name, transitively;
-  - every call of `item_process`, compared by `ast.dump`.
+- **Where it starts.** For the functions below it starts from the tree of the `main` commit carrying the merge of this proposal, not at the opening, because change 2 alters `item_process` and lands after the opening. `score_items`, `sovereign_keys`, `P0` and `tools/clerk.py` are compared from the opening, as now. That merge is the first `merge` entry after the opening whose `commit` has as an ancestor the `commit` of a `proposal` entry whose `title` begins `C2a-prime window code`. Before that merge exists, criterion 6 prints `unchanged: pending the window code's merge`.
+- **What it covers, from that merge.**
+  - `item_process`;
+  - change 2's functions, and every top-level function of `tools/status.py` they reference by name, transitively;
+  - every top-level function of `tools/status.py` that calls `item_process` or one of change 2's functions, compared whole.
 
-**Tests and size.** The new pins join `VALUE_PINS`, so criterion 1 requires them. There is a test for each change. A further test shows that on the real `log.jsonl`, `item_process` returns the same items with the set change 2 computes as with no set passed. Counted lines after the window code and the reviewer's pins together: at most 8,400.
+**Tests and size.** The new pins join `VALUE_PINS`, so criterion 1 requires them. There is a test for each change. A further test shows that on the real `log.jsonl`, up to its last entry before the first `decision fix` (the whole log if it holds none), `item_process` returns the same items with the set change 2 computes as with no set passed. Correction 3's "the first proposal after C2a-prime's opening" is read as the first proposal of code after it. Counted lines after the window code and the reviewer's pins together: at most 8,400.
 
 ### Between the `fix` and that merge
 `status.py` as it then stands assesses `promote C2a` against C2a's first window, and no `promote` can pass:
 - criterion 3 refuses, since HEAD's `judge/scope.json` differs from the tree at seq 367;
-- criterion 6 there does not see the `fix`, which falls after that window's prefix.
+- criterion 7 refuses on the nine rows;
+- criterion 6 there does not see the `fix`, so its typing plays no part.
 
 `status.py` is a function of the prefix, so items finalised in the interval are recomputed by every run after the merge. The C2a-prime report prints both typings. This touches BRIEF-C1b's "no later entry, evidence string or merge changes an earlier item" for that interval alone, and correction 3 accepts it.
 
@@ -160,7 +167,7 @@ Change 2 is exempt from three refusals:
 The grounds:
 - A3.2 makes C2a-prime a new pre-stated window and this brief its pre-statement. Its criteria are C2a's, read on its window, and its refusal list is C2a's, entire, but for this exemption.
 - The change is inert on the record as it stands. `log.jsonl` at 41f0d6c, seqs 0–1275, holds seven `decision` entries and no `fix`: four `transmute` (seqs 3, 28, 66, 136), one `budget` (seq 50) and two `promote` (seqs 188, 337). So on every prefix before the first `fix`, the items, the stakes and the wealth are those the code yields now.
-- It decides only how the boundary `fix` is typed, and A2.6 typed that on 18 October 2026, before any window opened. The code that implements it was written after (the ruling's Reasoning 2).
+- It decides only how the boundary `fix` is typed, and A2.6 typed that on 18 October 2026, before any window opened. BRIEF-C1b's reuse of `fix`, and the code that types every `fix` a repair, came after it (the ruling's Reasoning 2).
 - A4.1's "same statistic under the same null" holds: the null p₀ = 6/11 and A4.3's stake rule do not change. What changes is that the one entry A2.6 names is read as A2.6 names it.
 
 This is counsel's decision under correction 3 (p 0.8). If the reads find the exemption beyond this brief's power, the question goes to the sovereign before the opening.
@@ -176,7 +183,7 @@ The table ends at its generation instant, which is at or after the last entry be
 
 The command reads GitHub's current record: comment bodies, labels, deletions. Counsel therefore commits the raw table with the attributed one, so the evidence the promotion read stays on `main` whatever GitHub later shows.
 
-The off-log acts between C2a's stated end and C2a-prime's opening fall inside no window's interval. The C2a report lists them.
+The off-log acts between 2026-11-15T15:04:14Z and C2a-prime's opening fall inside no window's interval. The C2a report lists them.
 
 ## Order of acts, and the clock
 1. **The brief and V5–V7.** This brief is merged with two reads on the record, by readers of different model families, neither returning a BLOCK. Counsel then enters V5–V7 (the ruling's Order 4, as corrected). V5's `resolves_by` is never moved.
@@ -206,6 +213,7 @@ This brief states no minimum length for the window. A5 makes a window a maximum,
 
 ## Pins (the reviewer's), each with its named mutant and passing twin
 - **`second_window_from_the_end`**
+    - Fixture: pushes at the analogues of seq 367, of an instant between 2026-11-15T15:04:14Z and 2026-11-17T12:00:00Z, and of an instant after it.
   - Requires: the opening is the first push after V0's `resolves_by`.
   - Mutants: the first push after seq 337, which is C2a's own (seq 367); the first push after `c2a_window`'s end.
 - **`second_window_end_is_v5`**
@@ -218,8 +226,9 @@ This brief states no minimum length for the window. A5 makes a window a maximum,
   - Requires: criterion 7 counts rows from C2a-prime's opening.
   - Mutant: from C2a's opening, which counts the nine.
 - **`promote_refused_before_end`**
-  - Requires: a `promote C2a` at a prefix before C2a-prime's opening is assessed against the first window, prints no `window: C2a-prime` line, and is refused on criterion 7.
-  - Mutant: assessed against C2a-prime whenever a V5 exists.
+    - Requires: a `promote C2a` at a prefix before C2a-prime's opening is assessed against the first window, prints no `window: C2a-prime` line, and is refused on criterion 7; after the opening, a `veto` with subject `C2a-prime` refuses C2a-prime.
+  - Mutants: assessed against C2a-prime whenever a V5 exists; a `veto` with subject `C2a-prime` after the opening ignored.
+  - Twin: a `veto` with subject `C2a` before the opening does not refuse C2a-prime.
 - **`window_fix_is_decision`**
   - Fixture:
     - a synthetic log on which W is C2a (an opening push above seq 337; V0 later than opening + 14 d, so its two readings differ);
@@ -233,7 +242,10 @@ This brief states no minimum length for the window. A5 makes a window a maximum,
     - condition 2 read as "ended without promotion";
     - (a) read early;
     - (b1) or the (b2) interval read late;
-    - condition 3 read early;
+        - condition 3 read early;
+    - condition 1 read as "contains the name";
+    - the next-push bound of condition 3 dropped;
+    - condition 4 dropped;
     - the carrying commit taken as the assessed head;
     - the attributed requirement dropped.
   - Twins. Each is still a repair, taints the open writ and is a late report:
@@ -250,13 +262,14 @@ This brief states no minimum length for the window. A5 makes a window a maximum,
     - the history unreadable, which also prints the `unverified` line.
   - Further twin: a `veto` naming W at or before its early end, with no file, makes the `fix` a decision.
 - **`process_unchanged_from_window_code`**
-  - Requires: criterion 6's comparison starts at the window code's merge and covers change 2's functions, the functions they reference, and every call of `item_process`.
-  - Mutants: the comparison started at the opening push, which refuses every prefix; change 2's functions omitted from the comparison; the set widened at the call site. The last two must each read `unchanged False`.
+    - Twins: a tree identical to the merge's reads `unchanged True`; a later tree that edits a change-2 function, a function one references, or a caller of `item_process` (a widened set among them) reads `unchanged False`.
+  - Mutants of the guard: started at the opening push, which refuses every prefix; change 2's functions omitted; the callers omitted.
 - **`wealth_continues`** (C2a's, unchanged).
 
 ## Refusal list
 C2a's, entire, but for §The exemption, plus:
-- no change to any criterion's statistic or threshold;
+- no change to any criterion's statistic or threshold as this brief states them;
+- no change to `transcripts/evidence/guy_acts3.py` before C2a-prime's exit;
 - no re-attribution of any row of C2a's acts evidence;
 - no minimum window length;
 - no second push inside the window;
@@ -286,10 +299,10 @@ C2a's, entire, but for §The exemption, plus:
     - the nine rows as precedent;
     - the lawful change and its `grant`;
     - C2a's stated end, read two ways and unruled;
-    - the off-log acts between C2a's end and C2a-prime's opening;
+        - the off-log acts between 2026-11-15T15:04:14Z and C2a-prime's opening;
     - the sovereign's acts outside jack on 4 November: three runner merges and a runner label, as off-log repairs the instrument cannot see, and the App as a capability grant;
   - a section on C2a-prime's exit: its length, its acts count, and the boundary `fix`'s typing before and after the window code;
-- LAW.md's count of the sovereign's cap-change pushes (seqs 197 and 367) brought up to date.
+- LAW.md's count of the sovereign's cap-change pushes corrected: seqs 5, 9, 29, 197 and 367, not "two so far", and C2a-prime's opening added.
 
 The first window's acts evidence has been on `main` since #296: `acts-20261103T2144` raw and attributed, its classifier hash, and `runs-tests-20261103T2144.json`.
 
