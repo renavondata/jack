@@ -25,6 +25,7 @@ P0 = Fraction(6, 11)  # BRIEF-C1b v7; never estimated from the live window
 WORKFLOW = ".github/workflows/tests.yml"
 MAP = "tools/enforcement.json"
 C2A_PRIME_CAP = 8400
+WINDOW_FIX_FUNCTIONS = ("decision_window", "fix_window", "carrying_commit", "attributed_failure", "window_fix_seqs")
 
 
 def sovereign_keys(es):
@@ -79,9 +80,9 @@ def prime_window(es):
     return opening["seq"], opening["ts"], v5["body"]["resolves_by"]
 
 
-def fix_window(es, name):
+def fix_window(es, name, late=False):
     if name == "C2a":
-        return c2a_window(es)
+        return c2a_window(es, late=late)
     if name == "C2a-prime":
         return prime_window(es)
     if name == "C1b":
@@ -94,7 +95,10 @@ def fix_window(es, name):
         opening = next(e for e in es if e["type"] == "push" and e["seq"] > promotion["seq"])
         x7 = next(e for e in es if e["type"] == "forecast" and e["seq"] < opening["seq"] and
                   e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "X7")
-        return opening["seq"], opening["ts"], min(instant(x7["body"]["resolves_by"]), instant(opening["ts"]) + dt.timedelta(days=14)).strftime(FMT)
+        end = instant(x7["body"]["resolves_by"])
+        if not late:
+            end = min(end, instant(opening["ts"]) + dt.timedelta(days=14))
+        return opening["seq"], opening["ts"], end.strftime(FMT)
     raise ValueError("no pre-stated window bounds for " + name)
 
 
@@ -151,7 +155,7 @@ def window_fix_seqs(es, root, rev):
             continue
         try:
             _, start, end = fix_window(es, name)
-            late = c2a_window(es, late=True)[2] if name == "C2a" else end
+            late = fix_window(es, name, late=True)[2]
             closing = [d for d in es if d["type"] == "decision" and d["ts"] <= late and decision_window(d, es) == name]
             following = next((p for p in es if p["type"] == "push" and p["ts"] > late), None)
             if e["ts"] <= late or following and e["seq"] >= following["seq"] or any(d["body"]["kind"] == "promote" for d in closing):
@@ -337,11 +341,12 @@ def off_log_repairs(acts, start, end):
                for row in acts)
 
 
+# Awaiting the reviewer's registration; add these to VALUE_PINS when registered.
 C2A_PRIME_PINS = ("second_window_from_the_end second_window_end_is_v5 second_window_cap offlog_from_second_opening "
                   "promote_refused_before_end window_fix_is_decision process_unchanged_from_window_code").split()
 VALUE_PINS = ("worked_table forecast_before_cutoff rigged revision weights_from_resolved_prefix abstention_is_base "
               "one_event_one_key grouping_by_principal uniform_prior no_learning_rate exact_probabilities per_type_base "
-              "bounded_difference lambda_predictable factor_algebra window_from_the_push wealth_continues promote_refused_value").split() + C2A_PRIME_PINS
+              "bounded_difference lambda_predictable factor_algebra window_from_the_push wealth_continues promote_refused_value").split()
 
 
 def c2a_tree_evidence(root, rev, prefix, opening, prime=False):
@@ -367,23 +372,29 @@ def c2a_tree_evidence(root, rev, prefix, opening, prime=False):
                        p["body"]["commit"] in ancestors for p in prefix):
                     process_start = carrying_commit(root, rev, e, first_parent=True)
                     break
-        def process_at(sha):
+        def process_at(sha, window_code=False):
             module = ast.parse(tree_bytes(root, sha, "tools/status.py"))
             nodes = module.body
-            names = {"item_process", "score_items", "sovereign_keys"}
-            if prime:
+            names = {"score_items", "sovereign_keys"} | (set() if prime else {"item_process"})
+            constants = {"P0"}
+            if window_code:
                 functions = {n.name: n for n in nodes if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
-                pending = {"window_fix_seqs"}
+                declaration = next(n for n in nodes if isinstance(n, ast.Assign) and
+                                   any(isinstance(t, ast.Name) and t.id == "WINDOW_FIX_FUNCTIONS" for t in n.targets))
+                roots = set(ast.literal_eval(declaration.value))
+                names, pending, constants = {"item_process"}, roots, {"WINDOW_FIX_FUNCTIONS"}
                 while pending:
                     names |= pending
                     pending = {n.id for name in pending for n in ast.walk(functions[name])
                                if isinstance(n, ast.Name) and n.id in functions} - names
-            calls = [ast.dump(n) for n in ast.walk(module) if isinstance(n, ast.Call) and
-                     (isinstance(n.func, ast.Name) and n.func.id == "item_process" or
-                      isinstance(n.func, ast.Attribute) and n.func.attr == "item_process")] if prime else []
+                names |= {name for name, function in functions.items() if any(isinstance(n, ast.Call) and
+                          (isinstance(n.func, ast.Name) and n.func.id in roots | {"item_process"} or
+                           isinstance(n.func, ast.Attribute) and n.func.attr in roots | {"item_process"}) for n in ast.walk(function))}
             return [ast.dump(n) for n in nodes if getattr(n, "name", None) in names or
-                    isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "P0" for t in n.targets)] + calls
-        same = None if process_start is None else process_at(process_start) == process_at(rev) and tree_bytes(root, process_start, "tools/clerk.py") == tree_bytes(root, rev, "tools/clerk.py")
+                    isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id in constants for t in n.targets)]
+        same = None if process_start is None else (process_at(start) == process_at(rev) and
+               (not prime or process_at(process_start, True) == process_at(rev, True)) and
+               tree_bytes(root, start, "tools/clerk.py") == tree_bytes(root, rev, "tools/clerk.py"))
         pins = tree_bytes(root, rev, "pins/pins.py").decode()
         registered = all(f'Pin("{name}"' in pins or f"Pin('{name}'" in pins for name in VALUE_PINS if prime or name not in C2A_PRIME_PINS)
         return unchanged, same, registered

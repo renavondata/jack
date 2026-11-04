@@ -1,4 +1,4 @@
-"""BRIEF-C2a-prime v5: boundary witnesses, disposable history, and inert-prefix oracle."""
+"""BRIEF-C2a-prime v6: boundary witnesses, disposable history, and inert-prefix oracle."""
 import hashlib
 import json
 from unittest.mock import patch
@@ -91,6 +91,34 @@ def test_second_window():
     assert st.decision_window(e(370, "decision", "guy", AFTER, kind="promote", subject="C2a-prime"), es) is None
     vetoed = st.status(es + [e(370, "decision", "guy", AFTER, kind="veto", subject="C2a-prime")], "A3", 14, AFTER, subject="C2a")
     assert vetoed["veto"]
+    for subject in ("C2a", "C2a-prime"):
+        for when in (END, PUSH, AFTER):
+            veto = e(370, "decision", "guy", when, kind="veto", subject=subject)
+            assert st.status(es + [veto], "A3", 14, AFTER, subject="C2a")["veto"] == (when == AFTER)
+
+
+@pytest.mark.parametrize("case", ["veto", "late-veto", "late-promote", "between", "acts", "late-acts", "short"])
+def test_c2b_stated_ends(case):
+    es = base() + [e(368, "forecast", ts=OPEN, args={"id": "X7"}, resolves_by=END if case == "short" else LATE),
+                   e(369, "decision", "guy", OPEN, kind="promote", subject="C2a"), e(370, "push", "guy", OPEN)]
+    assert st.fix_window(es, "C2b") == (370, OPEN, END)
+    assert st.fix_window(es, "C2b", late=True)[2] == (END if case == "short" else LATE)
+    es.append(e(371, "decision", "guy", LATE if case == "late-veto" else END, kind="veto", subject="C2b"))
+    if case == "late-promote":
+        es.append(e(372, "decision", "guy", LATE, kind="promote", subject="C2b"))
+    if case.endswith("acts"):
+        es.pop()
+    fix = e(373, "decision", "guy", END if case == "between" else FIX, kind="fix", subject="C2b: " + ("acts" if case.endswith("acts") else "no file"))
+    row = ROW.replace("2026-11-02 22:11", "2026-11-16 08:00") if case == "late-acts" else ROW
+    files = {"log.jsonl": log(es), PATH + ".csv": HEADER + row, PATH + "-raw.csv": HEADER + row,
+             PATH + "-classifier.sha256": hashlib.sha256(b"classifier").hexdigest(), "transcripts/evidence/guy_acts3.py": "classifier"}
+    with tree(files) as (root, _), patch.object(st, "signer_blob", side_effect=lambda e: e["proposer"]):
+        es.append(fix)
+        head = commit(root, {"log.jsonl": log(es)})
+        assert st.window_fix_seqs(es, root, head) == ({373} if case in ("veto", "acts", "short") else set())
+    for name in ("C1a", "C1b", "C2b", "later-window"):
+        for kind in ("promote", "veto"):
+            assert st.decision_window(e(374, "decision", "guy", AFTER, kind=kind, subject=name), es) == name
 
 
 def test_assessment_cap_and_first_window_refusal():
@@ -111,15 +139,23 @@ def test_assessment_cap_and_first_window_refusal():
             assert not checks[5][0] and "unchanged: pending the window code's merge" in checks[5][1]
 
 
-def test_process_unchanged_from_window_code():
+@pytest.mark.parametrize("opening_guard", [None, "score_items", "sovereign_keys", "P0", "clerk"])
+def test_process_unchanged_from_window_code(opening_guard):
     es = base() + [e(368, "forecast", ts=END, args={"id": "V5"}, resolves_by=V5), e(369, "push", "guy", PUSH)]
     scope = json.dumps({"cap": st.C2A_PRIME_CAP, "counted": ["tools/"]})
     source = st.tree_bytes(st.ROOT, None, "tools/status.py").decode()
+    source += "\ndef fix_caller(es, root, rev):\n    qualified = window_fix_seqs(es, root, rev)\n    return qualified\n"
     files = {"judge/scope.json": scope, "SPEC.md": "at C1 it is:\n```\n" + scope + "\n```", "tools/clerk.py": "",
-             "pins/pins.py": "\n".join(f'Pin("{p}"' for p in st.VALUE_PINS), "log.jsonl": log(es), "tools/status.py": "def item_process(): pass\n"}
+             "pins/pins.py": "\n".join(f'Pin("{p}"' for p in st.VALUE_PINS), "log.jsonl": log(es),
+             "tools/status.py": source.replace("if repair and seq not in window_fixes:", "if repair:")}
     with tree(files) as (root, opening):
         assert st.c2a_tree_evidence(root, opening, es, 369, True) == (True, None, True)
-        code = commit(root, {"tools/status.py": source})
+        before, after = {None: ("", ""), "score_items": ('successes += item["Y"]', 'successes += 1'),
+                         "sovereign_keys": ('d["pubkey"].split()[1]', 'd["pubkey"].split()[0]'), "P0": ('Fraction(6, 11)', 'Fraction(1, 2)'),
+                         "clerk": ("", "")}[opening_guard]
+        source = source.replace(before, after)
+        code = commit(root, {"tools/status.py": source.replace("BRIEF-C1b §Liveness", "pre-merge process"),
+                             "tools/clerk.py": "changed" if opening_guard == "clerk" else ""})
         es.append(e(370, "proposal", ts=PUSH, title="C2a-prime window code: fixture", commit=code))
         es.append(e(371, "proposal", ts=PUSH, title="unrelated later proposal", commit=opening))
         proposal = commit(root, {"log.jsonl": log(es)})
@@ -127,13 +163,34 @@ def test_process_unchanged_from_window_code():
         unrelated = commit(root, {"log.jsonl": log(es)})
         assert st.c2a_tree_evidence(root, unrelated, es, 369, True)[1] is None
         es.append(e(373, "merge", ts=PUSH, proposal=999, commit=proposal))
-        merged = commit(root, {"log.jsonl": log(es)})
-        assert st.c2a_tree_evidence(root, merged, es, 369, True) == (True, True, True)
+        merged = commit(root, {"log.jsonl": log(es), "tools/status.py": source})
+        assert st.c2a_tree_evidence(root, merged, es, 369, True) == (True, opening_guard is None, True)
+        if opening_guard is not None:
+            return
         for before, after in [('r["class"] == "repair"', 'True'), ('end, fixes)', 'end, fixes | {999})'),
-                              ('dt.datetime.strptime(s, FMT)', 'dt.datetime.strptime(s, FMT) + dt.timedelta(seconds=1)')]:
+                              ('fixes = window_fix_seqs(s["prefix"], root, rev)', 'fixes = window_fix_seqs(s["prefix"], root, rev) | {999}'),
+                              ('return qualified\n', 'return qualified | {999}\n'),
+                              ('dt.datetime.strptime(s, FMT)', 'dt.datetime.strptime(s, FMT) + dt.timedelta(seconds=1)'),
+                              ('capture_output=True', 'capture_output=False'),
+                              ('"attributed_failure", "window_fix_seqs")', '"window_fix_seqs",)')]:
             changed = commit(root, {"tools/status.py": source.replace(before, after)})
             assert st.c2a_tree_evidence(root, changed, es, 369, True)[1] is False
-        changed = commit(root, {"tools/status.py": source, "judge/scope.json": scope.replace(str(st.C2A_PRIME_CAP), str(st.C2A_PRIME_CAP + 1))})
+        for node in st.ast.parse(source).body:
+            if isinstance(node, st.ast.FunctionDef) and node.name in st.WINDOW_FIX_FUNCTIONS + ("item_process",):
+                lines = source.splitlines(keepends=True)
+                lines.insert(node.lineno, "    pass\n")
+                changed = commit(root, {"tools/status.py": "".join(lines)})
+                assert st.c2a_tree_evidence(root, changed, es, 369, True)[1] is False
+        for before, after in [('Fraction(6, 11)', 'Fraction(1, 2)'), ('successes += item["Y"]', 'successes += 1'),
+                              ('d["pubkey"].split()[1]', 'd["pubkey"].split()[0]'), ('"tools/clerk.py"', 'clerk changed')]:
+            edits = {"tools/status.py": source.replace(before, after), "tools/clerk.py": ""}
+            if before == '"tools/clerk.py"':
+                edits = {"tools/status.py": source, "tools/clerk.py": after}
+            changed = commit(root, edits)
+            assert st.c2a_tree_evidence(root, changed, es, 369, True)[1] is False
+        restored = commit(root, {"tools/status.py": source, "tools/clerk.py": ""})
+        assert st.c2a_tree_evidence(root, restored, es, 369, True)[1] is True
+        changed = commit(root, {"judge/scope.json": scope.replace(str(st.C2A_PRIME_CAP), str(st.C2A_PRIME_CAP + 1))})
         assert st.c2a_tree_evidence(root, changed, es, 369, True)[0] is False
         reverted = commit(root, {"judge/scope.json": scope})
         assert st.c2a_tree_evidence(root, reverted, es, 369, True)[0] is False
@@ -148,6 +205,9 @@ def test_nonretroactivity():
     es = []
     with open(st.ROOT + "/log.jsonl") as stream:
         for line in stream:
-            es.append(json.loads(line))
+            entry = json.loads(line)
+            if entry["type"] == "decision" and entry["body"].get("kind") == "fix":
+                break
+            es.append(entry)
     with patch.object(st, "git_bytes", side_effect=AssertionError("inertness must read no git history")):
         assert st.item_process(es, st.c1b_window(es)[0], window_fixes=st.window_fix_seqs(es, st.ROOT, "HEAD")) == st.item_process(es, st.c1b_window(es)[0])
