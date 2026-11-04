@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 91
+EXPECTED = 99
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1059,3 +1059,65 @@ for pin in C2B_GATE_PINS:
     pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
         f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
 PINS += C2B_GATE_PINS
+
+
+# --- C2a-prime v7: each edit is anchored in production code, never in its oracle. ---
+def prime_tests(*nodes):
+    def test(root):
+        r = subprocess.run([sys.executable, "-m", "pytest", "-q", *nodes], cwd=root, capture_output=True, text=True)
+        assert r.returncode == 0, r.stdout + r.stderr
+    return test
+
+
+def prime_mutant(name, before, after):
+    return Mutant(name, "tools/status.py", before, after)
+
+
+PT = "tests/test_c2a_prime.py::"
+PR = "pins/c2aprime.py::"
+FIX_FAILURE = 'if any(d["body"]["kind"] == "veto" and d["ts"] <= end for d in closing) or attributed_failure(root, carrier, e["body"]["subject"], start, end):'
+FOLLOW = ' or following and e["seq"] >= following["seq"]'
+CALLERS = 'names |= {name for name, function in functions.items() if any(isinstance(n, ast.Call) and\n                          (isinstance(n.func, ast.Name) and n.func.id in roots | {"item_process"} or\n                           isinstance(n.func, ast.Attribute) and n.func.attr in roots | {"item_process"}) for n in ast.walk(function))}'
+ASSIGNMENTS = 'constants |= {n.id for name in names for n in ast.walk(functions[name]) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}'
+CAP_HISTORY = 'original = scope_at(start)\n        unchanged = all(scope_at(c) == original for c in [rev] + git_bytes(root, "rev-list", f"{start}..{rev}").decode().split())\n        unchanged = unchanged and json.loads(original[0])["cap"] == (C2A_PRIME_CAP if prime else 7800) and not any(\n            e["type"] == "push" and e["seq"] > opening for e in prefix)'
+C2A_PRIME_PINS = [
+    Pin("second_window_from_the_end", prime_tests(PR + "test_opening"), [
+        prime_mutant("first_push_after_337", 'e["type"] == "push" and e["ts"] > end', 'e["type"] == "push" and e["seq"] > 337'),
+        prime_mutant("early_end_opens", 'end = c2a_window(es, late=True)[2]', 'end = c2a_window(es)[2]')]),
+    Pin("second_window_end_is_v5", prime_tests(PT + "test_second_window"), [
+        prime_mutant("v0_ends_second", 'return opening["seq"], opening["ts"], v5["body"]["resolves_by"]', 'return opening["seq"], opening["ts"], c2a_window(es, late=True)[2]'),
+        prime_mutant("v5_after_opening", 'v5 = next((e for e in es if e["seq"] < opening["seq"] and', 'v5 = next((e for e in es if')]),
+    Pin("second_window_cap", prime_tests(PT + "test_assessment_cap_and_first_window_refusal", PR + "test_cap_history"), [
+        prime_mutant("hardcoded_7800", 'cap = C2A_PRIME_CAP if prime else 7800', 'cap = 7800'),
+        prime_mutant("head_cap_only", CAP_HISTORY, 'unchanged = counted_lines(root, rev, json.loads(scope_at(rev)[0])["counted"]) <= json.loads(scope_at(rev)[0])["cap"]')]),
+    Pin("offlog_from_second_opening", prime_tests(PR + "test_offlog_and_promotion"), [
+        prime_mutant("first_window_acts", 'off = off_log_repairs(acts, s["start"], end, minute_overlap=prime)', 'off = off_log_repairs(acts, c2a_window(s["prefix"])[1], end, minute_overlap=prime)'),
+        prime_mutant("minute_start_only", 't + dt.timedelta(minutes=1) > instant(start)', 't >= instant(start)')]),
+    Pin("promote_refused_before_end", prime_tests(PR + "test_offlog_and_promotion"), [
+        prime_mutant("v5_alone_opens", 'return next((e for e in es if e["type"] == "push" and e["ts"] > end), None)', 'return next((e for e in es if e["type"] == "push" and e["ts"] > end), next((dict(e, seq=e["seq"] + 1) for e in es if e["type"] == "forecast" and e["body"].get("args", {}).get("id") == "V5"), None))'),
+        prime_mutant("prime_veto_ignored", 'or name == "C2a-prime" and e["body"].get("kind") == "veto"', '')]),
+    Pin("window_fix_is_decision", prime_tests(PR + "test_fix_cases", PR + "test_contains_name"), [
+        prime_mutant("fix_is_repair", 'qualified.add(e["seq"])', 'pass'),
+        prime_mutant("nonpromotion_is_failure", FIX_FAILURE, 'if True:'),
+        prime_mutant("promotion_read_early", 'd["ts"] <= late and decision_window', 'd["ts"] <= end and decision_window'),
+        prime_mutant("veto_read_late", FIX_FAILURE, FIX_FAILURE.replace('d["ts"] <= end', 'd["ts"] <= late')),
+        prime_mutant("acts_read_late", FIX_FAILURE, FIX_FAILURE.replace('start, end)', 'start, late)')),
+        prime_mutant("fix_read_early", 'if e["ts"] <= late or following', 'if e["ts"] <= end or following'),
+        prime_mutant("contains_window_name", 'name, colon, _ = e["body"]["subject"].partition(":")', 'name, colon, _ = e["body"]["subject"][e["body"]["subject"].find("C2a:"):].partition(":")'),
+        prime_mutant("next_push_unbounded", FOLLOW, ''),
+        prime_mutant("second_fix_allowed", 'if not first or signer_blob(e)', 'if signer_blob(e)'),
+        prime_mutant("head_carries_fix", 'carrier = carrying_commit(root, rev, e)', 'carrier = rev'),
+        prime_mutant("attribution_dropped", '        tree_bytes(root, rev, path[:-4] + "-raw.csv")\n        tokens = tree_bytes(root, rev, path[:-4] + "-classifier.sha256").split()\n        if not tokens or hashlib.sha256(tree_bytes(root, rev, "transcripts/evidence/guy_acts3.py")).hexdigest().encode() != tokens[0]:\n            continue', '        pass'),
+        prime_mutant("substring_file_name", 're.search(r"(?<![\\w-])" + re.escape(os.path.basename(p)[:-4]) + r"(?:\\.csv)?(?![\\w-])", subject)', 'os.path.basename(p)[:-4] in subject'),
+        prime_mutant("push_clears_all_fixes", 'repairs[:] = [r for r in repairs if r not in window_fixes]', 'repairs[:] = []')]),
+    Pin("window_fix_not_retroactive", prime_tests(PR + "test_nonretroactive_batches"), [
+        prime_mutant("rule_from_fix", '        if repair:\n', '        if repair and seq not in window_fixes:\n'),
+        prime_mutant("rule_never_applied", 'repairs[:] = [r for r in repairs if r not in window_fixes]', 'repairs[:] = repairs')]),
+    Pin("process_unchanged_from_opening", prime_tests(PT + "test_process_unchanged_from_opening", PR + "test_guard_tuple_and_dependency"), [
+        prime_mutant("fix_functions_omitted", 'roots = set(ast.literal_eval(declaration.value))', 'roots = set()'),
+        prime_mutant("references_not_followed", 'while pending:', 'for _ in range(2):'),
+        prime_mutant("callers_omitted", CALLERS, 'names |= set()'),
+        prime_mutant("assignments_omitted", ASSIGNMENTS, 'constants |= set()'),
+        prime_mutant("tuple_from_assessed_tree", 'declaration = next(n for n in nodes if isinstance(n, ast.Assign)', 'declaration = next(n for n in ast.parse(tree_bytes(root, rev, "tools/status.py")).body if isinstance(n, ast.Assign)')]),
+]
+PINS += C2A_PRIME_PINS
