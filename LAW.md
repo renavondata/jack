@@ -13,6 +13,13 @@ Where a layer's brief promised a thing that has not arrived, the sentence says
 so rather than naming the brief. Nothing here adds law: it maps. Brought from
 C0 to C2a by counsel on 3 November 2026 (the author's F1).
 
+**This file binds nothing.** It is the map CHARTER §9.7 asks for: each italic passage that opens a paragraph is the
+charter's, and what follows it names the code that enforces it (`tests/test_law.py` checks only that the cited
+definitions exist). Where each part of the law is written, and which text decides which question, is set out at the head of
+`transcripts/CASES.md`, counsel's index of the sovereign's rulings, which binds nothing either. Passages
+marked *commentary* say something other than which code enforces a sentence; they are counsel's, and bind
+only if an amendment enacts them.
+
 ## §2 Four maxims
 
 ### 1. No one judges their own cause
@@ -86,7 +93,7 @@ per-type base rate); C1b's liveness is A4.3's bet in `tools/status.py:score_item
 and `item_process`; C2a's value is A4.4's bounded-difference bet against the
 base rate in `tools/value.py:value`.
 
-**Where practice departs from the sentence** (the author's F6, jack #244).
+**Where practice departs from the sentence** (*commentary*; the author's F6, jack #244).
 The gate is drawn by path and verb, not act by act. Anything under the trusted base
 (`judge/`, `kernel/`, `kernel2/`, `.github/workflows/`, `SPEC.md`) changes only by a
 sovereign `push`, so reversible content there is blocked as well: the counted-line cap in
@@ -202,32 +209,36 @@ are forecasts, scored when the world resolves them.* — The `forecast` and
 itself such a forecast.
 
 *Statutes are confined to decidable properties, because non-trivial semantic
-properties of programs are undecidable (Rice 1953).* — At C0 the only statute
-is this text, bound to the record by its hash: `genesis.template.json` records
-`body.charter`, and `judge/judge.py:judge` refuses every proposal while trunk's
-`CHARTER.md` does not hash to it (`charter_mismatch`). The decidable language
-for primary rules has not arrived (maxim 2); the statutes in force are the
-charter, SPEC, and the briefs' pre-stated criteria as `tools/status.py` reads them.
+properties of programs are undecidable (Rice 1953).* — (*commentary*) In the charter's sense a
+statute is "a decidable predicate, admitted with a violating and a satisfying witness (mutant and twin)"
+(§4), entered by a change entry (§3, Change). None has been admitted: there is no `rule` type (maxim 2
+above; A2.1, "Until then no primary rule exists"). Two other things are decidable and witnessed today. The
+checker's refusals (SPEC §8) are recognition, §4's "validity predicate", each refused by a signed
+vector, beside admitted logs of every entry type (SPEC §11). The briefs' pre-stated criteria are computed by `tools/status.py`, most held
+by a pin and its twin (not all: the off-log count of C2a's criterion 7 has a test and no pin), and bind
+their window only (A2.4). The charter's
+text is bound by its hash — genesis's `body.charter` until A2, then the latest `amend`'s `charter` (seq 137,
+A5) — and `judge/judge.py:judge` refuses every proposal while trunk's `CHARTER.md` does not hash to it
+(`charter_mismatch`, SPEC §10.2). The decidable language for primary rules has not arrived (maxim 2).
 
-## Readings of the charter's citations
+## Readings of the charter's citations (commentary)
 
-These are errata in the charter's reading of its sources, not amendments. They change no
-mechanism, and the charter's text stays as the genesis hash binds it. A session reading the
-charter as law reads these with it. They join the charter's text at the next amendment that
-a witnessed brief rule calls for, and never by an amendment of their own (COUNSEL-OPEN
-row 28). Checked against the texts by the author on 3 November 2026 (jack #244, #245).
+These are counsel's commentary on the charter's reading of its sources: not amendments, not rulings,
+binding on no one. They change no mechanism, and the charter's text stays as the latest `amend`'s
+`charter` hash binds it (seq 137; SPEC §7, §10.2). Counsel proposes no charter text for them except under
+COUNSEL-OPEN row 28's conditions. Checked against the texts by the author on 3 November 2026 (jack #244, #245).
 
 - **§2.4, "forbid only the irreversible (Arrow & Fisher 1974)".** Arrow and Fisher price
   irreversibility; they do not forbid it ("Just because an action is irreversible does not
   mean that it should not be undertaken", p. 319). That a reversible act has no option value
   follows from their model only when reversal costs nothing, and they do not state it. Read
   the maxim as the court's policy, *after* Arrow and Fisher, not as their theorem.
-- **§3, "fold(law, log) is the model every good regulator must contain (Conant & Ashby
+- **§5, "fold(law, log) is the model every good regulator must contain (Conant & Ashby
   1970)".** The theorem concerns the *simplest* optimal regulator, which is a mapping of the
   reguland's events, with the distribution over them fixed. Optimal regulators that are not
   models exist; Conant and Ashby call them "unnecessarily complex". Read "…the model the
   simplest optimal regulator must contain".
-- **§3, "the pool of proposers must carry at least the variety of the disturbances it
+- **§5, "the pool of proposers must carry at least the variety of the disturbances it
   absorbs (Ashby 1956)".** S.11/7 bounds the variety of outcomes below by V_D − V_R; it does
   not require the regulator's variety to equal the disturbances'. Read "…enough variety that
   the outcomes it lets through fit the acceptable set (Ashby 1956, S.11/7)". The case for

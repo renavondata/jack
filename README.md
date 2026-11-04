@@ -11,6 +11,7 @@ rules as data, witnesses and lapse arrive in C1 when a first precedent needs
 them (`BRIEF-C1.md`; the earlier draft is on branch `c1-law-draft`). `CHARTER.md`
 is the founding text; `LAW.md` reads its §§2–3 against the code; `SPEC.md` is
 the contract a second checker is written from; `REPORT.md` is the C0 verdict.
+`transcripts/CASES.md` indexes the sovereign's rulings and says where each part of the law is written; it binds nothing.
 
 ## Layout
 
