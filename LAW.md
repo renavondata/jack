@@ -276,8 +276,8 @@ clause: only an amendment does.
   (`if s["subject"] == "C1b" else []`), so a forecast in the running window carries no W1 writ and is
   seen only once overdue, as a W4 line. `tools/enforcement.json`'s W1 row, which is the builder's file, and
   maxim 3 above state W1 without that condition. BRIEF-C2a forbids changing the clerk inside its window,
-  and C2a-prime's brief does too; the one-line fix, with a pin whose mutant is the present line, is to ride
-  C2b's opening push. Until then W1 is C1b's only.
+  and C2a-prime's brief does too, and BRIEF-C2b's refusal list bars a clerk change in C2b. The fix lands from
+  C2c's opening (BRIEF-C2c Appendix M.3, pin `c2c_w1_every_window`). Until then W1 is C1b's only.
 - **SPEC §10.14, the sovereign's decisions.** *"a `decision` entry not signed by a key declared in genesis
   (the sovereign's acts are his own; CHARTER §7)"*: `judge/judge.py:judge`, ground `decision_by_other`, pin
   `decision_forged`. The judge compares the signature's public key with genesis's keys by key material, not by
