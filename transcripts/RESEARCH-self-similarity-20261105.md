@@ -135,3 +135,62 @@ What the model does not do: make L2 prose binding. A charter sentence binds exac
 5. **The formal model (§4)** is written at step 1 as the C2c brief's own appendix — so the brief is the first text written to it — and kept beside SPEC thereafter.
 
 Two things are the sovereign's and nobody else's: the budget entries of §3.5 (the prior odds and the loss ratio, or the decision to keep "20" as a single budget line until a utility exists), and whether `transmute` survives as the name for a mandatory read.
+
+## 6. The two decisions, and how to implement both documents (added 5 November)
+
+### 6.1 The promotion threshold
+
+Separate two things the single number "20" does today: it *reports* evidence and it *triggers* an act. Keep them apart.
+
+- **Reporting needs no threshold.** E_t is the evidence whatever anyone does with it; Ville's bound holds at every level; "a court fooling itself would be seen going broke" (ch 12 §12.7) is true with no α at all. So `status.py` prints E and nothing in the law says "20" about it.
+- **Acting is priced, as every reversible act is (maxim 4).** Promote when prior odds × E_t > k, where k = L_wrong / L_wait, "a wrong promotion costs me k windows of waiting". Prior odds come from the record, not from you: Laplace over windows so far (two promoted, one failed → (2+1)/(1+1) = 1.5). Today's rule is k = 20 at odds 1 — it says a false promotion costs twenty windows, which A4.1 contradicts: a failed window is followed and the wealth is carried, so a wrong promotion costs about one failed window plus the rebuild. A k of 3–5 is the honest range; with k = 4 and odds 1.5 the trigger is E ≥ 2.7. That is a large drop and it is the point: the 5 % error rate was never the thing being bought.
+
+One budget entry, in §7's reserved kind: `jack decision budget "promotion: a wrong promotion costs 4 windows; prior odds Laplace over windows on the log"`. `status.py` reads it; the pin's mutant hard-codes 20. **Order:** do this only after collapse §3.1, because until every party's promises are items, Y_i measures the cron stream's cadence and the trigger would fire on nothing. Until then, the smallest honest act is a budget entry that says "promote at E ≥ 20" — same number, now a wish rather than a theorem, which is what §12.2 of the book should have said. (This k is the same quantity as life-agent's u_wrong: a cost of committing against abstaining; you had put 0.7 on it being a ruling to make rather than a latent to fit. Same answer here.)
+
+### 6.2 `transmute`
+
+Retire it as a kind; keep what it was for. Its two functions are already the court's vocabulary: (i) *intent, priced* — the drafter enters a `claim` "scope S will be enacted by T" (kind `guy_answers`, since you resolve it), so a withdrawn amendment is a resolution 0 against its drafter; (ii) *a mandatory read* — the `enact` carries `review` (the read's hash, as `push` does now) and `witness` (the seq of the resolved claim that forced it, row 28), and the judge refuses an `enact` of scope "charter" with either missing. Suber's move survives as *claim then enact with a read*, and the same path serves briefs and rulings, which is what row 33 asked for. The four `transmute` entries on the log stay as history.
+
+### 6.3 Implementing both documents, in the law's order
+
+Everything below respects what the record has fixed: C2a's boundary acts wait for 2026-11-17T12:00:00Z; BRIEF-C2a-prime v6 is read and not re-opened; BRIEF-C2b v6 is under review; tools are frozen inside a window unless its brief says otherwise; nothing in anticipation. Your acts are the five marked **[G]**; everything else is counsel's, a builder's or a reviewer's, filed through the runner.
+
+**Now, no law moves (L4 repairs with their witnesses).** Counsel: close or escalate the four past-due `COUNSEL-DUE` rows and deliver the C2a report; bring `README.md` to the layer; LAW.md to say A2.8 is unbuilt and to map §10.14; RUNBOOK's "250" withdrawn or the verb bounded; CASES.md to record the window-end question as moot once §3.2 lands (no ruling needed — every act waits for the 17th anyway, so ruling now spends your attention on nothing). A resolver session for the six writs 442–447 or a stated reason they cannot resolve. The author session: the audit's §1–§2 corrections to the book (A2.8, p₀, the cap count, two acts, the C2a end as disputed, §12.2's α as a convention, §6.4's last paragraph); nothing about the collapses until they are on the record.
+
+**Prepared now, landed on the 17th.** The `NaN` case: a reviewer branch with the vector (`spec/vectors/logs/50_nan_bad.jsonl` → `malformed_json`), the simulator kind and the pin; a builder branch with the one-line kernel fix and the kernel2 change if any (kernel2 already answers correctly); a run of record over both. It rides C2a-prime's opening `push` only if that brief's "nothing else in the push" allows it; otherwise it is the first push after the opening, with its reads. `count_kernel.py --limit 500` in `tests.yml` and the verb's check goes with it (same push, trusted base). **[G] 1:** sign that push after its reads.
+
+**C2a-prime and C2b run as pre-stated.** Nothing in this note changes their briefs. C2a-prime closes C2a's question by the ruling's correction 2; C2b's election is the first consumer of the scores. During them, counsel and one reader of a family counsel did not choose write the C2c brief — with the formal model (§4) as its appendix, written first, so the brief is the first text written to it — and enter counsel's claims about it. **[G] 2:** one line now: "C2c is the self-similarity layer, in this order" — so the drafting has a mandate and nobody designs it in anticipation of a brief that does not exist.
+
+**C2c, window 1 (L3, no kernel change).** The clerk's one writ function over every forecast (pin: a second class); `status.py` and `judge/scope.json`'s consumer read p₀, the ratio stop, the promotion rule and the cap from `budget` entries (pin: a hard-coded constant); the enforcement map's rows as claims with deadlines and the ratchet as the window's criterion (pin: a `hand` row with no deadline); world types as data with `reads_record` and `scheduled_by` (pin: a cron stream counted as object for the ratio); `COUNSEL-DUE.jsonl` retired into claims. **[G] 3:** the budget entries of §6.1, entered at this window's opening.
+
+**C2c, window 2 (L0 + L1, one push).** SPEC text first (counsel): `claim`, `resolution`, `enact`, `decision` reduced to `budget | grant | veto`; `activate_at` and the wait gone; one `enacted_mismatch` ground; the promotion resolution's signer. kernel2 from the SPEC text alone by the other family; the Python kernel by a builder; the differential; the reads; the push. This is the C1a installing-push pattern and it is the one place the trusted base grows before it shrinks — the ten types become five, so the kernel should come out *smaller* than 450, and the brief pre-states that bound. **[G] 4:** sign the push after its reads.
+
+**C2c exit: the charter (L2).** One `enact` of scope "charter", with its read and its witnesses, restating §3 Change, §6, A2.6–A2.7 and A5 in fewer words and folding A1–A5 into the body — the first amendment to go by the path row 33 described, and the first the charter's own text will no longer contradict (A2.7's "the law changes, then the code" against RUNBOOK's amend-last). **[G] 5:** read and enact.
+
+**The book, at each exit.** The author session reports each collapse the week it is on the record, with the seq, and not before; chapter 9 gains the row-33 verdict and this path as its sixth case; chapter 12 §12.2 loses its α row to §12.4; appendix A §A.17 drops Wald's optimality or states the loss that §6.1 supplies.
+
+**What this costs you:** five acts over about four weeks, each a read and a signature, and no rulings — which is the number the charter was written to reach.
+
+## 7. How these two documents enter the court (added 5 November)
+
+This session holds no key. By the charter's own corollary its advice has unknown value until it is scored, and nothing in these two documents binds until a key carries it. The way in is the one the court already has for every other unkeyed source: a text becomes entries, by a party that did not write it, with claims that can lose.
+
+1. **The audit's code findings are reviewer findings** (A2.9: "a review finding is a pin, a mutant with a passing twin, or a replay disagreement"). A runner issue hands `claude/audit-book-jack-20261104.md` §3.6 to a reviewer session of another family with the usual template: re-derive each finding on the clone, and for each that reproduces, register the pin or vector under the reviewer's key with a `review.forecast` claim that it stands. The `NaN` vector, the kernel-bound pin and the W1 pin are the first three. A finding that does not reproduce is a resolution 0 against this note.
+2. **The audit's book findings go by the author's channel** (plan.md D48): issues on `renavondata/jack` for what jack's documents say wrong, issues on `gfrmin/agent-court` for the book; the author session corrects the chapters and the checker's phrases.
+3. **The design note enters as counsel's text**, the way `transcripts/RESEARCH-trusted-core.md` did on 18 October: proposed by `counsel-2` under `transcripts/`, attributed to this session, read cold before a pull request (COUNSEL-OPEN row 34), and then the C2c brief is written *to* it. Counsel's own interest is disclosed in the brief as usual; the readers are chosen by a party other than counsel.
+4. **Every recommendation above is a claim.** They are entered under the key of whoever adopts them — the reviewer for the code, counsel for the brief — so that this session's influence is on the ledger only through parties the law already scores. This session's probabilities, for whoever enters them (never resolved by the party that entered them):
+
+| claim | p | resolves by |
+|---|---|---|
+| the `NaN` vector, kind and kernel fix are on `main` by a push with a run of record | 0.80 | 2026-11-24 |
+| C2c's brief, as read and merged, carries collapse §3.1 (one claim type, one writ function) | 0.60 | 2026-12-15 |
+| the kernel's counted lines after C2c window 2 are at most 450 | 0.65 | C2c window 2's push |
+| the sovereign sets k in [3, 5] (or declines the rule and keeps "20" as one budget line) — the first alternative | 0.50 | 2026-12-15 |
+| the promotion rule decided by a `budget` entry, not the constant 20, decides a promotion on the log | 0.40 | 2027-02-28 |
+| `transmute` is retired as a kind by C2c's exit | 0.50 | C2c's exit |
+| a ruling is on the log as an entry (an `enact` of a ruling's scope, or equivalent) | 0.55 | 2027-01-31 |
+| forecasts 442–447 are resolved | 0.50 | 2026-11-10 |
+| the book's A2.8 and p₀ corrections are on `master` | 0.75 | 2026-11-12 |
+| another window fails at its stated end before C2c opens | 0.30 | C2c's opening |
+
+5. **The change to the law is itself the loop of §3.8.** The first instance runs under the law as it stands: the sovereign reads the brief and rules once (A2.10) that C2c is the self-similarity layer; that direction is a row in `CASES.md` until the `enact` path exists to record it. Every instance after that goes by `enact` with a read and a witness, and the ratchet criterion is what makes "the law is enforced" a line `status.py` prints rather than a sentence a counsel writes.
