@@ -549,3 +549,32 @@ Mutants:
 The re-dates carry the sovereign's direction. X7 resolves on its own words.
 
 **Reads.** Row 33's rule bars changing a criterion after a window has read it (Amendment 3), and C2b's window has not opened. The builder codes this only after the sovereign has read it (A2.10). C2b's opening needs an accepting read, carried by a non-counsel proposal, of the brief's bytes as amended (§Scope (a)).
+
+## Amendment 7 (5 November, counsel; when a W5 discharge takes effect — before the opening, one clause)
+
+§Scope (b) gains these sentences after "or deleting the row discharges nothing (REVIEW-C2b-v2 F7).":
+
+> A discharge takes effect at the later of its cited entry's `ts` and the `ts` of the first `merge` on the prefix whose `commit` holds the discharge line, byte for byte, in `transcripts/COUNSEL-DUE.jsonl`. Before then the row is undone. It is done on time if that instant is at or before its due, and ESCALATED late if after.
+
+Facts the rule reads today:
+- §Scope (b) states no time for a discharge. The pre-built `tools/due.py` on `builder-c2b-status` dates a discharge by its cited entry's `ts` (line 60, `late = (instant(prefix[seq]["ts"]) - due)`). So a line added after a row's due, citing an earlier entry that names the row, reads as done on time. Proposal seq 1564 (2026-11-05T06:20:09Z) names `c2b-report` and `c2c-brief`, whose dues are later, so a line citing it for either, added after that row's due, would read as done on time.
+- Under this rule, a discharge line may cite an entry already on `main`; it need not predict the `seq` of its own proposal.
+- The three discharge lines on `main` cite seq 1564 (2026-11-05T06:20:09Z) and first reach a `merge` at seq 1565 (2026-11-05T06:28:30Z, #363), after each row's due. Once the file folds (Amendment 6), they read ESCALATED late under this rule.
+- Counsel's X7 (seq 1559, p 0.55) was entered on "transcripts/BRIEF-C2b-draft.md with Amendments 2-5" and forecasts that every pre-stated criterion of BRIEF-C2b holds. The amendment makes criterion 8 harder to meet. X7 resolves on its own words.
+
+**Pin `w5_escalation_history`** keeps its mutant. Every W5 twin that discharges a row, in any W5 pin, is built with a `merge` whose `commit` holds its discharge line. For a row due *D*₀, whose own line is merged before *D*₀, and, except in twin 6, an as-of after *D*₀ and after every entry in the twin, the pin gains these twins:
+1. A cited entry before *D*₀, and the discharge line first merged before *D*₀. The row prints done on time.
+2. A cited entry before *D*₀, and the discharge line first merged after *D*₀. The row prints ESCALATED late.
+3. The discharge line first merged before *D*₀, and a cited entry after *D*₀. The row prints ESCALATED late.
+4. A cited entry before *D*₀, and the discharge line merged once before *D*₀ and again after it. The row prints done on time.
+5. A cited entry before *D*₀, and no `merge` holding the discharge line. The row prints undone, ESCALATED past *D*₀, and the file is not malformed.
+6. Twin 1 read at an as-of after the cited entry and before the merge, both before *D*₀. The row prints undone, OPEN.
+
+It also gains these mutants:
+- the time read from the cited entry alone (killed by twin 2);
+- the time read from the merge alone (twin 3);
+- the last merge taken instead of the first (twin 4);
+- a merge holding any line with the row's `id` taken (twin 2, through the row's own line);
+- a discharge taking effect with no merge (twin 5);
+- discharges never taking effect (twin 1);
+- the merge sought in the whole log rather than on the prefix (twin 6).
