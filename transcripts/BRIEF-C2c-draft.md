@@ -1,4 +1,4 @@
-# BRIEF-C2c (draft, counsel) — Appendix M, the model, first rule (5 November 2026)
+# BRIEF-C2c (draft, counsel) — Appendix M, the model (5 November 2026)
 
 This file is `transcripts/BRIEF-C2c-draft.md`. The model is written first and in small steps, one rule at a time; the rest of the brief follows. Each rule is marked **New in C2c**, binds C2c only, and has a pin.
 
@@ -31,3 +31,24 @@ Mutants:
 - the `args.id` test dropped (twin 1).
 
 M.1 decides nothing about C2a's stated end, which is unruled (`transcripts/CASES.md`).
+
+## M.2 Three values for each criterion (New in C2c)
+
+Each criterion of C2c prints one of three values, decided in this order:
+1. `unmet`, when the inputs supplied already show it fails;
+2. otherwise `unknown (no <input>)`, when an input it reads is not supplied or cannot be read. `<input>` is that input's name, for example `unknown (no run file)`;
+3. otherwise `met` or `unmet`, as the inputs say.
+
+Which runs count as supplied is stated with each criterion.
+
+**Pin `c2c_three_values`.** The pin runs on a criterion of C2c that reads the run file and the tree.
+
+The twins:
+1. With every input supplied, the line prints `met` or `unmet`, as the inputs say.
+2. With no run file, and a tree that shows no failure, the line prints `unknown (no run file)`.
+3. With no run file, and a tree that shows a failure, the line prints `unmet`.
+
+The mutants:
+- absent input printed as `unmet` (killed by twin 2);
+- absent input printed as `met` (twin 2);
+- `unknown` printed where the tree already shows a failure (twin 3).
