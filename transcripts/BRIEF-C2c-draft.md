@@ -52,3 +52,24 @@ The mutants:
 - absent input printed as `unmet` (killed by twin 2);
 - absent input printed as `met` (twin 2);
 - `unknown` printed where the tree already shows a failure (twin 3).
+
+## M.3 W1 in every window (New in C2c)
+
+From C2c's opening, the clerk lists W1 as BRIEF-C1b defines it under any subject whose prefix holds C1b's opening. That means a line `W1 forecast <seq>` for every `forecast` entered after C1b's opening that has no `resolution`, escalated once it is past its `resolves_by`. W1 is printed by `tools/clerk.py` and `tools/status.py` and by nothing else. Today both list W1 only when the subject is C1b (`tools/clerk.py:81`, and `tools/status.py:625` on `builder-c2b-status`). This is the audit's D3, reproduced in `transcripts/REVIEW-audit-3-6-argon.md`.
+
+**Pin `c2c_w1_every_window`.** Each twin runs both tools, under a subject other than C1b, on a prefix that holds C1b's opening.
+
+The twins:
+1. A forecast entered after C1b's opening, unresolved and past its `resolves_by`. A `W1 forecast <seq>` line prints, ESCALATED.
+2. The same forecast before its `resolves_by`. The `W1 forecast <seq>` line prints, not escalated.
+3. A forecast entered after C1b's opening that has a `resolution`. No W1 line prints for it.
+4. A forecast entered after C1b's opening and before the assessed window's opening, unresolved. It is listed.
+
+The mutants:
+- W1 listed only under C1b, in either tool, which is the present line (killed by twin 1);
+- W1 listed only once overdue (twin 2);
+- every W1 escalated (twin 2);
+- resolved forecasts listed (twin 3);
+- forecasts counted from the assessed window's opening (twin 4).
+
+The reviewer's pin `w1_c2a_omitted`, on `review-audit-3-6` at decf8e8, witnesses the first mutant in `tools/clerk.py`.
