@@ -1,0 +1,27 @@
+Forecast 685: left undecided.
+Claim: median proposal-to-merge time under twelve minutes during the 24 hours
+after C2b's opening push.
+
+BRIEF-C2b-draft.md, Order of acts, lines 284-285 defines the opening as the
+first push entry after decision promote C2a. No such promotion is on this
+origin/main prefix, so the observation window has not begun.
+
+Commands run:
+git rev-parse origin/main
+git show origin/main:log.jsonl | grep -E '"type":"(push|decision)"' | python3 -c 'import sys,json; es=[json.loads(l) for l in sys.stdin]; print("C2a promotion entries:", sum(e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject")=="C2a" for e in es)); print("Push entries (seq, ts):"); [print(e["seq"], e["ts"]) for e in es if e["type"]=="push"]'
+
+Output:
+93b1bc8c1130afd8fc4516553c0978d670946bbf
+C2a promotion entries: 0
+Push entries (seq, ts):
+2 2026-10-18T14:42:38Z
+5 2026-10-19T04:36:23Z
+9 2026-10-19T06:00:46Z
+12 2026-10-20T02:06:48Z
+29 2026-10-25T16:16:20Z
+197 2026-10-31T13:04:49Z
+367 2026-11-01T15:04:14Z
+
+Deciding evidence needed: C2b's opening push followed by its complete 24-hour
+window, and proposal/merge entry timestamp pairs for that window. Compute
+their median and compare strictly with twelve minutes. No resolution entered.
