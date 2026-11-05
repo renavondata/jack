@@ -278,3 +278,9 @@ clause: only an amendment does.
   maxim 3 above state W1 without that condition. BRIEF-C2a forbids changing the clerk inside its window,
   and C2a-prime's brief does too; the one-line fix, with a pin whose mutant is the present line, is to ride
   C2b's opening push. Until then W1 is C1b's only.
+- **SPEC §10.14, the sovereign's decisions.** *"a `decision` entry not signed by a key declared in genesis
+  (the sovereign's acts are his own; CHARTER §7)"*: `judge/judge.py:judge`, ground `decision_by_other`, pin
+  `decision_forged`. The judge compares the signature's public key with genesis's keys by key material, not by
+  `key_id`. A genesis key re-declared under its `key_id` with a new public key would therefore have its decisions
+  refused (the audit's §3.6 D5, reproduced in `REVIEW-audit-3-6-argon.md`). The judge is trusted base, so the fix
+  waits for a push.
