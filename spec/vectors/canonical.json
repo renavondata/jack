@@ -103,6 +103,18 @@
   {
    "line": "{\"a\":1.5,\"b\":\"\\ud800\"}",
    "reason": "malformed_json"
+  },
+  {
+   "line": "{\"a\":NaN}",
+   "reason": "malformed_json"
+  },
+  {
+   "line": "{\"a\":Infinity}",
+   "reason": "malformed_json"
+  },
+  {
+   "line": "{\"a\":-Infinity}",
+   "reason": "malformed_json"
   }
  ],
  "genesis_parent": "0000000000000000000000000000000000000000000000000000000000000000"

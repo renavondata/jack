@@ -243,6 +243,11 @@
    "ok": false,
    "seq": 2,
    "reason": "bad_signature"
+  },
+  "50_nan_malformed_json.jsonl": {
+   "ok": false,
+   "seq": 0,
+   "reason": "malformed_json"
   }
  }
 }

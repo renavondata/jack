@@ -1,23 +1,5 @@
-"""The pins (CHARTER §9): attack fixture, named mutant(s), passing twin. Data, run by pins/run.py.
-
-Each test takes the root of the tree under test and runs that tree's checker or
-judge as a subprocess, so the same fixtures run unchanged against the second
-checker. Expectations are exact (seq, reason) or exact acceptance, so a mutant
-cannot survive by failing for a different reason. C0 is the record only: the
-rule pins of §9 (final_law_for_all, vacuous_rule_admitted,
-impossible_rule_admitted, redundancy_unreported) return with the law language
-in C1; unsigned_change reads over `key` entries, the change entries of C0. The
-differential pins of SPEC §9a.7 run the tree's harness/diff.py over shell-script checkers.
-"""
-import functools
-import glob
-import hashlib
-import json
-import os
-import shutil
-import subprocess
-import sys
-import tempfile
+"""The pins (CHARTER §9): attack fixture, named mutant(s), passing twin. Data, run by pins/run.py."""
+import functools, glob, hashlib, json, os, shutil, subprocess, sys, tempfile  # noqa: E401
 from collections import namedtuple
 
 from harness import build, diff, gitfix, keys, runner
@@ -661,7 +643,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 91
+EXPECTED = 100
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1059,3 +1041,84 @@ for pin in C2B_GATE_PINS:
     pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
         f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
 PINS += C2B_GATE_PINS
+
+
+# --- AUDIT-20261104 §3.6 witnesses (D1-D9) ---
+def t_nan_not_malformed(root):
+    for s in ('{"a":NaN}', '{"a":Infinity}', '{"a":-Infinity}'):
+        refused(runner.check_with(root, [s]), 0, "malformed_json")
+    py = [sys.executable, "-E", "-s", "-c", f"import sys; sys.path.insert(0, {root!r}); from kernel.check import main; sys.exit(main(sys.argv))"]
+    assert not diff.compare(py, [os.path.join(root, "kernel2", "check")], [os.path.join(root, "spec", "vectors", "logs", "50_nan_malformed_json.jsonl")])
+
+def t_kernel_bound_500(root):
+    assert subprocess.run([sys.executable, "tools/count_kernel.py"], cwd=root, capture_output=True).returncode == 0
+    open(os.path.join(root, "kernel", "__init__.py"), "w").write("x = 1\n" * 51)
+    r = subprocess.run([sys.executable, "tools/count_kernel.py"], cwd=root, capture_output=True, text=True)
+    assert r.returncode == 1 and "EXCESS" in r.stdout, r.stdout + r.stderr
+
+def t_w1_c2a(root):
+    r = subprocess.run([sys.executable, os.path.join(root, "tools", "clerk.py"), "--root", os.getcwd(), "--subject", "C2a",
+                        "--as-of", "2026-11-04T15:28:28Z"], capture_output=True, text=True)
+    assert r.returncode == 0 and "W1 forecast 442:" in r.stdout, r.stdout + r.stderr
+
+def t_jack_bound_250(root):
+    assert sum(1 for _ in open(os.path.join(root, "tools", "jack"), "rb")) <= 250 and "--opens" in open(os.path.join(root, "RUNBOOK.md")).read()
+
+def t_decision_rotated_master(root):
+    w, fx = world(), make_repo(world(), root=root)
+    fx.log.add("key", "guy", build.decl("guy-master", "guy", w.stranger, build.ALL), w.guy)
+    fx.log.add("decision", "guy", {"kind": "fix", "subject": "x"}, w.stranger)
+    gitfix.write(fx.repo, "log.jsonl", fx.log.text()); propose(fx.repo, fx.log, w, msg="Rotated decision")
+    assert judged(root, fx).get("ok") is True and "decision_by_other" in open(os.path.join(root, "LAW.md")).read()
+
+def t_grounds_5_order(root):
+    w, fx = world(), make_repo(world(), root=root)
+    gitfix.git(fx.repo, "checkout", "-q", "main")
+    gitfix.write(fx.repo, "kernel2/check", '#!/bin/sh\necho \'{"ok":false,"seq":1,"reason":"malformed_json","detail":""}\'; exit 1\n')
+    os.chmod(os.path.join(fx.repo, "kernel2", "check"), 0o755); commit(fx.repo, "k2"); bind_genesis(fx.repo, fx.log, w)
+    gitfix.git(fx.repo, "checkout", "-q", "pr"); gitfix.git(fx.repo, "reset", "-q", "--hard", "main")
+    gitfix.write(fx.repo, "log.jsonl", fx.log.text() + '{"a": 1}\n'); commit(fx.repo, "non-canonical")
+    judge_refuses(judged(root, fx), "not_canonical")
+
+def t_a5_crossing(root):
+    row = json.load(open(os.path.join(root, "tools", "enforcement.json")))["A5"]
+    assert "a5_mutant" not in row and (row["enforcer"].startswith("hand:") or "window_writs" in row["enforcer"] or "exit at the crossing" not in row["principle"])
+
+def t_workflow_go_and_seeds(root):
+    j, t = (open(os.path.join(root, ".github", "workflows", f)).read() for f in ("judge.yml", "tests.yml"))
+    assert "setup-go" in j and t.count("--seeds ") == 1 and (("--seeds 2000" in t and "2,000" in t) or ("--seeds 300" in t and "first 300 " in t))
+
+def t_status_cap_from_scope(root):
+    code = ("import sys; sys.path.insert(0, sys.argv[1]); from unittest.mock import patch\n"
+            "from tools import status as s; from tests.test_status import StatusTest; t = StatusTest(); t.setUp()\n"
+            "with patch.object(s, 'tree_facts', return_value=dict(counted=7800, kernel=500, scope=True)), "
+            "patch.object(s, 'tree_bytes', return_value=b'{\"cap\": 7800}'):\n"
+            "    assert s.assess(t.es, 'C1a', '2026-10-26T04:00:00Z', t.root, None)['checks'][2][0]\n")
+    r = subprocess.run([sys.executable, "-c", code, root], capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+
+AUDIT_3_6_PINS = [
+    Pin("nan_not_malformed", t_nan_not_malformed, [
+        Mutant("nan_as_float", "kernel/log.py", "def parse_line(line):", 'def parse_line(line):\n    if "NaN" in line: raise Refuse("not_canonical")')]),
+    Pin("kernel_bound_500", t_kernel_bound_500, [
+        Mutant("limit_1000", "tools/count_kernel.py", "if total > args.limit:", "if total > 1000:")]),
+    Pin("w1_c2a_omitted", t_w1_c2a, [
+        Mutant("c1b_only", "tools/clerk.py", 'forecast_writs(es, runs, a.as_of)', 'forecast_writs(es, runs, a.as_of) if s["subject"] == "C1b" else []')]),
+    Pin("jack_bound_250", t_jack_bound_250, [
+        Mutant("jack_over_250", "tools/jack", 'if __name__ == "__main__":', '#\n' * 250 + 'if __name__ == "__main__":')]),
+    Pin("decision_rotated_master", t_decision_rotated_master, [
+        Mutant("genesis_blob_only", "judge/judge.py", "    return dict(report, ok=True)",
+               '    if any(e["type"] == "decision" and signer_blob(e) not in {d["pubkey"].split(" ")[1] for d in entries[0]["body"]["keys"]} for e in entries): return refuse("decision_by_other")\n    return dict(report, ok=True)')]),
+    Pin("grounds_5_order", t_grounds_5_order, [
+        Mutant("drift_before_verdict", "judge/judge.py", '    if not report["verdict"]["ok"]:\n        return refuse(report["verdict"]["reason"], report["verdict"].get("detail", ""))',
+               '    if report["kernel2"] != "absent" and strip(report["kernel2"]) != strip(report["verdict"]):\n        return refuse("checker_drift", "the two checkers disagree")\n    if not report["verdict"]["ok"]:\n        return refuse(report["verdict"]["reason"], report["verdict"].get("detail", ""))')]),
+    Pin("a5_crossing_unacted", t_a5_crossing, [
+        Mutant("a5_unwitnessed", "tools/enforcement.json", '"A5": {', '"A5": {"a5_mutant": true, ')]),
+    Pin("workflow_go_and_seeds", t_workflow_go_and_seeds, [
+        Mutant("seeds_mismatch", ".github/workflows/tests.yml", "--b kernel2/check 'spec/vectors/logs/*.jsonl'",
+               "--seeds 10 --b kernel2/check 'spec/vectors/logs/*.jsonl'")]),
+    Pin("status_cap_from_scope", t_status_cap_from_scope, [
+        Mutant("hardcoded_cap", "tools/status.py", "    facts = tree_facts(root, rev)",
+               '    facts = dict(tree_facts(root, rev), counted=99999)')]),
+]
+PINS += AUDIT_3_6_PINS
