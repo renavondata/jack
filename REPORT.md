@@ -516,3 +516,100 @@ the crossing, `decision promote C2a`.
 ### Correction to the C2b texts (counsel, 3 November 2026; REVIEW-C2b-am1 F25)
 
 BRIEF-C2b Amendment 1, its pull request body (#207), the opening note `transcripts/PUSH-c2b-opening.md` and SPEC §10's cap-history clause on the push branch quoted the sixth read's fit forecast as 0.40. The log holds 550‰ (seq 633); 0.40 was the fifth read's, 400‰ (seq 612). The opening note and the SPEC clause were corrected on `push-c2b-9000` before the opening; the amendment's text stands as read (an edit would need a fresh read) with this correction beside it. Counsel's rule from it is COUNSEL-OPEN row 26: every probability counsel quotes names its seq, and a check runs over every document before the push.
+
+# C2a report — value against the base rate (part 1 of 2, written before the exit)
+
+Counsel's report, 5 November 2026. Proposer: counsel `claude-opus-5-5`, session
+`session_013Ce38BiYZ9xMbMtFh7wzxX`. **No exit prefix yet.** C2a's first window opened at the push of seq 367
+(`2026-11-01T15:04:14Z`). Its stated end is read two ways and is unruled (§3). This part is written now
+because COUNSEL-DUE row `c2a-report` was due `2026-11-04T06:00:00Z`; it is past due, and stays past due
+until part 2 is on `main`. Part 2 names the exit prefix and follows within a day of `2026-11-17T12:00:00Z`,
+the later reading. The brief is `transcripts/BRIEF-C2a-draft.md` v2 with its amendments.
+
+## 1. Standing against BRIEF-C2a's pre-stated criteria, at seq 1561
+
+`main` at `7b8dda5027e902751ec136c296254951d3b5aedf`, `log.jsonl` seqs 0–1561, last `ts`
+`2026-11-05T05:42:30Z`:
+`python3 tools/status.py --subject C2a --acts transcripts/evidence/acts-20261103T2144.csv --runs transcripts/evidence/runs-tests-20261103T2144.json`
+
+| # | criterion | state at seq 1561 | evidence |
+|---|---|---|---|
+| 1 | every pin KILLED with a passing twin in the `tests` run on `main` at the exit prefix | not read | the runs file is the run of 3 November's tree; evidence not supplied for this commit is unverified, never green |
+| 2 | both checkers agree on the exit prefix and the committed seeds | not read | as 1 |
+| 3 | counted lines within 7,800; kernel within 500; `judge/scope.json` and SPEC §10's block unchanged since the opening push | met | 7,784 / 7,800; 450 / 500; unchanged |
+| 4 | the attack tests green on `main` before the first scored event's cutoff | met | 2026-11-01T15:59:44Z |
+| 5 | value *E*ᵥ ≥ 20 | met | *E*ᵥ ≈ 10,068,005 over 393 events |
+| 6 | C1b's process continued at or above 20 | met | *E* ≈ 2,569,888 over 94 items, projected expiries included; process unchanged; late repairs 0 |
+| 7 | no `veto`; **off-log repairs 0** on the acts evidence; A3.4 at or under 5 : 1 | **unmet** | no veto; **off-log repairs: 9** |
+
+J7: 6 of 473 window forecasts are unresolved past `resolves_by`: seqs 442–447, the builder's
+`world.renavon` forecasts. A reviewer session is resolving them late from their evidence, or declaring each
+unresolvable with its reason (opencode-runner #279; jack #350). Part 2 reads criteria 1, 2 and the A3.4 ratio
+on the exit prefix.
+
+## 2. Why the first window cannot promote
+
+Criterion 7 requires off-log repairs 0. The attributed acts table `transcripts/evidence/acts-20261103T2144.csv`
+has been on `main` since #296. Its raw twin and its classifier hash are beside it, and
+`transcripts/evidence/guy_acts3.py` hashes to the first token of that hash file, `ed0d37ba…`. It holds nine
+rows with `repo` `renavondata/jack` and `class` `repair` inside the window, the earliest at 2026-11-02 22:11
+HKT. One of them is the sovereign's hand at counsel's request (COUNSEL-OPEN row 33).
+
+No later act removes a row, and a failed window is never patched in place (A3.2). So no prefix of this window
+after the first row satisfies criterion 7, and `status.py` refuses `promote C2a` at every one of them. At
+seq 1076 (`2026-11-03T21:26:25Z`), criteria 3–6 were already met on the committed evidence and criterion 7
+read 9. `transcripts/REVIEW-C2a-prime-argon-v7.md` F1 reproduces both readings.
+
+## 3. The stated end, read two ways
+
+- **`2026-11-15T15:04:14Z`.** BRIEF-C2a v2's "fourteen days at most", stated before the opening (seqs 355 and
+  356). `status.py` prints the window to this instant.
+- **`2026-11-17T12:00:00Z`.** A5.2: "a window's stated end is the `resolves_by` of the promotion forecast
+  the window's brief names … a brief states no other date". That forecast is V0 (seq 361), and
+  `REVIEW-C1b-A5.md` F8 applied the clause to a brief's fourteen-day maximum.
+
+The question is unruled (`transcripts/CASES.md`). Counsel holds an interest in it: V0, V2 and V3 resolve by the
+later instant. No act depends on the reading, because every act at the boundary comes after the later one:
+the `grant`, the `fix` and C2a-prime's opening push.
+
+## 4. The lawful change
+
+- **The ruling of 4 November** (`transcripts/RULING-20261104-window-fix.md`, with corrections 1–7). At a
+  failed window's boundary A2.6 governs, and the sovereign's `decision fix` is a decision, not a repair, when
+  its four conditions hold.
+- **BRIEF-C2a-prime v7** is the window that follows. It was read by `REVIEW-C2a-prime-astra-v7.md`
+  (gpt-6-astra) and `REVIEW-C2a-prime-argon-v7.md` (gemini-4-argon), both ACCEPT WITH OBLIGATIONS.
+  - It opens at the first push after `2026-11-17T12:00:00Z` and ends at V5's `resolves_by`,
+    `2026-11-30T00:00:00Z`.
+  - Wealth is carried (A4.1), and off-log repairs are counted from its opening.
+  - Its code, tests and pins ride the opening push, under a cap of 8,400.
+- **The sovereign read the texts that carry code** (A2.10), as COUNSEL-OPEN rows 35 and 36 record.
+- **The root cause the sovereign named, the GitHub identity, is delivered** as one App for the court,
+  `renavondata-jack-court[bot]`. It acts from 2026-11-04 and is recorded by `decision grant` at the boundary.
+
+## 5. Counsel's errors in this window, for the record
+
+- Counsel's request put one of the nine rows on the record (row 33).
+- Within an hour of that failure, counsel drafted BRIEF-C2a Amendment 4, to restart the count in place, and
+  charter amendment A6. A cold read blocked the first on four charter conflicts, and the sovereign decided
+  that no amendment would be made (row 33).
+- The ruling of 4 November was proposed unread, with a title claiming a change its commit did not carry. A
+  pull request withdrawn by counsel was merged by the merge verb (row 34).
+- A correction deciding C2a's stated end was drafted by counsel, who holds an interest in it, and withdrawn
+  (row 35).
+- COUNSEL-DUE rows were past due:
+  - `c2a-acts`, delivered late by #296;
+  - `c2a-report`, of which this part is late;
+  - `runbook-c2b`, delivered in part, late, by the documents pull request of 5 November;
+  - `hkjc-hv-20261104` and `D-1`, whose acts were on time but named late.
+
+## 6. Part 2, at the exit
+
+- The exit prefix, and every criterion read on it with its tests run.
+- The acts table over the whole window, and its re-run.
+- V0–V3 resolved on their own words.
+- The off-log acts between `2026-11-15T15:04:14Z` and C2a-prime's opening.
+- The sovereign's acts outside jack on 4 November: three runner merges and a runner label, which are off-log
+  repairs the instrument cannot see, and the App, which is a capability grant.
+- Any writ finalised between the boundary `fix` and the opening push, with its taint (BRIEF-C2a-prime v7;
+  `REVIEW-C2a-prime-argon-v7.md` F1's obligation).
