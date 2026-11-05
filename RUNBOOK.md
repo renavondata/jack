@@ -250,8 +250,10 @@ but `~/git/jack`.
 
 ## Bound and custody
 
-`tools/jack` is one Python file within 250 lines as `tools/count_kernel.py` counts, standard library plus
-`tools/entry.py`, `kernel` and `judge` imports; it is untrusted, enters by pull request, and is read cold.
+`tools/jack` is one Python file, standard library plus `tools/entry.py`, `kernel` and `judge` imports. It was
+written to a bound of 250 lines. It is 329 as `tools/count_kernel.py` counts (5 November 2026), and no test or pin
+holds it to any bound (the audit's §3.6 D4; `REVIEW-audit-3-6-argon.md`, whose pin `jack_bound_250` is on
+`review-audit-3-6`). Whether a bound is restated and enforced is for the C2c brief. It it is untrusted, enters by pull request, and is read cold.
 Its tests prove effects, not calls: `gh` and `ssh-keygen` are stubs on `PATH` that record their arguments and
 answer as GitHub would from a fixture remote, the judge's check being the real judge's verdict on the live
 head, and a test of a verb's ending asserts what the remote now holds. A fixture's proposal touches only
