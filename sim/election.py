@@ -20,10 +20,10 @@ def setup(pool):
              build.decl("reviewer-2", "reviewer", pool.ann, ["forecast", "resolution"]),
              build.decl("builder-2", "builder", pool.stranger, ["forecast", "resolution"])]
     lg.add("genesis", "guy", build.genesis_body(decls), pool.guy, ts=OPEN)
-    # X0 must be counsel's: re-declare an id prospectively, retaining its ownership.
+    # X7 must be counsel's: re-declare an id prospectively, retaining its ownership.
     lg.add("key", "guy", build.decl("reviewer-2", "counsel", pool.ann, ["forecast", "resolution"]), pool.guy, ts=OPEN)
-    lg.add("forecast", "counsel", dict(claim="X0", p=500, type="counsel.programme",
-           args={"id": "X0"}, resolves_by=elect.later(OPEN, 336)), pool.ann, ts=OPEN)
+    lg.add("forecast", "counsel", dict(claim="X7", p=500, type="counsel.programme",
+           args={"id": "X7"}, resolves_by=elect.later(OPEN, 336)), pool.ann, ts=OPEN)
     lg.add("key", "guy", decls[2], pool.guy, ts=OPEN)
     lg.add("decision", "guy", dict(kind="promote", subject="C2a"), pool.guy, ts=OPEN)
     lg.add("push", "guy", dict(digest="1" * 64, review="0" * 64), pool.guy, ts=OPEN)

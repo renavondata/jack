@@ -80,13 +80,9 @@ def window(es):
     promoted = next(e for e in es if e["type"] == "decision" and
                     e["body"].get("kind") == "promote" and e["body"].get("subject") == "C2a")
     opening = next(e for e in es if e["type"] == "push" and e["seq"] > promoted["seq"])
-    x0 = next(e for e in es if e["seq"] < opening["seq"] and e["type"] == "forecast" and
-              e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "X0")
-    revisions = [e for e in es if x0["seq"] < e["seq"] < opening["seq"] and e["type"] == "forecast" and
-                 e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "X0" and
-                 e["body"]["args"].get("revises") is not None]
-    x0 = revisions[-1] if revisions else x0
-    return opening["seq"], opening["ts"], min(x0["body"]["resolves_by"], later(opening["ts"], GJ * (D + 1)))
+    x7 = next(e for e in es if e["seq"] < opening["seq"] and e["type"] == "forecast" and
+              e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "X7")
+    return opening["seq"], opening["ts"], x7["body"]["resolves_by"]
 
 
 def first_slot(opening):

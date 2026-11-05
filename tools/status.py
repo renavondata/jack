@@ -291,12 +291,13 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
         except StopIteration:
             promoted = next((e for e in es if promotes(e, "C2a") and e["ts"] <= as_of), None)
             opened = promoted and any(e["type"] == "push" and e["seq"] > promoted["seq"] and e["ts"] <= as_of for e in es)
-            reason = "C2b window unverified: X0 missing" if opened else "C2b has not opened: no opening push after promote C2a"
+            reason = "C2b has no promotion forecast before its opening" if opened else "C2b has not opened: no opening push after promote C2a"
             names = ("pins and twins", "checker agreement", "counted lines and trusted bytes", "attack tests",
                      "value continued", "liveness continued", "elections witnessed", "counsel bound", "veto, off-log repairs and A3.4")
             return dict(subject=subject, start=as_of, end=as_of, as_of=as_of, prefix_last_seq=None,
                         j7_unresolved_past_due=0, j7_denominator=0, overdue=[],
-                        checks=[(False, f"criterion {i}: {name}: {reason}") for i, name in enumerate(names, 1)])
+                        checks=[(False, reason)] if opened else
+                        [(False, f"criterion {i}: {name}: {reason}") for i, name in enumerate(names, 1)])
     s = status(es, "A3", 14, as_of, root, subject, rev)
     facts = tree_facts(root, rev)
     verified = run_verified(run, rev) and completed_by(run, as_of)

@@ -93,7 +93,7 @@ class C2bExitTest(unittest.TestCase):
             cutoff = "2026-11-01T01:00:00Z" if i < 70 else "2026-11-02T01:00:00Z"
             resolved = "2026-11-01T02:00:00Z" if i < 70 else "2026-11-02T02:00:00Z"
             if i == 70:
-                self.add("forecast", "counsel", when, args=dict(id="X0"), resolves_by=self.END, p=500)
+                self.add("forecast", "counsel", when, args=dict(id="X7"), resolves_by=self.END, p=500)
                 self.add("decision", "guy", when, kind="promote", subject="C2a")
                 self.add("push", "guy", when)
             f = self.add("forecast", "counsel", when, p=999 if i % 2 else 1, type="world.hkjc",
@@ -200,31 +200,54 @@ class C2bExitTest(unittest.TestCase):
         self.assertEqual([t.split(":")[0] for t in st.unmet(bad)], ["criterion 9"])
         self.decision(bad)
 
-    def test_window_revised_x0_before_opening_and_exit_prefix(self):
-        opening, start, end = st.elect.window(self.es)
-        x0 = next(entry for entry in self.es if entry["body"].get("args", {}).get("id") == "X0")
-        revised = copy.deepcopy(x0)
-        revised["seq"] += 1
-        revised["body"].update(args=dict(id="X0", revises=x0["seq"]), resolves_by="2026-11-02T01:30:00Z")
-        shifted = [dict(entry, seq=entry["seq"] + 3) if entry["seq"] > x0["seq"] else entry for entry in self.es]
-        later = copy.deepcopy(revised); later["seq"] += 1
-        later["body"]["resolves_by"] = "2026-11-02T01:45:00Z"
-        entries = sorted(shifted + [revised, later], key=lambda entry: entry["seq"])
-        self.assertEqual(st.elect.window(entries)[2], later["body"]["resolves_by"])
-        late = copy.deepcopy(later); late["seq"] = entries[-1]["seq"] + 1
-        late["ts"] = self.END
-        late["body"]["resolves_by"] = "2026-12-31T00:00:00Z"
-        entries.append(late)
-        self.assertEqual(st.elect.window(entries)[2], later["body"]["resolves_by"])
-        short = self.assessment(entries)
+    def test_window_x7_outlasts_x0(self):
+        x0 = e(3, self.es[0]["ts"], "forecast", "counsel", args=dict(id="X0"),
+               resolves_by="2026-11-02T01:30:00Z", p=500)
+        self.assertEqual(st.elect.window(self.es + [x0])[2], self.END)
+        self.assertEqual(self.assessment(self.es + [x0])["end"], self.END)
+
+    def test_window_x7_outlasts_fourteen_days(self):
+        x7 = next(entry for entry in self.es if entry["body"].get("args", {}).get("id") == "X7")
+        x7["body"]["resolves_by"] = "2026-12-01T12:00:00Z"
+        self.assertLess(st.elect.later(self.START, 14 * 24), x7["body"]["resolves_by"])
+        self.assertEqual(st.elect.window(self.es)[2], x7["body"]["resolves_by"])
+        self.assertEqual(self.assessment()["end"], x7["body"]["resolves_by"])
+
+    def test_window_requires_counsels_x7_before_opening(self):
+        opening = st.elect.window(self.es)[0]
+        x7 = next(entry for entry in self.es if entry["body"].get("args", {}).get("id") == "X7")
+        without = [entry for entry in self.es if entry is not x7]
+        # Keep the timestamp unchanged: sequence, not time or input order, decides.
+        for ignored in ([], [dict(x7, seq=self.es[-1]["seq"] + 1)],
+                        [dict(x7, seq=opening)], [dict(x7, proposer="builder")]):
+            with self.subTest(ignored=ignored):
+                entries = ignored + without
+                with self.assertRaises(StopIteration): st.elect.window(entries)
+                s = self.assessment(entries)
+                self.assertEqual(st.render(s).splitlines()[-1],
+                                 "promote C2b: refused: C2b has no promotion forecast before its opening")
+                with patch.object(st, "inputs", return_value=dict(es=[self.es[0]], runs=[], rev="head")), \
+                        patch.object(st, "report", return_value=s), patch.object(st, "tree_bytes", return_value=b""), \
+                        patch("tools.due.main", return_value=0), patch("builtins.print") as output:
+                    self.assertEqual(st.main(["--subject", "C2b", "--as-of", self.END]), 0)
+                output.assert_any_call("promote C2b: refused: C2b has no promotion forecast before its opening")
+                self.decision(s)
+
+    def test_window_revised_x0_changes_nothing(self):
+        expected = st.elect.window(self.es)
+        x0 = e(3, self.es[0]["ts"], "forecast", "counsel", args=dict(id="X0"), resolves_by=self.END, p=500)
+        for end in ("2026-11-02T01:30:00Z", "2026-12-31T00:00:00Z"):
+            revised = e(4, x0["ts"], "forecast", "counsel", args=dict(id="X0", revises=x0["seq"]), resolves_by=end, p=500)
+            self.assertEqual(st.elect.window(self.es + [x0, revised]), expected)
+            self.assertEqual(self.assessment(self.es + [x0, revised])["value"]["events"], 80)
+
+    def test_window_x7_exit_prefix(self):
+        x7 = next(entry for entry in self.es if entry["body"].get("args", {}).get("id") == "X7")
+        x7["body"]["resolves_by"] = "2026-11-02T01:30:00Z"
+        short = self.assessment()
         self.assertEqual(short["value"]["events"], 70)  # post-end resolutions excluded
         self.assertTrue(all(entry["ts"] <= short["end"] for entry in short["prefix"]))
-        self.assertLess(short["prefix_last_seq"], entries[-2]["seq"])
-        for who, args in (("builder", dict(id="X0", revises=x0["seq"])), ("counsel", dict(id="X0"))):
-            ignored = dict(revised, proposer=who, body=dict(revised["body"], args=args))
-            self.assertEqual(st.elect.window(shifted + [ignored])[2], end)
-        revised["body"]["resolves_by"] = "2026-12-31T00:00:00Z"
-        self.assertEqual(st.elect.window(shifted + [revised])[2], "2026-11-16T00:00:00Z")
+        self.assertLess(short["prefix_last_seq"], self.es[-1]["seq"])
 
     def test_unopened_names_all_nine_without_crashing(self):
         opening = st.elect.window(self.es)[0]
