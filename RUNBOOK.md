@@ -103,7 +103,7 @@ no other commit is ever merged (`--match-head-commit H`). Then `main` pulled and
 commit GitHub makes is the effect of the entry that precedes it. GitHub's protection of `main` requires the
 same two checks, independently of the verb. When the clerk holds `merge`, this verb is unchanged.
 
-## `jack push BRANCH --review FILE | --review none`
+## `jack push BRANCH --review FILE | --review none [--opens LAYER]`
 
 The only way a change to the trusted base reaches `main`, and the only verb that pushes to `main` anything
 but an entry. On `main`; BRANCH is a local branch another party built, and the verb never commits to it.
@@ -123,6 +123,23 @@ parts' bytes concatenated in name order, or 64 zeros when no run was required �
 committed `push: BRANCH`; the self-check runs with the new trusted base and the entry both in place. On any
 failure `main` returns to `origin/main`, BRANCH untouched. `--remove` removes BRANCH's worktree afterwards.
 
+**`--opens LAYER`, the read gate** (#182, 2 November; BRIEF-C2b §Scope (a)). Required when BRANCH changes
+`judge/scope.json`, refused when it does not; LAYER is letters, digits, `_` and `-`, and the layer is read
+from `--opens`, never from `scope.json`'s `layer`. The verb then requires, on `origin/main`,
+`transcripts/BRIEF-LAYER-draft.md` and at least one `transcripts/REVIEW-LAYER-*.md` that
+- begins `VERDICT: ACCEPT` or `VERDICT: ACCEPT WITH OBLIGATIONS`;
+- has a `Reviewed tree:` line naming a commit on `origin/main` at which the brief's bytes equal
+  `origin/main`'s; and
+- was brought to `main` by a `proposal` entry signed by a key whose principal is not counsel, whose
+  commit adds the file with the blob `main` now holds.
+
+Each review that fails a test is reported, and the push is refused only when every one fails. So a brief
+edited after its reads makes them stale, a read carried by counsel's key never counts, and a later edit of
+an accepted review's first lines breaks it. The gate establishes the provenance and freshness of a read,
+nothing about its reasoning. Example, C2a-prime's opening: `jack push opening-c2a-prime --opens C2a-prime
+--review <worktree>/transcripts/REVIEW-C2a-prime-code.md`, after the sovereign's `decision grant` and
+`decision fix` (BRIEF-C2a-prime v7 §Order of acts).
+
 ## `jack decision KIND SUBJECT`
 
 On `main`. KIND is one of `veto promote budget grant transmute fix`; SUBJECT a non-empty string (for
@@ -139,8 +156,11 @@ activate_at: N as given, the entry's seq + 1 when omitted}; `CHARTER.md` and `lo
 items 2, 12, 13 on the way in).
 
 **Order of an amendment (A2 clause 7, the research's protocol):** `jack decision transmute ID` → the pushes
-that build the amendment's mechanisms, each by `jack push` → `jack amend ID FILE` last, so the charter never
-says what the code does not enforce. A2 was recorded before its mechanisms and is the one exception.
+that build the amendment's mechanisms, each by `jack push` → `jack amend ID FILE` last, so that an amendment's own
+mechanisms are on `main` before its text is in force (A3.5 is the order's precedent; A2 was recorded before
+its mechanisms and is the one exception). This is not a claim that the charter never says what the code
+does not enforce: A2.8's monitor is unbuilt (`LAW.md`), and §3's witnesses and lapse wait on A2.1. A2.7's
+separate rule, no `push` between an `amend` and its height (SPEC §10.12), is enforced.
 
 **Text before code.** A change to `SPEC.md` that needs code is the first commit of the builder's branch —
 counsel's patch, applied and read by Guy there, with counsel's trailer — and reaches `main` in the same
@@ -186,7 +206,9 @@ with it in meaning) and its expected table in the brief (pin `score_not_proper`)
 C1b's clerk (BRIEF-C1b v7): every open writ, derived from `log.jsonl`, the tree and the clock, printed with
 its class, obligation, holders and deadline; one past its deadline reads `ESCALATED to guy`. Read-only,
 level-triggered, no state, no signing, no network: run it on a timer or by hand, and a missed tick costs
-nothing. Writ classes: **W1** — every `forecast` entered after C1b's opening, from its entry; holders are
+nothing. Writ classes: **W1** — every `forecast` entered after C1b's opening, from its entry, **computed only when
+the window is C1b** (`tools/clerk.py`; jack #350): under a later window a forecast carries no W1 writ and
+appears only once overdue, as a W4 line, until the fix rides C2b's opening push; holders are
 the keys with `resolution` power whose principal is not the forecaster's; deadline `resolves_by`,
 overdue strictly after it; discharged by a `resolution`. **W3** — a `merge` entry whose `commit` has no
 `tests.yml` run with `conclusion` success and `updated_at` not after the merge entry's `ts` in `--runs FILE`

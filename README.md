@@ -4,82 +4,88 @@ Bayesian self-improving agent under a small core of law; judged by assize.
 
 This repository is the core: an append-only, hash-chained, SSH-signed record
 (`log.jsonl`), a checker small enough to read entire, and a judge that runs
-trunk's checker over every proposal. **C0 is the record only** (Guy's decision
-on counsel's review, 14 October 2026): four entry types, `genesis`, `key`,
-`proposal`, `merge`; the law is CHARTER §3's three secondary rules in code;
-rules as data, witnesses and lapse arrive in C1 when a first precedent needs
-them (`BRIEF-C1.md`; the earlier draft is on branch `c1-law-draft`). `CHARTER.md`
-is the founding text; `LAW.md` reads its §§2–3 against the code; `SPEC.md` is
-the contract a second checker is written from; `REPORT.md` is the C0 verdict.
-`transcripts/CASES.md` indexes the sovereign's rulings and says where each part of the law is written; it binds nothing.
+trunk's checker over every proposal. The record carries ten entry types
+(`kernel/log.py` `TYPES`): `genesis`, `key`, `proposal`, `merge`, `amend`,
+`push`, `decision`, `spec_conflict`, `forecast` and `resolution`.
+
+**Where it stands** (5 November 2026). The layers are pre-stated windows, each
+with criteria written before it opens (`CHARTER.md` §8–§9, A3–A5; `REPORT.md`
+holds each exit report).
+- **C0**, the record and the checker: exit report `REPORT.md` §8 (17 October).
+- **C1a**, the record says things about the world (`forecast`, `resolution`):
+  promoted by the sovereign's `decision promote C1a`, seq 188.
+- **C1b**, the clerk and its writs, and the liveness statistic: promoted at
+  seq 337.
+- **C2a**, the value statistic and the streams: opened by the push at seq 367
+  on 1 November. Its first window cannot promote: criterion 7 read nine off-log
+  repairs on its acts evidence. Its stated end is read two ways and unruled
+  (`transcripts/CASES.md`).
+- **C2a-prime**, the window that follows it (`transcripts/BRIEF-C2a-prime-draft.md`),
+  and **C2b**, the election of proposers (`transcripts/BRIEF-C2b-draft.md`), are
+  pre-stated and not yet open.
+
+`CHARTER.md` is the founding text, with its amendments A1–A5 appended. `LAW.md`
+reads its §§2–3 against the code and binds nothing. `SPEC.md` is the contract
+a second checker is written from. `RUNBOOK.md` documents the verbs of
+`tools/jack`. `transcripts/CASES.md` indexes the sovereign's rulings and says
+where each part of the law is written; it binds nothing.
 
 ## Layout
 
 | path | what |
 |---|---|
 | `kernel/` | the checker: `log.py` (format, schemas), `sig.py` (SSHSIG + strict Ed25519, weak keys), `check.py` (the validity predicate, CLI). Standard library only; no clock, network or LLM. |
-| `judge/judge.py` | trunk's kernel over a proposal's appended entries, every fact from git; guards the trusted base and the charter hash |
-| `.github/workflows/` | `judge.yml` (pull_request_target, read-only, no secrets), `tests.yml` (tests, pins, line count) |
+| `kernel2/` | the second checker, in Go, written from `SPEC.md` by another model family |
+| `judge/` | `judge.py`: trunk's kernel over a proposal's appended entries, every fact from git; guards the trusted base, the charter hash and each party's paths (`scope.json`) |
+| `.github/workflows/` | `judge.yml` (pull_request_target, read-only, no secrets), `tests.yml` (tests, pins, line counts, the judge's self-check, the simulator sample) |
 | `pins/` | the pins as data and their runner (text-edit mutants on disposable copies) |
 | `sim/` | seeded simulator, committed seed list, run transcripts |
 | `harness/` | throwaway keys, log builders, git fixtures, the differential harness |
-| `kernel2/` | the second checker's interface (to be written by another model family from `SPEC.md`) |
 | `spec/vectors/` | canonical-JSON vectors and signed logs with required verdicts |
-| `tools/` | `count_kernel.py`, `digest.py`, `genesis.py`, `vectors.py` |
-| `transcripts/` | pin, test, count and judge run outputs cited by `REPORT.md` |
+| `tools/` | `jack` (the verbs; `RUNBOOK.md`), `entry.py` (prepare, assemble and score entries), `clerk.py` (the writs), `status.py` (each window's criteria and statistics), `value.py` (the value statistic), `count_kernel.py`, `digest.py`, `vectors.py`, `enforcement.json` (the enforcement map) |
+| `transcripts/` | briefs, reviews, rulings, evidence and run outputs cited by the reports |
 
 ## Run it
 
 ```
-python3 -m kernel.check log.jsonl          # → {"ok":true,"entries":N} or a refusal; exit 0/1
-python3 -m unittest discover -s tests -t . # unit tests (needs ssh-keygen and git on PATH)
-python3 pins/run.py                        # every mutant KILLED with a passing twin; checker_drift PENDING
-python3 tools/count_kernel.py              # kernel physical lines against the 1,000 limit
-python3 sim/run.py --budget 600            # seeded simulator within a time budget → sim/runs/
+python3 -m kernel.check log.jsonl            # → {"ok":true,"entries":N} or a refusal; exit 0/1
+python3 -m unittest discover -s tests -t .   # unit tests (needs ssh-keygen and git on PATH)
+python3 pins/run.py                          # every mutant KILLED with a passing twin
+python3 tools/count_kernel.py --limit 500    # kernel physical lines; 500 is the bound status.py reads (criterion 3), 1,000 the tool's default
+python3 tools/status.py                      # each window's criteria and statistics on the current tree
+python3 tools/clerk.py                       # every open writ, with its holders and deadline
+python3 sim/run.py --budget 600              # seeded simulator within a time budget → sim/runs/
 python3 judge/judge.py --trunk main --proposal <branch-or-sha>
 ```
 
 Python 3.12. The kernel verifies signatures itself; `ssh-keygen` is needed only
-to *make* them (tests, fixtures, Guy's genesis).
+to *make* them. Entries are made by the verbs of `tools/jack`, each documented
+in `RUNBOOK.md`.
 
-## Genesis — Guy's procedure, in this order
+## Genesis
 
-Nothing binds until entry 0 exists. No key is generated here; Guy signs with his
-own **plain `ssh-ed25519`** key. If his master key is a hardware key
-(`sk-ssh-ed25519@openssh.com`), `prepare` stops with exit 3: that format signs
-a different message and is added later by a change entry. Report it.
+Entry 0 was signed by Guy with his own `ssh-ed25519` key, `guy-master`, holding
+all four powers, and committed to `main` by him at `95679e7` (ts
+`2026-10-14T05:41:39Z`; `REPORT.md` §8.1, criterion 4). It was prepared and
+assembled by `tools/genesis.py`, which was removed from the tree at `879caf9`
+once genesis was done; its text is in git's history, and `tools/entry.py`
+`prepare` and `assemble` now make every entry.
 
-1. Prepare the canonical unsigned message (the trusted-base digest is computed
-   from the working tree, so do this on a clean checkout of `main`):
-
-       python3 tools/genesis.py prepare --pubkey ~/.ssh/id_ed25519.pub --ts 2026-10-14T09:00:00Z
-
-2. Sign it — exactly this command, which `prepare` also prints:
-
-       ssh-keygen -Y sign -f ~/.ssh/id_ed25519 -n core-entry genesis.unsigned
-
-3. Assemble entry 0 and check it:
-
-       python3 tools/genesis.py assemble genesis.unsigned genesis.unsigned.sig > log.jsonl
-       python3 -m kernel.check log.jsonl
-
-4. **Commit `log.jsonl` to `main` yourself.** Genesis never arrives by pull
-   request: the judge refuses any proposal that introduces entry 0
-   (`genesis_by_proposal`), because before genesis anyone's genesis would be
-   admissible. From then on the judge refuses every proposal while `CHARTER.md`
-   on `main` does not hash to the value genesis records (`charter_mismatch`).
-
-5. **Only then** make `judge` and `tests` required status checks on `main`.
-   Until genesis is on `main`, `log.jsonl` is absent and both workflows pass
-   trivially on an empty record.
+Genesis never arrives by pull request: the judge refuses any proposal that
+introduces entry 0 (`genesis_by_proposal`), because before genesis anyone's
+genesis would be admissible. The judge refuses every proposal while trunk's
+`CHARTER.md` does not hash to the charter in force: genesis's `body.charter`
+until A2, then the latest `amend`'s (`charter_mismatch`). `judge` and `tests`
+are required status checks on `main`.
 
 ## The trusted base
 
 `kernel/`, `kernel2/`, `judge/`, `.github/workflows/` and `SPEC.md` are the
-trusted base; their digest is what genesis records as `checker`. The judge
+trusted base; genesis recorded their digest as `checker`, and the trusted base
+in force is the `digest` of the latest valid `push` entry (SPEC §7). The judge
 refuses any proposal whose trusted-base digest, or whose `CHARTER.md`, differs
 from trunk's (`trusted_path`): compared by content, so an edit, a rename, a
 deletion or an addition under those paths is refused alike, and a proposal must
-rebase after trunk's trusted base moves. Until C1 brings a lawful change path,
-these files change only by a commit Guy makes himself. The founding pull
-request is the stated exception: `main` had no judge yet.
+rebase after trunk's trusted base moves. These files change only by Guy's
+`jack push`, recorded by a `push` entry (SPEC §10, items 1 and 11; `RUNBOOK.md`). The
+founding pull request is the stated exception: `main` had no judge yet.
