@@ -208,7 +208,7 @@ its class, obligation, holders and deadline; one past its deadline reads `ESCALA
 level-triggered, no state, no signing, no network: run it on a timer or by hand, and a missed tick costs
 nothing. Writ classes: **W1** — every `forecast` entered after C1b's opening, from its entry, **computed only when
 the window is C1b** (`tools/clerk.py`; jack #350): under a later window a forecast carries no W1 writ and
-appears only once overdue, as a W4 line, until the fix rides C2b's opening push; holders are
+appears only once overdue, as a W4 line, until the fix lands from C2c's opening (BRIEF-C2c M.3); holders are
 the keys with `resolution` power whose principal is not the forecaster's; deadline `resolves_by`,
 overdue strictly after it; discharged by a `resolution`. **W3** — a `merge` entry whose `commit` has no
 `tests.yml` run with `conclusion` success and `updated_at` not after the merge entry's `ts` in `--runs FILE`
