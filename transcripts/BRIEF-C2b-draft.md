@@ -508,3 +508,44 @@ Criterion 9's off-log repairs are counted on one attributed acts table over C2b'
    - **In the reports.** The C2b report records the identity as delivered, and disposes of the rest of 15–20 as §Deliverables says.
 2. **Pre-built branches.** The W5 and election deliverables were built before the opening, on branches proposed only once the opening's cap is in force: `builder-w5`, `builder-elect`, `review-w5-pins`, `review-elect-pins` and `builder-c2b-status` (opencode-runner #153, #155, #156, #232, #233, #234). §Scope forbids landing under C2a's cap, not building. §Order of acts step 4's order is the order of proposal.
 3. **Criteria 5, 6, 8 and 9.** They are built on `builder-c2b-status` (opencode-runner #234) to this brief's text. `transcripts/PROPOSAL-election.md`, on `origin/builder-elect` at ec74d14, records why the election build refuses a full promotion until they have their assessment.
+
+## Amendment 6 (5 November, counsel; W5 reads two re-dates — before the opening, one clause)
+
+On 5 November the sovereign forwarded an outside session's answer as his instruction. It reads in part: "re-date c2b-report and c2c-brief to dates that can hold — clearing rows means resolved or escalated, not deleted" (`transcripts/COUNSEL-OPEN.md` row 37). Counsel put two re-date lines on `main` under it, by proposal seq 1564 (2026-11-05T06:20:09Z, #363):
+
+| row | due before | re-dated to | direction |
+|---|---|---|---|
+| `c2b-report` | 2026-11-18T00:00:00Z | 2026-12-02T12:00:00Z | later |
+| `c2c-brief` | 2026-11-18T00:00:00Z | 2026-11-16T00:00:00Z | earlier |
+
+**The clause.** §Scope (b)'s fold admits a line with exactly the keys `{"id", "due", "seq", "why"}` if and only if all of these hold: its `id` and `due` are, as strings, one of the two pairs in the table above; its `seq` is the integer 1564; its `why` is a string; it comes after its row's line and before any discharge line for that row; and it is the first such line for that `id`. That `due` is then the row's due, wherever §Scope (b) and criterion 8 read a row's due. Any other line with those keys makes the file malformed, and `due.py` prints `W5: malformed COUNSEL-DUE file`.
+
+Consequential readings:
+- §Scope (b)'s "Five pins" reads "Six pins", and its list adds `w5_redate`. §Pins adds `w5_redate` after `w5_inventory`.
+- Criterion 8's "the five W5 pins" reads "the six W5 pins", and §Deliverables' "tests and five pins" reads "tests and six pins".
+- The version note's "five everywhere" and Amendment 1's "five pins" record those texts as they stood.
+
+**Pin `w5_redate`.** Its twins:
+1. The two lines of the table, after their rows. The rows print their new dues.
+2. A third line with those keys, for `runbook-c2b`. The file is malformed.
+3. Without twin 1's `c2b-report` line: a line for `c2b-report` with seq 1564 and due 2026-12-01T00:00:00Z. The file is malformed.
+4. Twin 1's `c2b-report` line twice. The file is malformed.
+5. Twin 1's lines, but the `c2b-report` line with seq 1565. The file is malformed.
+6. Twin 1's `c2b-report` line placed before its row's line. The file is malformed.
+
+Mutants:
+- re-date lines refused, or ignored (killed by twin 1);
+- any re-date line admitted (twin 2);
+- matched by `id` alone (twin 3);
+- a second line for one row admitted (twin 4);
+- the `seq` test dropped (twin 5);
+- the order test dropped (twin 6).
+
+**Interests.** Counsel holds X7 (seq 1559, p 0.55, 2026-11-05T05:33:33Z), entered on "transcripts/BRIEF-C2b-draft.md with Amendments 2-5". It forecasts that every pre-stated criterion of BRIEF-C2b holds. Counsel entered the two re-date lines 47 minutes later.
+- Under the text X7 was entered on, `c2b-report`'s due precedes every possible exit of C2b, so criterion 8 could hold only if the report came before C2b's exit.
+- This amendment moves that due past X7's `resolves_by`, which is strongly in counsel's favour.
+- It moves `c2c-brief` earlier, which is against counsel.
+
+The re-dates carry the sovereign's direction. X7 resolves on its own words.
+
+**Reads.** Row 33's rule bars changing a criterion after a window has read it (Amendment 3), and C2b's window has not opened. The builder codes this only after the sovereign has read it (A2.10). C2b's opening needs an accepting read, carried by a non-counsel proposal, of the brief's bytes as amended (§Scope (a)).
