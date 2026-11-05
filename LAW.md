@@ -70,7 +70,8 @@ that no one could be the sole holder of (`kernel/sig.py:weak_key`; `bad_key`).
 
 *Every obligation is derived from present state and the clock, carries a
 deadline, and escalates when the deadline passes.* — `tools/clerk.py`:
-`forecast_writs` (W1, a writ per unresolved forecast with its `resolves_by`),
+`forecast_writs` (W1, a writ per unresolved forecast with its `resolves_by`; computed
+for C1b only, see the last section),
 `merge_writs` (W3, a writ per unwitnessed merge) and `window_writs` (W4, the
 window's criteria with its end) are computed from the log, the saved runs and
 the clock; past the deadline the line reads ESCALATED. The escalation was a
@@ -102,7 +103,9 @@ is the weekly budget, a sovereign `decision` (seq 50). The reason is the one max
 sentence on adjudication gives: deciding reversibility edit by edit means judging the
 content of the change, a semantic property no decidable check can be trusted with (Rice
 1953). The cost is priced and recorded rather than removed: one sovereign act per cap
-change: two so far (seqs 197 and 367), and a third at C2b's opening. A cap set by a non-sovereign key within a
+change: five so far (seqs 5, 12, 29, 197 and 367), a sixth at C2a-prime's opening and a seventh at
+C2b's. BRIEF-C2a-prime v7's deliverables name seq 9 where the cap moved at seq 12: the trees of seqs 5 and 9
+both hold 4,500, and seq 12's holds 5,500. A cap set by a non-sovereign key within a
 bound the sovereign fixes is a C2c candidate. It is not law, and the charter's sentence
 stands as the intent the practice approximates.
 
@@ -243,3 +246,35 @@ COUNSEL-OPEN row 28's conditions. Checked against the texts by the author on 3 N
   not require the regulator's variety to equal the disturbances'. Read "…enough variety that
   the outcomes it lets through fit the acceptable set (Ashby 1956, S.11/7)". The case for
   several model families stands on that reading.
+
+## Clauses the code does not carry as written (commentary)
+
+Counsel's, 5 November 2026, answering the book author's findings (jack #347–#350). Each is a place where a
+reader of the charter or of this map would believe something the code does not do. Nothing here changes a
+clause: only an amendment does.
+
+- **A2.8's monitor is unbuilt.** *"The head hash of `log.jsonl` on `main` is published on every push; a
+  monitor that the owner does not operate verifies that each head extends the last and that both checkers
+  accept the log, and writs Guy on any failure."* No workflow publishes or verifies a head hash:
+  `.github/workflows/` holds `judge.yml` and `tests.yml`, and `tools/enforcement.json` has no row for A2.8.
+  What exists runs on the owner's repository and writs no one: the judge refuses a proposal whose log is not
+  an extension of trunk's (`prefix_broken`), and `main`'s protection refuses force pushes. Building the
+  monitor is a trusted-base change, carried to the C2c brief.
+- **§12's liveness falsifier cannot fire as written.** *"C1's window fails against assize's baseline:
+  level-triggered writs do not buy liveness here, and the fault lies in the clerk, not the proposers."*
+  BRIEF-C1b §Liveness commits p₀ = 6/11, Laplace over jack's own first nine items through seq 163, and
+  reports assize's repairs per merge beside it, "not bet on". No statistic on the record bets against
+  assize's series, so a window can fail only against jack's own p₀.
+- **A2.9 and `judge/scope.json` differ.** *"a reviewer's key may propose only under `pins/` and
+  `spec/vectors/`"*. `judge/scope.json` gives the reviewer `pins/`, `spec/vectors/`, `transcripts/` and
+  `log.jsonl`. The wider scope entered at `3c842ab` ("judge: attribution by signed proposal entry; scope by
+  party", 19 October), after A2 (seq 4), and reached the trusted base by the sovereign's push. The judge
+  admits proposals by `scope.json`, so the wider scope is the one enforced, and every reviewer proposal
+  admitted under it is on `main`; A2.9's sentence states a narrower rule than the judge keeps. Which of the
+  two should govern is a question of what the charter allows (A2.10), open until an act needs it.
+- **W1 runs for C1b only.** `tools/clerk.py` computes `forecast_writs` only when the window is C1b
+  (`if s["subject"] == "C1b" else []`), so a forecast in the running window carries no W1 writ and is
+  seen only once overdue, as a W4 line. `tools/enforcement.json`'s W1 row, which is the builder's file, and
+  maxim 3 above state W1 without that condition. BRIEF-C2a forbids changing the clerk inside its window,
+  and C2a-prime's brief does too; the one-line fix, with a pin whose mutant is the present line, is to ride
+  C2b's opening push. Until then W1 is C1b's only.
