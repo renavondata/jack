@@ -1,0 +1,31 @@
+Forecast 522 (RM-6): C2b's opening push entry (a push after decision promote C2a that sets cap 9000) is on main before 2026-11-05T00:00:00Z.
+Outcome: 0. The cutoff has passed and main has no promote C2a decision, hence no qualifying subsequent opening push.
+
+Command:
+git log -1 --format='%H %cI %s' origin/main
+Output:
+a4eecc566c4190ff8a855c4b5f6f87e441b4d5c0 2026-11-05T05:59:22+02:00 Merge pull request #346 from renavondata/ops-stream-47-r
+Commit time normalized to UTC: 2026-11-05T03:59:22Z.
+
+Command:
+git show origin/main:log.jsonl | python3 -c 'import sys,json; es=[json.loads(l) for l in sys.stdin]; cutoff="2026-11-05T00:00:00Z"; print("main last entry:",es[-1]["seq"],es[-1]["ts"]); print("All decision/push entries (seq, UTC ts, type, body):"); [print(e["seq"],e["ts"],e["type"],json.dumps(e["body"],sort_keys=True)) for e in es if e["type"] in ("decision","push")]; promotions=[e for e in es if e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject")=="C2a"]; print("promote C2a entries:",len(promotions)); print("promote C2a entries before cutoff:",sum(e["ts"]<cutoff for e in promotions)); print("No promote C2a decision exists on main, so no subsequent C2b opening push before",cutoff,"; outcome 0")'
+Output:
+main last entry: 1541 2026-11-05T03:52:29Z
+All decision/push entries (seq, UTC ts, type, body):
+2 2026-10-18T14:42:38Z push {"digest": "f77c28e59d559cd87c54b533911cc78ea7193b5e97f925555d33a09f9ac31da7", "review": "e82946b684fa388469b8d4441289fb83a1d0a2f612c3fc3107ec482959175b94"}
+3 2026-10-19T04:33:05Z decision {"kind": "transmute", "subject": "A2"}
+5 2026-10-19T04:36:23Z push {"digest": "1db66ff08fdaca4bed5bebe2d5060ca09caf14c5755fcebb65952aa7f67337ba", "review": "0000000000000000000000000000000000000000000000000000000000000000"}
+9 2026-10-19T06:00:46Z push {"digest": "bf9a798dd8b4ced53d6dcf8ddf0026d2a6565e13a391f5af590aea249ba91cf7", "review": "0000000000000000000000000000000000000000000000000000000000000000"}
+12 2026-10-20T02:06:48Z push {"digest": "ba8f9a7708d0e18773412c06f6cec5ba75b37514dff5edd4ac7cfc316ccf0a82", "record": "0000000000000000000000000000000000000000000000000000000000000000", "review": "3d3e8ea8876aae3ee76bddd72581127dea54cf09bc7b77e5691eeb13d829cae2"}
+28 2026-10-24T20:53:36Z decision {"kind": "transmute", "subject": "A3"}
+29 2026-10-25T16:16:20Z push {"digest": "606e6562f9b1d1840b0bf56b219b21bc18875b66266b4f16c384cc8d5a7366df", "record": "69a2b165233195360c35b8b9f7fbec6b1df325458aa9422ec856afa54f120542", "review": "0c0339eec05e9da68cf94494b8d418ab29ec3ac4ba6b4ae394f138719ae6ac2f"}
+50 2026-10-26T08:58:22Z decision {"kind": "budget", "subject": "C1b: 4 Guy-hours/week; USD 300/month; windows 14 days"}
+66 2026-10-27T07:03:58Z decision {"kind": "transmute", "subject": "A4"}
+136 2026-10-30T09:59:23Z decision {"kind": "transmute", "subject": "A5"}
+188 2026-10-31T10:42:10Z decision {"kind": "promote", "subject": "C1a"}
+197 2026-10-31T13:04:49Z push {"digest": "30976b3b4525dd5ab50369c7bd53930bb39bb552f0ca15f66d17e0566fe10000", "record": "0000000000000000000000000000000000000000000000000000000000000000", "review": "b04f011f777fb056a903fb434a2a50f4c950e1e03758208fd4c7b8a2f1742954"}
+337 2026-11-01T11:31:58Z decision {"kind": "promote", "subject": "C1b"}
+367 2026-11-01T15:04:14Z push {"digest": "afe633a2f34cc810bff9bb7e08aa3f59c98bcd64310c3f0145eae184a88af08d", "record": "0000000000000000000000000000000000000000000000000000000000000000", "review": "c51320cbccf38d77e4d82d10b06d30fffda4d1db700be5d5d9e9270567aee34e"}
+promote C2a entries: 0
+promote C2a entries before cutoff: 0
+No promote C2a decision exists on main, so no subsequent C2b opening push before 2026-11-05T00:00:00Z ; outcome 0
