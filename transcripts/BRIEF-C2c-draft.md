@@ -91,3 +91,19 @@ A5.1 ends a window only at its stated end or at a `promote`, and A6's clause add
 - `transcripts/RULING-20261104-window-fix.md` calls the procedure "C2c item 12". That names an item of a draft that is not yet on `main`.
 
 That procedure is to be stated in a later part, not yet written.
+
+## The first section (COUNSEL-DUE `c2c-brief`), one item: the kernel types (a record, no rule)
+
+The `c2c-brief` row's `what` lists three items. BRIEF-C2b's Amendment 9 struck the procedure contracts, which leaves two. This part is one of them. The other, the GitHub identities, is not yet written, so this part alone does not discharge the row.
+
+BRIEF-C2b's paragraph beginning "C2's third word" says, at its lines 31–33, that the kernel types C2a's text promised (`invite`, `accept` and `wish`) are "deferred to the first witness that a forecast cannot carry an invitation". Its §Deliverables puts the kernel types in this brief's first section, "if a witness has appeared".
+
+As of seq 1889 (2026-11-06T08:04:35Z), no witness has appeared:
+- Invitations are `election.invite` forecasts, which the clerk enters in C2b's window. C2b has not opened.
+- The log on `main` holds no `election.invite` forecast.
+
+So, as of that seq, this part adds none of `invite`, `accept` or `wish`.
+- **When a witness can appear.** No earlier than when invitations are first issued, in C2b's window.
+- **The row's due.** The `c2c-brief` row is due 2026-11-16T00:00:00Z. Amendment 2 puts C2b's opening after 2026-11-17T12:00:00Z. So at the row's due, this item can only be recorded as it stands then.
+- **The C2b report.** That paragraph says the deferral is also to be recorded "in the C2b report".
+- **Where the kernel items go.** This is one of the open questions of `transcripts/COUNSEL-OPEN.md` row 37, and this part does not decide it.
