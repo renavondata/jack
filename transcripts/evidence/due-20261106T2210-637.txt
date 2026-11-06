@@ -1,0 +1,52 @@
+Forecast 637 (counsel.programme, X1): LEFT UNDECIDED.
+Observed at 2026-11-06T22:11:50Z, before resolves_by 2026-11-07T00:00:00Z.
+Origin/main: d0fb0b590a2688b8b12eda7969a30add0b7e86d3, through seq 2106.
+
+Command run:
+git show origin/main:log.jsonl | python3 -c 'import sys,json; latest=None; promotions=[]; invites=0; n=None
+for l in sys.stdin:
+ e=json.loads(l); n=e["seq"]
+ if e["type"]=="push": latest={k:e[k] for k in ("seq","ts","body")}
+ if e["type"]=="decision" and e["body"].get("kind")=="promote": promotions.append({k:e[k] for k in ("seq","ts","body")})
+ if e["type"]=="forecast" and e["body"].get("type")=="election.invite": invites+=1
+print(json.dumps({"last_seq":n,"latest_push":latest,"promotions":promotions,"election_invites":invites},indent=2))'
+
+Output:
+{
+  "last_seq": 2106,
+  "latest_push": {
+    "seq": 367,
+    "ts": "2026-11-01T15:04:14Z",
+    "body": {
+      "digest": "afe633a2f34cc810bff9bb7e08aa3f59c98bcd64310c3f0145eae184a88af08d",
+      "record": "0000000000000000000000000000000000000000000000000000000000000000",
+      "review": "c51320cbccf38d77e4d82d10b06d30fffda4d1db700be5d5d9e9270567aee34e"
+    }
+  },
+  "promotions": [
+    {
+      "seq": 188,
+      "ts": "2026-10-31T10:42:10Z",
+      "body": {"kind": "promote", "subject": "C1a"}
+    },
+    {
+      "seq": 337,
+      "ts": "2026-11-01T11:31:58Z",
+      "body": {"kind": "promote", "subject": "C1b"}
+    }
+  ],
+  "election_invites": 0
+}
+
+Command: git ls-tree origin/main tools/elect.py
+Output: (empty)
+
+BRIEF-C2b v6, Order of acts step 3, defines its opening as the first push
+after decision promote C2a. No such promotion or opening exists on this
+prefix. Seq 367 is C2a's opening, not C2b's. Therefore the claim's
+opening-plus-three-days evaluation instant cannot yet be computed, and
+tools/elect.py --table is unavailable on this tree. Zero invites now does
+not decide the future relative-window claim. Its absolute resolves_by is
+also still ahead. Deciding evidence would be the C2b opening and the table
+on its three-day prefix, or another definitive settlement under the
+claim's own terms. No resolution entered.
