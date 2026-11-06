@@ -277,12 +277,12 @@ class C2bCounselTest(unittest.TestCase):
     def records(self, rows):
         return "".join(json.dumps(row) + "\n" for row in rows)
 
-    def assess(self, rows=None, ticks=None, pins=None, verified=True):
+    def assess(self, rows=None, ticks=None, pins=None, verified=True, merges=None):
         files = {self.path: self.records(rows if rows is not None else [self.row, self.done]),
                  "pins/pins.py": "\n".join(f'Pin("{name}")' for name in (st.COUNSEL_PINS if pins is None else pins))}
         files.update({self.tick: f"as-of: {self.TICK}\n{self.line}\n"} if ticks is None else ticks)
         rev = commit(self.root, files)
-        prefix = self.entries + [e(4, self.TICK, "merge", "herald", commit=rev)]
+        prefix = self.entries + ([e(4, self.TICK, "merge", "herald", commit=rev)] if merges is None else merges)
         return st.counsel_bound(dict(self.s, prefix=prefix), verified, self.root, rev)
 
     def test_counsel_bound_passing_and_pin_run_twins(self):
@@ -302,6 +302,15 @@ class C2bCounselTest(unittest.TestCase):
         self.s["as_of"] = self.TICK
         self.entries[-1]["ts"] = self.END
         self.assertFalse(self.assess()[0])  # future entry cannot discharge
+
+    def test_discharge_requires_verified_merge_evidence(self):
+        ok, text = self.assess(merges=[])
+        self.assertFalse(ok); self.assertIn("overdue undone ['report']", text); self.assertIn("malformed False", text)
+        ok, text = self.assess(merges=[e(4, self.TICK, "merge", "herald", commit="0" * 40)])
+        self.assertFalse(ok); self.assertIn("unverified merge", text)
+        self.assertTrue(self.assess()[0])
+        ok, text = self.assess(rows=[self.row, self.done, dict(id="other", extra="not allowed")])
+        self.assertFalse(ok); self.assertIn("malformed COUNSEL-DUE file", text)
 
     def test_first_tick_not_reconstructed_or_replaced_by_later_success(self):
         later = "transcripts/evidence/w5/later.txt"

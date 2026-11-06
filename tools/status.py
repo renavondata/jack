@@ -377,7 +377,7 @@ def election_tree_evidence(root, rev, prefix, opening):
                  git_bytes(root, "ls-tree", "-r", c2a, "kernel/") == initial[-1] and
                  not any(e["type"] == "push" and e["seq"] > opening for e in prefix))
     names = elect.PINS + ("push_without_read_refused read_of_this_text read_not_counsels w5_overdue_escalates "
-                         "w5_escalation_history w5_done_is_an_entry w5_rows_append_only w5_inventory "
+                         "w5_escalation_history w5_done_is_an_entry w5_rows_append_only w5_inventory w5_redate "
                          "workflow_steps_preserved window_from_the_push wealth_continues promote_refused").split()
     registered = tree_bytes(root, rev, "pins/pins.py").decode()
     return unchanged, all(f'Pin("{name}"' in registered or f"Pin('{name}'" in registered for name in names)
@@ -416,7 +416,7 @@ def assess_election(s, facts, verified, root, rev, runs):
 
 
 COUNSEL_PINS = ("push_without_read_refused read_of_this_text read_not_counsels w5_overdue_escalates "
-                "w5_done_is_an_entry w5_rows_append_only w5_inventory w5_escalation_history").split()
+                "w5_done_is_an_entry w5_rows_append_only w5_inventory w5_redate w5_escalation_history").split()
 
 
 def liveness_unchanged(root, rev, prefix):
