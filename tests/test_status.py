@@ -260,6 +260,7 @@ class C2bExitTest(unittest.TestCase):
 
 
 class C2bCounselTest(unittest.TestCase):
+    OPEN = "2026-11-02T00:00:00Z"
     DUE, TICK, END = "2026-11-02T01:00:00Z", "2026-11-02T02:00:00Z", "2026-11-03T00:00:00Z"
 
     def setUp(self):
@@ -269,10 +270,13 @@ class C2bCounselTest(unittest.TestCase):
         self.path = due.FILE
         self.tick = "transcripts/evidence/w5/first.txt"
         self.line = f"W5 report due {self.DUE} file report: ESCALATED 1h past due"
-        self.entries = [e(1, self.DUE, "push", "guy"), e(3, self.TICK, "proposal", "counsel", title="report")]
-        self.s = dict(prefix=self.entries, opening=1, start=self.DUE, as_of=self.END, end=self.END)
-        self.root, self.start = self.enterContext(tree({self.path: self.records([self.row])}))
-        self.enterContext(patch.object(st, "prefix_tree", return_value=self.start))
+        self.entries = [e(1, self.OPEN, "push", "guy")]
+        self.s = dict(prefix=self.entries, opening=1, start=self.OPEN, as_of=self.END, end=self.END)
+        self.root, self.start = self.enterContext(tree({self.path: self.records([self.row]),
+                                                       "log.jsonl": self.records(self.entries)}))
+        landing = commit(self.root, {"tools/due.py": "# W5 marker\n"})
+        self.entries += [e(2, self.OPEN, "merge", "herald", commit=landing),
+                         e(3, self.TICK, "proposal", "counsel", title="report")]
 
     def records(self, rows):
         return "".join(json.dumps(row) + "\n" for row in rows)
@@ -280,9 +284,11 @@ class C2bCounselTest(unittest.TestCase):
     def assess(self, rows=None, ticks=None, pins=None, verified=True, merges=None):
         files = {self.path: self.records(rows if rows is not None else [self.row, self.done]),
                  "pins/pins.py": "\n".join(f'Pin("{name}")' for name in (st.COUNSEL_PINS if pins is None else pins))}
-        files.update({self.tick: f"as-of: {self.TICK}\n{self.line}\n"} if ticks is None else ticks)
+        files.update({self.tick: f"as-of: {self.TICK}; prefix to seq 3\n{self.line}\n"} if ticks is None else ticks)
+        files["log.jsonl"] = self.records(self.entries)
         rev = commit(self.root, files)
         prefix = self.entries + ([e(4, self.TICK, "merge", "herald", commit=rev)] if merges is None else merges)
+        rev = commit(self.root, {"log.jsonl": self.records(prefix)})
         return st.counsel_bound(dict(self.s, prefix=prefix), verified, self.root, rev)
 
     def test_counsel_bound_passing_and_pin_run_twins(self):
@@ -315,17 +321,97 @@ class C2bCounselTest(unittest.TestCase):
     def test_first_tick_not_reconstructed_or_replaced_by_later_success(self):
         later = "transcripts/evidence/w5/later.txt"
         good = f"window C2b: start .. end (as of {self.TICK}; prefix to seq 3)\n{self.line}\n"
-        for first in ("", f"as-of: {self.DUE}\n{self.line}\n", f"as-of: {self.TICK}\nW5 report: OPEN\n",
-                      f"as-of: {self.TICK}\nW5 report-other due {self.DUE} file report: ESCALATED\n"):
-            bad = {self.tick: first, later: f"as-of: {self.END}\n{self.line}\n"}
-            # A tick at exactly due is not after due; without a later failure it is a passing boundary twin.
-            if first.startswith(f"as-of: {self.DUE}"):
-                self.assertTrue(self.assess(ticks=bad)[0])
-            else:
-                self.assertFalse(self.assess(ticks=bad)[0])
+        header = f"as-of: {self.TICK}; prefix to seq 3\n"
+        for first in ("", f"as-of: {self.DUE}; prefix to seq 3\n{self.line}\n", f"{header}W5 report: OPEN\n",
+                      f"{header}W5 report-other due {self.DUE} file report: ESCALATED\n"):
+            bad = {self.tick: first, later: f"as-of: {self.END}; prefix to seq 4\n{self.line}\n"}
+            self.assertFalse(self.assess(ticks=bad)[0])
             self.assertTrue(self.assess(ticks={self.tick: good})[0])
         self.assertFalse(self.assess(ticks={self.tick: f"as-of: 2026-11-04T00:00:00Z\n{self.line}\n",
                                           later: f"as-of: 2026-11-04T01:00:00Z\n{self.line}\n"})[0])
+
+    def test_c2b_history_from_w5(self):
+        from tools import due
+        before, after, late = (f"2026-11-02T{h}:00Z" for h in ("00:30", "01:30", "03:00"))
+        cases = [  # Amendment 8's seven twins, then the retained first-prefix contract (F7).
+            ("1 pre-landing", after, late, None, True),
+            ("2 missing history", before, late, None, False),
+            ("3 first-prefix print", before, late, "first", True),
+            ("4 undone", after, None, None, False),
+            ("5 two landings", before, late, None, False),
+            ("6 equality", self.DUE, late, None, True),
+            ("7 no landing", None, late, None, True),
+            ("on time", before, before, None, True),
+            ("exactly due", before, self.DUE, None, True),
+            ("skipped prefix", before, late, "skipped", False),
+            ("equal-ts skipped prefix", before, late, "skipped", False),
+            ("equal-ts first prefix", before, late, "first", True),
+            ("backdated clock", before, late, "backdated", False),
+            ("late clock", before, late, "late-clock", False),
+            ("late-authored tick", before, late, "late-authored", False),
+            ("wrong sequence", before, late, "wrong-seq", False),
+            ("equal-ts excluded landing", None, late, None, True),
+            ("equal-ts excluded unreadable", None, late, None, True),
+            ("non-merge marker", None, late, None, True),
+            ("unreadable tree", None, late, None, False),
+        ]
+        for name, landing, done_at, tick, expected in cases:
+            with self.subTest(case=name):
+                entries = [e(1, self.OPEN, "push", "guy")]
+                inventory = self.records([self.row])
+                root, start = self.enterContext(tree({self.path: inventory, "log.jsonl": self.records(entries),
+                    "pins/pins.py": "\n".join(f'Pin("{p}")' for p in st.COUNSEL_PINS)}))
+                entries += [e(2, self.OPEN, "merge", "herald", commit=start),
+                            e(3, self.OPEN, "proposal", "counsel", title="file report")]
+                rev = commit(root, {"log.jsonl": self.records(entries)})
+                next_at = self.TICK if name.startswith("equal-ts") and name.endswith("prefix") else late
+                actions = [(self.TICK, "tick"), (next_at, "next")]
+                if landing: actions.append((landing, "landing"))
+                if name.startswith("5 "): actions.append((after, "landing"))
+                if done_at: actions.append((done_at, "done"))
+                if name == "non-merge marker": actions.append((before, "proposal"))
+                if name == "unreadable tree": actions.append((before, "unreadable"))
+                printed = None
+                for when, action in sorted(actions, key=lambda a: (a[0], a[1] == "next")):
+                    files, body = {}, {}
+                    typ = "proposal"
+                    if action in ("landing", "proposal"):
+                        marker = commit(root, {"tools/due.py": "# W5 marker\n"})
+                        typ, body = ("merge" if action == "landing" else "proposal"), dict(commit=marker)
+                    elif action in ("done", "unreadable"):
+                        if action == "done":
+                            inventory += self.records([self.done])
+                            rev = commit(root, {self.path: inventory})
+                        typ, body = "merge", dict(commit=rev if action == "done" else "0" * 40)
+                    entries.append(e(entries[-1]["seq"] + 1, when, typ, "herald", **body))
+                    if action == "tick":
+                        stamp = self.DUE if tick == "backdated" else late if tick == "late-clock" else when
+                        seq = entries[-1]["seq"] + (1 if tick == "wrong-seq" else 0)
+                        printed = f"as-of: {stamp}; prefix to seq {seq}\n{self.line}\n"
+                        if tick and tick not in ("skipped", "late-authored"): files[self.tick] = printed
+                    if action == "next" and tick in ("skipped", "late-authored"):
+                        files[self.tick] = (f"as-of: {when}; prefix to seq {entries[-1]['seq']}\n{self.line}\n"
+                                            if tick == "skipped" else printed)
+                    rev = commit(root, dict(files, **{"log.jsonl": self.records(entries)}))
+                prefix = entries[:]
+                if name.startswith("equal-ts excluded"):
+                    marker = commit(root, {"tools/due.py": "# W5 marker\n"})
+                    entries.append(e(entries[-1]["seq"] + 1, late, "merge", "herald",
+                                     commit="0" * 40 if name.endswith("unreadable") else marker))
+                    rev = commit(root, {"log.jsonl": self.records(entries)})
+                with patch.object(st, "git_bytes", wraps=st.git_bytes) as reads:
+                    ok, text = st.counsel_bound(dict(self.s, prefix=list(reversed(prefix))), True, root, rev)
+                self.assertEqual(ok, expected, text)
+                if name.startswith("equal-ts excluded"):
+                    self.assertFalse(any(call.args[1:] == ("ls-tree", marker, "--", "tools/due.py")
+                                         for call in reads.call_args_list))
+                if name == "unreadable tree": self.assertIn("unverified", text)
+                elif not expected:
+                    self.assertIn("overdue undone ['report']" if done_at is None else
+                                  "first-tick escalation missing ['report']", text)
+                if done_at and done_at > self.DUE and name != "unreadable tree":
+                    lines, malformed = due.project(root, inventory.encode(), prefix, self.END)
+                    self.assertFalse(malformed); self.assertIn("done seq 3 ESCALATED", lines[0])
 
     def test_append_only_history_and_opening_inventory(self):
         self.assertTrue(self.assess()[0])

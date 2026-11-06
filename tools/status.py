@@ -377,7 +377,7 @@ def election_tree_evidence(root, rev, prefix, opening):
                  git_bytes(root, "ls-tree", "-r", c2a, "kernel/") == initial[-1] and
                  not any(e["type"] == "push" and e["seq"] > opening for e in prefix))
     names = elect.PINS + ("push_without_read_refused read_of_this_text read_not_counsels w5_overdue_escalates "
-                         "w5_escalation_history w5_done_is_an_entry w5_rows_append_only w5_inventory w5_redate "
+                         "w5_escalation_history w5_done_is_an_entry w5_rows_append_only w5_inventory w5_redate c2b_history_from_w5 "
                          "workflow_steps_preserved window_from_the_push wealth_continues promote_refused").split()
     registered = tree_bytes(root, rev, "pins/pins.py").decode()
     return unchanged, all(f'Pin("{name}"' in registered or f"Pin('{name}'" in registered for name in names)
@@ -416,7 +416,7 @@ def assess_election(s, facts, verified, root, rev, runs):
 
 
 COUNSEL_PINS = ("push_without_read_refused read_of_this_text read_not_counsels w5_overdue_escalates "
-                "w5_done_is_an_entry w5_rows_append_only w5_inventory w5_redate w5_escalation_history").split()
+                "w5_done_is_an_entry w5_rows_append_only w5_inventory w5_redate c2b_history_from_w5 w5_escalation_history").split()
 
 
 def liveness_unchanged(root, rev, prefix):
@@ -450,9 +450,15 @@ def counsel_bound(s, verified, root, rev):
         current = tree_bytes(root, rev, due.FILE)
         due.unchanged(text, current)
         rows = due.fold(due.rows(current))
-        lines, malformed = due.project(root, current, s["prefix"], end)
+        prefix = sorted((e for e in s["prefix"] if e["ts"] <= end), key=lambda e: e["seq"])
+        lines, malformed = due.project(root, current, prefix, end)
         overdue = [r["id"] for r, line in zip(rows, lines) if r["due"] < end and
                    not line.startswith(f"W5 {r['id']} due {r['due']} {r['what']}: done seq ")]
+        landing = None
+        for entry in prefix:
+            if entry["type"] == "merge" and git_bytes(root, "ls-tree", entry["body"]["commit"], "--", "tools/due.py"):
+                landing = entry["ts"]
+                break
         ticks = []
         paths = git_bytes(root, "ls-tree", "-r", "--name-only", rev, "transcripts/evidence/w5/").decode().splitlines()
         for path in paths:
@@ -462,16 +468,31 @@ def counsel_bound(s, verified, root, rev):
                 raise ValueError(f"tick has no unique as-of: {path}")
             when = due.instant(stamps[0]).strftime(FMT)
             if when <= end:
-                ticks.append((when, path, text.splitlines()))
+                seqs = re.findall(r"\bprefix to seq ([0-9]+)\b", text)
+                if len(seqs) == 1:
+                    ticks.append((when, int(seqs[0]), path, text))
         ticks.sort()
         missing = []
-        for row in rows:
-            if row["due"] >= end:
+        for row, line in zip(rows, lines):
+            if landing is None or row["due"] <= landing or row["due"] >= end or line.endswith(" on time"):
                 continue
-            first = next((tick for tick in ticks if tick[0] > row["due"]), None)
+            first = next((i for i, entry in enumerate(prefix) if entry["ts"] > row["due"]), None)
             marker = f"W5 {row['id']} due {row['due']} {row['what']}: "
-            if first is None or not any(line.startswith(marker) and
-                                       re.search(r"\bESCALATED\b", line[len(marker):]) for line in first[2]):
+            witnessed = False
+            if first is not None:
+                historical = prefix_tree(root, rev, prefix[:first + 1])
+                for when, seq, path, text in ticks:
+                    if (seq != prefix[first]["seq"] or when < prefix[first]["ts"] or
+                            (first + 1 < len(prefix) and when >= prefix[first + 1]["ts"] and when != prefix[first]["ts"])):
+                        continue
+                    # A claimed old as-of is not evidence if these bytes appeared only on a later prefix.
+                    if (historical is not None and git_bytes(root, "ls-tree", historical, "--", path) and
+                            tree_bytes(root, historical, path).decode() == text and any(
+                                line.startswith(marker) and re.search(r"\bESCALATED\b", line[len(marker):])
+                                for line in text.splitlines())):
+                        witnessed = True
+                        break
+            if not witnessed:
                 missing.append(row["id"])
         ok = verified and registered and not malformed and not overdue and not missing
         return ok, (f"criterion 8: counsel bound: gate/W5 pins in verified tests {verified and registered}; "
