@@ -349,11 +349,14 @@ class C2bCounselTest(unittest.TestCase):
             ("backdated clock", before, late, "backdated", False),
             ("late clock", before, late, "late-clock", False),
             ("late-authored tick", before, late, "late-authored", False),
+            ("unavailable tick tree", before, late, "unavailable", False),
+            ("replaced tick bytes", before, late, "replaced", False),
             ("wrong sequence", before, late, "wrong-seq", False),
             ("equal-ts excluded landing", None, late, None, True),
             ("equal-ts excluded unreadable", None, late, None, True),
             ("non-merge marker", None, late, None, True),
             ("unreadable tree", None, late, None, False),
+            ("unreadable landing subtree", before, late, "first", False),
         ]
         for name, landing, done_at, tick, expected in cases:
             with self.subTest(case=name):
@@ -389,7 +392,12 @@ class C2bCounselTest(unittest.TestCase):
                         seq = entries[-1]["seq"] + (1 if tick == "wrong-seq" else 0)
                         printed = f"as-of: {stamp}; prefix to seq {seq}\n{self.line}\n"
                         if tick and tick not in ("skipped", "late-authored"): files[self.tick] = printed
-                    if action == "next" and tick in ("skipped", "late-authored"):
+                        if tick == "unavailable":
+                            # Keep the print, but never commit this exact log prefix.
+                            write(root, self.tick, printed)
+                            continue
+                        if tick == "replaced": files[self.tick] = printed.replace(self.line, "W5 report: OPEN")
+                    if action == "next" and tick in ("skipped", "late-authored", "replaced"):
                         files[self.tick] = (f"as-of: {when}; prefix to seq {entries[-1]['seq']}\n{self.line}\n"
                                             if tick == "skipped" else printed)
                     rev = commit(root, dict(files, **{"log.jsonl": self.records(entries)}))
@@ -399,16 +407,22 @@ class C2bCounselTest(unittest.TestCase):
                     entries.append(e(entries[-1]["seq"] + 1, late, "merge", "herald",
                                      commit="0" * 40 if name.endswith("unreadable") else marker))
                     rev = commit(root, {"log.jsonl": self.records(entries)})
+                if name == "unreadable landing subtree":
+                    # Discharge reads traverse transcripts; only the landing read needs tools.
+                    oid = st.git_bytes(root, "rev-parse", f"{marker}:tools").decode().strip()
+                    (Path(root) / ".git" / "objects" / oid[:2] / oid[2:]).unlink()
                 with patch.object(st, "git_bytes", wraps=st.git_bytes) as reads:
                     ok, text = st.counsel_bound(dict(self.s, prefix=list(reversed(prefix))), True, root, rev)
                 self.assertEqual(ok, expected, text)
                 if name.startswith("equal-ts excluded"):
                     self.assertFalse(any(call.args[1:] == ("ls-tree", marker, "--", "tools/due.py")
                                          for call in reads.call_args_list))
-                if name == "unreadable tree": self.assertIn("unverified", text)
+                if name.startswith("unreadable"): self.assertIn("unverified", text)
                 elif not expected:
                     self.assertIn("overdue undone ['report']" if done_at is None else
                                   "first-tick escalation missing ['report']", text)
+                if name == "unreadable landing subtree":
+                    self.assertIn(unittest.mock.call(root, "ls-tree", marker, "--", "tools/due.py"), reads.call_args_list)
                 if done_at and done_at > self.DUE and name != "unreadable tree":
                     lines, malformed = due.project(root, inventory.encode(), prefix, self.END)
                     self.assertFalse(malformed); self.assertIn("done seq 3 ESCALATED", lines[0])
