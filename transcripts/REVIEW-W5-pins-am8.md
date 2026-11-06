@@ -174,3 +174,35 @@ workflow_steps_preserved gate_skipped_on_failure      KILLED
 Pre-opening reviewer branch work, with trailer `Proposer: reviewer reviewer-2`.
 The branch is for push only; proposal awaits C2b's opening cap. No forecast or
 ledger entry is part of this change.
+
+## Re-run on a829a27
+
+Merged builder commit `a829a274770f3fdb0c2a04098a84548ff14abdf0` as
+`9ebb3a08709168392f2be5bcd9f620fb29d76528`, carrying
+`Proposer: reviewer reviewer-2`. The builder adds the three distinguishing
+twins in `tests/test_status.py`; no mutant or file under `tools/` changed.
+
+Ran the full documented pin runner with reviewer credentials and temporary
+files confined to this worktree:
+
+```sh
+TMPDIR="$PWD/transcripts" PYTHONDONTWRITEBYTECODE=1 JACK_KEY="$HOME/.ssh/jack-reviewer" python3 pins/run.py --transcript transcripts/PINS-C2b-am8-a829a27-full.txt
+```
+
+The three previously surviving mutants now report:
+
+```text
+c2b_history_from_w5              unavailable_tick_tree_accepted KILLED  (FAILED (failures=1))
+c2b_history_from_w5              tick_bytes_unchecked         KILLED  (FAILED (failures=1))
+c2b_history_from_w5              unreadable_landing_is_absent KILLED  (FAILED (failures=1))
+```
+
+All **19** mutants of `c2b_history_from_w5` are **KILLED**, and every other
+pin retains its KILLED results. The unedited twins pass. The full runner exits
+**0**, across **101 pins**, with totals:
+
+```text
+KILLED 165, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0
+```
+
+Full output: `transcripts/PINS-C2b-am8-a829a27-full.txt`.
