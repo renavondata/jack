@@ -73,3 +73,21 @@ The mutants:
 - forecasts counted from the assessed window's opening (twin 4).
 
 The reviewer's pin `w1_c2a_omitted`, on `review-audit-3-6` at decf8e8, witnesses the first mutant in `tools/clerk.py`.
+
+## C2c's first amendments (the sovereign's direction of 5 November)
+
+This part is not the first section of the brief that COUNSEL-DUE `c2c-brief` names (procedure contracts, kernel types if witnessed, GitHub identities).
+
+The sovereign, 2026-11-05T20:28:54Z: "Stop. C2a ends on the 17th. The A6 clause with the reads' findings as its spec, and principle 7's ranking, go to C2c as its first amendments. Record this chain's cost in reads and hours in the C2a report." (`transcripts/COUNSEL-OPEN.md` row 39.)
+
+The two amendments are these:
+1. **A6's clause.** Its spec is the reads' findings, which are Appendices C–E of `transcripts/A6-CASE-20261105.md`. That file also holds:
+   - the clause he adopted at 16:33:56Z, before he stopped the chain (§The clause he adopted);
+   - counsel's second (last) draft of the clause (Appendix B).
+2. **Principle 7's ranking.** It comes from the text he forwarded at 16:57:06Z, beginning "Other agent speaks for me": "(7) The charter's maxims should govern its procedural clauses, and today they do not, because every amendment overrides earlier text; this ranking is to be added at C2c."
+
+A5.1 ends a window only at its stated end or at a `promote`, and A6's clause adds another way for it to end. Principle 7's ranking orders the charter's own clauses. Both therefore come after the amendment procedure:
+- `transcripts/COUNSEL-OPEN.md` row 33 records his decision of 4 November that "the charter is amended again only through a process judged as jack judges everything else". It sets that procedure "before any A6".
+- `transcripts/RULING-20261104-window-fix.md` calls the procedure "C2c item 12". That names an item of a draft that is not yet on `main`.
+
+That procedure is to be stated in a later part, not yet written.
