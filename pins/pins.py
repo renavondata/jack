@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 100
+EXPECTED = 101
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1061,11 +1061,19 @@ for pin in C2B_GATE_PINS:
 PINS += C2B_GATE_PINS
 
 
-# --- counsel's writs and workflow (BRIEF-C2b Amendments 6/7; review F7/F8) ---
+# --- counsel's writs and workflow (BRIEF-C2b Amendments 6–8; their reviews) ---
 due_tests = functools.partial(fixture_tests, "test_due.DueTest")
+counsel_tests = functools.partial(fixture_tests, "test_status.C2bCounselTest")
 workflow_tests = functools.partial(fixture_tests, "test_workflow.WorkflowTest")
 REDATE_FIELDS = '{"id", "due", "seq", "why"}'
 EFFECTIVE = 'max(instant(prefix[seq]["ts"]), merged[discharges[row["id"]]])'
+HISTORY_EXEMPT = 'landing is None or row["due"] <= landing'
+LANDING_SCAN = '''        for entry in prefix:
+            if entry["type"] == "merge" and git_bytes(root, "ls-tree", entry["body"]["commit"], "--", "tools/due.py"):
+                landing = entry["ts"]
+                break'''
+TICK_AUTHORED = '''historical is not None and git_bytes(root, "ls-tree", historical, "--", path) and
+                            tree_bytes(root, historical, path).decode() == text'''
 C2B_W5_PINS = [
     Pin("w5_overdue_escalates", due_tests("w5_overdue_escalates"), [
         Mutant("overdue_printed_open", "tools/due.py", 'if due < now else "OPEN"', 'if False else "OPEN"')]),
@@ -1100,6 +1108,45 @@ C2B_W5_PINS = [
                'row["due"] == redates.get(key) and key != "c2b-report"'),
         Mutant("c2c_brief_redate_refused", "tools/due.py", 'row["due"] == redates.get(key)',
                'row["due"] == redates.get(key) and key != "c2c-brief"')]),
+    Pin("c2b_history_from_w5", counsel_tests("c2b_history_from_w5"), [
+        # Amendment 8: twins 1, 2, 4, 5, 6 and 7 respectively; twin 3 stays positive.
+        Mutant("every_row_gated", "tools/status.py", HISTORY_EXEMPT, 'False'),
+        Mutant("every_row_excused", "tools/status.py", HISTORY_EXEMPT, 'True'),
+        Mutant("whole_criterion_excused", "tools/status.py", '        ok = verified and registered and not malformed and not overdue and not missing',
+               '        ok = all(landing is None or row["due"] <= landing for row in rows) or (verified and registered and not malformed and not overdue and not missing)'),
+        Mutant("last_landing", "tools/status.py", LANDING_SCAN, LANDING_SCAN.replace('\n                break', '')),
+        Mutant("landing_equality_gated", "tools/status.py", HISTORY_EXEMPT, 'landing is None or row["due"] < landing'),
+        Mutant("no_landing_gated", "tools/status.py", HISTORY_EXEMPT, 'landing is not None and row["due"] <= landing'),
+        # F7: retain timely discharge and a contemporary, exact first-prefix witness.
+        Mutant("timely_history_required", "tools/status.py", ' or line.endswith(" on time")', ''),
+        Mutant("exact_due_history_required", "tools/due.py", 'if late > 0 else "on time"', 'if late >= 0 else "on time"'),
+        Mutant("first_supplied_tick_accepted", "tools/status.py",
+               'first = next((i for i, entry in enumerate(prefix) if entry["ts"] > row["due"]), None)',
+               'first = next((i for when, seq, path, text in ticks if when > row["due"] for i, entry in enumerate(prefix) if entry["seq"] == seq), None)'),
+        Mutant("tick_clock_lower_unchecked", "tools/status.py", ' or when < prefix[first]["ts"]', ''),
+        Mutant("tick_clock_upper_unchecked", "tools/status.py",
+               '(first + 1 < len(prefix) and when >= prefix[first + 1]["ts"] and when != prefix[first]["ts"])', 'False'),
+        Mutant("equal_ts_first_tick_rejected", "tools/status.py", ' and when != prefix[first]["ts"]', ''),
+        Mutant("tick_sequence_unchecked", "tools/status.py", 'seq != prefix[first]["seq"] or ', ''),
+        Mutant("unavailable_tick_tree_accepted", "tools/status.py", TICK_AUTHORED,
+               '(historical is None or (' + TICK_AUTHORED + '))'),
+        Mutant("unauthored_tick_accepted", "tools/status.py", TICK_AUTHORED,
+               'historical is not None and (not git_bytes(root, "ls-tree", historical, "--", path) or\n'
+               '                            tree_bytes(root, historical, path).decode() == text)'),
+        Mutant("tick_bytes_unchecked", "tools/status.py", 'tree_bytes(root, historical, path).decode() == text', 'True'),
+        Mutant("landing_beyond_prefix", "tools/status.py", LANDING_SCAN,
+               LANDING_SCAN.replace('for entry in prefix:', 'for entry in sorted(due.rows(tree_bytes(root, rev, "log.jsonl")), key=lambda e: e["seq"]):')),
+        Mutant("nonmerge_landing", "tools/status.py", LANDING_SCAN,
+               LANDING_SCAN.replace('entry["type"] == "merge"', '"commit" in entry["body"]')),
+        Mutant("unreadable_landing_is_absent", "tools/status.py", LANDING_SCAN,
+               '        for entry in prefix:\n'
+               '            try:\n'
+               '                present = entry["type"] == "merge" and git_bytes(root, "ls-tree", entry["body"]["commit"], "--", "tools/due.py")\n'
+               '            except subprocess.CalledProcessError:\n'
+               '                present = False\n'
+               '            if present:\n'
+               '                landing = entry["ts"]\n'
+               '                break')]),
     Pin("w5_escalation_history", due_tests("w5_escalation_history"), [
         Mutant("late_escalation_cleared", "tools/due.py", 'if late > 0 else "on time"', 'if False else "on time"'),
         Mutant("cited_entry_alone", "tools/due.py", EFFECTIVE, 'instant(prefix[seq]["ts"])'),
