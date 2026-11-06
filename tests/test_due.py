@@ -87,6 +87,32 @@ class DueTest(unittest.TestCase):
         root = self.repository([ROW], [ROW, dict(ROW, id="next")])
         self.assertEqual(self.run_due(root, "--inventory", "HEAD~1")[0], 0)
 
+    def test_w5_redate(self):
+        originals = [dict(ROW, id=key, due="2026-11-18T00:00:00Z") for key in ("c2b-report", "c2c-brief")]
+        redates = [dict(id=row["id"], due=when, seq=1564, why="sovereign direction") for row, when in
+                   zip(originals, ("2026-12-02T12:00:00Z", "2026-11-16T00:00:00Z"))]
+        discharge = dict(DONE, id="c2b-report")
+        entries = [dict(ENTRY, body=dict(title="c2b-report c2c-brief"))]
+        for initial, appended in ((originals, redates), ([originals[0]], [redates[0]]),
+                                  ([originals[1]], [redates[1]]), (originals, redates + [discharge])):
+            code, text = self.run_due(self.repository(initial, initial + appended, entries))
+            self.assertEqual(code, 0)
+            for row in appended:
+                if "due" in row:
+                    self.assertIn(f"W5 {row['id']} due {row['due']} ", text)
+        bad = [originals + [dict(ROW, id="runbook-c2b"), dict(redates[0], id="runbook-c2b")],
+               originals + [dict(redates[0], due="2026-12-01T00:00:00Z")],
+               originals + redates + [redates[0]], originals + [dict(redates[0], seq=1565)],
+               [redates[0]] + originals, originals + [discharge, redates[0]]]
+        bad += [originals + [dict(redates[0], **change)] for change in
+                ({"why": None}, {"why": 1}, {"seq": "1564"}, {"seq": 1564.0}, {"seq": True},
+                 {"due": None}, {"extra": "key"})]
+        bad += [originals + [{k: v for k, v in redates[0].items() if k != missing}] for missing in redates[0]]
+        for records in bad:
+            with self.subTest(records=records):
+                self.assertEqual(self.run_due(self.repository([], records, entries)),
+                                 (2, "W5: malformed COUNSEL-DUE file\n"))
+
     def test_w5_escalation_history(self):
         for ts, expected in ((LATE, "ESCALATED 2h late"), (T, "on time")):
             root = self.repository([ROW], [ROW, DONE], [dict(ENTRY, ts=ts)])

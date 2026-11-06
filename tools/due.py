@@ -29,7 +29,8 @@ def unchanged(previous, current):
 
 
 def fold(records):
-    result = {}
+    result, redated = {}, set()
+    redates = {"c2b-report": "2026-12-02T12:00:00Z", "c2c-brief": "2026-11-16T00:00:00Z"}
     for row in records:
         if not isinstance(row, dict) or not isinstance(row.get("id"), str):
             raise ValueError("malformed COUNSEL-DUE file")
@@ -39,6 +40,11 @@ def fold(records):
             result[key] = dict(row)
         elif set(row) == {"id", "done"} and key in result and result[key]["done"] is None and row["done"] is not None:
             result[key] = dict(result[key], done=row["done"])
+        elif (set(row) == {"id", "due", "seq", "why"} and key in result and key not in redated and
+              result[key]["done"] is None and isinstance(row["due"], str) and row["due"] == redates.get(key) and
+              type(row["seq"]) is int and row["seq"] == 1564 and isinstance(row["why"], str)):
+            result[key] = dict(result[key], due=row["due"])
+            redated.add(key)
         else:
             raise ValueError("malformed COUNSEL-DUE file")
     return list(result.values())
