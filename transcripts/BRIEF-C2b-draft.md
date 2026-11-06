@@ -632,3 +632,45 @@ The mutants:
 - `REVIEW-C2b-am67-astra.md` F9: "An explicit lawful pre-opening change, with its own fresh read, would be needed to change that historical requirement."
 
 The builder codes this only after the sovereign has read it (A2.10). C2b's opening needs an accepting read, carried by a non-counsel proposal, of the brief's bytes as amended (§Scope (a)).
+
+## Amendment 9 (6 November, counsel; the procedure contracts withdrawn, by the sovereign's decision — before the opening, one clause)
+
+Counsel holds an interest here (below), so the question went to the sovereign (`transcripts/COUNSEL-OPEN.md` row 35: counsel "may not decide a question in which it holds an interest").
+- **The question.** Counsel asked him to choose: withdraw the promise "with a one-clause C2b amendment that changes no code", or have C2c write the contracts.
+- **What he was told.** Counsel marked withdrawal as recommended, at p≈0.75, and told him of its interest along with it. Row 41 is the precedent for this. The mark did not carry row 27's seven lines.
+- **His answer.** He chose the option "Withdraw (Recommended)", described as "C2b Amendment 9: the four types stay out of the value statistic for good; still scored in the reported scores." "(Recommended)" is counsel's marking. Row 43 quotes the question and both options.
+- **His read.** This text carries no rule that code implements, so it is not put to him to read (row 35).
+
+**The clause.**
+- In §Scope's sentence on the procedure types, ", until a contract with a genuine pre-outcome boundary exists for each" is struck, and so is "; writing those contracts is a C2c item". The parenthesis citing REVIEW-C2b-v1 F6 stays. The sentence then ends with that parenthesis and a full stop.
+- In §Deliverables, "the procedure contracts, " is struck from the parenthesis after "the C2c brief's first section".
+- §Not in C2b's "contracts for the procedure types" stands.
+- The procedure contracts leave this brief and are not promised to the next one. A brief binds its own layer only (A2.4). His "for good" stands as his direction to later briefs (row 43).
+- BRIEF-C2a promised C2b "an event contract for the procedure types". That promise is disposed of with them.
+
+**Why.** For each of these types, the forecasting party can itself know the outcome before a stated cutoff, or act on it after one.
+- A branch's author runs its tests before proposing (`tools/jack` lines 13 and 123). A counted-line claim about a fixed commit is "mechanically knowable before proposal" (REVIEW-C2b-v1 F6).
+- The reviewer forecasts C2b's promotion (seqs 1459, 1794 and 1829) and also writes C2b's pins (§Pins, "the reviewer's").
+- Counsel drafts the briefs whose outcomes its programme forecasts name. For example, V0 (seq 361) forecasts that the criteria of BRIEF-C2a, counsel's draft, hold.
+- A claim that is a statistic of the parties' scores can have a boundary. Examples are a value E reaching 20 (seq 362) and one arm's mean gain exceeding another's (seq 638). But the parties in the roster move it with their own forecasts.
+
+REVIEW-C2b-v1 F6 named this course: "leave such forecasts in C1's reported scores". The same review also asked for contracts, and the sovereign has chosen between the two. Precedent for the words is §Scope's withdrawal of the simulator-sample skip: "It leaves this brief and is not promised to the next one".
+
+**What does not move.**
+- `procedure_types_out`, `tools/value.py` and every pin stand. No code changes.
+- No criterion's wording reads §Deliverables.
+- `transcripts/COUNSEL-DUE.jsonl` is append-only. Its `c2c-brief` row's `what` still names "procedure contracts". So does BRIEF-C2c's line that quotes the row.
+
+**What moves with it.** §Scope (b) seeds the `c2c-brief` row from this brief's obligations, and criterion 8 reads that row. This amendment changes what the row owes. Row 33's rule does not bar this. The rule concerns a criterion's "witnessed application to a window" (REVIEW-C2b-am2-astra F2, as Amendment 8 cites it), and C2b's window has not opened.
+
+**Interests.**
+- **Counsel's programme forecasts.** Every `counsel.programme` forecast on the log is counsel's, and counsel is an entrant of the value statistic's roster. Those forecasts were already out of C2b's value statistic. What the withdrawal changes is that no later window is promised a contract that could admit them. Whether that helps or hurts counsel is not clear.
+- **Counsel's row.** Counsel holds the W5 row `c2c-brief`, due 2026-11-16T00:00:00Z. The withdrawal makes that row much lighter. The first section then owes:
+  - the kernel types, only if a witness has appeared;
+  - the GitHub identities. The Note of 4 November records these as delivered as one App. REVIEW-C2b-am2-astra F10 disputes that reading for identities per party.
+
+  This adds to the relief Amendment 8 gave the same row. It also relieves counsel of an item on which counsel's three C2c drafts failed their cold reads. An honest discharge before the exit becomes easier. Criterion 8 requires that discharge, and counsel's X7 (seq 1559, p 0.55) rests on criterion 8. In that respect the withdrawal is in counsel's favour.
+- **X7.** As under Amendment 8, X7 resolves on its own words. A non-counsel resolver assesses it on the terms it was entered on (`REVIEW-C2b-am67-astra.md` F3). Those terms include the row's original `what`.
+- **The reader.** The formal read is a reviewer's. The reviewer holds three forecasts that C2b promotes (seqs 1459, 1794 and 1829), which a lighter row makes likelier.
+
+**Reads.** C2b's opening needs an accepting read, carried by a non-counsel proposal, of the brief's bytes as amended (§Scope (a)).
