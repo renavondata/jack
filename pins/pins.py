@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 93
+EXPECTED = 100
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1059,6 +1059,71 @@ for pin in C2B_GATE_PINS:
     pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
         f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
 PINS += C2B_GATE_PINS
+
+
+# --- counsel's writs and workflow (BRIEF-C2b Amendments 6/7; review F7/F8) ---
+due_tests = functools.partial(fixture_tests, "test_due.DueTest")
+workflow_tests = functools.partial(fixture_tests, "test_workflow.WorkflowTest")
+REDATE_FIELDS = '{"id", "due", "seq", "why"}'
+EFFECTIVE = 'max(instant(prefix[seq]["ts"]), merged[discharges[row["id"]]])'
+C2B_W5_PINS = [
+    Pin("w5_overdue_escalates", due_tests("w5_overdue_escalates"), [
+        Mutant("overdue_printed_open", "tools/due.py", 'if due < now else "OPEN"', 'if False else "OPEN"')]),
+    Pin("w5_done_is_an_entry", due_tests("w5_done_is_an_entry"), [
+        Mutant("unrelated_entry_discharges", "tools/due.py",
+               'row["id"] in json.dumps(prefix[seq].get("body", {}), sort_keys=True, separators=(",", ":"), ensure_ascii=True)', 'True')]),
+    Pin("w5_rows_append_only", due_tests("w5_rows_append_only"), [
+        Mutant("earlier_row_edit_accepted", "tools/due.py", 'old != current[i]',
+               'json.loads(old) != dict(json.loads(current[i]), what=json.loads(old).get("what"))')]),
+    Pin("w5_inventory", due_tests("w5_inventory"), [
+        Mutant("missing_seed_accepted", "tools/due.py", 'if row["id"] not in {r["id"] for r in current}:', 'if False:')]),
+    Pin("w5_redate", due_tests("w5_redate"), [
+        Mutant("redates_refused", "tools/due.py", 'elif (set(row) == ' + REDATE_FIELDS,
+               'elif (False and set(row) == ' + REDATE_FIELDS),
+        Mutant("redates_ignored", "tools/due.py", 'result[key] = dict(result[key], due=row["due"])', 'pass'),
+        Mutant("any_redate_admitted", "tools/due.py", 'row["due"] == redates.get(key)', 'True'),
+        Mutant("redate_id_only", "tools/due.py", 'row["due"] == redates.get(key)', 'key in redates'),
+        Mutant("second_redate_admitted", "tools/due.py", ' and key not in redated', ''),
+        Mutant("redate_seq_unchecked", "tools/due.py", 'row["seq"] == 1564', 'True'),
+        # Process originals first: a before-row re-date really reaches assignment, not KeyError.
+        Mutant("redate_before_row_admitted", "tools/due.py", 'for row in records:',
+               'for row in sorted(records, key=lambda r: set(r) != {"id", "due", "what", "done"}):'),
+        Mutant("redate_after_done_admitted", "tools/due.py", 'result[key]["done"] is None and isinstance(row["due"], str)',
+               'isinstance(row["due"], str)'),
+        Mutant("redate_why_unchecked", "tools/due.py", 'isinstance(row["why"], str)', 'True'),
+        Mutant("redate_seq_type_unchecked", "tools/due.py", 'type(row["seq"]) is int and ', ''),
+        Mutant("redate_extra_keys_admitted", "tools/due.py", 'set(row) == ' + REDATE_FIELDS, REDATE_FIELDS + ' <= set(row)'),
+        Mutant("redate_missing_keys_defaulted", "tools/due.py", '    for row in records:\n',
+               '    for row in records:\n        if set(row) < ' + REDATE_FIELDS + ':\n'
+               '            row = dict({"id": "c2b-report", "due": redates["c2b-report"], "seq": 1564, "why": ""}, **row)\n'),
+        Mutant("c2b_report_redate_refused", "tools/due.py", 'row["due"] == redates.get(key)',
+               'row["due"] == redates.get(key) and key != "c2b-report"'),
+        Mutant("c2c_brief_redate_refused", "tools/due.py", 'row["due"] == redates.get(key)',
+               'row["due"] == redates.get(key) and key != "c2c-brief"')]),
+    Pin("w5_escalation_history", due_tests("w5_escalation_history"), [
+        Mutant("late_escalation_cleared", "tools/due.py", 'if late > 0 else "on time"', 'if False else "on time"'),
+        Mutant("cited_entry_alone", "tools/due.py", EFFECTIVE, 'instant(prefix[seq]["ts"])'),
+        Mutant("merge_alone", "tools/due.py", EFFECTIVE, 'merged[discharges[row["id"]]]'),
+        Mutant("last_merge", "tools/due.py", 'merged.setdefault(line, instant(entry["ts"]))', 'merged[line] = instant(entry["ts"])'),
+        Mutant("any_line_with_id", "tools/due.py", '                merged.setdefault(line, instant(entry["ts"]))',
+               '                for key, discharge in discharges.items():\n'
+               '                    if json.loads(line).get("id") == key:\n'
+               '                        merged.setdefault(discharge, instant(entry["ts"]))'),
+        Mutant("no_merge_required", "tools/due.py", 'if valid and discharges[row["id"]] in merged:\n                effective = ' + EFFECTIVE,
+               'if valid:\n                effective = max(instant(prefix[seq]["ts"]), merged.get(discharges[row["id"]], instant(prefix[seq]["ts"])))'),
+        Mutant("never_effective", "tools/due.py", 'if effective <= now:', 'if False:'),
+        # F8: widen only merge lookup; preserve the cited-entry prefix and effective-time guard.
+        Mutant("whole_log", "tools/due.py", 'for entry in prefix.values():', 'for entry in rows(blob(root, "HEAD", "log.jsonl")):')]),
+    Pin("workflow_steps_preserved", workflow_tests("workflow_steps_preserved"), [
+        Mutant("sample_step_dropped", "tests/test_workflow.py", '        preserved(workflow)\n',
+               '        workflow["jobs"]["sample"]["steps"].pop()\n        preserved(workflow)\n'),
+        Mutant("gate_skipped_on_failure", "tests/test_workflow.py", '        preserved(workflow)\n',
+               '        workflow["jobs"]["tests"]["if"] = "success()"\n        preserved(workflow)\n')]),
+]
+for pin in C2B_W5_PINS:
+    pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
+        f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
+PINS += C2B_W5_PINS
 
 # Simulator attack registration; the election's remaining pins belong to its read.
 elect_attacks = functools.partial(fixture_tests, "test_elect.Election")
