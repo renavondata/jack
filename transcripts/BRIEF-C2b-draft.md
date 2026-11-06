@@ -578,3 +578,57 @@ It also gains these mutants:
 - a discharge taking effect with no merge (twin 5);
 - discharges never taking effect (twin 1);
 - the merge sought in the whole log rather than on the prefix (twin 6).
+
+## Amendment 8 (6 November, counsel; criterion 8's history read from the instant W5 lands — before the opening, one clause)
+
+The sovereign asked for criterion 8 to be amended: "Read 6 and 7, approved... Amend 8" (2026-11-06T00:52:31Z; `transcripts/COUNSEL-OPEN.md` row 40). Counsel then put two forms to him:
+- that part of criterion 8 applying only to dues after W5 reaches `main`;
+- five rows only.
+
+His answer: "Don't gate on something impossible" (2026-11-06T01:52:42Z; row 41). His answer named no form. Counsel reads it as the first, and asks him to confirm the form when he reads this text (A2.10).
+
+**The clause.** Criterion 8's "every row that passed its due was printed ESCALATED by `status.py` at the first prefix after it" applies only to rows whose due falls after W5 lands. W5 lands at the `ts` of the first `merge` on the prefix whose `commit` holds `tools/due.py` (§Scope, Counsel bound: "W5 lands first after the opening"). That part does not gate a row whose due falls at or before that instant, or any row on a prefix with no such merge. The rest of criterion 8 stands for every row.
+
+Facts the rule reads today:
+- `tools/due.py` is not on `main`. It lands only after C2b's opening (§Order of acts step 4). C2b opens only after C2a-prime's promotion, and C2a-prime opens only after 2026-11-17T12:00:00Z (Amendment 2). Before W5 lands, `status.py` on `main` prints no W5 line, so for a row that passes its due before then, that part cannot be met.
+- Rows now due before W5 can land:
+  - `c2a-acts`, `hkjc-hv-20261104`, `c2a-report`, `D-1` and `runbook-c2b`, past due already;
+  - `c2c-brief`, due 2026-11-16T00:00:00Z, and V1, whose outcome is fixed at 2026-11-08T15:04:14Z. Both can still be discharged on time, and a row discharged on time never "passed its due".
+  - V0, V2 and V3, due 2026-11-17T12:00:00Z, which resolve on C2a's end. That end is unruled (correction 5 of `RULING-20261104-window-fix.md`). On the later reading they cannot be resolved before their due. On the earlier reading, BRIEF-C2a-prime recommends no resolution of them before the later instant.
+  - the X-forecast resolution rows that §Scope (b) seeds at the opening, where their due falls before W5 lands.
+- "No `COUNSEL-DUE` row past due and undone at the exit prefix" binds every row, so each of these must still be discharged before the exit.
+- W5 lands at its merge entry's signing `ts`, a little before GitHub merges it. No row now on the file is due in that interval.
+
+**Pin `c2b_history_from_w5`**, a W5 pin on `tools/status.py`'s criterion 8 assessment.
+- §Pins adds it after `w5_redate`.
+- §Scope (b)'s "Six pins" reads "Seven pins", and its list adds it.
+- Criterion 8's "the six W5 pins" reads "the seven W5 pins", and §Deliverables' "tests and six pins" reads "tests and seven pins".
+- Both of `status.py`'s pin inventories add it.
+
+Every twin builds every discharged row as Amendment 7 requires. Except in twin 7, every twin builds W5's landing as a `merge` whose `commit` holds `tools/due.py`. Each twin holds every other part of criterion 8. The twins:
+1. A row due before W5 lands, discharged late before the exit, with no ESCALATED print. Criterion 8 is met.
+2. A row due after W5 lands, undone at its due and discharged late before the exit, not printed ESCALATED at the first prefix after its due. Unmet.
+3. As twin 2, but printed ESCALATED at the first prefix after its due. Met.
+4. A row due before W5 lands, still undone at the exit. Unmet.
+5. Two merges hold `tools/due.py`, and a row is due between them, otherwise as twin 2. Unmet.
+6. A row due exactly when W5 lands, otherwise as twin 1. Met.
+7. No merge on the prefix holds `tools/due.py`. A row past its due, discharged late before the exit, with no ESCALATED print. Met.
+
+The mutants:
+- every row gated, whatever its due (killed by twin 1);
+- every row excused (twin 2);
+- the excuse extended to the whole of criterion 8 (twin 4);
+- the landing read from the last such merge (twin 5);
+- a due at the landing gated (twin 6);
+- every row gated when W5 has not landed (twin 7).
+
+**Interests.** This is in counsel's favour:
+- It excuses, from the printed-escalation part, every row of counsel's that passes its due before W5 lands.
+- A late `c2c-brief` or V1 before then no longer fails criterion 8. That lifts the burden Amendment 6 disclosed when it moved `c2c-brief` earlier.
+- X7 (seq 1559, p 0.55) resolves on its own words. A non-counsel resolver assesses it on the terms it was entered on (`REVIEW-C2b-am67-astra.md` F3).
+
+**Reads.** The text rests on two readings:
+- `REVIEW-C2b-am2-astra.md` F2: row 33's rule against changing a criterion after it is read concerns "its witnessed application to a window". C2b's window has not opened.
+- `REVIEW-C2b-am67-astra.md` F9: "An explicit lawful pre-opening change, with its own fresh read, would be needed to change that historical requirement."
+
+The builder codes this only after the sovereign has read it (A2.10). C2b's opening needs an accepting read, carried by a non-counsel proposal, of the brief's bytes as amended (§Scope (a)).
