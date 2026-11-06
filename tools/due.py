@@ -50,10 +50,18 @@ def fold(records):
     return list(result.values())
 
 
-def project(current, entries, as_of):
+def project(root, text, entries, as_of):
     """Return rendered rows and whether any completion is malformed; overdue is not an error."""
     now, lines, malformed = instant(as_of), [], False
+    records = rows(text)
+    current = fold(records)
+    discharges = {r["id"]: line for r, line in zip(records, text.splitlines(keepends=True)) if set(r) == {"id", "done"}}
     prefix = {e["seq"]: e for e in entries if instant(e["ts"]) <= now}
+    merged = {}
+    for entry in prefix.values():
+        if entry.get("type") == "merge":
+            for line in merge_lines(root, entry["body"]["commit"]):
+                merged.setdefault(line, instant(entry["ts"]))
     for row in current:
         due, done = instant(row["due"]), row["done"]
         state = f"ESCALATED {(now - due).total_seconds() / 3600:g}h past due" if due < now else "OPEN"
@@ -62,10 +70,12 @@ def project(current, entries, as_of):
             valid = (isinstance(done, dict) and set(done) == {"seq", "what"} and
                      type(seq) is int and isinstance(done["what"], str) and seq in prefix and
                      row["id"] in json.dumps(prefix[seq].get("body", {}), sort_keys=True, separators=(",", ":"), ensure_ascii=True))
-            if valid:
-                late = (instant(prefix[seq]["ts"]) - due).total_seconds() / 3600
-                state = f"done seq {seq} " + (f"ESCALATED {late:g}h late" if late > 0 else "on time")
-            else:
+            if valid and discharges[row["id"]] in merged:
+                effective = max(instant(prefix[seq]["ts"]), merged[discharges[row["id"]]])
+                if effective <= now:
+                    late = (effective - due).total_seconds() / 3600
+                    state = f"done seq {seq} " + (f"ESCALATED {late:g}h late" if late > 0 else "on time")
+            elif not valid:
                 malformed = True
                 state += f" (done names seq {seq}, not an entry)"
         lines.append(f"W5 {row['id']} due {row['due']} {row['what']}: {state}")
@@ -77,6 +87,17 @@ def blob(root, rev, path, optional=False):
     if result.returncode and not optional:
         raise ValueError(f"cannot read {rev}:{path}")
     return None if result.returncode else result.stdout
+
+
+def merge_lines(root, commit):
+    """An absent path is no witness; an unreadable tree or blob is unverified."""
+    result = subprocess.run(["git", "-C", str(root), "ls-tree", commit, "--", FILE], capture_output=True)
+    try:
+        if result.returncode:
+            raise ValueError(f"cannot read {commit}")
+        return (blob(root, commit, FILE) if result.stdout else b"").splitlines(keepends=True)
+    except ValueError as exc:
+        raise ValueError(f"unverified merge: {exc}") from exc
 
 
 def main(argv=None):
@@ -99,7 +120,7 @@ def main(argv=None):
         if text is None:
             print("W5: no COUNSEL-DUE file")
             return 0
-        lines, malformed = project(current, rows(blob(a.root, rev, "log.jsonl")), a.as_of)
+        lines, malformed = project(a.root, text, rows(blob(a.root, rev, "log.jsonl")), a.as_of)
         if malformed:
             lines.append("W5: malformed COUNSEL-DUE file")
         print("\n".join(lines))

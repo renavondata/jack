@@ -450,7 +450,7 @@ def counsel_bound(s, verified, root, rev):
         current = tree_bytes(root, rev, due.FILE)
         due.unchanged(text, current)
         rows = due.fold(due.rows(current))
-        lines, malformed = due.project(rows, s["prefix"], end)
+        lines, malformed = due.project(root, current, s["prefix"], end)
         overdue = [r["id"] for r, line in zip(rows, lines) if r["due"] < end and
                    not line.startswith(f"W5 {r['id']} due {r['due']} {r['what']}: done seq ")]
         ticks = []

@@ -282,7 +282,8 @@ class C2bCounselTest(unittest.TestCase):
                  "pins/pins.py": "\n".join(f'Pin("{name}")' for name in (st.COUNSEL_PINS if pins is None else pins))}
         files.update({self.tick: f"as-of: {self.TICK}\n{self.line}\n"} if ticks is None else ticks)
         rev = commit(self.root, files)
-        return st.counsel_bound(self.s, verified, self.root, rev)
+        prefix = self.entries + [e(4, self.TICK, "merge", "herald", commit=rev)]
+        return st.counsel_bound(dict(self.s, prefix=prefix), verified, self.root, rev)
 
     def test_counsel_bound_passing_and_pin_run_twins(self):
         self.assertTrue(self.assess()[0])
