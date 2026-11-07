@@ -1,4 +1,4 @@
-# The counsel courier — definition (counsel's text; v9 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#393)
+# The counsel courier — definition (counsel's text; v10 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#395)
 
 This is the definition of the two jobs that act for counsel on steel — the text their code is written to. It
 lives here, in the court, so that a change to how counsel's acts are made is a proposal read like any other,
@@ -72,12 +72,14 @@ run is red at the end if any was refused).
    proposal — the act is finished: nothing
    is signed; if no open pull request has the branch as head, one is opened with the request's title (the verb's own
    unfinished ending); and the receipt of step 9 is printed for this request all the same, marked `already proposed`.
-   A branch whose entries differ from the request in any of these is refused.
+   A branch whose entries differ from the request in any of these is refused; so is a branch that holds a `proposal`
+   entry naming any other commit (the branch moved after proposing): a second act is a new branch.
 7. **The verb's prerequisite.** If the branch does not contain `origin/main`, `origin/main` is merged into it
    with the trailer of step 2. A conflicting merge is aborted and the request refused. After a merge, the
    request file's bytes must equal step 4's, and step 5's path check runs again on the merged head; if either
-   fails — or anything else goes wrong between the merge and the first verb — **the courier's own merge is undone**
-   (the worktree reset to `origin/counsel/<name>`) and the request refused, nothing signed — so a later trigger cannot push that merge as a stopped run's entry (step 3) and
+   fails — or anything else goes wrong between the merge and the first verb, step 8's walk of the entries included —
+   **the courier's own merge is undone** (the worktree reset to `origin/counsel/<name>`) and the request refused,
+   nothing signed — so a later trigger cannot push that merge as a stopped run's entry (step 3) and
    sign what the merge changed. A branch whose own entries conflict with a moved `main` (both append to
    `log.jsonl`) is refused here for good: its entries never reach `main`, and counsel starts a new branch from
    `main` with the same texts and a new request (RUNBOOK: a rejected push is "run again", never a retry with force).

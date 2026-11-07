@@ -33,8 +33,9 @@ be replayed against each other by anyone.
   (the courier pushes them on the next trigger, never resets them), and the next trigger skips a forecast whose
   entry already stands and continues from the first line without one — while `main` has not moved; once it has,
   the branch's entries conflict with `main`'s and the request is refused for good, and counsel starts a new
-  branch from `main` with the same texts and a new request. To act again after the proposal, counsel pushes a
-  new commit and a new request file; it pushes nothing to a branch while a run on it may be in flight (a push
+  branch from `main` with the same texts and a new request. To act again after the proposal, counsel starts a
+  new branch with a new request file (a branch carries one request; a branch that already holds a proposal entry is
+  refused); it pushes nothing to a branch while a run on it may be in flight (a push
   that lacks the run's commits diverges, and the courier refuses rather than reset).
 
 ## What this is for
