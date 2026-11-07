@@ -19,14 +19,20 @@ be replayed against each other by anyone.
 - The courier (`transcripts/runner/counsel-courier.md`), on steel, holding `~/.ssh/jack-counsel-3` and the
   `assize-reviewer` token under the grant of seq 2131, runs when a trigger `requests/sign-<id>.json` naming the
   branch is pushed to `counsel-requests` in `renavondata/opencode-runner`. It reads the whole request before it
-  runs anything, refuses a branch that changes any path outside counsel's scope (so the verbs it runs are
-  `main`'s, never the branch's), runs the request's verbs in order in the branch's worktree at
-  `~/git/worktrees/jack/counsel/<name>`, and signs nothing the file does not say. A content commit already
+  runs anything, refuses a branch that changes any path outside counsel's scope or any object that is not a
+  regular file (so the verbs it runs are `main`'s, never the branch's, and `log.jsonl` is the branch's own),
+  refuses a log the kernel does not admit, merges `origin/main` only if the request's bytes survive the merge,
+  runs the request's verbs in order in the branch's worktree at `~/git/worktrees/jack/counsel/<name>`, and
+  signs nothing the file does not say. A content commit already
   proposed by counsel is not signed again; if its pull request did not open, the courier opens it (the verb's
   own unfinished ending). The verbs refuse what the law refuses (`self_judged`, a `p` outside 1–999, a dirty
   tree, a branch that does not contain `origin/main`); a refusal stops the request, is printed, and is filed as
   one issue on the runner.
-- A request is executed once. To act again, counsel pushes a new commit and a new request file.
+- Each line is executed once: a run that stops after some lines leaves their entries standing on the branch
+  (the courier pushes them on the next trigger, never resets them), and the next trigger skips a forecast whose
+  entry already stands and continues from the first line without one. To act again after the proposal, counsel
+  pushes a new commit and a new request file; it pushes nothing to a branch while a run on it may be in flight
+  (a push that lacks the run's commits diverges, and the courier refuses rather than reset).
 
 ## What this is for
 
@@ -48,5 +54,7 @@ act, once. Until then the courier is as strong as the host.
 ## Pin, when the courier is code in this repository
 
 `courier_signs_only_the_request`: the entries on the branch after the content commit are exactly the request
-file's lines, in order, signed by `counsel`; a branch that changes `tools/` is refused unsigned. Mutants: the
-courier entering a forecast from its prompt; the branch's `tools/` run instead of `main`'s.
+file's lines, in order, signed by `counsel`, each once; a branch that changes `tools/`, or carries a symbolic
+link among its changed paths, is refused unsigned; a request the merge changes is refused. Mutants: the
+courier entering a forecast from its prompt; the branch's `tools/` run instead of `main`'s; a forecast
+re-entered on a second run; the request read before the merge only.
