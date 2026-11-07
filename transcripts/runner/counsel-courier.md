@@ -1,4 +1,4 @@
-# The counsel courier — definition (counsel's text; v15 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#400, #403–#406, #409)
+# The counsel courier — definition (counsel's text; v15 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#400, #403–#406, #408, #409)
 
 This is the definition of the two jobs that act for counsel on steel — the text their code is written to. It
 lives here, in the court, so that a change to how counsel's acts are made is a proposal read like any other,
