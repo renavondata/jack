@@ -1,4 +1,4 @@
-# The counsel courier — definition (counsel's text; v8 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#391)
+# The counsel courier — definition (counsel's text; v9 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#393)
 
 This is the definition of the two jobs that act for counsel on steel — the text their code is written to. It
 lives here, in the court, so that a change to how counsel's acts are made is a proposal read like any other,
@@ -58,16 +58,18 @@ run is red at the end if any was refused).
    point's, by the scope check; the verbs re-check with the merged kernel); a log the kernel does not admit
    refuses the request. Only after this is the branch's log read for anything.
 6. **Finished already?** A branch with no commit `origin/main` lacks has either been merged — then a `proposal` entry on
-   `main` by this principal names a commit that is an ancestor of `origin/counsel/<name>` and itself changed
-   `transcripts/requests/<name>.jsonl` to the request's bytes (step 4's) — the branch's own content commit, not a later
-   proposal's that inherited the file — and the receipt of step 9 is printed for it, marked `already proposed, merged`, so that a run stopped
+   `main` by this principal names a commit that is an ancestor of `origin/counsel/<name>` whose tree holds
+   `transcripts/requests/<name>.jsonl` with the request's bytes (step 4's) — the newest such on `main` is the branch's own
+   proposal, since a later counsel branch's commits are not ancestors of this one — and the receipt of step 9 is printed
+   for it, marked `already proposed, merged`, so that a run stopped
    between the verb and its receipt still leaves one — or is empty, or merged without such an entry, and is refused. Otherwise
    the content commit is found as the `proposal` verb finds it: the newest commit
    reachable from the head and not from `origin/main` that changes a path other than `log.jsonl` (merges
    against each parent, renames on both sides). The branch's own entries are the lines of its `log.jsonl`
    after the fork point's (the merge base with `origin/main`). If they hold a `proposal` by this key's
-   principal naming that commit **and** the branch's own forecast entries are exactly the request's forecast lines, in
-   order (step 8's match, run here too) **and** that proposal's `title` is the request's, the act is finished: nothing
+   principal naming that commit **and** the branch's own entries are exactly the request's lines in order — each forecast
+   line's entry, then that one proposal with the request's title and nothing else, no surplus forecast or earlier
+   proposal — the act is finished: nothing
    is signed; if no open pull request has the branch as head, one is opened with the request's title (the verb's own
    unfinished ending); and the receipt of step 9 is printed for this request all the same, marked `already proposed`.
    A branch whose entries differ from the request in any of these is refused.
@@ -105,17 +107,18 @@ run is red at the end if any was refused).
 
 ## The acts job, for each request file that is not a sign request
 
-A request is one JSON object with `id` and `act`:
+A request is one JSON object with `id` (one token, `[A-Za-z0-9._-]+`: it is written into issue bodies, so it may not carry anything that could read as an instruction; both jobs refuse any other) and `act`:
 
 - `pr` {head, title, body}: a pull request on `renavondata/jack` from `head`, which must be `counsel/<name>`;
   otherwise refused.
 - `issue` {title, body, labels, then_labels}, or `issue` {template, window, model, branch?, texts?}: an issue on
   `renavondata/opencode-runner` — never on jack. In the second form the job fetches `transcripts/sessions/<template>.md`
-  from jack's `main`, fills `{WINDOW}`, `{STAMP}`, `{NOW}`, `{MODEL}`, `{BRANCH}` and `{TEXTS}` from values that must
-  match `[A-Za-z0-9._/-]+` (a value with a newline, a brace or a space is refused — nothing counsel writes can become an
-  instruction), takes the title from the template's first `#` line, and carries nothing else of counsel's: the session's
-  prompt is a text on `main`. In the first form the body may not name the builder's key (`key: ~/.ssh/jack-builder` is
-  refused): a builder-keyed session — the evidence session, a build to a text — is filed from a template only, so that
+  from jack's `main`, fills `{STAMP}` and `{NOW}` itself and `{WINDOW}`, `{MODEL}`, `{BRANCH}` and `{TEXTS}` from the
+  request's values, each of which must match `[A-Za-z0-9._/,-]+` (a value with a newline, a brace or a space is refused —
+  nothing counsel writes can become an instruction; a placeholder the request leaves unfilled refuses the request), takes
+  the title from the template's first `#` line, and carries nothing else of counsel's: the session's prompt is a text on
+  `main`. In the first form the body may not name the builder's key in any spelling (a `key:` line naming `jack-builder`
+  is refused): a builder-keyed session — the evidence session, a build to a text — is filed from a template only, so that
   what the builder does under its key is never a body counsel wrote. The
   body carries `<!-- counsel-request: <id> -->`; a request whose exact marker is already on an issue counsel's account
   opened (every issue of the repository is searched, paged to the end; another author's issue, or a body that merely
