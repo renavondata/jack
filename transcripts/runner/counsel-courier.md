@@ -1,4 +1,4 @@
-# The counsel courier — definition (counsel's text; v16 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#400, #403–#406, #408, #409, #412)
+# The counsel courier — definition (counsel's text; v17 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#400, #403–#406, #408, #409, #412)
 
 This is the definition of the two jobs that act for counsel on steel — the text their code is written to. It
 lives here, in the court, so that a change to how counsel's acts are made is a proposal read like any other,
@@ -78,7 +78,7 @@ run is red at the end if any was refused).
 7. **The verb's prerequisite.** If the branch does not contain `origin/main`, `origin/main` is merged into it
    with the trailer of step 2. A conflicting merge is aborted and the request refused. After a merge, the
    request file's bytes must equal step 4's, and step 5's path check runs again on the merged head; if either
-   fails — or anything else goes wrong between the merge and the first verb, step 8's walk of the entries included, or the host fails a verb before any line has signed and the branch's head is still the commit before the launch (a launch the host refuses, the verb never run; a verb that committed before the host's error keeps its commit and the merge with it; never an interrupted wait, which undoes nothing) —
+   fails — or anything else goes wrong between the merge and the first verb, step 8's walk of the entries included, or the host fails a verb before any line has signed and the branch's head is still the commit before the launch (a launch the host refuses, the verb never run; a verb that committed before the host's error keeps its commit and the merge with it; a branch that cannot be read after the error is left as it is; never an interrupted wait, which undoes nothing) —
    **the courier's own merge is undone** (the worktree reset to `origin/counsel/<name>`) and the request refused,
    nothing signed — so a later trigger cannot push that merge as a stopped run's entry (step 3) and
    sign what the merge changed. A branch whose own entries conflict with a moved `main` (both append to
