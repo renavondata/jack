@@ -17,11 +17,15 @@ be replayed against each other by anyone.
   No other verb is accepted. A file with any other line, or a branch with no request file, is left alone and
   reported.
 - The courier (`transcripts/runner/counsel-courier.md`), on steel, holding `~/.ssh/jack-counsel-3` and the
-  `assize-reviewer` token under the grant of seq 2131, reconciles state on every tick: for each remote branch
-  `counsel/*` whose request file has not been executed (no `proposal` entry on the branch at or after its last
-  content commit), it checks the branch out fresh, runs the request's verbs in order, and reports. The verbs
-  themselves refuse what the law refuses (`self_judged`, a `p` outside 1–999, a dirty tree, a branch that does
-  not contain `origin/main`); the courier adds nothing to them and signs nothing the file does not say.
+  `assize-reviewer` token under the grant of seq 2131, runs when a trigger `requests/sign-<id>.json` naming the
+  branch is pushed to `counsel-requests` in `renavondata/opencode-runner`. It reads the whole request before it
+  runs anything, refuses a branch that changes any path outside counsel's scope (so the verbs it runs are
+  `main`'s, never the branch's), runs the request's verbs in order in the branch's worktree at
+  `~/git/worktrees/jack/counsel/<name>`, and signs nothing the file does not say. A content commit already
+  proposed by counsel is not signed again; if its pull request did not open, the courier opens it (the verb's
+  own unfinished ending). The verbs refuse what the law refuses (`self_judged`, a `p` outside 1–999, a dirty
+  tree, a branch that does not contain `origin/main`); a refusal stops the request, is printed, and is filed as
+  one issue on the runner.
 - A request is executed once. To act again, counsel pushes a new commit and a new request file.
 
 ## What this is for
@@ -29,11 +33,20 @@ be replayed against each other by anyone.
 Every act of counsel's is then: a text on a branch (evidence), a request in the tree (the ask), an entry
 signed by a key that never leaves steel (the act), and a pull request opened by an identity under a grant
 (the platform's record). The session that drafts can end and nothing is lost; the next session needs no
-secret. Whoever can push a `counsel/*` branch is counsel — today, the sovereign's credentials, which this
-convention discloses rather than fixes; a deploy key per counsel session is the C2c-1 item that fixes it.
+secret.
+
+## Custody, disclosed
+
+Whoever can push a `counsel/*` branch to jack and a trigger to `counsel-requests` is counsel — today, the
+sovereign's git credentials, which the drafting session uses for pushes (not acts, COUNSEL-OPEN row 44). Two
+other routes reach the key: every runner on steel runs as the login user `g`, whose home holds every party
+key and a `gfrmin` login with admin scopes (`opencode-runner` #188), and `run.yml` exports whatever `key:` an
+issue names to the session it starts — so any session on steel, and anyone who can file a `run` issue, can sign
+as any party. This convention does not close those routes; #188's runner user does, and it is the sovereign's
+act, once. Until then the courier is as strong as the host.
 
 ## Pin, when the courier is code in this repository
 
-`courier_signs_only_the_request`: a branch whose request file omits a forecast the courier nonetheless
-enters is refused by the courier's own replay (the entries on the branch after the content commit must be
-exactly the request file's lines, in order); mutant: the courier entering a forecast from its prompt.
+`courier_signs_only_the_request`: the entries on the branch after the content commit are exactly the request
+file's lines, in order, signed by `counsel`; a branch that changes `tools/` is refused unsigned. Mutants: the
+courier entering a forecast from its prompt; the branch's `tools/` run instead of `main`'s.
