@@ -1,15 +1,29 @@
 {
   "window": "C2c-1",
-  "brief": "transcripts/BRIEF-C2c-1.md",
+  "brief": "transcripts/BRIEF-C2c-1-draft.md",
   "opens": {"rule": "first_push_after_decision", "decision": {"kind": "promote", "subject": "C2b"}},
-  "promotion": {"forecast_id": "C2c-1-V0", "proposer": "counsel", "type": "window.promotion"},
+  "preconditions": [
+    "a key with principal counsel and powers proposal,forecast declared on the log (seq 2254)",
+    "the counsel-sign job on the runner's main (opencode-runner #369)",
+    "the sovereign has read this file and the brief's §3 before any builder session is filed for it (A2.10); the instant is a COUNSEL-OPEN row",
+    "the promotion forecast entered, naming this file's sha256 in its args"
+  ],
+  "promotion": {"forecast_id": "C2c-1-V0", "proposer": "counsel", "type": "window.promotion", "p": 600,
+                "claim": "every criterion of C2c-1 is met at the prefix at which decision promote C2c-1 is entered, at or before resolves_by",
+                "resolves_by": "the opening sitting's instant plus seven days, stated by counsel at entry; the window's end",
+                "args": {"id": "C2c-1-V0", "window": "C2c-1", "window_sha256": "<sha256 of this file as proposed>"}},
   "end": {"rule": "promotion_forecast_resolves_by"},
   "budget": {"seq": null, "entered_at": "the opening sitting, by the sovereign, before the opening push",
-             "text": "C2c-1: p0 6/11; promote at E >= 20; ratio 5:1; grace 2 h; counted cap 8400; kernel 450; window at most 7 d"},
-  "numbers": {"p0": [6, 11], "promote_E": 20, "ratio_max": 5, "grace_hours": 2, "counted_cap": 8400,
-              "kernel_cap": 450, "max_days": 7},
-  "processes": {"items": {"null": "p0", "threshold": "promote_E", "carried_from": "C2b",
-                          "item": "a forecast resolved on time by a holder who is not its proposer"}},
+             "text": "C2c-1: p0 6/11; promote at E >= 20 (CHARTER §6, unchanged); ratio 5:1; escalation grace 2 h; counted cap <v2 figure>; kernel 450; stream three-hourly; ratchet row runner"},
+  "numbers": {"p0": [6, 11], "promote_E": 20, "ratio_max": 5, "grace_hours": 2, "counted_cap": null,
+              "kernel_cap": 450, "ratchet_min_rows": 1, "stream_cadence_hours": 3, "readers": 2},
+  "processes": {
+    "value": {"definition": "BRIEF-C2a §Value, continued as BRIEF-C2a-prime v7 and BRIEF-C2b Amendment 4 continue it; wealth carried, never reset (A4.1)", "threshold": "promote_E"},
+    "liveness": {"definition": "BRIEF-C1b §Liveness (the herald's act; expiry Y = 0; no repair by the sovereign), continued by BRIEF-C2b Amendment 4; wealth carried, never reset", "null": "p0", "threshold": "promote_E"}
+  },
+  "frozen": {"inside_the_window": ["transcripts/windows/C2c-1.json", "tools/", "kernel/", "judge/", "pins/", "tests/"],
+             "except_by": "a proposal this brief's §6 names (a deliverable landing late; a pin's twin)",
+             "cap_raises_inside_the_window": 0},
   "criteria": [
     {"id": 1, "kind": "verified_run", "args": {"shows": "pins_and_twins"},
      "text": "pins and twins in a verified tests run on the assessed tree"},
@@ -19,24 +33,37 @@
      "text": "counted lines within the cap; kernel within its bound; judge scope equals SPEC"},
     {"id": 4, "kind": "pins_killed", "args": {"pins": ["numerals_housed", "window_from_file", "criteria_three_valued",
                                                       "one_stated_end", "one_writ_function", "undertakings_are_forecasts",
-                                                      "ratchet_row_moves", "escalation_recorded"]},
+                                                      "escalation_recorded", "ratchet_row_moves", "object_declared",
+                                                      "window_file_fixed"]},
      "text": "every pin this brief names is KILLED with a passing twin in that run"},
-    {"id": 5, "kind": "no_claim_past_due_unescalated", "args": {"grace": "grace_hours", "evidence": "escalations"},
-     "text": "no forecast is past its resolves_by plus the grace without an escalation record naming it"},
-    {"id": 6, "kind": "ratchet", "args": {"min_rows": 1, "map": "tools/enforcement.json"},
-     "text": "at least one row of the enforcement map moved from hand to code with its pin in this window"},
-    {"id": 7, "kind": "count_zero", "args": {"source": "off_log_repairs", "evidence": "acts"},
-     "text": "zero acts typed repair under the sovereign's login in the window"},
-    {"id": 8, "kind": "undertakings_kept", "args": {"proposer": "counsel", "type": "counsel.undertaking"},
-     "text": "every undertaking counsel entered for this window is resolved 1 on time, or not yet due"},
-    {"id": 9, "kind": "no_veto", "args": {},
+    {"id": 5, "kind": "window_file_fixed", "args": {"forecast": "promotion"},
+     "text": "this file at the assessed prefix hashes to the window_sha256 the promotion forecast names"},
+    {"id": 6, "kind": "eprocess", "args": {"process": "value", "threshold": "promote_E"},
+     "text": "value E at or above the threshold on the assessed prefix (CHARTER §6; wealth carried)"},
+    {"id": 7, "kind": "eprocess", "args": {"process": "liveness", "threshold": "promote_E"},
+     "text": "continued liveness E at or above the threshold on the assessed prefix (CHARTER §6; wealth carried)"},
+    {"id": 8, "kind": "no_claim_past_due_unescalated", "args": {"grace": "grace_hours", "evidence": "escalations"},
+     "text": "every forecast that is unresolved and past its resolves_by plus the grace has an escalation row dated within the grace"},
+    {"id": 9, "kind": "ratchet", "args": {"rows": ["runner"], "min_rows": "ratchet_min_rows", "map": "tools/enforcement.json", "evidence": "runner"},
+     "text": "the enforcement map's runner row moved from hand to code with its pin KILLED, and the runner evidence shows its workflows fetching the court's definitions"},
+    {"id": 10, "kind": "count_zero", "args": {"source": "off_log_repairs", "evidence": "acts"},
+     "text": "zero rows typed repair on renavondata/jack in the acts evidence over the window"},
+    {"id": 11, "kind": "undertakings_kept", "args": {"proposer": "counsel", "type": "counsel.undertaking", "window": "C2c-1", "due_file": "transcripts/COUNSEL-DUE.jsonl"},
+     "text": "every undertaking counsel entered for this window is resolved 1 at or before its resolves_by, or unresolved and not yet due; the due file is absent from the tree"},
+    {"id": 12, "kind": "no_veto", "args": {},
      "text": "no veto on C2c-1"},
-    {"id": 10, "kind": "ratio", "args": {"max": "ratio_max"},
-     "text": "A3.4: procedure to object at most 5 : 1 over the window, the exit promote counted"}
+    {"id": 13, "kind": "ratio", "args": {"max": "ratio_max"},
+     "text": "A3.4: procedure to object at most 5 : 1 over the window, the exit promote counted; object as A3.4 reads it today"}
   ],
   "evidence": {
-    "acts": "transcripts/evidence/acts-<window>-<stamp>.json (the acts classifier's table over the window)",
-    "escalations": "transcripts/evidence/escalations-<stamp>.json (the diary's record: forecast seq -> issue filed, instant)",
-    "run": "the verified tests run on the assessed tree, as tools/jack v_decision supplies it"
-  }
+    "run": "the verified tests run on the assessed tree, as tools/jack v_decision supplies it (--run, --runs)",
+    "acts": "CSV, header repo,time_hkt,class,kind,ref,note, written by transcripts/evidence/guy_acts3.py over the window's interval and committed as transcripts/evidence/acts-C2c-1-<stamp>.csv; the file the promotion decision names with --acts; a minute that overlaps the window counts (BRIEF-C2b Amendment 5)",
+    "escalations": "JSON list of rows {forecast: seq, issue: number, filed_at: instant}, written by the diary and committed as transcripts/evidence/escalations-<stamp>.json; the file the promotion decision names with --escalations",
+    "runner": "JSON written by a builder session from read-only gh api calls: for each workflow of renavondata/opencode-runner at its main, its sha and the path and sha of the definition it fetches from jack's main; committed as transcripts/evidence/runner-<stamp>.json; named with --runner"
+  },
+  "reads": {"before_opening": 2, "families": "other than counsel's, chosen by the runner's rotation, never by counsel"},
+  "reserved_to_the_sovereign": [
+    "COUNSEL-OPEN row 37: the promotion budget (20 as one line until C2c-3), transmute (kept until A9), scheduled streams as object (reported here, decided at A9)",
+    "COUNSEL-OPEN row 44: what repair means; whether a brief may narrow the classifier's attribution"
+  ]
 }
