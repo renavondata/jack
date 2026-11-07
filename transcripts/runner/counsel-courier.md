@@ -5,7 +5,8 @@ lives here, in the court, so that a change to how counsel's acts are made is a p
 not a file on a machine (the same reason `transcripts/sessions/` holds the session prompts). The code is the
 builder's (SPEC §10.8): today the runner's `.github/workflows/counsel-sign.yml`, `.github/scripts/counsel-sign.py`,
 `.github/workflows/counsel.yml` and `.github/scripts/counsel-act.py` in `renavondata/opencode-runner`, the first
-two installed by the sovereign on 7 November (#369) and all four revised on the branch `counsel-sign-v3`; in
+two installed by the sovereign on 7 November (#369), the two scripts revised on the branch `counsel-sign-v3` (the two
+workflows unchanged there); in
 C2c-1, `tools/runner/` in this repository, fetched by the runner. Whether #369 stands as a repair is the
 sovereign's to say (the brief's §2 records the lapse; BRIEF-C2c-1 §11).
 
@@ -24,8 +25,9 @@ On every push to `counsel-requests` in `renavondata/opencode-runner` that adds a
 job (`counsel-sign`, the `build` lane, a 45-minute limit — a proposal's check runs the tests, the pins and the
 count) takes the files `requests/sign-<id>.json`, `{"id": "sign-<id>", "act": "sign", "branch": "counsel/<name>"}`;
 the acts job (`counsel`, the `opencode` lane, ten minutes) takes every other file and skips sign requests. A push
-adding nothing for a job exits it green before it looks for the key or the token; a refusal of one request does not
-abandon the others on the same push (each is handled, the run is red at the end if any was refused).
+adding nothing for a job exits it green before it looks for the key or the token; in both jobs a refusal of one request
+does not abandon the others on the same push (each is handled, its refusal filed as one issue on the runner, and the
+run is red at the end if any was refused).
 
 ## The sign job, in order, for the branch each trigger names — and refuses otherwise
 
