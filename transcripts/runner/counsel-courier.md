@@ -1,4 +1,4 @@
-# The counsel courier — definition (counsel's text; v2 of 7 November 2026 after `REVIEW-meta-jack-astra.md` F30–F37)
+# The counsel courier — definition (counsel's text; v3 of 7 November 2026, after the reads on runner issues #365 and #368)
 
 This is the definition of the job that makes counsel's entries on steel — the text its code is written to. It
 lives here, in the court, so that a change to how counsel's acts are made is a proposal read like any other,
@@ -26,34 +26,43 @@ before it looks for the key.
 ## What it does, in order, for the branch each trigger names — and refuses otherwise
 
 1. The branch is `counsel/<name>` with `<name>` one token, and `origin/counsel/<name>` exists.
-2. **The worktree is RUNBOOK's:** `~/git/worktrees/jack/counsel/<name>`. If it exists, its branch must be
-   `counsel/<name>` (else refused: the path belongs to another branch) and it is reset to `origin/counsel/<name>`;
-   if not, it is created there. Nothing is ever deleted.
-3. If the branch does not contain `origin/main`, `origin/main` is merged into it with the trailer
-   `Proposer: counsel counsel-3` — the merge the `proposal` verb itself names as its prerequisite.
-4. **The branch touches only counsel's paths.** `git diff --name-only origin/main...HEAD` is compared with the
-   `counsel` row of `judge/scope.json` *at `origin/main`*; any path outside it (so any change to `tools/`,
-   `kernel/`, `judge/`, `pins/`, `tests/`) refuses the request before anything is signed. After step 3 the
-   branch's `tools/` is therefore `main`'s, and the verbs that run are the ones `main` holds.
-5. **The whole request is read before anything runs.** `transcripts/requests/<name>.jsonl` at the head: every
-   line parses; every `verb` is `forecast` or `proposal`; `proposal` occurs exactly once and last. Otherwise
-   refused, nothing signed.
-6. **Signed once, and the act finished.** The content commit is the last commit on the branch changing a path
-   other than `log.jsonl`. If the branch's `log.jsonl` already holds a `proposal` entry by `counsel` with that
-   commit, the request is done except for the verb's own unfinished ending: if no open pull request has the
-   branch as head, one is opened (`gh pr create`, as the verb prints when its push or PR step failed). Nothing
-   is signed again.
-7. Otherwise, with `JACK_KEY=~/.ssh/jack-counsel-3` and `GH_TOKEN` counsel's, each `forecast` line runs as
+2. **The trailer is the key's.** The pubkey beside the private key is looked up in `main`'s log; it must be
+   declared exactly once with powers, and the trailer the verbs will write is `Proposer: <principal> <key_id>`
+   from that declaration (RUNBOOK, Common: key and party) — never a name typed into the job.
+3. **The worktree is RUNBOOK's:** `~/git/worktrees/jack/counsel/<name>`. If it exists, its branch must be
+   `counsel/<name>`; it must hold no commit `origin/counsel/<name>` lacks (a run that stopped after signing a
+   forecast leaves one, and it stands — the job refuses and says to push it by hand); and it must be clean.
+   Then it is reset to `origin/counsel/<name>`. If it does not exist, it is created there. Nothing is deleted.
+4. **The whole request is read and checked before anything runs.** `transcripts/requests/<name>.jsonl` at the
+   head: every line is a JSON object; every `verb` is `forecast` with `claim` (string), `p` (integer) and `by`
+   (string), or `proposal` with `title` (string); `proposal` occurs exactly once and last. Otherwise refused,
+   nothing signed.
+5. **Signed once, checked before any merge, and the act finished.** The content commit is found as the
+   `proposal` verb finds it: the newest commit reachable from the head and not from `origin/main` that changes a
+   path other than `log.jsonl` (merges against each parent, renames on both sides). If the branch's `log.jsonl`
+   already holds a `proposal` by this key's principal with that commit, nothing is signed; if no open pull
+   request has the branch as head, one is opened with the request's title (the verb's own unfinished ending).
+6. If the branch does not contain `origin/main`, `origin/main` is merged into it with the trailer of step 2.
+   A conflicting merge is aborted and the request refused, nothing signed.
+7. **The branch touches only counsel's paths.** `git diff --name-only --no-renames origin/main...HEAD` is
+   compared with the `counsel` row of `judge/scope.json` *at `origin/main`*; any path outside it (so any change
+   to `tools/`, `kernel/`, `judge/`, `pins/`, `tests/`, and a rename out of them) refuses the request before
+   anything is signed. After step 6 the branch's `tools/` is therefore `main`'s, and the verbs that run are the
+   ones `main` holds.
+8. With `JACK_KEY=~/.ssh/jack-counsel-3` and `GH_TOKEN` counsel's, each `forecast` line runs as
    `tools/jack forecast "<claim>" --p <p> --by <by> [--type <type> --args '<args>']` and the `proposal` line as
    `tools/jack proposal --title "<title>"`, one at a time, each after the last has printed. The verbs push the
    branch and open the pull request. A refusal stops the request at that line: the entries before it stand as
-   lawful (RUNBOOK: branch verbs undo nothing), the refusal is printed verbatim and filed as one issue, and
-   nothing is retried or forced.
+   lawful (RUNBOOK: branch verbs undo nothing), the refusal is printed verbatim and filed as one issue on the
+   runner, and nothing is retried or forced.
+9. **The receipt** is the run itself: the trigger `requests/sign-<id>.json` on `counsel-requests` names the
+   branch, and the `counsel-sign` run on that push prints what it signed. The job comments on nothing (the grant
+   of seq 2131 does not cover it); B6's test reads the trigger and the run, not a comment.
 
 ## What it never does
 
-Sign anything not in the request file; run a verb other than the two; run a branch's own code (step 4); touch
-`main`; delete a worktree or a branch; comment on an issue it did not file; read `log.jsonl` whole into a model.
+Sign anything not in the request file; run a verb other than the two; run a branch's own code (step 7); touch
+`main`; delete or reset away anything; comment on any issue or pull request; read `log.jsonl` whole into a model.
 
 ## Custody, disclosed
 
@@ -75,8 +84,8 @@ entered from the prompt; `tools/` of the branch run instead of `main`'s.
 ## The script
 
 Counsel touches documents only; code enters from a builder (SPEC §10.8), so the script is not here. Its
-runner copy is `.github/scripts/counsel-sign.py` in `renavondata/opencode-runner`, merged by the sovereign on
-7 November (#369, commit `d88a824`) and written to this definition; in C2c-1 a builder brings it into the
+runner copy is `.github/scripts/counsel-sign.py` in `renavondata/opencode-runner` (#369, merged 7 November; v3 on
+the branch `counsel-sign-v3`, with U2's narrowing of `counsel-act.py`), written to this definition; in C2c-1 a builder brings it into the
 court as `tools/runner/counsel-sign.py`, built to this text, with the workflow that runs it, and the runner's
 copy becomes a fetch of that file from `main`. Until then, any difference between this text and the runner's
 script is a finding against the script.
