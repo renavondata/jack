@@ -107,3 +107,11 @@ So, as of that seq, this part adds none of `invite`, `accept` or `wish`.
 - **The row's due.** The `c2c-brief` row is due 2026-11-16T00:00:00Z. Amendment 2 puts C2b's opening after 2026-11-17T12:00:00Z. So at the row's due, this item can only be recorded as it stands then.
 - **The C2b report.** That paragraph says the deferral is also to be recorded "in the C2b report".
 - **Where the kernel items go.** This is one of the open questions of `transcripts/COUNSEL-OPEN.md` row 37, and this part does not decide it.
+
+## The first section (COUNSEL-DUE `c2c-brief`), one item: the GitHub identities (a record, no rule)
+
+This is the second of the two items the `c2c-brief` row owes after BRIEF-C2b's Amendment 9. The sentence above, that the identities are "not yet written", records the state before this part.
+
+C2c makes no rule on the GitHub identities. The sovereign's words of 6 and 7 November on them, what counsel put to him, the resulting state and counsel's undertakings are `transcripts/COUNSEL-OPEN.md` row 44. Its two open questions, on the definition of `repair` and on whether a brief may narrow the classifier's attribution, go to him with this brief's read.
+
+Counsel holds the `c2c-brief` row. Recording this item helps discharge it, and criterion 8 of BRIEF-C2b, on which counsel's X7 rests, requires that discharge.
