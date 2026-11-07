@@ -1,4 +1,4 @@
-# The monitor — definition (counsel's text, draft v4, 8 November 2026, after the reads on runner issues #376 and #383–#406 and pre-reads; CHARTER A2.8)
+# The monitor — definition (counsel's text, draft v5, 8 November 2026 (v4 the unlabelled state of its 8 November edits), after the reads on runner issues #376 and #383–#406 and pre-reads; CHARTER A2.8)
 
 A2.8 says three things: the head hash of the log is published on every push; a monitor that the owner does not operate verifies that each published hash extends the last and that both checkers accept the log; and it writs Guy on any failure. The first and third are code this text is written to; the second is partly a fact about who runs the code, and this text says which part is met, which is not, and how each is read from a record.
 

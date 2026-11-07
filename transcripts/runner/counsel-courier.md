@@ -1,4 +1,4 @@
-# The counsel courier — definition (counsel's text; v15 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#400, #403–#406, #408, #409)
+# The counsel courier — definition (counsel's text; v16 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#400, #403–#406, #408, #409)
 
 This is the definition of the two jobs that act for counsel on steel — the text their code is written to. It
 lives here, in the court, so that a change to how counsel's acts are made is a proposal read like any other,
@@ -128,7 +128,7 @@ A request is one JSON object with `id` (one token, `[A-Za-z0-9._-]+`: it is writ
   named window's file (a build is to texts the window freezes, never to one counsel can change inside the window; paths
   are read as written — a segment beginning with `.`, an empty segment or a leading `/` in a `texts` element or in
   `branch` (one path, no comma) is refused, so no spelling reaches a path the prefix does not cover — a `texts` element
-  is a file's path, not a directory's (a trailing `/` is an empty segment); `window` must match `[A-Za-z0-9][A-Za-z0-9-]*`, one file name under
+  ends in a name, never a `/` (a trailing `/` is an empty segment); `window` must match `[A-Za-z0-9][A-Za-z0-9-]*`, one file name under
   `transcripts/windows/`; `texts` without `window` is refused), and
   carries nothing else of counsel's: the session's prompt is a text on
   `main`. In the first form the body may not name the builder's key in any spelling (a `key:` line naming `jack-builder`
