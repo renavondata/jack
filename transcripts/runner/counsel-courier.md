@@ -21,7 +21,9 @@ sovereign's to say (the brief's §2 records the lapse; BRIEF-C2c-1 §11).
 
 ## When they run
 
-On every push to `counsel-requests` in `renavondata/opencode-runner` that adds a file under `requests/`. The sign
+On every push to `counsel-requests` in `renavondata/opencode-runner` that adds a file under `requests/` — every push: the
+workflows carry no concurrency group (GitHub cancels a queued run when a third arrives, and a cancelled run is a push whose
+requests nobody sees); the one runner of each lane serialises the runs. The sign
 job (`counsel-sign`, the `build` lane, a 45-minute limit — a proposal's check runs the tests, the pins and the
 count) takes the files `requests/sign-<id>.json`, `{"id": "sign-<id>", "act": "sign", "branch": "counsel/<name>"}`;
 the acts job (`counsel`, the `opencode` lane, ten minutes) takes every other file and skips sign requests. A push
@@ -55,17 +57,20 @@ run is red at the end if any was refused).
    nothing. Then `python3 -m kernel.check log.jsonl` runs in the worktree (its `kernel/` is a `main`'s — the fork
    point's, by the scope check; the verbs re-check with the merged kernel); a log the kernel does not admit
    refuses the request. Only after this is the branch's log read for anything.
-6. **Finished already?** The content commit is found as the `proposal` verb finds it: the newest commit
+6. **Finished already?** A branch with no commit `origin/main` lacks (merged already, or empty) is refused: there is
+   nothing to sign and a request on it would re-sign what `main` holds. Otherwise the content commit is found as the
+   `proposal` verb finds it: the newest commit
    reachable from the head and not from `origin/main` that changes a path other than `log.jsonl` (merges
    against each parent, renames on both sides). The branch's own entries are the lines of its `log.jsonl`
    after the fork point's (the merge base with `origin/main`). If they hold a `proposal` by this key's
    principal naming that commit, the act is finished: nothing is signed; if no open pull request has the
-   branch as head, one is opened with the request's title (the verb's own unfinished ending).
+   branch as head, one is opened with the request's title (the verb's own unfinished ending); and the receipt of
+   step 9 is printed for this request all the same, marked `already proposed`.
 7. **The verb's prerequisite.** If the branch does not contain `origin/main`, `origin/main` is merged into it
    with the trailer of step 2. A conflicting merge is aborted and the request refused. After a merge, the
    request file's bytes must equal step 4's, and step 5's path check runs again on the merged head; if either
-   fails, **the courier's own merge is undone** (the worktree reset to `origin/counsel/<name>`) and the request
-   refused, nothing signed — so a later trigger cannot push that merge as a stopped run's entry (step 3) and
+   fails — or anything else goes wrong between the merge and the first verb — **the courier's own merge is undone**
+   (the worktree reset to `origin/counsel/<name>`) and the request refused, nothing signed — so a later trigger cannot push that merge as a stopped run's entry (step 3) and
    sign what the merge changed. A branch whose own entries conflict with a moved `main` (both append to
    `log.jsonl`) is refused here for good: its entries never reach `main`, and counsel starts a new branch from
    `main` with the same texts and a new request (RUNBOOK: a rejected push is "run again", never a retry with force).
@@ -73,15 +78,18 @@ run is red at the end if any was refused).
    runs as `tools/jack forecast "<claim>" --p <p> --by <by> [--type <type> --args '<args>']` and the `proposal`
    line as `tools/jack proposal --title "<title>"`, one at a time, each after the last has printed — except
    that a forecast line whose entry already stands among the branch's own entries (same `claim`, `p`,
-   `resolves_by`, `type` and `args`, by this principal) is not entered again: its entry is its receipt. The
+   `resolves_by`, `type` and `args`, compared as canonical JSON so that `true` and `1` differ, by this principal) is
+   not entered again: its entry is its receipt, and each entry is the receipt of one line, taken in order, so two
+   identical lines need two entries. The
    verbs commit on the branch; the proposal verb pushes it and opens the pull request. A refusal stops the
    request at that line: the entries before it stand as lawful (RUNBOOK: branch verbs undo nothing), the
    refusal is printed verbatim and filed as one issue on the runner, and nothing is retried or forced. The
    next trigger for the branch pushes what stood (step 3), skips it (this step) and continues — while `main` has
    not moved; if it has, step 7 refuses and the branch is restarted from `main`.
 9. **The receipt** is the run itself: the trigger `requests/sign-<id>.json` on `counsel-requests` names the
-   branch, and the `counsel-sign` run on that push prints, last, the request's SHA-256, the commit the
-   proposal entry names, the head it pushed and the pull request. The job comments on nothing (the grant
+   branch, and the `counsel-sign` run on that push prints, for each request it handled, a receipt line beginning
+   with the request's id: the request's SHA-256, the commit the proposal entry names, the head it pushed and the
+   pull request. The job comments on nothing (the grant
    of seq 2131 does not cover it). The evidence session copies the runs into the court as the `courier`
    evidence (the window file's `evidence.courier`: run id, created and updated instants, the trigger's path,
    the receipt line), and B6's test reads that file and the log, nothing off the record.
@@ -93,8 +101,8 @@ A request is one JSON object with `id` and `act`:
 - `pr` {head, title, body}: a pull request on `renavondata/jack` from `head`, which must be `counsel/<name>`;
   otherwise refused.
 - `issue` {title, body, labels, then_labels}: an issue on `renavondata/opencode-runner` — never on jack. The
-  body carries `counsel-request: <id>`; a request whose marker is already on an issue is skipped, so a re-run
-  files nothing twice. `then_labels` are added after the issue exists (so `run.yml` sees `build` when the
+  body carries `counsel-request: <id>`; a request whose marker is already on an issue (every issue of the
+  repository is searched, paged to the end) files nothing twice, and only adds the `then_labels` a stopped run owed. `then_labels` are added after the issue exists (so `run.yml` sees `build` when the
   `labeled run` event fires).
 - `close` {repo, number, stale}: on `renavondata/jack`, a pull request whose head is `counsel/<name>` and which
   counsel's account opened, closed after the comment `stale: <reason>` (the grant's "with a comment"); on
