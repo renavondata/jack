@@ -56,8 +56,8 @@ act, once. Until then the courier is as strong as the host.
 
 ## Pin, when the courier is code in this repository
 
-`courier_signs_only_the_request`: the entries on the branch after the content commit are exactly the request
-file's lines, in order, signed by `counsel`, each once, in order, and nothing else stands on the branch; a branch that changes `tools/`,
+`courier_signs_only_the_request`: the entries on the branch after the fork point with `main` are exactly the
+request file's lines, in order, signed by `counsel`, each once, and nothing else stands on the branch; a branch that changes `tools/`,
 or carries a symbolic link among its changed paths, is refused unsigned; a request the merge changes is refused. Mutants: the
 courier entering a forecast from its prompt; the branch's `tools/` run instead of `main`'s; a forecast
 re-entered on a second run; the request read before the merge only.

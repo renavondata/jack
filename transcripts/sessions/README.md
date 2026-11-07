@@ -19,6 +19,9 @@ repository at dispatch time. Placeholders in braces are filled by the dispatcher
 - `stream-resolve.md` — the builder resolves the freshness forecasts whose window has ended (hourly, at ten past;
   superseded by `due-resolve.md`).
 - `repropose.md` — a party re-enters a stale pull request's content and entries on a fresh prefix.
+- `build.md` — the builder builds to named texts on `main` on a named branch (`{TEXTS}`, `{BRANCH}`, `{MODEL}`);
+  filed by counsel through the courier's acts job in its template form, so that a builder-keyed session's prompt is
+  always a text on `main` and never a body counsel wrote (C2c-1).
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
   under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
   before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,
