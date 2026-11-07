@@ -1,4 +1,4 @@
-# The counsel courier — definition (counsel's text; v12 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#400)
+# The counsel courier — definition (counsel's text; v13 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#400, #403, #404)
 
 This is the definition of the two jobs that act for counsel on steel — the text their code is written to. It
 lives here, in the court, so that a change to how counsel's acts are made is a proposal read like any other,
@@ -46,7 +46,7 @@ run is red at the end if any was refused).
 4. **The whole request is read and checked before anything runs.** `transcripts/requests/<name>.jsonl` at the
    head: every line is a JSON object; every `verb` is `forecast` with `claim` (string), `p` (integer, not a
    boolean) and `by` (string), and if present `type` (string) and `args` (object), or `proposal` with `title`
-   (string); no string is empty or blank (the proposal verb would substitute a commit's subject for an empty title), none holds a control character or text UTF-8 cannot encode (a verb cannot be given one); `proposal` occurs exactly
+   (string); no string is empty, blank or longer than 4000 characters (the proposal verb would substitute a commit's subject for an empty title; an argument the host cannot pass is not tried), none holds a control character (C0, DEL or C1) or text UTF-8 cannot encode (a verb cannot be given one); `proposal` occurs exactly
    once and last. Otherwise refused, nothing signed (a `type` that is not a
    string would be signed as the string `None` and never match its own receipt). The file's bytes are kept for step 7.
 5. **The branch is counsel's, and its log is the kernel's.** `git diff --name-only --no-renames
@@ -78,7 +78,7 @@ run is red at the end if any was refused).
 7. **The verb's prerequisite.** If the branch does not contain `origin/main`, `origin/main` is merged into it
    with the trailer of step 2. A conflicting merge is aborted and the request refused. After a merge, the
    request file's bytes must equal step 4's, and step 5's path check runs again on the merged head; if either
-   fails — or anything else goes wrong between the merge and the first verb, step 8's walk of the entries included —
+   fails — or anything else goes wrong between the merge and the first verb, step 8's walk of the entries and the first verb's own launch included —
    **the courier's own merge is undone** (the worktree reset to `origin/counsel/<name>`) and the request refused,
    nothing signed — so a later trigger cannot push that merge as a stopped run's entry (step 3) and
    sign what the merge changed. A branch whose own entries conflict with a moved `main` (both append to
@@ -120,7 +120,10 @@ A request is one JSON object with `id` (one token, `[A-Za-z0-9._-]+`: it is writ
   request's values, each of which must match `[A-Za-z0-9._/,-]+` (a value with a newline, a brace or a space is refused —
   nothing counsel writes can become an instruction; a placeholder the request leaves unfilled refuses the request), takes
   the title from the template's first `#` line, refuses a `texts` value naming any path not under a frozen prefix of the
-  named window's file (a build is to texts the window freezes, never to one counsel can change inside the window), and
+  named window's file (a build is to texts the window freezes, never to one counsel can change inside the window; paths
+  are read as written — a segment `.` or `..`, an empty segment or a leading `/` in `texts` or `branch` is refused, so no
+  spelling reaches a path the prefix does not cover; `window` must match `[A-Za-z0-9][A-Za-z0-9-]*`, one file name under
+  `transcripts/windows/`; `texts` without `window` is refused), and
   carries nothing else of counsel's: the session's prompt is a text on
   `main`. In the first form the body may not name the builder's key in any spelling (a `key:` line naming `jack-builder`
   is refused): a builder-keyed session — the evidence session, a build to a text — is filed from a template only, so that
