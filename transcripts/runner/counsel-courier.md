@@ -24,7 +24,8 @@ On every push to `counsel-requests` in `renavondata/opencode-runner` that adds a
 job (`counsel-sign`, the `build` lane, a 45-minute limit — a proposal's check runs the tests, the pins and the
 count) takes the files `requests/sign-<id>.json`, `{"id": "sign-<id>", "act": "sign", "branch": "counsel/<name>"}`;
 the acts job (`counsel`, the `opencode` lane, ten minutes) takes every other file and skips sign requests. A push
-adding nothing for a job exits it green before it looks for the key or the token.
+adding nothing for a job exits it green before it looks for the key or the token; a refusal of one request does not
+abandon the others on the same push (each is handled, the run is red at the end if any was refused).
 
 ## The sign job, in order, for the branch each trigger names — and refuses otherwise
 
@@ -40,16 +41,18 @@ adding nothing for a job exits it green before it looks for the key or the token
    contains everything it held. Nothing is deleted; nothing of a stopped run's is reset away.
 4. **The whole request is read and checked before anything runs.** `transcripts/requests/<name>.jsonl` at the
    head: every line is a JSON object; every `verb` is `forecast` with `claim` (string), `p` (integer, not a
-   boolean) and `by` (string), or `proposal` with `title` (string); `proposal` occurs exactly once and last.
-   Otherwise refused, nothing signed. The file's bytes are kept for step 6.
+   boolean) and `by` (string), and if present `type` (string) and `args` (object), or `proposal` with `title`
+   (string); `proposal` occurs exactly once and last. Otherwise refused, nothing signed (a `type` that is not a
+   string would be signed as the string `None` and never match its own receipt). The file's bytes are kept for step 7.
 5. **The branch is counsel's, and its log is the kernel's.** `git diff --name-only --no-renames
    origin/main...HEAD` is compared with the `counsel` row of `judge/scope.json` *at `origin/main`*: any path
    outside it (so any change to `tools/`, `kernel/`, `judge/`, `pins/`, `tests/`, and a rename out of them)
    refuses the request. Every changed path present at the head must be a regular file (git mode `100644` or
    `100755`; SPEC §10 item 9): a symbolic link named `log.jsonl` would make the verbs append to the file it
-   points at, so it is refused before any verb runs. Then `python3 -m kernel.check log.jsonl` runs in the
-   worktree (its `kernel/` is `main`'s, by the scope check); a log the kernel does not admit refuses the
-   request. Only after this is the branch's log read for anything.
+   points at, so it is refused before any verb runs; paths are read NUL-separated, so a space in a name hides
+   nothing. Then `python3 -m kernel.check log.jsonl` runs in the worktree (its `kernel/` is a `main`'s — the fork
+   point's, by the scope check; the verbs re-check with the merged kernel); a log the kernel does not admit
+   refuses the request. Only after this is the branch's log read for anything.
 6. **Finished already?** The content commit is found as the `proposal` verb finds it: the newest commit
    reachable from the head and not from `origin/main` that changes a path other than `log.jsonl` (merges
    against each parent, renames on both sides). The branch's own entries are the lines of its `log.jsonl`
@@ -58,8 +61,12 @@ adding nothing for a job exits it green before it looks for the key or the token
    branch as head, one is opened with the request's title (the verb's own unfinished ending).
 7. **The verb's prerequisite.** If the branch does not contain `origin/main`, `origin/main` is merged into it
    with the trailer of step 2. A conflicting merge is aborted and the request refused. After a merge, the
-   request file's bytes must equal step 4's — a merge that changes the request refuses it, nothing signed —
-   and step 5's path check runs again on the merged head.
+   request file's bytes must equal step 4's, and step 5's path check runs again on the merged head; if either
+   fails, **the courier's own merge is undone** (the worktree reset to `origin/counsel/<name>`) and the request
+   refused, nothing signed — so a later trigger cannot push that merge as a stopped run's entry (step 3) and
+   sign what the merge changed. A branch whose own entries conflict with a moved `main` (both append to
+   `log.jsonl`) is refused here for good: its entries never reach `main`, and counsel starts a new branch from
+   `main` with the same texts and a new request (RUNBOOK: a rejected push is "run again", never a retry with force).
 8. **Each line once.** With `JACK_KEY=~/.ssh/jack-counsel-3` and `GH_TOKEN` counsel's, each `forecast` line
    runs as `tools/jack forecast "<claim>" --p <p> --by <by> [--type <type> --args '<args>']` and the `proposal`
    line as `tools/jack proposal --title "<title>"`, one at a time, each after the last has printed — except
@@ -68,11 +75,14 @@ adding nothing for a job exits it green before it looks for the key or the token
    verbs commit on the branch; the proposal verb pushes it and opens the pull request. A refusal stops the
    request at that line: the entries before it stand as lawful (RUNBOOK: branch verbs undo nothing), the
    refusal is printed verbatim and filed as one issue on the runner, and nothing is retried or forced. The
-   next trigger for the branch pushes what stood (step 3), skips it (this step) and continues.
+   next trigger for the branch pushes what stood (step 3), skips it (this step) and continues — while `main` has
+   not moved; if it has, step 7 refuses and the branch is restarted from `main`.
 9. **The receipt** is the run itself: the trigger `requests/sign-<id>.json` on `counsel-requests` names the
    branch, and the `counsel-sign` run on that push prints, last, the request's SHA-256, the commit the
    proposal entry names, the head it pushed and the pull request. The job comments on nothing (the grant
-   of seq 2131 does not cover it); B6's test reads the trigger and the run, not a comment.
+   of seq 2131 does not cover it). The evidence session copies the runs into the court as the `courier`
+   evidence (the window file's `evidence.courier`: run id, created and updated instants, the trigger's path,
+   the receipt line), and B6's test reads that file and the log, nothing off the record.
 
 ## The acts job, for each request file that is not a sign request
 
@@ -85,17 +95,19 @@ A request is one JSON object with `id` and `act`:
   files nothing twice. `then_labels` are added after the issue exists (so `run.yml` sees `build` when the
   `labeled run` event fires).
 - `close` {repo, number, stale}: on `renavondata/jack`, a pull request whose head is `counsel/<name>` and which
-  counsel's account opened; on `renavondata/opencode-runner`, an issue counsel's account opened. `stale` is the
-  reason, required; the comment posted is `stale: <reason>`, then the close. Anything else — another author,
-  another repository, no reason, a jack issue — is refused; one already closed is skipped.
+  counsel's account opened, closed after the comment `stale: <reason>` (the grant's "with a comment"); on
+  `renavondata/opencode-runner`, an issue — not a pull request — counsel's account opened, closed with no comment
+  (the grant's runner clause is filing and closing). `stale` is the reason, required in both. Anything else —
+  another author, another repository, no reason, a jack issue, a runner pull request — is refused; one already
+  closed is skipped.
 
 No other act exists. A refusal makes the run red, with its reason in the log.
 
 ## What the jobs never do
 
 Sign anything not in the request file; run a verb other than the two; run a branch's own code (step 5); touch
-`main`; delete or reset away anything; comment on any issue or pull request except the `stale:` comment of a
-declared close; file an issue on jack; read `log.jsonl` whole into a model.
+`main`; delete or reset away anything but its own refused merge; comment on any issue or pull request except the
+`stale:` comment on a jack proposal it closes; file an issue on jack; read `log.jsonl` whole into a model.
 
 ## Custody, disclosed
 
@@ -107,13 +119,14 @@ every runner on steel runs as the login user `g`, whose home holds every party k
 admin scopes (`opencode-runner` issue #188), and `run.yml` exports whatever `key:` an issue body names as
 `JACK_KEY` to the session it starts. So any session on steel, and anyone who can file a `run` issue, can sign as
 any party. The fix is #188's — a runner user that holds only the job's credentials — and it is the sovereign's,
-once. Until then this courier is as strong as the host. The enforcement map does not yet say so: its
-`irreversible` row reads `code: keys, rulesets`; BRIEF-C2c-1 R7 makes the map a ledger and names this row as
-`hand` with #188 as its deadline, and until that lands the disclosure is this paragraph and nothing in the tree.
+once. Until then this courier is as strong as the host. The enforcement map does not say so: its
+`irreversible` row reads `code: keys, rulesets`, and no row names the host. BRIEF-C2c-1 R7 gives every row a witness
+and every hand row a deadline, and names no row for this; the disclosure is this paragraph, and the act that closes
+it is #188's, the sovereign's.
 
 ## Pin, when the courier is code in this repository
 
-`courier_signs_only_the_request`: the entries on the branch after the content commit are exactly the request
+**Pin `courier_signs_only_the_request`.** The entries on the branch after the content commit are exactly the request
 file's lines, in order, signed by `counsel`, each once; a branch changing `tools/`, or carrying a symbolic link
 among its changed paths, is refused unsigned; a request changed by the merge is refused. Mutants: a forecast
 entered from the prompt; `tools/` of the branch run instead of `main`'s; a forecast re-entered on a second run;
