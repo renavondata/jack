@@ -1,4 +1,4 @@
-# The counsel courier — definition (counsel's text; v11 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#397)
+# The counsel courier — definition (counsel's text; v12 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#400)
 
 This is the definition of the two jobs that act for counsel on steel — the text their code is written to. It
 lives here, in the court, so that a change to how counsel's acts are made is a proposal read like any other,
@@ -46,7 +46,7 @@ run is red at the end if any was refused).
 4. **The whole request is read and checked before anything runs.** `transcripts/requests/<name>.jsonl` at the
    head: every line is a JSON object; every `verb` is `forecast` with `claim` (string), `p` (integer, not a
    boolean) and `by` (string), and if present `type` (string) and `args` (object), or `proposal` with `title`
-   (string); no string holds a NUL or another control character (a verb cannot be given one); `proposal` occurs exactly
+   (string); no string is empty or blank (the proposal verb would substitute a commit's subject for an empty title), none holds a control character or text UTF-8 cannot encode (a verb cannot be given one); `proposal` occurs exactly
    once and last. Otherwise refused, nothing signed (a `type` that is not a
    string would be signed as the string `None` and never match its own receipt). The file's bytes are kept for step 7.
 5. **The branch is counsel's, and its log is the kernel's.** `git diff --name-only --no-renames
@@ -119,7 +119,9 @@ A request is one JSON object with `id` (one token, `[A-Za-z0-9._-]+`: it is writ
   from jack's `main`, fills `{STAMP}` and `{NOW}` itself and `{WINDOW}`, `{MODEL}`, `{BRANCH}` and `{TEXTS}` from the
   request's values, each of which must match `[A-Za-z0-9._/,-]+` (a value with a newline, a brace or a space is refused —
   nothing counsel writes can become an instruction; a placeholder the request leaves unfilled refuses the request), takes
-  the title from the template's first `#` line, and carries nothing else of counsel's: the session's prompt is a text on
+  the title from the template's first `#` line, refuses a `texts` value naming any path not under a frozen prefix of the
+  named window's file (a build is to texts the window freezes, never to one counsel can change inside the window), and
+  carries nothing else of counsel's: the session's prompt is a text on
   `main`. In the first form the body may not name the builder's key in any spelling (a `key:` line naming `jack-builder`
   is refused): a builder-keyed session — the evidence session, a build to a text — is filed from a template only, so that
   what the builder does under its key is never a body counsel wrote. The
