@@ -1,4 +1,4 @@
-# The counsel courier — definition (counsel's text; v6 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386 and #387)
+# The counsel courier — definition (counsel's text; v7 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#389)
 
 This is the definition of the two jobs that act for counsel on steel — the text their code is written to. It
 lives here, in the court, so that a change to how counsel's acts are made is a proposal read like any other,
@@ -58,8 +58,9 @@ run is red at the end if any was refused).
    point's, by the scope check; the verbs re-check with the merged kernel); a log the kernel does not admit
    refuses the request. Only after this is the branch's log read for anything.
 6. **Finished already?** A branch with no commit `origin/main` lacks has either been merged — then a `proposal` entry on
-   `main` names a commit of the branch, and the receipt of step 9 is printed for it, marked `already proposed, merged`,
-   so that a run stopped between the verb and its receipt still leaves one — or is empty, and is refused. Otherwise
+   `main` by this principal names a commit whose tree holds `transcripts/requests/<name>.jsonl` with the request's bytes
+   (step 4's), and the receipt of step 9 is printed for it, marked `already proposed, merged`, so that a run stopped
+   between the verb and its receipt still leaves one — or is empty, or merged without such an entry, and is refused. Otherwise
    the content commit is found as the `proposal` verb finds it: the newest commit
    reachable from the head and not from `origin/main` that changes a path other than `log.jsonl` (merges
    against each parent, renames on both sides). The branch's own entries are the lines of its `log.jsonl`
@@ -80,9 +81,11 @@ run is red at the end if any was refused).
    line as `tools/jack proposal --title "<title>"`, one at a time, each after the last has printed — except
    that a forecast line whose entry already stands among the branch's own entries (same `claim`, `p`,
    `resolves_by`, `type` and `args`, compared as canonical JSON so that `true` and `1` differ, by this principal) is
-   not entered again: its entry is its receipt. The match is in order and one-to-one: the k-th forecast line stands
-   only if the k-th forecast entry of counsel's after the fork point equals it; two identical lines need two entries. An
-   absent `args` and `"args": {}` are one entry (`tools/entry.py` writes `{}` for absent) and compare equal. The
+   not entered again: its entry is its receipt. The match is in order and one-to-one: counsel's forecast entries after
+   the fork point are walked in order beside the forecast lines; the k-th line stands if it equals the k-th entry; a k-th
+   entry that equals no k-th line — an entry the request does not say, or in another order — refuses the request
+   (nothing on the branch may stand that the file does not say); two identical lines need two entries; an absent
+   `args` and `"args": {}` are different entries (`tools/entry.py` writes no member for absent) and compare unequal. The
    verbs commit on the branch; the proposal verb pushes it and opens the pull request. A refusal stops the
    request at that line: the entries before it stand as lawful (RUNBOOK: branch verbs undo nothing), the
    refusal is printed verbatim and filed as one issue on the runner, and nothing is retried or forced. The
@@ -114,8 +117,9 @@ A request is one JSON object with `id` and `act`:
   counsel's account opened, closed after the comment `stale: <reason>` (the grant's "with a comment"); on
   `renavondata/opencode-runner`, an issue — not a pull request — counsel's account opened, closed with no comment
   (the grant's runner clause is filing and closing). `stale` is the reason, required in both.
-  The job tolerates nothing: any failure in one request (a refused act, an API error, a malformed request) is that
-  request's refusal, filed as one issue, and the next request is handled — in both jobs, whatever raised it. Anything else —
+  The job tolerates nothing: any failure in one request (a refused act, an API error, a malformed request, a git or
+  `gh` command that fails) is that request's refusal, filed as one issue, and the next request is handled — in both
+  jobs, whatever raised it. Anything else —
   another author, another repository, no reason, a jack issue, a runner pull request — is refused; one already
   closed is skipped.
 
