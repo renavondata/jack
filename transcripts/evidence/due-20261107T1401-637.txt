@@ -1,0 +1,33 @@
+Forecast 637; outcome 0; resolves_by 2026-11-07T00:00:00Z.
+Claim: X1: criterion 7 of BRIEF-C2b v6 (24 rounds whose invite is on the log before the session, replays from the prefix and is resolved by its deadline; four instances interleaved) is met within 3 days of the opening push's ts
+args.id: X1
+args.evidence: tools/elect.py --table on the prefix 3 days after the opening push
+Session: renavondata/opencode-runner#380; builder openai/gpt-6-astra.
+The required opening did not occur by the deadline. Outcome follows this issue's explicit disposition of the absent opening; no election window is invented.
+
+Command run (the same computation checked both deadlines):
+PYTHONDONTWRITEBYTECODE=1 python3 - <<'EOF'
+import json, subprocess
+from tools.value import opening_push
+ref = subprocess.check_output(['git', 'rev-parse', 'origin/main'], text=True).strip()
+es = [json.loads(line) for line in subprocess.check_output(['git', 'show', ref + ':log.jsonl'], text=True).splitlines()]
+print('origin/main:', ref)
+for end in ('2026-11-06T00:00:00Z', '2026-11-07T00:00:00Z'):
+    prefix = [e for e in es if e['ts'] < end]
+    opening = opening_push(prefix)
+    pushes = [e for e in prefix if e['type'] == 'push']
+    later = [e for e in pushes if e['seq'] > opening['seq']]
+    print('before:', end, 'prefix_last_seq:', prefix[-1]['seq'], 'prefix_last_ts:', prefix[-1]['ts'])
+    print('pushes (seq, ts):', [(e['seq'], e['ts']) for e in pushes])
+    print('C2a opening (tools.value.opening_push):', opening['seq'], opening['ts'])
+    print('pushes after C2a opening:', len(later))
+    print('C2b opening absent:', not later)
+EOF
+
+Output (origin and this claim's deadline):
+origin/main: b728a6d6cacb0f367a3ca4dfb57cf203514d695e
+before: 2026-11-07T00:00:00Z prefix_last_seq: 2122 prefix_last_ts: 2026-11-06T23:26:35Z
+pushes (seq, ts): [(2, '2026-10-18T14:42:38Z'), (5, '2026-10-19T04:36:23Z'), (9, '2026-10-19T06:00:46Z'), (12, '2026-10-20T02:06:48Z'), (29, '2026-10-25T16:16:20Z'), (197, '2026-10-31T13:04:49Z'), (367, '2026-11-01T15:04:14Z')]
+C2a opening (tools.value.opening_push): 367 2026-11-01T15:04:14Z
+pushes after C2a opening: 0
+C2b opening absent: True
