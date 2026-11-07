@@ -1,0 +1,38 @@
+Forecast 685 (X5, under twelve minutes): outcome 0 under issue #373's event-claim procedure.
+Resolver: builder openai/gpt-6-astra; renavondata/opencode-runner#373.
+Forecast read with: grep -n '"seq":685,' log.jsonl
+Claim: X5 as BRIEF-C2b v6 states it: over the 24 hours after C2b's opening push, the median time from a proposal entry's ts to its merge entry's ts on the log is under twelve minutes (2 November 00:00-12:00Z: about twenty). The X5 entered in PR 179 is counsel's earlier, stricter form (under eight minutes, 0.6) and stands as its own forecast
+resolves_by: 2026-11-06T00:00:00Z
+Evidence requested by forecast: proposal and merge entry timestamps on the log in the 24 hours after the opening push
+UTC now checked with date -u +%Y-%m-%dT%H:%M:%SZ: 2026-11-07T12:19:23Z.
+
+Fresh computation run in this session (full command and shared output also saved in due-20261107T1218-637.txt):
+python3 - <<'EOF'
+import json, subprocess
+from kernel import check
+raw = subprocess.check_output(['git', 'show', 'origin/main:log.jsonl'])
+lines = check.read_lines(raw)
+assert check.check(lines)['ok']
+es = list(map(json.loads, lines))
+print('origin/main', subprocess.check_output(['git', 'rev-parse', 'origin/main'], text=True).strip())
+print('main last seq', es[-1]['seq'], 'ts', es[-1]['ts'])
+print('all pushes', [(e['seq'], e['ts']) for e in es if e['type'] == 'push'])
+for seq in (637, 641, 685):
+    f = next(e for e in es if e['seq'] == seq)
+    end = f['body']['resolves_by']
+    prefix = [e for e in es if e['ts'] <= end]
+    later_pushes = [e['seq'] for e in prefix if e['type'] == 'push' and e['seq'] > 367]
+    resolved = [e['seq'] for e in es if e['type'] == 'resolution' and e['body']['forecast'] == seq]
+    print(seq, 'deadline', end, 'prefix last seq', prefix[-1]['seq'], 'ts', prefix[-1]['ts'], 'pushes after C2a', later_pushes, 'resolutions', resolved)
+    assert not later_pushes and not resolved
+EOF
+Output relevant to 685:
+origin/main 2b05fa9f17af485e006cd89a2d49cafcc19cda9e
+main last seq 2255 ts 2026-11-07T11:58:38Z
+all pushes [(2, '2026-10-18T14:42:38Z'), (5, '2026-10-19T04:36:23Z'), (9, '2026-10-19T06:00:46Z'), (12, '2026-10-20T02:06:48Z'), (29, '2026-10-25T16:16:20Z'), (197, '2026-10-31T13:04:49Z'), (367, '2026-11-01T15:04:14Z')]
+685 deadline 2026-11-06T00:00:00Z prefix last seq 1804 ts 2026-11-05T23:10:36Z pushes after C2a [] resolutions []
+
+BRIEF-C2b-draft.md Amendment 2 lines 440-442: C2a's first window cannot promote; C2a-prime opens only after 2026-11-17T12:00:00Z; C2b opens only after C2a-prime's promotion. Lines 458-461 preserve the original forecasts and deadlines.
+No push exists after C2a's opening seq 367, including by this forecast's deadline. The C2b opening required for X5's 24-hour measurement window was absent at the passed deadline. The supplied event-claim procedure decides outcome 0 independently of seq 641's stricter threshold; no empty-sample median is invented.
+Evidence string:
+no C2b opening push on main before 2026-11-06T00:00:00Z (prefix to seq 1804); transcripts/evidence/due-20261107T1218-685.txt
