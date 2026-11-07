@@ -1,0 +1,40 @@
+Forecast 637 (X1): outcome 0 under issue #373's event-claim procedure.
+Resolver: builder openai/gpt-6-astra; renavondata/opencode-runner#373.
+Forecast read with: grep -n '"seq":637,' log.jsonl
+Claim: X1: criterion 7 of BRIEF-C2b v6 (24 rounds whose invite is on the log before the session, replays from the prefix and is resolved by its deadline; four instances interleaved) is met within 3 days of the opening push's ts
+resolves_by: 2026-11-07T00:00:00Z
+Evidence requested by forecast: tools/elect.py --table on the prefix 3 days after the opening push
+UTC now checked with date -u +%Y-%m-%dT%H:%M:%SZ: 2026-11-07T12:19:23Z.
+
+Fresh computation (also used for 641 and 685):
+python3 - <<'EOF'
+import json, subprocess
+from kernel import check
+raw = subprocess.check_output(['git', 'show', 'origin/main:log.jsonl'])
+lines = check.read_lines(raw)
+assert check.check(lines)['ok']
+es = list(map(json.loads, lines))
+print('origin/main', subprocess.check_output(['git', 'rev-parse', 'origin/main'], text=True).strip())
+print('main last seq', es[-1]['seq'], 'ts', es[-1]['ts'])
+print('all pushes', [(e['seq'], e['ts']) for e in es if e['type'] == 'push'])
+for seq in (637, 641, 685):
+    f = next(e for e in es if e['seq'] == seq)
+    end = f['body']['resolves_by']
+    prefix = [e for e in es if e['ts'] <= end]
+    later_pushes = [e['seq'] for e in prefix if e['type'] == 'push' and e['seq'] > 367]
+    resolved = [e['seq'] for e in es if e['type'] == 'resolution' and e['body']['forecast'] == seq]
+    print(seq, 'deadline', end, 'prefix last seq', prefix[-1]['seq'], 'ts', prefix[-1]['ts'], 'pushes after C2a', later_pushes, 'resolutions', resolved)
+    assert not later_pushes and not resolved
+EOF
+Output:
+origin/main 2b05fa9f17af485e006cd89a2d49cafcc19cda9e
+main last seq 2255 ts 2026-11-07T11:58:38Z
+all pushes [(2, '2026-10-18T14:42:38Z'), (5, '2026-10-19T04:36:23Z'), (9, '2026-10-19T06:00:46Z'), (12, '2026-10-20T02:06:48Z'), (29, '2026-10-25T16:16:20Z'), (197, '2026-10-31T13:04:49Z'), (367, '2026-11-01T15:04:14Z')]
+637 deadline 2026-11-07T00:00:00Z prefix last seq 2122 ts 2026-11-06T23:26:35Z pushes after C2a [] resolutions []
+641 deadline 2026-11-06T00:00:00Z prefix last seq 1804 ts 2026-11-05T23:10:36Z pushes after C2a [] resolutions []
+685 deadline 2026-11-06T00:00:00Z prefix last seq 1804 ts 2026-11-05T23:10:36Z pushes after C2a [] resolutions []
+
+BRIEF-C2b-draft.md Amendment 2 lines 440-442: C2a's first window cannot promote; C2a-prime opens only after 2026-11-17T12:00:00Z; C2b opens only after C2a-prime's promotion. Lines 458-461 preserve the original forecasts and deadlines.
+No push exists after C2a's opening seq 367, including by this forecast's deadline. Therefore the C2b opening on which X1 depends was absent at its passed deadline. The supplied event-claim procedure decides outcome 0; no election window or rounds table is presumed.
+Evidence string:
+no C2b opening push on main before 2026-11-07T00:00:00Z (prefix to seq 2122); transcripts/evidence/due-20261107T1218-637.txt

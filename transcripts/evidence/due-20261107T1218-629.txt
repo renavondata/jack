@@ -1,0 +1,82 @@
+Forecast 629 (RM-4): outcome 1.
+Resolver: builder openai/gpt-6-astra; renavondata/opencode-runner#373.
+Recomputed in this session on 2026-11-07, not copied from earlier evidence.
+Forecast read with: grep -n '"seq":629,' log.jsonl
+Claim: RM-4: given at the same time: the same before 2026-11-06T00:00:00Z (Wednesday's Happy Valley races in the record by then)
+resolves_by: 2026-11-06T06:00:00Z
+RM-3d (seq 628), which RM-4 revises, defines "the same" as C2a's value E and continued liveness E both at least 20 on main at a prefix.
+origin/main: 2b05fa9f17af485e006cd89a2d49cafcc19cda9e, last seq 2255.
+Working-tree log and origin/main log were kernel-checked and asserted equal through the claim cutoff.
+tools/status.py assess_value lines 257-261 confirm attack_start, val.value, item_process and score_items are the assessment functions used below.
+
+Fresh runs acquisition command:
+python3 - <<'EOF'
+import json, subprocess
+runs=[]
+for page in range(1,15):
+    r=subprocess.run(['gh','api',f'repos/renavondata/jack/actions/workflows/tests.yml/runs?per_page=100&page={page}'],capture_output=True,text=True,check=True)
+    w=json.loads(r.stdout).get('workflow_runs',[]); runs+=w
+    print('page',page,'runs',len(w),flush=True)
+    if len(w)<100: break
+keep=['id','name','path','event','status','conclusion','head_branch','head_sha','created_at','updated_at','run_number','html_url']
+with open('transcripts/evidence/runs-tests-20261107T1218.json','x') as f:
+    json.dump([{k:x.get(k) for k in keep} for x in runs],f,indent=0)
+print('runs saved:',len(runs))
+EOF
+Output: pages 1-12 each 100 runs; page 13 25 runs; runs saved: 1225.
+
+Joint-table command:
+python3 - <<'EOF' > transcripts/evidence/crossing-20261107T1218-20261106T000000Z.txt
+import json, os, sys, subprocess
+from fractions import Fraction
+ROOT, RUNS = os.getcwd(), 'transcripts/evidence/runs-tests-20261107T1218.json'
+START, END = '2026-11-01T15:04:14Z', '2026-11-06T00:00:00Z'
+sys.path.insert(0, ROOT)
+from kernel import check
+from tools import status as st
+from tools import value as val
+with open(os.path.join(ROOT, 'log.jsonl'), 'rb') as f:
+    lines = check.read_lines(f.read())
+assert check.check(lines)['ok']
+es = [json.loads(l) for l in lines]
+main_lines=check.read_lines(subprocess.check_output(['git','show','origin/main:log.jsonl']))
+assert check.check(main_lines)['ok']
+main_es=list(map(json.loads,main_lines))
+assert [e for e in es if e['ts']<=END] == [e for e in main_es if e['ts']<=END]
+runs = json.load(open(RUNS))
+gate_v = st.attack_start(ROOT, runs, END, 'tests/test_value.py')
+gate_l = st.attack_start(ROOT, runs, END)
+opening_c1b = st.c1b_window(es)[0]
+print(f'# value attack-green {gate_v}; liveness attack-green {gate_l}; c1b opening seq {opening_c1b}')
+assert gate_v is not None and gate_l is not None
+print('ts | last_seq | value_E | liveness_E_fraction | liveness_E')
+instants = sorted({e['ts'] for e in es if START <= e['ts'] <= END} | {START, END})
+best = (Fraction(0), None)
+for T in instants:
+    prefix = [e for e in es if e['ts'] <= T]
+    v = val.value(prefix, as_of=T, attack_green=gate_v)
+    process = st.item_process(prefix, opening_c1b, T)
+    live = st.score_items(i for i in process['items'] if gate_l is not None and gate_l < i['ts'])
+    both = min(Fraction(v['E_value']), live['E'])
+    if both > best[0]:
+        best = (both, T)
+    print(f"{T} | {prefix[-1]['seq']} | {v['E_value']:.6f} | {live['E']} | {float(live['E']):.6f}", flush=True)
+print(f'# max over instants of min(value E, liveness E): {float(best[0]):.6f} at {best[1]}')
+assert best[0] >= 20 and best[1] < END
+EOF
+
+Output (complete output in the named joint table):
+# value attack-green 2026-11-01T15:59:44Z; liveness attack-green 2026-10-31T13:32:21Z; c1b opening seq 188
+2026-11-05T09:02:34Z | 1592 | 16641360.075365 | 77787964060070582859513938114971128717917876946029329123560958680818697236800243835465535478292041/20063233357684014144645238448124403566719408054393635379791022614468204953600000000000000000 | 3877139.974065
+# max over instants of min(value E, liveness E): 3877139.974065 at 2026-11-05T09:02:34Z
+The maximum occurs strictly before END; including END as a boundary check does not change the maximum over prefixes strictly before END.
+
+Spot-check commands and complete stdout:
+$ python3 tools/value.py --as-of 2026-11-05T09:02:34Z --attack-green 2026-11-01T15:59:44Z
+value: E 16641360.075365 over 399 events; window events 399
+$ python3 tools/status.py --as-of 2026-11-05T09:02:34Z --runs transcripts/evidence/runs-tests-20261107T1218.json | grep '^liveness continued'
+liveness continued: E 77787964060070582859513938114971128717917876946029329123560958680818697236800243835465535478292041/20063233357684014144645238448124403566719408054393635379791022614468204953600000000000000000 over 95 items (including projected expiries)
+
+REPORT.md C2a section (standing at seq 1561) already records both criteria met; COUNSEL-OPEN rows 36-39 record the sovereign's subsequent readings and ruling. Issue #373 explicitly authorizes entering this already-reported crossing after independent recomputation.
+Evidence string:
+joint table transcripts/evidence/crossing-20261107T1218-20261106T000000Z.txt: max over every prefix before 2026-11-06T00:00:00Z of min(value E, continued liveness E) = 3877139.974065 at 2026-11-05T09:02:34Z

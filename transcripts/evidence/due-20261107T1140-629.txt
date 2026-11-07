@@ -1,0 +1,33 @@
+Forecast: 629 (RM-4), referring through args.revises to forecast 628 (RM-3d).
+Claim cutoff: 2026-11-06T00:00:00Z.
+Forecast resolves_by: 2026-11-06T06:00:00Z.
+Source prefix: origin/main 7fd45782bac755dfe2c6de675801c5b7a20cd447,
+last entry seq 2253 at 2026-11-07T11:26:35Z; local HEAD matched this commit.
+
+Ran the request's crossing-table heredoc with END=2026-11-06T00:00:00Z,
+after confirming tools/status.py assess_value calls attack_start, val.value,
+item_process and score_items in the supplied manner. Runs were freshly fetched
+using the request's GitHub API pagination procedure (1222 runs saved).
+
+Runs: transcripts/evidence/runs-tests-20261107T1140.json
+Table: transcripts/evidence/crossing-20261107T1140-20261106T000000Z.txt
+
+Table header:
+# value attack-green 2026-11-01T15:59:44Z; liveness attack-green 2026-10-31T13:32:21Z; c1b opening seq 188
+
+Table maximum:
+# max over instants of min(value E, liveness E): 3877139.974065 at 2026-11-05T09:02:34Z
+
+Spot-check commands and output:
+$ PYTHONDONTWRITEBYTECODE=1 python3 tools/value.py --as-of 2026-11-05T09:02:34Z --attack-green 2026-11-01T15:59:44Z
+value: E 16641360.075365 over 399 events; window events 399
+
+$ PYTHONDONTWRITEBYTECODE=1 python3 tools/status.py --as-of 2026-11-05T09:02:34Z --runs transcripts/evidence/runs-tests-20261107T1140.json | grep '^liveness continued'
+liveness continued: E 77787964060070582859513938114971128717917876946029329123560958680818697236800243835465535478292041/20063233357684014144645238448124403566719408054393635379791022614468204953600000000000000000 over 95 items (including projected expiries)
+
+Matching table row:
+2026-11-05T09:02:34Z | 1592 | 16641360.075365 | 77787964060070582859513938114971128717917876946029329123560958680818697236800243835465535478292041/20063233357684014144645238448124403566719408054393635379791022614468204953600000000000000000 | 3877139.974065
+
+Both E values exceed 20 at a prefix strictly before the claim cutoff.
+STOP: the request requires reporting a crossing before resolving, because it
+is also the sovereign's business. No resolution or proposal entered.

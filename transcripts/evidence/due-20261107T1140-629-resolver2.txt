@@ -1,0 +1,9 @@
+Computed at 2026-11-07T12:07:33Z
+Joint table: transcripts/evidence/crossing-20261107T1140-resolver2-20261106T000000Z.txt
+1439 instants; maximum min(value E, continued liveness E) = 3877139.974065 at 2026-11-05T09:02:34Z, strictly before 2026-11-06T00:00:00Z. Outcome 1.
+$ python3 tools/value.py --as-of 2026-11-05T09:02:34Z --attack-green 2026-11-01T15:59:44Z
+value: E 16641360.075365 over 399 events; window events 399
+
+$ python3 tools/status.py --as-of 2026-11-05T09:02:34Z --runs transcripts/evidence/runs-tests-20261107T1140-resolver2.json | grep '^liveness continued'
+liveness continued: E 77787964060070582859513938114971128717917876946029329123560958680818697236800243835465535478292041/20063233357684014144645238448124403566719408054393635379791022614468204953600000000000000000 over 95 items (including projected expiries)
+
