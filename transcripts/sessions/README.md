@@ -20,5 +20,6 @@ repository at dispatch time. Placeholders in braces are filled by the dispatcher
   superseded by `due-resolve.md`).
 - `repropose.md` — a party re-enters a stale pull request's content and entries on a fresh prefix.
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
-  under `tools/evidence/` and proposes them (C2c-1; the diary files it daily; `{WINDOW}`, `{STAMP}`, `{NOW}`,
+  under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
+  before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,
   `{MODEL}`).
