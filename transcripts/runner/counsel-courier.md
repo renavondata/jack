@@ -1,4 +1,4 @@
-# The counsel courier — definition (counsel's text; v10 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#395)
+# The counsel courier — definition (counsel's text; v11 of 8 November 2026, after the reads on runner issues #365, #368, #375, #383, #384, #386–#397)
 
 This is the definition of the two jobs that act for counsel on steel — the text their code is written to. It
 lives here, in the court, so that a change to how counsel's acts are made is a proposal read like any other,
@@ -46,7 +46,8 @@ run is red at the end if any was refused).
 4. **The whole request is read and checked before anything runs.** `transcripts/requests/<name>.jsonl` at the
    head: every line is a JSON object; every `verb` is `forecast` with `claim` (string), `p` (integer, not a
    boolean) and `by` (string), and if present `type` (string) and `args` (object), or `proposal` with `title`
-   (string); `proposal` occurs exactly once and last. Otherwise refused, nothing signed (a `type` that is not a
+   (string); no string holds a NUL or another control character (a verb cannot be given one); `proposal` occurs exactly
+   once and last. Otherwise refused, nothing signed (a `type` that is not a
    string would be signed as the string `None` and never match its own receipt). The file's bytes are kept for step 7.
 5. **The branch is counsel's, and its log is the kernel's.** `git diff --name-only --no-renames
    origin/main...HEAD` is compared with the `counsel` row of `judge/scope.json` *at `origin/main`*: any path
