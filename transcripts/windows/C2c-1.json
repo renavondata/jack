@@ -1,0 +1,42 @@
+{
+  "window": "C2c-1",
+  "brief": "transcripts/BRIEF-C2c-1.md",
+  "opens": {"rule": "first_push_after_decision", "decision": {"kind": "promote", "subject": "C2b"}},
+  "promotion": {"forecast_id": "C2c-1-V0", "proposer": "counsel", "type": "window.promotion"},
+  "end": {"rule": "promotion_forecast_resolves_by"},
+  "budget": {"seq": null, "entered_at": "the opening sitting, by the sovereign, before the opening push",
+             "text": "C2c-1: p0 6/11; promote at E >= 20; ratio 5:1; grace 2 h; counted cap 8400; kernel 450; window at most 7 d"},
+  "numbers": {"p0": [6, 11], "promote_E": 20, "ratio_max": 5, "grace_hours": 2, "counted_cap": 8400,
+              "kernel_cap": 450, "max_days": 7},
+  "processes": {"items": {"null": "p0", "threshold": "promote_E", "carried_from": "C2b",
+                          "item": "a forecast resolved on time by a holder who is not its proposer"}},
+  "criteria": [
+    {"id": 1, "kind": "verified_run", "args": {"shows": "pins_and_twins"},
+     "text": "pins and twins in a verified tests run on the assessed tree"},
+    {"id": 2, "kind": "verified_run", "args": {"shows": "checker_agreement"},
+     "text": "both checkers agree on the assessed log, in that run"},
+    {"id": 3, "kind": "tree_bounds", "args": {"counted": "counted_cap", "kernel": "kernel_cap", "scope_equals_spec": true},
+     "text": "counted lines within the cap; kernel within its bound; judge scope equals SPEC"},
+    {"id": 4, "kind": "pins_killed", "args": {"pins": ["numerals_housed", "window_from_file", "criteria_three_valued",
+                                                      "one_stated_end", "one_writ_function", "undertakings_are_forecasts",
+                                                      "ratchet_row_moves", "escalation_recorded"]},
+     "text": "every pin this brief names is KILLED with a passing twin in that run"},
+    {"id": 5, "kind": "no_claim_past_due_unescalated", "args": {"grace": "grace_hours", "evidence": "escalations"},
+     "text": "no forecast is past its resolves_by plus the grace without an escalation record naming it"},
+    {"id": 6, "kind": "ratchet", "args": {"min_rows": 1, "map": "tools/enforcement.json"},
+     "text": "at least one row of the enforcement map moved from hand to code with its pin in this window"},
+    {"id": 7, "kind": "count_zero", "args": {"source": "off_log_repairs", "evidence": "acts"},
+     "text": "zero acts typed repair under the sovereign's login in the window"},
+    {"id": 8, "kind": "undertakings_kept", "args": {"proposer": "counsel", "type": "counsel.undertaking"},
+     "text": "every undertaking counsel entered for this window is resolved 1 on time, or not yet due"},
+    {"id": 9, "kind": "no_veto", "args": {},
+     "text": "no veto on C2c-1"},
+    {"id": 10, "kind": "ratio", "args": {"max": "ratio_max"},
+     "text": "A3.4: procedure to object at most 5 : 1 over the window, the exit promote counted"}
+  ],
+  "evidence": {
+    "acts": "transcripts/evidence/acts-<window>-<stamp>.json (the acts classifier's table over the window)",
+    "escalations": "transcripts/evidence/escalations-<stamp>.json (the diary's record: forecast seq -> issue filed, instant)",
+    "run": "the verified tests run on the assessed tree, as tools/jack v_decision supplies it"
+  }
+}
