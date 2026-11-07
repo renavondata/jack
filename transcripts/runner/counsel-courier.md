@@ -1,12 +1,12 @@
-# The counsel courier — definition (counsel's text; v4 of 7 November 2026, after the reads on runner issues #365, #368 and #375)
+# The counsel courier — definition (counsel's text; v5 of 7 November 2026, after the reads on runner issues #365, #368, #375, #383 and #384)
 
 This is the definition of the two jobs that act for counsel on steel — the text their code is written to. It
 lives here, in the court, so that a change to how counsel's acts are made is a proposal read like any other,
 not a file on a machine (the same reason `transcripts/sessions/` holds the session prompts). The code is the
 builder's (SPEC §10.8): today the runner's `.github/workflows/counsel-sign.yml`, `.github/scripts/counsel-sign.py`,
 `.github/workflows/counsel.yml` and `.github/scripts/counsel-act.py` in `renavondata/opencode-runner`, the first
-two installed by the sovereign on 7 November (#369), the two scripts revised on the branch `counsel-sign-v3` (the two
-workflows unchanged there); in
+two installed by the sovereign on 7 November (#369), the last two on 6 November (#335); the branch `counsel-sign-v3` revises
+the two scripts, removes the concurrency group from each workflow (three lines each) and changes one line of `diary.yml`; in
 C2c-1, `tools/runner/` in this repository, fetched by the runner. Whether #369 stands as a repair is the
 sovereign's to say (the brief's §2 records the lapse; BRIEF-C2c-1 §11).
 
@@ -100,14 +100,19 @@ A request is one JSON object with `id` and `act`:
 
 - `pr` {head, title, body}: a pull request on `renavondata/jack` from `head`, which must be `counsel/<name>`;
   otherwise refused.
-- `issue` {title, body, labels, then_labels}: an issue on `renavondata/opencode-runner` — never on jack. The
+- `issue` {title, body, labels, then_labels}, or `issue` {template, window, model}: an issue on `renavondata/opencode-runner` —
+  never on jack. In the second form the job fetches `transcripts/sessions/<template>.md` from jack's `main`, fills
+  `{WINDOW}`, `{STAMP}`, `{NOW}` and `{MODEL}`, takes the title from the template's first `#` line, and carries nothing
+  counsel wrote: the session's prompt is a text on `main` (the evidence session, C2c-1). The
   body carries `counsel-request: <id>`; a request whose marker is already on an issue (every issue of the
   repository is searched, paged to the end) files nothing twice, and only adds the `then_labels` a stopped run owed. `then_labels` are added after the issue exists (so `run.yml` sees `build` when the
   `labeled run` event fires).
 - `close` {repo, number, stale}: on `renavondata/jack`, a pull request whose head is `counsel/<name>` and which
   counsel's account opened, closed after the comment `stale: <reason>` (the grant's "with a comment"); on
   `renavondata/opencode-runner`, an issue — not a pull request — counsel's account opened, closed with no comment
-  (the grant's runner clause is filing and closing). `stale` is the reason, required in both. Anything else —
+  (the grant's runner clause is filing and closing). `stale` is the reason, required in both.
+  The job tolerates nothing: any failure in one request (a refused act, an API error, a malformed request) is that
+  request's refusal, filed as one issue, and the next request is handled. Anything else —
   another author, another repository, no reason, a jack issue, a runner pull request — is refused; one already
   closed is skipped.
 
@@ -136,8 +141,9 @@ it is #188's, the sovereign's.
 
 ## Pin, when the courier is code in this repository
 
-**Pin `courier_signs_only_the_request`.** The entries on the branch after the content commit are exactly the request
-file's lines, in order, signed by `counsel`, each once; a branch changing `tools/`, or carrying a symbolic link
+**Pin `courier_signs_only_the_request`.** The entries on the branch after the fork point with `main` are exactly the
+request file's lines, in order, signed by `counsel`, each once (a branch is used for one request; a second request
+is a new branch, `transcripts/requests/README.md`); a branch changing `tools/`, or carrying a symbolic link
 among its changed paths, is refused unsigned; a request changed by the merge is refused. Mutants: a forecast
 entered from the prompt; `tools/` of the branch run instead of `main`'s; a forecast re-entered on a second run;
 the request read before the merge only.
@@ -146,8 +152,8 @@ the request read before the merge only.
 
 Counsel touches documents only; code enters from a builder (SPEC §10.8), so the script is not here. Its
 runner copies are `.github/scripts/counsel-sign.py` and `.github/scripts/counsel-act.py` in
-`renavondata/opencode-runner` (#369, merged 7 November; v4 of both on the branch `counsel-sign-v3`, with U2's
-narrowing of the acts), written to this definition; in C2c-1 a builder brings them into the court as
+`renavondata/opencode-runner` (#335 and #369, merged 6 and 7 November; v5 of both on the branch `counsel-sign-v3`, with
+U2's narrowing of the acts), written to this definition; in C2c-1 a builder brings them into the court as
 `tools/runner/counsel-sign.py` and `tools/runner/counsel-act.py`, built to this text, with the workflows that
 run them, and the runner's copies become a fetch of those files from `main`. Until then, any difference between
 this text and the runner's scripts is a finding against the scripts.

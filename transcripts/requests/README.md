@@ -6,7 +6,7 @@ be replayed against each other by anyone.
 
 ## The convention
 
-- A counsel branch is named `counsel/<name>`. Its commits carry the hand trailer `Proposer: counsel <model id>
+- A counsel branch is named `counsel/<name>` and carries one request; a second request is a new branch. Its commits carry the hand trailer `Proposer: counsel <model id>
   <session id>` (RUNBOOK, Common: a commit made by hand) and, from C2c-2, `Model: <model id>` beside it (SPEC-PATCH
   §2: the drafter's commit names its model so that a reader can differ from it). Pushing it is not an act (COUNSEL-OPEN row 44).
 - The branch holds exactly one request file, `transcripts/requests/<name>.jsonl`, one JSON object per line, in
