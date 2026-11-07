@@ -1,0 +1,14 @@
+{
+  "world.renavon": {"resolver_inputs": ["the dataset's public page at renavon.com, fetched after the window, its printed last-updated instant"],
+                    "reads_record": false,
+                    "scheduled_by": "transcripts/sessions/stream-forecast.md",
+                    "note": "freshness stream: six datasets per tick, forecast two hours ahead by the reviewer, resolved by the builder (BRIEF-C2a §Scope; Amendment 2 hourly; three-hourly from C2b's exit per BRIEF-C2c-1)"},
+  "world.hkjc": {"resolver_inputs": ["the HKJC results and dividends page for the race, fetched after the off time"],
+                 "reads_record": false,
+                 "scheduled_by": "none",
+                 "note": "per race, entered by hand-filed sessions (transcripts/world-hkjc.md); no stream template"},
+  "world.assize": {"resolver_inputs": ["renavondata/assize's root REPORT.md and its tags"],
+                   "reads_record": false,
+                   "scheduled_by": "none",
+                   "note": "the charter's K-series on the predecessor court (CHARTER §10)"}
+}
