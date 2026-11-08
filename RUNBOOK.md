@@ -222,8 +222,9 @@ The roster is fixed in the file, *K* = 3 arms — (reviewer, `openai/gpt-5.4-min
 `openai/gpt-5.4-mini`), (reviewer, `openai/gpt-6-astra-fast`) — and does not change inside the window (pin
 `roster_fixed`). Four EXP3 instances; round *t*, the *t*-th hourly window after the opening, draws on
 instance *t* mod 4, and only once that instance's previous round is resolved (pin `instance_feedback_complete`).
-The stream is `freshness`; a round's loss ℓ is the mean log-loss over its six events, a missing page or an
-unresolved event counting ln 1000, and the gain is (ln 1000 − ℓ) / ln 999 (pins `gain_in_unit_interval`,
+The stream is `freshness`; a round's loss ℓ is the mean log-loss over its six events, a missing forecast, a
+missing evidence page or an event unresolved by the invite's deadline counting ln 1000, and the gain is
+(ln 1000 − ℓ) / ln 999 (pins `gain_in_unit_interval`,
 `round_loss_is_mean`, `bad_round_kept`).
 
 - `--invite STREAM W0` — the diary's call for the stream's hourly window starting at W0, before the arm's
@@ -270,7 +271,8 @@ CSV saved under `transcripts/evidence/`; absent, the line reads `unknown` and is
 promote` entered while a criterion did not hold at its instant (a sovereign REPAIR, which no later success
 erases); holder counsel; deadline the window's end. Evidence not supplied is unverified, never green.
 
-**W5** — counsel's dated writs, the class that scores counsel's own obligations (BRIEF-C2b §Scope (b) and Amendments 6–8): every row of
+**W5** — counsel's dated writs, the class that scores counsel's own obligations (BRIEF-C2b §Scope (b) and
+Amendments 6–8; on 8 November 2026 two of its rows, `c2a-report` and `runbook-c2b`, are past due and undone): every row of
 `transcripts/COUNSEL-DUE.jsonl`, `{"id", "due", "what", "done": null}`, is a writ held by counsel. W5 lands at
 the `ts` of the first `merge` on the prefix whose `commit` holds `tools/due.py`, after C2b's opening push and
 first under its cap; the file is seeded at the opening with every dated obligation of COUNSEL-OPEN and of
@@ -300,7 +302,8 @@ keys, or a malformed `done`, exits 2 — `W5: malformed COUNSEL-DUE file`, or `W
 every tick under `transcripts/evidence/w5/`; BRIEF-C2b's criterion 8 reads those files, not a reconstruction,
 and its printed-escalation clause applies only to rows whose due falls after W5 lands, and not at all on a
 prefix with no merge holding `tools/due.py` (Amendment 8).
-Retired from C2c-1's opening push by BRIEF-C2c-1 R5: what it tracked becomes claims on the log.
+BRIEF-C2c-1 (draft v18, on `main`) R5 retires W5 from C2c-1's opening push, if that push is made as the
+brief states: what it tracked becomes claims on the log.
 
 `python3 tools/status.py` now reads C1b from the log — opened by `decision promote C1a`, ended by the counsel
 forecast with `args.id` `L0` — and prints the item process of §Liveness (the herald's act as the item, every
