@@ -1,0 +1,110 @@
+# The diary on steel, dispatched by the timer at ten past every hour and twenty past every third hour (no GitHub
+# schedule: it fired once unbidden on 1 Nov). At :10 it COMPUTES what is due — every unresolved forecast on
+# origin/main whose evidence should now exist: a freshness window that has ended, a race whose off time has passed,
+# a proposal whose first tests run has had an hour to finish, any other claim within two hours of its deadline —
+# and files one resolver session per non-proposer principal with that list embedded (transcripts/sessions/due-resolve.md
+# in renavondata/jack): the builder resolves what the reviewer, counsel and the herald forecast, the reviewer
+# resolves what the builder forecast, so no session ever meets its own principal's forecasts (the kernel refuses
+# self-resolution). The list is computed here, in code, with its UTC instant: on 2 Nov two sessions asked to work
+# the list out themselves found "nothing due" against a live window, and on 3 Nov four of counsel's forecasts expired
+# while status.py printed ESCALATED for six hours with no session filed. A list that is only freshness goes to
+# gpt-5.4-mini; anything else goes to gpt-6-astra (a wrong resolution is permanent). A seq handed to a session in
+# the last three hours is not handed again; a past-due seq stays on the list for two days, not six hours (7 Nov: the
+# six-hour cutoff was the hole the four expiries of 3 Nov fell through; two days bounds the cost of an undecidable one). At :20, after the :10 PR has normally merged, a REVIEWER session
+# forecasts the freshness window two hours ahead (transcripts/sessions/stream-forecast.md). N is one more than the
+# largest stream number in this repository's issue titles. Issues are filed with the owner's gh login, not
+# GH_TOKEN: an issue created by the workflow token raises no `labeled` event and run.yml would never start.
+name: diary
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: diary
+  cancel-in-progress: false
+jobs:
+  file:
+    runs-on: [self-hosted, opencode]
+    timeout-minutes: 10
+    steps:
+      - name: File the next session (resolve what is due at :10, forecast at :20)
+        run: |
+          set -euo pipefail
+          # Identity (runner #225): when the jack-court App's files exist, every gh call in this job (the session's,
+          # the verbs', the herald's) acts as the App, never as the owner. Otherwise refuse (host.md §3).
+          if [ -r "$HOME/.config/jack/app-id" ] && [ -r "$HOME/.config/jack/app.pem" ]; then
+            export GH_REAL="$(command -v gh)"; mkdir -p "$RUNNER_TEMP/bin"; "$GH_REAL" api -H 'Accept: application/vnd.github.raw' "repos/$GITHUB_REPOSITORY/contents/.github/scripts/gh-as-app?ref=$GITHUB_SHA" > "$RUNNER_TEMP/bin/gh"; chmod +x "$RUNNER_TEMP/bin/gh"
+            export PATH="$RUNNER_TEMP/bin:$PATH"; unset GH_TOKEN; echo "identity: jack-court App ($(gh api /installation/repositories --jq '[.repositories[].name] | join(",")'))"
+          else echo "no identity: the App's files are absent"; exit 1; fi
+          # The minute of the DISPATCH decides the role, not the minute the job gets the runner: this job queues
+          # behind sessions on the one runner, and at 03:08Z on 2 Nov a :08 dispatch ran at :16 and filed a forecast.
+          CREATED=$(gh run view "$GITHUB_RUN_ID" -R "$GITHUB_REPOSITORY" --json createdAt -q .createdAt)
+          STAMP=$(date -u -d "$CREATED" +%Y%m%dT%H%M); MIN=$(date -u -d "$CREATED" +%M)
+          NOW=$(date -u -d "$CREATED" +%Y-%m-%dT%H:%M:%SZ)
+          git -C "$HOME/git/jack" fetch -q origin
+          if [ "$MIN" -lt 15 ]; then
+            git -C "$HOME/git/jack" show origin/main:log.jsonl > "$RUNNER_TEMP/log.jsonl"
+            git -C "$HOME/git/jack" show origin/main:transcripts/sessions/due-resolve.md > "$RUNNER_TEMP/due-resolve.md"
+            gh issue list -R "$GITHUB_REPOSITORY" --state all --search "resolve the writs due in:title" --limit 40 --json body,createdAt > "$RUNNER_TEMP/handed.json"
+            cat > "$RUNNER_TEMP/due.py" <<'PY'
+          import datetime as dt, json, re, sys
+          tmp, now, stamp = sys.argv[1], sys.argv[2], sys.argv[3]
+          T = lambda s: dt.datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc)
+          S = lambda t: t.strftime("%Y-%m-%dT%H:%M:%SZ")
+          n = T(now); H = dt.timedelta(hours=1)
+          E = [json.loads(l) for l in open(f"{tmp}/log.jsonl") if l.strip()]
+          done = {e["body"]["forecast"] for e in E if e["type"] == "resolution"}
+          handed = set()
+          for i in json.load(open(f"{tmp}/handed.json")):
+              if T(i["createdAt"]) >= n - 3 * H:
+                  for m in re.findall(r"^due-seqs: ([0-9,]+)", i["body"], re.M):
+                      handed |= {int(x) for x in m.split(",") if x}
+          lists = {"builder": [], "reviewer": []}
+          for e in E:
+              if e["type"] != "forecast" or e["seq"] in done or e["seq"] in handed:
+                  continue
+              b = e["body"]; a = b.get("args") or {}; typ = str(b.get("type") or "untyped"); rb = T(b["resolves_by"])
+              if typ == "world.renavon" and a.get("stream") == "freshness" and a.get("window_utc"):
+                  due, what = T(a["window_utc"][1]) <= n, f"dataset {a.get('dataset')}, window {a['window_utc'][0]}..{a['window_utc'][1]}"
+              elif typ == "world.hkjc" and a.get("off_utc"):
+                  due, what = T(a["off_utc"]) + H / 2 <= n, f"meeting {a.get('meeting')} race {a.get('race')} off {a['off_utc']}"
+              elif typ.startswith("proposal."):
+                  due, what = T(e["ts"]) + H <= n, "its proposal head (procedure below)"
+              else:
+                  due, what = rb <= n + 2 * H, f"id {a.get('id', '-')}; evidence: {a.get('evidence', '-')}"
+              past = rb < n
+              if past and rb < n - 48 * H or not (due or past):  # past due: listed for two days (sixteen ticks), not six hours —
+                  continue                                        # the cutoff of 3 Nov dropped four forecasts while status.py printed ESCALATED
+              flag = " PAST DUE" if past else ""
+              claim = (b.get("claim") or "").replace("\n", " ")[:220]
+              line = f"- seq {e['seq']} | {e['proposer']} | {typ} | {what} | resolves_by {b['resolves_by']}{flag} | {claim}"
+              lists["reviewer" if e["proposer"] == "builder" else "builder"].append((rb, e["seq"], typ, line))
+          tpl = open(f"{tmp}/due-resolve.md").read()
+          for party, rows in lists.items():
+              if not rows:
+                  continue
+              rows.sort()
+              types = {r[2] for r in rows}
+              model = "openai/gpt-5.4-mini" if types <= {"world.renavon"} else "openai/gpt-6-astra"
+              body = (tpl.replace("{PARTY}", party).replace("{MODEL}", model).replace("{STAMP}", stamp).replace("{NOW}", now)
+                      .replace("{COUNT}", str(len(rows))).replace("{LIST}", "\n".join(r[3] for r in rows)))
+              body += "\n\ndue-seqs: " + ",".join(str(r[1]) for r in rows) + "\n"
+              open(f"{tmp}/issue-{party}.md", "w").write(body)
+              print(f"{party} {model} {len(rows)} {','.join(str(r[1]) for r in rows)}")
+          PY
+            python3 "$RUNNER_TEMP/due.py" "$RUNNER_TEMP" "$NOW" "$STAMP" | tee "$RUNNER_TEMP/due.txt"
+            [ -s "$RUNNER_TEMP/due.txt" ] || echo "nothing due at $NOW that is not already handed to a session"
+            while read -r PARTY MODEL COUNT SEQS; do
+              gh issue create -R "$GITHUB_REPOSITORY" --label run \
+                 --title "$PARTY: resolve the writs due — $COUNT listed at $NOW (${MODEL#openai/}, $PARTY key)" \
+                 --body-file "$RUNNER_TEMP/issue-$PARTY.md"
+            done < "$RUNNER_TEMP/due.txt"
+          else
+            LAST=$(gh issue list -R "$GITHUB_REPOSITORY" --state all --search "freshness stream in:title" --limit 500 --json title -q '.[].title' \
+                   | grep -oE 'freshness stream [0-9]+' | grep -oE '[0-9]+' | sort -n | tail -1)
+            N=$(( ${LAST:-0} + 1 ))
+            git -C "$HOME/git/jack" show origin/main:transcripts/sessions/stream-forecast.md | sed -e "s/{N}/$N/g" -e "s/{STAMP}/$STAMP/g" > "$RUNNER_TEMP/issue.md"
+            gh issue create -R "$GITHUB_REPOSITORY" --label run \
+               --title "reviewer: freshness stream $N — six forecasts for the window two hours ahead (gpt-5.4-mini, reviewer key)" \
+               --body-file "$RUNNER_TEMP/issue.md"
+          fi

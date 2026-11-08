@@ -284,8 +284,9 @@ class CourierTest(unittest.TestCase):
             "requests/01-pr-ok.json": {"id": "01-pr-ok", "act": "pr", "head": "counsel/foo", "title": "T", "body": "B"},
             "requests/02-pr-bad.json": {"id": "02-pr-bad", "act": "pr", "head": "builder-x", "title": "T", "body": "B"},
             "requests/03-issue-direct.json": {"id": "03-issue-direct", "act": "issue", "title": "Reader",
-                                              "body": "key: ~/.ssh/jack-reviewer\nhello", "labels": ["read"], "then_labels": ["run"]},
+                                              "body": "model: google/gemini-4-argon\nhello", "labels": ["read"], "then_labels": ["run"]},
             "requests/04-issue-bkey.json": {"id": "04-issue-bkey", "act": "issue", "title": "Sneak", "body": "key: ~/.ssh/jack-builder\ndo this"},
+            "requests/04b-issue-rkey.json": {"id": "04b-issue-rkey", "act": "issue", "title": "RevSneak", "body": "  KEY: ~/.ssh/jack-reviewer\ndo this"},
             "requests/05-tpl-ok.json": {"id": "05-tpl-ok", "act": "issue", "template": "build", "window": "C2c-1",
                                         "model": "google/gemini-4-argon", "branch": "builder-c2c-1-courier",
                                         "texts": "transcripts/runner/counsel-courier.md,transcripts/windows/C2c-1.json",
@@ -295,7 +296,7 @@ class CourierTest(unittest.TestCase):
             "requests/07-close-jack.json": {"id": "07-close-jack", "act": "close", "repo": "renavondata/jack", "number": 1, "stale": "superseded"},
             "requests/08-close-runner.json": {"id": "08-close-runner", "act": "close", "repo": "renavondata/opencode-runner", "number": 2, "stale": "done"},
             "requests/09-issue-dedup.json": {"id": "03-issue-direct", "act": "issue", "title": "Reader",
-                                             "body": "key: ~/.ssh/jack-reviewer\nhello", "labels": ["read"], "then_labels": ["run", "extra"]},
+                                             "body": "model: google/gemini-4-argon\nhello", "labels": ["read"], "then_labels": ["run", "extra"]},
         }
         prs = [{"number": 1, "head": "counsel/old", "title": "Old", "body": "", "state": "open", "user": "assize-reviewer"}]
         issues = {"renavondata/jack": [{"number": 1, "state": "open", "user": {"login": "assize-reviewer"}, "pull_request": {}}]}
@@ -312,7 +313,130 @@ class CourierTest(unittest.TestCase):
         tpl_issue = next(i for i in runner_issues if "<!-- counsel-request: 05-tpl-ok -->" in i["body"])
         self.assertTrue(tpl_issue["title"].startswith("builder: build transcripts/runner/counsel-courier.md"))
         self.assertEqual({l["name"] for l in tpl_issue["labels"]}, {"build", "run"})
-        self.assertEqual(len([i for i in runner_issues if i["title"].startswith("counsel-act:")]), 3)
+        self.assertEqual(len([i for i in runner_issues if i["title"].startswith("counsel-act:")]), 4)
+
+
+    def test_host_installer_check_and_workflows(self):
+        install_sh = os.path.join(ROOT, "tools", "runner", "host", "install.sh")
+        check_sh = os.path.join(ROOT, "tools", "runner", "host", "check.sh")
+        staged = (".ssh/jack-builder", ".ssh/jack-builder.pub", ".ssh/jack-reviewer", ".ssh/jack-reviewer.pub",
+                  ".ssh/jack-herald", ".ssh/jack-herald.pub", ".ssh/jack-counsel-3", ".ssh/jack-counsel-3.pub",
+                  ".ssh/deploy-jack", ".ssh/deploy-jack.pub", ".config/jack/app-id", ".config/jack/app.pem", ".config/jack/gh-counsel")
+        write_file(os.path.join(self.stubs, "curl"), '#!/bin/sh\necho \'{"ssh_keys":["ssh-ed25519 AAAATESTKEY"]}\'\n', 0o755)
+
+        def make_fixture(name):
+            base = os.path.join(self.tmp.name, f"host-{name}")
+            stg, old, root = (os.path.join(base, d) for d in ("staging", "old", "root"))
+            for rel in staged:
+                write_file(os.path.join(stg, rel), f"content:{rel}\n")
+            subprocess.run(["git", "clone", "-q", self.origin, os.path.join(old, "git", "jack")], check=True, env=self.env)
+            return stg, old, root
+
+        def tree_files(d):
+            return sorted(os.path.relpath(os.path.join(dp, fn), d) for dp, _, fns in os.walk(d) for fn in fns) if os.path.exists(d) else []
+
+        # Twin 1: exact 13 staged files, checkout at origin -> 12 placed + .gitconfig + .ssh/config + .ssh/known_hosts
+        stg1, old1, root1 = make_fixture("twin1")
+        r1 = subprocess.run([install_sh, "--root", root1, "--staging", stg1, "--old-home", old1], env=self.env, capture_output=True, text=True)
+        self.assertEqual(r1.returncode, 0, r1.stdout + r1.stderr)
+        home1 = os.path.join(root1, "home", "jack-runner")
+        want_placed = sorted([p for p in staged if p != ".ssh/deploy-jack.pub"] + [".gitconfig", ".ssh/config", ".ssh/known_hosts"])
+        self.assertEqual(tree_files(home1), want_placed)
+        self.assertEqual(tree_files(root1), [f"home/jack-runner/{p}" for p in want_placed])
+        for rel in staged:
+            if rel != ".ssh/deploy-jack.pub":
+                self.assertEqual(os.stat(os.path.join(home1, rel)).st_mode & 0o777, 0o600)
+        for cfg in (".ssh/config", ".ssh/known_hosts"):
+            self.assertEqual(os.stat(os.path.join(home1, cfg)).st_mode & 0o777, 0o644)
+        self.assertEqual(subprocess.run([install_sh, "--root", root1, "--staging", stg1, "--old-home", old1], env=self.env, capture_output=True, text=True).returncode, 0)
+
+        # Twin 2: hosts.yml added to staging -> stops with that name and writes nothing
+        stg2, old2, root2 = make_fixture("twin2")
+        write_file(os.path.join(stg2, "hosts.yml"), "oauth_token: secret\n")
+        r2 = subprocess.run([install_sh, "--root", root2, "--staging", stg2, "--old-home", old2], env=self.env, capture_output=True, text=True)
+        self.assertNotEqual(r2.returncode, 0)
+        self.assertIn("hosts.yml", r2.stdout + r2.stderr)
+        self.assertEqual(tree_files(root2), [])
+
+        # Twin 3: jack-reviewer absent -> stops before any placement
+        stg3, old3, root3 = make_fixture("twin3")
+        os.remove(os.path.join(stg3, ".ssh/jack-reviewer"))
+        r3 = subprocess.run([install_sh, "--root", root3, "--staging", stg3, "--old-home", old3], env=self.env, capture_output=True, text=True)
+        self.assertNotEqual(r3.returncode, 0)
+        self.assertEqual(tree_files(root3), [])
+
+        # Twin 4: old checkout one commit ahead of origin -> stops
+        stg4, old4, root4 = make_fixture("twin4")
+        write_file(os.path.join(old4, "git", "jack", "README.md"), "ahead\n")
+        self.git("add", "-A", cwd=os.path.join(old4, "git", "jack"))
+        self.git("commit", "-q", "-m", "ahead", cwd=os.path.join(old4, "git", "jack"))
+        r4 = subprocess.run([install_sh, "--root", root4, "--staging", stg4, "--old-home", old4], env=self.env, capture_output=True, text=True)
+        self.assertNotEqual(r4.returncode, 0)
+        self.assertEqual(tree_files(root4), [])
+
+        # Runner.Worker running under old home -> stops
+        stg5, old5, root5 = make_fixture("worker")
+        worker_bin = os.path.join(old5, ".local", "share", "actions-runner-1", "bin", "Runner.Worker")
+        write_file(worker_bin, "#!/bin/sh\nsleep 30\n", 0o755)
+        proc = subprocess.Popen([worker_bin])
+        try:
+            r5 = subprocess.run([install_sh, "--root", root5, "--staging", stg5, "--old-home", old5], env=self.env, capture_output=True, text=True)
+            self.assertNotEqual(r5.returncode, 0)
+            self.assertEqual(tree_files(root5), [])
+            # Mutant (d): Runner.Worker test deleted -> proceeds
+            m_d = os.path.join(self.tmp.name, "install-md.sh")
+            with open(install_sh, encoding="utf-8") as f:
+                src = f.read()
+            line_d = '! pgrep -f "$OLD/.local/share/actions-runner-[^/]*/bin/Runner.Worker" >/dev/null 2>&1 || { echo "refused: Runner.Worker is running under $OLD" >&2; exit 1; }\n'
+            self.assertEqual(src.count(line_d), 1)
+            write_file(m_d, src.replace(line_d, ""), 0o755)
+            self.assertEqual(subprocess.run([m_d, "--root", root5, "--staging", stg5, "--old-home", old5], env=self.env, capture_output=True, text=True).returncode, 0)
+        finally:
+            proc.terminate()
+            proc.wait()
+
+        # Mutants (a), (b), (c): each a single line of install.sh deleted
+        for idx, (find_line, stg_m, old_m, root_m, expected_file) in enumerate([
+            ('for rel in $(find "$STAGING" -mindepth 1 \\( -type f -o -type l \\) -printf \'%P\\n\' | sort); do case " $STAGED_FILES " in *" $rel "*) ;; *) echo "refused: unexpected staged file: $rel" >&2; exit 1 ;; esac; done\n',
+             stg2, old2, root2, "home/jack-runner/hosts.yml"),
+            ('for rel in $STAGED_FILES; do [ -f "$STAGING/$rel" ] || { echo "refused: missing staged file: $rel" >&2; exit 1; }; done\n',
+             stg3, old3, root3, "home/jack-runner/.ssh/jack-builder"),
+            ('ahead=$(git -C "$OLD/git/jack" for-each-ref --format=\'%(refname:short)\' refs/heads/ | while read -r b; do if [ -n "$(git -C "$OLD/git/jack" rev-list "origin/$b..$b" 2>/dev/null || git -C "$OLD/git/jack" rev-list "$b" --not --remotes=origin)" ]; then echo "$b"; fi; done); [ -z "$ahead" ] || { echo "refused: local branch ahead of origin: $ahead" >&2; exit 1; }\n',
+             stg4, old4, root4, "home/jack-runner/.ssh/jack-builder"),
+        ]):
+            self.assertEqual(src.count(find_line), 1, idx)
+            m_sh = os.path.join(self.tmp.name, f"install-m{idx}.sh")
+            write_file(m_sh, src.replace(find_line, ""), 0o755)
+            rm = subprocess.run([m_sh, "--root", root_m, "--staging", stg_m, "--old-home", old_m], env=self.env, capture_output=True, text=True)
+            self.assertEqual(rm.returncode, 0, rm.stdout + rm.stderr)
+            self.assertIn(expected_file, tree_files(root_m))
+
+        # Check check.sh against passing and failing fixtures
+        units = os.path.join(self.tmp.name, "units")
+        write_file(os.path.join(units, "actions.runner.renavondata-opencode-runner.steel-1.service"), f"[Service]\nUser={os.environ.get('USER', 'g')}\n")
+        subprocess.run(["git", "clone", "-q", self.origin, os.path.join(home1, "git", "jack")], check=True, env=self.env)
+        write_file(os.path.join(old1, ".config", "gh", "hosts.yml"), "secret\n", 0o000)
+        write_file(os.path.join(self.stubs, "gh"), "#!/bin/sh\nexit 1\n", 0o755)
+        chk_env = dict(self.env, JACK_RUNNER_HOME=home1, JACK_OLD_HOME=old1, JACK_RUNNER_USER=os.environ.get("USER", "g"), JACK_UNITS_DIR=units)
+        try:
+            rc_ok = subprocess.run([check_sh], env=chk_env, capture_output=True, text=True)
+            self.assertEqual(rc_ok.returncode, 0, rc_ok.stdout + rc_ok.stderr)
+            self.assertNotIn("FAIL:", rc_ok.stdout)
+            os.chmod(os.path.join(old1, ".config", "gh", "hosts.yml"), 0o644)
+            rc_fail = subprocess.run([check_sh], env=chk_env, capture_output=True, text=True)
+            self.assertEqual(rc_fail.returncode, 1)
+            self.assertIn("FAIL:", rc_fail.stdout)
+        finally:
+            os.chmod(os.path.join(old1, ".config", "gh", "hosts.yml"), 0o600)
+
+        # Workflow changes under tools/runner/host/workflows/
+        for wf in ("run.yml", "diary.yml", "herald.yml", "repropose.yml"):
+            with open(os.path.join(ROOT, "tools", "runner", "host", "workflows", wf), encoding="utf-8") as f:
+                text = f.read()
+            self.assertNotIn("identity: owner login", text)
+            self.assertIn('echo "no identity: the App\'s files are absent"', text)
+            if wf == "run.yml":
+                self.assertLess(text.index('refused: no identity (the App\'s files are absent)'), text.index('started: run $GITHUB_RUN_ID'))
 
 
 if __name__ == "__main__":
