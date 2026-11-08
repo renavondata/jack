@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 91
+EXPECTED = 105
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1059,3 +1059,42 @@ for pin in C2B_GATE_PINS:
     pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
         f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
 PINS += C2B_GATE_PINS
+
+
+# --- C2c-1 window pins (BRIEF-C2c-1 §3; runner texts) -----------------------
+
+from pins.c2c_1 import c2c_tests, courier_tests
+
+C2C1_PINS = [
+    Pin("numerals_housed", c2c_tests("tests.test_c2c_1.R1NumeralsAndR9Binding.test_r1_numerals_housed_twins_and_mutants"), [
+        Mutant("numeral_scan_disabled", "tools/window.py", "    return violations\n", "    return []\n"),
+        Mutant("numeric_key_check_disabled", "tools/window.py", "    if not isinstance(key, str) or key not in numbers or not is_num_val(numbers[key]):\n", "    if False:\n")]),
+    Pin("criteria_three_valued", c2c_tests("tests.test_c2c_1.R2R4R8CriteriaAndWrits.test_r2_criteria_three_valued_twins"), [
+        Mutant("missing_acts_not_unknown", "tools/window.py", "        if pair is None:\n            return \"unknown (no acts)\"\n", "        if False:\n            return \"unknown (no acts)\"\n")]),
+    Pin("window_from_file", c2c_tests("tests.test_c2c_1.R2R4R8CriteriaAndWrits.test_r2_window_from_file_twins"), [
+        Mutant("criteria_ignored", "tools/window.py", "    criterion_lines = []\n    checks = []\n    for c in wfile.get(\"criteria\", []):\n", "    criterion_lines = []\n    checks = []\n    for c in []:\n")]),
+    Pin("undertakings_are_forecasts", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r5_undertakings_are_forecasts_twins"), [
+        Mutant("inventory_ignored", "tools/window.py", "            if row[\"due\"] > start:\n", "            if False:\n")]),
+    Pin("escalation_recorded", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r6_escalation_recorded_and_red_line_twins"), [
+        Mutant("escalation_match_ignored", "tools/window.py", "            if not matched:\n                return \"unmet\"\n", "            if False:\n                return \"unmet\"\n")]),
+    Pin("ratchet_row_moves", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r7_ratchet_and_hand_row_deadline_twins"), [
+        Mutant("ratchet_opening_ignored", "tools/window.py", "            if not o_enf.startswith(\"hand:\") or not n_enf.startswith(\"code:\"):\n", "            if not False:\n")]),
+    Pin("hand_row_deadline", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r7_ratchet_and_hand_row_deadline_twins"), [
+        Mutant("hand_deadline_unchecked", "tools/enforcement.py", "        if enf.startswith(\"hand:\") and not valid_deadline(row[\"deadline\"], numbers):\n", "        if False:\n")]),
+    Pin("object_declared", c2c_tests("tests.test_c2c_1.R2R4R8CriteriaAndWrits.test_r4_one_writ_function_and_r8_object_declared"), [
+        Mutant("scheduled_types_not_excluded", "tools/window.py", "    line2 = f\"A3.4 ratio excluding scheduled: procedure {proc2} : object {obj2}; at promote {exit_proc2} : {obj2}\"\n", "    line2 = line1\n")]),
+    Pin("window_file_fixed", c2c_tests("tests.test_c2c_1.R1NumeralsAndR9Binding.test_r9_window_file_fixed_twins"), [
+        Mutant("window_hash_unchecked", "tools/window.py", "    if actual_sha != b_sha or actual_sha != f_sha:\n", "    if False:\n")]),
+    Pin("eprocess_continued", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r10_eprocess_continued_twins"), [
+        Mutant("late_repair_gate_dropped", "tools/window.py", "            if proc[\"late_reports\"]:\n", "            if False:\n")]),
+    Pin("evidence_provenance", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r11_tree_bounds_and_evidence_provenance_twins", "tests.test_c2c_1.R5R6R7R10R11Criteria.test_r11_remaining_tree_bounds_and_provenance_twins"), [
+        Mutant("provenance_overwritten", "tools/window.py", "            if p not in changers:\n", "            if True:\n")]),
+    Pin("tree_bounds", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r11_tree_bounds_and_evidence_provenance_twins", "tests.test_c2c_1.R5R6R7R10R11Criteria.test_r11_remaining_tree_bounds_and_provenance_twins"), [
+        Mutant("frozen_path_ignored", "tools/window.py", "                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n", "                        if False:\n")]),
+    Pin("courier_signs_only_the_request", courier_tests("tests.test_courier.CourierTest.test_courier_signs_only_the_request"), [
+        Mutant("branch_scope_ignored", "tools/runner/counsel-sign.py", "        (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n", "        False and (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n")]),
+    Pin("runner_user_holds_no_login", courier_tests("tests.test_courier.CourierTest.test_host_installer_check_and_workflows"), [
+        Mutant("staging_files_unchecked", "tools/runner/host/install.sh", "for rel in $STAGED_FILES; do [ -f \"$STAGING/$rel\" ] || { echo \"refused: missing staged file: $rel\" >&2; exit 1; }; done\n", "true\n"),
+        Mutant("ahead_checkout_unchecked", "tools/runner/host/install.sh", "ahead=$(git -C \"$OLD/git/jack\" for-each-ref --format='%(refname:short)' refs/heads/ | while read -r b; do if [ -n \"$(git -C \"$OLD/git/jack\" rev-list \"origin/$b..$b\" 2>/dev/null || git -C \"$OLD/git/jack\" rev-list \"$b\" --not --remotes=origin)\" ]; then echo \"$b\"; fi; done); [ -z \"$ahead\" ] || { echo \"refused: local branch ahead of origin: $ahead\" >&2; exit 1; }\n", "true\n")]),
+]
+PINS += C2C1_PINS
