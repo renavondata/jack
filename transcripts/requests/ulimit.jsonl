@@ -1,0 +1,1 @@
+{"verb": "proposal", "title": "sessions/build.md, pins.md, evidence.md: tests, pins and scripts run under ulimit -v 4194304 — a runaway test was OOM-killed twice on 8 Nov and systemd stopped the build runner's unit each time (runs 42474717641, 42492011295)"}
