@@ -25,8 +25,8 @@ repository at dispatch time. Placeholders in braces are filled by the dispatcher
   branch is pushed and not proposed: the deliverables ride the opening push (BRIEF-C2c-1 §2); after it, a proposal.
 - `pins.md` — the reviewer writes the pins the named texts name, each twin passing on the builder's pre-built
   branches merged into the reviewer's worktree, each mutant the present code or the variant the text names; the
-  same placeholders and the same
-  rule on where the branch goes (C2c-1; filed by counsel through the courier's template form).
+  same placeholders and the same rule on where the branch goes (C2c-1; filed by counsel through the courier's
+  template form).
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
   under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
   before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,
