@@ -1,0 +1,23 @@
+# Counsel's entries, signed on steel (transcripts/runner/counsel-courier.md). The shell holds trigger, lane,
+# permissions, timeout, and one step that fetches tools/runner/counsel-sign.py from jack's main at dispatch and runs it.
+name: counsel-sign
+on:
+  push:
+    branches: [counsel-requests]
+permissions:
+  contents: read
+jobs:
+  sign:
+    runs-on: [self-hosted, build]
+    timeout-minutes: 45
+    steps:
+      - name: Sign the requested entries with counsel's key
+        env:
+          READ_TOKEN: ${{ github.token }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.event.after }}
+        run: |
+          set -euo pipefail
+          GH_TOKEN="$READ_TOKEN" gh api -H 'Accept: application/vnd.github.raw' \
+            "repos/renavondata/jack/contents/tools/runner/counsel-sign.py?ref=main" > "$RUNNER_TEMP/counsel-sign.py"
+          python3 "$RUNNER_TEMP/counsel-sign.py"
