@@ -210,9 +210,53 @@ lists every unresolved forecast whose `resolves_by` is before TS, by `resolves_b
 witness is `spec/vectors/score.jsonl` (the reviewer's; the builder's `tests/vectors/score.jsonl` must agree
 with it in meaning) and its expected table in the brief (pin `score_not_proper`).
 
+## `jack elect` — `python3 tools/elect.py --invite STREAM W0 | --replay SEQ | --resolve-plan SEQ | --table [--as-of T] [--sigma B64] [--log FILE]`
+
+C2b's election (BRIEF-C2b §Scope: the entrants, the round's gain, the election, the draw; §Order of acts
+step 4). `tools/elect.py` lands after C2b's opening push, under its cap, after `tools/due.py`; the diary
+consults it before every forecast session from the first green `tests` run on `main` holding
+`tests/test_elect.py`, and invites before that instant are not rounds (criterion 4). Until the first invite the
+stream's shape is the three-window forecast session the diary files; from the first invite each round's
+forecasts come from the invited arm's own session, filed per invite, and no session is filed without one.
+The roster is fixed in the file, *K* = 3 arms — (reviewer, `openai/gpt-5.4-mini`), (builder,
+`openai/gpt-5.4-mini`), (reviewer, `openai/gpt-6-astra-fast`) — and does not change inside the window (pin
+`roster_fixed`). Four EXP3 instances; round *t*, the *t*-th hourly window after the opening, draws on
+instance *t* mod 4, and only once that instance's previous round is resolved (pin `instance_feedback_complete`).
+The stream is `freshness`; a round's loss ℓ is the mean log-loss over its six events, a missing forecast, a
+missing evidence page or an event unresolved by the invite's deadline counting ln 1000, and the gain is
+(ln 1000 − ℓ) / ln 999 (pins `gain_in_unit_interval`,
+`round_loss_is_mean`, `bad_round_kept`).
+
+- `--invite STREAM W0` — the diary's call for the stream's hourly window starting at W0, before the arm's
+  session is filed. Reads the prefix at `--as-of` (default now; the log must pass the kernel), runs
+  `tests.test_elect.Election.test_self_invite` and `test_rigged_election` and refuses on a red tree; refuses
+  a (stream, W0) already invited (`revision`), a W0 outside the window or a stream other than `freshness`, and
+  a call at or after W0 (`skipped: W0` — the round is skipped, no invite and no session, the hour reported as
+  skipped); exits 3 with `wait: instance j round t unresolved` while the instance's previous round is
+  unresolved, to be called again before W0. Otherwise it prints the round string `election.invite STREAM W0`,
+  signs it under `~/.ssh/jack-herald` (σ; `--sigma` supplies a signature made elsewhere; one that does not
+  verify is `rigged_election`), draws the arm on the 2^256 grid from σ, and prints the entry body — `claim`,
+  `p` (the invite's success event, prequential Laplace over the settled invites, (*s* + 1)/(*n* + 2) in
+  permille; pin `invite_p_is_success_rate`), `type`, `resolves_by`, `args` with `round`, `instance`,
+  `gains`, `cuts`, `propensity`, `gamma`, `eta`, `sigma` — which the diary enters under the herald's key before filing the arm's session (pins
+  `invite_before_session`, `draw_on_the_grid`, `sigma_verifies`, `self_invite`, `rigged_election`). The
+  importance weight divides by the propensity saved in the invite, never a later one. Every other refusal
+  exits 1.
+- `--replay SEQ` — recomputes the invite at seq SEQ from the prefix before it and verifies σ; prints
+  `election invite SEQ: replay verified` or the first error (pin `draw_replays_from_prefix`). Read-only.
+- `--resolve-plan SEQ` — prints the resolver the invite at SEQ routes to, never the arm that forecast
+  (pin `resolver_not_forecaster`). Read-only.
+- `--table` — per arm: rounds invited, Ĝ summed over the instances, mean gain, successes, frequency, mean
+  recorded propensity; per instance: last round and whether it is resolved; the skipped rounds, the
+  diagnostic, the `election.invite` lines of `jack score`, and any invite the audit refused. Read-only.
+
+Only `--invite` signs, and only with the herald's key (`~/.ssh/jack-herald`, held on steel, the sovereign's
+machine); the verb checks no host. No mode writes to the tree or to `log.jsonl`.
+The twins are `tests/test_elect.py`'s; the pins are BRIEF-C2b's §Pins.
+
 ## `jack clerk` — `python3 tools/clerk.py [--as-of T] [--runs FILE] [--acts FILE] [--counsel-open FILE]`
 
-C1b's clerk (BRIEF-C1b v7): every open writ, derived from `log.jsonl`, the tree and the clock, printed with
+C1b's clerk (BRIEF-C1b v7): every open writ of classes W1–W4 (W5 below is `status.py`'s), derived from `log.jsonl`, the tree and the clock, printed with
 its class, obligation, holders and deadline; one past its deadline reads `ESCALATED to guy`. Read-only,
 level-triggered, no state, no signing, no network: run it on a timer or by hand, and a missed tick costs
 nothing. Writ classes: **W1** — every `forecast` on the prefix with no `resolution`, **from the log's first
@@ -228,6 +272,40 @@ line of `status.py` that is not `met`, including `off-log repairs: n` from `--ac
 CSV saved under `transcripts/evidence/`; absent, the line reads `unknown` and is a writ) and a `decision
 promote` entered while a criterion did not hold at its instant (a sovereign REPAIR, which no later success
 erases); holder counsel; deadline the window's end. Evidence not supplied is unverified, never green.
+
+**W5** — counsel's dated writs, the class that scores counsel's own obligations (BRIEF-C2b §Scope (b) and
+Amendments 6–8; on 8 November 2026 two of its rows, `c2a-report` and `runbook-c2b`, are past due and undone): every row of
+`transcripts/COUNSEL-DUE.jsonl`, `{"id", "due", "what", "done": null}`, is a writ held by counsel. W5 lands at
+the `ts` of the first `merge` on the prefix whose `commit` holds `tools/due.py`, after C2b's opening push and
+first under its cap; the file is seeded at the opening with every dated obligation of COUNSEL-OPEN and of
+BRIEF-C2b, and pin `w5_inventory` checks the seeded ids are present at every later tree. It is computed by
+`python3 tools/due.py [--rev R] [--as-of T] [--root DIR] [--inventory COMMIT]`, **not** by `tools/clerk.py`,
+and printed by `status.py` beside W1–W4. `--rev` names the commit whose file and `log.jsonl` are read (its
+parent's file for the append-only check); `--inventory COMMIT` fails with `W5: missing <id>` when an id seeded
+in that commit's file is absent from the one read. One line per row: `W5 <id> due <due> <what>: OPEN`,
+`ESCALATED <h>h past due`, `done seq <n> on time` or `done seq <n> ESCALATED <h>h late`; `W5: no COUNSEL-DUE
+file` when the tree has none.
+
+Rows are append-only — a file whose earlier lines changed is refused. A row is
+discharged only by a later line `{"id", "done": {"seq": n, "what": "<the act>"}}` whose `seq` is an entry on
+the prefix whose canonical body contains the row's `id` (a proposal whose title names it; a forecast or
+resolution whose `args.id` is it); a bare integer, an unrelated entry or a deleted row discharges nothing. The
+discharge takes effect at the later of the cited entry's `ts` and the `ts` of the first `merge` on the prefix
+whose `commit` holds the discharge line byte for byte (Amendment 7): before then the row is undone; on time
+if that instant is at or before the due, ESCALATED late if after, and a late discharge prints
+ESCALATED-then-done forever.
+
+The fold also admits a re-date line with exactly the keys `{"id", "due", "seq", "why"}` for exactly
+the two rows Amendment 6 names (`c2b-report` → `2026-12-02T12:00:00Z`, `c2c-brief` → `2026-11-16T00:00:00Z`,
+`seq` 1564, first such line for its id, after the row and before any discharge); any other line with those
+keys, or a malformed `done`, exits 2 — `W5: malformed COUNSEL-DUE file`, or `W5: <error>` where the fold itself fails. Seven pins:
+`w5_overdue_escalates`, `w5_done_is_an_entry`, `w5_rows_append_only`, `w5_inventory`, `w5_redate`,
+`w5_escalation_history`, `c2b_history_from_w5`. The diary's resolve session commits `status.py`'s W5 lines at
+every tick under `transcripts/evidence/w5/`; BRIEF-C2b's criterion 8 reads those files, not a reconstruction,
+and its printed-escalation clause applies only to rows whose due falls after W5 lands, and not at all on a
+prefix with no merge holding `tools/due.py` (Amendment 8).
+BRIEF-C2c-1 (draft v18, on `main`) R5 retires W5 from C2c-1's opening push, if that push is made as the
+brief states: what it tracked becomes claims on the log.
 
 `python3 tools/status.py` now reads C1b from the log — opened by `decision promote C1a`, ended by the counsel
 forecast with `args.id` `L0` — and prints the item process of §Liveness (the herald's act as the item, every
