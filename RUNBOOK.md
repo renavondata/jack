@@ -140,6 +140,15 @@ nothing about its reasoning. Example, C2a-prime's opening: `jack push opening-c2
 --review <worktree>/transcripts/REVIEW-C2a-prime-code.md`, after the sovereign's `decision grant` and
 `decision fix` (BRIEF-C2a-prime v7 §Order of acts).
 
+**A layer with a window file (BRIEF-C2c-1 §2 and §6; in force for every opening push after C2c-1's, whose
+own push carries this extension and so is gated by the rule above and the sovereign's check at the
+sitting).** When `transcripts/windows/LAYER.json` is on `origin/main`, the verb requires as many distinct
+`transcripts/REVIEW-LAYER-*.md` files as that file's `numbers.readers` says, each passing the three tests
+above and each with a `Reviewed tree:` at which the window file's bytes, as well as the brief's, equal
+`origin/main`'s — in place of the refusal rule above: fewer such files refuses the push, however many
+others are on `main`. The number comes from the window file and from nowhere else. Without a window file
+the rule above stands, one review of the brief.
+
 ## `jack decision KIND SUBJECT`
 
 On `main`. KIND is one of `veto promote budget grant transmute fix`; SUBJECT a non-empty string (for
@@ -206,9 +215,10 @@ with it in meaning) and its expected table in the brief (pin `score_not_proper`)
 C1b's clerk (BRIEF-C1b v7): every open writ, derived from `log.jsonl`, the tree and the clock, printed with
 its class, obligation, holders and deadline; one past its deadline reads `ESCALATED to guy`. Read-only,
 level-triggered, no state, no signing, no network: run it on a timer or by hand, and a missed tick costs
-nothing. Writ classes: **W1** — every `forecast` entered after C1b's opening, from its entry, **computed only when
-the window is C1b** (`tools/clerk.py`; jack #350): under a later window a forecast carries no W1 writ and
-appears only once overdue, as a W4 line, until the fix lands from C2c's opening (BRIEF-C2c M.3); holders are
+nothing. Writ classes: **W1** — every `forecast` on the prefix with no `resolution`, **from the log's first
+entry and under every subject** (BRIEF-C2c-1 R4, from C2c-1's opening push; until then `tools/clerk.py`
+computes it only when the window is C1b, jack #350, and under a later window a forecast appears only once
+overdue, as a W4 line); holders are
 the keys with `resolution` power whose principal is not the forecaster's; deadline `resolves_by`,
 overdue strictly after it; discharged by a `resolution`. **W3** — a `merge` entry whose `commit` has no
 `tests.yml` run with `conclusion` success and `updated_at` not after the merge entry's `ts` in `--runs FILE`
@@ -227,7 +237,13 @@ repairs: n`, criterion 3 from the tree, criterion 7 from `tools/enforcement.json
 FILE`, the `tests.yml` push-to-main run for the tree's exact commit, verified field by field.
 
 `jack decision promote <window>` fetches that run itself with `gh api`, runs `status.py` with it, and signs
-only when the line reads `lawful`; on `refused` it prints the line and signs nothing. The sovereign's hand
+only when the line reads `lawful`; on `refused` it prints the line and signs nothing. From C2c-1's opening
+push (BRIEF-C2c-1 §6) the verb promotes any `<window>` whose file `transcripts/windows/<window>.json` is on
+the tree, and no other — the list of names it promotes today (`C1a`, `C1b`, `C2a`) goes — takes no `--acts`
+(the acts evidence is the newest pair of `transcripts/evidence/acts-<window>-<repo>-<stamp>.csv` files in
+the tree, as the window file's `evidence.acts` defines it), writes nothing to the tree, and refuses
+`promote` when no pair exists or the newest pair's stamp is not within the file's
+`numbers.acts_fresh_minutes` before the decision's `ts`. The sovereign's hand
 repairs are entered as `jack decision fix "<what>"` when made (§7): a repair taints every writ open at its
 instant whatever its subject says, so the subject is for the record, and one entered after the item it
 concerns was finalised changes no score but prints as a late report that refuses `promote` while it stands.
