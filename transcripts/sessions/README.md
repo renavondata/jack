@@ -27,6 +27,10 @@ repository at dispatch time. Placeholders in braces are filled by the dispatcher
   branches merged into the reviewer's worktree, each mutant the present code or the variant the text names; the
   same placeholders and the same rule on where the branch goes (C2c-1; filed by counsel through the courier's
   template form).
+- `review.md` — the reviewer reads the named texts on `main` and, on PASS, writes and proposes the review file the
+  opening gate reads (`VERDICT:` first, `Reviewed tree:` a commit on `main`; BRIEF-C2c-1 §2, precondition 3), under
+  the reviewer's key; always a proposal, the file being a transcript (C2c-1; the same placeholders; filed by counsel
+  through the courier's template form).
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
   under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
   before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,

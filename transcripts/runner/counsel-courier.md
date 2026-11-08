@@ -133,7 +133,7 @@ A request is one JSON object with `id` (one token, `[A-Za-z0-9._-]+`: it is writ
   carries nothing else of counsel's: the session's prompt is a text on
   `main`. In the first form the body may carry no `key:` line at all (from `transcripts/runner/host.md` §3; before it, a line
   naming `jack-builder` in any spelling was refused): a keyed session — the evidence session, a build to a text, a
-  re-proposal — is filed from a template only, so that what a party does under its key is never a body counsel wrote,
+  re-proposal, a gate review (`review.md`) — is filed from a template only, so that what a party does under its key is never a body counsel wrote,
   and a session counsel files by this form is handed no key. The
   body carries `<!-- counsel-request: <id> -->`; a request whose exact marker is already on an issue counsel's account
   opened (every issue of the repository is searched, paged to the end; another author's issue, or a body that merely
