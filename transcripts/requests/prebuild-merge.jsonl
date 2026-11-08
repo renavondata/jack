@@ -1,1 +1,0 @@
-{"verb": "proposal", "title": "sessions/build.md: a pre-built branch is merged with log.jsonl taken from origin/main, and a read-only gh api call is not a read outside the worktree; host.md v13: the four workflows are read from the runner's main — after the host build (#469) stopped on both"}
