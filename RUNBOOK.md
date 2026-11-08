@@ -236,8 +236,9 @@ missing evidence page or an event unresolved by the invite's deadline counting l
   unresolved, to be called again before W0. Otherwise it prints the round string `election.invite STREAM W0`,
   signs it under `~/.ssh/jack-herald` (σ; `--sigma` supplies a signature made elsewhere; one that does not
   verify is `rigged_election`), draws the arm on the 2^256 grid from σ, and prints the entry body — `claim`,
-  `p`, `type`, `resolves_by`, `args` with `round`, `instance`, `gains`, `cuts`, `propensity`, `gamma`, `eta`,
-  `sigma` — which the diary enters under the herald's key before filing the arm's session (pins
+  `p` (the invite's success event, prequential Laplace over the settled invites, (*s* + 1)/(*n* + 2) in
+  permille; pin `invite_p_is_success_rate`), `type`, `resolves_by`, `args` with `round`, `instance`,
+  `gains`, `cuts`, `propensity`, `gamma`, `eta`, `sigma` — which the diary enters under the herald's key before filing the arm's session (pins
   `invite_before_session`, `draw_on_the_grid`, `sigma_verifies`, `self_invite`, `rigged_election`). The
   importance weight divides by the propensity saved in the invite, never a later one. Every other refusal
   exits 1.
