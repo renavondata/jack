@@ -253,7 +253,7 @@ The twins are `tests/test_elect.py`'s; the pins are BRIEF-C2b's §Pins.
 
 ## `jack clerk` — `python3 tools/clerk.py [--as-of T] [--runs FILE] [--acts FILE] [--counsel-open FILE]`
 
-C1b's clerk (BRIEF-C1b v7): every open writ, derived from `log.jsonl`, the tree and the clock, printed with
+C1b's clerk (BRIEF-C1b v7): every open writ of classes W1–W4 (W5 below is `status.py`'s), derived from `log.jsonl`, the tree and the clock, printed with
 its class, obligation, holders and deadline; one past its deadline reads `ESCALATED to guy`. Read-only,
 level-triggered, no state, no signing, no network: run it on a timer or by hand, and a missed tick costs
 nothing. Writ classes: **W1** — every `forecast` on the prefix with no `resolution`, **from the log's first
@@ -270,7 +270,7 @@ CSV saved under `transcripts/evidence/`; absent, the line reads `unknown` and is
 promote` entered while a criterion did not hold at its instant (a sovereign REPAIR, which no later success
 erases); holder counsel; deadline the window's end. Evidence not supplied is unverified, never green.
 
-**W5** — counsel's dated writs (BRIEF-C2b §Scope (b) and Amendments 6–8): every row of
+**W5** — counsel's dated writs, the class that scores counsel's own obligations (BRIEF-C2b §Scope (b) and Amendments 6–8): every row of
 `transcripts/COUNSEL-DUE.jsonl`, `{"id", "due", "what", "done": null}`, is a writ held by counsel. W5 lands at
 the `ts` of the first `merge` on the prefix whose `commit` holds `tools/due.py`, after C2b's opening push and
 first under its cap; the file is seeded at the opening with every dated obligation of COUNSEL-OPEN and of
@@ -291,10 +291,10 @@ whose `commit` holds the discharge line byte for byte (Amendment 7): before then
 if that instant is at or before the due, ESCALATED late if after, and a late discharge prints
 ESCALATED-then-done forever.
 
-The fold also admits a re-date line `{"id", "due", "seq", "why"}` for exactly
+The fold also admits a re-date line with exactly the keys `{"id", "due", "seq", "why"}` for exactly
 the two rows Amendment 6 names (`c2b-report` → `2026-12-02T12:00:00Z`, `c2c-brief` → `2026-11-16T00:00:00Z`,
 `seq` 1564, first such line for its id, after the row and before any discharge); any other line with those
-keys, or a malformed `done`, prints `W5: malformed COUNSEL-DUE file` and exits 2. Seven pins:
+keys, or a malformed `done`, exits 2 — `W5: malformed COUNSEL-DUE file`, or `W5: <error>` where the fold itself fails. Seven pins:
 `w5_overdue_escalates`, `w5_done_is_an_entry`, `w5_rows_append_only`, `w5_inventory`, `w5_redate`,
 `w5_escalation_history`, `c2b_history_from_w5`. The diary's resolve session commits `status.py`'s W5 lines at
 every tick under `transcripts/evidence/w5/`; BRIEF-C2b's criterion 8 reads those files, not a reconstruction,
