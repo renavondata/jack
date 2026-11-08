@@ -250,7 +250,8 @@ missing evidence page or an event unresolved by the invite's deadline counting l
   recorded propensity; per instance: last round and whether it is resolved; the skipped rounds, the
   diagnostic, the `election.invite` lines of `jack score`, and any invite the audit refused. Read-only.
 
-Only `--invite` signs, and only with the herald's key, on steel; no mode writes to the tree or to `log.jsonl`.
+Only `--invite` signs, and only with the herald's key (`~/.ssh/jack-herald`, held on steel, the sovereign's
+machine); the verb checks no host. No mode writes to the tree or to `log.jsonl`.
 The twins are `tests/test_elect.py`'s; the pins are BRIEF-C2b's §Pins.
 
 ## `jack clerk` — `python3 tools/clerk.py [--as-of T] [--runs FILE] [--acts FILE] [--counsel-open FILE]`
