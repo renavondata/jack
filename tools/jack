@@ -183,19 +183,22 @@ def push_read_gate(branch, layer, repo=ROOT):
         return
     if not layer: refuse("judge/scope.json: scope changes require --opens LAYER")
     if not re.fullmatch(r"[A-Za-z0-9_-]+", layer): refuse("judge/scope.json: invalid --opens LAYER")
-    brief, pattern = f"transcripts/BRIEF-{layer}-draft.md", f"transcripts/REVIEW-{layer}-*.md"
-    current = tree_bytes(repo, "origin/main", brief)
+    from tools.window import window_path
+    brief, pattern, wpath = f"transcripts/BRIEF-{layer}-draft.md", f"transcripts/REVIEW-{layer}-*.md", window_path(layer)
+    current, wbytes = tree_bytes(repo, "origin/main", brief), tree_bytes(repo, "origin/main", wpath)
     if current is None: refuse(f"{brief}: missing on origin/main")
+    needed = json.loads(wbytes).get("numbers", {}).get("readers") if wbytes is not None else 1
+    if type(needed) is not int or needed < 1: refuse(f"{wpath}: invalid numbers.readers")
     reviews = g("ls-tree", "-r", "--name-only", "origin/main", "--", "transcripts/").splitlines()
     reviews = [p for p in reviews if re.fullmatch(rf"transcripts/REVIEW-{re.escape(layer)}-.*\.md", p)]
     if not reviews: refuse(f"{pattern}: missing review on origin/main")
     lines = check.read_lines(tree_bytes(repo, "origin/main", "log.jsonl") or b"")
     verdict = check.check(lines)
     if not lines or not verdict["ok"]: refuse(f"log.jsonl: invalid signed provenance: {verdict}")
-    entries, errors = list(map(json.loads, lines)), []
+    entries, errors, accepted = list(map(json.loads, lines)), [], 0
     proposals = [e for i, e in enumerate(entries) if e["type"] == "proposal" and
                  principal_at(entries, i, signer_blob(e)) not in (None, "counsel")]
-    for review in reviews:
+    for review in sorted(set(reviews)):
         try:
             text = tree_bytes(repo, "origin/main", review).decode("utf-8", "replace").split("\n")
             if text[0] not in ("VERDICT: ACCEPT", "VERDICT: ACCEPT WITH OBLIGATIONS"):
@@ -205,6 +208,8 @@ def push_read_gate(branch, layer, repo=ROOT):
             commit = g("rev-parse", "--verify", tokens[0] + "^{commit}", ok=False) if tokens else ""
             if not commit or not ancestor(commit, "origin/main"): refuse(f"{review}: Reviewed tree is not a commit on origin/main")
             if tree_bytes(repo, commit, brief) != current: refuse(f"{review}: Reviewed tree has different bytes for {brief}")
+            if wbytes is not None and tree_bytes(repo, commit, wpath) != wbytes:
+                refuse(f"{review}: Reviewed tree has different bytes for {wpath}")
             additions = g("log", "--diff-filter=A", "--format=%H", "origin/main", "--", review).splitlines()
             merged = g("log", "--first-parent", "-1", "--format=%H", "origin/main", "--", review)
             at_merge = check.read_lines(tree_bytes(repo, merged, "log.jsonl") or b"")
@@ -213,11 +218,15 @@ def push_read_gate(branch, layer, repo=ROOT):
                 if log.canonical(proposal) not in at_merge: continue  # a later endorsement did not bring the file to main
                 head = proposal["body"]["commit"]
                 if any(x == head or ancestor(x, head) and not ancestor(x, merged + "^1") for x in additions):
-                    if g("rev-parse", "--verify", head + ":" + review, ok=False) == blob: return
-            refuse(f"{review}: no non-counsel signed proposal with the adding commit and identical review blob in log.jsonl")
+                    if g("rev-parse", "--verify", head + ":" + review, ok=False) == blob:
+                        accepted += 1
+                        if accepted >= needed: return
+                        break
+            else:
+                refuse(f"{review}: no non-counsel signed proposal with the adding commit and identical review blob in log.jsonl")
         except Refused as x:
             errors.append(str(x))
-    refuse("\n".join(errors))
+    refuse("\n".join(errors + ([f"{pattern}: {accepted} of {needed} required reviews accepted"] if wbytes is not None else [])))
 
 def v_push(a):
     begin(a, True)
@@ -248,15 +257,16 @@ def v_decision(a):
     begin(a, True)
     a.subject or refuse("SUBJECT must be a non-empty string")
     if a.kind == "promote":
-        a.subject in ("C1a", "C1b", "C2a") or refuse("promotion criteria unknown for " + a.subject)
-        head = git("rev-parse", "HEAD")
+        from tools.window import check_promote_gate
+        head, a.decision_ts = git("rev-parse", "HEAD"), entry.now()  # the assessed instant is the instant signed, including expiry boundaries
+        try: check_promote_gate(ROOT, head, a.subject, a.decision_ts)  # noqa: E701
+        except ValueError as x: refuse(str(x))  # noqa: E701
         endpoint = "repos/{owner}/{repo}/actions/workflows/tests.yml/runs"
         def fetch(query):
             pages = json.loads(run("gh", "api", endpoint + query, "--paginate", "--slurp").stdout)
             return [r for page in pages for r in page["workflow_runs"]]
         current = fetch(f"?head_sha={head}&event=push&branch=main")
         history = fetch("?event=push&branch=main")
-        a.decision_ts = entry.now()  # the assessed instant is the instant signed, including expiry boundaries
         from tools.status import run_verified
         with tempfile.TemporaryDirectory() as tmp:
             for name, value in (("run", next((r for r in current if run_verified(r, head)), None)), ("runs", history)):
@@ -264,8 +274,6 @@ def v_decision(a):
                     json.dump(value, f)
             command = [sys.executable, "tools/status.py", "--subject", a.subject, "--run", os.path.join(tmp, "run"),
                        "--runs", os.path.join(tmp, "runs"), "--as-of", a.decision_ts]
-            if a.acts:
-                command += ["--acts", a.acts]
             result = run(*command).stdout
         lines = [line for line in result.splitlines() if line.startswith(f"promote {a.subject}:")]
         lines == [f"promote {a.subject}: lawful"] or refuse("\n".join(lines) or "status returned no promotion verdict")
@@ -306,7 +314,7 @@ def main(argv):
     for verb in ("status", "clerk"):
         sub.add_parser(verb, help=f"read-only {verb}; jack {verb} --help lists evidence inputs")
     for verb, specs in (("key", "declared --principal= --powers= --pubkey="), ("proposal", "--title"), ("merge", "n:int"),
-                        ("spec_conflict", "--section= --text="), ("push", "target --review= --opens"), ("decision", "kind subject --acts"),
+                        ("spec_conflict", "--section= --text="), ("push", "target --review= --opens"), ("decision", "kind subject"),
                         ("amend", "id file --activate-at:int"), ("forecast", "claim --p:int= --by= --type --args"),
                         ("resolve", "seq:int --outcome:int= --evidence="), ("score", "--as-of")):
         p = sub.add_parser(verb)

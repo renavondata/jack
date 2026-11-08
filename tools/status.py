@@ -138,7 +138,8 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None):
         start, end = instant(start), instant(end)
         window = subject
     else:
-        opened = next(e for e in es if e["type"] == "amend" and e["body"].get("id") == window)
+        opened = next((e for e in es if e["type"] == "amend" and e["body"].get("id") == window), None) or next(
+            (e for e in reversed(es) if e["type"] == "push"), es[0])
         opening, start = opened["seq"], instant(opened["ts"])
         end = start + dt.timedelta(days=days)
     closing = next((e for e in es if promotes(e, subject)), None)
@@ -165,7 +166,7 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None):
         "veto": any(e["type"] == "decision" and e["body"].get("kind") == "veto" and e["body"].get("subject") == subject for e in prefix),
         "j7_unresolved_past_due": len(late), "j7_denominator": len(fc),
         "overdue": overdue,
-        "opening": opening, "prefix": prefix,
+        "opening": opening, "prefix": prefix, "es": es,
     }
 
 
@@ -275,6 +276,10 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
 
 def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=None, decision=None):
     """One assessment for live status and a promotion's own prefix, tree and instant."""
+    from tools import window as win
+    target = decision["body"]["subject"] if decision is not None else subject
+    if win.has_file(root, rev, target):
+        return win.assess(es, subject, as_of, root, rev, run=run, runs=runs, acts=acts, mapping=mapping, decision=decision)
     if decision is not None:
         es = [e for e in es if e["seq"] <= decision["seq"]]
         as_of, subject = decision["ts"], decision["body"]["subject"]
@@ -351,6 +356,9 @@ def promotion_line(s):
 
 
 def render(s):
+    from tools import clerk, window as win
+    if s.get("from_window_file"):
+        return win.render(s)
     lines = [f"window {s['subject']}: {s['start']} .. {s['end']} (as of {s['as_of']}; prefix to seq {s['prefix_last_seq']})"]
     lines += [text + (" met" if ok else " STOP" if text.startswith("A3.4") else " SHORT") for ok, text in s["checks"]]
     lines += [f"map {k}: {v['principle']} | {v['enforcer']}" for k, v in sorted(s.get("map", {}).items())]
@@ -363,6 +371,9 @@ def render(s):
         lines += [f"value: E {v['E_value']:.6f} over {v['events']} events; window events {v['window_events']}",
                   "elections: " + " / ".join(f"{k} {float(w):.6f}" for k, w in weights.items()) + f"; below base: {below}",
                   f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
+    w1 = clerk.forecast_writs(s.get("es", s.get("prefix", [])), [], s["as_of"])
+    if w1:
+        lines.append(clerk.render(w1))
     lines = s.get("history", []) + lines
     return "\n".join(lines + s.get("repairs", []) + [promotion_line(s)])
 
@@ -372,7 +383,7 @@ def parser(description):
     ap.add_argument("--log", default=os.path.join(ROOT, "log.jsonl"), help="kernel-checked log (default repository log.jsonl)")
     ap.add_argument("--root", default=ROOT, help="local git repository for tree/history evidence (default this repository)")
     ap.add_argument("--as-of", default=dt.datetime.now(dt.timezone.utc).strftime(FMT), help="UTC YYYY-MM-DDTHH:MM:SSZ; default now")
-    ap.add_argument("--subject", choices=("C1a", "C1b", "C2a"), help="status defaults to the latest opened window")
+    ap.add_argument("--subject", help="status defaults to the latest opened window")
     ap.add_argument("--run", metavar="FILE", help="one Actions workflow-run JSON object for HEAD: tests.yml path, push event, main branch, "
                     "exact SHA, success conclusion, updated_at by as-of; absent leaves criteria 1/2 unverified")
     ap.add_argument("--runs", metavar="FILE", help="JSON array of Actions workflow_runs: historical promotion, attack and W3 witnesses; default empty")
@@ -410,6 +421,13 @@ def inputs(a):
             acts = list(reader)
     head = git_bytes(a.root, "rev-parse", "HEAD").decode().strip()
     subject = a.subject or ("C1b" if any(promotes(e, "C1a") for e in es) else "C1a")
+    if a.subject is None:
+        from tools import window as win
+        if any(e["type"] == "push" and e["seq"] > 337 for e in es):
+            subject = "C2a"
+        w_sub = win.default_subject(a.root, head, es)
+        if w_sub:
+            subject = w_sub
     return dict(es=es, rev=head, subject=subject, as_of=a.as_of, root=a.root, run=run, runs=runs, acts=acts, mapping=mapping)
 
 
@@ -438,8 +456,6 @@ def main(argv=None):
     a = ap.parse_args(argv)
     try:
         context = inputs(a)
-        if a.subject is None and any(e["type"] == "push" and e["seq"] > 337 for e in context["es"]):
-            context["subject"] = "C2a"
         s = report(**context)
         print(json.dumps(s, indent=1, default=str) if a.json else render(s))
     except (StopIteration, OSError, ValueError, subprocess.CalledProcessError) as exc:

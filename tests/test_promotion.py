@@ -67,6 +67,7 @@ class Promotion(SignedFixture):
                 self.assertEqual(json.load(f), run if status.run_verified(run, SHA) else None)
             return SimpleNamespace(stdout=text)
         with patch.object(jack, "begin"), patch.object(jack, "git", return_value=SHA), patch.object(jack, "run", side_effect=command), \
+                patch("tools.window.check_promote_gate", return_value=True), \
                 patch.object(jack, "main_ending") as ending, patch.object(jack, "append") as append:
             if text.splitlines()[-1] == "promote C1b: lawful":
                 jack.v_decision(a)
