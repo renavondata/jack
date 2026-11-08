@@ -69,3 +69,18 @@ class PushGate(unittest.TestCase):
         self.publish(self.accepted()); self.gate()
         self.rejected("judge/scope.json:.*meaningless", branch="origin/main")
         self.gate(layer=None, branch="origin/main")
+    def test_window_file_requires_numbers_readers_reviews_covering_both_files(self):
+        wfile = "transcripts/windows/C2b.json"
+        self.git("checkout", "-q", self.trunk); self.git("reset", "--hard", self.base)
+        self.write(wfile, '{"numbers":{"readers":2}}\n'); self.base = self.commit(); self.main()
+        self.publish(self.accepted(self.base))
+        self.rejected("1 of 2 required reviews accepted")
+        self.git("checkout", "-qB", "review2", self.trunk)
+        self.write("transcripts/REVIEW-C2b-v2.md", self.accepted(self.base)); head2 = self.commit()
+        lg = build.Log((self.repo / "log.jsonl").read_text().splitlines())
+        lg.add("proposal", "builder", build.proposal(commit=head2), self.world.parties["builder"])
+        self.write("log.jsonl", lg.text()); self.commit()
+        self.git("checkout", "-q", self.trunk); self.git("merge", "--no-ff", "-qm", "merge review2", "review2"); self.main()
+        self.gate()
+        self.write(wfile, '{"numbers":{"readers":2},"edited":true}\n'); self.commit(); self.main()
+        self.rejected("different bytes.*C2b.json")

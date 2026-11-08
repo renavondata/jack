@@ -21,8 +21,9 @@ class ClerkTest(SignedFixture):
         for now, escalated in ((NOW, False), (DUE, False), (LATE, True)):
             writs = clerk.forecast_writs(self.s.es, [], now)
             self.assertEqual([(w["seq"], w["holders"], w["deadline"], w["escalated"]) for w in writs],
-                             [(f, ("guy", "herald"), DUE, escalated)])
+                             [(3, ("guy", "herald"), DUE, escalated), (f, ("guy", "herald"), DUE, escalated)])
             self.assertEqual("ESCALATED to guy" in clerk.render(writs), escalated)
+        self.s.resolve(3)
         self.s.resolve(f)
         self.assertEqual(clerk.forecast_writs(self.s.es, [], LATE), [])
 
@@ -31,7 +32,7 @@ class ClerkTest(SignedFixture):
         before = copy.deepcopy(self.s.es)
         first = clerk.forecast_writs(self.s.es, [], NOW)
         second = clerk.forecast_writs(self.s.es, [], NOW)
-        self.assertEqual([w["seq"] for w in first], forecasts)
+        self.assertEqual([w["seq"] for w in first], [3] + forecasts)
         self.assertEqual(clerk.render(first).encode(), clerk.render(second).encode())
         self.assertEqual(before, self.s.es)
 

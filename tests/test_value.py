@@ -273,6 +273,7 @@ class Attacks(SignedFixture):
                 self.assertEqual(cmd[cmd.index("--subject")+1], "C2a")
                 return SimpleNamespace(stdout=st.render(s))
             with patch.object(jack, "begin"), patch.object(jack, "git", return_value=head), patch.object(jack, "run", side_effect=command), \
+                    patch("tools.window.check_promote_gate", return_value=True), \
                     patch.object(jack, "main_ending") as ending, patch.object(jack, "append") as append:
                 with self.assertRaises(jack.Refused):
                     jack.v_decision(a)

@@ -13,15 +13,16 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
-from tools import status  # noqa: E402
-from tools.status import c1b_window  # noqa: E402
+from tools import enforcement, status  # noqa: E402
 
 
 def forecast_writs(entries, runs, now):
     """Pure W1 projection; runs do not discharge a forecast."""
     es = [e for e in entries if e["ts"] <= now]
-    opening, _, _ = c1b_window(es)
-    keys = {d["key_id"]: d for d in es[0]["body"]["keys"]}
+    if not es:
+        return []
+    opening = -1
+    keys = {d["key_id"]: d for d in es[0]["body"].get("keys", [])}
     for e in es:
         if e["type"] == "key":
             keys[e["body"]["key_id"]] = e["body"]
@@ -38,7 +39,7 @@ def forecast_writs(entries, runs, now):
 def writ(es, kind, obligation, deadline, now, seq=None, holders=("counsel",)):
     return {"class": kind, "seq": seq, "obligation": obligation, "holders": holders,
             "deadline": deadline, "escalated": deadline < now,
-            "sovereign": ",".join(sorted({d["principal"] for d in es[0]["body"]["keys"]}))}
+            "sovereign": ",".join(sorted({d["principal"] for d in (es[0]["body"].get("keys", []) if es else [])}))}
 
 
 def merge_writs(es, runs, now, deadline, counsel_open):
@@ -50,10 +51,27 @@ def merge_writs(es, runs, now, deadline, counsel_open):
             not any(re.search(rf"\bW3 merge {e['seq']}\b", row) for row in rows)]
 
 
+def hand_row_writs(es, mapping, start_ts, end_ts, numbers, now):
+    enforcement.check_map(mapping, numbers)
+    out = []
+    for k, row in mapping.items():
+        if row.get("enforcer", "").startswith("hand:"):
+            dl = enforcement.resolve_deadline(row["deadline"], start_ts, end_ts, numbers)
+            out.append(writ(es, "W4", f"hand-row {k} deadline {dl}", dl, now))
+    return out
+
+
 def window_writs(es, s, now):
     lines = status.unmet(s) + s.get("repairs", [])
     lines += [f"overdue forecast {seq} ({who}) due {by}" for by, seq, who, _ in s["overdue"]]
-    return [writ(es, "W4", text, s["end"], now) for text in lines]
+    writs = [writ(es, "W4", text, s["end"], now) for text in lines]
+    mapping = s.get("map")
+    if mapping and (s.get("from_window_file") or (
+            any(isinstance(r, dict) and "deadline" in r for r in mapping.values()) and
+            not (s.get("subject") == "C1b" and not s.get("numbers") and
+                 any(isinstance(r, dict) and str(r.get("deadline", "")).startswith("opening+") for r in mapping.values())))):
+        writs += hand_row_writs(es, mapping, s["start"], s["end"], s.get("numbers"), now)
+    return writs
 
 
 def render(writs):
@@ -78,7 +96,10 @@ def main(argv=None):
                 precedents = status.tree_bytes(a.root, context["rev"], "transcripts/COUNSEL-OPEN.md").decode()
         except (FileNotFoundError, subprocess.CalledProcessError):
             precedents = ""
-        forecasts = forecast_writs(es, runs, a.as_of) if s["subject"] == "C1b" else []
+        if context.get("mapping") is not None:
+            enforcement.check_map(context["mapping"], s.get("numbers"))
+            s["map"] = context["mapping"]
+        forecasts = forecast_writs(es, runs, a.as_of)
         print(render(forecasts + merge_writs(es, runs, a.as_of, s["end"], precedents) + window_writs(es, s, a.as_of)))
     except (StopIteration, OSError, ValueError, subprocess.CalledProcessError) as exc:
         raise SystemExit(f"clerk unverified: {exc or 'window opening or L0 missing'}")
