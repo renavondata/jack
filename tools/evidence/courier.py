@@ -24,12 +24,11 @@ def run_log_lines(run_id, conclusion):
 
 
 def extract_receipts(lines, trigger_ids=None):
-    seen, out = set(), []
+    out = []
     for raw in lines:
         cleaned = TS_PREFIX.sub("", raw.strip())
         m = RECEIPT_RE.match(cleaned)
-        if m and (not trigger_ids or m.group(1) in trigger_ids) and cleaned not in seen:
-            seen.add(cleaned)
+        if m and (not trigger_ids or m.group(1) in trigger_ids):
             out.append(cleaned)
     return out
 
