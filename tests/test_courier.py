@@ -430,6 +430,14 @@ class CourierTest(unittest.TestCase):
         with open(os.path.join(home1, ".ssh", "known_hosts"), encoding="utf-8") as f:
             self.assertEqual(f.read(), known_hosts)
 
+        # The host keys must come from GitHub Meta; no embedded fallback is accepted.
+        stg_meta, old_meta, root_meta = make_fixture("meta-failure")
+        write_file(os.path.join(self.stubs, "curl"), "#!/bin/sh\nexit 1\n", 0o755)
+        meta = subprocess.run([install_sh, "--root", root_meta, "--staging", stg_meta, "--old-home", old_meta], env=self.env, capture_output=True, text=True)
+        self.assertNotEqual(meta.returncode, 0)
+        self.assertIn("GitHub Meta", meta.stdout + meta.stderr)
+        write_file(os.path.join(self.stubs, "curl"), '#!/bin/sh\necho \'{"ssh_keys":["ssh-ed25519 AAAATESTKEY"]}\'\n', 0o755)
+
         # Twin 2: hosts.yml added to staging -> stops with that name and writes nothing
         stg2, old2, root2 = make_fixture("twin2")
         write_file(os.path.join(stg2, "hosts.yml"), "oauth_token: secret\n")
