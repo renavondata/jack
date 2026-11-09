@@ -126,6 +126,9 @@ class EvidenceScriptsTest(unittest.TestCase):
             _, rows = acts.collect_acts("renavondata/jack", "2026-11-08T01:00:30Z", "2026-11-08T01:01:30Z")
         self.assertEqual(len(rows), 1)
 
+        with self.assertRaisesRegex(SystemExit, "after collection instant"):
+            acts.main(["C2c-1", "renavondata/jack", "20261108T0401"])
+
     def test_acts_keeps_an_event_in_the_opening_minute(self):
         event = {"id": 1, "event": "closed", "actor": {"login": "gfrmin"},
                  "created_at": "2026-11-08T01:00:01Z",
@@ -261,6 +264,16 @@ class EvidenceScriptsTest(unittest.TestCase):
                 kwargs["stdout"].write(zbuf.getvalue()), subprocess.CompletedProcess([], 0, stderr=b""))[1]):
             with self.assertRaisesRegex(SystemExit, "more than"):
                 list(courier.run_log_lines(101, "success"))
+
+    def test_courier_refuses_receipts_too_large(self):
+        line = "request: request sha256 " + "0" * 64
+        with mock.patch.object(courier, "MAX_RECEIPT_BYTES", len(line.encode("utf-8"))):
+            with self.assertRaisesRegex(SystemExit, "receipts exceed"):
+                courier.extract_receipts([line, line])
+
+    def test_runner_refuses_a_future_stamp(self):
+        with self.assertRaisesRegex(SystemExit, "after collection instant"):
+            runner.main(["20261108T0401"])
 
     def test_courier_fetches_every_commit_files_page(self):
         first = [{"filename": f"other/{n}", "status": "added"} for n in range(100)]

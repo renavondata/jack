@@ -10,6 +10,7 @@ TS_PREFIX = re.compile(r"^\ufeff?\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z\
 RECEIPT_RE = re.compile(r"^([A-Za-z0-9._-]+):\s+.*\brequest sha256 [0-9a-fA-F]{64}\b")
 MAX_LOG_MEMBERS = 1000
 MAX_COMMIT_FILE_PAGES = 100
+MAX_RECEIPT_BYTES = 64 * 1024 * 1024
 
 
 def run_log_lines(run_id, conclusion):
@@ -34,11 +35,14 @@ def run_log_lines(run_id, conclusion):
 
 
 def extract_receipts(lines):
-    out = []
+    out, size = [], 0
     for raw in lines:
         cleaned = TS_PREFIX.sub("", raw.strip())
         m = RECEIPT_RE.match(cleaned)
         if m:
+            size += len(cleaned.encode("utf-8"))
+            if size > MAX_RECEIPT_BYTES:
+                raise SystemExit(f"refused: courier receipts exceed {MAX_RECEIPT_BYTES} bytes")
             out.append(cleaned)
     return out
 
