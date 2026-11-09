@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 105
+EXPECTED = 107
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1063,7 +1063,7 @@ PINS += C2B_GATE_PINS
 
 # --- C2c-1 window pins (BRIEF-C2c-1 §3; runner texts) -----------------------
 
-from pins.c2c_1 import c2c_tests, courier_tests
+from pins.c2c_1 import c2c_tests, courier_tests, one_stated_end, one_writ_function
 
 C2C1_PINS = [
     Pin("numerals_housed", c2c_tests("tests.test_c2c_1.R1NumeralsAndR9Binding.test_r1_numerals_housed_twins_and_mutants"), [
@@ -1073,6 +1073,17 @@ C2C1_PINS = [
         Mutant("missing_acts_not_unknown", "tools/window.py", "        if pair is None:\n            return \"unknown (no acts)\"\n", "        if False:\n            return \"unknown (no acts)\"\n")]),
     Pin("window_from_file", c2c_tests("tests.test_c2c_1.R2R4R8CriteriaAndWrits.test_r2_window_from_file_twins"), [
         Mutant("criteria_ignored", "tools/window.py", "    criterion_lines = []\n    checks = []\n    for c in wfile.get(\"criteria\", []):\n", "    criterion_lines = []\n    checks = []\n    for c in []:\n")]),
+    Pin("one_stated_end", one_stated_end, [
+        Mutant("second_forecast_selected", "tools/window.py", "    return next((e for e in es if e[\"seq\"] < opening_seq and e[\"type\"] == \"forecast\" and\n", "    return next((e for e in reversed(es) if e[\"seq\"] < opening_seq and e[\"type\"] == \"forecast\" and\n"),
+        Mutant("non_counsel_forecast_selected", "tools/window.py", 'e["proposer"] == who and e["body"].get("type") == typ and', 'True and e["body"].get("type") == typ and'),
+        Mutant("wrong_type_selected", "tools/window.py", 'e["body"].get("type") == typ and', "True and"),
+        Mutant("forecast_after_opening_selected", "tools/window.py", "    return next((e for e in es if e[\"seq\"] < opening_seq and e[\"type\"] == \"forecast\" and\n", "    return next((e for e in es if e[\"seq\"] > opening_seq and e[\"type\"] == \"forecast\" and\n"),
+        Mutant("promotion_id_unchecked", "tools/window.py", '(e["body"].get("args") or {}).get("id") == fid', "True")]),
+    Pin("one_writ_function", one_writ_function, [
+        Mutant("w1_from_c1b_only", "tools/clerk.py", "    opening = -1\n", "    opening = 337\n"),
+        Mutant("w1_only_when_overdue", "tools/clerk.py", "        if e[\"type\"] == \"forecast\" and e[\"seq\"] > opening and e[\"seq\"] not in resolved:\n", "        if e[\"type\"] == \"forecast\" and e[\"seq\"] > opening and e[\"seq\"] not in resolved and e[\"body\"][\"resolves_by\"] < now:\n"),
+        Mutant("every_w1_escalated", "tools/clerk.py", '"escalated": deadline < now,', '"escalated": True,'),
+        Mutant("resolved_forecasts_listed", "tools/clerk.py", " and e[\"seq\"] not in resolved", "" )]),
     Pin("undertakings_are_forecasts", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r5_undertakings_are_forecasts_twins"), [
         Mutant("inventory_ignored", "tools/window.py", "            if row[\"due\"] > start:\n", "            if False:\n")]),
     Pin("escalation_recorded", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r6_escalation_recorded_and_red_line_twins"), [
