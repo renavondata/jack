@@ -213,6 +213,8 @@ def main(argv=None):
     start_iso, end_iso = opening_instant(window_name, root=root), stamp_to_iso(stamp)
     if t(end_iso) < t(start_iso):
         raise SystemExit(f"refused: stamp {end_iso} precedes window {window_name} opening {start_iso}")
+    if t(end_iso) > t(now_iso()):
+        raise SystemExit(f"refused: stamp {end_iso} is after collection instant {now_iso()}")
     raw_acts, attributed = collect_acts(repo, start_iso, end_iso)
     ev_dir = os.path.join(root, "transcripts", "evidence")
     os.makedirs(ev_dir, exist_ok=True)

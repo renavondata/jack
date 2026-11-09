@@ -126,6 +126,9 @@ class EvidenceScriptsTest(unittest.TestCase):
             _, rows = acts.collect_acts("renavondata/jack", "2026-11-08T01:00:30Z", "2026-11-08T01:01:30Z")
         self.assertEqual(len(rows), 1)
 
+        with self.assertRaisesRegex(SystemExit, "after collection instant"):
+            acts.main(["C2c-1", "renavondata/jack", "20261108T0401"])
+
     def test_acts_keeps_an_event_in_the_opening_minute(self):
         event = {"id": 1, "event": "closed", "actor": {"login": "gfrmin"},
                  "created_at": "2026-11-08T01:00:01Z",
@@ -150,16 +153,16 @@ class EvidenceScriptsTest(unittest.TestCase):
             json.dump({"through": "2026-11-01T00:00:00Z", "rows": [{"forecast": 999, "issue": 1}]}, f)
 
         issues_data = [
-            {"number": 450, "title": "builder: resolve the writs due — 1 listed",
+            {"number": 450, "title": "resolve the writs due",
              "created_at": "2026-11-07T14:00:00Z", "user": {"login": "renavondata-jack-court[bot]"},
              "body": f"list\n\ndue-seqs: {self.fc_handed}\n"},
-            {"number": 451, "title": "builder: resolve the writs due — forged",
+            {"number": 451, "title": "resolve the writs due",
              "created_at": "2026-11-08T01:40:00Z", "user": {"login": "assize-reviewer"},
              "body": f"due-seqs: {self.fc_escalated}\n"},
-            {"number": 452, "title": "reviewer: resolve the writs due — 1 listed",
+            {"number": 452, "title": "resolve the writs due",
              "created_at": "2026-11-08T02:00:00Z", "user": {"login": "renavondata-jack-court[bot]"},
              "body": f"due-seqs: {self.fc_escalated}\n"},
-            {"number": 449, "title": "builder: resolve the writs due — too early (>12h before opening)",
+            {"number": 449, "title": "resolve the writs due",
              "created_at": "2026-11-07T12:59:59Z", "user": {"login": "renavondata-jack-court[bot]"},
              "body": f"due-seqs: {self.fc_handed}\n"},
         ]
@@ -178,6 +181,14 @@ class EvidenceScriptsTest(unittest.TestCase):
             {"forecast": self.fc_escalated, "issue": 452, "filed_at": "2026-11-08T02:00:00Z",
              "kind": "escalated", "user": "renavondata-jack-court[bot]"},
         ])
+
+    def test_escalations_requires_the_exact_diary_title(self):
+        issue = {"number": 453, "title": "builder: resolve the writs due", "created_at": T_NOW,
+                 "user": {"login": "renavondata-jack-court[bot]"}, "body": f"due-seqs: {self.fc_handed}"}
+        with mock.patch.object(escalations, "pages", return_value=iter([issue])):
+            data, ignored = escalations.build_escalations("C2c-1", root=self.root, through=T_NOW)
+        self.assertEqual(data["rows"], [])
+        self.assertEqual(ignored, [])
 
     def test_runner_and_courier_evidence(self):
         wf_bytes = {"counsel-sign.yml": b"name: counsel-sign\n", "counsel.yml": b"name: counsel\n"}
@@ -239,6 +250,38 @@ class EvidenceScriptsTest(unittest.TestCase):
             }],
             "receipts": [receipt_line, receipt_line, receipt_line],
         })
+
+    def test_courier_refuses_incomplete_logs_and_excessive_members(self):
+        with mock.patch.object(subprocess, "run", return_value=subprocess.CompletedProcess([], 1, stderr=b"not ready")):
+            with self.assertRaisesRegex(SystemExit, "not ready"):
+                list(courier.run_log_lines(101, None))
+
+        zbuf = io.BytesIO()
+        with zipfile.ZipFile(zbuf, "w") as z:
+            for n in range(courier.MAX_LOG_MEMBERS + 1):
+                z.writestr(f"{n}.txt", "")
+        with mock.patch.object(subprocess, "run", side_effect=lambda *args, **kwargs: (
+                kwargs["stdout"].write(zbuf.getvalue()), subprocess.CompletedProcess([], 0, stderr=b""))[1]):
+            with self.assertRaisesRegex(SystemExit, "more than"):
+                list(courier.run_log_lines(101, "success"))
+
+    def test_courier_refuses_receipts_too_large(self):
+        line = "request: request sha256 " + "0" * 64
+        with mock.patch.object(courier, "MAX_RECEIPT_BYTES", len(line.encode("utf-8"))):
+            with self.assertRaisesRegex(SystemExit, "receipts exceed"):
+                courier.extract_receipts([line, line])
+
+    def test_runner_refuses_a_future_stamp(self):
+        with self.assertRaisesRegex(SystemExit, "after collection instant"):
+            runner.main(["20261108T0401"])
+
+    def test_courier_fetches_every_commit_files_page(self):
+        first = [{"filename": f"other/{n}", "status": "added"} for n in range(100)]
+        second = [{"filename": "requests/sign-row-48.json", "status": "added"}]
+        def fake_api(path):
+            return {"files": first if path.endswith("page=1") else second}
+        with mock.patch.object(courier, "api", side_effect=fake_api):
+            self.assertEqual(courier.commit_files("deadbeef"), first + second)
 
 
 if __name__ == "__main__":

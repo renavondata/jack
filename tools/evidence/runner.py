@@ -3,7 +3,7 @@
 (transcripts/sessions/evidence.md step 3; transcripts/runner/README.md; C2c-1.json evidence.runner)."""
 import hashlib, json, os, subprocess, sys  # noqa: E401
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from acts import api, current_stamp, root_dir  # noqa: E402
+from acts import api, current_stamp, now_iso, root_dir, stamp_to_iso, t  # noqa: E402
 
 RUNNER = "renavondata/opencode-runner"
 
@@ -34,6 +34,9 @@ def main(argv=None):
         raise SystemExit("usage: runner.py [stamp]")
     root = root_dir()
     stamp = current_stamp(root, args[0] if args else None)
+    stamp_iso = stamp_to_iso(stamp)
+    if t(stamp_iso) > t(now_iso()):
+        raise SystemExit(f"refused: stamp {stamp_iso} is after collection instant {now_iso()}")
     workflows = collect_runner_workflows()
     out_path = os.path.join(root, "transcripts", "evidence", f"runner-{stamp}.json")
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
