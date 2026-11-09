@@ -531,13 +531,15 @@ def evaluate_criterion(c, ctx):
                     if status_code != "ok":
                         return "unmet"
                     for p in c_paths - {"log.jsonl"}:
-                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):
+                        if any(p.startswith(fp) for fp in f_paths) and (tree_bytes_opt(root, c_sha, p) is None or
+                                                                        not any(p.startswith(ap) for ap in allowed)):
                             return "unmet"
                 status_code, merge_paths = attribute_commit(root, m_sha, p1, anc_p1)
                 if status_code != "ok":
                     return "unmet"
                 for p in merge_paths - {"log.jsonl"}:
-                    if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):
+                    if any(p.startswith(fp) for fp in f_paths) and (tree_bytes_opt(root, m_sha, p) is None or
+                                                                      not any(p.startswith(ap) for ap in allowed)):
                         return "unmet"
         return "met"
 
