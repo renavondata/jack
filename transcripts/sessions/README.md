@@ -33,6 +33,15 @@ The templates in this directory are procedure (the sovereign's ruling of 9 Novem
   opening gate reads (`VERDICT:` first, `Reviewed tree:` a commit on `main`; BRIEF-C2c-1 §2, precondition 3), under
   the reviewer's key; always a proposal, the file being a transcript (C2c-1; the same placeholders; filed by counsel
   through the courier's template form).
+- `assemble.md` — the builder assembles a window's opening push branch `push-<window>` once the decision its window file's
+  `opens` names is on `main`'s log: `reviewer-<window>-pins` — checked to hold every `builder-<window>-*` head — brought in as one trailered commit, conflicts under the merge rule, the
+  one trusted-base change the brief allows (`judge/scope.json`'s `cap` at the file's `numbers.counted_cap`, SPEC §10's block and the
+  cap's history clause), the opening note `transcripts/PUSH-<window>-opening.md`, tests, pins and the count against the cap; pushed,
+  never proposed — the sovereign's `jack push <branch> --opens <window>` moves `main` (BRIEF-C2c-1 §2, §7; the same placeholders;
+  filed by counsel through the courier's template form).
+- `code-review.md` — the reviewer reads the assembled push branch cold against the texts and, on PASS, commits
+  `transcripts/REVIEW-<window>-code.md` on that branch for the sovereign's `--review` (RUNBOOK, `jack push`; C2a-prime's precedent);
+  not proposed (the same placeholders; filed by counsel through the courier's template form).
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
   under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
   before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,
