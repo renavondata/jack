@@ -1152,8 +1152,8 @@ C2A_PINS = [
     Pin("bounded_difference", value_tests("bounded_difference"), [
         Mutant("no_clip", "tools/value.py", 'return min(Fraction(per_mille[1], per_mille[0]), max(Fraction(1, per_mille[0]), p))', 'return p')]),
     Pin("lambda_predictable", value_tests("lambda_predictable"), [
-        Mutant("current_item_in_lambda", "tools/value.py", 'x, lam = difference(q, b, y), stake(prior)',
-               'x, lam = difference(q, b, y), stake(prior + [difference(q, b, y)])')]),
+        Mutant("current_item_in_lambda", "tools/value.py", 'x, lam = difference(q, b, y, table_values), stake(prior, table_values)',
+               'x, lam = difference(q, b, y, table_values), stake(prior + [difference(q, b, y, table_values)], table_values)')]),
     Pin("factor_algebra", c2a_cases("factor_tree"), [
         Mutant("factor_plus_one_fiftieth", "tools/value.py", 'return 1 + lam * x', 'return 1 + lam * x + 1/50')]),
     Pin("window_from_the_push", c2a_cases("opening_merge"), [

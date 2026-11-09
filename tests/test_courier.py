@@ -378,11 +378,7 @@ class CourierTest(unittest.TestCase):
             "requests/07-close-jack.json": {"id": "07-close-jack", "act": "close", "repo": "renavondata/jack", "number": 1, "stale": "superseded"},
             "requests/08-close-runner.json": {"id": "08-close-runner", "act": "close", "repo": "renavondata/opencode-runner", "number": 2, "stale": "done"},
             "requests/09-issue-dedup.json": {"id": "03-issue-direct", "act": "issue", "title": "Reader",
-<<<<<<< HEAD
-                                             "body": "model: google/gemini-4-argon\nhello", "labels": ["read"], "then_labels": ["run", "extra"]},
-=======
-                                             "body": "hello", "labels": ["read"], "then_labels": ["run", "extra"]},
->>>>>>> origin/builder-c2c-1-courier
+                                              "body": "hello", "labels": ["read"], "then_labels": ["run", "extra"]},
         }
         prs = [{"number": 1, "head": "counsel/old", "title": "Old", "body": "", "state": "open", "user": "assize-reviewer"}]
         issues = {"renavondata/jack": [{"number": 1, "state": "open", "user": {"login": "assize-reviewer"}, "pull_request": {}}]}
