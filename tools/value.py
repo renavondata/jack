@@ -15,6 +15,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tools.entry import now, read_log, resolution_rates
 from kernel import check, log
 
+EVENT_TABLE_VALUES = None
+
 
 def tables():
     """R1's numeric tables are opened only by the window module."""
@@ -22,8 +24,8 @@ def tables():
     return value_tables()
 
 
-def clip(p):
-    _, spec, _ = tables()
+def clip(p, table_values=None):
+    _, spec, _ = table_values or tables()
     per_mille = spec["per_mille"]
     return min(Fraction(per_mille[1], per_mille[0]), max(Fraction(1, per_mille[0]), p))
 
@@ -34,7 +36,7 @@ def event(f):
     a, typ = body.get("args", {}), body.get("type")
     if typ == "world.renavon" and a.get("stream") == "freshness":
         w = a.get("window_utc")
-        _, spec, _ = tables()
+        _, spec, _ = EVENT_TABLE_VALUES or tables()
         if isinstance(a.get("dataset"), str) and isinstance(w, (list, tuple)) and len(w) == spec["laplace"][1] and all(log.instant(t) for t in w) and w[0] < w[1]:
             return (typ, "freshness", a["dataset"], tuple(w)), w[0]
     if typ == "world.hkjc" and isinstance(a.get("meeting"), str) and type(a.get("race")) is int and log.instant(a.get("off_utc")):
@@ -44,8 +46,8 @@ def event(f):
     return None
 
 
-def opening_push(es):
-    _, _, history = tables()
+def opening_push(es, table_values=None):
+    _, _, history = table_values or tables()
     return next(e for e in es if e["type"] == "push" and e["seq"] > history["c1b_last_seq"][0])
 
 
@@ -67,13 +69,13 @@ def likelihood(p, y):
     return p if y else 1 - p
 
 
-def difference(q, b, y):
-    _, spec, _ = tables()
+def difference(q, b, y, table_values=None):
+    _, spec, _ = table_values or tables()
     return math.log(likelihood(q, y) / likelihood(b, y)) / math.log(spec["per_mille"][1])
 
 
-def stake(prior):
-    _, spec, _ = tables()
+def stake(prior, table_values=None):
+    _, spec, _ = table_values or tables()
     one, two = spec["laplace"][0], spec["laplace"][1]
     return min(max(Fraction(0), sum(prior) / (two + sum(x * x for x in prior))),
                float(one) - float(one) / (len(prior) + two))
@@ -83,10 +85,12 @@ def factor(lam, x):
     return 1 + lam * x
 
 
-def value(es, opening=None, as_of=None, attack_green=None, no_attack_gate=False, window_opening=None):
+def value(es, opening=None, as_of=None, attack_green=None, no_attack_gate=False, window_opening=None, table_values=None):
     """One continuing ledger; window_opening selects diagnostics only, never resets it."""
+    global EVENT_TABLE_VALUES
+    EVENT_TABLE_VALUES = table_values
     es = sorted((e for e in es if as_of is None or e["ts"] <= as_of), key=lambda e: e["seq"])
-    opening = opening or opening_push(es)["ts"]
+    opening = opening or opening_push(es, table_values)["ts"]
     window_opening = window_opening or opening
     roster = roster_at(es, opening)
     weights = {k: Fraction(1, len(roster)) for k in roster}
@@ -120,8 +124,8 @@ def value(es, opening=None, as_of=None, attack_green=None, no_attack_gate=False,
             if reason:
                 excluded.append((f["seq"], reason))
             else:
-                _, spec, _ = tables()
-                g["forecasts"][who] = (f["seq"], clip(Fraction(f["body"]["p"], spec["per_mille"][0])))
+                _, spec, _ = table_values or tables()
+                g["forecasts"][who] = (f["seq"], clip(Fraction(f["body"]["p"], spec["per_mille"][0]), table_values))
     rows, prior, omitted, wealth, mixture_lr = [], [], [], Fraction(1), Fraction(1)
     for r, f, raw_base, counts in rates:
         identity = event(f)
@@ -134,10 +138,10 @@ def value(es, opening=None, as_of=None, attack_green=None, no_attack_gate=False,
         if cutoff <= opening or not no_attack_gate and (attack_green is None or cutoff <= attack_green):
             omitted.append((r["seq"], key, "before opening/attack green"))
             continue
-        b, y = clip(raw_base), r["body"]["outcome"]
+        b, y = clip(raw_base, table_values), r["body"]["outcome"]
         ps = {k: g["forecasts"].get(k, (None, b))[1] for k in roster}
         q = sum((weights[k] * ps[k] for k in roster), Fraction(0))
-        x, lam = difference(q, b, y), stake(prior)
+        x, lam = difference(q, b, y, table_values), stake(prior, table_values)
         step = factor(lam, x)
         wealth *= step
         rows.append(dict(key=key, cutoff=cutoff, resolution_seq=r["seq"], Y=y, base=b, base_counts=counts,

@@ -33,6 +33,19 @@ def window_path(subject):
     return f"{WINDOWS_DIR}/{subject}.json"
 
 
+def opening_review_requirement(root, layer):
+    """Read the opening's review requirement; callers never parse window files."""
+    brief = f"transcripts/BRIEF-{layer}-draft.md"
+    raw = tree_bytes_opt(root, "origin/main", window_path(layer))
+    if raw is None:
+        return brief, None, None, 1
+    wfile = json.loads(raw)
+    needed = wfile.get("numbers", {}).get("readers")
+    if type(needed) is not int or needed < 1:
+        raise ValueError(f"{window_path(layer)}: invalid numbers.readers")
+    return brief, window_path(layer), raw, needed
+
+
 def git_lines(root, *args):
     r = subprocess.run(["git", "-C", root, *args], capture_output=True, text=True)
     return r.stdout.splitlines() if r.returncode == 0 else []
@@ -554,7 +567,9 @@ def evaluate_criterion(c, ctx):
             except StopIteration:
                 first_open = next((e["ts"] for e in prefix if e["type"] == "push"), start)
             gate = st.attack_start(root, runs, end_eff, "tests/test_value.py")
-            v_gate = val.value(prefix, opening=first_open, as_of=end_eff, attack_green=gate, window_opening=start)
+            tables = (numbers, wfile["spec_constants"], wfile["history"])
+            v_gate = val.value(prefix, opening=first_open, as_of=end_eff, attack_green=gate,
+                               window_opening=start, table_values=tables)
             ok = (st.run_verified(run, rev) and st.completed_by(run, as_of) and
                   gate is not None and all(gate < r["cutoff"] for r in v_gate["rows"]) and v_gate["E_value"] >= thresh)
             return "met" if ok else "unmet"
