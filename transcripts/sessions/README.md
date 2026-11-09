@@ -19,9 +19,20 @@ repository at dispatch time. Placeholders in braces are filled by the dispatcher
 - `stream-resolve.md` — the builder resolves the freshness forecasts whose window has ended (hourly, at ten past;
   superseded by `due-resolve.md`).
 - `repropose.md` — a party re-enters a stale pull request's content and entries on a fresh prefix.
-- `build.md` — the builder builds to named texts on `main` on a named branch (`{TEXTS}`, `{BRANCH}`, `{MODEL}`);
-  filed by counsel through the courier's acts job in its template form, so that a builder-keyed session's prompt is
-  always a text on `main` and never a body counsel wrote (C2c-1).
+- `build.md` — the builder builds to named texts on `main` on a named branch (`{TEXTS}`, `{BRANCH}`, `{MODEL}`,
+  `{WINDOW}`); filed by counsel through the courier's acts job in its template form, so that a builder-keyed
+  session's prompt is always a text on `main` and never a body counsel wrote (C2c-1). Before the window opens the
+  branch is pushed and not proposed: the deliverables ride the opening push (BRIEF-C2c-1 §2); after it, a proposal.
+The templates in this directory are procedure (the sovereign's ruling of 9 November, 14:02 HKT): counsel proposes changes to them with readers' reads, and no read of the sovereign's precedes a session filed from them; what the sovereign reads before a build is a deliverable text — a brief, a window file, a runner text.
+
+- `pins.md` — the reviewer writes the pins the named texts name, each twin passing on the builder's pre-built
+  branches merged into the reviewer's worktree, each mutant the present code or the variant the text names; the
+  same placeholders and the same rule on where the branch goes (C2c-1; filed by counsel through the courier's
+  template form).
+- `review.md` — the reviewer reads the named texts on `main` and, on PASS, writes and proposes the review file the
+  opening gate reads (`VERDICT:` first, `Reviewed tree:` a commit on `main`; BRIEF-C2c-1 §2, precondition 3), under
+  the reviewer's key; always a proposal, the file being a transcript (C2c-1; the same placeholders; filed by counsel
+  through the courier's template form).
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
   under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
   before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,
