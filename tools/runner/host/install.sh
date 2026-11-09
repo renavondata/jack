@@ -35,7 +35,9 @@ write_memory_dropin() {
   unit=$(runner_unit "$1")
   dir="/etc/systemd/system/$unit.d"
   mkdir -p "$dir"
-  printf '[Service]\nOOMPolicy=continue\nMemoryMax=12G\nMemorySwapMax=1G\n' > "$dir/memory.conf"
+  if [ ! -f "$dir/memory.conf" ] || ! printf '[Service]\nOOMPolicy=continue\nMemoryMax=12G\nMemorySwapMax=1G\n' | cmp -s - "$dir/memory.conf"; then
+    printf '[Service]\nOOMPolicy=continue\nMemoryMax=12G\nMemorySwapMax=1G\n' > "$dir/memory.conf"
+  fi
 }
 
 ! pgrep -f "$OLD/.local/share/actions-runner-[^/]*/bin/Runner.Worker" >/dev/null 2>&1 || { echo "refused: Runner.Worker is running under $OLD" >&2; exit 1; }
