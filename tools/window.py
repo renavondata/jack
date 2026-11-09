@@ -724,8 +724,9 @@ def evaluate_criterion(c, ctx):
                 if row["id"] in ctx["expired_undertakings"]:
                     return "unmet"
                 matched = any((f["body"].get("args") or {}).get("id") == row["id"] and
-                              (f["body"].get("args") or {}).get("window") == ctx["subject"] and
-                              f["body"]["resolves_by"] <= row["due"] for f in undertakings)
+                               (f["body"].get("args") or {}).get("window") == ctx["subject"] and
+                               f["seq"] < ctx["opening"] and
+                               f["body"]["resolves_by"] <= row["due"] for f in undertakings)
                 if not matched:
                     return "unmet"
         res_by_fc = {e["body"]["forecast"]: e for e in prefix if e["type"] == "resolution"}
@@ -911,8 +912,9 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
     exit_proc = proc + int(not any(st.promotes(e, subject) for e in prefix))
 
     ctx = {"root": root, "rev": rev, "opening_rev": open_rev, "wfile": wfile, "subject": subject,
-           "as_of": as_of, "start": start, "end": end, "prefix": prefix, "inw": inw,
-           "run": run, "runs": runs, "acts": pair, "escalations": escalations, "runner": runner_ev,
+            "as_of": as_of, "start": start, "end": end, "prefix": prefix, "inw": inw,
+            "opening": opening_seq,
+            "run": run, "runs": runs, "acts": pair, "escalations": escalations, "runner": runner_ev,
            "expired_undertakings": expired_ids, "procedure": proc, "object": obj, "exit_procedure": exit_proc}
 
     criterion_lines = []

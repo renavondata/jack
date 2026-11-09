@@ -359,6 +359,7 @@ def render(s):
     from tools import window as win
     if s.get("from_window_file"):
         return win.render(s)
+    from tools import clerk
     lines = [f"window {s['subject']}: {s['start']} .. {s['end']} (as of {s['as_of']}; prefix to seq {s['prefix_last_seq']})"]
     lines += [text + (" met" if ok else " STOP" if text.startswith("A3.4") else " SHORT") for ok, text in s["checks"]]
     lines += [f"map {k}: {v['principle']} | {v['enforcer']}" for k, v in sorted(s.get("map", {}).items())]
@@ -369,8 +370,11 @@ def render(s):
         weights = v["window_weights"]
         below = ", ".join(k for k in weights if weights[k] < weights["base"]) or "none"
         lines += [f"value: E {v['E_value']:.6f} over {v['events']} events; window events {v['window_events']}",
-                  "elections: " + " / ".join(f"{k} {float(w):.6f}" for k, w in weights.items()) + f"; below base: {below}",
-                  f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
+                   "elections: " + " / ".join(f"{k} {float(w):.6f}" for k, w in weights.items()) + f"; below base: {below}",
+                   f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
+    w1 = clerk.render(clerk.forecast_writs(s["es"], [], s["as_of"]))
+    if w1:
+        lines.append(w1)
     lines = s.get("history", []) + lines
     return "\n".join(lines + s.get("repairs", []) + [promotion_line(s)])
 
