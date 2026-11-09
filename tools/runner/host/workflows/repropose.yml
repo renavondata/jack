@@ -1,0 +1,56 @@
+# Re-propose a stale jack pull request without a model. The herald dispatches this when it closes a PR as stale:
+# .github/scripts/repropose.py re-applies the PR's evidence files and re-enters its forecasts and resolutions with
+# the jack verbs under the same party's key on the current main, then proposes. It skips by rule only (a forecast
+# of a window begun or past its deadline; a resolution main already holds). Anything unexpected exits 2, and this
+# job then files the model session the herald used to file (transcripts/sessions/repropose.md), so nothing is
+# lost by trying the machine first. On 3 Nov a model re-proposal skipped six resolutions as if they were forecasts.
+# GH_TOKEN is never set: the App proposes and files, as in run.yml.
+name: repropose
+on:
+  workflow_dispatch:
+    inputs:
+      n: {description: "stale PR number", required: true}
+      branch: {description: "stale PR head branch", required: true}
+      party: {description: "builder or reviewer", required: true}
+      title: {description: "stale PR title", required: true}
+permissions:
+  contents: read
+concurrency:
+  group: repropose-${{ inputs.n }}
+  cancel-in-progress: false
+jobs:
+  repropose:
+    runs-on: [self-hosted, opencode]
+    timeout-minutes: 30
+    env:
+      N: ${{ inputs.n }}
+      BRANCH: ${{ inputs.branch }}
+      PARTY: ${{ inputs.party }}
+      TITLE: ${{ inputs.title }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Re-make the entries on main and propose
+        run: |
+          set -uo pipefail
+          case "$PARTY" in builder|reviewer) ;; *) echo "party '$PARTY' is not re-proposed from steel"; exit 0;; esac
+          # Identity (runner #225): when the jack-court App's files exist, every gh call in this job (the session's,
+          # the verbs', the herald's) acts as the App, never as the owner. Otherwise refuse (host.md §3).
+          if [ -r "$HOME/.config/jack/app-id" ] && [ -r "$HOME/.config/jack/app.pem" ]; then
+            export GH_REAL="$(command -v gh)"; mkdir -p "$RUNNER_TEMP/bin"; "$GH_REAL" api -H 'Accept: application/vnd.github.raw' "repos/$GITHUB_REPOSITORY/contents/.github/scripts/gh-as-app?ref=$GITHUB_SHA" > "$RUNNER_TEMP/bin/gh"; chmod +x "$RUNNER_TEMP/bin/gh"
+            export PATH="$RUNNER_TEMP/bin:$PATH"; unset GH_TOKEN; echo "identity: jack-court App ($(gh api /installation/repositories --jq '[.repositories[].name] | join(",")'))"
+          else echo "no identity: the App's files are absent"; exit 1; fi
+          find /tmp -maxdepth 1 -user "$(id -un)" \( -name 'tmp*' -o -name 'jack*' \) -mmin +60 -exec rm -rf {} + 2>/dev/null || true
+          cd "$HOME/git/jack" && git worktree prune
+          set +e
+          JACK_KEY="$HOME/.ssh/jack-$PARTY" python3 "$GITHUB_WORKSPACE/.github/scripts/repropose.py" "$HOME/git/jack" "$N" "$BRANCH" "$TITLE" 2>&1 | tee "$RUNNER_TEMP/out.txt"
+          rc=${PIPESTATUS[0]}
+          set -e
+          if [ "$rc" = 0 ]; then
+            gh pr comment "$N" -R renavondata/jack -b "$(printf 'Re-proposed mechanically (no model), %s:\n\n```\n%s\n```\n\nProposer: herald herald-2' "$(date -u +%H:%MZ)" "$(tail -20 "$RUNNER_TEMP/out.txt")")" || true
+          else
+            echo "mechanical re-proposal refused (exit $rc); filing the model session"
+            git -C "$HOME/git/jack" show origin/main:transcripts/sessions/repropose.md \
+              | sed -e "s/{N}/$N/g" -e "s/{BRANCH}/$BRANCH/g" -e "s/{KEY}/$PARTY/g" -e "s/{PARTY}/$PARTY/g" -e "s|{TITLE}|$TITLE|g" > "$RUNNER_TEMP/repropose.md"
+            printf '\n\nThe mechanical re-proposal refused first:\n\n```\n%s\n```\n' "$(tail -15 "$RUNNER_TEMP/out.txt")" >> "$RUNNER_TEMP/repropose.md"
+            gh issue create -R "$GITHUB_REPOSITORY" --label run --title "$PARTY: re-propose PR #$N ($BRANCH) on a fresh prefix (gpt-5.4-mini, $PARTY key)" --body-file "$RUNNER_TEMP/repropose.md"
+          fi

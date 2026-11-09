@@ -1,0 +1,90 @@
+# .github/workflows/run.yml in renavondata/opencode-runner
+# One issue = one session. An issue whose body is a prompt, labelled `run`, becomes an opencode session on
+# steel in ~/git/jack; the transcript tail comes back as a comment and the label flips to `done`.
+# The prompt's first lines may say `model: <provider/model>`, `key: <path>` (exported as JACK_KEY) and `branch: <name>`;
+# the job creates ~/git/worktrees/jack/<branch> from origin/main (or reuses it) and runs opencode inside it, because a
+# non-interactive session auto-rejects reads outside its working directory (run 41060147966). GH_TOKEN is set only on
+# the two issue steps: in run 41060460243 the job-level token (scoped to this repo) shadowed the owner's gh login
+# inside the session, and the push to jack was refused.
+# API keys come from the runner's own .env on steel (actions-runner sources it), never from GitHub.
+name: opencode
+on:
+  issues:
+    types: [labeled]
+permissions:
+  issues: write
+  contents: read
+concurrency:
+  group: opencode-${{ github.event.issue.number }}
+  cancel-in-progress: false
+jobs:
+  run:
+    if: github.event.label.name == 'run'
+    # Two lanes (4 Nov): a session whose issue also carries `build` (counsel's pre-builds, reviews, reads; nothing
+    # with a deadline inside the hour) runs only on a runner labelled `build`, so at most that runner is held by
+    # long work and the other stays free for the diary's sessions, whose forecasts must land before W0 and whose
+    # resolutions before their deadline. Without the label, a session runs on any `opencode` runner, as before.
+    runs-on: ${{ contains(github.event.issue.labels.*.name, 'build') && fromJSON('["self-hosted","build"]') || fromJSON('["self-hosted","opencode"]') }}
+    timeout-minutes: 180
+    env:
+      ISSUE: ${{ github.event.issue.number }}
+      DEFAULT_MODEL: openai/gpt-6-astra
+    steps:
+      - name: Prompt from the issue body; model and key from its first lines
+        env:
+          GH_TOKEN: ${{ github.token }}   # this repo's token, for the issue only; the session itself uses the jack-court App
+        run: |
+          set -euo pipefail
+          gh issue view "$ISSUE" -R "$GITHUB_REPOSITORY" --json body -q .body > "$RUNNER_TEMP/prompt.md"
+          model=$(sed -n '1,4{s/^model: *//p}' "$RUNNER_TEMP/prompt.md" | head -1)
+          key=$(sed -n '1,4{s/^key: *//p}' "$RUNNER_TEMP/prompt.md" | head -1)
+          branch=$(sed -n '1,4{s/^branch: *//p}' "$RUNNER_TEMP/prompt.md" | head -1)
+          echo "MODEL=${model:-$DEFAULT_MODEL}" >> "$GITHUB_ENV"
+          echo "JACK_KEY=${key/#\~/$HOME}" >> "$GITHUB_ENV"
+          echo "BRANCH=${branch:-issue-$ISSUE}" >> "$GITHUB_ENV"
+          if [ -r "$HOME/.config/jack/app-id" ] && [ -r "$HOME/.config/jack/app.pem" ]; then
+            export GH_REAL="$(command -v gh)"; mkdir -p "$RUNNER_TEMP/bin"; "$GH_REAL" api -H 'Accept: application/vnd.github.raw' "repos/$GITHUB_REPOSITORY/contents/.github/scripts/gh-as-app?ref=$GITHUB_SHA" > "$RUNNER_TEMP/bin/gh"; chmod +x "$RUNNER_TEMP/bin/gh"
+          else
+            echo "no identity: the App's files are absent"
+            gh issue comment "$ISSUE" -R "$GITHUB_REPOSITORY" -b "refused: no identity (the App's files are absent)"
+            exit 1
+          fi
+          gh issue comment "$ISSUE" -R "$GITHUB_REPOSITORY" -b "started: run $GITHUB_RUN_ID on $(hostname), model ${model:-$DEFAULT_MODEL}, key ${key:-unset}, branch ${branch:-issue-$ISSUE}"
+      - name: Run opencode in the jack checkout
+        run: |
+          set -uo pipefail
+          # Identity (runner #225, host.md §3): when the jack-court App's files exist, every gh call in this job
+          # (the session's, the verbs', the herald's) acts as the App, never as the owner. Otherwise refuse.
+          if [ -r "$HOME/.config/jack/app-id" ] && [ -r "$HOME/.config/jack/app.pem" ]; then
+            export GH_REAL="$(command -v gh)"; mkdir -p "$RUNNER_TEMP/bin"; [ -x "$RUNNER_TEMP/bin/gh" ] || { "$GH_REAL" api -H 'Accept: application/vnd.github.raw' "repos/$GITHUB_REPOSITORY/contents/.github/scripts/gh-as-app?ref=$GITHUB_SHA" > "$RUNNER_TEMP/bin/gh"; chmod +x "$RUNNER_TEMP/bin/gh"; }
+            export PATH="$RUNNER_TEMP/bin:$PATH"; unset GH_TOKEN; echo "identity: jack-court App ($(gh api /installation/repositories --jq '[.repositories[].name] | join(",")'))"
+          else echo "no identity: the App's files are absent"; exit 1; fi
+          # /tmp ran out of inodes on 2 Nov (06:04Z: 1048398 of 1048576 used, 6.4G): the proposal check's test suite
+          # makes temp dirs (prefixes tmp, "jack ", "jack-test ", "entry space "; the merge verb's worktrees jack-),
+          # and a session killed mid-check (opencode's 2-minute default command timeout) leaves them. Every proposal
+          # and every merge was refused for two hours. Sweep this user's stale ones before each session, and give
+          # commands fifteen minutes so the check is not killed in the first place.
+          find /tmp -maxdepth 1 -user "$(id -un)" \( -name 'tmp*' -o -name 'jack*' -o -name 'entry space*' -o -name 'repo-*' \) -mmin +60 -exec rm -rf {} + 2>/dev/null || true
+          git -C "$HOME/git/jack" worktree prune 2>/dev/null || true
+          export OPENCODE_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS=900000
+          cd "$HOME/git/jack" && for i in 1 2 3 4 5; do git fetch -q origin && break; sleep 3; done   # never switch the runner's checkout; retried: a second runner's herald may hold a ref lock for a second
+          WT="$HOME/git/worktrees/jack/$BRANCH"
+          if [ ! -d "$WT" ]; then git worktree add -q "$WT" -b "$BRANCH" origin/main || git worktree add -q "$WT" "$BRANCH"; fi
+          cd "$WT"   # opencode's cwd is the worktree: a non-interactive session may not read outside it
+          opencode run -m "$MODEL" "$(cat "$RUNNER_TEMP/prompt.md")" 2>&1 | tee "$RUNNER_TEMP/transcript.txt"
+          echo "exit=${PIPESTATUS[0]}" >> "$RUNNER_TEMP/transcript.txt"
+      - name: Post the transcript tail
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          { echo '```'; tail -c 60000 "$RUNNER_TEMP/transcript.txt"; echo '```'; } > "$RUNNER_TEMP/comment.md"
+          gh issue comment "$ISSUE" -R "$GITHUB_REPOSITORY" -F "$RUNNER_TEMP/comment.md"
+          gh issue edit "$ISSUE" -R "$GITHUB_REPOSITORY" --remove-label run --add-label done
+          # Done is closed: an open issue means a session still owed. Until 3 Nov this step only relabelled, and
+          # 100+ finished sessions sat open beside the live ones. The sweep closes any earlier `done` issue left
+          # open, under this workflow's token, so no closure is an act on the owner's login.
+          gh issue close "$ISSUE" -R "$GITHUB_REPOSITORY" --reason completed
+          gh issue list -R "$GITHUB_REPOSITORY" --state open --label done --limit 200 --json number -q '.[].number' \
+            | while read -r N; do gh issue close "$N" -R "$GITHUB_REPOSITORY" --reason completed || true; done
