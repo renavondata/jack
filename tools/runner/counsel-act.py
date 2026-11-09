@@ -3,7 +3,7 @@
 else: on renavondata/jack, opening counsel's proposals and closing its own stale proposals with a comment; on
 renavondata/opencode-runner, filing and closing issues. Written to transcripts/runner/counsel-courier.md."""
 import datetime, json, os, re, subprocess, sys, tempfile  # noqa: E401
-JACK, RUNNER, SEG = "renavondata/jack", "renavondata/opencode-runner", r"[A-Za-z0-9_-][A-Za-z0-9._-]*"
+JACK, RUNNER, COUNSEL_LOGIN, SEG = "renavondata/jack", "renavondata/opencode-runner", "assize-reviewer", r"[A-Za-z0-9_-][A-Za-z0-9._-]*"
 
 def gh(token, *args, payload=None):
     r = subprocess.run(["gh", "api", *args] + (["--input", "-"] if payload is not None else []),
@@ -46,7 +46,7 @@ def valid_counsel_branch(ref):
 
 def main():
     here, before_sha, after_sha, read = os.environ["GITHUB_REPOSITORY"], os.environ["BEFORE"], os.environ["AFTER"], os.environ["READ_TOKEN"]
-    repo = os.environ.get("COUNSEL_TRIGGER_REPO", f"https://github.com/{here}.git")
+    repo = f"https://github.com/{here}.git"
     files = sorted(f for f in added_files(repo, before_sha, after_sha, read)
                    if f.startswith("requests/") and f.endswith(".json")
                    and not f.startswith("requests/sign-"))
@@ -55,6 +55,7 @@ def main():
     tok = os.environ.get("COUNSEL_GH_TOKEN") or (open(p).read().strip() if os.path.exists(p := os.path.expanduser("~/.config/jack/gh-counsel")) else "")
     tok or sys.exit("counsel's token is absent (COUNSEL_GH_TOKEN or ~/.config/jack/gh-counsel); nothing done")
     me = gh(tok, "user")["login"]
+    me == COUNSEL_LOGIN or sys.exit(f"counsel's token belongs to {me}, not {COUNSEL_LOGIN}; nothing done")
     print("identity:", me)
 
     def handle(f):

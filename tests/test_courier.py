@@ -314,6 +314,12 @@ class CourierTest(unittest.TestCase):
         self.set_gh(added=["requests/act-only.json"])
         self.assertEqual(subprocess.run([sys.executable, SIGN_SCRIPT],
                                         env=dict(self.env, COUNSEL_GH_TOKEN="", COUNSEL_KEY="/no/key"), capture_output=True, text=True).returncode, 0)
+        prop = {"verb": "proposal", "title": "t"}
+        self.make_counsel_branch("wrong-identity", [prop])
+        self.set_gh(added=["requests/sign-wrong-identity.json"],
+                    contents={"requests/sign-wrong-identity.json": {"id": "sign-wrong-identity", "act": "sign", "branch": "counsel/wrong-identity"}},
+                    login="not-counsel")
+        self.assertEqual(subprocess.run([sys.executable, SIGN_SCRIPT], env=self.env, capture_output=True, text=True).returncode, 1)
         for idx, bad_lines in enumerate([
             [{"verb": "forecast", "claim": "c", "p": True, "by": "2099-01-01T00:00:00Z"}, {"verb": "proposal", "title": "t"}],
             [{"verb": "forecast", "claim": "c", "p": 500, "by": "2099-01-01T00:00:00Z", "type": 123}, {"verb": "proposal", "title": "t"}],
@@ -338,6 +344,11 @@ class CourierTest(unittest.TestCase):
         self.set_gh(added=["requests/sign-1.json"])
         empty = subprocess.run([sys.executable, ACT_SCRIPT], env=dict(self.env, COUNSEL_GH_TOKEN=""), capture_output=True, text=True)
         self.assertEqual(empty.returncode, 0, empty.stdout + empty.stderr)
+        self.set_gh(added=["requests/identity.json"], contents={"requests/identity.json": {"id": "identity", "act": "issue", "title": "T", "body": "B"}},
+                    login="not-counsel")
+        self.assertEqual(subprocess.run([sys.executable, ACT_SCRIPT], env=self.env, capture_output=True, text=True).returncode, 1)
+        with open(ACT_SCRIPT, encoding="utf-8") as f:
+            self.assertNotIn("COUNSEL_TRIGGER_REPO", f.read())
         tpl = "model: {MODEL}\nkey: ~/.ssh/jack-builder\nbranch: {BRANCH}\n\n# builder: build {TEXTS} on {BRANCH} at {NOW} ({STAMP}) for {WINDOW}\nBody.\n"
         win = {"window": "C2c-1", "frozen": {"paths": ["transcripts/runner/", "transcripts/windows/"]}}
         reqs = {

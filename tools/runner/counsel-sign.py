@@ -5,6 +5,7 @@ import hashlib, json, os, re, subprocess, sys, tempfile  # noqa: E401
 FIELDS = {"forecast": {"claim": str, "p": int, "by": str}, "proposal": {"title": str}}
 OPTIONAL = {"forecast": {"type": str, "args": dict}, "proposal": {}}
 REGULAR = {"100644", "100755"}  # SPEC §10 item 9: the repository holds regular files only
+COUNSEL_LOGIN = "assize-reviewer"
 
 class CommandFailed(Exception): """a git or gh command failed: the request's refusal, filed by the outer handler"""  # noqa: E701
 class Refused(SystemExit): """a refusal whose issue is already filed"""  # noqa: E701
@@ -89,7 +90,9 @@ def main():
     tok or sys.exit("counsel's token is absent (COUNSEL_GH_TOKEN or ~/.config/jack/gh-counsel); nothing done")
     os.path.exists(key) or sys.exit(f"{key} is absent on this runner; nothing done")
     env = {**os.environ, "GH_TOKEN": tok, "JACK_KEY": key}
-    print("identity:", json.loads(sh("gh", "api", "user", env=env).stdout)["login"])
+    identity = json.loads(sh("gh", "api", "user", env=env).stdout)["login"]
+    identity == COUNSEL_LOGIN or sys.exit(f"counsel's token belongs to {identity}, not {COUNSEL_LOGIN}; nothing done")
+    print("identity:", identity)
     sh("git", "fetch", "-q", "origin", cwd=jack), sh("git", "worktree", "prune", cwd=jack)
     scope = json.loads(sh("git", "show", "origin/main:judge/scope.json", cwd=jack).stdout)["parties"]["counsel"]
     pub = " ".join(open(key + ".pub").read().split()[:2])
