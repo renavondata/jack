@@ -1190,7 +1190,8 @@ PINS += C2B_GATE_PINS
 
 # --- C2c-1 window pins (BRIEF-C2c-1 §3; runner texts) -----------------------
 
-from pins.c2c_1 import c2c_tests, courier_tests, numerals_housed, one_stated_end, one_writ_function
+from pins.c2c_1 import (c2c_tests, courier_tests, numerals_housed, one_stated_end,
+                        one_writ_function, undertakings_are_forecasts)
 
 C2C1_PINS = [
     Pin("numerals_housed", numerals_housed, [
@@ -1217,7 +1218,7 @@ C2C1_PINS = [
         Mutant("resolved_forecasts_listed", "tools/clerk.py", " and e[\"seq\"] not in resolved", "" ),
         Mutant("w1_status_limited_to_c1b", "tools/window.py", '    w1 = clerk.forecast_writs(s.get("es", s.get("prefix", [])), [], s["as_of"])\n',
                '    w1 = clerk.forecast_writs(s.get("es", s.get("prefix", [])), [], s["as_of"]) if s["subject"] == "C1b" else []\n')]),
-    Pin("undertakings_are_forecasts", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r5_undertakings_are_forecasts_twins"), [
+    Pin("undertakings_are_forecasts", undertakings_are_forecasts, [
         Mutant("inventory_ignored", "tools/window.py", "            if row[\"due\"] > start:\n", "            if False:\n")]),
     Pin("escalation_recorded", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r6_escalation_recorded_and_red_line_twins"), [
         Mutant("escalation_match_ignored", "tools/window.py", "            if not matched:\n                return \"unmet\"\n", "            if False:\n                return \"unmet\"\n")]),

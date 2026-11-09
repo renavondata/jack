@@ -96,4 +96,45 @@ def one_writ_function(root):
         assert by_seq[5]["escalated"] is True
         assert by_seq[6]["escalated"] is False
     ''')
+    _run(root, '''
+        from tools import status
+        entries = [
+            {"seq": 0, "type": "genesis", "ts": "2026-01-01T00:00:00Z",
+             "body": {"keys": [{"key_id": "resolver", "principal": "reviewer", "powers": ["resolution"]}]},
+             "proposer": "guy"},
+            {"seq": 5, "type": "forecast", "ts": "2026-01-01T00:01:00Z",
+             "body": {"resolves_by": "2026-01-02T00:00:00Z"}, "proposer": "counsel"},
+        ]
+        rendered = status.render({"subject": "C2a", "start": "2026-01-01T00:00:00Z",
+                                  "end": "2026-01-03T00:00:00Z", "as_of": "2026-01-02T12:00:00Z",
+                                  "prefix_last_seq": 5, "checks": [], "map": {}, "overdue": [],
+                                  "j7_unresolved_past_due": 0, "j7_denominator": 0,
+                                  "es": entries, "repairs": []})
+        assert "W1 forecast 5" in rendered, rendered
+    ''')
     c2c_tests("tests.test_c2c_1.R2R4R8CriteriaAndWrits.test_r4_one_writ_function_and_r8_object_declared")(root)
+
+
+def undertakings_are_forecasts(root):
+    """R5 requires inventory rows to be matched by a forecast already present at opening."""
+    c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r5_undertakings_are_forecasts_twins")(root)
+    _run(root, '''
+        from tools import window
+        due = b'{"id":"u1","due":"2026-01-03T00:00:00Z","done":null}' + bytes([10])
+        old_bytes, old_retired = window.tree_bytes_opt, window.retired_by_proposal
+        try:
+            window.tree_bytes_opt = lambda root, rev, path: due if rev == "open" else None
+            window.retired_by_proposal = lambda *args: True
+            post_opening = {"seq": 2, "type": "forecast", "proposer": "counsel", "ts": "2026-01-02T00:00:00Z",
+                            "body": {"type": "counsel.undertaking", "resolves_by": "2026-01-03T00:00:00Z",
+                                     "args": {"id": "u1", "window": "C2c-1"}}}
+            ctx = {"root": ".", "rev": "head", "opening_rev": "open", "wfile": {"numbers": {}},
+                   "prefix": [post_opening], "inw": [post_opening], "as_of": "2026-01-02T12:00:00Z",
+                   "start": "2026-01-01T00:00:00Z", "end": "2026-01-04T00:00:00Z", "run": None,
+                   "runs": [], "subject": "C2c-1", "expired_undertakings": set()}
+            criterion = {"kind": "undertakings_kept", "args": {"due_file": "transcripts/COUNSEL-DUE.jsonl",
+                         "proposer": "counsel", "type": "counsel.undertaking"}}
+            assert window.evaluate_criterion(criterion, ctx) == "unmet"
+        finally:
+            window.tree_bytes_opt, window.retired_by_proposal = old_bytes, old_retired
+    ''')
