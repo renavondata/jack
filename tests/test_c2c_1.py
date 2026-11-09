@@ -121,7 +121,7 @@ class C2c1Fixture(unittest.TestCase):
             head = self.propose_merge(repo, lg, es, "counsel", {}, delete=("transcripts/COUNSEL-DUE.jsonl",))
         return repo, lg, es, open_sha, head, add
 
-    def propose_merge(self, repo, lg, es, party, files, delete=(), ts=None, extra_log_commit=False):
+    def propose_merge(self, repo, lg, es, party, files, delete=(), ts=None, extra_log_commit=False, merge_files=None):
         ts = ts or max("2026-11-08T11:00:00Z", es[-1]["ts"])
         gitfix.write(repo, "log.jsonl", lg.text())
         if gitfix.git(repo, "status", "--porcelain"):
@@ -149,7 +149,13 @@ class C2c1Fixture(unittest.TestCase):
         gitfix.write(repo, "log.jsonl", lg.text())
         branch_tip = gitfix.commit_all(repo, "merge: #1\n\nProposer: herald herald")
         gitfix.git(repo, "checkout", "-q", "-B", "main", main_sha)
-        gitfix.git(repo, "merge", "--no-ff", "-q", "-m", "Merge pull request #1", branch_tip)
+        if merge_files:
+            gitfix.git(repo, "merge", "--no-ff", "-q", "--no-commit", branch_tip)
+            for path, data in merge_files.items():
+                gitfix.write(repo, path, data)
+            gitfix.commit_all(repo, "Merge pull request #1")
+        else:
+            gitfix.git(repo, "merge", "--no-ff", "-q", "-m", "Merge pull request #1", branch_tip)
         return gitfix.git(repo, "rev-parse", "HEAD")
 
 
@@ -309,6 +315,11 @@ class R5R6R7R10R11Criteria(C2c1Fixture):
         # Due file present at assessed prefix -> unmet (twin 8)
         r_keep, _, es_keep, _, h_keep, _ = self.make_env(due_rows=[due_rows[0]], keep_due=True)
         self.assertTrue(st.assess(es_keep, "C2c-1", T_NOW, r_keep, h_keep)["criterion_lines"][9].endswith("unmet"))
+        # Deletion outside a proposal is not retirement (R5's migration rule).
+        r_hand, _, es_hand, _, h_hand, _ = self.make_env(due_rows=[due_rows[0]], keep_due=True)
+        os.remove(os.path.join(r_hand, "transcripts/COUNSEL-DUE.jsonl"))
+        h_hand = gitfix.commit_all(r_hand, "hand delete")
+        self.assertTrue(st.assess(es_hand, "C2c-1", T_NOW, r_hand, h_hand)["criterion_lines"][9].endswith("unmet"))
 
     def test_r6_escalation_recorded_and_red_line_twins(self):
         repo, lg, es, _, head, add = self.make_env()
@@ -338,6 +349,8 @@ class R5R6R7R10R11Criteria(C2c1Fixture):
         self.assertEqual(s_ok["red_lines"], [])
         # Stale escalations (twin 11)
         self.assertTrue(st.assess(es, "C2c-1", "2026-11-08T18:00:00Z", repo, h_e4)["criterion_lines"][6].endswith("unknown (stale escalations)"))
+        # A stale file is unknown even if its recorded interval has an uncovered forecast.
+        self.assertTrue(st.assess(es, "C2c-1", "2026-11-08T18:00:00Z", repo, h_e3)["criterion_lines"][6].endswith("unknown (stale escalations)"))
 
     def test_r7_ratchet_and_hand_row_deadline_twins(self):
         repo, lg, es, open_sha, head, _ = self.make_env()
@@ -423,6 +436,11 @@ class R5R6R7R10R11Criteria(C2c1Fixture):
             orig_st = f.read()
         h_rest = self.propose_merge(repo, lg, es, "builder", {"tools/status.py": orig_st})
         self.assertTrue(st.assess(es, "C2c-1", T_NOW, repo, h_rest)["criterion_lines"][2].endswith("unmet"))
+        # A frozen path changed by the GitHub merge itself is charged to the proposal.
+        r_merge, lg_merge, es_merge, _, _, _ = self.make_env()
+        h_merge = self.propose_merge(r_merge, lg_merge, es_merge, "builder", {"REPORT.md": "report\n"},
+                                     merge_files={"tools/status.py": "# merge conflict edit\n"})
+        self.assertTrue(st.assess(es_merge, "C2c-1", T_NOW, r_merge, h_merge)["criterion_lines"][2].endswith("unmet"))
 
     def test_r11_remaining_tree_bounds_and_provenance_twins(self):
         repo, lg, es, open_sha, head, add = self.make_env()
