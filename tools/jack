@@ -183,12 +183,11 @@ def push_read_gate(branch, layer, repo=ROOT):
         return
     if not layer: refuse("judge/scope.json: scope changes require --opens LAYER")
     if not re.fullmatch(r"[A-Za-z0-9_-]+", layer): refuse("judge/scope.json: invalid --opens LAYER")
-    from tools.window import window_path
-    brief, pattern, wpath = f"transcripts/BRIEF-{layer}-draft.md", f"transcripts/REVIEW-{layer}-*.md", window_path(layer)
-    current, wbytes = tree_bytes(repo, "origin/main", brief), tree_bytes(repo, "origin/main", wpath)
+    from tools.window import opening_review_requirement
+    try: brief, wpath, wbytes, needed = opening_review_requirement(repo, layer)
+    except ValueError as x: refuse(str(x))
+    pattern, current = f"transcripts/REVIEW-{layer}-*.md", tree_bytes(repo, "origin/main", brief)
     if current is None: refuse(f"{brief}: missing on origin/main")
-    needed = json.loads(wbytes).get("numbers", {}).get("readers") if wbytes is not None else 1
-    if type(needed) is not int or needed < 1: refuse(f"{wpath}: invalid numbers.readers")
     reviews = g("ls-tree", "-r", "--name-only", "origin/main", "--", "transcripts/").splitlines()
     reviews = [p for p in reviews if re.fullmatch(rf"transcripts/REVIEW-{re.escape(layer)}-.*\.md", p)]
     if not reviews: refuse(f"{pattern}: missing review on origin/main")
