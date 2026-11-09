@@ -7,7 +7,7 @@ from acts import FMT, api, load_entries, now_iso, opening_instant, pages, root_d
 
 RUNNER = "renavondata/opencode-runner"
 DIARY_LOGIN = "renavondata-jack-court[bot]"
-TITLE_SUB = "resolve the writs due"
+TITLE = "resolve the writs due"
 
 
 def due_seqs(body):
@@ -25,7 +25,7 @@ def build_escalations(window_name, root=None, through=None):
     deadlines = {e["seq"]: e["body"]["resolves_by"] for e in es if e["type"] == "forecast"}
     rows, ignored = [], []
     for it in pages(f"repos/{RUNNER}/issues?state=all&since={since_iso}&sort=created&direction=asc"):
-        if "pull_request" in it or TITLE_SUB not in (it.get("title") or ""):
+        if "pull_request" in it or it.get("title") != TITLE:
             continue
         filed_at = it.get("created_at") or it.get("createdAt") or ""
         if not filed_at or not (since_dt <= t(filed_at) <= through_dt):

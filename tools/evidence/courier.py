@@ -8,6 +8,8 @@ from runner import RUNNER, gh_raw_bytes  # noqa: E402
 
 TS_PREFIX = re.compile(r"^\ufeff?\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z\s+")
 RECEIPT_RE = re.compile(r"^([A-Za-z0-9._-]+):\s+.*\brequest sha256 [0-9a-fA-F]{64}\b")
+MAX_LOG_MEMBERS = 1000
+MAX_COMMIT_FILE_PAGES = 100
 
 
 def run_log_lines(run_id, conclusion):
@@ -15,14 +17,15 @@ def run_log_lines(run_id, conclusion):
         r = subprocess.run(["gh", "api", f"repos/{RUNNER}/actions/runs/{run_id}/logs"],
                            stdout=log, stderr=subprocess.PIPE)
         if r.returncode != 0:
-            if conclusion is None:
-                return []
             raise SystemExit(f"refused: gh api repos/{RUNNER}/actions/runs/{run_id}/logs: {r.stderr.decode('utf-8', errors='replace').strip()}")
         log.seek(0)
         if zipfile.is_zipfile(log):
             with zipfile.ZipFile(log) as z:
-                for name in sorted(z.namelist()):
-                    with z.open(name) as member:
+                members = z.infolist()
+                if len(members) > MAX_LOG_MEMBERS:
+                    raise SystemExit(f"refused: run {run_id} log has more than {MAX_LOG_MEMBERS} members")
+                for member_info in sorted(members, key=lambda member: member.filename):
+                    with z.open(member_info) as member:
                         for line in member:
                             yield line.decode("utf-8", errors="replace").rstrip("\r\n")
             return
@@ -40,6 +43,20 @@ def extract_receipts(lines):
     return out
 
 
+def commit_files(sha):
+    files = []
+    for page in range(1, MAX_COMMIT_FILE_PAGES + 1):
+        suffix = "?per_page=100&page=" + str(page)
+        response = api(f"repos/{RUNNER}/commits/{sha}{suffix}")
+        page_files = response.get("files")
+        if not isinstance(page_files, list):
+            raise SystemExit(f"refused: commit {sha} files are not a JSON list")
+        files.extend(page_files)
+        if len(page_files) < 100:
+            return files
+    raise SystemExit(f"refused: commit {sha} files exceeded {MAX_COMMIT_FILE_PAGES} pages")
+
+
 def collect_courier(window_name, root=None, through=None):
     root = root or root_dir()
     open_iso = opening_instant(window_name, root=root)
@@ -52,7 +69,7 @@ def collect_courier(window_name, root=None, through=None):
     runs = []
     for r in raw_runs:
         sha = r.get("head_sha") or ""
-        files = api(f"repos/{RUNNER}/commits/{sha}").get("files", []) if sha else []
+        files = commit_files(sha) if sha else []
         added = sorted(f["filename"] for f in files if f.get("status") == "added" and
                        f.get("filename", "").startswith("requests/sign-") and f.get("filename", "").endswith(".json"))
         triggers = []
