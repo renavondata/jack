@@ -134,17 +134,23 @@ class CourierTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix="courier-test-")
         t = self.tmp.name
-        self.origin, self.jack, self.wt, self.stubs, self.gh_state = (os.path.join(t, n) for n in ("origin.git", "jack", "wt", "stubs", "gh_state.json"))
+        self.home = os.path.join(t, "home")
+        self.origin, self.trigger_origin, self.jack, self.trigger, self.wt, self.stubs, self.gh_state = (os.path.join(t, n) for n in ("origin.git", "runner.git", "home/git/jack", "runner", "home/git/worktrees/jack", "stubs", "gh_state.json"))
         shutil.copytree(self.origin_template, self.origin)
         write_file(os.path.join(self.stubs, "gh"), GH_STUB, 0o755)
-        write_file(os.path.join(t, "gitconfig"), "[user]\n\tname = t\n\temail = t@t\n")
-        self.env = dict(os.environ, PATH=self.stubs + os.pathsep + os.environ["PATH"], STUB_GH_STATE=self.gh_state,
+        subprocess.run(["git", "clone", "-q", "--bare", self.origin, self.trigger_origin], check=True)
+        write_file(os.path.join(t, "gitconfig"), f"[user]\n\tname = t\n\temail = t@t\n[url \"{self.trigger_origin}\"]\n\tinsteadOf = https://github.com/renavondata/opencode-runner.git\n")
+        self.env = dict(os.environ, HOME=self.home, PATH=self.stubs + os.pathsep + os.environ["PATH"], STUB_GH_STATE=self.gh_state,
                         GITHUB_REPOSITORY="renavondata/opencode-runner", BEFORE="0" * 40, AFTER="a" * 40,
-                        READ_TOKEN="read-tok", COUNSEL_GH_TOKEN="counsel-tok", COUNSEL_JACK=self.jack, COUNSEL_WT=self.wt,
-                        COUNSEL_KEY=self.w.parties["counsel"].path, GITHUB_RUN_ID="99",
+                        READ_TOKEN="read-tok", COUNSEL_GH_TOKEN="counsel-tok", GITHUB_RUN_ID="99",
                         GIT_CONFIG_GLOBAL=os.path.join(t, "gitconfig"), GIT_CONFIG_NOSYSTEM="1")
         self.set_gh()
         subprocess.run(["git", "clone", "-q", self.origin, self.jack], check=True, env=self.env)
+        subprocess.run(["git", "clone", "-q", self.trigger_origin, self.trigger], check=True, env=self.env)
+        key = os.path.join(self.home, ".ssh", "jack-counsel-3")
+        os.makedirs(os.path.dirname(key), exist_ok=True)
+        shutil.copy2(self.w.parties["counsel"].path, key)
+        shutil.copy2(self.w.parties["counsel"].path + ".pub", key + ".pub")
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -152,13 +158,15 @@ class CourierTest(unittest.TestCase):
     def set_gh(self, added=(), contents=None, prs=None, issues=None, login="assize-reviewer"):
         write_file(self.gh_state, json.dumps({"login": login, "added_files": [{"filename": f, "status": "added"} for f in added],
                                                "contents": contents or {}, "prs": prs or [], "issues": issues or {}, "comments": [], "calls": []}))
-        if added and os.path.isdir(self.jack):
-            before = self.git("rev-parse", "HEAD")
+        if added and os.path.isdir(self.trigger):
+            before = self.git("rev-parse", "HEAD", cwd=self.trigger)
             for path in added:
-                write_file(os.path.join(self.jack, path), "{}\n")
-            self.git("add", *added)
-            self.git("commit", "-q", "-m", "trigger files")
-            self.env.update(BEFORE=before, AFTER=self.git("rev-parse", "HEAD"), COUNSEL_TRIGGER_REPO=self.jack)
+                write_file(os.path.join(self.trigger, path), "{}\n")
+            self.git("add", *added, cwd=self.trigger)
+            self.git("commit", "-q", "-m", "trigger files", cwd=self.trigger)
+            after = self.git("rev-parse", "HEAD", cwd=self.trigger)
+            self.git("push", "-q", "origin", "main", cwd=self.trigger)
+            self.env.update(BEFORE=before, AFTER=after)
 
     def get_gh(self):
         with open(self.gh_state, encoding="utf-8") as f:
@@ -225,6 +233,12 @@ class CourierTest(unittest.TestCase):
                    {"type": "key", "body": {"key_id": "same", "pubkey": "pub", "powers": ["forecast"]}}]
         self.assertEqual(len(sign.powered_key_declarations(entries, "pub")), 2)
 
+    def test_sign_custody_paths_are_not_environment_selectable(self):
+        with open(SIGN_SCRIPT, encoding="utf-8") as f:
+            text = f.read()
+        for name in ("COUNSEL_JACK", "COUNSEL_WT", "COUNSEL_KEY", "COUNSEL_TRIGGER_REPO"):
+            self.assertNotIn(name, text)
+
     def test_courier_signs_only_the_request(self):
         """Pin courier_signs_only_the_request: exact request lines in order, once; branch tools/ or symlink refused; merge edit refused."""
         base_len = len(self.remote_entries("main"))
@@ -285,6 +299,16 @@ class CourierTest(unittest.TestCase):
         self.assertEqual(self.trigger_sign("sign-mchg", "counsel/merge-chg").returncode, 1)
         self.assertEqual(self.git("rev-parse", "HEAD", cwd=os.path.join(self.wt, "counsel", "merge-chg")), branch_sha)
         self.assertEqual(self.remote_entries("counsel/merge-chg")[base_len:], [])
+
+        branch_sha = self.make_counsel_branch("merge-fail", [prop], extra_files={"transcripts/f.md": "1\n"})
+        with open(os.path.join(ROOT, "tools", "jack"), encoding="utf-8") as f:
+            failing_jack = f.read().replace("#!/usr/bin/env python3", "#!/usr/bin/env python3\nraise SystemExit(1)", 1)
+        write_file(os.path.join(main_work, "tools", "jack"), failing_jack, 0o755)
+        self.git("add", "tools/jack", cwd=main_work)
+        self.git("commit", "-q", "-m", "main makes the verb fail", cwd=main_work)
+        self.git("push", "-q", "origin", "main", cwd=main_work)
+        self.assertEqual(self.trigger_sign("sign-mfail", "counsel/merge-fail").returncode, 1)
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=os.path.join(self.wt, "counsel", "merge-fail")), branch_sha)
 
     def test_sign_empty_push_and_refusals(self):
         self.set_gh(added=["requests/act-only.json"])
