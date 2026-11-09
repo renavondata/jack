@@ -27,6 +27,10 @@ IGNORE = shutil.ignore_patterns(".git", "__pycache__", "runs", "*.pyc")
 def disposable_copy(root, into):
     dest = os.path.join(into, "tree")
     shutil.copytree(root, dest, ignore=IGNORE)
+    # Window-backed pins must read the same window fixtures as the source tree.
+    windows = os.path.join(root, "transcripts", "windows")
+    if os.path.isdir(windows):
+        shutil.copytree(windows, os.path.join(dest, "transcripts", "windows"), dirs_exist_ok=True)
     return dest
 
 
