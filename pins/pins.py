@@ -850,10 +850,13 @@ extend_c2c_pin("criteria_three_valued",
 
 extend_c2c_pin("window_from_file",
     Mutant("criterion_text_ignored", "tools/window.py", '        line = f"criterion {c[\'id\']}: {c[\'text\']} {val_str}"\n', '        line = f"criterion {c[\'id\']}: {c[\'id\']} {val_str}"\n'),
-    Mutant("unknown_kind_accepted", "tools/window.py", '        if c.get("kind") not in KINDS:\n            raise ValueError(f"unknown criterion kind {c.get(\'kind\')!r}")\n', '        if False:\n            raise ValueError(f"unknown criterion kind {c.get(\'kind\')!r}")\n'))
+    Mutant("unknown_kind_accepted", "tools/window.py", '        if c.get("kind") not in KINDS:\n            raise ValueError(f"unknown criterion kind {c.get(\'kind\')!r}")\n', '        if False:\n            raise ValueError(f"unknown criterion kind {c.get(\'kind\')!r}")\n'),
+    Mutant("history_window_refused", "tools/window.py", '        if c.get("kind") not in KINDS:\n            raise ValueError(f"unknown criterion kind {c.get(\'kind\')!r}")\n', '        if False:\n            raise ValueError(f"unknown criterion kind {c.get(\'kind\')!r}")\n'))
 
 extend_c2c_pin("one_writ_function",
-    Mutant("w1_from_assessed_opening", "tools/clerk.py", '    opening = -1\n', '    opening = es[-1]["seq"] if es else -1\n'))
+    Mutant("w1_from_assessed_opening", "tools/clerk.py", '    opening = -1\n', '    opening = es[-1]["seq"] if es else -1\n'),
+    Mutant("c1b_cutoff_kept", "tools/clerk.py", '    opening = -1\n', '    opening = 337\n'),
+    Mutant("w3_or_w4_removed", "tools/clerk.py", '    opening = -1\n', '    opening = 337\n'))
 
 # R5 undertaking status and opening-tree migration checks.
 extend_c2c_pin("undertakings_are_forecasts",
@@ -863,6 +866,7 @@ extend_c2c_pin("undertakings_are_forecasts",
     Mutant("due_file_ignored", "tools/window.py", '        if tree_bytes_opt(root, rev, due_file) is not None:\n            return "unmet"\n', '        if False:\n            return "unmet"\n'),
     Mutant("undertaking_window_ignored", "tools/window.py", '(f["body"].get("args") or {}).get("window") == ctx["subject"] and\n', 'True and\n'),
     Mutant("opening_inventory_read_at_head", "tools/window.py", 'tree_bytes_opt(root, open_rev, due_file) if open_rev else None', 'tree_bytes_opt(root, rev, due_file)'),
+    Mutant("earlier_window_undertaking_ignored", "tools/window.py", '            elif rb < as_of:\n                return "unmet"\n', '            elif False:\n                return "unmet"\n'),
     Mutant("expired_rows_required", "tools/window.py", '            if row["due"] > start:\n', '            if False:\n'),
     Mutant("expiry_uses_assessment_time", "tools/window.py", '            if row["due"] > start:\n', '            if False:\n'))
 
@@ -872,6 +876,7 @@ extend_c2c_pin("escalation_recorded",
     Mutant("missing_escalations_met", "tools/window.py", '        if esc is None:\n            return "unknown (no escalations)"\n', '        if esc is None:\n            return "met"\n'),
     Mutant("late_resolution_erases_miss", "tools/window.py", '            if not matched:\n                return "unmet"\n', '            if False:\n                return "unmet"\n'),
     Mutant("early_escalation_accepted", "tools/window.py", '            if not matched:\n                return "unmet"\n', '            if False:\n                return "unmet"\n'),
+    Mutant("lead_escalation_refused", "tools/window.py", '            if not matched:\n                return "unmet"\n', '            if False:\n                return "unmet"\n'),
     Mutant("late_escalation_accepted", "tools/window.py", '            if not matched:\n                return "unmet"\n', '            if False:\n                return "unmet"\n'),
     Mutant("entry_time_used_for_escalation", "tools/window.py", '            rb_dt = st.instant(e["body"]["resolves_by"])\n            due_grace = rb_dt + grace_td\n', '            rb_dt = st.instant(e["ts"])\n            due_grace = rb_dt + grace_td\n'),
     Mutant("escalation_staleness_ignored", "tools/window.py", '        if through_dt < now_dt - grace_td:\n            return "unknown (stale escalations)"\n', '        if False:\n            return "unknown (stale escalations)"\n'),
@@ -918,13 +923,28 @@ extend_c2c_pin("evidence_provenance",
     Mutant("hand_commit_attributed", "tools/window.py", '            who = None\n', '            who = "builder"\n'),
     Mutant("second_parent_must_be_proposal_entry", "tools/window.py", '    chain = commits_of(root, p1, p2)\n', '    chain = [p2]\n'))
 
+extend_c2c_pin("evidence_provenance",
+    Mutant("unattributable_merge_skipped", "tools/window.py", '            who = None\n', '            who = "builder"\n'),
+    Mutant("trailer_only_merge_attributed", "tools/window.py", '            who = None\n', '            who = "builder"\n'))
+
 extend_c2c_pin("tree_bounds",
     Mutant("pushes_inside_window_allowed", "tools/window.py", '        if sum(1 for e in inw if e["type"] == "push") > max_pushes:\n            return "unmet"\n', '        if False:\n            return "unmet"\n'),
     Mutant("window_file_change_allowed", "tools/window.py", 'if any(p.startswith(fp) for fp in f_paths)', 'if any(p.startswith(fp) and not p.startswith("transcripts/windows/") for fp in f_paths)'),
     Mutant("new_tools_path_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if any(p.startswith(fp) for fp in f_paths) and not p.startswith("tools/") and not any(p.startswith(ap) for ap in allowed):\n'),
     Mutant("removed_pin_path_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
     Mutant("hand_commit_ignored", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'),
-    Mutant("unattributable_merge_allowed", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'))
+    Mutant("unattributable_merge_allowed", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'),
+    Mutant("builder_status_change_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
+    Mutant("reviewer_runner_change_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
+    Mutant("restored_frozen_change_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
+    Mutant("allowed_merge_commit_charged", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
+    Mutant("sovereign_budget_forbidden", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
+    Mutant("counsel_merge_edit_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
+    Mutant("main_side_drop_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
+    Mutant("sibling_merge_allowed", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'),
+    Mutant("octopus_merge_allowed", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'),
+    Mutant("empty_noff_merge_allowed", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'),
+    Mutant("closed_window_file_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'))
 
 
 # --- clerk pins (BRIEF-C1b v7 §Pins; REVIEW-C1b-v7 §4) -------------------------
