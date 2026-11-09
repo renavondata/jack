@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Sign counsel's requested entries with counsel's key on steel (counsel-sign.yml). Written to
 transcripts/runner/counsel-courier.md in renavondata/jack; that text governs, this file is its code."""
-import hashlib, json, os, re, subprocess, sys  # noqa: E401
+import hashlib, json, os, re, subprocess, sys, tempfile  # noqa: E401
 FIELDS = {"forecast": {"claim": str, "p": int, "by": str}, "proposal": {"title": str}}
 OPTIONAL = {"forecast": {"type": str, "args": dict}, "proposal": {}}
 REGULAR = {"100644", "100755"}  # SPEC §10 item 9: the repository holds regular files only
@@ -14,6 +14,25 @@ def sh(*args, cwd=None, env=None, ok=True):
     if ok and r.returncode:
         raise CommandFailed(f"{' '.join(args[:4])} failed (exit {r.returncode})\n{r.stdout[-2000:]}{r.stderr[-2000:]}")
     return r
+
+def added_files(repo, before, after, token):
+    """Use Git's unbounded diff rather than GitHub's 300-file REST response."""
+    with tempfile.TemporaryDirectory(prefix="counsel-trigger-") as tmp:
+        sh("git", "init", "-q", tmp)
+        sh("git", "remote", "add", "origin", repo, cwd=tmp)
+        auth = f"http.extraHeader=Authorization: Bearer {token}"
+        sh("git", "-c", auth, "fetch", "-q", "--no-tags", "origin", after, cwd=tmp)
+        if set(before) == {"0"}:
+            output = sh("git", "diff-tree", "--root", "--no-commit-id", "--name-status", "-z", after, cwd=tmp).stdout
+        else:
+            sh("git", "-c", auth, "fetch", "-q", "--no-tags", "origin", before, cwd=tmp)
+            output = sh("git", "diff", "--name-status", "-z", before, after, cwd=tmp).stdout
+    fields = output.split("\0")
+    return [fields[i + 1] for i in range(0, len(fields) - 1, 2) if fields[i] == "A"]
+
+def powered_key_declarations(entries, pub):
+    declarations = [d for e in entries for d in (e["body"]["keys"] if e["type"] == "genesis" else [e["body"]] if e["type"] == "key" else [])]
+    return [d for d in declarations if d["pubkey"] == pub and d["powers"]]
 
 def changed_by(wt, sha):  # judge.judge.changed_by's command: both sides of a rename, a merge against each parent
     return set(sh("git", "diff-tree", "-r", "-m", "--root", "--no-commit-id", "--name-only", "--no-renames", sha, cwd=wt).stdout.split()) - {""}
@@ -61,9 +80,9 @@ def main():
     jack, wt_root = os.environ.get("COUNSEL_JACK", f"{home}/git/jack"), os.environ.get("COUNSEL_WT", f"{home}/git/worktrees/jack")
     key, run_id, read = os.environ.get("COUNSEL_KEY", f"{home}/.ssh/jack-counsel-3"), os.environ.get("GITHUB_RUN_ID", "?"), os.environ["READ_TOKEN"]
     gh_read = lambda *a: sh("gh", "api", *a, env={**os.environ, "GH_TOKEN": read}).stdout  # noqa: E731
-    ep = f"repos/{here}/commits/{after_sha}" if set(before_sha) == {"0"} else f"repos/{here}/compare/{before_sha}...{after_sha}"
-    files = sorted(f["filename"] for f in json.loads(gh_read(ep))["files"]
-                   if f["status"] == "added" and f["filename"].startswith("requests/sign-") and f["filename"].endswith(".json"))
+    repo = os.environ.get("COUNSEL_TRIGGER_REPO", f"https://github.com/{here}.git")
+    files = sorted(f for f in added_files(repo, before_sha, after_sha, read)
+                   if f.startswith("requests/sign-") and f.endswith(".json"))
     print(f"{len(files)} sign request(s): {files}")
     if not files: return 0
     tok = os.environ.get("COUNSEL_GH_TOKEN") or (open(p).read().strip() if os.path.exists(p := f"{home}/.config/jack/gh-counsel") else "")
@@ -75,8 +94,7 @@ def main():
     scope = json.loads(sh("git", "show", "origin/main:judge/scope.json", cwd=jack).stdout)["parties"]["counsel"]
     pub = " ".join(open(key + ".pub").read().split()[:2])
     main_entries = [json.loads(l) for l in sh("git", "show", "origin/main:log.jsonl", cwd=jack).stdout.splitlines() if l.strip()]
-    keys = {d["key_id"]: d for e in main_entries for d in (e["body"]["keys"] if e["type"] == "genesis" else [e["body"]] if e["type"] == "key" else [])}
-    mine = [d for d in keys.values() if d["pubkey"] == pub and d["powers"]]
+    mine = powered_key_declarations(main_entries, pub)
     len(mine) == 1 or sys.exit(f"{key}.pub is declared {len(mine)} times with powers on main; nothing done")
     principal, trailer = mine[0]["principal"], f"Proposer: {mine[0]['principal']} {mine[0]['key_id']}"
 
