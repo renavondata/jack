@@ -1,6 +1,6 @@
 """The counsel courier (transcripts/runner/counsel-courier.md, transcripts/runner/README.md):
 tools/runner/counsel-sign.py, tools/runner/counsel-act.py, and tools/runner/workflows/*.yml."""
-import json, os, shutil, subprocess, sys, tempfile, unittest  # noqa: E401
+import importlib.util, json, os, shutil, subprocess, sys, tempfile, unittest  # noqa: E401
 from harness import build, gitfix
 from judge.judge import digest as commit_digest
 
@@ -85,6 +85,13 @@ def write_file(path, text, mode=None):
         os.chmod(path, mode)
 
 
+def load_script(path, name):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def template(tmp):
     w = build.World(tmp)
     w.decls = [build.decl("guy-master", "guy", w.guy, build.ALL),
@@ -144,7 +151,14 @@ class CourierTest(unittest.TestCase):
 
     def set_gh(self, added=(), contents=None, prs=None, issues=None, login="assize-reviewer"):
         write_file(self.gh_state, json.dumps({"login": login, "added_files": [{"filename": f, "status": "added"} for f in added],
-                                              "contents": contents or {}, "prs": prs or [], "issues": issues or {}, "comments": [], "calls": []}))
+                                               "contents": contents or {}, "prs": prs or [], "issues": issues or {}, "comments": [], "calls": []}))
+        if added and os.path.isdir(self.jack):
+            before = self.git("rev-parse", "HEAD")
+            for path in added:
+                write_file(os.path.join(self.jack, path), "{}\n")
+            self.git("add", *added)
+            self.git("commit", "-q", "-m", "trigger files")
+            self.env.update(BEFORE=before, AFTER=self.git("rev-parse", "HEAD"), COUNSEL_TRIGGER_REPO=self.jack)
 
     def get_gh(self):
         with open(self.gh_state, encoding="utf-8") as f:
@@ -189,6 +203,27 @@ class CourierTest(unittest.TestCase):
             for expected in (name, "branches: [counsel-requests]", lane, timeout, f"repos/renavondata/jack/contents/{script}?ref=main"):
                 self.assertIn(expected, text)
             self.assertNotIn("concurrency:", text)
+
+    def test_trigger_files_are_not_limited_by_githubs_rest_file_cap(self):
+        before = self.git("rev-parse", "main")
+        work = os.path.join(self.tmp.name, "trigger-files")
+        subprocess.run(["git", "clone", "-q", self.origin, work], check=True, env=self.env)
+        for number in range(301):
+            write_file(os.path.join(work, "requests", f"{number:03}.json"), "{}\n")
+        self.git("add", "requests", cwd=work)
+        self.git("commit", "-q", "-m", "many trigger files", cwd=work)
+        after = self.git("rev-parse", "HEAD", cwd=work)
+        self.git("push", "-q", "origin", "HEAD:main", cwd=work)
+        sign, act = load_script(SIGN_SCRIPT, "courier_sign"), load_script(ACT_SCRIPT, "courier_act")
+        expected = [f"requests/{number:03}.json" for number in range(301)]
+        self.assertEqual(sign.added_files(self.origin, before, after, "read"), expected)
+        self.assertEqual(act.added_files(self.origin, before, after, "read"), expected)
+
+    def test_powered_key_declarations_are_not_collapsed_by_key_id(self):
+        sign = load_script(SIGN_SCRIPT, "courier_sign_keys")
+        entries = [{"type": "key", "body": {"key_id": "same", "pubkey": "pub", "powers": ["proposal"]}},
+                   {"type": "key", "body": {"key_id": "same", "pubkey": "pub", "powers": ["forecast"]}}]
+        self.assertEqual(len(sign.powered_key_declarations(entries, "pub")), 2)
 
     def test_courier_signs_only_the_request(self):
         """Pin courier_signs_only_the_request: exact request lines in order, once; branch tools/ or symlink refused; merge edit refused."""
@@ -277,7 +312,8 @@ class CourierTest(unittest.TestCase):
 
     def test_acts_job_pr_issue_template_and_close(self):
         self.set_gh(added=["requests/sign-1.json"])
-        self.assertEqual(subprocess.run([sys.executable, ACT_SCRIPT], env=dict(self.env, COUNSEL_GH_TOKEN=""), capture_output=True, text=True).returncode, 0)
+        empty = subprocess.run([sys.executable, ACT_SCRIPT], env=dict(self.env, COUNSEL_GH_TOKEN=""), capture_output=True, text=True)
+        self.assertEqual(empty.returncode, 0, empty.stdout + empty.stderr)
         tpl = "model: {MODEL}\nkey: ~/.ssh/jack-builder\nbranch: {BRANCH}\n\n# builder: build {TEXTS} on {BRANCH} at {NOW} ({STAMP}) for {WINDOW}\nBody.\n"
         win = {"window": "C2c-1", "frozen": {"paths": ["transcripts/runner/", "transcripts/windows/"]}}
         reqs = {
