@@ -108,8 +108,9 @@ def collect_acts(repo, start_iso, end_iso):
         if (it.get("user") or {}).get("login") != G or "pull_request" in it: continue
         labels = {l["name"] for l in it.get("labels", [])}
         add(it["created_at"], "decision", "wish filed" if "wish" in labels else "instruction filed", f"#{n}", (it.get("title") or "")[:70])
-    events = [e for e in pages(f"repos/{repo}/issues/events", stop=lambda e: t(e["created_at"]) < start)
-              if e.get("actor") and e["actor"]["login"] == G and e.get("issue") and t(e["created_at"]) >= start]
+    events = [e for e in pages(f"repos/{repo}/issues/events",
+                               stop=lambda e: t(e["created_at"]) < start - dt.timedelta(minutes=1))
+              if e.get("actor") and e["actor"]["login"] == G and e.get("issue")]
     events.sort(key=lambda e: e["created_at"])
     signed_once, skip, by_issue = set(), set(), defaultdict(list)
     for e in events: by_issue[e["issue"]["number"]].append(e)

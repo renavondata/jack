@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Record counsel-sign workflow runs, their push triggers, and receipt lines since the window's opening
 (transcripts/sessions/evidence.md step 4; C2c-1.json evidence.courier; RESEARCH-meta-jack-20261107.md B6)."""
-import io, json, os, re, subprocess, sys, zipfile  # noqa: E401
+import json, os, re, subprocess, sys, tempfile, zipfile  # noqa: E401
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from acts import api, current_stamp, now_iso, opening_instant, pages, root_dir, t  # noqa: E402
 from runner import RUNNER, gh_raw_bytes  # noqa: E402
@@ -11,24 +11,31 @@ RECEIPT_RE = re.compile(r"^([A-Za-z0-9._-]+):\s+.*\brequest sha256 [0-9a-fA-F]{6
 
 
 def run_log_lines(run_id, conclusion):
-    r = subprocess.run(["gh", "api", f"repos/{RUNNER}/actions/runs/{run_id}/logs"], capture_output=True)
-    if r.returncode != 0:
-        if conclusion is None:
-            return []
-        raise SystemExit(f"refused: gh api repos/{RUNNER}/actions/runs/{run_id}/logs: {r.stderr.decode('utf-8', errors='replace').strip()}")
-    if zipfile.is_zipfile(io.BytesIO(r.stdout)):
-        with zipfile.ZipFile(io.BytesIO(r.stdout)) as z:
-            names = [n for n in sorted(z.namelist()) if "/" not in n and n.endswith(".txt")] or sorted(z.namelist())
-            return [line for n in names for line in z.read(n).decode("utf-8", errors="replace").splitlines()]
-    return r.stdout.decode("utf-8", errors="replace").splitlines()
+    with tempfile.TemporaryFile() as log:
+        r = subprocess.run(["gh", "api", f"repos/{RUNNER}/actions/runs/{run_id}/logs"],
+                           stdout=log, stderr=subprocess.PIPE)
+        if r.returncode != 0:
+            if conclusion is None:
+                return []
+            raise SystemExit(f"refused: gh api repos/{RUNNER}/actions/runs/{run_id}/logs: {r.stderr.decode('utf-8', errors='replace').strip()}")
+        log.seek(0)
+        if zipfile.is_zipfile(log):
+            with zipfile.ZipFile(log) as z:
+                for name in sorted(z.namelist()):
+                    with z.open(name) as member:
+                        for line in member:
+                            yield line.decode("utf-8", errors="replace").rstrip("\r\n")
+            return
+        for line in log:
+            yield line.decode("utf-8", errors="replace").rstrip("\r\n")
 
 
-def extract_receipts(lines, trigger_ids=None):
+def extract_receipts(lines):
     out = []
     for raw in lines:
         cleaned = TS_PREFIX.sub("", raw.strip())
         m = RECEIPT_RE.match(cleaned)
-        if m and (not trigger_ids or m.group(1) in trigger_ids):
+        if m:
             out.append(cleaned)
     return out
 
@@ -48,7 +55,7 @@ def collect_courier(window_name, root=None, through=None):
         files = api(f"repos/{RUNNER}/commits/{sha}").get("files", []) if sha else []
         added = sorted(f["filename"] for f in files if f.get("status") == "added" and
                        f.get("filename", "").startswith("requests/sign-") and f.get("filename", "").endswith(".json"))
-        triggers, trig_ids = [], set()
+        triggers = []
         for path in added:
             raw_text = gh_raw_bytes(f"repos/{RUNNER}/contents/{path}?ref={sha}").decode("utf-8", errors="replace")
             try:
@@ -57,12 +64,9 @@ def collect_courier(window_name, root=None, through=None):
             except ValueError:
                 obj = {}
             rid = obj.get("id")
-            if isinstance(rid, str):
-                trig_ids.add(rid)
-            trig_ids.add(os.path.basename(path).removesuffix(".json"))
-            triggers.append({"path": path, "id": rid, "branch": obj.get("branch"), "act": obj.get("act"), "contents": raw_text})
+            triggers.append({"path": path, "id": rid, "branch": obj.get("branch"), "contents": raw_text})
         log_lines = run_log_lines(r["id"], r.get("conclusion"))
-        receipts = extract_receipts(log_lines, trig_ids or None)
+        receipts = extract_receipts(log_lines)
         runs.append({
             "run": r["id"],
             "created_at": r.get("created_at"),
