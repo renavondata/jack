@@ -46,7 +46,7 @@ def valid_counsel_branch(ref):
 
 def main():
     here, before_sha, after_sha, read = os.environ["GITHUB_REPOSITORY"], os.environ["BEFORE"], os.environ["AFTER"], os.environ["READ_TOKEN"]
-    repo = os.environ.get("COUNSEL_TRIGGER_REPO", f"https://github.com/{here}.git")
+    repo = f"https://github.com/{here}.git"
     files = sorted(f for f in added_files(repo, before_sha, after_sha, read)
                    if f.startswith("requests/") and f.endswith(".json")
                    and not f.startswith("requests/sign-"))
@@ -55,6 +55,7 @@ def main():
     tok = os.environ.get("COUNSEL_GH_TOKEN") or (open(p).read().strip() if os.path.exists(p := os.path.expanduser("~/.config/jack/gh-counsel")) else "")
     tok or sys.exit("counsel's token is absent (COUNSEL_GH_TOKEN or ~/.config/jack/gh-counsel); nothing done")
     me = gh(tok, "user")["login"]
+    me == "assize-reviewer" or sys.exit(f"refused: counsel's token identifies {me!r}, not 'assize-reviewer'")
     print("identity:", me)
 
     def handle(f):

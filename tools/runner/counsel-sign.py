@@ -89,7 +89,9 @@ def main():
     tok or sys.exit("counsel's token is absent (COUNSEL_GH_TOKEN or ~/.config/jack/gh-counsel); nothing done")
     os.path.exists(key) or sys.exit(f"{key} is absent on this runner; nothing done")
     env = {**os.environ, "GH_TOKEN": tok, "JACK_KEY": key}
-    print("identity:", json.loads(sh("gh", "api", "user", env=env).stdout)["login"])
+    identity = json.loads(sh("gh", "api", "user", env=env).stdout)["login"]
+    identity == "assize-reviewer" or sys.exit(f"refused: counsel's token identifies {identity!r}, not 'assize-reviewer'")
+    print("identity:", identity)
     sh("git", "fetch", "-q", "origin", cwd=jack), sh("git", "worktree", "prune", cwd=jack)
     scope = json.loads(sh("git", "show", "origin/main:judge/scope.json", cwd=jack).stdout)["parties"]["counsel"]
     pub = " ".join(open(key + ".pub").read().split()[:2])

@@ -334,6 +334,17 @@ class CourierTest(unittest.TestCase):
         self.assertEqual(self.trigger_sign("sign-unasked", "counsel/unasked").returncode, 1)
         self.assertEqual([e["type"] for e in self.remote_entries("counsel/unasked")[-1:]], ["forecast"])
 
+    def test_courier_refuses_a_token_not_owned_by_assize_reviewer(self):
+        self.make_counsel_branch("wrong-identity", [{"verb": "proposal", "title": "t"}])
+        self.set_gh(added=["requests/sign-wrong-identity.json"],
+                    contents={"requests/sign-wrong-identity.json": {"id": "sign-wrong-identity", "act": "sign", "branch": "counsel/wrong-identity"}},
+                    login="not-counsel")
+        self.assertEqual(subprocess.run([sys.executable, SIGN_SCRIPT], env=self.env, capture_output=True, text=True).returncode, 1)
+        self.set_gh(added=["requests/act-wrong-identity.json"],
+                    contents={"requests/act-wrong-identity.json": {"id": "act-wrong-identity", "act": "issue", "title": "x", "body": "x"}},
+                    login="not-counsel")
+        self.assertEqual(subprocess.run([sys.executable, ACT_SCRIPT], env=self.env, capture_output=True, text=True).returncode, 1)
+
     def test_acts_job_pr_issue_template_and_close(self):
         self.set_gh(added=["requests/sign-1.json"])
         empty = subprocess.run([sys.executable, ACT_SCRIPT], env=dict(self.env, COUNSEL_GH_TOKEN=""), capture_output=True, text=True)

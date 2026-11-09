@@ -60,8 +60,9 @@ else
   ! id -nG jack-runner | tr ' ' '\n' | grep -qx sudo || { echo "refused: jack-runner has sudo" >&2; exit 1; }
   mkdir -p /home/jack-runner && chmod 700 /home/jack-runner
   for d in "$OLD"/.local/share/actions-runner-*; do
-    if [ -d "$d" ] && [ -x "$d/svc.sh" ]; then (cd "$d" && ./svc.sh stop || true; ./svc.sh uninstall || true); fi
+    if [ -d "$d" ] && [ -x "$d/svc.sh" ]; then (cd "$d" && ./svc.sh stop && ./svc.sh uninstall); fi
   done
+  ! pgrep -f "$OLD/.local/share/actions-runner-[^/]*/bin/Runner.Worker" >/dev/null 2>&1 || { echo "refused: Runner.Worker remained running after runner services stopped" >&2; exit 1; }
 fi
 
 mkdir -p -m 700 "$NEW_HOME" "$NEW_HOME/.ssh" "$NEW_HOME/.config/jack"
