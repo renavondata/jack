@@ -95,7 +95,7 @@ def main():
             else:
                 if set(q) - {"id", "act", "title", "body", "labels", "then_labels"} or not isinstance(q.get("title"), str) or not q["title"].strip() or not isinstance(q.get("body"), str):
                     sys.exit(f"{rid}: refused: issue requires non-empty string title and string body")
-                re.search(r"^\s*key:.*jack-builder", q["body"], re.M | re.I) and sys.exit(f"{rid}: refused: builder key in direct issue body")
+                re.search(r"^\s*key:\s*", q["body"], re.M | re.I) and sys.exit(f"{rid}: refused: direct issue body contains a key line")
             labels, then_labels = q.get("labels", []), q.get("then_labels", [])
             if not (isinstance(labels, list) and all(isinstance(x, str) for x in labels) and isinstance(then_labels, list) and all(isinstance(x, str) for x in then_labels)):
                 sys.exit(f"{rid}: refused: invalid labels")

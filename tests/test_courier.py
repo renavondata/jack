@@ -355,8 +355,9 @@ class CourierTest(unittest.TestCase):
             "requests/01-pr-ok.json": {"id": "01-pr-ok", "act": "pr", "head": "counsel/foo", "title": "T", "body": "B"},
             "requests/02-pr-bad.json": {"id": "02-pr-bad", "act": "pr", "head": "builder-x", "title": "T", "body": "B"},
             "requests/03-issue-direct.json": {"id": "03-issue-direct", "act": "issue", "title": "Reader",
-                                              "body": "key: ~/.ssh/jack-reviewer\nhello", "labels": ["read"], "then_labels": ["run"]},
+                                              "body": "hello", "labels": ["read"], "then_labels": ["run"]},
             "requests/04-issue-bkey.json": {"id": "04-issue-bkey", "act": "issue", "title": "Sneak", "body": "key: ~/.ssh/jack-builder\ndo this"},
+            "requests/04-issue-rkey.json": {"id": "04-issue-rkey", "act": "issue", "title": "Sneak", "body": "key: ~/.ssh/jack-reviewer\ndo this"},
             "requests/05-tpl-ok.json": {"id": "05-tpl-ok", "act": "issue", "template": "build", "window": "C2c-1",
                                         "model": "google/gemini-4-argon", "branch": "builder-c2c-1-courier",
                                         "texts": "transcripts/runner/counsel-courier.md,transcripts/windows/C2c-1.json",
@@ -366,7 +367,7 @@ class CourierTest(unittest.TestCase):
             "requests/07-close-jack.json": {"id": "07-close-jack", "act": "close", "repo": "renavondata/jack", "number": 1, "stale": "superseded"},
             "requests/08-close-runner.json": {"id": "08-close-runner", "act": "close", "repo": "renavondata/opencode-runner", "number": 2, "stale": "done"},
             "requests/09-issue-dedup.json": {"id": "03-issue-direct", "act": "issue", "title": "Reader",
-                                             "body": "key: ~/.ssh/jack-reviewer\nhello", "labels": ["read"], "then_labels": ["run", "extra"]},
+                                             "body": "hello", "labels": ["read"], "then_labels": ["run", "extra"]},
         }
         prs = [{"number": 1, "head": "counsel/old", "title": "Old", "body": "", "state": "open", "user": "assize-reviewer"}]
         issues = {"renavondata/jack": [{"number": 1, "state": "open", "user": {"login": "assize-reviewer"}, "pull_request": {}}]}
@@ -383,7 +384,7 @@ class CourierTest(unittest.TestCase):
         tpl_issue = next(i for i in runner_issues if "<!-- counsel-request: 05-tpl-ok -->" in i["body"])
         self.assertTrue(tpl_issue["title"].startswith("builder: build transcripts/runner/counsel-courier.md"))
         self.assertEqual({l["name"] for l in tpl_issue["labels"]}, {"build", "run"})
-        self.assertEqual(len([i for i in runner_issues if i["title"].startswith("counsel-act:")]), 3)
+        self.assertEqual(len([i for i in runner_issues if i["title"].startswith("counsel-act:")]), 4)
 
 
 if __name__ == "__main__":
