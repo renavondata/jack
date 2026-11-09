@@ -1,0 +1,33 @@
+Forecast 520, counsel.programme, RM-4
+Claim: RM-4: C2a's value E reaches 20 within 7 days of its opening push (a revision of V1, seq 362, entered while V1 stands)
+Opening push: seq 367 at 2026-11-01T15:04:14Z.
+Seven-day endpoint and resolves_by: 2026-11-08T15:04:14Z.
+Outcome: 1. The claim is already true before its endpoint: a prefix on origin/main at 2026-11-03T03:12:26Z has value E 20.131519.
+This claim concerns value E alone, not the joint value/continued-liveness criterion.
+
+Commands and results produced in this session:
+
+$ git rev-parse origin/main
+adcb63157b730b01bae9db4e8484644c48532408
+$ git rev-parse HEAD
+adcb63157b730b01bae9db4e8484644c48532408
+
+Gate discovery used tools.status.attack_start(os.getcwd(), runs, '2026-11-08T13:11:48Z', 'tests/test_value.py'), as assess_value does, over workflow_runs returned by:
+$ gh api 'repos/renavondata/jack/actions/workflows/tests.yml/runs?branch=main&event=push&status=success&created=2026-11-01T00:00:00Z..2026-11-02T23:59:59Z&per_page=100'
+Successful main push runs: 72 (fewer than the page limit of 100).
+Verified value attack-green: 2026-11-01T15:59:44Z.
+
+$ gh api repos/renavondata/jack/actions/runs/41323442395 --jq '{id,name,event,status,conclusion,head_branch,head_sha,created_at,updated_at}'
+{"conclusion":"success","created_at":"2026-11-01T15:52:54Z","event":"push","head_branch":"main","head_sha":"b5b445d2d7c4ec6ea4806e869aee85d43db9a5dd","id":41323442395,"name":"tests","status":"completed","updated_at":"2026-11-01T15:59:44Z"}
+
+$ git cat-file -e b5b445d2d7c4ec6ea4806e869aee85d43db9a5dd:tests/test_value.py
+(no output; exit 0)
+
+The first row with E_after >= 20 in tools.value.value(es, as_of='2026-11-08T13:11:48Z', attack_green='2026-11-01T15:59:44Z') names resolution seq 789, timestamp 2026-11-03T03:12:26Z; E_after 20.131519 (six-decimal display). Replay at that instant:
+$ PYTHONDONTWRITEBYTECODE=1 python3 tools/value.py --as-of 2026-11-03T03:12:26Z --attack-green 2026-11-01T15:59:44Z
+value: E 20.131519 over 114 events; window events 114
+
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-11-08T13:12:25Z
+
+The witnessed instant satisfies 2026-11-01T15:04:14Z < 2026-11-03T03:12:26Z < 2026-11-08T15:04:14Z. The future deadline does not prevent a true resolution of a claim already met.

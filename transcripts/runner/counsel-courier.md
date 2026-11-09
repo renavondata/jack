@@ -131,9 +131,10 @@ A request is one JSON object with `id` (one token, `[A-Za-z0-9._-]+`: it is writ
   ends in a name, never a `/` (a trailing `/` is an empty segment); `window` must match `[A-Za-z0-9][A-Za-z0-9-]*`, one file name under
   `transcripts/windows/`; `texts` without `window` is refused), and
   carries nothing else of counsel's: the session's prompt is a text on
-  `main`. In the first form the body may not name the builder's key in any spelling (a `key:` line naming `jack-builder`
-  is refused): a builder-keyed session — the evidence session, a build to a text — is filed from a template only, so that
-  what the builder does under its key is never a body counsel wrote. The
+  `main`. In the first form the body may carry no `key:` line at all (from `transcripts/runner/host.md` §3; before it, a line
+  naming `jack-builder` in any spelling was refused): a keyed session — the evidence session, a build to a text, a
+  re-proposal, a gate review (`review.md`) — is filed from a template only, so that what a party does under its key is never a body counsel wrote,
+  and a session counsel files by this form is handed no key. The
   body carries `<!-- counsel-request: <id> -->`; a request whose exact marker is already on an issue counsel's account
   opened (every issue of the repository is searched, paged to the end; another author's issue, or a body that merely
   contains the id, is not a match) files nothing twice, and only adds the `then_labels` a stopped run owed. `then_labels` are added after the issue exists (so `run.yml` sees `build` when the
@@ -162,11 +163,11 @@ Whoever can push a `counsel/*` branch to jack *and* a trigger to `counsel-reques
 sovereign's git credentials, which the drafting session uses for pushes (pushes are not acts, COUNSEL-OPEN row 44).
 A branch must not be pushed while a run on it may be in flight: a push that does not include the run's commits
 diverges from them, and step 3 refuses. Two further routes reach the key and are not closed by this definition:
-every runner on steel runs as the login user `g`, whose home holds every party key and a `gfrmin` login with
-admin scopes (`opencode-runner` issue #188), and `run.yml` exports whatever `key:` an issue body names as
-`JACK_KEY` to the session it starts. So any session on steel, and anyone who can file a `run` issue, can sign as
-any party. The fix is #188's — a runner user that holds only the job's credentials — and it is the sovereign's,
-once. Until then this courier is as strong as the host. The enforcement map does not say so: its
+every runner on steel runs as `jack-runner`, whose home holds every party key and no login of the owner's
+(`transcripts/runner/host.md`; `opencode-runner` issue #188), and `run.yml` exports whatever `key:` an issue body
+names as `JACK_KEY` to the session it starts. So any session on steel, and anyone who can file a `run` issue, can
+sign as any party. The separation of the parties' keys is C2c-2's, with a text of its own. Until then this courier
+is as strong as the host. The enforcement map does not say so: its
 `irreversible` row reads `code: keys, rulesets`, and no row names the host. BRIEF-C2c-1 R7 gives every row a witness
 and every hand row a deadline, and names no row for this; the disclosure is this paragraph, and the act that closes
 it is #188's, the sovereign's.
