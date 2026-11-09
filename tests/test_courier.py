@@ -411,6 +411,14 @@ class CourierTest(unittest.TestCase):
             self.assertEqual(os.stat(os.path.join(home1, cfg)).st_mode & 0o777, 0o644)
         self.assertEqual(subprocess.run([install_sh, "--root", root1, "--staging", stg1, "--old-home", old1], env=self.env, capture_output=True, text=True).returncode, 0)
 
+        # A completed root-mode install retains the known-host bytes on rerun.
+        with open(os.path.join(home1, ".ssh", "known_hosts"), encoding="utf-8") as f:
+            known_hosts = f.read()
+        write_file(os.path.join(self.stubs, "curl"), '#!/bin/sh\necho \'{"ssh_keys":["ssh-ed25519 CHANGED"]}\'\n', 0o755)
+        self.assertEqual(subprocess.run([install_sh, "--root", root1, "--staging", stg1, "--old-home", old1], env=self.env, capture_output=True, text=True).returncode, 0)
+        with open(os.path.join(home1, ".ssh", "known_hosts"), encoding="utf-8") as f:
+            self.assertEqual(f.read(), known_hosts)
+
         # Twin 2: hosts.yml added to staging -> stops with that name and writes nothing
         stg2, old2, root2 = make_fixture("twin2")
         write_file(os.path.join(stg2, "hosts.yml"), "oauth_token: secret\n")
@@ -418,6 +426,15 @@ class CourierTest(unittest.TestCase):
         self.assertNotEqual(r2.returncode, 0)
         self.assertIn("hosts.yml", r2.stdout + r2.stderr)
         self.assertEqual(tree_files(root2), [])
+
+        # Staged secrets are files, never symlinks to bytes outside the staging tree.
+        stg_link, old_link, root_link = make_fixture("symlink")
+        os.remove(os.path.join(stg_link, ".ssh", "jack-builder"))
+        os.symlink(os.path.join(old_link, "git", "jack", "README.md"), os.path.join(stg_link, ".ssh", "jack-builder"))
+        r_link = subprocess.run([install_sh, "--root", root_link, "--staging", stg_link, "--old-home", old_link], env=self.env, capture_output=True, text=True)
+        self.assertNotEqual(r_link.returncode, 0)
+        self.assertIn("symlink", r_link.stdout + r_link.stderr)
+        self.assertEqual(tree_files(root_link), [])
 
         # Twin 3: jack-reviewer absent -> stops before any placement
         stg3, old3, root3 = make_fixture("twin3")
@@ -458,9 +475,9 @@ class CourierTest(unittest.TestCase):
 
         # Mutants (a), (b), (c): each a single line of install.sh deleted
         for idx, (find_line, stg_m, old_m, root_m, expected_file) in enumerate([
-            ('for rel in $(find "$STAGING" -mindepth 1 \\( -type f -o -type l \\) -printf \'%P\\n\' | sort); do case " $STAGED_FILES " in *" $rel "*) ;; *) echo "refused: unexpected staged file: $rel" >&2; exit 1 ;; esac; done\n',
+            ('for rel in $(find "$STAGING" -mindepth 1 -type f -printf \'%P\\n\' | sort); do case " $STAGED_FILES " in *" $rel "*) ;; *) echo "refused: unexpected staged file: $rel" >&2; exit 1 ;; esac; done\n',
              stg2, old2, root2, "home/jack-runner/hosts.yml"),
-            ('for rel in $STAGED_FILES; do [ -f "$STAGING/$rel" ] || { echo "refused: missing staged file: $rel" >&2; exit 1; }; done\n',
+            ('for rel in $STAGED_FILES; do [ -f "$STAGING/$rel" ] && [ ! -L "$STAGING/$rel" ] || { echo "refused: missing staged file: $rel" >&2; exit 1; }; done\n',
              stg3, old3, root3, "home/jack-runner/.ssh/jack-builder"),
             ('ahead=$(git -C "$OLD/git/jack" for-each-ref --format=\'%(refname:short)\' refs/heads/ | while read -r b; do if [ -n "$(git -C "$OLD/git/jack" rev-list "origin/$b..$b" 2>/dev/null || git -C "$OLD/git/jack" rev-list "$b" --not --remotes=origin)" ]; then echo "$b"; fi; done); [ -z "$ahead" ] || { echo "refused: local branch ahead of origin: $ahead" >&2; exit 1; }\n',
              stg4, old4, root4, "home/jack-runner/.ssh/jack-builder"),
