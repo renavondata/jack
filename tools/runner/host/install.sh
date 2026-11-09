@@ -41,15 +41,23 @@ write_memory_dropin() {
 ! pgrep -f "$OLD/.local/share/actions-runner-[^/]*/bin/Runner.Worker" >/dev/null 2>&1 || { echo "refused: Runner.Worker is running under $OLD" >&2; exit 1; }
 ahead=$(git -C "$OLD/git/jack" for-each-ref --format='%(refname:short)' refs/heads/ | while read -r b; do if [ -n "$(git -C "$OLD/git/jack" rev-list "origin/$b..$b" 2>/dev/null || git -C "$OLD/git/jack" rev-list "$b" --not --remotes=origin)" ]; then echo "$b"; fi; done); [ -z "$ahead" ] || { echo "refused: local branch ahead of origin: $ahead" >&2; exit 1; }
 [ -d "$STAGING" ] || { echo "refused: staging directory $STAGING does not exist" >&2; exit 1; }
-for rel in $(find "$STAGING" -mindepth 1 \( -type f -o -type l \) -printf '%P\n' | sort); do case " $STAGED_FILES " in *" $rel "*) ;; *) echo "refused: unexpected staged file: $rel" >&2; exit 1 ;; esac; done
-for rel in $STAGED_FILES; do [ -f "$STAGING/$rel" ] || { echo "refused: missing staged file: $rel" >&2; exit 1; }; done
+for rel in $(find "$STAGING" -mindepth 1 -type l -printf '%P\n' | sort); do echo "refused: staged file is a symlink: $rel" >&2; exit 1; done
+for rel in $(find "$STAGING" -mindepth 1 -type f -printf '%P\n' | sort); do case " $STAGED_FILES " in *" $rel "*) ;; *) echo "refused: unexpected staged file: $rel" >&2; exit 1 ;; esac; done
+for rel in $STAGED_FILES; do [ -f "$STAGING/$rel" ] && [ ! -L "$STAGING/$rel" ] || { echo "refused: missing staged file: $rel" >&2; exit 1; }; done
 
 if [ -n "$ROOT_DIR" ]; then
   echo "useradd --system --home-dir /home/jack-runner --create-home --shell /usr/sbin/nologin jack-runner"
   echo "chmod 700 /home/jack-runner"
   echo "for d in $OLD/.local/share/actions-runner-*; do (cd \"\$d\" && ./svc.sh stop && ./svc.sh uninstall); done"
 else
-  id -u jack-runner >/dev/null 2>&1 || useradd --system --home-dir /home/jack-runner --create-home --shell /usr/sbin/nologin jack-runner
+  if ! id -u jack-runner >/dev/null 2>&1; then
+    useradd --system --home-dir /home/jack-runner --create-home --shell /usr/sbin/nologin jack-runner
+  fi
+  runner_record=$(getent passwd jack-runner) || { echo "refused: jack-runner has no passwd record" >&2; exit 1; }
+  [ "$(printf '%s' "$runner_record" | cut -d: -f6)" = "/home/jack-runner" ] || { echo "refused: jack-runner home is not /home/jack-runner" >&2; exit 1; }
+  [ "$(printf '%s' "$runner_record" | cut -d: -f7)" = "/usr/sbin/nologin" ] || { echo "refused: jack-runner shell is not /usr/sbin/nologin" >&2; exit 1; }
+  case "$(passwd -S jack-runner | awk '{print $2}')" in L|NP) ;; *) echo "refused: jack-runner has a password" >&2; exit 1 ;; esac
+  ! id -nG jack-runner | tr ' ' '\n' | grep -qx sudo || { echo "refused: jack-runner has sudo" >&2; exit 1; }
   mkdir -p /home/jack-runner && chmod 700 /home/jack-runner
   for d in "$OLD"/.local/share/actions-runner-*; do
     if [ -d "$d" ] && [ -x "$d/svc.sh" ]; then (cd "$d" && ./svc.sh stop || true; ./svc.sh uninstall || true); fi
@@ -70,14 +78,16 @@ done
 [ -f "$NEW_HOME/.gitconfig" ] || printf '[user]\n\tname = jack-runner\n\temail = jack-runner@steel\n' > "$NEW_HOME/.gitconfig"
 printf 'Host github-jack\n  HostName github.com\n  IdentityFile ~/.ssh/deploy-jack\n' > "$NEW_HOME/.ssh/config"
 chmod 644 "$NEW_HOME/.ssh/config"
-meta_keys=$(curl -fsSL --max-time 5 https://api.github.com/meta 2>/dev/null | python3 -c 'import json,sys; [print("github.com", k) for k in json.load(sys.stdin)["ssh_keys"]]' 2>/dev/null || true)
-if [ -z "$meta_keys" ]; then
-  meta_keys=$(printf '%s\n' \
-    "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl" \
-    "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=" \
-    "github.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=")
+if [ ! -f "$NEW_HOME/.ssh/known_hosts" ]; then
+  meta_keys=$(curl -fsSL --max-time 5 https://api.github.com/meta 2>/dev/null | python3 -c 'import json,sys; [print("github.com", k) for k in json.load(sys.stdin)["ssh_keys"]]' 2>/dev/null || true)
+  if [ -z "$meta_keys" ]; then
+    meta_keys=$(printf '%s\n' \
+      "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl" \
+      "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=" \
+      "github.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=")
+  fi
+  printf '%s\n' "$meta_keys" > "$NEW_HOME/.ssh/known_hosts"
 fi
-printf '%s\n' "$meta_keys" > "$NEW_HOME/.ssh/known_hosts"
 chmod 644 "$NEW_HOME/.ssh/known_hosts"
 
 if [ -n "$ROOT_DIR" ]; then

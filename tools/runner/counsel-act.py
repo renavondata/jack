@@ -2,7 +2,7 @@
 """Make counsel's requested acts under counsel's own account (counsel.yml), within the grant of seq 2131 and nothing
 else: on renavondata/jack, opening counsel's proposals and closing its own stale proposals with a comment; on
 renavondata/opencode-runner, filing and closing issues. Written to transcripts/runner/counsel-courier.md."""
-import datetime, json, os, re, subprocess, sys  # noqa: E401
+import datetime, json, os, re, subprocess, sys, tempfile  # noqa: E401
 JACK, RUNNER, SEG = "renavondata/jack", "renavondata/opencode-runner", r"[A-Za-z0-9_-][A-Za-z0-9._-]*"
 
 def gh(token, *args, payload=None):
@@ -18,6 +18,20 @@ def gh_raw(token, path):
     r.returncode and sys.exit(f"refused: gh api {path}: {r.stdout}{r.stderr}")
     return r.stdout
 
+def added_files(repo, before, after, token):
+    """Use Git's unbounded diff rather than GitHub's 300-file REST response."""
+    with tempfile.TemporaryDirectory(prefix="counsel-trigger-") as tmp:
+        subprocess.run(["git", "init", "-q", tmp], check=True, capture_output=True, text=True)
+        subprocess.run(["git", "remote", "add", "origin", repo], cwd=tmp, check=True, capture_output=True, text=True)
+        auth = f"http.extraHeader=Authorization: Bearer {token}"
+        fetch = lambda ref: subprocess.run(["git", "-c", auth, "fetch", "-q", "--no-tags", "origin", ref], cwd=tmp, check=True, capture_output=True, text=True)  # noqa: E731
+        fetch(after)
+        command = ["git", "diff-tree", "--root", "--no-commit-id", "--name-status", "-z", after] if set(before) == {"0"} else ["git", "diff", "--name-status", "-z", before, after]
+        if set(before) != {"0"}: fetch(before)
+        output = subprocess.run(command, cwd=tmp, check=True, capture_output=True, text=True).stdout
+    fields = output.split("\0")
+    return [fields[i + 1] for i in range(0, len(fields) - 1, 2) if fields[i] == "A"]
+
 def jack_text(dir_, name, ext): return f"repos/{JACK}/contents/transcripts/{dir_}/{name}.{ext}?ref=main"  # noqa: E704
 
 def issues(tok, repo):
@@ -32,10 +46,10 @@ def valid_counsel_branch(ref):
 
 def main():
     here, before_sha, after_sha, read = os.environ["GITHUB_REPOSITORY"], os.environ["BEFORE"], os.environ["AFTER"], os.environ["READ_TOKEN"]
-    ep = f"repos/{here}/commits/{after_sha}" if set(before_sha) == {"0"} else f"repos/{here}/compare/{before_sha}...{after_sha}"
-    files = sorted(f["filename"] for f in gh(read, ep)["files"]
-                   if f["status"] == "added" and f["filename"].startswith("requests/") and f["filename"].endswith(".json")
-                   and not f["filename"].startswith("requests/sign-"))
+    repo = os.environ.get("COUNSEL_TRIGGER_REPO", f"https://github.com/{here}.git")
+    files = sorted(f for f in added_files(repo, before_sha, after_sha, read)
+                   if f.startswith("requests/") and f.endswith(".json")
+                   and not f.startswith("requests/sign-"))
     print(f"{len(files)} request(s) for this job: {files}")
     if not files: return 0
     tok = os.environ.get("COUNSEL_GH_TOKEN") or (open(p).read().strip() if os.path.exists(p := os.path.expanduser("~/.config/jack/gh-counsel")) else "")

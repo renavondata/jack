@@ -1,6 +1,6 @@
 """The counsel courier (transcripts/runner/counsel-courier.md, transcripts/runner/README.md):
 tools/runner/counsel-sign.py, tools/runner/counsel-act.py, and tools/runner/workflows/*.yml."""
-import json, os, shutil, subprocess, sys, tempfile, unittest  # noqa: E401
+import importlib.util, json, os, shutil, subprocess, sys, tempfile, unittest  # noqa: E401
 from harness import build, gitfix
 from judge.judge import digest as commit_digest
 
@@ -85,6 +85,13 @@ def write_file(path, text, mode=None):
         os.chmod(path, mode)
 
 
+def load_script(path, name):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def template(tmp):
     w = build.World(tmp)
     w.decls = [build.decl("guy-master", "guy", w.guy, build.ALL),
@@ -127,24 +134,39 @@ class CourierTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix="courier-test-")
         t = self.tmp.name
-        self.origin, self.jack, self.wt, self.stubs, self.gh_state = (os.path.join(t, n) for n in ("origin.git", "jack", "wt", "stubs", "gh_state.json"))
+        self.home = os.path.join(t, "home")
+        self.origin, self.trigger_origin, self.jack, self.trigger, self.wt, self.stubs, self.gh_state = (os.path.join(t, n) for n in ("origin.git", "runner.git", "home/git/jack", "runner", "home/git/worktrees/jack", "stubs", "gh_state.json"))
         shutil.copytree(self.origin_template, self.origin)
         write_file(os.path.join(self.stubs, "gh"), GH_STUB, 0o755)
-        write_file(os.path.join(t, "gitconfig"), "[user]\n\tname = t\n\temail = t@t\n")
-        self.env = dict(os.environ, PATH=self.stubs + os.pathsep + os.environ["PATH"], STUB_GH_STATE=self.gh_state,
+        subprocess.run(["git", "clone", "-q", "--bare", self.origin, self.trigger_origin], check=True)
+        write_file(os.path.join(t, "gitconfig"), f"[user]\n\tname = t\n\temail = t@t\n[url \"{self.trigger_origin}\"]\n\tinsteadOf = https://github.com/renavondata/opencode-runner.git\n")
+        self.env = dict(os.environ, HOME=self.home, PATH=self.stubs + os.pathsep + os.environ["PATH"], STUB_GH_STATE=self.gh_state,
                         GITHUB_REPOSITORY="renavondata/opencode-runner", BEFORE="0" * 40, AFTER="a" * 40,
-                        READ_TOKEN="read-tok", COUNSEL_GH_TOKEN="counsel-tok", COUNSEL_JACK=self.jack, COUNSEL_WT=self.wt,
-                        COUNSEL_KEY=self.w.parties["counsel"].path, GITHUB_RUN_ID="99",
+                        READ_TOKEN="read-tok", COUNSEL_GH_TOKEN="counsel-tok", GITHUB_RUN_ID="99",
                         GIT_CONFIG_GLOBAL=os.path.join(t, "gitconfig"), GIT_CONFIG_NOSYSTEM="1")
         self.set_gh()
         subprocess.run(["git", "clone", "-q", self.origin, self.jack], check=True, env=self.env)
+        subprocess.run(["git", "clone", "-q", self.trigger_origin, self.trigger], check=True, env=self.env)
+        key = os.path.join(self.home, ".ssh", "jack-counsel-3")
+        os.makedirs(os.path.dirname(key), exist_ok=True)
+        shutil.copy2(self.w.parties["counsel"].path, key)
+        shutil.copy2(self.w.parties["counsel"].path + ".pub", key + ".pub")
 
     def tearDown(self):
         self.tmp.cleanup()
 
     def set_gh(self, added=(), contents=None, prs=None, issues=None, login="assize-reviewer"):
         write_file(self.gh_state, json.dumps({"login": login, "added_files": [{"filename": f, "status": "added"} for f in added],
-                                              "contents": contents or {}, "prs": prs or [], "issues": issues or {}, "comments": [], "calls": []}))
+                                               "contents": contents or {}, "prs": prs or [], "issues": issues or {}, "comments": [], "calls": []}))
+        if added and os.path.isdir(self.trigger):
+            before = self.git("rev-parse", "HEAD", cwd=self.trigger)
+            for path in added:
+                write_file(os.path.join(self.trigger, path), "{}\n")
+            self.git("add", *added, cwd=self.trigger)
+            self.git("commit", "-q", "-m", "trigger files", cwd=self.trigger)
+            after = self.git("rev-parse", "HEAD", cwd=self.trigger)
+            self.git("push", "-q", "origin", "main", cwd=self.trigger)
+            self.env.update(BEFORE=before, AFTER=after)
 
     def get_gh(self):
         with open(self.gh_state, encoding="utf-8") as f:
@@ -189,6 +211,33 @@ class CourierTest(unittest.TestCase):
             for expected in (name, "branches: [counsel-requests]", lane, timeout, f"repos/renavondata/jack/contents/{script}?ref=main"):
                 self.assertIn(expected, text)
             self.assertNotIn("concurrency:", text)
+
+    def test_trigger_files_are_not_limited_by_githubs_rest_file_cap(self):
+        before = self.git("rev-parse", "main")
+        work = os.path.join(self.tmp.name, "trigger-files")
+        subprocess.run(["git", "clone", "-q", self.origin, work], check=True, env=self.env)
+        for number in range(301):
+            write_file(os.path.join(work, "requests", f"{number:03}.json"), "{}\n")
+        self.git("add", "requests", cwd=work)
+        self.git("commit", "-q", "-m", "many trigger files", cwd=work)
+        after = self.git("rev-parse", "HEAD", cwd=work)
+        self.git("push", "-q", "origin", "HEAD:main", cwd=work)
+        sign, act = load_script(SIGN_SCRIPT, "courier_sign"), load_script(ACT_SCRIPT, "courier_act")
+        expected = [f"requests/{number:03}.json" for number in range(301)]
+        self.assertEqual(sign.added_files(self.origin, before, after, "read"), expected)
+        self.assertEqual(act.added_files(self.origin, before, after, "read"), expected)
+
+    def test_powered_key_declarations_are_not_collapsed_by_key_id(self):
+        sign = load_script(SIGN_SCRIPT, "courier_sign_keys")
+        entries = [{"type": "key", "body": {"key_id": "same", "pubkey": "pub", "powers": ["proposal"]}},
+                   {"type": "key", "body": {"key_id": "same", "pubkey": "pub", "powers": ["forecast"]}}]
+        self.assertEqual(len(sign.powered_key_declarations(entries, "pub")), 2)
+
+    def test_sign_custody_paths_are_not_environment_selectable(self):
+        with open(SIGN_SCRIPT, encoding="utf-8") as f:
+            text = f.read()
+        for name in ("COUNSEL_JACK", "COUNSEL_WT", "COUNSEL_KEY", "COUNSEL_TRIGGER_REPO"):
+            self.assertNotIn(name, text)
 
     def test_courier_signs_only_the_request(self):
         """Pin courier_signs_only_the_request: exact request lines in order, once; branch tools/ or symlink refused; merge edit refused."""
@@ -251,6 +300,16 @@ class CourierTest(unittest.TestCase):
         self.assertEqual(self.git("rev-parse", "HEAD", cwd=os.path.join(self.wt, "counsel", "merge-chg")), branch_sha)
         self.assertEqual(self.remote_entries("counsel/merge-chg")[base_len:], [])
 
+        branch_sha = self.make_counsel_branch("merge-fail", [prop], extra_files={"transcripts/f.md": "1\n"})
+        with open(os.path.join(ROOT, "tools", "jack"), encoding="utf-8") as f:
+            failing_jack = f.read().replace("#!/usr/bin/env python3", "#!/usr/bin/env python3\nraise SystemExit(1)", 1)
+        write_file(os.path.join(main_work, "tools", "jack"), failing_jack, 0o755)
+        self.git("add", "tools/jack", cwd=main_work)
+        self.git("commit", "-q", "-m", "main makes the verb fail", cwd=main_work)
+        self.git("push", "-q", "origin", "main", cwd=main_work)
+        self.assertEqual(self.trigger_sign("sign-mfail", "counsel/merge-fail").returncode, 1)
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=os.path.join(self.wt, "counsel", "merge-fail")), branch_sha)
+
     def test_sign_empty_push_and_refusals(self):
         self.set_gh(added=["requests/act-only.json"])
         self.assertEqual(subprocess.run([sys.executable, SIGN_SCRIPT],
@@ -277,7 +336,8 @@ class CourierTest(unittest.TestCase):
 
     def test_acts_job_pr_issue_template_and_close(self):
         self.set_gh(added=["requests/sign-1.json"])
-        self.assertEqual(subprocess.run([sys.executable, ACT_SCRIPT], env=dict(self.env, COUNSEL_GH_TOKEN=""), capture_output=True, text=True).returncode, 0)
+        empty = subprocess.run([sys.executable, ACT_SCRIPT], env=dict(self.env, COUNSEL_GH_TOKEN=""), capture_output=True, text=True)
+        self.assertEqual(empty.returncode, 0, empty.stdout + empty.stderr)
         tpl = "model: {MODEL}\nkey: ~/.ssh/jack-builder\nbranch: {BRANCH}\n\n# builder: build {TEXTS} on {BRANCH} at {NOW} ({STAMP}) for {WINDOW}\nBody.\n"
         win = {"window": "C2c-1", "frozen": {"paths": ["transcripts/runner/", "transcripts/windows/"]}}
         reqs = {
@@ -351,6 +411,14 @@ class CourierTest(unittest.TestCase):
             self.assertEqual(os.stat(os.path.join(home1, cfg)).st_mode & 0o777, 0o644)
         self.assertEqual(subprocess.run([install_sh, "--root", root1, "--staging", stg1, "--old-home", old1], env=self.env, capture_output=True, text=True).returncode, 0)
 
+        # A completed root-mode install retains the known-host bytes on rerun.
+        with open(os.path.join(home1, ".ssh", "known_hosts"), encoding="utf-8") as f:
+            known_hosts = f.read()
+        write_file(os.path.join(self.stubs, "curl"), '#!/bin/sh\necho \'{"ssh_keys":["ssh-ed25519 CHANGED"]}\'\n', 0o755)
+        self.assertEqual(subprocess.run([install_sh, "--root", root1, "--staging", stg1, "--old-home", old1], env=self.env, capture_output=True, text=True).returncode, 0)
+        with open(os.path.join(home1, ".ssh", "known_hosts"), encoding="utf-8") as f:
+            self.assertEqual(f.read(), known_hosts)
+
         # Twin 2: hosts.yml added to staging -> stops with that name and writes nothing
         stg2, old2, root2 = make_fixture("twin2")
         write_file(os.path.join(stg2, "hosts.yml"), "oauth_token: secret\n")
@@ -358,6 +426,15 @@ class CourierTest(unittest.TestCase):
         self.assertNotEqual(r2.returncode, 0)
         self.assertIn("hosts.yml", r2.stdout + r2.stderr)
         self.assertEqual(tree_files(root2), [])
+
+        # Staged secrets are files, never symlinks to bytes outside the staging tree.
+        stg_link, old_link, root_link = make_fixture("symlink")
+        os.remove(os.path.join(stg_link, ".ssh", "jack-builder"))
+        os.symlink(os.path.join(old_link, "git", "jack", "README.md"), os.path.join(stg_link, ".ssh", "jack-builder"))
+        r_link = subprocess.run([install_sh, "--root", root_link, "--staging", stg_link, "--old-home", old_link], env=self.env, capture_output=True, text=True)
+        self.assertNotEqual(r_link.returncode, 0)
+        self.assertIn("symlink", r_link.stdout + r_link.stderr)
+        self.assertEqual(tree_files(root_link), [])
 
         # Twin 3: jack-reviewer absent -> stops before any placement
         stg3, old3, root3 = make_fixture("twin3")
@@ -398,9 +475,9 @@ class CourierTest(unittest.TestCase):
 
         # Mutants (a), (b), (c): each a single line of install.sh deleted
         for idx, (find_line, stg_m, old_m, root_m, expected_file) in enumerate([
-            ('for rel in $(find "$STAGING" -mindepth 1 \\( -type f -o -type l \\) -printf \'%P\\n\' | sort); do case " $STAGED_FILES " in *" $rel "*) ;; *) echo "refused: unexpected staged file: $rel" >&2; exit 1 ;; esac; done\n',
+            ('for rel in $(find "$STAGING" -mindepth 1 -type f -printf \'%P\\n\' | sort); do case " $STAGED_FILES " in *" $rel "*) ;; *) echo "refused: unexpected staged file: $rel" >&2; exit 1 ;; esac; done\n',
              stg2, old2, root2, "home/jack-runner/hosts.yml"),
-            ('for rel in $STAGED_FILES; do [ -f "$STAGING/$rel" ] || { echo "refused: missing staged file: $rel" >&2; exit 1; }; done\n',
+            ('for rel in $STAGED_FILES; do [ -f "$STAGING/$rel" ] && [ ! -L "$STAGING/$rel" ] || { echo "refused: missing staged file: $rel" >&2; exit 1; }; done\n',
              stg3, old3, root3, "home/jack-runner/.ssh/jack-builder"),
             ('ahead=$(git -C "$OLD/git/jack" for-each-ref --format=\'%(refname:short)\' refs/heads/ | while read -r b; do if [ -n "$(git -C "$OLD/git/jack" rev-list "origin/$b..$b" 2>/dev/null || git -C "$OLD/git/jack" rev-list "$b" --not --remotes=origin)" ]; then echo "$b"; fi; done); [ -z "$ahead" ] || { echo "refused: local branch ahead of origin: $ahead" >&2; exit 1; }\n',
              stg4, old4, root4, "home/jack-runner/.ssh/jack-builder"),
