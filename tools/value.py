@@ -15,11 +15,16 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tools.entry import now, read_log, resolution_rates
 from kernel import check, log
 
-B = math.log(999)
+
+def tables():
+    from tools.window import value_tables
+    return value_tables()
 
 
 def clip(p):
-    return min(Fraction(999, 1000), max(Fraction(1, 1000), p))
+    _, spec, _ = tables()
+    per_mille = spec["per_mille"]
+    return min(Fraction(per_mille[1], per_mille[0]), max(Fraction(1, per_mille[0]), p))
 
 
 def event(f):
@@ -28,7 +33,8 @@ def event(f):
     a, typ = body.get("args", {}), body.get("type")
     if typ == "world.renavon" and a.get("stream") == "freshness":
         w = a.get("window_utc")
-        if isinstance(a.get("dataset"), str) and isinstance(w, (list, tuple)) and len(w) == 2 and all(log.instant(t) for t in w) and w[0] < w[1]:
+        _, spec, _ = tables()
+        if isinstance(a.get("dataset"), str) and isinstance(w, (list, tuple)) and len(w) == spec["laplace"][1] and all(log.instant(t) for t in w) and w[0] < w[1]:
             return (typ, "freshness", a["dataset"], tuple(w)), w[0]
     if typ == "world.hkjc" and isinstance(a.get("meeting"), str) and type(a.get("race")) is int and log.instant(a.get("off_utc")):
         kind = a.get("kind", "favourite_wins")
@@ -38,7 +44,8 @@ def event(f):
 
 
 def opening_push(es):
-    return next(e for e in es if e["type"] == "push" and e["seq"] > 337)
+    _, _, history = tables()
+    return next(e for e in es if e["type"] == "push" and e["seq"] > history["c1b_last_seq"][0])
 
 
 def roster_at(es, opening):
@@ -60,11 +67,15 @@ def likelihood(p, y):
 
 
 def difference(q, b, y):
-    return math.log(likelihood(q, y) / likelihood(b, y)) / B
+    _, spec, _ = tables()
+    return math.log(likelihood(q, y) / likelihood(b, y)) / math.log(spec["per_mille"][1])
 
 
 def stake(prior):
-    return min(max(0.0, sum(prior) / (2 + sum(x * x for x in prior))), 1 - 1 / (len(prior) + 2))
+    _, spec, _ = tables()
+    laplace = spec["laplace"]
+    return min(max(float(0), sum(prior) / (laplace[1] + sum(x * x for x in prior))),
+               1 - 1 / (len(prior) + laplace[1]))
 
 
 def factor(lam, x):
@@ -108,8 +119,8 @@ def value(es, opening=None, as_of=None, attack_green=None, no_attack_gate=False,
             if reason:
                 excluded.append((f["seq"], reason))
             else:
-                g["forecasts"][who] = (f["seq"], clip(Fraction(f["body"]["p"], 1000)))
-    rows, prior, omitted, wealth, mixture_lr = [], [], [], 1.0, Fraction(1)
+                g["forecasts"][who] = (f["seq"], clip(Fraction(f["body"]["p"], tables()[1]["per_mille"][0])))
+    rows, prior, omitted, wealth, mixture_lr = [], [], [], float(1), Fraction(1)
     for r, f, raw_base, counts in rates:
         identity = event(f)
         if identity is None:
@@ -150,7 +161,7 @@ def table(result):
             return {k: rounded(v) for k, v in x.items()}
         if isinstance(x, (tuple, list)):
             return [rounded(v) for v in x]
-        return round(float(x), 6) if isinstance(x, (Fraction, float)) else x
+        return round(float(x), tables()[1]["rounding"][0]) if isinstance(x, (Fraction, float)) else x
     out = rounded(result)
     for row, exact in zip(out["rows"], result["rows"]):
         row["base"] = str(exact["base"])

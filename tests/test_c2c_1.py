@@ -155,8 +155,9 @@ class C2c1Fixture(unittest.TestCase):
 
 class R1NumeralsAndR9Binding(C2c1Fixture):
     def test_r1_numerals_housed_twins_and_mutants(self):
-        with open(os.path.join(ROOT, "tools/window.py")) as f:
-            self.assertEqual(win.scan_source_numerals(f.read(), WFILE), [])
+        for path in ("tools/window.py", "tools/value.py"):
+            with open(os.path.join(ROOT, path)) as f:
+                self.assertEqual(win.scan_source_numerals(f.read(), WFILE), [])
         self.assertTrue(win.check_window_file_numbers(WFILE))
         self.assertEqual(win.scan_tools_window_paths(), [])
         for bad_src in ('P0 = Fraction(6, 11)\n', 'x = 6900\n', 'x = int("6900")\n',

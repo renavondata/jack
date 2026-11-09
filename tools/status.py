@@ -356,7 +356,7 @@ def promotion_line(s):
 
 
 def render(s):
-    from tools import clerk, window as win
+    from tools import window as win
     if s.get("from_window_file"):
         return win.render(s)
     lines = [f"window {s['subject']}: {s['start']} .. {s['end']} (as of {s['as_of']}; prefix to seq {s['prefix_last_seq']})"]
@@ -371,9 +371,6 @@ def render(s):
         lines += [f"value: E {v['E_value']:.6f} over {v['events']} events; window events {v['window_events']}",
                   "elections: " + " / ".join(f"{k} {float(w):.6f}" for k, w in weights.items()) + f"; below base: {below}",
                   f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
-    w1 = clerk.forecast_writs(s.get("es", s.get("prefix", [])), [], s["as_of"])
-    if w1:
-        lines.append(clerk.render(w1))
     lines = s.get("history", []) + lines
     return "\n".join(lines + s.get("repairs", []) + [promotion_line(s)])
 

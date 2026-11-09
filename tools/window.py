@@ -115,6 +115,15 @@ def check_window_file_numbers(wfile):
     return True
 
 
+def value_tables():
+    """Supply R1's value constants without letting value.py open a window file."""
+    raw = tree_bytes_opt(ROOT, None, window_path("C2c-1"))
+    if raw is None:
+        raise ValueError("C2c-1 window file missing")
+    wfile = json.loads(raw)
+    return wfile["numbers"], wfile["spec_constants"], wfile["history"]
+
+
 def parses_as_number_or_instant(s):
     t = s.strip()
     if not t:
@@ -402,7 +411,7 @@ def pin_killed_in_run(run, pin_name):
     if "transcript" in run and isinstance(run["transcript"], str):
         lines = [l.split() for l in run["transcript"].splitlines() if l.strip().startswith(pin_name)]
         return bool(lines) and all("KILLED" in toks for toks in lines)
-    return True
+    return False
 
 
 def fold_undertakings(raw_bytes):
