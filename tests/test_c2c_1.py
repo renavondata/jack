@@ -44,8 +44,8 @@ class C2c1Fixture(unittest.TestCase):
         cls.signers = {who: keys.make_key(cls.tmp.name, who)
                        for who in ("guy", "counsel", "builder", "reviewer", "herald")}
 
-    def make_env(self, wfile_override=None, due_rows=None, keep_due=False,
-                 budget_hash=True, fc_hash=True, fc_after=False, fc_type="window.promotion",
+    def make_env(self, wfile_override=None, due_rows=None, keep_due=False, pre_open_undertaking=None,
+                 budget_hash=True, fc_hash=True, fc_after=False, fc_type="window.promotion", promotion_candidates=(),
                  extra_files=None):
         td = tempfile.TemporaryDirectory()
         self.addCleanup(td.cleanup)
@@ -80,11 +80,18 @@ class C2c1Fixture(unittest.TestCase):
         b_subj = f"C2c-1: window file sha256:{wf_sha}; cap 10900" if budget_hash else "C2c-1: no hash"
         add("decision", "guy", ts="2026-11-08T09:50:00Z", kind="budget", subject=b_subj)
         if not fc_after:
-            fc_args = {"id": "C2c-1-V0", "window": "C2c-1"}
-            if fc_hash:
-                fc_args["window_sha256"] = wf_sha
-            add("forecast", "counsel", ts="2026-11-08T09:55:00Z", claim="promo", p=600,
-                resolves_by=T_END, type=fc_type, args=fc_args)
+            candidates = promotion_candidates or ({"ts": "2026-11-08T09:55:00Z", "resolves_by": T_END,
+                                                   "type": fc_type, "id": "C2c-1-V0"},)
+            for candidate in candidates:
+                fc_args = {"id": candidate["id"], "window": "C2c-1"}
+                if fc_hash:
+                    fc_args["window_sha256"] = wf_sha
+                add("forecast", "counsel", ts=candidate["ts"], claim="promo", p=600,
+                    resolves_by=candidate["resolves_by"], type=candidate["type"], args=fc_args)
+        if pre_open_undertaking is not None:
+            add("forecast", "counsel", ts="2026-11-08T09:56:00Z", claim="undertaking", p=800,
+                resolves_by=pre_open_undertaking["resolves_by"], type="counsel.undertaking",
+                args={"id": pre_open_undertaking["id"], "window": "C2c-1"})
         add("push", "guy", ts=T_OPEN, digest="a" * 64, review="0" * 64, record="0" * 64)
         if fc_after:
             add("forecast", "counsel", ts="2026-11-08T10:05:00Z", claim="promo", p=600,
@@ -202,6 +209,15 @@ class R1NumeralsAndR9Binding(C2c1Fixture):
                          "promote C2c-1: refused: window file changed")
 
     def test_r3_one_stated_end_twins(self):
+        d1, d2 = "2026-11-14T10:00:00Z", "2026-11-13T10:00:00Z"
+        candidates = (
+            {"ts": "2026-11-08T09:51:00Z", "resolves_by": T_END, "type": "counsel.programme", "id": "C2c-1-V0"},
+            {"ts": "2026-11-08T09:52:00Z", "resolves_by": d1, "type": "window.promotion", "id": "C2c-1-V0"},
+            {"ts": "2026-11-08T09:53:00Z", "resolves_by": d2, "type": "window.promotion", "id": "C2c-1-V0"},
+            {"ts": "2026-11-08T09:54:00Z", "resolves_by": T_END, "type": "window.promotion", "id": "other"},
+        )
+        repo0, _, es0, _, head0, _ = self.make_env(promotion_candidates=candidates)
+        self.assertEqual(st.assess(es0, "C2c-1", T_NOW, repo0, head0)["end"], d1)
         repo, lg, es, _, head, _ = self.make_env(fc_after=True)
         self.assertEqual(st.render(st.assess(es, "C2c-1", T_NOW, repo, head)),
                          "promote C2c-1: refused: C2c-1 has no promotion forecast before its opening")
@@ -266,6 +282,11 @@ class R2R4R8CriteriaAndWrits(C2c1Fixture):
         rendered_status = st.render(st.assess(es, "C2c-1", T_NOW, repo, head))
         self.assertIn("W1 forecast 5:", rendered_status)
         self.assertIn(f"W1 forecast {u_seq}:", rendered_status)
+        rendered_c2a = st.render({"subject": "C2a", "start": T_EARLY, "end": T_END, "as_of": T_NOW,
+                                  "prefix_last_seq": es[-1]["seq"], "checks": [], "map": {}, "overdue": [], "es": es,
+                                  "j7_unresolved_past_due": 0, "j7_denominator": 0})
+        self.assertIn("W1 forecast 5:", rendered_c2a)
+        self.assertIn(f"W1 forecast {u_seq}:", rendered_c2a)
         # R8 object_declared twins
         add("forecast", "reviewer", ts="2026-11-08T10:31:00Z", claim="r", p=500,
             resolves_by=T_END, type="world.renavon")
@@ -302,11 +323,15 @@ class R5R6R7R10R11Criteria(C2c1Fixture):
                     args={"id": "due-1", "window": "C2b"})
         add("resolution", "reviewer", ts="2026-11-08T10:20:00Z", forecast=u_bad, outcome=1, evidence="run")
         self.assertTrue(st.assess(es, "C2c-1", T_NOW, repo, head)["criterion_lines"][9].endswith("unmet"))
-        # Correct forecast for due-1, unresolved before resolves_by -> met (twin 4 & 12)
+        # An undertaking entered after the opening cannot satisfy the opening inventory.
         u_ok = add("forecast", "counsel", ts="2026-11-08T10:25:00Z", claim="u", p=800,
-                   resolves_by="2026-11-09T00:00:00Z", type="counsel.undertaking",
-                   args={"id": "due-1", "window": "C2c-1"})
-        self.assertTrue(st.assess(es, "C2c-1", T_NOW, repo, head)["criterion_lines"][9].endswith("met"))
+                    resolves_by="2026-11-09T00:00:00Z", type="counsel.undertaking",
+                    args={"id": "due-1", "window": "C2c-1"})
+        self.assertTrue(st.assess(es, "C2c-1", T_NOW, repo, head)["criterion_lines"][9].endswith("unmet"))
+        # An undertaking re-entered before the opening satisfies the inventory (twins 4 and 12).
+        r_pre, _, es_pre, _, h_pre, _ = self.make_env(
+            due_rows=due_rows, pre_open_undertaking={"id": "due-1", "resolves_by": "2026-11-09T00:00:00Z"})
+        self.assertTrue(st.assess(es_pre, "C2c-1", T_NOW, r_pre, h_pre)["criterion_lines"][9].endswith("met"))
         # Unresolved past resolves_by -> unmet (twin 3)
         self.assertTrue(st.assess(es, "C2c-1", "2026-11-09T01:00:00Z", repo, head)["criterion_lines"][9].endswith("unmet"))
         # Resolved 1 at or before resolves_by, plus builder undertaking resolved 0 (twin 1 & 6) -> met
@@ -352,8 +377,8 @@ class R5R6R7R10R11Criteria(C2c1Fixture):
         self.assertEqual(s_ok["red_lines"], [])
         # Stale escalations (twin 11)
         self.assertTrue(st.assess(es, "C2c-1", "2026-11-08T18:00:00Z", repo, h_e4)["criterion_lines"][6].endswith("unknown (stale escalations)"))
-        # A stale file is unknown even if its recorded interval has an uncovered forecast.
-        self.assertTrue(st.assess(es, "C2c-1", "2026-11-08T18:00:00Z", repo, h_e3)["criterion_lines"][6].endswith("unknown (stale escalations)"))
+        # A known uncovered claim is unmet even when the evidence has since become stale.
+        self.assertTrue(st.assess(es, "C2c-1", "2026-11-08T18:00:00Z", repo, h_e3)["criterion_lines"][6].endswith("unmet"))
 
     def test_r7_ratchet_and_hand_row_deadline_twins(self):
         repo, lg, es, open_sha, head, _ = self.make_env()
