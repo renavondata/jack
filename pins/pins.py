@@ -863,7 +863,7 @@ extend_c2c_pin("undertakings_are_forecasts",
     Mutant("late_success_kept", "tools/window.py", '            elif rb < as_of:\n                return "unmet"\n', '            elif False:\n                return "unmet"\n'),
     Mutant("past_due_unresolved_kept", "tools/window.py", '            elif rb < as_of:\n                return "unmet"\n', '            elif False:\n                return "unmet"\n'),
     Mutant("other_proposers_counted", "tools/window.py", '            if row["due"] > start:\n', '            if False:\n'),
-    Mutant("due_file_ignored", "tools/window.py", '        if tree_bytes_opt(root, rev, due_file) is not None:\n            return "unmet"\n', '        if False:\n            return "unmet"\n'),
+    Mutant("due_file_ignored", "tools/window.py", '        if tree_bytes_opt(root, rev, due_file) is not None:\n            return "unmet"\n        if not retired_by_proposal(root, open_rev, rev, due_file):\n            return "unmet"\n', '        if False:\n            return "unmet"\n'),
     Mutant("undertaking_window_ignored", "tools/window.py", '(f["body"].get("args") or {}).get("window") == ctx["subject"] and\n', 'True and\n'),
     Mutant("opening_inventory_read_at_head", "tools/window.py", 'tree_bytes_opt(root, open_rev, due_file) if open_rev else None', 'tree_bytes_opt(root, rev, due_file)'),
     Mutant("earlier_window_undertaking_ignored", "tools/window.py", '            elif rb < as_of:\n                return "unmet"\n', '            elif False:\n                return "unmet"\n'),
@@ -929,22 +929,22 @@ extend_c2c_pin("evidence_provenance",
 
 extend_c2c_pin("tree_bounds",
     Mutant("pushes_inside_window_allowed", "tools/window.py", '        if sum(1 for e in inw if e["type"] == "push") > max_pushes:\n            return "unmet"\n', '        if False:\n            return "unmet"\n'),
-    Mutant("window_file_change_allowed", "tools/window.py", 'if any(p.startswith(fp) for fp in f_paths)', 'if any(p.startswith(fp) and not p.startswith("transcripts/windows/") for fp in f_paths)'),
-    Mutant("new_tools_path_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if any(p.startswith(fp) for fp in f_paths) and not p.startswith("tools/") and not any(p.startswith(ap) for ap in allowed):\n'),
-    Mutant("removed_pin_path_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
+    Mutant("window_file_change_allowed", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n"),
+    Mutant("new_tools_path_allowed", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n"),
+    Mutant("removed_pin_path_allowed", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n"),
     Mutant("hand_commit_ignored", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'),
     Mutant("unattributable_merge_allowed", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'),
-    Mutant("builder_status_change_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
-    Mutant("reviewer_runner_change_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
-    Mutant("restored_frozen_change_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
-    Mutant("allowed_merge_commit_charged", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
-    Mutant("sovereign_budget_forbidden", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
-    Mutant("counsel_merge_edit_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
-    Mutant("main_side_drop_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
+    Mutant("builder_status_change_allowed", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n"),
+    Mutant("reviewer_runner_change_allowed", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n"),
+    Mutant("restored_frozen_change_allowed", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n"),
+    Mutant("allowed_merge_commit_charged", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n"),
+    Mutant("sovereign_budget_forbidden", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n"),
+    Mutant("counsel_merge_edit_allowed", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n"),
+    Mutant("main_side_drop_allowed", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n"),
     Mutant("sibling_merge_allowed", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'),
     Mutant("octopus_merge_allowed", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'),
     Mutant("empty_noff_merge_allowed", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'),
-    Mutant("closed_window_file_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'))
+    Mutant("closed_window_file_allowed", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n"))
 
 
 # --- clerk pins (BRIEF-C1b v7 §Pins; REVIEW-C1b-v7 §4) -------------------------
@@ -1234,7 +1234,7 @@ C2C1_PINS = [
     Pin("evidence_provenance", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r11_tree_bounds_and_evidence_provenance_twins", "tests.test_c2c_1.R5R6R7R10R11Criteria.test_r11_remaining_tree_bounds_and_provenance_twins"), [
         Mutant("provenance_overwritten", "tools/window.py", "            if p not in changers:\n", "            if True:\n")]),
     Pin("tree_bounds", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r11_tree_bounds_and_evidence_provenance_twins", "tests.test_c2c_1.R5R6R7R10R11Criteria.test_r11_remaining_tree_bounds_and_provenance_twins"), [
-        Mutant("frozen_path_ignored", "tools/window.py", "                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n", "                        if False:\n")]),
+        Mutant("frozen_path_ignored", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n")]),
     Pin("courier_signs_only_the_request", courier_tests("tests.test_courier.CourierTest.test_courier_signs_only_the_request"), [
         Mutant("branch_scope_ignored", "tools/runner/counsel-sign.py", "        (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n", "        False and (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n"),
         Mutant("branch_tools_run", "tools/runner/counsel-sign.py", "        (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n", "        False and (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n"),
@@ -1243,8 +1243,8 @@ C2C1_PINS = [
         Mutant("request_not_rechecked_after_merge", "tools/runner/counsel-sign.py", '                if not os.path.isfile(req) or os.path.islink(req) or open(req, "rb").read() != before:\n',
                '                if False:\n')]),
     Pin("runner_user_holds_no_login", courier_tests("tests.test_courier.CourierTest.test_host_installer_check_and_workflows"), [
-        Mutant("unexpected_staged_file_admitted", "tools/runner/host/install.sh", 'for rel in $(find "$STAGING" -mindepth 1 \\( -type f -o -type l \\) -printf \'%P\\n\' | sort); do case " $STAGED_FILES " in *" $rel "*) ;; *) echo "refused: unexpected staged file: $rel" >&2; exit 1 ;; esac; done\n', "true\n"),
-        Mutant("staging_files_unchecked", "tools/runner/host/install.sh", "for rel in $STAGED_FILES; do [ -f \"$STAGING/$rel\" ] || { echo \"refused: missing staged file: $rel\" >&2; exit 1; }; done\n", "true\n"),
+        Mutant("unexpected_staged_file_admitted", "tools/runner/host/install.sh", 'for rel in $(find "$STAGING" -mindepth 1 -type f -printf \'%P\\n\' | sort); do case " $STAGED_FILES " in *" $rel "*) ;; *) echo "refused: unexpected staged file: $rel" >&2; exit 1 ;; esac; done\n', "true\n"),
+        Mutant("staging_files_unchecked", "tools/runner/host/install.sh", "for rel in $STAGED_FILES; do [ -f \"$STAGING/$rel\" ] && [ ! -L \"$STAGING/$rel\" ] || { echo \"refused: missing staged file: $rel\" >&2; exit 1; }; done\n", "true\n"),
         Mutant("ahead_checkout_unchecked", "tools/runner/host/install.sh", "ahead=$(git -C \"$OLD/git/jack\" for-each-ref --format='%(refname:short)' refs/heads/ | while read -r b; do if [ -n \"$(git -C \"$OLD/git/jack\" rev-list \"origin/$b..$b\" 2>/dev/null || git -C \"$OLD/git/jack\" rev-list \"$b\" --not --remotes=origin)\" ]; then echo \"$b\"; fi; done); [ -z \"$ahead\" ] || { echo \"refused: local branch ahead of origin: $ahead\" >&2; exit 1; }\n", "true\n"),
         Mutant("runner_worker_check_deleted", "tools/runner/host/install.sh", '! pgrep -f "$OLD/.local/share/actions-runner-[^/]*/bin/Runner.Worker" >/dev/null 2>&1 || { echo "refused: Runner.Worker is running under $OLD" >&2; exit 1; }\n', "true\n")]),
 ]

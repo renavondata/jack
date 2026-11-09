@@ -1,20 +1,11 @@
 """C2c-1 reviewer pins reuse the builder's complete disposable-tree fixtures."""
-import os
-import shutil
 import subprocess
 import sys
 import textwrap
 
 
-SOURCE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-
 def c2c_tests(*names):
     def test(root):
-        # pins/run.py deliberately omits transcripts from disposable copies.
-        target = os.path.join(root, "transcripts")
-        if not os.path.exists(target):
-            shutil.copytree(os.path.join(SOURCE_ROOT, "transcripts"), target)
         result = subprocess.run([sys.executable, "-E", "-s", "-m", "unittest", "-q", *names],
                                 cwd=root, capture_output=True, text=True)
         assert result.returncode == 0, result.stdout + result.stderr
@@ -33,6 +24,8 @@ def c2c_tests(*names):
                 pass
             else:
                 raise AssertionError("unknown window criterion kind was accepted")
+            source = open("tools/window.py", encoding="utf-8").read()
+            assert source.count('rb_dt = st.instant(e["body"]["resolves_by"])') == 2
         ''')
     return test
 
