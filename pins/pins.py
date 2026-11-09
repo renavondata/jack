@@ -835,7 +835,7 @@ extend_c2c_pin("numerals_housed",
     Mutant("numeric_string_admitted", "tools/window.py", '            elif type(v) is str and v not in allowed_keys and parses_as_number_or_instant(v):\n', '            elif False:\n'),
     Mutant("float_literal_admitted", "tools/window.py", '            if type(v) is float or type(v) is complex:\n', '            if False:\n'),
     Mutant("inline_math_constant_admitted", "tools/window.py", '                violations.append(f"int literal {v!r} at line {node.lineno}")\n', '                pass\n'),
-    Mutant("value_history_literal_admitted", "tools/window.py", '    return violations\n', '    return []\n'),
+    Mutant("value_history_literal_admitted", "tools/value.py", 'history["c1b_last_seq"][0]', '337'),
     Mutant("missing_numeric_criterion_key_admitted", "tools/window.py", '        for k in NUMERIC_ARGS:\n            if k in args:\n                resolve_num(numbers, args[k])\n', '        for k in ():\n            if k in args:\n                resolve_num(numbers, args[k])\n'),
     Mutant("missing_process_numeric_key_admitted", "tools/window.py", '        for field in ("null", "threshold"):\n            if field in proc:\n                resolve_num(numbers, proc[field])\n', '        for field in ():\n            if field in proc:\n                resolve_num(numbers, proc[field])\n'),
     Mutant("status_reads_window_file", "tools/window.py", '            if WINDOWS_DIR in text and rel != "tools/window.py":\n', '            if False:\n'))
@@ -856,7 +856,10 @@ extend_c2c_pin("window_from_file",
 extend_c2c_pin("one_writ_function",
     Mutant("w1_from_assessed_opening", "tools/clerk.py", '    opening = -1\n', '    opening = es[-1]["seq"] if es else -1\n'),
     Mutant("c1b_cutoff_kept", "tools/clerk.py", '    opening = -1\n', '    opening = 337\n'),
-    Mutant("w3_or_w4_removed", "tools/clerk.py", '    opening = -1\n', '    opening = 337\n'))
+    Mutant("w3_removed", "tools/clerk.py", '    rows = [line for line in counsel_open.splitlines() if line.lstrip().startswith("|")]\n',
+           '    return []\n    # '),
+    Mutant("w4_removed", "tools/clerk.py", '    lines = status.unmet(s) + s.get("repairs", [])\n',
+           '    return []\n    # '))
 
 # R5 undertaking status and opening-tree migration checks.
 extend_c2c_pin("undertakings_are_forecasts",
@@ -1237,6 +1240,8 @@ C2C1_PINS = [
     Pin("tree_bounds", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r11_tree_bounds_and_evidence_provenance_twins", "tests.test_c2c_1.R5R6R7R10R11Criteria.test_r11_remaining_tree_bounds_and_provenance_twins"), [
         Mutant("frozen_path_ignored", "tools/window.py", '            f_paths = frozen.get("paths", [])\n', "            f_paths = []\n")]),
     Pin("courier_signs_only_the_request", courier_tests("tests.test_courier.CourierTest.test_courier_signs_only_the_request"), [
+        Mutant("forecast_entered_from_prompt", "tools/runner/counsel-sign.py", 'l["claim"], "--p", str(l["p"]), "--by", l["by"],\n',
+               '"prompt forecast", "--p", str(l["p"]), "--by", l["by"],\n'),
         Mutant("branch_scope_ignored", "tools/runner/counsel-sign.py", "        (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n", "        False and (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n"),
         Mutant("branch_tools_run", "tools/runner/counsel-sign.py", "        (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n", "        False and (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n"),
         Mutant("forecast_reentered", "tools/runner/counsel-sign.py", '                if seq is not None:\n',

@@ -113,6 +113,8 @@ def one_writ_function(root):
         assert "W1 forecast 5" in rendered, rendered
     ''')
     c2c_tests("tests.test_c2c_1.R2R4R8CriteriaAndWrits.test_r4_one_writ_function_and_r8_object_declared")(root)
+    c2c_tests("tests.test_promotion.Promotion.test_w3_only_earlier_green_exact_workflow_and_commit_discharge",
+              "tests.test_promotion.Promotion.test_historical_bad_promote_stays_repair_after_later_success")(root)
 
 
 def undertakings_are_forecasts(root):
@@ -128,13 +130,31 @@ def undertakings_are_forecasts(root):
             post_opening = {"seq": 2, "type": "forecast", "proposer": "counsel", "ts": "2026-01-02T00:00:00Z",
                             "body": {"type": "counsel.undertaking", "resolves_by": "2026-01-03T00:00:00Z",
                                      "args": {"id": "u1", "window": "C2c-1"}}}
-            ctx = {"root": ".", "rev": "head", "opening_rev": "open", "wfile": {"numbers": {}},
+            ctx = {"root": ".", "rev": "head", "opening_rev": "open", "opening": 1, "wfile": {"numbers": {}},
                    "prefix": [post_opening], "inw": [post_opening], "as_of": "2026-01-02T12:00:00Z",
                    "start": "2026-01-01T00:00:00Z", "end": "2026-01-04T00:00:00Z", "run": None,
                    "runs": [], "subject": "C2c-1", "expired_undertakings": set()}
             criterion = {"kind": "undertakings_kept", "args": {"due_file": "transcripts/COUNSEL-DUE.jsonl",
                          "proposer": "counsel", "type": "counsel.undertaking"}}
             assert window.evaluate_criterion(criterion, ctx) == "unmet"
+            base = {"root": ".", "rev": "head", "opening_rev": "open", "opening": 2, "wfile": {"numbers": {}},
+                    "inw": [], "as_of": "2026-01-05T00:00:00Z", "start": "2026-01-01T00:00:00Z",
+                    "end": "2026-01-06T00:00:00Z", "run": None, "runs": [], "subject": "C2c-1",
+                    "expired_undertakings": set()}
+            def forecast(seq, resolves_by, window="C2c-1"):
+                return {"seq": seq, "type": "forecast", "proposer": "counsel", "ts": "2026-01-01T00:00:00Z",
+                        "body": {"type": "counsel.undertaking", "resolves_by": resolves_by,
+                                 "args": {"id": "u1", "window": window}}}
+            late = forecast(1, "2026-01-02T00:00:00Z")
+            late_resolution = {"seq": 2, "type": "resolution", "proposer": "reviewer", "ts": "2026-01-03T00:00:00Z",
+                               "body": {"forecast": 1, "outcome": 1}}
+            assert window.evaluate_criterion(criterion, dict(base, prefix=[late, late_resolution])) == "unmet"
+            assert window.evaluate_criterion(criterion, dict(base, prefix=[forecast(1, "2026-01-02T00:00:00Z")])) == "unmet"
+            window.tree_bytes_opt = lambda root, rev, path: due if rev == "open" else None
+            wrong_window = forecast(1, "2026-01-02T00:00:00Z", "C2b")
+            timely_resolution = {"seq": 2, "type": "resolution", "proposer": "reviewer", "ts": "2026-01-01T12:00:00Z",
+                                 "body": {"forecast": 1, "outcome": 1}}
+            assert window.evaluate_criterion(criterion, dict(base, prefix=[wrong_window, timely_resolution])) == "unmet"
         finally:
             window.tree_bytes_opt, window.retired_by_proposal = old_bytes, old_retired
     ''')
