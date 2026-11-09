@@ -7,6 +7,7 @@ sys.path.insert(0, ROOT := os.path.dirname(os.path.dirname(os.path.dirname(os.pa
 from kernel import check  # noqa: E402
 
 G, HKT, FMT = "gfrmin", dt.timezone(dt.timedelta(hours=8)), "%Y-%m-%dT%H:%M:%SZ"
+MAX_PAGES = 100
 PREDECESSOR = {"C2c-1": "C2b", "C2c-2": "C2c-1", "C2c-3": "C2c-2", "C2b": "C2a", "C2a": "C1b"}
 REPOS = {"jack": "renavondata/jack", "renavondata/jack": "renavondata/jack",
          "opencode-runner": "renavondata/opencode-runner", "renavondata/opencode-runner": "renavondata/opencode-runner"}
@@ -83,7 +84,7 @@ def api(path):
 
 def pages(path, key=None, stop=None):
     n = 1
-    while True:
+    while n <= MAX_PAGES:
         sep = "&" if "?" in path else "?"
         d = api(f"{path}{sep}per_page=100&page={n}")
         items = d[key] if key else d
@@ -91,12 +92,17 @@ def pages(path, key=None, stop=None):
         for it in items: yield it
         if len(items) < 100 or (stop and stop(items[-1])): return
         n += 1
+    raise SystemExit(f"refused: gh api {path}: exceeded {MAX_PAGES} pages")
 
 
 def collect_acts(repo, start_iso, end_iso):
     start, end, acts = t(start_iso), t(end_iso), []
     def add(ts, cls, kind, ref, note=""):
-        if start <= t(ts) < end: acts.append((t(ts), cls, kind, ref, note))
+        instant = t(ts)
+        # Tables print whole UTC+8 minutes, so retain any minute that overlaps the window.
+        minute = instant.replace(second=0, microsecond=0)
+        if minute < end and minute + dt.timedelta(minutes=1) > start:
+            acts.append((instant, cls, kind, ref, note))
     issues = {it["number"]: it for it in pages(f"repos/{repo}/issues?state=all&since={start_iso}&sort=updated&direction=desc")}
     for n, it in issues.items():
         if (it.get("user") or {}).get("login") != G or "pull_request" in it: continue
@@ -158,11 +164,9 @@ def collect_acts(repo, start_iso, end_iso):
         if (run.get("triggering_actor") or {}).get("login") != G: continue
         if run["event"] == "workflow_dispatch": add(run["created_at"], "repair", f"dispatch {run['name']}", str(run["id"]))
         elif run.get("run_attempt", 1) > 1: add(run.get("run_started_at") or run["created_at"], "repair", f"re-run {run['name']}", str(run["id"]))
-    try:
-        for rs in api(f"repos/{repo}/rulesets"):
-            d = api(f"repos/{repo}/rulesets/{rs['id']}")
-            if d.get("created_at"): add(d["created_at"], "decision", "ruleset created", d["name"])
-    except BaseException: pass
+    for rs in api(f"repos/{repo}/rulesets"):
+        d = api(f"repos/{repo}/rulesets/{rs['id']}")
+        if d.get("created_at"): add(d["created_at"], "decision", "ruleset created", d["name"])
     comments = list(pages(f"repos/{repo}/issues/comments?since={start_iso}"))
     for c in comments:
         if (c.get("user") or {}).get("login") != G: continue

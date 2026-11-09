@@ -107,6 +107,30 @@ class EvidenceScriptsTest(unittest.TestCase):
             self.assertEqual([r["class"] for r in attr_rows], ["party-act", "party-comment", "repair"])
             self.assertTrue(all(r["repo"] == full_repo for r in attr_rows))
 
+    def test_acts_counts_an_overlapping_printed_minute_and_refuses_api_failure(self):
+        with mock.patch.object(acts, "pages", return_value=iter(())), \
+             mock.patch.object(acts, "api", side_effect=SystemExit("rulesets unavailable")):
+            with self.assertRaisesRegex(SystemExit, "rulesets unavailable"):
+                acts.collect_acts("renavondata/jack", T_OPEN, T_NOW)
+
+        def fake_api(path):
+            if "/actions/runs" in path:
+                return {"workflow_runs": []}
+            if "/issues?state=all" in path or "/issues/events" in path or "/issues/comments" in path:
+                return []
+            if path.endswith("/rulesets"):
+                return [{"id": 1, "name": "r"}]
+            return {"created_at": "2026-11-08T01:00:01Z", "name": "r"}
+
+        with mock.patch.object(acts, "api", side_effect=fake_api):
+            _, rows = acts.collect_acts("renavondata/jack", "2026-11-08T01:00:30Z", "2026-11-08T01:01:30Z")
+        self.assertEqual(len(rows), 1)
+
+    def test_pages_refuses_an_unbounded_result(self):
+        with mock.patch.object(acts, "api", return_value=[{}] * 100):
+            with self.assertRaisesRegex(SystemExit, "exceeded"):
+                list(acts.pages("repos/x/y"))
+
     def test_escalations_rebuilds_from_diary_issues_and_ignores_other_logins(self):
         ev_dir = os.path.join(self.root, "transcripts", "evidence")
         os.makedirs(ev_dir, exist_ok=True)
@@ -165,7 +189,7 @@ class EvidenceScriptsTest(unittest.TestCase):
                         "proposal commit abcdef; head 123456; pull request 620")
         zbuf = io.BytesIO()
         with zipfile.ZipFile(zbuf, "w") as z:
-            z.writestr("0_sign.txt", f"2026-11-08T02:01:00.1234567Z {receipt_line}\n2026-11-08T02:01:00Z noise\n")
+            z.writestr("0_sign.txt", f"2026-11-08T02:01:00.1234567Z {receipt_line}\n2026-11-08T02:01:01Z {receipt_line}\n")
             z.writestr("sign/1_step.txt", f"2026-11-08T02:01:00.1234567Z {receipt_line}\n")
 
         runs_page = [
@@ -202,7 +226,7 @@ class EvidenceScriptsTest(unittest.TestCase):
                 "act": "sign",
                 "contents": trig_json,
             }],
-            "receipts": [receipt_line],
+            "receipts": [receipt_line, receipt_line],
         })
 
 
