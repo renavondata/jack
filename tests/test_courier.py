@@ -339,6 +339,7 @@ class CourierTest(unittest.TestCase):
         stg1, old1, root1 = make_fixture("twin1")
         r1 = subprocess.run([install_sh, "--root", root1, "--staging", stg1, "--old-home", old1], env=self.env, capture_output=True, text=True)
         self.assertEqual(r1.returncode, 0, r1.stdout + r1.stderr)
+        self.assertIn("MemoryMax=12G", r1.stdout)
         home1 = os.path.join(root1, "home", "jack-runner")
         want_placed = sorted([p for p in staged if p != ".ssh/deploy-jack.pub"] + [".gitconfig", ".ssh/config", ".ssh/known_hosts"])
         self.assertEqual(tree_files(home1), want_placed)
