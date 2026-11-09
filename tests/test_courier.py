@@ -314,6 +314,12 @@ class CourierTest(unittest.TestCase):
         self.set_gh(added=["requests/act-only.json"])
         self.assertEqual(subprocess.run([sys.executable, SIGN_SCRIPT],
                                         env=dict(self.env, COUNSEL_GH_TOKEN="", COUNSEL_KEY="/no/key"), capture_output=True, text=True).returncode, 0)
+        prop = {"verb": "proposal", "title": "t"}
+        self.make_counsel_branch("wrong-identity", [prop])
+        self.set_gh(added=["requests/sign-wrong-identity.json"],
+                    contents={"requests/sign-wrong-identity.json": {"id": "sign-wrong-identity", "act": "sign", "branch": "counsel/wrong-identity"}},
+                    login="not-counsel")
+        self.assertEqual(subprocess.run([sys.executable, SIGN_SCRIPT], env=self.env, capture_output=True, text=True).returncode, 1)
         for idx, bad_lines in enumerate([
             [{"verb": "forecast", "claim": "c", "p": True, "by": "2099-01-01T00:00:00Z"}, {"verb": "proposal", "title": "t"}],
             [{"verb": "forecast", "claim": "c", "p": 500, "by": "2099-01-01T00:00:00Z", "type": 123}, {"verb": "proposal", "title": "t"}],
@@ -338,15 +344,20 @@ class CourierTest(unittest.TestCase):
         self.set_gh(added=["requests/sign-1.json"])
         empty = subprocess.run([sys.executable, ACT_SCRIPT], env=dict(self.env, COUNSEL_GH_TOKEN=""), capture_output=True, text=True)
         self.assertEqual(empty.returncode, 0, empty.stdout + empty.stderr)
+        self.set_gh(added=["requests/identity.json"], contents={"requests/identity.json": {"id": "identity", "act": "issue", "title": "T", "body": "B"}},
+                    login="not-counsel")
+        self.assertEqual(subprocess.run([sys.executable, ACT_SCRIPT], env=self.env, capture_output=True, text=True).returncode, 1)
+        with open(ACT_SCRIPT, encoding="utf-8") as f:
+            self.assertNotIn("COUNSEL_TRIGGER_REPO", f.read())
         tpl = "model: {MODEL}\nkey: ~/.ssh/jack-builder\nbranch: {BRANCH}\n\n# builder: build {TEXTS} on {BRANCH} at {NOW} ({STAMP}) for {WINDOW}\nBody.\n"
         win = {"window": "C2c-1", "frozen": {"paths": ["transcripts/runner/", "transcripts/windows/"]}}
         reqs = {
             "requests/01-pr-ok.json": {"id": "01-pr-ok", "act": "pr", "head": "counsel/foo", "title": "T", "body": "B"},
             "requests/02-pr-bad.json": {"id": "02-pr-bad", "act": "pr", "head": "builder-x", "title": "T", "body": "B"},
             "requests/03-issue-direct.json": {"id": "03-issue-direct", "act": "issue", "title": "Reader",
-                                              "body": "model: google/gemini-4-argon\nhello", "labels": ["read"], "then_labels": ["run"]},
+                                               "body": "hello", "labels": ["read"], "then_labels": ["run"]},
             "requests/04-issue-bkey.json": {"id": "04-issue-bkey", "act": "issue", "title": "Sneak", "body": "key: ~/.ssh/jack-builder\ndo this"},
-            "requests/04b-issue-rkey.json": {"id": "04b-issue-rkey", "act": "issue", "title": "RevSneak", "body": "  KEY: ~/.ssh/jack-reviewer\ndo this"},
+            "requests/04-issue-rkey.json": {"id": "04-issue-rkey", "act": "issue", "title": "Sneak", "body": "key: ~/.ssh/jack-reviewer\ndo this"},
             "requests/05-tpl-ok.json": {"id": "05-tpl-ok", "act": "issue", "template": "build", "window": "C2c-1",
                                         "model": "google/gemini-4-argon", "branch": "builder-c2c-1-courier",
                                         "texts": "transcripts/runner/counsel-courier.md,transcripts/windows/C2c-1.json",
@@ -356,7 +367,11 @@ class CourierTest(unittest.TestCase):
             "requests/07-close-jack.json": {"id": "07-close-jack", "act": "close", "repo": "renavondata/jack", "number": 1, "stale": "superseded"},
             "requests/08-close-runner.json": {"id": "08-close-runner", "act": "close", "repo": "renavondata/opencode-runner", "number": 2, "stale": "done"},
             "requests/09-issue-dedup.json": {"id": "03-issue-direct", "act": "issue", "title": "Reader",
+<<<<<<< HEAD
                                              "body": "model: google/gemini-4-argon\nhello", "labels": ["read"], "then_labels": ["run", "extra"]},
+=======
+                                             "body": "hello", "labels": ["read"], "then_labels": ["run", "extra"]},
+>>>>>>> origin/builder-c2c-1-courier
         }
         prs = [{"number": 1, "head": "counsel/old", "title": "Old", "body": "", "state": "open", "user": "assize-reviewer"}]
         issues = {"renavondata/jack": [{"number": 1, "state": "open", "user": {"login": "assize-reviewer"}, "pull_request": {}}]}
@@ -374,8 +389,6 @@ class CourierTest(unittest.TestCase):
         self.assertTrue(tpl_issue["title"].startswith("builder: build transcripts/runner/counsel-courier.md"))
         self.assertEqual({l["name"] for l in tpl_issue["labels"]}, {"build", "run"})
         self.assertEqual(len([i for i in runner_issues if i["title"].startswith("counsel-act:")]), 4)
-
-
     def test_host_installer_check_and_workflows(self):
         install_sh = os.path.join(ROOT, "tools", "runner", "host", "install.sh")
         check_sh = os.path.join(ROOT, "tools", "runner", "host", "check.sh")
