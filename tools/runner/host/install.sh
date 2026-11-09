@@ -35,7 +35,9 @@ write_memory_dropin() {
   unit=$(runner_unit "$1")
   dir="/etc/systemd/system/$unit.d"
   mkdir -p "$dir"
-  printf '[Service]\nOOMPolicy=continue\nMemoryMax=12G\nMemorySwapMax=1G\n' > "$dir/memory.conf"
+  if [ ! -f "$dir/memory.conf" ] || ! printf '[Service]\nOOMPolicy=continue\nMemoryMax=12G\nMemorySwapMax=1G\n' | cmp -s - "$dir/memory.conf"; then
+    printf '[Service]\nOOMPolicy=continue\nMemoryMax=12G\nMemorySwapMax=1G\n' > "$dir/memory.conf"
+  fi
 }
 
 ! pgrep -f "$OLD/.local/share/actions-runner-[^/]*/bin/Runner.Worker" >/dev/null 2>&1 || { echo "refused: Runner.Worker is running under $OLD" >&2; exit 1; }
@@ -60,8 +62,9 @@ else
   ! id -nG jack-runner | tr ' ' '\n' | grep -qx sudo || { echo "refused: jack-runner has sudo" >&2; exit 1; }
   mkdir -p /home/jack-runner && chmod 700 /home/jack-runner
   for d in "$OLD"/.local/share/actions-runner-*; do
-    if [ -d "$d" ] && [ -x "$d/svc.sh" ]; then (cd "$d" && ./svc.sh stop || true; ./svc.sh uninstall || true); fi
+    if [ -d "$d" ] && [ -x "$d/svc.sh" ]; then (cd "$d" && ./svc.sh stop && ./svc.sh uninstall); fi
   done
+  ! pgrep -f "$OLD/.local/share/actions-runner-[^/]*/bin/Runner.Worker" >/dev/null 2>&1 || { echo "refused: Runner.Worker remained running after runner services stopped" >&2; exit 1; }
 fi
 
 mkdir -p -m 700 "$NEW_HOME" "$NEW_HOME/.ssh" "$NEW_HOME/.config/jack"
@@ -76,11 +79,13 @@ for rel in $(find "$STAGING" -mindepth 1 \( -type f -o -type l \) -printf '%P\n'
   fi
 done
 [ -f "$NEW_HOME/.gitconfig" ] || printf '[user]\n\tname = jack-runner\n\temail = jack-runner@steel\n' > "$NEW_HOME/.gitconfig"
-printf 'Host github-jack\n  HostName github.com\n  IdentityFile ~/.ssh/deploy-jack\n' > "$NEW_HOME/.ssh/config"
+if [ ! -f "$NEW_HOME/.ssh/config" ] || ! printf 'Host github-jack\n  HostName github.com\n  IdentityFile ~/.ssh/deploy-jack\n' | cmp -s - "$NEW_HOME/.ssh/config"; then
+  printf 'Host github-jack\n  HostName github.com\n  IdentityFile ~/.ssh/deploy-jack\n' > "$NEW_HOME/.ssh/config"
+fi
 chmod 644 "$NEW_HOME/.ssh/config"
 if [ ! -f "$NEW_HOME/.ssh/known_hosts" ]; then
   meta_keys=$(curl -fsSL --max-time 5 https://api.github.com/meta 2>/dev/null | python3 -c 'import json,sys; [print("github.com", k) for k in json.load(sys.stdin)["ssh_keys"]]' 2>/dev/null || true)
-  if [ -z "$meta_keys" ]; then
+  if [ -z "$meta_keys" ]; then echo "refused: GitHub Meta returned no SSH keys" >&2; exit 1
     meta_keys=$(printf '%s\n' \
       "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl" \
       "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=" \
@@ -104,13 +109,14 @@ if [ -n "$ROOT_DIR" ]; then
 fi
 
 mkdir -p /home/jack-runner/git/worktrees/jack /home/jack-runner/.config /home/jack-runner/.local/share
-if [ -d "$OLD/.npm-global" ] && [ ! -d /home/jack-runner/.npm-global ]; then cp -a "$OLD/.npm-global" /home/jack-runner/.npm-global; fi
-if [ -d "$OLD/.config/opencode" ] && [ ! -d /home/jack-runner/.config/opencode ]; then cp -a "$OLD/.config/opencode" /home/jack-runner/.config/opencode; fi
 chown -R jack-runner:jack-runner /home/jack-runner
 if [ ! -d /home/jack-runner/git/jack/.git ]; then
   runuser -u jack-runner -- env HOME=/home/jack-runner git clone git@github-jack:renavondata/jack.git /home/jack-runner/git/jack
 fi
 runuser -u jack-runner -- env HOME=/home/jack-runner git -C /home/jack-runner/git/jack fetch origin
+if [ -d "$OLD/.npm-global" ] && [ ! -d /home/jack-runner/.npm-global ]; then cp -a "$OLD/.npm-global" /home/jack-runner/.npm-global; fi
+if [ -d "$OLD/.config/opencode" ] && [ ! -d /home/jack-runner/.config/opencode ]; then cp -a "$OLD/.config/opencode" /home/jack-runner/.config/opencode; fi
+chown -R jack-runner:jack-runner /home/jack-runner
 for d in "$OLD"/.local/share/actions-runner-*; do
   if [ ! -d "$d" ]; then continue; fi
   mv "$d" "/home/jack-runner/.local/share/$(basename "$d")"

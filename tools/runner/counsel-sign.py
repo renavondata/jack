@@ -91,7 +91,7 @@ def main():
     os.path.exists(key) or sys.exit(f"{key} is absent on this runner; nothing done")
     env = {**os.environ, "GH_TOKEN": tok, "JACK_KEY": key}
     identity = json.loads(sh("gh", "api", "user", env=env).stdout)["login"]
-    identity == COUNSEL_LOGIN or sys.exit(f"counsel's token belongs to {identity}, not {COUNSEL_LOGIN}; nothing done")
+    identity == "assize-reviewer" or sys.exit(f"refused: counsel's token identifies {identity!r}, not 'assize-reviewer'")
     print("identity:", identity)
     sh("git", "fetch", "-q", "origin", cwd=jack), sh("git", "worktree", "prune", cwd=jack)
     scope = json.loads(sh("git", "show", "origin/main:judge/scope.json", cwd=jack).stdout)["parties"]["counsel"]

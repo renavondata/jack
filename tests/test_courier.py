@@ -340,6 +340,17 @@ class CourierTest(unittest.TestCase):
         self.assertEqual(self.trigger_sign("sign-unasked", "counsel/unasked").returncode, 1)
         self.assertEqual([e["type"] for e in self.remote_entries("counsel/unasked")[-1:]], ["forecast"])
 
+    def test_courier_refuses_a_token_not_owned_by_assize_reviewer(self):
+        self.make_counsel_branch("wrong-identity", [{"verb": "proposal", "title": "t"}])
+        self.set_gh(added=["requests/sign-wrong-identity.json"],
+                    contents={"requests/sign-wrong-identity.json": {"id": "sign-wrong-identity", "act": "sign", "branch": "counsel/wrong-identity"}},
+                    login="not-counsel")
+        self.assertEqual(subprocess.run([sys.executable, SIGN_SCRIPT], env=self.env, capture_output=True, text=True).returncode, 1)
+        self.set_gh(added=["requests/act-wrong-identity.json"],
+                    contents={"requests/act-wrong-identity.json": {"id": "act-wrong-identity", "act": "issue", "title": "x", "body": "x"}},
+                    login="not-counsel")
+        self.assertEqual(subprocess.run([sys.executable, ACT_SCRIPT], env=self.env, capture_output=True, text=True).returncode, 1)
+
     def test_acts_job_pr_issue_template_and_close(self):
         self.set_gh(added=["requests/sign-1.json"])
         empty = subprocess.run([sys.executable, ACT_SCRIPT], env=dict(self.env, COUNSEL_GH_TOKEN=""), capture_output=True, text=True)
@@ -431,6 +442,14 @@ class CourierTest(unittest.TestCase):
         self.assertEqual(subprocess.run([install_sh, "--root", root1, "--staging", stg1, "--old-home", old1], env=self.env, capture_output=True, text=True).returncode, 0)
         with open(os.path.join(home1, ".ssh", "known_hosts"), encoding="utf-8") as f:
             self.assertEqual(f.read(), known_hosts)
+
+        # The host keys must come from GitHub Meta; no embedded fallback is accepted.
+        stg_meta, old_meta, root_meta = make_fixture("meta-failure")
+        write_file(os.path.join(self.stubs, "curl"), "#!/bin/sh\nexit 1\n", 0o755)
+        meta = subprocess.run([install_sh, "--root", root_meta, "--staging", stg_meta, "--old-home", old_meta], env=self.env, capture_output=True, text=True)
+        self.assertNotEqual(meta.returncode, 0)
+        self.assertIn("GitHub Meta", meta.stdout + meta.stderr)
+        write_file(os.path.join(self.stubs, "curl"), '#!/bin/sh\necho \'{"ssh_keys":["ssh-ed25519 AAAATESTKEY"]}\'\n', 0o755)
 
         # Twin 2: hosts.yml added to staging -> stops with that name and writes nothing
         stg2, old2, root2 = make_fixture("twin2")

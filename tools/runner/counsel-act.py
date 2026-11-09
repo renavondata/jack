@@ -55,7 +55,7 @@ def main():
     tok = os.environ.get("COUNSEL_GH_TOKEN") or (open(p).read().strip() if os.path.exists(p := os.path.expanduser("~/.config/jack/gh-counsel")) else "")
     tok or sys.exit("counsel's token is absent (COUNSEL_GH_TOKEN or ~/.config/jack/gh-counsel); nothing done")
     me = gh(tok, "user")["login"]
-    me == COUNSEL_LOGIN or sys.exit(f"counsel's token belongs to {me}, not {COUNSEL_LOGIN}; nothing done")
+    me == "assize-reviewer" or sys.exit(f"refused: counsel's token identifies {me!r}, not 'assize-reviewer'")
     print("identity:", me)
 
     def handle(f):
