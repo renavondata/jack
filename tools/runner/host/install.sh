@@ -21,6 +21,23 @@ done
 NEW_HOME="${ROOT_DIR}/home/jack-runner"
 STAGED_FILES=".ssh/jack-builder .ssh/jack-builder.pub .ssh/jack-reviewer .ssh/jack-reviewer.pub .ssh/jack-herald .ssh/jack-herald.pub .ssh/jack-counsel-3 .ssh/jack-counsel-3.pub .ssh/deploy-jack .ssh/deploy-jack.pub .config/jack/app-id .config/jack/app.pem .config/jack/gh-counsel"
 
+runner_unit() {
+  python3 - "$1/.runner" <<'PY'
+import json
+import sys
+with open(sys.argv[1], encoding="utf-8") as f:
+    name = json.load(f)["agentName"]
+print(f"actions.runner.renavondata-opencode-runner.{name}.service")
+PY
+}
+
+write_memory_dropin() {
+  unit=$(runner_unit "$1")
+  dir="/etc/systemd/system/$unit.d"
+  mkdir -p "$dir"
+  printf '[Service]\nOOMPolicy=continue\nMemoryMax=12G\nMemorySwapMax=1G\n' > "$dir/memory.conf"
+}
+
 ! pgrep -f "$OLD/.local/share/actions-runner-[^/]*/bin/Runner.Worker" >/dev/null 2>&1 || { echo "refused: Runner.Worker is running under $OLD" >&2; exit 1; }
 ahead=$(git -C "$OLD/git/jack" for-each-ref --format='%(refname:short)' refs/heads/ | while read -r b; do if [ -n "$(git -C "$OLD/git/jack" rev-list "origin/$b..$b" 2>/dev/null || git -C "$OLD/git/jack" rev-list "$b" --not --remotes=origin)" ]; then echo "$b"; fi; done); [ -z "$ahead" ] || { echo "refused: local branch ahead of origin: $ahead" >&2; exit 1; }
 [ -d "$STAGING" ] || { echo "refused: staging directory $STAGING does not exist" >&2; exit 1; }
@@ -70,7 +87,8 @@ if [ -n "$ROOT_DIR" ]; then
   echo "cp -a $OLD/.config/opencode /home/jack-runner/.config/opencode"
   echo "chown -R jack-runner:jack-runner /home/jack-runner"
   echo "mv $OLD/.local/share/actions-runner-* /home/jack-runner/.local/share/ && write .path && chown -R jack-runner:jack-runner"
-  echo "for d in /home/jack-runner/.local/share/actions-runner-*; do (cd \"\$d\" && ./svc.sh install jack-runner && ./svc.sh start); done"
+  echo "for d in /home/jack-runner/.local/share/actions-runner-*; do (cd \"\$d\" && ./svc.sh install jack-runner); write /etc/systemd/system/<unit>.d/memory.conf ([Service], OOMPolicy=continue, MemoryMax=12G, MemorySwapMax=1G); done"
+  echo "systemctl daemon-reload; for d in /home/jack-runner/.local/share/actions-runner-*; do (cd \"\$d\" && ./svc.sh start); done"
   echo "chmod 700 $OLD"
   exit 0
 fi
@@ -94,10 +112,17 @@ for d in /home/jack-runner/.local/share/actions-runner-*; do
   unit=""
   if [ -f "$d/.service" ]; then unit=$(tr -d '[:space:]' < "$d/.service"); fi
   if [ -z "$unit" ] || [ "$(systemctl show -p User --value "$unit" 2>/dev/null || true)" != "jack-runner" ]; then
-    (cd "$d" && PATH="/home/jack-runner/.npm-global/bin:$PATH" ./svc.sh install jack-runner && ./svc.sh start)
+    (cd "$d" && PATH="/home/jack-runner/.npm-global/bin:$PATH" ./svc.sh install jack-runner)
     printf '/home/jack-runner/.npm-global/bin:%s\n' "${PATH}" > "$d/.path"
     chown -R jack-runner:jack-runner "$d"
-  elif ! systemctl is-active --quiet "$unit"; then
+  fi
+  write_memory_dropin "$d"
+done
+systemctl daemon-reload
+for d in /home/jack-runner/.local/share/actions-runner-*; do
+  [ -d "$d" ] || continue
+  unit=$(runner_unit "$d")
+  if ! systemctl is-active --quiet "$unit"; then
     (cd "$d" && ./svc.sh start)
   fi
 done
