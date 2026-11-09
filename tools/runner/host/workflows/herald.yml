@@ -1,0 +1,92 @@
+# The herald on steel: every ten minutes, merge each open jack pull request whose head GitHub has admitted
+# (judge and tests green) and whose last log entry is a proposal, with `tools/jack merge N` under
+# ~/.ssh/jack-herald (key_id herald-2, power merge). The verb does the rest: signs the merge entry, pushes it
+# to the branch, waits for the checks on that head, merges exactly that head, pulls main. It decides nothing.
+# Until the key exists on steel the job says so and exits; GH_TOKEN is never set at job level (the App
+# does the GitHub side, as in run.yml).
+name: herald
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: herald
+  cancel-in-progress: false
+jobs:
+  merge:
+    runs-on: [self-hosted, herald]
+    timeout-minutes: 60
+    steps:
+      - name: Merge what GitHub has admitted
+        run: |
+          set -uo pipefail
+          KEY="$HOME/.ssh/jack-herald"
+          [ -f "$KEY" ] || { echo "herald key $KEY absent; nothing merged"; exit 0; }
+          # Identity (runner #225): when the jack-court App's files exist, every gh call in this job (the session's,
+          # the verbs', the herald's) acts as the App, never as the owner. Otherwise refuse (host.md §3).
+          if [ -r "$HOME/.config/jack/app-id" ] && [ -r "$HOME/.config/jack/app.pem" ]; then
+            export GH_REAL="$(command -v gh)"; mkdir -p "$RUNNER_TEMP/bin"; "$GH_REAL" api -H 'Accept: application/vnd.github.raw' "repos/$GITHUB_REPOSITORY/contents/.github/scripts/gh-as-app?ref=$GITHUB_SHA" > "$RUNNER_TEMP/bin/gh"; chmod +x "$RUNNER_TEMP/bin/gh"
+            export PATH="$RUNNER_TEMP/bin:$PATH"; unset GH_TOKEN; echo "identity: jack-court App ($(gh api /installation/repositories --jq '[.repositories[].name] | join(",")'))"
+          else echo "no identity: the App's files are absent"; exit 1; fi
+          # the same sweep as run.yml: the merge verb's worktree lives in /tmp and was refused when /tmp ran out of inodes
+          find /tmp -maxdepth 1 -user "$(id -un)" \( -name 'tmp*' -o -name 'jack*' -o -name 'entry space*' -o -name 'repo-*' \) -mmin +60 -exec rm -rf {} + 2>/dev/null || true
+          cd "$HOME/git/jack" && git worktree prune && git checkout -q main && for i in 1 2 3 4 5; do git fetch -q origin && git pull -q --ff-only && break; sleep 3; done   # retried: a session on a second runner may hold a ref lock for a second
+          repropose() {  # close PR $1 as stale with the declaration BRIEF-C1b Amendment 2 reads, and file its re-proposal
+            N=$1; WHY=$2
+            PARTY=$(gh pr view "$N" -R renavondata/jack --json body -q .body | sed -n 's/^Proposer: \([a-z]*\) .*/\1/p' | head -1)
+            BRANCH=$(gh pr view "$N" -R renavondata/jack --json headRefName -q .headRefName)
+            TITLE=$(gh pr view "$N" -R renavondata/jack --json title -q .title)
+            case "$PARTY" in builder|reviewer)
+                gh pr comment "$N" -R renavondata/jack -b "$(printf 'Closed as stale: %s. Re-proposed mechanically for %s from %s (repropose.yml, on the first free -r branch; a model session only if that refuses).\n\nProposer: herald herald-2' "$WHY" "$PARTY" "$BRANCH")"
+                gh pr close "$N" -R renavondata/jack
+                gh workflow run repropose.yml -R "$GITHUB_REPOSITORY" -f n="$N" -f branch="$BRANCH" -f party="$PARTY" -f title="$TITLE"
+                echo "#$N: stale ($WHY); closed and mechanical re-proposal dispatched for $PARTY";;
+              *) echo "#$N: stale ($WHY); party '$PARTY' is not re-proposed from steel";;
+            esac
+          }
+          for N in $(gh pr list -R renavondata/jack --state open --base main --json number,createdAt -q 'sort_by(.createdAt) | .[].number'); do   # oldest first: the stream's proposal, filed earlier, is not staled by a later one that happened to go green first
+            H=$(gh pr view "$N" -R renavondata/jack --json headRefOid -q .headRefOid)
+            git fetch -q origin "$H" 2>/dev/null || true
+            last=$(git show "$H:log.jsonl" 2>/dev/null | tail -1 | python3 -c 'import json,sys; print(json.load(sys.stdin)["type"])' 2>/dev/null || echo none)
+            [ "$(gh pr view "$N" -R renavondata/jack --json isDraft -q .isDraft)" = true ] && { echo "#$N: draft; skip"; continue; }
+            if [ "$last" = merge ]; then
+              # The merge verb signed and pushed the merge entry, then gave up before GitHub merged (13:27Z on 3 Nov:
+              # `gh pr checks --watch` returned non-zero one minute into the run; #229 and #231 then sat green for
+              # hours because this loop skipped any head whose last entry is a merge). The entry is already signed
+              # by herald-2 on the head; what is left is GitHub's merge of exactly that head, or a re-proposal if
+              # main has moved under it.
+              if ! cmp -s <(git show "$H:log.jsonl" | head -c "$(stat -c %s log.jsonl)") log.jsonl; then
+                repropose "$N" "main gained entries before its merge entry landed (its log is no longer a prefix)"; continue
+              fi
+              checks=$(gh api "repos/renavondata/jack/actions/runs?head_sha=$H&per_page=10" --jq '[.workflow_runs[] | select(.name=="judge" or .name=="tests") | .conclusion] | sort | join(",")')
+              if [ "$checks" = "success,success" ]; then
+                echo "#$N: merge entry on $H admitted; completing the merge"
+                gh pr merge "$N" -R renavondata/jack --merge --match-head-commit "$H" || true
+                git checkout -q main && git pull -q --ff-only
+              else
+                # no re-run: it would act on jack under the owner's login, typed a repair (BRIEF-C2a Amendment 4)
+                echo "#$N: merge entry on $H; checks ${checks:-none}; waiting"
+              fi
+              continue
+            fi
+            [ "$last" = proposal ] || { echo "#$N: last entry is $last; skip"; continue; }
+            # Stale is decided here, from the bytes, the moment main has moved — not after a red judge
+            # (prefix_broken) or a refused merge: main's log must be a byte-prefix of the proposal's.
+            if ! cmp -s <(git show "$H:log.jsonl" | head -c "$(stat -c %s log.jsonl)") log.jsonl; then
+              repropose "$N" "main gained entries before this merged (its log is no longer a prefix of the proposal's)"; continue
+            fi
+            checks=$(gh api "repos/renavondata/jack/actions/runs?head_sha=$H&per_page=10" --jq '[.workflow_runs[] | select(.name=="judge" or .name=="tests") | .conclusion] | sort | join(",")')
+            if [ "$checks" != "success,success" ]; then
+              # No re-run (BRIEF-C2a Amendment 4): a run re-started here acts on jack under the owner's login and is
+              # typed a repair. A red first attempt waits for main to move; the proposal then goes stale and is re-proposed.
+              echo "#$N: checks on $H: ${checks:-none}; skip"; continue
+            fi
+            echo "#$N: head $H admitted; merging as herald-2"
+            if ! JACK_KEY="$KEY" python3 tools/jack merge "$N" 2>&1 | tee "$RUNNER_TEMP/merge-$N.txt"; then :; fi
+            if grep -q "CONFLICTING" "$RUNNER_TEMP/merge-$N.txt"; then
+              repropose "$N" "the merge verb refused it (CONFLICTING)"
+            fi
+            git checkout -q main && git pull -q --ff-only
+          done
