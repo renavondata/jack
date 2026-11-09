@@ -66,6 +66,19 @@ def one_stated_end(root):
     ''')
 
 
+def numerals_housed(root):
+    """R1 keeps every window-file read and its numeric table at the assessed tree in window.py."""
+    c2c_tests("tests.test_c2c_1.R1NumeralsAndR9Binding.test_r1_numerals_housed_twins_and_mutants")(root)
+    _run(root, '''
+        from pathlib import Path
+        jack = Path("tools/jack").read_text(encoding="utf-8")
+        window = Path("tools/window.py").read_text(encoding="utf-8")
+        assert "json.loads(wbytes)" not in jack, "tools/jack reads the window file"
+        needle = 'tree_bytes_opt(ROOT, None, window_path("C2c-1"))'
+        assert needle not in window, "window criteria read the checkout instead of the assessed prefix"
+    ''')
+
+
 def one_writ_function(root):
     """R4 lists every unresolved forecast, including one before C1b's opening."""
     _run(root, '''

@@ -1190,10 +1190,10 @@ PINS += C2B_GATE_PINS
 
 # --- C2c-1 window pins (BRIEF-C2c-1 §3; runner texts) -----------------------
 
-from pins.c2c_1 import c2c_tests, courier_tests, one_stated_end, one_writ_function
+from pins.c2c_1 import c2c_tests, courier_tests, numerals_housed, one_stated_end, one_writ_function
 
 C2C1_PINS = [
-    Pin("numerals_housed", c2c_tests("tests.test_c2c_1.R1NumeralsAndR9Binding.test_r1_numerals_housed_twins_and_mutants"), [
+    Pin("numerals_housed", numerals_housed, [
         Mutant("numeral_scan_disabled", "tools/window.py", "    return violations\n", "    return []\n"),
         Mutant("numeric_key_check_disabled", "tools/window.py", "    if not isinstance(key, str) or key not in numbers or not is_num_val(numbers[key]):\n", "    if False:\n")]),
     Pin("criteria_three_valued", c2c_tests("tests.test_c2c_1.R2R4R8CriteriaAndWrits.test_r2_criteria_three_valued_twins"), [
