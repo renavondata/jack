@@ -425,6 +425,19 @@ def fold_undertakings(raw_bytes):
     return [r for r in rows.values() if not r.get("done") and not r.get("closed")]
 
 
+def retired_by_proposal(root, opening_rev, rev, path):
+    """A due file may leave the tree only through a proposal merged in this window."""
+    if not opening_rev or not rev:
+        return False
+    for merge_sha in git_lines(root, "rev-list", "--first-parent", f"{opening_rev}..{rev}"):
+        info = proposal_merge_info(root, merge_sha)
+        if info is None:
+            continue
+        if any(path in changed_by(root, commit) for commit in info["prop_chain"]):
+            return True
+    return False
+
+
 def valid_world_entry(entry):
     if not isinstance(entry, dict):
         return False
@@ -518,8 +531,16 @@ def evaluate_criterion(c, ctx):
                     if status_code != "ok":
                         return "unmet"
                     for p in c_paths - {"log.jsonl"}:
-                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):
+                        if any(p.startswith(fp) for fp in f_paths) and (tree_bytes_opt(root, c_sha, p) is None or
+                                                                        not any(p.startswith(ap) for ap in allowed)):
                             return "unmet"
+                status_code, merge_paths = attribute_commit(root, m_sha, p1, anc_p1)
+                if status_code != "ok":
+                    return "unmet"
+                for p in merge_paths - {"log.jsonl"}:
+                    if any(p.startswith(fp) for fp in f_paths) and (tree_bytes_opt(root, m_sha, p) is None or
+                                                                      not any(p.startswith(ap) for ap in allowed)):
+                        return "unmet"
         return "met"
 
     if kind == "eprocess":
@@ -569,6 +590,8 @@ def evaluate_criterion(c, ctx):
             return "unknown (no escalations)"
         through_dt = st.instant(esc["through"])
         now_dt, open_dt = st.instant(as_of), st.instant(start)
+        if through_dt < now_dt - grace_td:
+            return "unknown (stale escalations)"
         res_ts = {e["body"]["forecast"]: st.instant(e["ts"]) for e in prefix if e["type"] == "resolution"}
         rows = esc.get("rows", [])
         for e in prefix:
@@ -585,8 +608,6 @@ def evaluate_criterion(c, ctx):
                           rb_dt - lead_td <= st.instant(r["filed_at"]) <= due_grace for r in rows if r.get("filed_at"))
             if not matched:
                 return "unmet"
-        if through_dt < now_dt - grace_td:
-            return "unknown (stale escalations)"
         return "met"
 
     if kind == "ratchet":
@@ -676,6 +697,8 @@ def evaluate_criterion(c, ctx):
     if kind == "undertakings_kept":
         due_file = args["due_file"]
         if tree_bytes_opt(root, rev, due_file) is not None:
+            return "unmet"
+        if not retired_by_proposal(root, open_rev, rev, due_file):
             return "unmet"
         who, utype = args["proposer"], args["type"]
         open_due_raw = tree_bytes_opt(root, open_rev, due_file) if open_rev else None

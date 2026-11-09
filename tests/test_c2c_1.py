@@ -121,7 +121,8 @@ class C2c1Fixture(unittest.TestCase):
             head = self.propose_merge(repo, lg, es, "counsel", {}, delete=("transcripts/COUNSEL-DUE.jsonl",))
         return repo, lg, es, open_sha, head, add
 
-    def propose_merge(self, repo, lg, es, party, files, delete=(), ts=None, extra_log_commit=False):
+    def propose_merge(self, repo, lg, es, party, files, delete=(), ts=None, extra_log_commit=False, merge_files=None,
+                      merge_delete=()):
         ts = ts or max("2026-11-08T11:00:00Z", es[-1]["ts"])
         gitfix.write(repo, "log.jsonl", lg.text())
         if gitfix.git(repo, "status", "--porcelain"):
@@ -149,7 +150,15 @@ class C2c1Fixture(unittest.TestCase):
         gitfix.write(repo, "log.jsonl", lg.text())
         branch_tip = gitfix.commit_all(repo, "merge: #1\n\nProposer: herald herald")
         gitfix.git(repo, "checkout", "-q", "-B", "main", main_sha)
-        gitfix.git(repo, "merge", "--no-ff", "-q", "-m", "Merge pull request #1", branch_tip)
+        if merge_files or merge_delete:
+            gitfix.git(repo, "merge", "--no-ff", "-q", "--no-commit", branch_tip)
+            for path, data in merge_files.items():
+                gitfix.write(repo, path, data)
+            for path in merge_delete:
+                os.remove(os.path.join(repo, path))
+            gitfix.commit_all(repo, "Merge pull request #1")
+        else:
+            gitfix.git(repo, "merge", "--no-ff", "-q", "-m", "Merge pull request #1", branch_tip)
         return gitfix.git(repo, "rev-parse", "HEAD")
 
 
@@ -309,6 +318,11 @@ class R5R6R7R10R11Criteria(C2c1Fixture):
         # Due file present at assessed prefix -> unmet (twin 8)
         r_keep, _, es_keep, _, h_keep, _ = self.make_env(due_rows=[due_rows[0]], keep_due=True)
         self.assertTrue(st.assess(es_keep, "C2c-1", T_NOW, r_keep, h_keep)["criterion_lines"][9].endswith("unmet"))
+        # Deletion outside a proposal is not retirement (R5's migration rule).
+        r_hand, _, es_hand, _, h_hand, _ = self.make_env(due_rows=[due_rows[0]], keep_due=True)
+        os.remove(os.path.join(r_hand, "transcripts/COUNSEL-DUE.jsonl"))
+        h_hand = gitfix.commit_all(r_hand, "hand delete")
+        self.assertTrue(st.assess(es_hand, "C2c-1", T_NOW, r_hand, h_hand)["criterion_lines"][9].endswith("unmet"))
 
     def test_r6_escalation_recorded_and_red_line_twins(self):
         repo, lg, es, _, head, add = self.make_env()
@@ -338,6 +352,8 @@ class R5R6R7R10R11Criteria(C2c1Fixture):
         self.assertEqual(s_ok["red_lines"], [])
         # Stale escalations (twin 11)
         self.assertTrue(st.assess(es, "C2c-1", "2026-11-08T18:00:00Z", repo, h_e4)["criterion_lines"][6].endswith("unknown (stale escalations)"))
+        # A stale file is unknown even if its recorded interval has an uncovered forecast.
+        self.assertTrue(st.assess(es, "C2c-1", "2026-11-08T18:00:00Z", repo, h_e3)["criterion_lines"][6].endswith("unknown (stale escalations)"))
 
     def test_r7_ratchet_and_hand_row_deadline_twins(self):
         repo, lg, es, open_sha, head, _ = self.make_env()
@@ -423,6 +439,45 @@ class R5R6R7R10R11Criteria(C2c1Fixture):
             orig_st = f.read()
         h_rest = self.propose_merge(repo, lg, es, "builder", {"tools/status.py": orig_st})
         self.assertTrue(st.assess(es, "C2c-1", T_NOW, repo, h_rest)["criterion_lines"][2].endswith("unmet"))
+        # A frozen path changed by the GitHub merge itself is charged to the proposal.
+        r_merge, lg_merge, es_merge, _, _, _ = self.make_env()
+        h_merge = self.propose_merge(r_merge, lg_merge, es_merge, "builder", {"REPORT.md": "report\n"},
+                                     merge_files={"tools/status.py": "# merge conflict edit\n"})
+        self.assertTrue(st.assess(es_merge, "C2c-1", T_NOW, r_merge, h_merge)["criterion_lines"][2].endswith("unmet"))
+        # Twin 7: rebinding a changed window file cannot make its frozen edit lawful.
+        r7, lg7, es7, _, _, _ = self.make_env()
+        rebound = copy.deepcopy(WFILE)
+        rebound["binds_from"] = "rebound"
+        rebound_bytes = json.dumps(rebound).encode()
+        rebound_sha = hashlib.sha256(rebound_bytes).hexdigest()
+        h7 = self.propose_merge(r7, lg7, es7, "counsel", {"transcripts/windows/C2c-1.json": rebound_bytes})
+        for entry in es7:
+            if entry["type"] == "decision" and entry["body"].get("kind") == "budget":
+                entry["body"]["subject"] = f"C2c-1: window file sha256:{rebound_sha}"
+            if entry["type"] == "forecast" and (entry["body"].get("args") or {}).get("id") == "C2c-1-V0":
+                entry["body"]["args"]["window_sha256"] = rebound_sha
+        self.assertTrue(st.assess(es7, "C2c-1", T_NOW, r7, h7)["criterion_lines"][2].endswith("unmet"))
+        # Twins 8 and 9: frozen additions and removals are changes as well.
+        r8, lg8, es8, _, _, _ = self.make_env()
+        h8 = self.propose_merge(r8, lg8, es8, "builder", {"tools/new.py": "x = 1\n"})
+        self.assertTrue(st.assess(es8, "C2c-1", T_NOW, r8, h8)["criterion_lines"][2].endswith("unmet"))
+        r9, lg9, es9, _, _, _ = self.make_env()
+        h9 = self.propose_merge(r9, lg9, es9, "reviewer", {}, delete=("pins/pins.py",))
+        self.assertTrue(st.assess(es9, "C2c-1", T_NOW, r9, h9)["criterion_lines"][2].endswith("unmet"))
+        # Twins 16 and 17: a merge cannot edit frozen sessions or drop a main-side acts pair.
+        r16, lg16, es16, _, _, _ = self.make_env()
+        h16 = self.propose_merge(r16, lg16, es16, "counsel", {"REPORT.md": "report\n"},
+                                  merge_files={"transcripts/sessions/evidence.md": "changed\n"})
+        self.assertTrue(st.assess(es16, "C2c-1", T_NOW, r16, h16)["criterion_lines"][2].endswith("unmet"))
+        r17, lg17, es17, _, _, _ = self.make_env()
+        h17_base = self.propose_merge(r17, lg17, es17, "builder", {
+            f"transcripts/evidence/acts-C2c-1-jack-{STAMP}.csv": ACTS_HEADER,
+            f"transcripts/evidence/acts-C2c-1-opencode-runner-{STAMP}.csv": ACTS_HEADER,
+        })
+        h17 = self.propose_merge(r17, lg17, es17, "counsel", {"REPORT.md": "report\n"},
+                                 merge_files={}, merge_delete=(f"transcripts/evidence/acts-C2c-1-jack-{STAMP}.csv",))
+        self.assertNotEqual(h17_base, h17)
+        self.assertTrue(st.assess(es17, "C2c-1", T_NOW, r17, h17)["criterion_lines"][2].endswith("unmet"))
 
     def test_r11_remaining_tree_bounds_and_provenance_twins(self):
         repo, lg, es, open_sha, head, add = self.make_env()
