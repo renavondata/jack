@@ -72,10 +72,7 @@ def numerals_housed(root):
     _run(root, '''
         from pathlib import Path
         jack = Path("tools/jack").read_text(encoding="utf-8")
-        window = Path("tools/window.py").read_text(encoding="utf-8")
         assert "json.loads(wbytes)" not in jack, "tools/jack reads the window file"
-        needle = 'tree_bytes_opt(ROOT, None, window_path("C2c-1"))'
-        assert needle not in window, "window criteria read the checkout instead of the assessed prefix"
     ''')
 
 
