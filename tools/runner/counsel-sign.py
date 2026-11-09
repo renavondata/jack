@@ -77,10 +77,10 @@ def clean(x):  # no control character or unencodable text anywhere in a line's s
 def main():
     here, before_sha, after_sha = os.environ["GITHUB_REPOSITORY"], os.environ["BEFORE"], os.environ["AFTER"]
     home = os.path.expanduser("~")
-    jack, wt_root = os.environ.get("COUNSEL_JACK", f"{home}/git/jack"), os.environ.get("COUNSEL_WT", f"{home}/git/worktrees/jack")
-    key, run_id, read = os.environ.get("COUNSEL_KEY", f"{home}/.ssh/jack-counsel-3"), os.environ.get("GITHUB_RUN_ID", "?"), os.environ["READ_TOKEN"]
+    jack, wt_root = f"{home}/git/jack", f"{home}/git/worktrees/jack"
+    key, run_id, read = f"{home}/.ssh/jack-counsel-3", os.environ.get("GITHUB_RUN_ID", "?"), os.environ["READ_TOKEN"]
     gh_read = lambda *a: sh("gh", "api", *a, env={**os.environ, "GH_TOKEN": read}).stdout  # noqa: E731
-    repo = os.environ.get("COUNSEL_TRIGGER_REPO", f"https://github.com/{here}.git")
+    repo = f"https://github.com/{here}.git"
     files = sorted(f for f in added_files(repo, before_sha, after_sha, read)
                    if f.startswith("requests/sign-") and f.endswith(".json"))
     print(f"{len(files)} sign request(s): {files}")
@@ -219,16 +219,27 @@ def main():
                 if merged and not signed_any and head_now == pre:
                     sh("git", "reset", "-q", "--hard", f"origin/{branch}", cwd=wt, ok=False)
                 refuse(rid, f"line {i + 1} ({l['verb']}) failed in the host: {x}")
-            signed_any = signed_any or r.returncode == 0
-            r.returncode and refuse(rid, f"line {i + 1} ({l['verb']}) refused:\n{(r.stdout + r.stderr)[-1200:]}")
+            if r.returncode:
+                head_now = sh("git", "rev-parse", "HEAD", cwd=wt, ok=False).stdout.strip()
+                if merged and not signed_any and head_now == pre:
+                    sh("git", "reset", "-q", "--hard", f"origin/{branch}", cwd=wt, ok=False)
+                refuse(rid, f"line {i + 1} ({l['verb']}) refused:\n{(r.stdout + r.stderr)[-1200:]}")
             now, n_before = entries(f"{wt}/log.jsonl"), len(before_entries)
-            [canon(e) for e in now[:n_before]] == [canon(e) for e in before_entries] or refuse(rid, f"line {i + 1}: prior entries changed")
+            if [canon(e) for e in now[:n_before]] != [canon(e) for e in before_entries]:
+                head_now = sh("git", "rev-parse", "HEAD", cwd=wt, ok=False).stdout.strip()
+                if merged and not signed_any and head_now == pre:
+                    sh("git", "reset", "-q", "--hard", f"origin/{branch}", cwd=wt, ok=False)
+                refuse(rid, f"line {i + 1}: prior entries changed")
             new = now[n_before:]
             got = (canon({k: new[-1]["body"][k] for k in ("claim", "p", "resolves_by", "type", "args") if k in new[-1]["body"]})
                    if new and new[-1]["type"] == "forecast" else None)
             if not (len(new) == 1 and new[0]["proposer"] == principal and new[0]["type"] == l["verb"]
                     and (got == shape(l) if l["verb"] == "forecast" else new[0]["body"].get("title") == l["title"])):
+                head_now = sh("git", "rev-parse", "HEAD", cwd=wt, ok=False).stdout.strip()
+                if merged and not signed_any and head_now == pre:
+                    sh("git", "reset", "-q", "--hard", f"origin/{branch}", cwd=wt, ok=False)
                 refuse(rid, f"line {i + 1} ({l['verb']}): verb exited 0 without writing the requested entry")
+            signed_any = True
         head = sh("git", "rev-parse", "HEAD", cwd=wt).stdout.strip()
         named = next((e["body"]["commit"] for e in reversed(entries(f"{wt}/log.jsonl")) if e["type"] == "proposal"), "?")
         n = sh("gh", "pr", "list", "--head", branch, "--state", "open", "--json", "number", "--jq", ".[0].number", cwd=wt, env=env, ok=False).stdout.strip()
