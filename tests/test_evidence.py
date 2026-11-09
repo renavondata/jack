@@ -126,6 +126,17 @@ class EvidenceScriptsTest(unittest.TestCase):
             _, rows = acts.collect_acts("renavondata/jack", "2026-11-08T01:00:30Z", "2026-11-08T01:01:30Z")
         self.assertEqual(len(rows), 1)
 
+    def test_acts_keeps_an_event_in_the_opening_minute(self):
+        event = {"id": 1, "event": "closed", "actor": {"login": "gfrmin"},
+                 "created_at": "2026-11-08T01:00:01Z",
+                 "issue": {"number": 91, "user": {"login": "other"}, "labels": []}}
+        def fake_pages(path, **_):
+            return iter([event] if "/issues/events" in path else [])
+        with mock.patch.object(acts, "pages", side_effect=fake_pages), \
+             mock.patch.object(acts, "api", return_value=[]):
+            _, rows = acts.collect_acts("renavondata/jack", "2026-11-08T01:00:30Z", T_NOW)
+        self.assertEqual([row[3] for row in rows], ["#91"])
+
     def test_pages_refuses_an_unbounded_result(self):
         with mock.patch.object(acts, "api", return_value=[{}] * 100):
             with self.assertRaisesRegex(SystemExit, "exceeded"):
@@ -205,7 +216,8 @@ class EvidenceScriptsTest(unittest.TestCase):
         with mock.patch.object(courier, "pages", return_value=iter(runs_page)), \
              mock.patch.object(courier, "api", return_value=commit_obj), \
              mock.patch.object(courier, "gh_raw_bytes", return_value=trig_json.encode("utf-8")), \
-             mock.patch.object(subprocess, "run", return_value=subprocess.CompletedProcess([], 0, stdout=zbuf.getvalue(), stderr=b"")):
+            mock.patch.object(subprocess, "run", side_effect=lambda *args, **kwargs: (
+                kwargs["stdout"].write(zbuf.getvalue()), subprocess.CompletedProcess([], 0, stderr=b""))[1]):
             self.assertEqual(courier.main(["C2c-1"]), 0)
 
         courier_path = os.path.join(self.root, "transcripts", "evidence", f"courier-{STAMP}.json")
@@ -223,10 +235,9 @@ class EvidenceScriptsTest(unittest.TestCase):
                 "path": "requests/sign-row-47.json",
                 "id": "sign-row-47",
                 "branch": "counsel/row-47",
-                "act": "sign",
                 "contents": trig_json,
             }],
-            "receipts": [receipt_line, receipt_line],
+            "receipts": [receipt_line, receipt_line, receipt_line],
         })
 
 
