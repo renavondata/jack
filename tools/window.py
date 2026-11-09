@@ -605,8 +605,6 @@ def evaluate_criterion(c, ctx):
             return "unknown (no escalations)"
         through_dt = st.instant(esc["through"])
         now_dt, open_dt = st.instant(as_of), st.instant(start)
-        if through_dt < now_dt - grace_td:
-            return "unknown (stale escalations)"
         res_ts = {e["body"]["forecast"]: st.instant(e["ts"]) for e in prefix if e["type"] == "resolution"}
         rows = esc.get("rows", [])
         for e in prefix:
@@ -623,6 +621,8 @@ def evaluate_criterion(c, ctx):
                           rb_dt - lead_td <= st.instant(r["filed_at"]) <= due_grace for r in rows if r.get("filed_at"))
             if not matched:
                 return "unmet"
+        if through_dt < now_dt - grace_td:
+            return "unknown (stale escalations)"
         return "met"
 
     if kind == "ratchet":

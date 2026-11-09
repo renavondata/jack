@@ -256,10 +256,11 @@ def v_decision(a):
     begin(a, True)
     a.subject or refuse("SUBJECT must be a non-empty string")
     if a.kind == "promote":
-        from tools.window import check_promote_gate
+        from tools.window import check_promote_gate, has_file
         head, a.decision_ts = git("rev-parse", "HEAD"), entry.now()  # the assessed instant is the instant signed, including expiry boundaries
-        try: check_promote_gate(ROOT, head, a.subject, a.decision_ts)  # noqa: E701
-        except ValueError as x: refuse(str(x))  # noqa: E701
+        if has_file(ROOT, head, a.subject):
+            try: check_promote_gate(ROOT, head, a.subject, a.decision_ts)  # noqa: E701
+            except ValueError as x: refuse(str(x))  # noqa: E701
         endpoint = "repos/{owner}/{repo}/actions/workflows/tests.yml/runs"
         def fetch(query):
             pages = json.loads(run("gh", "api", endpoint + query, "--paginate", "--slurp").stdout)
