@@ -18,6 +18,22 @@ def c2c_tests(*names):
         result = subprocess.run([sys.executable, "-E", "-s", "-m", "unittest", "-q", *names],
                                 cwd=root, capture_output=True, text=True)
         assert result.returncode == 0, result.stdout + result.stderr
+        _run(root, '''
+            import os, tempfile
+            from tools import window
+            with tempfile.TemporaryDirectory(dir="tools") as d:
+                with open(os.path.join(d, "status.py"), "w") as f:
+                    f.write('p = "transcripts/windows/C2c-1.json"\\n')
+                found = window.scan_tools_window_paths(d)
+                assert len(found) == 1 and found[0].endswith("/status.py"), found
+            bad = {"numbers": {}, "processes": {}, "criteria": [{"kind": "x", "args": {}}]}
+            try:
+                window.check_window_file_numbers(bad)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError("unknown window criterion kind was accepted")
+        ''')
     return test
 
 

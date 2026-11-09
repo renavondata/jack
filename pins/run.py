@@ -20,7 +20,8 @@ from pins import pins  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 Result = namedtuple("Result", "pin mutant status detail")
-IGNORE = shutil.ignore_patterns(".git", "__pycache__", "transcripts", "runs", "*.pyc")
+# Window-backed pins and value tests need the assessed window files in each copy.
+IGNORE = shutil.ignore_patterns(".git", "__pycache__", "runs", "*.pyc")
 
 
 def disposable_copy(root, into):

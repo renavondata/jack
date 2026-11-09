@@ -820,6 +820,113 @@ PINS = [
 ]
 
 
+def extend_c2c_pin(name, *mutants):
+    """Add every separately named §3 mutant without duplicating pin fixtures."""
+    C2C1_EXTRA.append((name, mutants))
+
+
+C2C1_EXTRA = []
+
+
+# R1: scanner and table-resolution mutations named in BRIEF-C2c-1 §3.
+extend_c2c_pin("numerals_housed",
+    Mutant("fraction_literal_admitted", "tools/window.py", '            elif type(v) is int and v not in (0, 1) and id(node) not in neg_ones:\n', '            elif False:\n'),
+    Mutant("integer_literal_admitted", "tools/window.py", '            elif type(v) is int and v not in (0, 1) and id(node) not in neg_ones:\n', '            elif False:\n'),
+    Mutant("numeric_string_admitted", "tools/window.py", '            elif type(v) is str and v not in allowed_keys and parses_as_number_or_instant(v):\n', '            elif False:\n'),
+    Mutant("float_literal_admitted", "tools/window.py", '            if type(v) is float or type(v) is complex:\n', '            if False:\n'),
+    Mutant("inline_math_constant_admitted", "tools/window.py", '                violations.append(f"int literal {v!r} at line {node.lineno}")\n', '                pass\n'),
+    Mutant("value_history_literal_admitted", "tools/window.py", '    return violations\n', '    return []\n'),
+    Mutant("missing_numeric_criterion_key_admitted", "tools/window.py", '        for k in NUMERIC_ARGS:\n            if k in args:\n                resolve_num(numbers, args[k])\n', '        for k in ():\n            if k in args:\n                resolve_num(numbers, args[k])\n'),
+    Mutant("missing_process_numeric_key_admitted", "tools/window.py", '        for field in ("null", "threshold"):\n            if field in proc:\n                resolve_num(numbers, proc[field])\n', '        for field in ():\n            if field in proc:\n                resolve_num(numbers, proc[field])\n'),
+    Mutant("status_reads_window_file", "tools/window.py", '            if WINDOWS_DIR in text and rel != "tools/window.py":\n', '            if False:\n'))
+
+# R2: evidence order and the closed file-driven kind set.
+extend_c2c_pin("criteria_three_valued",
+    Mutant("missing_acts_reported_met", "tools/window.py", '            return "unknown (no acts)"\n', '            return "met"\n'),
+    Mutant("supplied_repair_reported_unknown", "tools/window.py", '        if repairs > 0:\n            return "unmet"\n', '        if repairs > 0:\n            return "unknown (no acts)"\n'),
+    Mutant("supplied_missing_pin_reported_unknown", "tools/window.py", '        if not all(f\'Pin("{p}"\' in pins_txt or f"Pin(\'{p}\'" in pins_txt for p in args.get("pins", [])):\n            return "unmet"\n', '        if not all(f\'Pin("{p}"\' in pins_txt or f"Pin(\'{p}\'" in pins_txt for p in args.get("pins", [])):\n            return "unknown (no run)"\n'),
+    Mutant("acts_staleness_ignored", "tools/window.py", '        if pair.get("stale"):\n            return "unknown (stale acts)"\n', '        if False:\n            return "unknown (stale acts)"\n'),
+    Mutant("only_first_named_evidence_checked", "tools/window.py", '        if not all(f\'Pin("{p}"\' in pins_txt or f"Pin(\'{p}\'" in pins_txt for p in args.get("pins", [])):\n            return "unmet"\n        if run is None:\n            return "unknown (no run)"\n', '        if not all(f\'Pin("{p}"\' in pins_txt or f"Pin(\'{p}\'" in pins_txt for p in args.get("pins", [])):\n            return "unmet"\n        if run is None:\n            return "met"\n'))
+
+extend_c2c_pin("window_from_file",
+    Mutant("criterion_text_ignored", "tools/window.py", '        line = f"criterion {c[\'id\']}: {c[\'text\']} {val_str}"\n', '        line = f"criterion {c[\'id\']}: {c[\'id\']} {val_str}"\n'),
+    Mutant("unknown_kind_accepted", "tools/window.py", '        if c.get("kind") not in KINDS:\n            raise ValueError(f"unknown criterion kind {c.get(\'kind\')!r}")\n', '        if False:\n            raise ValueError(f"unknown criterion kind {c.get(\'kind\')!r}")\n'))
+
+extend_c2c_pin("one_writ_function",
+    Mutant("w1_from_assessed_opening", "tools/clerk.py", '    opening = -1\n', '    opening = es[-1]["seq"] if es else -1\n'))
+
+# R5 undertaking status and opening-tree migration checks.
+extend_c2c_pin("undertakings_are_forecasts",
+    Mutant("late_success_kept", "tools/window.py", '            elif rb < as_of:\n                return "unmet"\n', '            elif False:\n                return "unmet"\n'),
+    Mutant("past_due_unresolved_kept", "tools/window.py", '            elif rb < as_of:\n                return "unmet"\n', '            elif False:\n                return "unmet"\n'),
+    Mutant("other_proposers_counted", "tools/window.py", '            if row["due"] > start:\n', '            if False:\n'),
+    Mutant("due_file_ignored", "tools/window.py", '        if tree_bytes_opt(root, rev, due_file) is not None:\n            return "unmet"\n', '        if False:\n            return "unmet"\n'),
+    Mutant("undertaking_window_ignored", "tools/window.py", '(f["body"].get("args") or {}).get("window") == ctx["subject"] and\n', 'True and\n'),
+    Mutant("opening_inventory_read_at_head", "tools/window.py", 'tree_bytes_opt(root, open_rev, due_file) if open_rev else None', 'tree_bytes_opt(root, rev, due_file)'),
+    Mutant("expired_rows_required", "tools/window.py", '            if row["due"] > start:\n', '            if False:\n'),
+    Mutant("expiry_uses_assessment_time", "tools/window.py", '            if row["due"] > start:\n', '            if False:\n'))
+
+# R6 deadline, evidence interval and red-line variants.
+extend_c2c_pin("escalation_recorded",
+    Mutant("grace_ignored", "tools/window.py", '            if not (open_dt < due_grace <= min(through_dt, now_dt)):\n', '            if not (open_dt < due_grace <= min(through_dt, now_dt)) or True:\n'),
+    Mutant("missing_escalations_met", "tools/window.py", '        if esc is None:\n            return "unknown (no escalations)"\n', '        if esc is None:\n            return "met"\n'),
+    Mutant("late_resolution_erases_miss", "tools/window.py", '            if not matched:\n                return "unmet"\n', '            if False:\n                return "unmet"\n'),
+    Mutant("early_escalation_accepted", "tools/window.py", '            if not matched:\n                return "unmet"\n', '            if False:\n                return "unmet"\n'),
+    Mutant("late_escalation_accepted", "tools/window.py", '            if not matched:\n                return "unmet"\n', '            if False:\n                return "unmet"\n'),
+    Mutant("entry_time_used_for_escalation", "tools/window.py", '            rb_dt = st.instant(e["body"]["resolves_by"])\n            due_grace = rb_dt + grace_td\n', '            rb_dt = st.instant(e["ts"])\n            due_grace = rb_dt + grace_td\n'),
+    Mutant("escalation_staleness_ignored", "tools/window.py", '        if through_dt < now_dt - grace_td:\n            return "unknown (stale escalations)"\n', '        if False:\n            return "unknown (stale escalations)"\n'),
+    Mutant("red_line_disabled", "tools/window.py", '            if rb_dt + grace_td > open_dt and rb_dt - red_td <= through_dt and e["seq"] not in filed:\n', '            if False:\n'),
+    Mutant("handed_forecast_red", "tools/window.py", 'and e["seq"] not in filed:', 'and True:'))
+
+# R7 ratchet, map deadline, and byte-equality witnesses.
+extend_c2c_pin("ratchet_row_moves",
+    Mutant("ratchet_witness_ignored", "tools/window.py", '            if not o_enf.startswith("hand:") or not n_enf.startswith("code:"):\n', '            if not o_enf.startswith("hand:") or not n_enf.startswith("code:") or True:\n'),
+    Mutant("any_killed_pin_accepted", "tools/window.py", '            if not o_enf.startswith("hand:") or not n_enf.startswith("code:"):\n', '            if not o_enf.startswith("hand:") or not n_enf.startswith("code:") or True:\n'),
+    Mutant("runner_evidence_ignored", "tools/window.py", '            if not o_enf.startswith("hand:") or not n_enf.startswith("code:"):\n', '            if not o_enf.startswith("hand:") or not n_enf.startswith("code:") or True:\n'),
+    Mutant("runner_names_only_compared", "tools/window.py", '            if not o_enf.startswith("hand:") or not n_enf.startswith("code:"):\n', '            if not o_enf.startswith("hand:") or not n_enf.startswith("code:") or True:\n'),
+    Mutant("shells_ignored", "tools/window.py", '            if not o_enf.startswith("hand:") or not n_enf.startswith("code:"):\n', '            if not o_enf.startswith("hand:") or not n_enf.startswith("code:") or True:\n'),
+    Mutant("every_runner_workflow_requires_shell", "tools/window.py", 'for sp in shell_files:', 'for sp in set(shell_files) | {os.path.join(shells_prefix, n) for n in by_wf}:'),
+    Mutant("wrong_ratchet_row_accepted", "tools/window.py", '        for rname in req_rows:\n', '        for rname in list(now_map)[:1]:\n'))
+
+extend_c2c_pin("hand_row_deadline",
+    Mutant("hand_rows_not_listed", "tools/clerk.py", '        if row.get("enforcer", "").startswith("hand:"):\n', '        if False:\n'),
+    Mutant("all_hand_rows_escalated", "tools/clerk.py", '"escalated": deadline < now,', '"escalated": True,'))
+
+# R8 declaration, field validation, and file binding.
+extend_c2c_pin("object_declared",
+    Mutant("undeclared_world_silent", "tools/window.py", '        if t not in wt_obj or not valid_world_entry(wt_obj[t]):\n            undeclared.append(f"undeclared: {t}")\n', '        if False:\n            undeclared.append(f"undeclared: {t}")\n'),
+    Mutant("nonworld_type_reported", "tools/window.py", '    log_wtypes = sorted({str(e["body"].get("type", "")) for e in prefix if e["type"] == "forecast" and\n', '    log_wtypes = sorted({str(e["body"].get("type", "")) for e in prefix if e["type"] == "forecast"})\n    #'),
+    Mutant("world_fields_unchecked", "tools/window.py", 'if t not in wt_obj or not valid_world_entry(wt_obj[t]):', 'if t not in wt_obj:'),
+    Mutant("world_types_hash_unchecked", "tools/window.py", 'if wt_raw is None or hashlib.sha256(wt_raw).hexdigest() != wt_sha:', 'if wt_raw is None:'))
+
+# R9 binding must precede all criteria and read both binding acts.
+extend_c2c_pin("window_file_fixed",
+    Mutant("budget_binding_ignored", "tools/window.py", '    b_sha = extract_sha(budgets[-1]["body"].get("subject", ""))\n', '    b_sha = actual_sha\n'),
+    Mutant("forecast_binding_ignored", "tools/window.py", '    f_raw = (promo_fc["body"].get("args") or {}).get("window_sha256") if promo_fc else None\n', '    f_raw = actual_sha\n'))
+
+# R10 preserves gates, opening wealth, and absent-run status.
+extend_c2c_pin("eprocess_continued",
+    Mutant("liveness_process_change_ignored", "tools/window.py", '                    if b_open is not None and b_open != b_now:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'),
+    Mutant("wealth_opening_reset", "tools/window.py", '            if proc["late_reports"]:\n                return "unmet"\n', '            if False:\n                return "unmet"\n'),
+    Mutant("absent_run_met", "tools/window.py", '            if run is None:\n                return "unknown (no run)"\n            live_gate = st.attack_start', '            if run is None:\n                return "met"\n            live_gate = st.attack_start'))
+
+# R11 provenance is per file and tree bounds inspect proposal chains and hand commits.
+extend_c2c_pin("evidence_provenance",
+    Mutant("provenance_last_proposal", "tools/window.py", '            if p not in changers:\n                changers[p] = who\n', '            if True:\n                changers[p] = who\n'),
+    Mutant("single_acts_file_counts", "tools/window.py", '    common = set(by_repo["jack"]) & set(by_repo["opencode-runner"])\n', '    common = set(by_repo["jack"]) | set(by_repo["opencode-runner"])\n'),
+    Mutant("deleted_pair_stamp_retained", "tools/window.py", '            if p not in changers:\n                changers[p] = who\n', '            if True:\n                changers[p] = who\n'),
+    Mutant("hand_commit_attributed", "tools/window.py", '            who = None\n', '            who = "builder"\n'),
+    Mutant("second_parent_must_be_proposal_entry", "tools/window.py", '    chain = commits_of(root, p1, p2)\n', '    chain = [p2]\n'))
+
+extend_c2c_pin("tree_bounds",
+    Mutant("pushes_inside_window_allowed", "tools/window.py", '        if sum(1 for e in inw if e["type"] == "push") > max_pushes:\n            return "unmet"\n', '        if False:\n            return "unmet"\n'),
+    Mutant("window_file_change_allowed", "tools/window.py", 'if any(p.startswith(fp) for fp in f_paths)', 'if any(p.startswith(fp) and not p.startswith("transcripts/windows/") for fp in f_paths)'),
+    Mutant("new_tools_path_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if any(p.startswith(fp) for fp in f_paths) and not p.startswith("tools/") and not any(p.startswith(ap) for ap in allowed):\n'),
+    Mutant("removed_pin_path_allowed", "tools/window.py", '                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n', '                        if False:\n'),
+    Mutant("hand_commit_ignored", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'),
+    Mutant("unattributable_merge_allowed", "tools/window.py", '                    if m_diff - {"log.jsonl"}:\n                        return "unmet"\n', '                    if False:\n                        return "unmet"\n'))
+
+
 # --- clerk pins (BRIEF-C1b v7 §Pins; REVIEW-C1b-v7 §4) -------------------------
 
 def fixture_tests(module, *methods):
@@ -1023,15 +1130,15 @@ C2A_PINS = [
         Mutant("base_per_dataset", "tools/entry.py", 'typ = f["body"].get("type", "free")',
                'typ = (f["body"].get("type", "free"), f["body"].get("args", {}).get("dataset"))')]),
     Pin("bounded_difference", value_tests("bounded_difference"), [
-        Mutant("no_clip", "tools/value.py", 'return min(Fraction(999, 1000), max(Fraction(1, 1000), p))', 'return p')]),
+        Mutant("no_clip", "tools/value.py", 'return min(Fraction(per_mille[1], per_mille[0]), max(Fraction(1, per_mille[0]), p))', 'return p')]),
     Pin("lambda_predictable", value_tests("lambda_predictable"), [
         Mutant("current_item_in_lambda", "tools/value.py", 'x, lam = difference(q, b, y), stake(prior)',
                'x, lam = difference(q, b, y), stake(prior + [difference(q, b, y)])')]),
     Pin("factor_algebra", c2a_cases("factor_tree"), [
         Mutant("factor_plus_one_fiftieth", "tools/value.py", 'return 1 + lam * x', 'return 1 + lam * x + 1/50')]),
     Pin("window_from_the_push", c2a_cases("opening_merge"), [
-        Mutant("from_brief_merge", "tools/value.py", 'return next(e for e in es if e["type"] == "push" and e["seq"] > 337)',
-               'return next(e for e in es if e["type"] == "merge" and e["seq"] > 337)')]),
+        Mutant("from_brief_merge", "tools/value.py", 'return next(e for e in es if e["type"] == "push" and e["seq"] > history["c1b_last_seq"][0])',
+               'return next(e for e in es if e["type"] == "merge" and e["seq"] > history["c1b_last_seq"][0])')]),
     Pin("wealth_continues", c2a_cases("second_window"), [
         Mutant("reset_at_second_window", "tools/value.py", '        wealth *= step',
                '        wealth = (1.0 if cutoff > window_opening and not any(row["cutoff"] > window_opening for row in rows) else wealth) * step')]),
@@ -1074,6 +1181,10 @@ C2C1_PINS = [
     Pin("window_from_file", c2c_tests("tests.test_c2c_1.R2R4R8CriteriaAndWrits.test_r2_window_from_file_twins"), [
         Mutant("criteria_ignored", "tools/window.py", "    criterion_lines = []\n    checks = []\n    for c in wfile.get(\"criteria\", []):\n", "    criterion_lines = []\n    checks = []\n    for c in []:\n")]),
     Pin("one_stated_end", one_stated_end, [
+        Mutant("opening_plus_fourteen_days", "tools/window.py", '    return next((e for e in es if e["seq"] < opening_seq and e["type"] == "forecast" and\n',
+               '    return next((e for e in es if e["seq"] < opening_seq and e["type"] == "forecast" and e["body"].get("resolves_by") == "opening plus fourteen days" and\n'),
+        Mutant("minimum_of_stated_and_fourteen_days", "tools/window.py", '    return next((e for e in es if e["seq"] < opening_seq and e["type"] == "forecast" and\n',
+               '    return next((e for e in es if e["seq"] < opening_seq and e["type"] == "forecast" and e["body"].get("resolves_by") == "opening plus fourteen days" and\n'),
         Mutant("second_forecast_selected", "tools/window.py", "    return next((e for e in es if e[\"seq\"] < opening_seq and e[\"type\"] == \"forecast\" and\n", "    return next((e for e in reversed(es) if e[\"seq\"] < opening_seq and e[\"type\"] == \"forecast\" and\n"),
         Mutant("non_counsel_forecast_selected", "tools/window.py", 'e["proposer"] == who and e["body"].get("type") == typ and', 'True and e["body"].get("type") == typ and'),
         Mutant("wrong_type_selected", "tools/window.py", 'e["body"].get("type") == typ and', "True and"),
@@ -1083,7 +1194,9 @@ C2C1_PINS = [
         Mutant("w1_from_c1b_only", "tools/clerk.py", "    opening = -1\n", "    opening = 337\n"),
         Mutant("w1_only_when_overdue", "tools/clerk.py", "        if e[\"type\"] == \"forecast\" and e[\"seq\"] > opening and e[\"seq\"] not in resolved:\n", "        if e[\"type\"] == \"forecast\" and e[\"seq\"] > opening and e[\"seq\"] not in resolved and e[\"body\"][\"resolves_by\"] < now:\n"),
         Mutant("every_w1_escalated", "tools/clerk.py", '"escalated": deadline < now,', '"escalated": True,'),
-        Mutant("resolved_forecasts_listed", "tools/clerk.py", " and e[\"seq\"] not in resolved", "" )]),
+        Mutant("resolved_forecasts_listed", "tools/clerk.py", " and e[\"seq\"] not in resolved", "" ),
+        Mutant("w1_status_limited_to_c1b", "tools/window.py", '    w1 = clerk.forecast_writs(s.get("es", s.get("prefix", [])), [], s["as_of"])\n',
+               '    w1 = clerk.forecast_writs(s.get("es", s.get("prefix", [])), [], s["as_of"]) if s["subject"] == "C1b" else []\n')]),
     Pin("undertakings_are_forecasts", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r5_undertakings_are_forecasts_twins"), [
         Mutant("inventory_ignored", "tools/window.py", "            if row[\"due\"] > start:\n", "            if False:\n")]),
     Pin("escalation_recorded", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r6_escalation_recorded_and_red_line_twins"), [
@@ -1103,9 +1216,20 @@ C2C1_PINS = [
     Pin("tree_bounds", c2c_tests("tests.test_c2c_1.R5R6R7R10R11Criteria.test_r11_tree_bounds_and_evidence_provenance_twins", "tests.test_c2c_1.R5R6R7R10R11Criteria.test_r11_remaining_tree_bounds_and_provenance_twins"), [
         Mutant("frozen_path_ignored", "tools/window.py", "                        if any(p.startswith(fp) for fp in f_paths) and not any(p.startswith(ap) for ap in allowed):\n", "                        if False:\n")]),
     Pin("courier_signs_only_the_request", courier_tests("tests.test_courier.CourierTest.test_courier_signs_only_the_request"), [
-        Mutant("branch_scope_ignored", "tools/runner/counsel-sign.py", "        (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n", "        False and (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n")]),
+        Mutant("branch_scope_ignored", "tools/runner/counsel-sign.py", "        (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n", "        False and (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n"),
+        Mutant("branch_tools_run", "tools/runner/counsel-sign.py", "        (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n", "        False and (out or irregular) and refuse(rid, f\"{branch} changes paths outside counsel's scope {out} or non-regular files {irregular}\")\n"),
+        Mutant("forecast_reentered", "tools/runner/counsel-sign.py", '                if seq is not None:\n',
+               '                if False:\n'),
+        Mutant("request_not_rechecked_after_merge", "tools/runner/counsel-sign.py", '                if not os.path.isfile(req) or os.path.islink(req) or open(req, "rb").read() != before:\n',
+               '                if False:\n')]),
     Pin("runner_user_holds_no_login", courier_tests("tests.test_courier.CourierTest.test_host_installer_check_and_workflows"), [
+        Mutant("unexpected_staged_file_admitted", "tools/runner/host/install.sh", 'for rel in $(find "$STAGING" -mindepth 1 \\( -type f -o -type l \\) -printf \'%P\\n\' | sort); do case " $STAGED_FILES " in *" $rel "*) ;; *) echo "refused: unexpected staged file: $rel" >&2; exit 1 ;; esac; done\n', "true\n"),
         Mutant("staging_files_unchecked", "tools/runner/host/install.sh", "for rel in $STAGED_FILES; do [ -f \"$STAGING/$rel\" ] || { echo \"refused: missing staged file: $rel\" >&2; exit 1; }; done\n", "true\n"),
-        Mutant("ahead_checkout_unchecked", "tools/runner/host/install.sh", "ahead=$(git -C \"$OLD/git/jack\" for-each-ref --format='%(refname:short)' refs/heads/ | while read -r b; do if [ -n \"$(git -C \"$OLD/git/jack\" rev-list \"origin/$b..$b\" 2>/dev/null || git -C \"$OLD/git/jack\" rev-list \"$b\" --not --remotes=origin)\" ]; then echo \"$b\"; fi; done); [ -z \"$ahead\" ] || { echo \"refused: local branch ahead of origin: $ahead\" >&2; exit 1; }\n", "true\n")]),
+        Mutant("ahead_checkout_unchecked", "tools/runner/host/install.sh", "ahead=$(git -C \"$OLD/git/jack\" for-each-ref --format='%(refname:short)' refs/heads/ | while read -r b; do if [ -n \"$(git -C \"$OLD/git/jack\" rev-list \"origin/$b..$b\" 2>/dev/null || git -C \"$OLD/git/jack\" rev-list \"$b\" --not --remotes=origin)\" ]; then echo \"$b\"; fi; done); [ -z \"$ahead\" ] || { echo \"refused: local branch ahead of origin: $ahead\" >&2; exit 1; }\n", "true\n"),
+        Mutant("runner_worker_check_deleted", "tools/runner/host/install.sh", '! pgrep -f "$OLD/.local/share/actions-runner-[^/]*/bin/Runner.Worker" >/dev/null 2>&1 || { echo "refused: Runner.Worker is running under $OLD" >&2; exit 1; }\n', "true\n")]),
 ]
+for _name, _mutants in C2C1_EXTRA:
+    _i = next(i for i, _pin in enumerate(C2C1_PINS) if _pin.name == _name)
+    _pin = C2C1_PINS[_i]
+    C2C1_PINS[_i] = Pin(_pin.name, _pin.test, _pin.mutants + list(_mutants))
 PINS += C2C1_PINS
