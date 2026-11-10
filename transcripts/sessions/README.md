@@ -42,6 +42,14 @@ The templates in this directory are procedure (the sovereign's ruling of 9 Novem
 - `code-review.md` — the reviewer reads the assembled push branch cold against the texts and, on PASS, commits
   `transcripts/REVIEW-<window>-code.md` on that branch for the sovereign's `--review` (RUNBOOK, `jack push`; C2a-prime's precedent);
   not proposed (the same placeholders; filed by counsel through the courier's template form).
+- `review-brief.md` — the reviewer's gate review of `transcripts/BRIEF-<window>-draft.md` for a window that has a brief and no
+  window file (C2a-prime, C2b): on PASS, `transcripts/REVIEW-<window>-<stamp>.md` proposed under the reviewer's key (placeholders
+  `{WINDOW}`, `{MODEL}`, `{BRANCH}`, `{STAMP}`, `{NOW}`; no texts list, so the courier needs no window file).
+- `c2b-build.md`, `c2b-pins.md`, `c2b-code-review.md` — C2b's window code on its opening push (BRIEF-C2b Amendment 10 clause 5):
+  the builder integrates the pre-built code with C2a-prime's on `builder-c2b-push` and makes it say the amended criteria; the
+  reviewer writes the pins on `reviewer-c2b-pins`; counsel cuts `push-c2b` from that with the two trusted-base changes and the
+  opening note (the precedent of `1c1b27f`); the reviewer reads `push-c2b` cold and commits `REVIEW-C2b-code.md` on it. Pushed,
+  never proposed; used once.
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
   under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
   before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,
