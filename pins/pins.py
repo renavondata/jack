@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 99
+EXPECTED = 126
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -835,6 +835,7 @@ def fixture_tests(module, *methods):
 clerk_tests = functools.partial(fixture_tests, "test_clerk.ClerkTest")
 promotion_tests = functools.partial(fixture_tests, "test_promotion.Promotion")
 status_tests = functools.partial(fixture_tests, "test_status.StatusTest")
+counsel_status_tests = functools.partial(fixture_tests, "test_status.C2bCounselTest")
 W1_TEST = clerk_tests("w1_from_entry_strict_deadline_holders_and_discharge")
 W1_OPEN = 'if e["type"] == "forecast" and e["seq"] > opening and e["seq"] not in resolved:'
 TAINT = '            for _, repairs in opened.values():\n                repairs.append(seq)'
@@ -1121,3 +1122,99 @@ C2A_PRIME_PINS = [
         prime_mutant("tuple_from_assessed_tree", 'declaration = next(n for n in ast.parse(tree_bytes(root, start, "tools/status.py")).body if isinstance(n, ast.Assign)', 'declaration = next(n for n in ast.parse(tree_bytes(root, rev, "tools/status.py")).body if isinstance(n, ast.Assign)')]),
 ]
 PINS += C2A_PRIME_PINS
+
+
+# --- C2b election and counsel-bound pins (BRIEF-C2b, Amendments 6--10) ---
+due_tests = functools.partial(fixture_tests, "test_due.DueTest")
+workflow_tests = functools.partial(fixture_tests, "test_workflow.WorkflowTest")
+elect_tests = functools.partial(fixture_tests, "test_elect.Election")
+
+
+def t_election_continued(root):
+    t_value_worked(root)
+    elect_tests("mixture_untouched_and_continued")(root)
+
+
+ELECTION_COMPARE = '    for field in sorted(set(a) | set(expected["args"])):'
+ELECTION_SIGMA = 'if not verifies(declaration["pubkey"], round_string(a["stream"], a["window_utc"][0]), a["sigma"]):'
+COUNSEL_HISTORY = 'if landing is None or row["due"] <= landing or row["due"] >= end or line.endswith(" on time"):'
+C2B_PINS = [
+    Pin("w5_overdue_escalates", due_tests("w5_overdue_escalates"), [
+        Mutant("overdue_printed_open", "tools/due.py", 'if due < now else "OPEN"', 'if False else "OPEN"')]),
+    Pin("w5_done_is_an_entry", due_tests("w5_done_is_an_entry"), [
+        Mutant("unrelated_entry_discharges", "tools/due.py",
+               'row["id"] in json.dumps(all_entries[seq].get("body", {}), sort_keys=True, separators=(",", ":"), ensure_ascii=True)',
+               'True')]),
+    Pin("w5_rows_append_only", due_tests("w5_rows_append_only"), [
+        Mutant("earlier_row_edit_accepted", "tools/due.py", 'if i >= len(current) or old != current[i]:', 'if False:')]),
+    Pin("w5_inventory", due_tests("w5_inventory"), [
+        Mutant("missing_seed_accepted", "tools/due.py", 'if row["id"] not in {r["id"] for r in current}:', 'if False:')]),
+    Pin("w5_redate", due_tests("w5_redate"), [
+        Mutant("redate_unrestricted", "tools/due.py", 'row["due"] == redates.get(key)', 'True')]),
+    Pin("w5_escalation_history", due_tests("w5_escalation_history"), [
+        Mutant("late_escalation_cleared", "tools/due.py", 'if late > 0 else "on time"', 'if False else "on time"')]),
+    Pin("c2b_history_from_w5", counsel_status_tests("c2b_history_from_w5"), [
+        Mutant("every_row_gated", "tools/status.py", COUNSEL_HISTORY,
+               'if row["due"] >= end or line.endswith(" on time"):')]),
+    Pin("workflow_steps_preserved", workflow_tests("workflow_steps_preserved"), [
+        Mutant("sample_step_dropped", "tests/test_workflow.py", '        preserved(workflow)\n',
+               '        workflow["jobs"]["sample"]["steps"].pop()\n        preserved(workflow)\n'),
+        Mutant("gate_skipped_on_failure", "tests/test_workflow.py", '        preserved(workflow)\n',
+               '        workflow["jobs"]["tests"]["if"] = "success()"\n        preserved(workflow)\n')]),
+    Pin("gain_in_unit_interval", elect_tests("gain_in_unit_interval"), [
+        Mutant("divide_by_ln1000", "tools/elect.py", '/ 6 / math.log(999)', '/ 6 / math.log(1000)')]),
+    Pin("round_loss_is_mean", elect_tests("round_loss_is_mean"), [
+        Mutant("six_losses_summed", "tools/elect.py", '/ 6 / math.log(999)', '/ math.log(999)')]),
+    Pin("bad_round_kept", elect_tests("bad_round_kept"), [
+        Mutant("incomplete_round_dropped", "tools/elect.py", 'if a["instance"] == instance and r["settled"]:',
+               'if a["instance"] == instance and r["settled"] and r["complete"]:'),
+        Mutant("missing_event_out_of_mean", "tools/elect.py", 'gain=gain(ns), success=success',
+               'gain=Fraction(math.fsum(math.log(n) for n in ns) / (len(bases) or 6) / math.log(999)), success=success')]),
+    Pin("exp3_importance", elect_tests("exp3_importance"), [
+        Mutant("todays_propensity", "tools/elect.py", '            G[k] += r["gain"] / Fraction(a["propensity"])',
+               '            G[k] += r["gain"] / propensity(k, cuts([g + (r["gain"] if i == k else 0) for i, g in enumerate(G)]))')]),
+    Pin("exp3_constants", elect_tests("exp3_constants"), [
+        Mutant("gamma_point_one", "tools/elect.py", 'GAMMA = min(1, math.sqrt(K * math.log(K) / ((math.e - 1) * GJ)))', 'GAMMA = 0.1')]),
+    Pin("instance_feedback_complete", elect_tests("instance_feedback_complete"), [
+        Mutant("draw_on_stale_feedback", "tools/elect.py", 'if any(not round_result(es, f, as_of)["settled"] for f in previous):', 'if False:')]),
+    Pin("draw_replays_from_prefix", elect_tests("draw_replays_from_prefix"), [
+        Mutant("recorded_gains_replayed", "tools/elect.py", ELECTION_COMPARE,
+               '    expected["args"]["gains"] = a["gains"]\n' + ELECTION_COMPARE)]),
+    Pin("sigma_verifies", elect_tests("sigma_verifies"), [
+        Mutant("sigma_unchecked", "tools/elect.py", ELECTION_SIGMA, 'if False:')]),
+    Pin("draw_on_the_grid", elect_tests("draw_on_the_grid"), [
+        Mutant("float_u_unassigned", "tools/elect.py", 'if cs[k] <= U < cs[k + 1]', 'if cs[k] / GRID <= U / GRID < cs[k + 1] / GRID')]),
+    Pin("roster_fixed", elect_tests("roster_fixed"), [
+        Mutant("outside_roster_admitted", "tools/elect.py", ELECTION_COMPARE,
+               '    for field in sorted((set(a) | set(expected["args"])) - {"principal", "model", "roster"}):')]),
+    Pin("invite_before_session", elect_tests("invite_before_session"), [
+        Mutant("later_invite_accepted", "tools/elect.py", 'invite["ts"] < f["ts"] < a["window_utc"][0]', 'f["ts"] < a["window_utc"][0]')]),
+    Pin("invite_cutoff_W0", elect_tests("invite_cutoff_W0"), [
+        Mutant("late_invite_scored", "tools/elect.py", 'return "rigged_election: rigged: ts >= W0"', 'return None')]),
+    Pin("invite_p_is_success_rate", elect_tests("invite_p_is_success_rate"), [
+        Mutant("p_is_propensity", "tools/elect.py", 'p=success_rate(es, rounds, k, as_of)',
+               'p=min(999, max(1, math.floor(1000 * propensity(k, cs) + Fraction(1, 2))))')]),
+    Pin("invite_resolution_strict", elect_tests("invite_resolution_strict"), [
+        Mutant("tie_is_success", "tools/elect.py", 'for n in ns) > math.prod(bases)', 'for n in ns) >= math.prod(bases)')]),
+    Pin("resolver_not_forecaster", elect_tests("resolver_not_forecaster"), [
+        Mutant("same_principal_resolves", "tools/elect.py", 'return "builder" if who == "reviewer" else "reviewer"', 'return who')]),
+    Pin("self_invite", elect_tests("self_invite"), [
+        Mutant("non_clerk_invite_admitted", "tools/elect.py", 'if not declaration or public != base64.b64decode(declaration["pubkey"].split()[1]):', 'if False:')]),
+    Pin("rigged_election", elect_tests("rigged_election"), [
+        Mutant("recorded_args_trusted", "tools/elect.py", ELECTION_COMPARE,
+               '    expected["args"]["gains"] = a["gains"]\n' + ELECTION_COMPARE),
+        Mutant("sigma_unchecked", "tools/elect.py", ELECTION_SIGMA, 'if False:')]),
+    Pin("mixture_untouched_and_continued", t_election_continued, [
+        Mutant("uniform_restart", "tools/value.py", '        q = sum((weights[k] * ps[k] for k in roster), Fraction(0))',
+               '        if cutoff > window_opening and not any(row["cutoff"] > window_opening for row in rows):\n'
+               '            weights = {k: Fraction(1, len(roster)) for k in roster}\n'
+               '        q = sum((weights[k] * ps[k] for k in roster), Fraction(0))')]),
+    Pin("procedure_types_out", elect_tests("procedure_types_out"), [
+        Mutant("counsel_programme_scored", "tools/value.py",
+               '        return None  # procedure_types_out: jack score only; no pre-outcome value contract',
+               '        return ((typ, body["claim"]), f["ts"]) if typ == "counsel.programme" else None')]),
+]
+for pin in C2B_PINS:
+    pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
+        f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
+PINS += C2B_PINS
