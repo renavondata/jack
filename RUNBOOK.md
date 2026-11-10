@@ -302,10 +302,13 @@ the two rows Amendment 6 names (`c2b-report` → `2026-12-02T12:00:00Z`, `c2c-br
 `seq` 1564, first such line for its id, after the row and before any discharge); any other line with those
 keys, or a malformed `done`, exits 2 — `W5: malformed COUNSEL-DUE file`, or `W5: <error>` where the fold itself fails. Seven pins:
 `w5_overdue_escalates`, `w5_done_is_an_entry`, `w5_rows_append_only`, `w5_inventory`, `w5_redate`,
-`w5_escalation_history`, `c2b_history_from_w5`. The diary's resolve session commits `status.py`'s W5 lines at
-every tick under `transcripts/evidence/w5/`; BRIEF-C2b's criterion 8 reads those files, not a reconstruction,
-and its printed-escalation clause applies only to rows whose due falls after W5 lands, and not at all on a
-prefix with no merge holding `tools/due.py` (Amendment 8).
+`w5_escalation_history`, `c2b_history_from_w5`. BRIEF-C2b's criterion 8 reads tick files under
+`transcripts/evidence/w5/` (`status.py`'s W5 lines as of an instant, committed at the first prefix after a row's
+due), not a reconstruction, and no session commits them: the step was never built and is struck for C2b
+(Amendment 11). Its printed-escalation clause applies only to rows whose due falls after W5 lands — the first
+merge on the prefix whose commit holds `tools/due.py`, which with the code on C2b's opening push is the first
+merge after it — and not at all on a prefix with no such merge (Amendment 8); so C2b's window holds no row that
+falls due inside it (Amendment 11 clause 3: the seed is the file as `main` holds it at the opening push).
 BRIEF-C2c-1 (draft v18, on `main`) R5 retires W5 from C2c-1's opening push, if that push is made as the
 brief states: what it tracked becomes claims on the log.
 
