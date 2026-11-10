@@ -353,6 +353,12 @@ class Election(unittest.TestCase):
             self.assertFalse(st.assess_election(s, dict(facts, counted=9801), True, e.ROOT, "head", [])[2][0])
             self.assertFalse(st.assess_election(s, facts, False, e.ROOT, "head", [])[0][0])
             self.assertFalse(st.assess_election(s, facts, False, e.ROOT, "head", [])[3][0])
+        with patch.object(st, "tree_bytes", return_value=b'{"cap":9800}'), \
+                patch.object(st, "election_tree_evidence", return_value=(True, False)), \
+                patch.object(st, "attack_start", return_value=fx.OPEN):
+            checks = st.assess_election(s, facts, True, e.ROOT, "head", [])
+            self.assertFalse(checks[0][0])
+            self.assertFalse(checks[4][0])
         def without_election(root, rev, path):
             if path == "sim/election.py":
                 raise subprocess.CalledProcessError(1, "git")

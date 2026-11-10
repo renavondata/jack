@@ -546,29 +546,29 @@ def assess_election(s, facts, verified, root, rev, runs):
     end = min(s["as_of"], s["end"])
     scope = json.loads(tree_bytes(root, rev, "judge/scope.json"))
     try:
-        unchanged, _ = election_tree_evidence(root, rev, s["prefix"], s["opening"])
+        unchanged, registered = election_tree_evidence(root, rev, s["prefix"], s["opening"])
     except (OSError, ValueError, IndexError, subprocess.CalledProcessError):
-        unchanged = False
+        unchanged, registered = False, False
     gate = attack_start(root, runs, end, "tests/test_elect.py")
     try:
         built = all(tree_bytes(root, rev, path) is not None for path in
                     ("tools/elect.py", "sim/election.py", "tests/test_elect.py"))
     except (OSError, subprocess.CalledProcessError):
         built = False
-    return [(verified, "criterion 1: C2b pins and twins in verified tests run"),
+    return [(verified and registered, "criterion 1: C2b pins and twins in verified tests run"),
             (verified, "criterion 2: checker agreement in verified tests run"),
             (facts["counted"] <= scope["cap"] and facts["kernel"] <= 500 and facts["scope"] and unchanged,
              f"criterion 3: counted {facts['counted']}/{scope['cap']}; kernel {facts['kernel']}/500; opening trusted bytes unchanged: {unchanged}"),
             (verified and gate is not None, f"criterion 4: election attacks green in verified tests run: {gate or 'unverified'}"),
-            (built and verified, "criterion 7: election built and not run")]
+            (built and verified and registered, "criterion 7: election built and not run")]
 
 
 COUNSEL_PINS = ("push_without_read_refused read_of_this_text read_not_counsels w5_overdue_escalates "
                 "w5_done_is_an_entry w5_rows_append_only w5_inventory w5_redate c2b_history_from_w5 w5_escalation_history").split()
 
 
-def liveness_unchanged(root, rev, prefix):
-    start = prefix_tree(root, rev, [e for e in prefix if e["seq"] <= val.opening_push(prefix)["seq"]])
+def liveness_unchanged(root, rev, prefix, opening):
+    start = prefix_tree(root, rev, [e for e in prefix if e["seq"] <= opening])
     if start is None:
         return False
     def process(sha):
@@ -660,16 +660,17 @@ def assess_c2b_exit(s, verified, root, rev, runs, acts):
         value_check = (False, f"criterion 5: value continued unverified: {exc}")
     try:
         gate = attack_start(root, runs, end)
-        process = item_process(prefix, c1b_window(prefix)[0], end)
+        fixes = window_fix_seqs(prefix, root, rev)
+        process = item_process(prefix, c1b_window(prefix)[0], end, fixes)
         live = score_items(i for i in process["items"] if gate is not None and gate < i["ts"])
-        same = liveness_unchanged(root, rev, prefix)
+        same = liveness_unchanged(root, rev, prefix, s["opening"])
         s.update(continued_liveness=live, late_reports=process["late_reports"])
         live_check = (same and gate is not None and live["E"] >= 20 and not process["late_reports"],
                       f"criterion 6: liveness continued E {live['E']} >= 20; unchanged {same}; "
                       f"attack {gate or 'unverified'}; late repairs {len(process['late_reports'])}")
     except (StopIteration, OSError, ValueError, subprocess.CalledProcessError) as exc:
         live_check = (False, f"criterion 6: liveness continued unverified: {exc}")
-    off = off_log_repairs(acts, s["start"], end)
+    off = off_log_repairs(acts, s["start"], end, minute_overlap=True)
     procedure = s["procedure"] + int(not any(promotes(e, "C2b") for e in prefix))
     return [value_check, live_check, counsel_bound(s, verified, root, rev),
             (not s["veto"] and off == 0 and procedure <= 5 * s["object"],

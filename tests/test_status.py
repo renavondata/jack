@@ -200,6 +200,11 @@ class C2bExitTest(unittest.TestCase):
         self.assertEqual([t.split(":")[0] for t in st.unmet(bad)], ["criterion 9"])
         self.decision(bad)
 
+    def test_criterion9_counts_a_repair_minute_overlapping_the_opening(self):
+        row = dict(repo="renavondata/jack", time_hkt="2026-11-02 08:29", **{"class": "repair"})
+        self.assertEqual(st.off_log_repairs([row], "2026-11-02T00:29:30Z", self.END, minute_overlap=True), 1)
+        self.assertEqual(st.off_log_repairs([row], "2026-11-02T00:29:30Z", self.END), 0)
+
     def test_window_x7_outlasts_x0(self):
         x0 = e(3, self.es[0]["ts"], "forecast", "counsel", args=dict(id="X0"),
                resolves_by="2026-11-02T01:30:00Z", p=500)
@@ -437,13 +442,13 @@ class C2bCounselTest(unittest.TestCase):
         root, start = self.enterContext(tree({"tools/status.py": source}))
         with patch.object(st, "prefix_tree", return_value=start), patch.object(st.val, "opening_push", return_value=dict(seq=1)):
             harmless = commit(root, {"tools/status.py": source + "\n# harmless comment\n"})
-            self.assertTrue(st.liveness_unchanged(root, harmless, self.entries))
+            self.assertTrue(st.liveness_unchanged(root, harmless, self.entries, 1))
             for before, after in (("P0 = Fraction(6, 11)", "P0 = Fraction(1, 2)"),
                                   ('return {d["pubkey"].split()[1]', 'return {d["pubkey"].split()[0]'),
                                   ("successes += item[\"Y\"]", "successes += 1"),
                                   ("repairs.append(seq)", "repairs.append(0)")):
                 rev = commit(root, {"tools/status.py": source.replace(before, after)})
-                self.assertFalse(st.liveness_unchanged(root, rev, self.entries))
+                self.assertFalse(st.liveness_unchanged(root, rev, self.entries, 1))
 
 
 if __name__ == "__main__":
