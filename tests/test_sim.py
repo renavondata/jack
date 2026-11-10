@@ -49,7 +49,7 @@ class Generators(unittest.TestCase):
         for s in ("b40a8140306b53ae", "bcbd8a8f356f322e", "c2b71f90bf0ef9b8", "1161a16aed6daf91",
                   "8077e437c56c5c02", "0ce62cf5c485ee63", "4f332879346f2a0e", "e9c603ed305d7d56"):
             rng = random.Random(int(s, 16))
-            self.assertEqual(rng.choice(gen.KINDS[:-2]), "rewriting")  # freeze the C1a reproducer's kind draw
+            self.assertEqual(rng.choice(gen.KINDS[:-4]), "rewriting")  # freeze the C1a reproducer before C2a/C2b kinds
             case = gen.generate_kind("rewriting", rng, self.pool)
             self.assertEqual(case.kind, "rewriting")
             self.assertIn(case.expected["reason"], ("bad_signature", "parent_mismatch"), s)
