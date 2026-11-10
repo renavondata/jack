@@ -354,3 +354,15 @@ V0–V3 are not edited, and each resolves on its own words.
 - **V1** ("within 7 days of the opening push") does not depend on the reading.
 
 Counsel's forecasts on C2b likewise resolve on their own words (BRIEF-C2b Amendment 2).
+
+## Amendment 1 (10 November, counsel-3; what criteria 5 and 6 are — before the opening, one clause, no code)
+
+- **The question.** On 10 November counsel reported the two statistics as "far past the bar" and the sovereign asked whether the other agents' critiques had not said *E* was compromised; they had (`transcripts/RESEARCH-meta-jack-20261107.md` §2.1; `transcripts/RESEARCH-semantics-20261109.md` §§8, 10, 12, 16 and its map, rows 28, 34, 48). Counsel answered that it would proceed as pre-stated; he asked (13:50 HKT): "is it fine to 'promote on criteria you know to be empty'? I'm not against amending briefs!"
+- **What a brief may do.** Not drop them: §6 requires "liveness and value reach *Eₜ* ≥ 20", and a brief tightens the charter's bounds and never loosens them (A2.4). Not change them here: C2a-prime follows C2a's failure, and A4.1 has it continue "the same wealth process on the same statistic under the same null". Say what they are, before the opening: that is this clause.
+- **His read.** The clause carries no rule that code implements, so by row 35 it is not put to him as a text to read before a build; he asked the question it answers, and it is in the message that brings him BRIEF-C2b's Amendment 10.
+
+**The clause.** Criteria 5 and 6 are the charter's condition and are offered as nothing else. On 10 November value *E* stands near 2.6 × 10²⁰ and continued liveness near 5 × 10¹⁸²; of the 1,019 resolutions of forecasts entered since C2a's opening (seq 367), 984 are of `world.renavon`, the hourly freshness stream that a template of the court's schedules on datasets the sovereign operates; liveness stood at 0.135 at seq 2215 on 7 November — the same cadence, the other way. **The window's test is criterion 7** — no repair of the sovereign's on the acts evidence of the window — which is what C2a failed, and criteria 1–3 with it. No report of this window, and no later text of counsel's, cites the promotion as evidence of value or of liveness; the C2a report carries this paragraph's first two sentences where it prints the two statistics. What *E* should count is the sovereign's ruling at C2c-3 (COUNSEL-OPEN row 49), made there as one pre-stated act with the old process retired; nothing in this window changes the statistic.
+
+**What does not move.** Every criterion's wording, every pin, the code on `opening-c2a-prime` (`a17864c`), the opening note, V5–V7. The two formal reads of v7 were of bytes this clause changes, so the gate's reviews are read again at these bytes, by readers of two families, before the opening (§Precondition 3).
+
+**Interests.** Counsel's V5 and V7 are neither likelier nor less likely by this clause. It costs counsel two reads and the claim it made that morning.

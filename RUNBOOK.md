@@ -213,7 +213,9 @@ with it in meaning) and its expected table in the brief (pin `score_not_proper`)
 ## `jack elect` — `python3 tools/elect.py --invite STREAM W0 | --replay SEQ | --resolve-plan SEQ | --table [--as-of T] [--sigma B64] [--log FILE]`
 
 C2b's election (BRIEF-C2b §Scope: the entrants, the round's gain, the election, the draw; §Order of acts
-step 4). `tools/elect.py` lands after C2b's opening push, under its cap, after `tools/due.py`; the diary
+step 4). **C2b holds no live round** (BRIEF-C2b Amendment 10): the verb and its pins land and are tested, the
+diary is unchanged, `herald-2` holds no `forecast` power, and what this section says of the diary, the invite
+and the per-invite session describes the window that first runs rounds, not C2b. `tools/elect.py` lands after C2b's opening push, under its cap, after `tools/due.py`; the diary
 consults it before every forecast session from the first green `tests` run on `main` holding
 `tests/test_elect.py`, and invites before that instant are not rounds (criterion 4). Until the first invite the
 stream's shape is the three-window forecast session the diary files; from the first invite each round's
