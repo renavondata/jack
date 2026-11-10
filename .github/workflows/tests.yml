@@ -11,19 +11,34 @@ permissions:
   contents: read
 jobs:
   tests:
+    needs: [unit, pins, sample]
+    if: always()
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - run: test "${{ needs.unit.result }}" = success && test "${{ needs.pins.result }}" = success && test "${{ needs.sample.result }}" = success
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: "3.12"
-      - name: Unit tests
-        run: python3 -m unittest discover -s tests -t . -v
-      - name: Pins (every mutant KILLED, twin passing; checker_drift PENDING until kernel2 exists)
-        run: python3 pins/run.py
-      - name: Judge self-check (the production path, trunk against itself; kernel2 must run)
-        run: python3 judge/selfcheck.py
-      - name: Simulator sample through both checkers (first 2,000 committed seeds; §9 criterion 2)
-        run: python3 harness/diff.py --seeds 300 --b kernel2/check 'spec/vectors/logs/*.jsonl'
-      - name: Kernel line count (CHARTER §9 criterion 3)
-        run: python3 tools/count_kernel.py
+      - run: python3 -m unittest discover -s tests -t . -v
+      - run: python3 tools/count_kernel.py
+  pins:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - run: python3 pins/run.py
+  sample:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - run: python3 judge/selfcheck.py
+      - run: python3 harness/diff.py --seeds 300 --b kernel2/check 'spec/vectors/logs/*.jsonl'
