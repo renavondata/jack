@@ -1050,9 +1050,9 @@ PINS += C2A_PINS
 push_gate_tests = functools.partial(fixture_tests, "test_push_gate.PushGate")
 C2B_GATE_PINS = [
     Pin("push_without_read_refused", push_gate_tests("push_without_read_refused"), [
-        Mutant("gate_always_admits", "tools/jack", 'def push_read_gate(branch, layer, repo=ROOT):', 'def push_read_gate(branch, layer, repo=ROOT):\n    return')]),
+        Mutant("trailer_in_place_of_signed_proposal", "tools/jack", 'if log.canonical(proposal) not in at_merge: continue', 'if not trailer(proposal["body"]["commit"]): continue')]),
     Pin("read_of_this_text", push_gate_tests("read_of_this_text"), [
-        Mutant("brief_bytes_unchecked", "tools/jack", 'if tree_bytes(repo, commit, brief) != current:', 'if False:')]),
+        Mutant("later_counsel_header", "tools/jack", 'blob = g("rev-parse", "origin/main:" + review)', 'blob = g("rev-parse", "--verify", head + ":" + review)')]),
     Pin("read_not_counsels", push_gate_tests("read_not_counsels"), [
         Mutant("proposer_unchecked", "tools/jack", 'principal_at(entries, i, signer_blob(e)) not in (None, "counsel")', 'True')]),
 ]
@@ -1150,12 +1150,29 @@ C2B_PINS = [
     Pin("w5_inventory", due_tests("w5_inventory"), [
         Mutant("missing_seed_accepted", "tools/due.py", 'if row["id"] not in {r["id"] for r in current}:', 'if False:')]),
     Pin("w5_redate", due_tests("w5_redate"), [
-        Mutant("redate_unrestricted", "tools/due.py", 'row["due"] == redates.get(key)', 'True')]),
+        Mutant("redates_ignored", "tools/due.py", 'result[key] = dict(result[key], due=row["due"])', 'result[key] = dict(result[key])'),
+        Mutant("redate_unrestricted", "tools/due.py", 'row["due"] == redates.get(key)', 'True'),
+        Mutant("matched_id_alone", "tools/due.py", 'row["due"] == redates.get(key)', 'key in redates'),
+        Mutant("second_redate_admitted", "tools/due.py", 'key not in redated', 'True'),
+        Mutant("redate_seq_dropped", "tools/due.py", 'type(row["seq"]) is int and row["seq"] == 1564', 'type(row["seq"]) is int'),
+        Mutant("redate_order_dropped", "tools/due.py", 'set(row) == {"id", "due", "seq", "why"} and key in result', 'set(row) == {"id", "due", "seq", "why"} and (key in result or key in redates)')]),
     Pin("w5_escalation_history", due_tests("w5_escalation_history"), [
-        Mutant("late_escalation_cleared", "tools/due.py", 'if late > 0 else "on time"', 'if False else "on time"')]),
+        Mutant("late_escalation_cleared", "tools/due.py", 'if late > 0 else "on time"', 'if False else "on time"'),
+        Mutant("cited_entry_time", "tools/due.py", 'effective = max(instant(prefix[seq]["ts"]), merged[discharges[row["id"]]][1])', 'effective = instant(prefix[seq]["ts"])'),
+        Mutant("merge_time", "tools/due.py", 'if valid and discharges[row["id"]] in merged and merged[discharges[row["id"]]][0] > seq:\n                effective = max(instant(prefix[seq]["ts"]), merged[discharges[row["id"]]][1])', 'if valid and discharges[row["id"]] in merged:\n                effective = merged[discharges[row["id"]]][1]'),
+        Mutant("last_merge", "tools/due.py", 'merged.setdefault(line, (entry["seq"], instant(entry["ts"])))', 'merged[line] = (entry["seq"], instant(entry["ts"]))'),
+        Mutant("any_id_line_merges", "tools/due.py", 'discharges[row["id"]] in merged', 'next(line for line in merged if row["id"] in line)'),
+        Mutant("merge_not_required", "tools/due.py", 'if valid and discharges[row["id"]] in merged and merged[discharges[row["id"]]][0] > seq:\n                effective = max(instant(prefix[seq]["ts"]), merged[discharges[row["id"]]][1])', 'if valid:\n                effective = instant(prefix[seq]["ts"])'),
+        Mutant("discharges_never_effective", "tools/due.py", 'if valid and discharges[row["id"]] in merged and merged[discharges[row["id"]]][0] > seq:', 'if False:'),
+        Mutant("merge_from_whole_log", "tools/due.py", 'for entry in prefix.values():', 'for entry in all_entries.values():')]),
     Pin("c2b_history_from_w5", counsel_status_tests("c2b_history_from_w5"), [
         Mutant("every_row_gated", "tools/status.py", COUNSEL_HISTORY,
-               'if row["due"] >= end or line.endswith(" on time"):')]),
+               'if row["due"] >= end or line.endswith(" on time"):'),
+        Mutant("every_row_excused", "tools/status.py", COUNSEL_HISTORY, 'if True:'),
+        Mutant("whole_criterion_excused", "tools/status.py", 'ok = verified and registered and not malformed and not overdue and not missing', 'ok = verified and registered and not malformed'),
+        Mutant("last_w5_landing", "tools/status.py", 'landing = entry["ts"]\n                break', 'landing = entry["ts"]\n                continue'),
+        Mutant("landing_due_gated", "tools/status.py", 'row["due"] <= landing', 'row["due"] < landing'),
+        Mutant("unlanded_rows_gated", "tools/status.py", 'landing is None or row["due"] <= landing', 'landing is not None')]),
     Pin("workflow_steps_preserved", workflow_tests("workflow_steps_preserved"), [
         Mutant("sample_step_dropped", "tests/test_workflow.py", '        preserved(workflow)\n',
                '        workflow["jobs"]["sample"]["steps"].pop()\n        preserved(workflow)\n'),
@@ -1179,7 +1196,8 @@ C2B_PINS = [
         Mutant("draw_on_stale_feedback", "tools/elect.py", 'if any(not round_result(es, f, as_of)["settled"] for f in previous):', 'if False:')]),
     Pin("draw_replays_from_prefix", elect_tests("draw_replays_from_prefix"), [
         Mutant("recorded_gains_replayed", "tools/elect.py", ELECTION_COMPARE,
-               '    expected["args"]["gains"] = a["gains"]\n' + ELECTION_COMPARE)]),
+               '    expected["args"]["gains"] = a["gains"]\n' + ELECTION_COMPARE),
+        Mutant("later_prefix_replayed", "tools/elect.py", 'error = replay_fields(prefix, rounds, f, verifies)', 'error = replay_fields(es, rounds, f, verifies)')]),
     Pin("sigma_verifies", elect_tests("sigma_verifies"), [
         Mutant("sigma_unchecked", "tools/elect.py", ELECTION_SIGMA, 'if False:')]),
     Pin("draw_on_the_grid", elect_tests("draw_on_the_grid"), [
