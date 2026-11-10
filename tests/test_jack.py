@@ -100,7 +100,7 @@ def template(tmp):
     gitfix.git(repo, "checkout", "-q", "main")
     gitfix.git(repo, "branch", "-D", "pr")
     for rel in ("tools/jack", "tools/entry.py", "tools/digest.py", "tools/count_kernel.py", "sim/__init__.py", "sim/gen.py", "sim/seeds.txt",
-                "tests/vectors/weak_keys.json"):
+                "tests/vectors/weak_keys.json", "sim/election.py", "tools/elect.py", "tools/value.py"):
         os.makedirs(os.path.dirname(os.path.join(repo, rel)), exist_ok=True)
         shutil.copy2(os.path.join(ROOT, rel), os.path.join(repo, rel))
     shutil.copytree(os.path.join(ROOT, "harness"), os.path.join(repo, "harness"), ignore=shutil.ignore_patterns("__pycache__"))
