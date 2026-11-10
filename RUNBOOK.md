@@ -213,13 +213,13 @@ with it in meaning) and its expected table in the brief (pin `score_not_proper`)
 ## `jack elect` — `python3 tools/elect.py --invite STREAM W0 | --replay SEQ | --resolve-plan SEQ | --table [--as-of T] [--sigma B64] [--log FILE]`
 
 C2b's election (BRIEF-C2b §Scope: the entrants, the round's gain, the election, the draw; §Order of acts
-step 4). **C2b holds no live round** (BRIEF-C2b Amendment 10): the verb and its pins land and are tested, the
-diary is unchanged, `herald-2` holds no `forecast` power, and what this section says of the diary, the invite
-and the per-invite session describes the window that first runs rounds, not C2b. `tools/elect.py` lands after C2b's opening push, under its cap, after `tools/due.py`; the diary
-consults it before every forecast session from the first green `tests` run on `main` holding
-`tests/test_elect.py`, and invites before that instant are not rounds (criterion 4). Until the first invite the
-stream's shape is the three-window forecast session the diary files; from the first invite each round's
-forecasts come from the invited arm's own session, filed per invite, and no session is filed without one.
+step 4). **C2b holds no live round** (BRIEF-C2b Amendment 10): `tools/elect.py` rides C2b's opening push with W5 and their
+pins (clause 5) and is tested, not run — no invite is entered, no per-invite session is filed, `herald-2` holds no
+`forecast` power, and the stream's shape stays the three-window forecast session the diary files. The rest of this
+section describes the verb, and the window that first runs rounds: there the diary consults it before every
+forecast session, invites entered before the attack tests are green are not rounds, and from the first invite
+each round's forecasts come from the invited arm's own session, filed per invite, and no session is filed
+without one.
 The roster is fixed in the file, *K* = 3 arms — (reviewer, `openai/gpt-5.4-mini`), (builder,
 `openai/gpt-5.4-mini`), (reviewer, `openai/gpt-6-astra-fast`) — and does not change inside the window (pin
 `roster_fixed`). Four EXP3 instances; round *t*, the *t*-th hourly window after the opening, draws on
