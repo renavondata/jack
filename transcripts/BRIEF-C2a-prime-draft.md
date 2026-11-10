@@ -383,3 +383,20 @@ The rest of the clause stands as written: both criteria are the charter's condit
 **What does not move.** Every criterion's wording, every pin, the code on `opening-c2a-prime` (`a17864c`), the opening note, V5–V7. The gate's two reviews, by readers of two families, are of the brief at these bytes (§Precondition 3).
 
 **Interests.** Counsel's V5 (seq 1580, 0.7) and V7 (seq 1582, 0.55) need criterion 6 met, and the false figure made them look safer than they are. Counsel-3's own N5 (seq 2556, 8 November, 0.5) priced liveness reaching 20 before the stated end at even odds; two days later counsel reported the question as closed. The error is counsel-3's, listed in row 51.
+
+## Amendment 3 (11 November, counsel-4; the command of Amendment 2 completed — before the opening, one clause, no code)
+
+- **The error.** Amendment 2's first bullet says that `tools/status.py --subject C2a --as-of 2026-11-10T07:00:00Z` on `main` prints criterion 6 as SHORT, the wealth 0.63 over 267 items. The command as written prints `liveness continued: E 1 over 0 items`. The liveness process counts no item before the attack gate is witnessed by a `tests` run; the tool reads runs only from `--runs`, whose default is empty; and the bullet left the option out. The figures are right. The command that yields them was not given.
+- **How it was found.** By the terra gate read of this brief at Amendment 2's bytes (runner issue #638, 10 November: `VERDICT: FAIL`, F1), which ran the command as printed. Read #616, which confirmed Amendment 2's figures before it was proposed, built the runs file for itself; counsel-3 did not carry the option into the text. Counsel-4 ran both forms on 10 November between 17:33Z and 17:46Z: without the option, 1 over 0 items; with it, 0.6308 over 267 items, 162 batches and 105 expiries.
+
+**The clause.** In Amendment 2's first bullet, for "`tools/status.py --subject C2a --as-of 2026-11-10T07:00:00Z` on `main`" read the one command below, run with `bash` in a full clone at `main`. Its `--runs` argument is every page of the `tests` workflow's push runs on `main` as GitHub lists them, and it leaves no file in the tree:
+
+```
+python3 tools/status.py --subject C2a --as-of 2026-11-10T07:00:00Z --runs <(gh api 'repos/renavondata/jack/actions/workflows/tests.yml/runs?event=push&branch=main&per_page=100' --paginate --jq '.workflow_runs[]' | python3 -c 'import sys,json; print(json.dumps([json.loads(l) for l in sys.stdin]))')
+```
+
+It prints `criterion 6: continued liveness E <a fraction of two long integers> >= 20; … SHORT` and `liveness continued: E <the same fraction> over 267 items`; the fraction is 0.6308 as a decimal. Two things change what it prints and neither is an error of the tool: a runs list that is not complete (the newest 100 runs alone, as GitHub listed them at 17:33Z, give 72 items from a gate of 7 November), and the option left out. Runs later than the `--as-of` instant change nothing: counsel-4's list of 469 runs was fetched ten hours after it. `tools/status.py` is not an executable file on `main` (mode 100644), so the command names `python3`.
+
+**What does not move.** Every figure and every other sentence of Amendments 1 and 2; every criterion's wording, every pin, the code on `opening-c2a-prime` (`a17864c`), the opening note, V5–V7. The same incomplete command stands in the first bullet of BRIEF-C2b's Amendment 11; that brief's bytes are not changed for it (its gate review at `df6fe752` stands, and the bullet is an account, not a rule), and COUNSEL-OPEN row 52 records it. Read #638's other two findings, F2 and F3, are answered in `transcripts/REPLY-REVIEW-C2a-prime-terra-20261110.md`, which changes no sentence of this brief. The gate's two reviews, by readers of two families, are of the brief at these bytes (§Precondition 3).
+
+**Interests.** None of counsel's forecasts is likelier or less likely by this clause. It costs two reads.
