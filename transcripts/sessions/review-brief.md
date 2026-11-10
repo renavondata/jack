@@ -12,6 +12,8 @@ You are a **reader** and, if the brief passes, the **reviewer** (`JACK_KEY=~/.ss
 
 **Your report** is your final message. Begin with exactly one line, `VERDICT: PASS` or `VERDICT: FAIL`. Then one line per finding: `F<n> [BLOCK|FIX|NOTE] <§ or amendment> — <problem> — <evidence, quoted>`. A rule not decidable as written, a contradiction with a text in force, a loosened bound, or code before the sovereign's read is a BLOCK. If your verdict is FAIL, write no file and propose nothing.
 
+**One family, one review.** Your family is the part of `{MODEL}` before its `/`. Before you write a file, for each `transcripts/REVIEW-{WINDOW}-*.md` on `origin/main` take the commit its `Reviewed tree:` line names and compare `git rev-parse <that commit>:transcripts/BRIEF-{WINDOW}-draft.md` with `git rev-parse origin/main:transcripts/BRIEF-{WINDOW}-draft.md`: where the two are equal the review is of the bytes you read, and its `Reader:` line names its model. If such a review names a model of your family, write no file and propose nothing — where a brief asks two reads by different model families (BRIEF-C2a-prime §Precondition 3), a second of one family is not one of them — and end your report with that sentence and the file's name.
+
 **On PASS, the review file.** Write `transcripts/REVIEW-{WINDOW}-{STAMP}.md` beginning with exactly these three lines, then your findings as above:
 ```
 VERDICT: ACCEPT WITH OBLIGATIONS
