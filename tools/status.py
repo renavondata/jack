@@ -81,7 +81,7 @@ def score_items(items):
     return {"items": result, "E": capital}
 
 
-def item_process(es, after_seq=-1, promotion_at=None):
+def item_process(es, after_seq=-1, promotion_at=None, window_fixes=frozenset()):
     """BRIEF-C1b §Liveness (i)-(iv), in entry order. No clock-created or regrouped items.
 
     `after_seq` is the first window's opening, not the latest restart: A4 wealth continues.
@@ -90,7 +90,7 @@ def item_process(es, after_seq=-1, promotion_at=None):
     set immediately; a sovereign boundary clears pending resolutions without reopening them.
     """
     sovereign = sovereign_keys(es)
-    opened, pending, items, late_reports = {}, [], [], []
+    opened, pending, items, late_reports, active_fixes = {}, [], [], [], set()
 
     def finalise(e, kind, members, success):
         repairs = tuple(sorted({r for _, rs in members for r in rs}))
@@ -111,10 +111,16 @@ def item_process(es, after_seq=-1, promotion_at=None):
         repair = royal and typ not in ("genesis", "key", "amend", "push", "proposal") and not (
             typ == "decision" and body["kind"] != "fix")
         if repair:
-            if items:
+            if items and seq not in window_fixes:
                 late_reports.append(seq)
             for _, repairs in opened.values():
                 repairs.append(seq)
+            if seq in window_fixes:
+                active_fixes.add(seq)
+        if typ == "push" and active_fixes:
+            for _, repairs in opened.values():
+                repairs[:] = [r for r in repairs if r not in active_fixes]
+            active_fixes.clear()
         if typ == "forecast" and seq > after_seq:
             opened[seq] = (e, [])
         if typ == "resolution" and body["forecast"] in opened:
@@ -253,6 +259,175 @@ def off_log_repairs(acts, start, end, overlap=False):
                for t in [dt.datetime.strptime(row["time_hkt"], "%Y-%m-%d %H:%M").replace(tzinfo=hkt)])
 
 
+WINDOW_NAMES = ("C1a", "C1b", "C2a", "C2a-prime", "C2b")
+CHANGE2_FUNCTIONS = ("window_bounds", "names_window", "subject_names", "carrying_commit",
+                     "attributed_repairs", "window_fix_check", "window_fixes")
+
+
+def window_bounds(es, name):
+    try:
+        if name == "C1a":
+            opened = next(e for e in es if e["type"] == "amend" and e["body"].get("id") == "A3")
+            end = (instant(opened["ts"]) + dt.timedelta(days=14)).strftime(FMT)
+            return opened["ts"], end, end
+        if name == "C1b":
+            _, start, end = c1b_window(es)
+            return start, end, end
+        if name == "C2a":
+            _, v0 = c2a_v0(es)
+            _, start, early = c2a_window(es)
+            return start, early, v0["body"]["resolves_by"]
+        if name == "C2a-prime":
+            w2 = c2a_prime_window(es)
+            return (w2[1], w2[2], w2[2]) if w2 and w2[2] else None
+    except StopIteration:
+        return None
+    return None
+
+
+def names_window(es, e, kind, name):
+    if e["type"] != "decision" or e["body"].get("kind") != kind:
+        return False
+    subj = e["body"].get("subject")
+    if name not in ("C2a", "C2a-prime"):
+        return subj == name
+    try:
+        w2 = c2a_prime_window(es)
+    except StopIteration:
+        w2 = None
+    is_prime = w2 is not None and instant(e["ts"]) > instant(w2[1])
+    if name == "C2a-prime":
+        return is_prime and (subj == "C2a" if kind == "promote" else subj in ("C2a", "C2a-prime"))
+    return not is_prime and subj == "C2a"
+
+
+def subject_names(subject, fname):
+    def word(c):
+        return c.isalpha() or c.isdigit() or c in "-_"
+    for token in (fname, fname[:-4]):
+        pos = 0
+        while True:
+            idx = subject.find(token, pos)
+            if idx < 0:
+                break
+            end = idx + len(token)
+            if (idx == 0 or not word(subject[idx - 1])) and (end == len(subject) or not word(subject[end])):
+                return True
+            pos = idx + 1
+    return False
+
+
+def carrying_commit(root, rev, fix):
+    if not root:
+        raise OSError("missing repository")
+    head = rev or git_bytes(root, "rev-parse", "HEAD").decode().strip()
+    parents = {p[0]: p[1:] for line in git_bytes(root, "rev-list", "--parents", head).decode().splitlines()
+               if line for p in [line.split()]}
+    memo = {}
+    def holds(sha):
+        if sha not in memo:
+            if not git_bytes(root, "ls-tree", sha, "--", "log.jsonl"):
+                memo[sha] = False
+            else:
+                lines = tree_bytes(root, sha, "log.jsonl").splitlines()
+                seq = fix["seq"]
+                memo[sha] = (seq < len(lines) and json.loads(lines[seq]) == fix) or any(
+                    b'"fix"' in ln and json.loads(ln) == fix for ln in lines)
+        return memo[sha]
+    if not holds(head):
+        return None
+    queue, seen = [head], {head}
+    for sha in queue:
+        ps = parents.get(sha, [])
+        if not ps and any(ln.startswith("parent ") for ln in git_bytes(root, "cat-file", "-p", sha).decode().splitlines()):
+            raise OSError("shallow history")
+        if not any(holds(p) for p in ps):
+            return sha
+        for p in ps:
+            if holds(p) and p not in seen:
+                seen.add(p)
+                queue.append(p)
+    return None
+
+
+def attributed_repairs(root, rev, fix, subject, start, early):
+    carry = carrying_commit(root, rev, fix)
+    if carry is None:
+        raise ValueError("carrying commit missing")
+    ev_paths = set(git_bytes(root, "ls-tree", "-r", "--name-only", carry, "transcripts/evidence/").decode().splitlines())
+    clf_path = "transcripts/evidence/guy_acts3.py"
+    hkt = dt.timezone(dt.timedelta(hours=8))
+    s_dt, e_dt = instant(start), instant(early)
+    for path in sorted(ev_paths):
+        fname = os.path.basename(path)
+        if not (fname.endswith(".csv") and not fname.endswith("-raw.csv") and subject_names(subject, fname)):
+            continue
+        raw, sha_path = path[:-4] + "-raw.csv", path[:-4] + "-classifier.sha256"
+        if raw not in ev_paths or sha_path not in ev_paths or clf_path not in ev_paths:
+            continue
+        toks = tree_bytes(root, carry, sha_path).decode().split()
+        if not toks or toks[0] != hashlib.sha256(tree_bytes(root, carry, clf_path)).hexdigest():
+            continue
+        try:
+            reader = csv.DictReader(tree_bytes(root, carry, path).decode().splitlines())
+            rows = list(reader) if reader.fieldnames == "repo,time_hkt,class,kind,ref,note".split(",") else []
+        except csv.Error:
+            rows = []
+        for row in rows:
+            if row.get("repo") == "renavondata/jack" and row.get("class") == "repair":
+                try:
+                    t = dt.datetime.strptime(row.get("time_hkt", ""), "%Y-%m-%d %H:%M").replace(tzinfo=hkt)
+                except ValueError:
+                    continue
+                if s_dt <= t and t + dt.timedelta(seconds=60) <= e_dt:
+                    return True
+    return False
+
+
+def window_fix_check(es, root=ROOT, rev=None):
+    if not es:
+        return set(), []
+    sovereign = sovereign_keys(es)
+    fixes, unverified = set(), []
+    for e in es:
+        if not (signer_blob(e) in sovereign and e["type"] == "decision" and e["body"].get("kind") == "fix"):
+            continue
+        subj = str(e["body"].get("subject", ""))
+        name = next((w for w in WINDOW_NAMES if subj.startswith(w + ":")), None)
+        if name is None:
+            continue
+        if any(x["seq"] < e["seq"] and signer_blob(x) in sovereign and x["type"] == "decision" and
+               x["body"].get("kind") == "fix" and str(x["body"].get("subject", "")).startswith(name + ":") for x in es):
+            continue
+        bounds = window_bounds(es, name)
+        if bounds is None:
+            continue
+        w_start, w_early, w_late = bounds
+        if instant(e["ts"]) <= instant(w_late):
+            continue
+        next_push = next((p for p in es if p["type"] == "push" and instant(p["ts"]) > instant(w_late)), None)
+        if next_push is not None and e["seq"] >= next_push["seq"]:
+            continue
+        if any(names_window(es, x, "promote", name) and instant(x["ts"]) <= instant(w_late) for x in es):
+            continue
+        veto_ok = any(names_window(es, x, "veto", name) and instant(x["ts"]) <= instant(w_early) for x in es)
+        try:
+            acts_ok = False if veto_ok else attributed_repairs(root, rev, e, subj, w_start, w_early)
+        except (OSError, ValueError, UnicodeDecodeError, subprocess.CalledProcessError) as exc:
+            unverified.append(f"window fix {e['seq']}: unverified — {exc}")
+            continue
+        if veto_ok or acts_ok:
+            fixes.add(e["seq"])
+    return fixes, unverified
+
+
+def window_fixes(es, root=ROOT, rev=None):
+    fixes, unverified = window_fix_check(es, root, rev)
+    for line in unverified:
+        print(line)
+    return fixes
+
+
 VALUE_PINS = ("worked_table forecast_before_cutoff rigged revision weights_from_resolved_prefix abstention_is_base "
               "one_event_one_key grouping_by_principal uniform_prior no_learning_rate exact_probabilities per_type_base "
               "bounded_difference lambda_predictable factor_algebra window_from_the_push wealth_continues promote_refused_value").split()
@@ -292,10 +467,11 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
     gate = attack_start(root, runs, end, "tests/test_value.py")
     v = val.value(s["prefix"], as_of=end, attack_green=gate, window_opening=s["start"])
     live_gate = attack_start(root, runs, end)
-    process = item_process(s["prefix"], c1b_window(s["prefix"])[0], end)
+    fixes, unverified = window_fix_check(s["prefix"], root, rev)
+    process = item_process(s["prefix"], c1b_window(s["prefix"])[0], end, fixes)
     live = score_items(i for i in process["items"] if live_gate is not None and live_gate < i["ts"])
     off = off_log_repairs(acts, s["start"], end, overlap=is_prime)
-    s.update(value=v, continued_liveness=live, late_reports=process["late_reports"])
+    s.update(value=v, continued_liveness=live, late_reports=process["late_reports"], unverified_fixes=unverified)
     return [(verified and registered, "criterion 1: C2a pins and twins in verified tests run"),
             (verified, "criterion 2: checker agreement in verified tests run"),
             (facts["counted"] <= cap and facts["kernel"] <= 500 and facts["scope"] and unchanged,
@@ -320,7 +496,9 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
         mapping = None
     s = status(es, "A3", 14, as_of, root, subject, rev, decision=decision)
     if subject == "C2a" and not s["v5"]:
-        s.update(subject=subject, checks=[(False, "C2a-prime has no promotion forecast before its opening")])
+        _, unverified = window_fix_check([e for e in es if instant(e["ts"]) <= instant(as_of)], root, rev)
+        s.update(subject=subject, unverified_fixes=unverified,
+                 checks=[(False, "C2a-prime has no promotion forecast before its opening")])
         return s
     facts = tree_facts(root, rev)
     verified = run_verified(run, rev) and completed_by(run, as_of)
@@ -331,14 +509,15 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
     if subject == "C2a":
         checks = assess_value(s, facts, verified, root, rev, runs, acts)
     elif subject == "C1b":
-        process = item_process(s["prefix"], s["opening"])
-        proposed = item_process(s["prefix"], s["opening"], min(as_of, s["end"]))
+        fixes, unverified = window_fix_check(s["prefix"], root, rev)
+        process = item_process(s["prefix"], s["opening"], window_fixes=fixes)
+        proposed = item_process(s["prefix"], s["opening"], min(as_of, s["end"]), fixes)
         gate = attack_start(root, runs, as_of)
         checks.append((gate is not None and all(gate < i["ts"] for i in proposed["items"]),
                        f"criterion 4: attack green on main before first item: {gate or 'unverified'}"))
         live, exit_ = [score_items(i for i in p["items"] if gate is not None and gate < i["ts"])
                        for p in (process, proposed)]
-        s.update(live, late_reports=process["late_reports"], promotion_E=exit_["E"])
+        s.update(live, late_reports=process["late_reports"], promotion_E=exit_["E"], unverified_fixes=unverified)
         checks.append((s["E"] >= 20 and s["promotion_E"] >= 20,
                        f"criterion 5: live E {s['E']} >= 20; items {len(s['items'])}; at promote E {s['promotion_E']}"))
         if mapping is None:
@@ -403,7 +582,7 @@ def render(s):
                   f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
     lines = s.get("history", []) + lines
     win = [f"window: C2a-prime (second window of C2a, opened seq {s['opening']})"] if s.get("window") == "C2a-prime" else []
-    return "\n".join(lines + s.get("repairs", []) + win + [promotion_line(s)])
+    return "\n".join(lines + s.get("unverified_fixes", []) + s.get("repairs", []) + win + [promotion_line(s)])
 
 
 def parser(description):
