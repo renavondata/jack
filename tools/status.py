@@ -428,7 +428,9 @@ def window_fixes(es, root=ROOT, rev=None, out=None):
 
 VALUE_PINS = ("worked_table forecast_before_cutoff rigged revision weights_from_resolved_prefix abstention_is_base "
               "one_event_one_key grouping_by_principal uniform_prior no_learning_rate exact_probabilities per_type_base "
-              "bounded_difference lambda_predictable factor_algebra window_from_the_push wealth_continues promote_refused_value").split()
+              "bounded_difference lambda_predictable factor_algebra window_from_the_push wealth_continues promote_refused_value "
+              "second_window_from_the_end second_window_end_is_v5 second_window_cap offlog_from_second_opening "
+              "promote_refused_before_end window_fix_is_decision window_fix_not_retroactive process_unchanged_from_opening").split()
 
 
 def c2a_tree_evidence(root, rev, prefix, opening):
