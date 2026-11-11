@@ -260,8 +260,7 @@ def off_log_repairs(acts, start, end, overlap=False):
 
 
 WINDOW_NAMES = ("C1a", "C1b", "C2a", "C2a-prime", "C2b")
-CHANGE2_FUNCTIONS = ("window_fixes", "window_bounds", "names_window",
-                     "subject_names", "carrying_commit", "attributed_repairs")
+CHANGE2_FUNCTIONS = ("window_fixes", "window_bounds", "names_window", "subject_names", "carrying_commit", "attributed_repairs")
 
 
 def window_bounds(es, name):
@@ -274,9 +273,8 @@ def window_bounds(es, name):
             _, start, end = c1b_window(es)
             return start, end, end
         if name == "C2a":
-            _, v0 = c2a_v0(es)
             _, start, early = c2a_window(es)
-            return start, early, v0["body"]["resolves_by"]
+            return start, early, c2a_v0(es)[1]["body"]["resolves_by"]
         if name == "C2a-prime":
             w2 = c2a_prime_window(es)
             return (w2[1], w2[2], w2[2]) if w2 and w2[2] else None
@@ -296,20 +294,15 @@ def names_window(es, e, kind, name):
     except StopIteration:
         w2 = None
     is_prime = w2 is not None and instant(e["ts"]) > instant(w2[1])
-    if name == "C2a-prime":
-        return is_prime and (subj == "C2a" if kind == "promote" else subj in ("C2a", "C2a-prime"))
-    return not is_prime and subj == "C2a"
+    return (is_prime and (subj == "C2a" if kind == "promote" else subj in ("C2a", "C2a-prime"))
+            if name == "C2a-prime" else not is_prime and subj == "C2a")
 
 
 def subject_names(subject, fname):
-    def word(c):
-        return c.isalpha() or c.isdigit() or c in "-_"
+    word = lambda c: c.isalpha() or c.isdigit() or c in "-_"
     for token in (fname, fname[:-4]):
         pos = 0
-        while True:
-            idx = subject.find(token, pos)
-            if idx < 0:
-                break
+        while (idx := subject.find(token, pos)) >= 0:
             end = idx + len(token)
             if (idx == 0 or not word(subject[idx - 1])) and (end == len(subject) or not word(subject[end])):
                 return True
@@ -321,18 +314,12 @@ def carrying_commit(root, rev, fix):
     if not root:
         raise OSError("missing repository")
     head = rev or git_bytes(root, "rev-parse", "HEAD").decode().strip()
-    parents = {p[0]: p[1:] for line in git_bytes(root, "rev-list", "--parents", head).decode().splitlines()
-               if line for p in [line.split()]}
-    memo = {}
+    parents = {p[0]: p[1:] for ln in git_bytes(root, "rev-list", "--parents", head).decode().splitlines() if ln for p in [ln.split()]}
+    memo, seq = {}, fix["seq"]
     def holds(sha):
         if sha not in memo:
-            if not git_bytes(root, "ls-tree", sha, "--", "log.jsonl"):
-                memo[sha] = False
-            else:
-                lines = tree_bytes(root, sha, "log.jsonl").splitlines()
-                seq = fix["seq"]
-                memo[sha] = (seq < len(lines) and json.loads(lines[seq]) == fix) or any(
-                    b'"fix"' in ln and json.loads(ln) == fix for ln in lines)
+            lines = tree_bytes(root, sha, "log.jsonl").splitlines() if git_bytes(root, "ls-tree", sha, "--", "log.jsonl") else []
+            memo[sha] = (seq < len(lines) and json.loads(lines[seq]) == fix) or any(b'"fix"' in l and json.loads(l) == fix for l in lines)
         return memo[sha]
     if not holds(head):
         return None
@@ -343,10 +330,8 @@ def carrying_commit(root, rev, fix):
             raise OSError("shallow history")
         if not any(holds(p) for p in ps):
             return sha
-        for p in ps:
-            if holds(p) and p not in seen:
-                seen.add(p)
-                queue.append(p)
+        for p in (p for p in ps if holds(p) and p not in seen):
+            seen.add(p); queue.append(p)
     return None
 
 
@@ -355,8 +340,7 @@ def attributed_repairs(root, rev, fix, subject, start, early):
     if carry is None:
         raise ValueError("carrying commit missing")
     ev_paths = set(git_bytes(root, "ls-tree", "-r", "--name-only", carry, "transcripts/evidence/").decode().splitlines())
-    clf_path = "transcripts/evidence/guy_acts3.py"
-    hkt = dt.timezone(dt.timedelta(hours=8))
+    clf_path, hkt = "transcripts/evidence/guy_acts3.py", dt.timezone(dt.timedelta(hours=8))
     s_dt, e_dt = instant(start), instant(early)
     for path in sorted(ev_paths):
         fname = os.path.basename(path)
@@ -369,8 +353,8 @@ def attributed_repairs(root, rev, fix, subject, start, early):
         if not toks or toks[0] != hashlib.sha256(tree_bytes(root, carry, clf_path)).hexdigest():
             continue
         try:
-            reader = csv.DictReader(tree_bytes(root, carry, path).decode().splitlines())
-            rows = list(reader) if reader.fieldnames == "repo,time_hkt,class,kind,ref,note".split(",") else []
+            rd = csv.DictReader(tree_bytes(root, carry, path).decode().splitlines())
+            rows = list(rd) if rd.fieldnames == "repo,time_hkt,class,kind,ref,note".split(",") else []
         except csv.Error:
             rows = []
         for row in rows:
@@ -387,24 +371,19 @@ def attributed_repairs(root, rev, fix, subject, start, early):
 def window_fixes(es, root=ROOT, rev=None, out=None):
     if not es:
         return set()
-    sovereign = sovereign_keys(es)
-    fixes, unverified = set(), []
+    sovereign, fixes, unverified = sovereign_keys(es), set(), []
     for e in es:
         if not (signer_blob(e) in sovereign and e["type"] == "decision" and e["body"].get("kind") == "fix"):
             continue
         subj = str(e["body"].get("subject", ""))
         name = next((w for w in WINDOW_NAMES if subj.startswith(w + ":")), None)
-        if name is None:
-            continue
-        if any(x["seq"] < e["seq"] and signer_blob(x) in sovereign and x["type"] == "decision" and
-               x["body"].get("kind") == "fix" and str(x["body"].get("subject", "")).startswith(name + ":") for x in es):
+        if name is None or any(x["seq"] < e["seq"] and signer_blob(x) in sovereign and x["type"] == "decision" and
+                               x["body"].get("kind") == "fix" and str(x["body"].get("subject", "")).startswith(name + ":") for x in es):
             continue
         bounds = window_bounds(es, name)
-        if bounds is None:
+        if bounds is None or instant(e["ts"]) <= instant(bounds[2]):
             continue
         w_start, w_early, w_late = bounds
-        if instant(e["ts"]) <= instant(w_late):
-            continue
         next_push = next((p for p in es if p["type"] == "push" and instant(p["ts"]) > instant(w_late)), None)
         if next_push is not None and e["seq"] >= next_push["seq"]:
             continue
@@ -418,11 +397,8 @@ def window_fixes(es, root=ROOT, rev=None, out=None):
             continue
         if veto_ok or acts_ok:
             fixes.add(e["seq"])
-    if out is None:
-        for line in unverified:
-            print(line)
-    else:
-        out.extend(unverified)
+    for line in unverified:
+        print(line) if out is None else out.append(line)
     return fixes
 
 
@@ -436,8 +412,7 @@ VALUE_PINS = ("worked_table forecast_before_cutoff rigged revision weights_from_
 def c2a_tree_evidence(root, rev, prefix, opening):
     """Check the opening's scope through every intervening tree; keep C1b's process code."""
     try:
-        target = [e for e in prefix if e["seq"] <= opening]
-        start = None
+        target, start = [e for e in prefix if e["seq"] <= opening], None
         for sha in git_bytes(root, "rev-list", "--first-parent", rev).decode().splitlines():
             try:
                 entries = [json.loads(line) for line in tree_bytes(root, sha, "log.jsonl").splitlines()]
@@ -451,54 +426,35 @@ def c2a_tree_evidence(root, rev, prefix, opening):
             return False, False, False
         is_prime = opening != val.opening_push(prefix)["seq"]
         cap = 8400 if is_prime else 7800
-        def scope_at(sha):
-            return (tree_bytes(root, sha, "judge/scope.json"),
-                    tree_bytes(root, sha, "SPEC.md").split(b"at C1 it is:", 1)[1].split(b"```", 2)[1])
+        scope_at = lambda sha: (tree_bytes(root, sha, "judge/scope.json"),
+                                tree_bytes(root, sha, "SPEC.md").split(b"at C1 it is:", 1)[1].split(b"```", 2)[1])
         original = scope_at(start)
         unchanged = all(scope_at(c) == original for c in [rev] + git_bytes(root, "rev-list", f"{start}..{rev}").decode().split())
         unchanged = unchanged and json.loads(original[0])["cap"] == cap and not any(
             e["type"] == "push" and e["seq"] > opening for e in prefix)
         start_nodes = ast.parse(tree_bytes(root, start, "tools/status.py")).body
         rev_nodes = ast.parse(tree_bytes(root, rev, "tools/status.py")).body
-        def assign_targets(n):
-            if isinstance(n, ast.Assign):
-                return {t.id for t in n.targets if isinstance(t, ast.Name)}
-            if isinstance(n, ast.AnnAssign) and isinstance(n.target, ast.Name):
-                return {n.target.id}
-            return set()
-        def read_c2_tuple(nodes):
-            for n in nodes:
-                if "CHANGE2_FUNCTIONS" in assign_targets(n):
-                    return tuple(ast.literal_eval(n.value))
-            return ()
-        covered_funcs = {"item_process", "score_items", "sovereign_keys"}
-        covered_assigns = {"P0"}
+        assign_targets = lambda n: ({t.id for t in n.targets if isinstance(t, ast.Name)} if isinstance(n, ast.Assign) else
+                                    {n.target.id} if isinstance(n, ast.AnnAssign) and isinstance(n.target, ast.Name) else set())
+        read_c2_tuple = lambda nodes: next((tuple(ast.literal_eval(n.value)) for n in nodes if "CHANGE2_FUNCTIONS" in assign_targets(n)), ())
+        covered_funcs, covered_assigns = {"item_process", "score_items", "sovereign_keys"}, {"P0"}
         if is_prime:
             defs = {n.name: n for n in start_nodes if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
             c2 = set(read_c2_tuple(start_nodes))
-            refs = set(c2)
-            queue = list(c2)
+            refs, queue = set(c2), list(c2)
             while queue:
                 fn = defs.get(queue.pop())
-                if fn is not None:
-                    for sub in ast.walk(fn):
-                        if isinstance(sub, ast.Name) and isinstance(sub.ctx, ast.Load) and sub.id in defs and sub.id not in refs:
-                            refs.add(sub.id)
-                            queue.append(sub.id)
+                for sub in ast.walk(fn) if fn is not None else ():
+                    if isinstance(sub, ast.Name) and isinstance(sub.ctx, ast.Load) and sub.id in defs and sub.id not in refs:
+                        refs.add(sub.id); queue.append(sub.id)
             targets = {"item_process"} | c2
-            def callers_in(nodes):
-                return {n.name for n in nodes if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and
-                        any(isinstance(sub, ast.Call) and isinstance(sub.func, ast.Name) and sub.func.id in targets
-                            for sub in ast.walk(n))}
+            callers_in = lambda nodes: {n.name for n in nodes if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and
+                                        any(isinstance(s, ast.Call) and isinstance(s.func, ast.Name) and s.func.id in targets for s in ast.walk(n))}
             covered_funcs |= refs | callers_in(start_nodes) | callers_in(rev_nodes)
             start_assigns = {name for n in start_nodes for name in assign_targets(n)}
-            for name in covered_funcs:
-                if name in defs:
-                    covered_assigns |= {sub.id for sub in ast.walk(defs[name])
-                                        if isinstance(sub, ast.Name) and isinstance(sub.ctx, ast.Load) and sub.id in start_assigns}
-        def process_at(nodes):
-            return [ast.dump(n) for n in nodes if getattr(n, "name", None) in covered_funcs or
-                    bool(assign_targets(n) & covered_assigns)]
+            covered_assigns |= {sub.id for name in covered_funcs if name in defs for sub in ast.walk(defs[name])
+                                if isinstance(sub, ast.Name) and isinstance(sub.ctx, ast.Load) and sub.id in start_assigns}
+        process_at = lambda nodes: [ast.dump(n) for n in nodes if getattr(n, "name", None) in covered_funcs or bool(assign_targets(n) & covered_assigns)]
         same = process_at(start_nodes) == process_at(rev_nodes) and tree_bytes(root, start, "tools/clerk.py") == tree_bytes(root, rev, "tools/clerk.py")
         pins = tree_bytes(root, rev, "pins/pins.py").decode()
         registered = all(f'Pin("{name}"' in pins or f"Pin('{name}'" in pins for name in VALUE_PINS)
