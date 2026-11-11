@@ -1,0 +1,7 @@
+- 17:00Z, 18:00Z, and 19:00Z are the only open windows here; 16:00Z already has 6 forecasts on `main`.
+- `hk_property_poi`: 198/203 windows advanced, and it has advances at 17Z, 18Z, and 19Z already (3/3 hits); keep it near ceiling at 945‰ for all three windows.
+- `hkex_disclosures`: 190/202 windows advanced, with 17Z/18Z/19Z hits already (3/3); keep it high at 935‰ for all three windows.
+- `hkex_disclosure_interests`: 190/202 windows advanced, also with 17Z/18Z/19Z hits already (3/3); mirror `hkex_disclosures` at 935‰ for all three windows.
+- `crhk_companies`: 29/195 windows advanced, with hits at 18Z and 19Z but not 17Z; stay near the Laplace rate but lift the later two hours: 120‰ at 17Z, 150‰ at 18Z, 150‰ at 19Z.
+- `sfc_licences`: 9/196 windows advanced, with no prior advances at 17Z/18Z/19Z; keep it low and near base rate at 50‰ for all three windows.
+- `hk_property_transactions`: 40/196 windows advanced, with no prior advances at 17Z/18Z and a hit at 19Z; stay middling-low at 130‰ at 17Z, 130‰ at 18Z, 160‰ at 19Z.
