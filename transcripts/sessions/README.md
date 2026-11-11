@@ -51,6 +51,14 @@ The templates in this directory are procedure (the sovereign's ruling of 9 Novem
   within its own paths (the first cut, `builder-c2b-push`, rewrote the tests workflow and is abandoned); the reviewer writes the
   pins on `reviewer-c2b-pins`; counsel cuts `push-c2b` from that with the opening note; the reviewer reads `push-c2b` cold and
   commits `REVIEW-C2b-code.md` on it. Pushed, never proposed; used once.
+- `c2a-prime-build.md`, `c2a-prime-pins.md`, `c2a-prime-code-review.md` — the rebuild of C2a-prime's window code, its tests and its pins after the
+  sovereign's read (his choice of 11 November; COUNSEL-OPEN row 54): the first build was written on 4 November before his read (seq 3432), and no
+  session of these templates reads the branches that hold it. Each session first prints the sovereign's own `decision` entries from seq 3432 on and
+  checks that the texts' bytes are those of draft v7 (`8a70dc8a`), and writes nothing to a text no entry of his states he read — the check row 53
+  owed. Counsel's base `push-c2a-prime-base` is `main` and the one trusted-base commit (the cap at 8400, SPEC §10's block and clause); the builder
+  merges it and builds §The code on `builder-c2a-prime-rebuild`; a reviewer of another family writes §Pins' pins on `reviewer-c2a-prime-rebuild-pins`;
+  counsel sets `opening-c2a-prime-rebuild` at that branch's head; a reviewer of another family than the builder's reads it cold and commits
+  `REVIEW-C2a-prime-code.md` on it. Pushed, never proposed; used for this rebuild only.
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
   under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
   before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,
