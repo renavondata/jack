@@ -240,6 +240,20 @@ class C2aPrimeTest(SignedFixture):
                 sha = commit(root, {"tools/status.py": edited})
                 self.assertEqual(st.c2a_tree_evidence(root, sha, self.s.es, op2), (True, False, True), i)
 
+    def test_real_log_before_first_fix(self):
+        expected_pins = {"second_window_from_the_end", "second_window_end_is_v5", "second_window_cap",
+                         "offlog_from_second_opening", "promote_refused_before_end", "window_fix_is_decision",
+                         "window_fix_not_retroactive", "process_unchanged_from_opening"}
+        self.assertTrue(expected_pins <= set(st.VALUE_PINS))
+        with open(os.path.join(st.ROOT, "log.jsonl")) as f:
+            es = [json.loads(line) for line in f]
+        cut = next((i for i, e in enumerate(es) if e["type"] == "decision" and e["body"].get("kind") == "fix"), len(es))
+        prefix = es[:cut]
+        fixes = st.window_fixes(prefix, st.ROOT)
+        self.assertEqual(st.item_process(prefix, window_fixes=fixes)["items"], st.item_process(prefix)["items"])
+        after = st.c1b_window(prefix)[0]
+        self.assertEqual(st.item_process(prefix, after, window_fixes=fixes)["items"], st.item_process(prefix, after)["items"])
+
 
 if __name__ == "__main__":
     unittest.main()
