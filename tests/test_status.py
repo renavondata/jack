@@ -1,5 +1,7 @@
 """tools/status.py: the window's figures from synthetic entries (hermetic; no log on disk, no clock)."""
+import contextlib
 import hashlib
+import io
 import json
 import os
 import unittest
@@ -132,6 +134,83 @@ class C2aPrimeTest(SignedFixture):
             bad_cap = commit(root, {"judge/scope.json": json.dumps(dict(scope84, cap=8401)),
                                     "SPEC.md": "at C1 it is:\n```\n" + json.dumps(dict(scope84, cap=8401)) + "\n```\n"})
             self.assertFalse(st.c2a_tree_evidence(root, bad_cap, self.s.es, op2)[0])
+
+    def test_change_2_window_fix(self):
+        clf = b"# classifier\n"
+        clf_sha = hashlib.sha256(clf).hexdigest()
+        hdr = "repo,time_hkt,class,kind,ref,note\n"
+        good_row = "renavondata/jack,2026-11-02 22:11,repair,act,r,n\n"
+        self.setUp()
+        self.c2a_stream()
+        base_lines, base_es, base_open = list(self.s.log.lines), list(self.s.es), self.s.opening
+        def run_case(subject="C2a: unmet (acts-x)", row=good_row, raw_row=good_row, late_commit=False,
+                     fix_ts="2026-11-17T12:00:01Z", after_push=False, extra=()):
+            self.s.log.lines, self.s.es, self.s.opening = list(base_lines), list(base_es), base_open
+            f1 = self.s.forecast(ts="2026-11-02T00:00:00Z", resolves_by="2026-11-25T00:00:00Z")
+            self.s.resolve(f1, ts="2026-11-02T01:00:00Z")
+            self.s.merge(ts="2026-11-02T02:00:00Z")
+            f2 = self.s.forecast(ts="2026-11-03T00:00:00Z", resolves_by="2026-11-25T00:00:00Z")
+            f3 = self.s.forecast(ts="2026-11-03T00:01:00Z", resolves_by="2026-11-25T00:00:00Z")
+            for k, kw in extra:
+                self.s.add(k, "guy", **kw)
+            ev = {"transcripts/evidence/guy_acts3.py": clf,
+                  "transcripts/evidence/acts-x.csv": (hdr + row).encode(),
+                  "transcripts/evidence/acts-x-raw.csv": (hdr + raw_row).encode(),
+                  "transcripts/evidence/acts-x-classifier.sha256": f"{clf_sha}  guy_acts3.py\n".encode()}
+            base_files = {"log.jsonl": self.s.log.text()}
+            if not late_commit:
+                base_files.update(ev)
+            with tree(base_files) as (root, _):
+                if after_push:
+                    self.s.add("push", "guy", ts="2026-11-17T12:00:01Z", digest="a" * 64, review="0" * 64)
+                fix_seq = self.s.add("decision", "guy", ts=fix_ts, kind="fix", subject=subject)
+                carry = commit(root, {"log.jsonl": self.s.log.text()})
+                self.s.resolve(f2, ts="2026-11-17T12:01:00Z")
+                self.s.merge(ts="2026-11-17T12:02:00Z")
+                mid_es = list(self.s.es)
+                self.s.add("push", "guy", ts="2026-11-17T12:05:00Z", digest="a" * 64, review="0" * 64)
+                self.s.resolve(f3, ts="2026-11-17T12:06:00Z")
+                self.s.merge(ts="2026-11-17T12:07:00Z")
+                end_files = {"log.jsonl": self.s.log.text()}
+                if late_commit:
+                    end_files.update(ev)
+                head = commit(root, end_files)
+                fixes = st.window_fixes(self.s.es, root, head)
+                mid_fixes = st.window_fixes(mid_es, root, carry)
+                old_mid = st.item_process(mid_es, self.s.opening)
+                new_mid = st.item_process(mid_es, self.s.opening, window_fixes=mid_fixes)
+                full = st.item_process(self.s.es, self.s.opening, window_fixes=fixes)
+                return fix_seq, fixes, old_mid, new_mid, full
+
+        seq, fixes, old_mid, new_mid, full = run_case()
+        self.assertEqual(fixes, {seq})
+        self.assertEqual(new_mid["items"], old_mid["items"])
+        self.assertEqual(new_mid["E"], old_mid["E"])
+        self.assertEqual(new_mid["late_reports"], [])
+        by_fc = {i["forecasts"]: (i["repairs"], i["Y"]) for i in full["items"]}
+        self.assertEqual([v for k, v in sorted(by_fc.items()) if len(k) == 1 and k[0] != 338], [((), 1), ((seq,), 0), ((), 1)])
+        self.assertEqual(full["late_reports"], [])
+
+        seq, fixes, _, _, full = run_case(subject="C2a: vetoed", row="", extra=[("decision", dict(ts="2026-11-10T00:00:00Z", kind="veto", subject="C2a"))])
+        self.assertEqual((fixes, full["items"][-1]["repairs"], full["late_reports"]), ({seq}, (), []))
+
+        for kw in (dict(subject="free text"), dict(subject="C2a: none"), dict(late_commit=True),
+                   dict(subject="C2a: raw (acts-x-raw)", row=""), dict(subject="C2a: raw (acts-x-raw)"),
+                   dict(row="renavondata/jack,2026-11-15 23:04,repair,act,r,n\n"),
+                   dict(extra=[("decision", dict(ts="2026-11-16T00:00:00Z", kind="promote", subject="C2a"))]),
+                   dict(row="", extra=[("decision", dict(ts="2026-11-16T00:00:00Z", kind="veto", subject="C2a"))]),
+                   dict(fix_ts="2026-11-16T00:00:00Z"), dict(after_push=True, fix_ts="2026-11-17T12:00:02Z"),
+                   dict(extra=[("decision", dict(ts="2026-11-10T00:00:00Z", kind="fix", subject="C2a: earlier"))])):
+            seq, fixes, _, _, full = run_case(**kw)
+            self.assertEqual(fixes, set(), kw)
+            self.assertIn(seq, full["items"][-1]["repairs"], kw)
+            self.assertIn(seq, full["late_reports"], kw)
+
+        seq, _, _, _, _ = run_case()
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            self.assertEqual(st.window_fixes(self.s.es, None, None), set())
+        self.assertIn(f"window fix {seq}: unverified —", buf.getvalue())
 
 
 if __name__ == "__main__":
