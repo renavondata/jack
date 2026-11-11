@@ -260,8 +260,8 @@ def off_log_repairs(acts, start, end, overlap=False):
 
 
 WINDOW_NAMES = ("C1a", "C1b", "C2a", "C2a-prime", "C2b")
-CHANGE2_FUNCTIONS = ("window_bounds", "names_window", "subject_names", "carrying_commit",
-                     "attributed_repairs", "window_fix_check", "window_fixes")
+CHANGE2_FUNCTIONS = ("window_fixes", "window_bounds", "names_window",
+                     "subject_names", "carrying_commit", "attributed_repairs")
 
 
 def window_bounds(es, name):
@@ -384,9 +384,9 @@ def attributed_repairs(root, rev, fix, subject, start, early):
     return False
 
 
-def window_fix_check(es, root=ROOT, rev=None):
+def window_fixes(es, root=ROOT, rev=None, out=None):
     if not es:
-        return set(), []
+        return set()
     sovereign = sovereign_keys(es)
     fixes, unverified = set(), []
     for e in es:
@@ -418,13 +418,11 @@ def window_fix_check(es, root=ROOT, rev=None):
             continue
         if veto_ok or acts_ok:
             fixes.add(e["seq"])
-    return fixes, unverified
-
-
-def window_fixes(es, root=ROOT, rev=None):
-    fixes, unverified = window_fix_check(es, root, rev)
-    for line in unverified:
-        print(line)
+    if out is None:
+        for line in unverified:
+            print(line)
+    else:
+        out.extend(unverified)
     return fixes
 
 
@@ -436,10 +434,21 @@ VALUE_PINS = ("worked_table forecast_before_cutoff rigged revision weights_from_
 def c2a_tree_evidence(root, rev, prefix, opening):
     """Check the opening's scope through every intervening tree; keep C1b's process code."""
     try:
-        start = prefix_tree(root, rev, [e for e in prefix if e["seq"] <= opening])
+        target = [e for e in prefix if e["seq"] <= opening]
+        start = None
+        for sha in git_bytes(root, "rev-list", "--first-parent", rev).decode().splitlines():
+            try:
+                entries = [json.loads(line) for line in tree_bytes(root, sha, "log.jsonl").splitlines()]
+            except subprocess.CalledProcessError:
+                entries = None
+            if entries == target:
+                start = sha
+            elif start is not None:
+                break
         if start is None:
             return False, False, False
-        cap = 8400 if opening != val.opening_push(prefix)["seq"] else 7800
+        is_prime = opening != val.opening_push(prefix)["seq"]
+        cap = 8400 if is_prime else 7800
         def scope_at(sha):
             return (tree_bytes(root, sha, "judge/scope.json"),
                     tree_bytes(root, sha, "SPEC.md").split(b"at C1 it is:", 1)[1].split(b"```", 2)[1])
@@ -447,15 +456,52 @@ def c2a_tree_evidence(root, rev, prefix, opening):
         unchanged = all(scope_at(c) == original for c in [rev] + git_bytes(root, "rev-list", f"{start}..{rev}").decode().split())
         unchanged = unchanged and json.loads(original[0])["cap"] == cap and not any(
             e["type"] == "push" and e["seq"] > opening for e in prefix)
-        def process_at(sha):
-            nodes = ast.parse(tree_bytes(root, sha, "tools/status.py")).body
-            return [ast.dump(n) for n in nodes if getattr(n, "name", None) in ("item_process", "score_items", "sovereign_keys") or
-                    isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "P0" for t in n.targets)]
-        same = process_at(start) == process_at(rev) and tree_bytes(root, start, "tools/clerk.py") == tree_bytes(root, rev, "tools/clerk.py")
+        start_nodes = ast.parse(tree_bytes(root, start, "tools/status.py")).body
+        rev_nodes = ast.parse(tree_bytes(root, rev, "tools/status.py")).body
+        def assign_targets(n):
+            if isinstance(n, ast.Assign):
+                return {t.id for t in n.targets if isinstance(t, ast.Name)}
+            if isinstance(n, ast.AnnAssign) and isinstance(n.target, ast.Name):
+                return {n.target.id}
+            return set()
+        def read_c2_tuple(nodes):
+            for n in nodes:
+                if "CHANGE2_FUNCTIONS" in assign_targets(n):
+                    return tuple(ast.literal_eval(n.value))
+            return ()
+        covered_funcs = {"item_process", "score_items", "sovereign_keys"}
+        covered_assigns = {"P0"}
+        if is_prime:
+            defs = {n.name: n for n in start_nodes if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
+            c2 = set(read_c2_tuple(start_nodes))
+            refs = set(c2)
+            queue = list(c2)
+            while queue:
+                fn = defs.get(queue.pop())
+                if fn is not None:
+                    for sub in ast.walk(fn):
+                        if isinstance(sub, ast.Name) and isinstance(sub.ctx, ast.Load) and sub.id in defs and sub.id not in refs:
+                            refs.add(sub.id)
+                            queue.append(sub.id)
+            targets = {"item_process"} | c2
+            def callers_in(nodes):
+                return {n.name for n in nodes if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and
+                        any(isinstance(sub, ast.Call) and isinstance(sub.func, ast.Name) and sub.func.id in targets
+                            for sub in ast.walk(n))}
+            covered_funcs |= refs | callers_in(start_nodes) | callers_in(rev_nodes)
+            start_assigns = {name for n in start_nodes for name in assign_targets(n)}
+            for name in covered_funcs:
+                if name in defs:
+                    covered_assigns |= {sub.id for sub in ast.walk(defs[name])
+                                        if isinstance(sub, ast.Name) and isinstance(sub.ctx, ast.Load) and sub.id in start_assigns}
+        def process_at(nodes):
+            return [ast.dump(n) for n in nodes if getattr(n, "name", None) in covered_funcs or
+                    bool(assign_targets(n) & covered_assigns)]
+        same = process_at(start_nodes) == process_at(rev_nodes) and tree_bytes(root, start, "tools/clerk.py") == tree_bytes(root, rev, "tools/clerk.py")
         pins = tree_bytes(root, rev, "pins/pins.py").decode()
         registered = all(f'Pin("{name}"' in pins or f"Pin('{name}'" in pins for name in VALUE_PINS)
         return unchanged, same, registered
-    except (OSError, ValueError, IndexError, subprocess.CalledProcessError):
+    except (OSError, ValueError, IndexError, SyntaxError, subprocess.CalledProcessError):
         return False, False, False
 
 
@@ -467,7 +513,8 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
     gate = attack_start(root, runs, end, "tests/test_value.py")
     v = val.value(s["prefix"], as_of=end, attack_green=gate, window_opening=s["start"])
     live_gate = attack_start(root, runs, end)
-    fixes, unverified = window_fix_check(s["prefix"], root, rev)
+    unverified = []
+    fixes = window_fixes(s["prefix"], root, rev, unverified)
     process = item_process(s["prefix"], c1b_window(s["prefix"])[0], end, fixes)
     live = score_items(i for i in process["items"] if live_gate is not None and live_gate < i["ts"])
     off = off_log_repairs(acts, s["start"], end, overlap=is_prime)
@@ -496,7 +543,8 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
         mapping = None
     s = status(es, "A3", 14, as_of, root, subject, rev, decision=decision)
     if subject == "C2a" and not s["v5"]:
-        _, unverified = window_fix_check([e for e in es if instant(e["ts"]) <= instant(as_of)], root, rev)
+        unverified = []
+        window_fixes([e for e in es if instant(e["ts"]) <= instant(as_of)], root, rev, unverified)
         s.update(subject=subject, unverified_fixes=unverified,
                  checks=[(False, "C2a-prime has no promotion forecast before its opening")])
         return s
@@ -509,7 +557,8 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
     if subject == "C2a":
         checks = assess_value(s, facts, verified, root, rev, runs, acts)
     elif subject == "C1b":
-        fixes, unverified = window_fix_check(s["prefix"], root, rev)
+        unverified = []
+        fixes = window_fixes(s["prefix"], root, rev, unverified)
         process = item_process(s["prefix"], s["opening"], window_fixes=fixes)
         proposed = item_process(s["prefix"], s["opening"], min(as_of, s["end"]), fixes)
         gate = attack_start(root, runs, as_of)
