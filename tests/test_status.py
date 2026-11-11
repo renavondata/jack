@@ -212,6 +212,34 @@ class C2aPrimeTest(SignedFixture):
             self.assertEqual(st.window_fixes(self.s.es, None, None), set())
         self.assertIn(f"window fix {seq}: unverified —", buf.getvalue())
 
+    def test_change_3_process_unchanged(self):
+        self.c2a_stream()
+        self.s.forecast(ts="2026-11-16T00:00:00Z", args={"id": "V5"}, resolves_by="2026-11-30T00:00:00Z")
+        op2 = self.s.add("push", "guy", ts="2026-11-18T00:00:00Z", digest="a" * 64, review="0" * 64)
+        scope = {"counted": ["tests/"], "cap": 8400}
+        with open(os.path.join(st.ROOT, "tools/status.py")) as f:
+            src = f.read()
+        with open(os.path.join(st.ROOT, "tools/clerk.py")) as f:
+            clerk_src = f.read()
+        files = {"judge/scope.json": json.dumps(scope), "SPEC.md": "at C1 it is:\n```\n" + json.dumps(scope) + "\n```\n",
+                 "log.jsonl": self.s.log.text(), "tools/status.py": src, "tools/clerk.py": clerk_src,
+                 "pins/pins.py": "\n".join(f'Pin("{name}", t, m)' for name in st.VALUE_PINS)}
+        with tree(files) as (root, start):
+            self.assertEqual(st.c2a_tree_evidence(root, start, self.s.es, op2), (True, True, True))
+            edits = [
+                src.replace("fixes, unverified = set(), []", "fixes, unverified = {0}, []", 1),
+                src.replace('e["body"].get("kind") == "promote"', 'e["body"].get("kind") in ("promote", "x")', 1),
+                src.replace("item_process(s[\"prefix\"], c1b_window(s[\"prefix\"])[0], end, fixes)",
+                            "item_process(s[\"prefix\"], c1b_window(s[\"prefix\"])[0], end, fixes | {1})", 1),
+                src.replace('WINDOW_NAMES = ("C1a",', 'WINDOW_NAMES = ("C0", "C1a",', 1),
+                src.replace('CHANGE2_FUNCTIONS = ("window_fixes", ', 'CHANGE2_FUNCTIONS = (', 1).replace(
+                    "fixes, unverified = set(), []", "fixes, unverified = {0}, []", 1),
+            ]
+            for i, edited in enumerate(edits):
+                self.assertTrue(edited != src, i)
+                sha = commit(root, {"tools/status.py": edited})
+                self.assertEqual(st.c2a_tree_evidence(root, sha, self.s.es, op2), (True, False, True), i)
+
 
 if __name__ == "__main__":
     unittest.main()
