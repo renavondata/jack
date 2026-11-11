@@ -42,12 +42,31 @@ def promotes(e, subject):
     return e["type"] == "decision" and e["body"].get("kind") == "promote" and e["body"].get("subject") == subject
 
 
-def c2a_window(es):
+def c2a_v0(es):
     opening = val.opening_push(es)
     v0 = next(e for e in es if e["seq"] < opening["seq"] and e["type"] == "forecast" and
               e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "V0")
+    return opening, v0
+
+
+def c2a_window(es):
+    opening, v0 = c2a_v0(es)
     end = min(instant(v0["body"]["resolves_by"]), instant(opening["ts"]) + dt.timedelta(days=14))
     return opening["seq"], opening["ts"], end.strftime(FMT)
+
+
+def c2a_prime_window(es):
+    opening, v0 = c2a_v0(es)
+    v0_end = v0["body"]["resolves_by"]
+    if any(promotes(e, "C2a") and instant(e["ts"]) <= instant(v0_end) for e in es):
+        return None
+    op2 = next((e for e in es if e["type"] == "push" and e["seq"] > opening["seq"] and
+                instant(e["ts"]) > instant(v0_end)), None)
+    if op2 is None:
+        return None
+    v5 = next((e for e in es if e["seq"] < op2["seq"] and e["type"] == "forecast" and
+               e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "V5"), None)
+    return op2["seq"], op2["ts"], v5["body"]["resolves_by"] if v5 else None
 
 
 def score_items(items):
@@ -129,19 +148,26 @@ def evidence_ok(root, ev, rev=None):
         return False
 
 
-def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None):
+def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None, decision=None):
     """The figures BRIEF-C1 evaluates on the exit prefix, on the prefix as of `as_of` (an instant string)."""
     now = instant(as_of)
     es = [e for e in es if instant(e["ts"]) <= now]
+    v5_ok = True
     if subject in ("C1b", "C2a"):
-        opening, start, end = (c2a_window if subject == "C2a" else c1b_window)(es)
+        w2 = c2a_prime_window(es) if subject == "C2a" else None
+        if w2 is not None and (decision is None or instant(decision["ts"]) > instant(w2[1])):
+            opening, start, end = w2[0], w2[1], w2[2] or w2[1]
+            v5_ok = w2[2] is not None
+            window = "C2a-prime"
+        else:
+            opening, start, end = (c2a_window if subject == "C2a" else c1b_window)(es)
+            window = subject
         start, end = instant(start), instant(end)
-        window = subject
     else:
         opened = next(e for e in es if e["type"] == "amend" and e["body"].get("id") == window)
         opening, start = opened["seq"], instant(opened["ts"])
         end = start + dt.timedelta(days=days)
-    closing = next((e for e in es if promotes(e, subject)), None)
+    closing = next((e for e in es if promotes(e, subject) and (window != "C2a-prime" or instant(e["ts"]) > start)), None)
     if closing:
         end = min(end, instant(closing["ts"]))
     prefix = [e for e in es if instant(e["ts"]) <= end and (not closing or e["seq"] <= closing["seq"])]
@@ -155,6 +181,10 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None):
     late = [e for e in fc if e["seq"] not in resolved and instant(e["body"]["resolves_by"]) < now]
     overdue = sorted((e["body"]["resolves_by"], e["seq"], e["proposer"], (e["body"].get("args") or {}).get("evidence", ""))
                      for e in es if e["type"] == "forecast" and e["seq"] not in resolved and instant(e["body"]["resolves_by"]) < now)
+    veto = (any(e["type"] == "decision" and e["body"].get("kind") == "veto" and
+                e["body"].get("subject") in ("C2a", "C2a-prime") and instant(e["ts"]) > start for e in prefix)
+            if window == "C2a-prime" else
+            any(e["type"] == "decision" and e["body"].get("kind") == "veto" and e["body"].get("subject") == subject for e in prefix))
     return {
         "window": window, "start": start.strftime(FMT), "end": end.strftime(FMT), "as_of": as_of,
         "prefix_last_seq": prefix[-1]["seq"] if prefix else None, "entries_in_window": len(inw),
@@ -162,10 +192,10 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None):
         "resolutions": len(rs), "world_resolutions": len(wrs),
         "world_resolutions_with_evidence": sum(1 for e in wrs if evidence_ok(root, e["body"]["evidence"], rev)),
         "procedure": len(inw) - objects, "object": objects,
-        "veto": any(e["type"] == "decision" and e["body"].get("kind") == "veto" and e["body"].get("subject") == subject for e in prefix),
+        "veto": veto,
         "j7_unresolved_past_due": len(late), "j7_denominator": len(fc),
         "overdue": overdue,
-        "opening": opening, "prefix": prefix,
+        "opening": opening, "prefix": prefix, "v5": v5_ok,
     }
 
 
@@ -212,13 +242,15 @@ def attack_start(root, runs, as_of, path="tests/test_clerk.py"):
     return min(times, default=None)
 
 
-def off_log_repairs(acts, start, end):
+def off_log_repairs(acts, start, end, overlap=False):
     if acts is None:
         return None
     hkt = dt.timezone(dt.timedelta(hours=8))  # counsel's weekly CSV contract
+    s, e = instant(start), instant(end)
     return sum(row["repo"] == "renavondata/jack" and row["class"] == "repair" and
-               instant(start) <= dt.datetime.strptime(row["time_hkt"], "%Y-%m-%d %H:%M").replace(tzinfo=hkt) <= instant(end)
-               for row in acts)
+               (s <= e and t <= e and t + dt.timedelta(seconds=60) > s if overlap else s <= t <= e)
+               for row in acts
+               for t in [dt.datetime.strptime(row["time_hkt"], "%Y-%m-%d %H:%M").replace(tzinfo=hkt)])
 
 
 VALUE_PINS = ("worked_table forecast_before_cutoff rigged revision weights_from_resolved_prefix abstention_is_base "
@@ -232,12 +264,13 @@ def c2a_tree_evidence(root, rev, prefix, opening):
         start = prefix_tree(root, rev, [e for e in prefix if e["seq"] <= opening])
         if start is None:
             return False, False, False
+        cap = 8400 if opening != val.opening_push(prefix)["seq"] else 7800
         def scope_at(sha):
             return (tree_bytes(root, sha, "judge/scope.json"),
                     tree_bytes(root, sha, "SPEC.md").split(b"at C1 it is:", 1)[1].split(b"```", 2)[1])
         original = scope_at(start)
         unchanged = all(scope_at(c) == original for c in [rev] + git_bytes(root, "rev-list", f"{start}..{rev}").decode().split())
-        unchanged = unchanged and json.loads(original[0])["cap"] == 7800 and not any(
+        unchanged = unchanged and json.loads(original[0])["cap"] == cap and not any(
             e["type"] == "push" and e["seq"] > opening for e in prefix)
         def process_at(sha):
             nodes = ast.parse(tree_bytes(root, sha, "tools/status.py")).body
@@ -252,19 +285,21 @@ def c2a_tree_evidence(root, rev, prefix, opening):
 
 
 def assess_value(s, facts, verified, root, rev, runs, acts):
+    is_prime = s["window"] == "C2a-prime"
+    cap = 8400 if is_prime else 7800
     end = min(s["as_of"], s["end"])
     unchanged, same, registered = c2a_tree_evidence(root, rev, s["prefix"], s["opening"])
     gate = attack_start(root, runs, end, "tests/test_value.py")
-    v = val.value(s["prefix"], as_of=end, attack_green=gate)
+    v = val.value(s["prefix"], as_of=end, attack_green=gate, window_opening=s["start"])
     live_gate = attack_start(root, runs, end)
     process = item_process(s["prefix"], c1b_window(s["prefix"])[0], end)
     live = score_items(i for i in process["items"] if live_gate is not None and live_gate < i["ts"])
-    off = off_log_repairs(acts, s["start"], end)
+    off = off_log_repairs(acts, s["start"], end, overlap=is_prime)
     s.update(value=v, continued_liveness=live, late_reports=process["late_reports"])
     return [(verified and registered, "criterion 1: C2a pins and twins in verified tests run"),
             (verified, "criterion 2: checker agreement in verified tests run"),
-            (facts["counted"] <= 7800 and facts["kernel"] <= 500 and facts["scope"] and unchanged,
-             f"criterion 3: counted {facts['counted']}/7800; kernel {facts['kernel']}/500; scope equals SPEC and unchanged: {facts['scope'] and unchanged}"),
+            (facts["counted"] <= cap and facts["kernel"] <= 500 and facts["scope"] and unchanged,
+             f"criterion 3: counted {facts['counted']}/{cap}; kernel {facts['kernel']}/500; scope equals SPEC and unchanged: {facts['scope'] and unchanged}"),
             (gate is not None and all(gate < r["cutoff"] for r in v["rows"]),
              f"criterion 4: attack green on main before first scored cutoff: {gate or 'unverified'}"),
             (v["E_value"] >= 20, f"criterion 5: value E {v['E_value']:.6f} >= 20"),
@@ -283,7 +318,10 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
             raise ValueError("historical tree unverified")
         run = next((r for r in runs if run_verified(r, rev) and completed_by(r, as_of)), None)
         mapping = None
-    s = status(es, "A3", 14, as_of, root, subject, rev)
+    s = status(es, "A3", 14, as_of, root, subject, rev, decision=decision)
+    if subject == "C2a" and not s["v5"]:
+        s.update(subject=subject, checks=[(False, "C2a-prime has no promotion forecast before its opening")])
+        return s
     facts = tree_facts(root, rev)
     verified = run_verified(run, rev) and completed_by(run, as_of)
     checks = [(verified, "criterion 1: pins and twins in verified tests run"),
@@ -322,7 +360,7 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
                         f"resolutions {s['resolutions']}/10; world-typed with evidence {s['world_resolutions_with_evidence']}/5"),
                        (verified, "criterion 5: score vectors in verified tests run")])
     checks.append((not s["veto"], f"criterion {7 if subject == 'C2a' else 6}: veto on {subject}: {'YES' if s['veto'] else 'none'}"))
-    exit_procedure = s["procedure"] + int(not any(promotes(e, subject) for e in s["prefix"]))
+    exit_procedure = s["procedure"] + int(not any(promotes(e, subject) and (s["window"] != "C2a-prime" or instant(e["ts"]) > instant(s["start"])) for e in s["prefix"]))
     checks.append((exit_procedure <= 5 * s["object"], f"A3.4 ratio: procedure {s['procedure']} : object {s['object']}; "
                    f"at promote {exit_procedure} : {s['object']} (maximum 5:1)"))
     s.update(subject=subject, checks=checks)
@@ -364,7 +402,8 @@ def render(s):
                   "elections: " + " / ".join(f"{k} {float(w):.6f}" for k, w in weights.items()) + f"; below base: {below}",
                   f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
     lines = s.get("history", []) + lines
-    return "\n".join(lines + s.get("repairs", []) + [promotion_line(s)])
+    win = [f"window: C2a-prime (second window of C2a, opened seq {s['opening']})"] if s.get("window") == "C2a-prime" else []
+    return "\n".join(lines + s.get("repairs", []) + win + [promotion_line(s)])
 
 
 def parser(description):
@@ -416,7 +455,9 @@ def inputs(a):
 def report(**context):
     decisions = [e for e in context["es"] if e["ts"] <= context["as_of"] and
                  any(promotes(e, w) for w in ("C1a", "C1b", "C2a"))]
-    closing = next((e for e in decisions if promotes(e, context["subject"])), None)
+    w2 = c2a_prime_window([e for e in context["es"] if instant(e["ts"]) <= instant(context["as_of"])]) if context["subject"] == "C2a" else None
+    closing = next((e for e in decisions if promotes(e, context["subject"]) and
+                    (w2 is None or instant(e["ts"]) > instant(w2[1]))), None)
     s = assess(**context, decision=closing)
     s["repairs"] = []
     for e in decisions:
