@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 91
+EXPECTED = 99
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1043,6 +1043,65 @@ for pin in C2A_PINS:
     pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2a named fixture and passing twin.") + "\n" + "\n".join(
         f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
 PINS += C2A_PINS
+
+
+# --- C2a-prime pins (BRIEF-C2a-prime §Pins) --------------------------------
+
+from pins import c2a_prime
+
+C2A_PRIME_PINS = [
+    Pin("second_window_from_the_end", c2a_prime.second_window_from_the_end, [
+        Mutant("first_push_after_c2a_opening", "tools/status.py",
+               'e["seq"] > opening["seq"] and\n                instant(e["ts"]) > instant(v0_end)', 'e["seq"] > 337'),
+        Mutant("first_push_after_c2a_end", "tools/status.py",
+               'instant(e["ts"]) > instant(v0_end)', 'instant(e["ts"]) > instant(c2a_window(es)[2])')]),
+    Pin("second_window_end_is_v5", c2a_prime.second_window_end_is_v5, [
+        Mutant("v0_is_second_end", "tools/status.py",
+               'return op2["seq"], op2["ts"], v5["body"]["resolves_by"] if v5 else None',
+               'return op2["seq"], op2["ts"], v0["body"]["resolves_by"] if v5 else None'),
+        Mutant("late_v5_accepted", "tools/status.py",
+               'e["seq"] < op2["seq"]', 'e["seq"] > op2["seq"]')]),
+    Pin("second_window_cap", c2a_prime.second_window_cap, [
+        Mutant("cap_7800", "tools/status.py", 'cap = 8400 if is_prime else 7800\n        scope_at', 'cap = 7800\n        scope_at'),
+        Mutant("cap_from_head", "tools/status.py", 'original = scope_at(start)\n        unchanged', 'original = scope_at(rev)\n        unchanged = True\n        #')]),
+    Pin("offlog_from_second_opening", c2a_prime.offlog_from_second_opening, [
+        Mutant("offlog_from_c2a_opening", "tools/status.py", 'off_log_repairs(acts, s["start"], end, overlap=is_prime)',
+               'off_log_repairs(acts, c2a_window(s["prefix"])[1], end, overlap=is_prime)'),
+        Mutant("minute_must_begin_in_window", "tools/status.py",
+               '(s <= e and t <= e and t + dt.timedelta(seconds=60) > s if overlap else s <= t <= e)',
+               '(s <= t <= e)')]),
+    Pin("promote_refused_before_end", c2a_prime.promote_refused_before_end, [
+        Mutant("v5_always_second_window", "tools/status.py",
+               'w2 = c2a_prime_window(es) if subject == "C2a" else None',
+               'w2 = c2a_prime_window(es) or (0, "2026-11-17T12:00:00Z", next(e["body"]["resolves_by"] for e in es if e["type"] == "forecast" and e["body"].get("args", {}).get("id") == "V5")) if subject == "C2a" else None'),
+        Mutant("prime_veto_ignored", "tools/status.py", 'e["body"].get("subject") in ("C2a", "C2a-prime")',
+               'e["body"].get("subject") == "C2a"')]),
+    Pin("window_fix_is_decision", c2a_prime.window_fix_is_decision, [
+        Mutant("fix_typed_repair", "tools/status.py", 'typ == "decision" and body["kind"] != "fix"', 'typ == "decision"'),
+        Mutant("condition_2_ended_without_promotion", "tools/status.py", 'if veto_ok or acts_ok:', 'if not any(names_window(es, x, "promote", name) for x in es):'),
+        Mutant("veto_read_late", "tools/status.py", 'instant(x["ts"]) <= instant(w_early)', 'instant(x["ts"]) <= instant(w_late)'),
+        Mutant("acts_interval_read_late", "tools/status.py", 't + dt.timedelta(seconds=60) <= e_dt', 't + dt.timedelta(seconds=60) <= instant(w_late)'),
+        Mutant("condition_3_read_early", "tools/status.py", 'instant(e["ts"]) <= instant(bounds[2])', 'instant(e["ts"]) <= instant(bounds[1])'),
+        Mutant("condition_1_contains_name", "tools/status.py", 'subj.startswith(w + ":")', 'True'),
+        Mutant("next_push_bound_dropped", "tools/status.py", 'if next_push is not None and e["seq"] >= next_push["seq"]:', 'if False:'),
+        Mutant("condition_4_dropped", "tools/status.py", 'if name is None or any(x["seq"] < e["seq"]', 'if name is None or False and any(x["seq"] < e["seq"]'),
+        Mutant("carrying_commit_is_head", "tools/status.py", 'head = rev or git_bytes(root, "rev-parse", "HEAD").decode().strip()', 'return rev or git_bytes(root, "rev-parse", "HEAD").decode().strip()'),
+        Mutant("attribution_dropped", "tools/status.py", 'if veto_ok or acts_ok:', 'if True:'),
+        Mutant("raw_substring_names_csv", "tools/status.py", 'and subject_names(subject, fname)', 'and fname[:-4] in subject'),
+        Mutant("push_clears_all_fixes", "tools/status.py", 'repairs[:] = [r for r in repairs if r not in active_fixes]', 'repairs.clear(); late_reports.append(-1)')]),
+    Pin("window_fix_not_retroactive", c2a_prime.window_fix_not_retroactive, [
+        Mutant("fix_applies_immediately", "tools/status.py", 'if seq in window_fixes:', 'if False:'),
+        Mutant("fix_never_clears", "tools/status.py", 'if typ == "push" and active_fixes:', 'if False:')]),
+    Pin("process_unchanged_from_opening", c2a_prime.process_unchanged_from_opening, [
+        Mutant("change2_functions_omitted", "tools/status.py", 'targets = {"item_process"} | c2', 'targets = set()'),
+        Mutant("references_not_transitive", "tools/status.py", 'refs, queue = set(c2), list(c2)', 'refs, queue = set(), []'),
+        Mutant("callers_omitted", "tools/status.py", 'covered_funcs |= refs | callers_in(start_nodes) | callers_in(rev_nodes)', 'covered_funcs |= refs'),
+        Mutant("assignments_omitted", "tools/status.py",
+                'covered_assigns |= {sub.id for name in covered_funcs if name in defs for sub in ast.walk(defs[name])\n                                if isinstance(sub, ast.Name) and isinstance(sub.ctx, ast.Load) and sub.id in start_assigns}',
+                'covered_assigns = set()'),
+        Mutant("tuple_read_at_head", "tools/status.py", 'c2 = set(read_c2_tuple(start_nodes))', 'c2 = set()')]),
+]
+PINS += C2A_PRIME_PINS
 
 
 # --- opening read gate pins (BRIEF-C2b §Counsel bound (a); REVIEW-C2b-v1 F7) ---
