@@ -1,11 +1,13 @@
 """tools/status.py: the window's figures from synthetic entries (hermetic; no log on disk, no clock)."""
 import hashlib
+import json
+import os
 import unittest
 from unittest.mock import patch
 
 from tools import status as st
 from harness.gitfix import write
-from tests.clerk_fixture import tree
+from tests.clerk_fixture import SignedFixture, commit, tree
 
 
 def e(seq, ts, type_, proposer, **body):
@@ -71,6 +73,65 @@ class StatusTest(unittest.TestCase):
         self.assertIn("forecasts 3/20; proposers 3/3", text)
         self.assertIn("world-typed with evidence 1/5 SHORT", text)
         self.assertIn("maximum 5:1) met", text)
+
+
+class C2aPrimeTest(SignedFixture):
+    def c2a_stream(self):
+        while len(self.s.es) < 337:
+            self.s.add("proposal", title="pad", commit="a" * 40)
+        self.s.add("decision", "guy", kind="promote", subject="C1b")
+        self.s.forecast(args={"id": "V0"}, resolves_by="2026-11-17T12:00:00Z")
+        op1 = self.s.add("push", "guy", ts="2026-11-01T15:04:14Z", digest="a" * 64, review="0" * 64)
+        return op1
+
+    def test_change_1_window(self):
+        self.c2a_stream()
+        self.s.add("push", "guy", ts="2026-11-16T00:00:00Z", digest="a" * 64, review="0" * 64)
+        self.assertIsNone(st.c2a_prime_window(self.s.es))
+        op_no_v5 = self.s.add("push", "guy", ts="2026-11-18T00:00:30Z", digest="a" * 64, review="0" * 64)
+        self.s.forecast(ts="2026-11-18T01:00:00Z", args={"id": "V5"}, resolves_by="2026-11-30T00:00:00Z")
+        s0 = st.assess(self.s.es, "C2a", "2026-11-18T02:00:00Z", None, None)
+        self.assertEqual(st.promotion_line(s0), "promote C2a: refused: C2a-prime has no promotion forecast before its opening")
+        self.assertIn(f"window: C2a-prime (second window of C2a, opened seq {op_no_v5})", st.render(s0))
+
+        self.setUp()
+        self.c2a_stream()
+        self.s.add("decision", "guy", ts="2026-11-10T00:00:00Z", kind="veto", subject="C2a")
+        self.s.add("decision", "guy", ts="2026-11-10T00:01:00Z", kind="veto", subject="C2a-prime")
+        self.s.forecast(ts="2026-11-16T00:00:00Z", args={"id": "V5"}, resolves_by="2026-11-30T00:00:00Z")
+        op2 = self.s.add("push", "guy", ts="2026-11-18T00:00:30Z", digest="a" * 64, review="0" * 64)
+        scope78 = {"counted": ["tests/"], "cap": 7800}
+        scope84 = {"counted": ["tests/"], "cap": 8400}
+        files = {"judge/scope.json": json.dumps(scope78), "SPEC.md": "at C1 it is:\n```\n" + json.dumps(scope78) + "\n```\n",
+                 "log.jsonl": "\n".join(self.s.log.lines[:-1]) + "\n", "tests/test_clerk.py": "# a\n", "tests/test_value.py": "# a\n",
+                 "pins/pins.py": "\n".join(f'Pin("{name}", t, m)' for name in st.VALUE_PINS)}
+        for path in ("tools/status.py", "tools/clerk.py"):
+            with open(os.path.join(st.ROOT, path)) as f:
+                files[path] = f.read()
+        with tree(files) as (root, pre_sha):
+            before = st.assess(self.s.es[:-1], "C2a", "2026-11-17T00:00:00Z", root, pre_sha,
+                               acts=[dict(repo="renavondata/jack", time_hkt="2026-11-02 22:11", **{"class": "repair"}, kind="fix", ref="", note="")])
+            self.assertNotIn("window: C2a-prime", st.render(before))
+            self.assertIn("criterion 7: off-log repairs: 1 SHORT", st.render(before))
+            open_sha = commit(root, {"judge/scope.json": json.dumps(scope84),
+                                     "SPEC.md": "at C1 it is:\n```\n" + json.dumps(scope84) + "\n```\n",
+                                     "log.jsonl": self.s.log.text()})
+            row = lambda hkt: dict(repo="renavondata/jack", time_hkt=hkt, **{"class": "repair"}, kind="fix", ref="", note="")
+            s = st.assess(self.s.es, "C2a", "2026-11-25T00:00:00Z", root, open_sha,
+                          acts=[row("2026-11-02 22:11"), row("2026-11-18 08:00")])
+            self.assertEqual((s["start"], s["end"], s["veto"]), ("2026-11-18T00:00:30Z", "2026-11-30T00:00:00Z", False))
+            self.assertIn("counted 2/8400; kernel 0/500; scope equals SPEC and unchanged: True met", st.render(s))
+            self.assertIn("criterion 7: off-log repairs: 1 SHORT", st.render(s))
+            self.assertEqual(st.render(s).splitlines()[-2], f"window: C2a-prime (second window of C2a, opened seq {op2})")
+            s_clean = st.assess(self.s.es, "C2a", "2026-11-25T00:00:00Z", root, open_sha,
+                                acts=[row("2026-11-02 22:11"), row("2026-11-18 07:59"), row("2026-11-30 08:01")])
+            self.assertIn("criterion 7: off-log repairs: 0 met", st.render(s_clean))
+            self.s.add("decision", "guy", ts="2026-11-19T00:00:00Z", kind="veto", subject="C2a-prime")
+            vetoed = commit(root, {"log.jsonl": self.s.log.text()})
+            self.assertTrue(st.assess(self.s.es, "C2a", "2026-11-25T00:00:00Z", root, vetoed, acts=[])["veto"])
+            bad_cap = commit(root, {"judge/scope.json": json.dumps(dict(scope84, cap=8401)),
+                                    "SPEC.md": "at C1 it is:\n```\n" + json.dumps(dict(scope84, cap=8401)) + "\n```\n"})
+            self.assertFalse(st.c2a_tree_evidence(root, bad_cap, self.s.es, op2)[0])
 
 
 if __name__ == "__main__":
