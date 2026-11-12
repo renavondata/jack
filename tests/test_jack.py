@@ -284,45 +284,63 @@ class Jack(unittest.TestCase):
 
     def test_decision_promote_names_committed_table(self):
         csv, path = "repo,time_hkt,class,kind,ref,note\n", "transcripts/evidence/acts-c2a2.csv"
-        self.commit("tools/status.py", "def run_verified(r, h): return True\nif __name__ == '__main__': print('promote C2a: lawful')\n")
-        for bad in ("transcripts/acts.csv", "transcripts/evidence/sub/acts.csv", "transcripts/evidence/acts.txt"):
-            self.commit(bad, csv)
+        scope = {"counted": ["tests/"], "cap": 6900, "layer": "C1b", "paths": ["tests/", "tools/", "transcripts/"], "parties": {}}
+        for rel in ("tools/status.py", "tools/value.py", "tools/enforcement.json"):
+            shutil.copy2(os.path.join(ROOT, rel), os.path.join(self.repo, rel))
+        for rel, txt in (("judge/scope.json", json.dumps(scope)), ("SPEC.md", f"at C1 it is:\n```\n{json.dumps(scope)}\n```\n"),
+                         ("tests/test_clerk.py", "# attack\n"), ("transcripts/acts.csv", csv),
+                         ("transcripts/evidence/sub/acts.csv", csv), ("transcripts/evidence/acts.txt", csv)):
+            write(os.path.join(self.repo, rel), txt)
+        self.commit("README.md", "setup\n")
+        chk, lg = commit_digest(self.repo, "HEAD"), build.Log()
+        lg.add("genesis", "guy", build.genesis_body([build.decl("guy-master", "guy", self.w.guy, build.ALL)],
+               charter=gitfix.CHARTER_SHA256, checker=chk), self.w.guy, ts="2026-10-31T11:00:00Z")
+        for k_id, who, k in (("counsel-1", "counsel", self.w.parties["counsel"]), ("herald-2", "herald", self.w.herald)):
+            lg.add("key", "guy", build.decl(k_id, who, k, build.ALL), self.w.guy, ts="2026-10-31T11:00:00Z")
+        lg.add("forecast", "counsel", {"claim": "l0", "p": 500, "resolves_by": "2026-11-03T00:00:00Z", "args": {"id": "L0"}},
+               self.w.parties["counsel"], ts="2026-10-31T11:01:00Z")
+        op = json.loads(lg.add("decision", "guy", {"kind": "promote", "subject": "C1a"}, self.w.guy, ts="2026-10-31T11:02:00Z"))["seq"]
+        for _ in range(9):
+            f = json.loads(lg.add("forecast", "counsel", {"claim": "c", "p": 500, "resolves_by": "2026-11-03T00:00:00Z",
+                                  "type": "world.fixture"}, self.w.parties["counsel"], ts="2026-10-31T12:00:00Z"))["seq"]
+            lg.add("resolution", "herald", {"forecast": f, "outcome": 1, "evidence": "run"}, self.w.herald, ts="2026-10-31T12:00:00Z")
+            lg.add("merge", "herald", {"proposal": op, "commit": "a" * 40, "checker": chk}, self.w.herald, ts="2026-10-31T12:00:00Z")
+        write(os.path.join(self.repo, "log.jsonl"), lg.text())
         h_commit = self.commit(path, csv)
-        self.git("push", "-q", "origin", "main")
-        self.gh((["api"], 0, '[{"workflow_runs": []}]\n'))
-        for bad in ("transcripts/acts.csv", "./" + path, "transcripts/evidence/sub/acts.csv", "transcripts/evidence/acts.txt", ""):
-            self.refused(self.jack("decision", "promote", "C2a", "--acts", bad), "--acts")
-            self.assertEqual((self.git("rev-parse", "HEAD"), self.remote()), (h_commit, h_commit))
+        self.git("push", "-qf", "origin", "main")
+        green = {"path": ".github/workflows/tests.yml", "event": "push", "head_branch": "main", "head_sha": h_commit,
+                 "conclusion": "success", "updated_at": "2026-10-31T11:59:59Z"}
+        self.gh((["api"], 0, json.dumps([{"workflow_runs": [green]}]) + "\n"))
+        now_patch, before_len = "jack.entry.now = lambda: '2026-10-31T12:30:00Z'; ", len(self.entries())
+        for bad in ("transcripts/acts.csv", "./" + path, "transcripts/evidence/sub/acts.csv", "transcripts/evidence/acts.txt",
+                    "transcripts/evidence/missing.csv", ""):
+            self.refused(self.jack("decision", "promote", "C1b", "--acts", bad, patch=now_patch), "--acts")
+            self.assertEqual((self.git("rev-parse", "HEAD"), self.remote(), len(self.entries())), (h_commit, h_commit, before_len))
         untracked = "transcripts/evidence/untracked.csv"
         write(os.path.join(self.repo, untracked), csv)
-        self.refused(self.jack("decision", "promote", "C2a", "--acts", untracked), "not clean")
+        self.refused(self.jack("decision", "promote", "C1b", "--acts", untracked, patch=now_patch), "not clean")
         write(os.path.join(self.repo, ".git/info/exclude"), untracked + "\n")
-        self.refused(self.jack("decision", "promote", "C2a", "--acts", untracked), "blob in HEAD")
+        self.refused(self.jack("decision", "promote", "C1b", "--acts", untracked, patch=now_patch), "blob in HEAD")
         os.remove(os.path.join(self.repo, untracked))
-        write(os.path.join(self.repo, path), csv + "renavondata/jack,2026-11-18 00:00,repair,fix,1,x\n")
-        self.refused(self.jack("decision", "promote", "C2a", "--acts", path), "not clean")
+        self.assertEqual(len(self.entries()), before_len)
+        write(os.path.join(self.repo, path), csv + "renavondata/jack,2026-10-31 20:10,repair,fix,1,x\n")
+        self.refused(self.jack("decision", "promote", "C1b", "--acts", path, patch=now_patch), "not clean")
         self.git("update-index", "--assume-unchanged", path)
-        self.refused(self.jack("decision", "promote", "C2a", "--acts", path), "blob in HEAD")
+        self.refused(self.jack("decision", "promote", "C1b", "--acts", path, patch=now_patch), "blob in HEAD")
         self.git("update-index", "--no-assume-unchanged", path)
         self.git("checkout", "--", path)
-        self.assertEqual((self.git("rev-parse", "HEAD"), self.remote()), (h_commit, h_commit))
-        self.admitted(self.jack("decision", "promote", "C2a", "--acts", path))
-        grant_sha, prom_sha = self.git("rev-parse", "HEAD^"), self.git("rev-parse", "HEAD")
-        self.assertEqual((self.git("rev-parse", f"{grant_sha}^"), self.remote()), (h_commit, prom_sha))
-        expected = f"C2a acts evidence: {path} sha256 {hashlib.sha256(csv.encode()).hexdigest()} at {h_commit}"
-        self.assertEqual([e["body"] for e in self.entries()[-2:]],
-                         [{"kind": "grant", "subject": expected}, {"kind": "promote", "subject": "C2a"}])
-        self.assertEqual(self.entries(grant_sha)[-1]["body"], {"kind": "grant", "subject": expected})
-        self.assertNotIn(expected, self.git("show", f"{h_commit}:log.jsonl"))
-        other = os.path.join(self.tmp.name, "moved")
-        self.git("clone", "-q", self.origin, other)
-        moved = self.commit("README.md", "concurrent\n", cwd=other)
-        self.gh((["api"], 0, '[{"workflow_runs": []}]\n'), move=None)
-        before_len = len(self.entries())
-        r = self.jack("decision", "promote", "C2a", "--acts", path,
-                      patch=f"_b = jack.begin; jack.begin = lambda a, m: (_b(a, m), __import__('subprocess').run(['git', '-C', {other!r}, 'push', '-q', 'origin', 'main'], check=True)); ")
-        self.refused(r, "the branch moved", signed=True)
-        self.assertEqual((self.git("rev-parse", "HEAD"), self.remote(), len(self.entries())), (prom_sha, moved, before_len))
+        self.assertEqual((self.git("rev-parse", "HEAD"), self.remote(), len(self.entries())), (h_commit, h_commit, before_len))
+        self.admitted(self.jack("decision", "promote", "C1b", "--acts", path, patch=now_patch))
+        prom_sha, entries = self.git("rev-parse", "HEAD"), self.entries()
+        self.assertEqual((self.git("rev-parse", "HEAD^"), self.remote(), len(entries)), (h_commit, prom_sha, before_len + 1))
+        self.assertEqual((entries[-1]["type"], entries[-1]["proposer"], entries[-1]["body"]),
+                         ("decision", "guy", {"kind": "promote", "subject": "C1b",
+                                              "acts": {"path": path, "sha256": hashlib.sha256(csv.encode()).hexdigest(), "commit": h_commit}}))
+        write(runs_file := os.path.join(self.tmp.name, "runs.json"), json.dumps([green]))
+        st = subprocess.run([sys.executable, "tools/status.py", "--subject", "C1b", "--runs", runs_file, "--acts", path,
+                             "--as-of", "2026-10-31T12:30:00Z"], cwd=self.repo, capture_output=True, text=True, check=True).stdout
+        self.assertEqual([ln for ln in st.splitlines() if "sovereign REPAIR" in ln and "promote C1b" in ln], [])
+        self.assertEqual(st.splitlines()[-1], "promote C1b: lawful")
 
     # jack key
 
