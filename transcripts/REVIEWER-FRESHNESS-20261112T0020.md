@@ -1,0 +1,6 @@
+- `hk_property_poi`: 204/209 windows advanced, with 02Z/03Z/04Z hits at 10/6/10; keep it near ceiling at 945‰, 935‰, and 945‰.
+- `hkex_disclosures`: 196/208 windows advanced, with 02Z/03Z/04Z hits at 10/6/9; keep it high at 935‰, 930‰, and 935‰.
+- `hkex_disclosure_interests`: 196/208 windows advanced, mirroring `hkex_disclosures` with 02Z/03Z/04Z hits at 10/6/9; use 935‰, 930‰, and 935‰.
+- `crhk_companies`: 29/201 windows advanced, with sparse 02Z/03Z/04Z hits at 0/2/1; stay near the Laplace rate but lift the known hours: 110‰, 160‰, and 140‰.
+- `sfc_licences`: 9/202 windows advanced, with 02Z/03Z/04Z hits at 0/1/7; keep it low and near base rate, but nudge the 04Z hour up a bit: 50‰, 55‰, and 95‰.
+- `hk_property_transactions`: 40/202 windows advanced, with 02Z/03Z/04Z hits at 2/1/0; stay middling-low at 145‰, 130‰, and 120‰.
