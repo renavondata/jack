@@ -282,6 +282,48 @@ class Jack(unittest.TestCase):
         self.refused(self.jack("decision", "wish", "x"), "KIND must be one of")
         self.refused(self.jack("decision", "veto", ""), "SUBJECT must be a non-empty string")
 
+    def test_decision_promote_names_committed_table(self):
+        csv, path = "repo,time_hkt,class,kind,ref,note\n", "transcripts/evidence/acts-c2a2.csv"
+        self.commit("tools/status.py", "def run_verified(r, h): return True\nif __name__ == '__main__': print('promote C2a: lawful')\n")
+        for bad in ("transcripts/acts.csv", "transcripts/evidence/sub/acts.csv", "transcripts/evidence/acts.txt"):
+            self.commit(bad, csv)
+        h_commit = self.commit(path, csv)
+        self.git("push", "-q", "origin", "main")
+        self.gh((["api"], 0, '[{"workflow_runs": []}]\n'))
+        for bad in ("transcripts/acts.csv", "./" + path, "transcripts/evidence/sub/acts.csv", "transcripts/evidence/acts.txt", ""):
+            self.refused(self.jack("decision", "promote", "C2a", "--acts", bad), "--acts")
+            self.assertEqual((self.git("rev-parse", "HEAD"), self.remote()), (h_commit, h_commit))
+        untracked = "transcripts/evidence/untracked.csv"
+        write(os.path.join(self.repo, untracked), csv)
+        self.refused(self.jack("decision", "promote", "C2a", "--acts", untracked), "not clean")
+        write(os.path.join(self.repo, ".git/info/exclude"), untracked + "\n")
+        self.refused(self.jack("decision", "promote", "C2a", "--acts", untracked), "blob in HEAD")
+        os.remove(os.path.join(self.repo, untracked))
+        write(os.path.join(self.repo, path), csv + "renavondata/jack,2026-11-18 00:00,repair,fix,1,x\n")
+        self.refused(self.jack("decision", "promote", "C2a", "--acts", path), "not clean")
+        self.git("update-index", "--assume-unchanged", path)
+        self.refused(self.jack("decision", "promote", "C2a", "--acts", path), "blob in HEAD")
+        self.git("update-index", "--no-assume-unchanged", path)
+        self.git("checkout", "--", path)
+        self.assertEqual((self.git("rev-parse", "HEAD"), self.remote()), (h_commit, h_commit))
+        self.admitted(self.jack("decision", "promote", "C2a", "--acts", path))
+        grant_sha, prom_sha = self.git("rev-parse", "HEAD^"), self.git("rev-parse", "HEAD")
+        self.assertEqual((self.git("rev-parse", f"{grant_sha}^"), self.remote()), (h_commit, prom_sha))
+        expected = f"C2a acts evidence: {path} sha256 {hashlib.sha256(csv.encode()).hexdigest()} at {h_commit}"
+        self.assertEqual([e["body"] for e in self.entries()[-2:]],
+                         [{"kind": "grant", "subject": expected}, {"kind": "promote", "subject": "C2a"}])
+        self.assertEqual(self.entries(grant_sha)[-1]["body"], {"kind": "grant", "subject": expected})
+        self.assertNotIn(expected, self.git("show", f"{h_commit}:log.jsonl"))
+        other = os.path.join(self.tmp.name, "moved")
+        self.git("clone", "-q", self.origin, other)
+        moved = self.commit("README.md", "concurrent\n", cwd=other)
+        self.gh((["api"], 0, '[{"workflow_runs": []}]\n'), move=None)
+        before_len = len(self.entries())
+        r = self.jack("decision", "promote", "C2a", "--acts", path,
+                      patch=f"_b = jack.begin; jack.begin = lambda a, m: (_b(a, m), __import__('subprocess').run(['git', '-C', {other!r}, 'push', '-q', 'origin', 'main'], check=True)); ")
+        self.refused(r, "the branch moved", signed=True)
+        self.assertEqual((self.git("rev-parse", "HEAD"), self.remote(), len(self.entries())), (prom_sha, moved, before_len))
+
     # jack key
 
     def test_key_admitted_and_revocation(self):
