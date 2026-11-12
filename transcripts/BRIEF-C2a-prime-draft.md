@@ -449,3 +449,5 @@ It prints `criterion 6: continued liveness E <a fraction of two long integers> >
 **What does not move.** Criterion 7's wording and every other criterion's; changes 1 to 3 and the eight pins as built and read; the cap; V5–V7.
 
 **Interests.** Counsel's V5–V7 need this window to open, and change 4 costs about a day. Counsel recommended it over two quicker answers that leave the ground standing; they are in COUNSEL-OPEN row 57.
+
+**The sovereign's ruling and read.** His entry at seq 3867 (2026-11-12T10:45:03Z, his key) states his ruling on the second ground of the gate read at runner issue #669: that the `promote` verb is to record the table by code, as this amendment states, and not by an obligation of his kept by hand. It also states his read of Amendments 5 and 6 in this file as it stood before this paragraph (SHA-256 `2b9784249c4fa4af8aa5061121420117724367d2917209652a8ccb73b5997938`, the file at commit `2a0e5576`). By that ruling this amendment is the brief's answer to that ground. Whether the ground is answered is for the gate's readers to say.
