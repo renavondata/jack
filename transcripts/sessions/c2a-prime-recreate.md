@@ -1,0 +1,26 @@
+model: {MODEL}
+key: ~/.ssh/jack-builder
+branch: {BRANCH}
+
+# builder: the rebuilt window code of C2a-prime re-created, commit for commit, on the branch whose first commit the sovereign applied — branch {BRANCH}, for the opening push of {WINDOW} (renavondata/jack)
+
+You are the **builder** (`JACK_KEY=~/.ssh/jack-builder`, party `builder`), in the worktree `~/git/worktrees/jack/{BRANCH}` on branch `{BRANCH}`. `{WINDOW}` is `C2a-prime` and `{BRANCH}` is `builder-c2a-prime-3`; if either is otherwise, stop and report. Do not read or write anything outside this worktree: no command of yours names a path outside it, `/tmp` included (the runner ends the session on the first one). Run no `tools/jack` verb. **You write no code in this session and change no file by hand.** The code is written (runner issues #697, #733 and #758) and this session moves it, unchanged, onto another first commit. Run one command at a time, and decide only the next command in any one turn. This issue's number is what `echo "$ISSUE"` prints.
+
+**Why.** The window code was built on a base whose one commit of the trusted-base change (`32df5f10`: the cap in `judge/scope.json`, SPEC §10's block and a clause of its cap history) counsel had applied itself. RUNBOOK's **Text before code** has such a patch applied by the sovereign, as the first commit of the builder's branch. On 12 November 2026 he applied the same patch himself, as the first commit of `builder-c2a-prime-3`, and directed that the builder's code be re-created on that branch commit for commit, unchanged (BRIEF-C2a-prime Amendment 9).
+
+**The sovereign's direction, before anything else.** `python3 -m kernel.check <(git show origin/main:log.jsonl)` prints `"ok": true`. Then `git show origin/main:log.jsonl | python3 -c 'import sys, json; [print(e["seq"], e["ts"], e["body"]["kind"], "|", e["body"]["subject"]) for e in map(json.loads, sys.stdin) if e["type"] == "decision" and e["proposer"] == "guy" and e["seq"] >= 4016]'` prints his entries from seq 4016 on. Quote in your report the words of one that direct this re-creation. If the first command does not print that, or no entry directs it, do nothing and say so in the first line of your report.
+
+**The branch.** `git fetch origin builder-c2a-prime-3 builder-c2a-prime-rebuild`, then `git checkout -B builder-c2a-prime-3 origin/builder-c2a-prime-3`. Then `git log --reverse --format='%h | %an | %cn | %(trailers:key=Proposer,valueonly,separator=%x20) | %s' origin/main..HEAD`. On a first session it prints one line: the trusted-base commit, its author `counsel`, its trailer counsel's. `git merge-base --is-ancestor 32df5f10 HEAD; echo $?` prints `1`: counsel's own commit of that change is not in this branch. If the log prints more than the one line, an earlier session of this template began the work: re-create below only the commits that are not yet there, in the same order. If the first line is not a commit by author `counsel` that changes `SPEC.md` and `judge/scope.json` and nothing else (`git show --stat --format=%an <its hash>`), stop and report.
+
+**The re-creation.** `git log --no-merges --reverse --format='%h %s' 32df5f10..origin/builder-c2a-prime-rebuild` prints the builder's nine commits, oldest first: `fe03d04e`, `f5667a6e`, `6b90e3d3`, `9cb3b1f0`, `243550ed`, `47e17c3e`, `717f6340`, `5802cf10`, `7497e633`. If it prints any other list, stop and report it. Then, in one command: `git cherry-pick fe03d04e f5667a6e 6b90e3d3 9cb3b1f0 243550ed 47e17c3e 717f6340 5802cf10 7497e633`. Each new commit keeps its author, its message and its `Proposer:` trailer; you add nothing to them. A conflict is a stop: `git cherry-pick --abort`, report the files, push nothing. You resolve nothing by hand.
+
+**Checks. Each must print what is stated, or you push nothing and report it.**
+1. `git diff --stat HEAD origin/builder-c2a-prime-rebuild -- sim harness tests tools pins judge kernel kernel2 SPEC.md` prints nothing: on those paths your tree is the tree that was built.
+2. `git log --reverse --format='%an | %(trailers:key=Proposer,valueonly,separator=%x20) | %s' origin/main..HEAD` prints ten lines: the trusted-base commit first, then nine with a `builder` trailer, their subjects those of the nine commits listed above, in that order.
+3. `git merge-base --is-ancestor 32df5f10 HEAD; echo $?` prints `1`.
+4. `ulimit -v 4194304; python3 -m unittest discover -s tests -t .` — every test passes.
+5. `python3 -c 'import subprocess; from judge.judge import counted_lines; print(counted_lines(".", subprocess.check_output(["git","rev-parse","HEAD"]).decode().strip(), ["sim/","harness/","tests/","pins/","tools/"]))'` prints at most **8230**.
+
+**Push.** `git push origin builder-c2a-prime-3` — never forced. If the push is refused, report what it printed and stop.
+
+**Your report** is your final message; the runner posts it on this issue, and you run no `gh issue comment`. Its first line is `RE-CREATED: nine commits on builder-c2a-prime-3 at <head>` or `NOT RE-CREATED: <why>`. Then: the words of the sovereign's entry you quoted; the nine new hashes, each beside the hash it re-creates; what each of the five checks printed (the pins are run on this tree by the reviewer's session, which follows); and that you changed no file by hand, or which you did.
