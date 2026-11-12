@@ -282,6 +282,66 @@ class Jack(unittest.TestCase):
         self.refused(self.jack("decision", "wish", "x"), "KIND must be one of")
         self.refused(self.jack("decision", "veto", ""), "SUBJECT must be a non-empty string")
 
+    def test_decision_promote_names_committed_table(self):
+        csv, path = "repo,time_hkt,class,kind,ref,note\n", "transcripts/evidence/acts-c2a2.csv"
+        scope = {"counted": ["tests/"], "cap": 6900, "layer": "C1b", "paths": ["tests/", "tools/", "transcripts/"], "parties": {}}
+        for rel in ("tools/status.py", "tools/value.py", "tools/enforcement.json"):
+            shutil.copy2(os.path.join(ROOT, rel), os.path.join(self.repo, rel))
+        for rel, txt in (("judge/scope.json", json.dumps(scope)), ("SPEC.md", f"at C1 it is:\n```\n{json.dumps(scope)}\n```\n"),
+                         ("tests/test_clerk.py", "# attack\n"), ("transcripts/acts.csv", csv),
+                         ("transcripts/evidence/sub/acts.csv", csv), ("transcripts/evidence/acts.txt", csv)):
+            write(os.path.join(self.repo, rel), txt)
+        self.commit("README.md", "setup\n")
+        chk, lg = commit_digest(self.repo, "HEAD"), build.Log()
+        lg.add("genesis", "guy", build.genesis_body([build.decl("guy-master", "guy", self.w.guy, build.ALL)],
+               charter=gitfix.CHARTER_SHA256, checker=chk), self.w.guy, ts="2026-10-31T11:00:00Z")
+        for k_id, who, k in (("counsel-1", "counsel", self.w.parties["counsel"]), ("herald-2", "herald", self.w.herald)):
+            lg.add("key", "guy", build.decl(k_id, who, k, build.ALL), self.w.guy, ts="2026-10-31T11:00:00Z")
+        lg.add("forecast", "counsel", {"claim": "l0", "p": 500, "resolves_by": "2026-11-03T00:00:00Z", "args": {"id": "L0"}},
+               self.w.parties["counsel"], ts="2026-10-31T11:01:00Z")
+        op = json.loads(lg.add("decision", "guy", {"kind": "promote", "subject": "C1a"}, self.w.guy, ts="2026-10-31T11:02:00Z"))["seq"]
+        for _ in range(9):
+            f = json.loads(lg.add("forecast", "counsel", {"claim": "c", "p": 500, "resolves_by": "2026-11-03T00:00:00Z",
+                                  "type": "world.fixture"}, self.w.parties["counsel"], ts="2026-10-31T12:00:00Z"))["seq"]
+            lg.add("resolution", "herald", {"forecast": f, "outcome": 1, "evidence": "run"}, self.w.herald, ts="2026-10-31T12:00:00Z")
+            lg.add("merge", "herald", {"proposal": op, "commit": "a" * 40, "checker": chk}, self.w.herald, ts="2026-10-31T12:00:00Z")
+        write(os.path.join(self.repo, "log.jsonl"), lg.text())
+        h_commit = self.commit(path, csv)
+        self.git("push", "-qf", "origin", "main")
+        green = {"path": ".github/workflows/tests.yml", "event": "push", "head_branch": "main", "head_sha": h_commit,
+                 "conclusion": "success", "updated_at": "2026-10-31T11:59:59Z"}
+        self.gh((["api"], 0, json.dumps([{"workflow_runs": [green]}]) + "\n"))
+        now_patch, before_len = "jack.entry.now = lambda: '2026-10-31T12:30:00Z'; ", len(self.entries())
+        for bad in ("transcripts/acts.csv", "./" + path, "transcripts/evidence/sub/acts.csv", "transcripts/evidence/acts.txt",
+                    "transcripts/evidence/missing.csv", ""):
+            self.refused(self.jack("decision", "promote", "C1b", "--acts", bad, patch=now_patch), "--acts")
+            self.assertEqual((self.git("rev-parse", "HEAD"), self.remote(), len(self.entries())), (h_commit, h_commit, before_len))
+        untracked = "transcripts/evidence/untracked.csv"
+        write(os.path.join(self.repo, untracked), csv)
+        self.refused(self.jack("decision", "promote", "C1b", "--acts", untracked, patch=now_patch), "not clean")
+        write(os.path.join(self.repo, ".git/info/exclude"), untracked + "\n")
+        self.refused(self.jack("decision", "promote", "C1b", "--acts", untracked, patch=now_patch), "blob in HEAD")
+        os.remove(os.path.join(self.repo, untracked))
+        self.assertEqual(len(self.entries()), before_len)
+        write(os.path.join(self.repo, path), csv + "renavondata/jack,2026-10-31 20:10,repair,fix,1,x\n")
+        self.refused(self.jack("decision", "promote", "C1b", "--acts", path, patch=now_patch), "not clean")
+        self.git("update-index", "--assume-unchanged", path)
+        self.refused(self.jack("decision", "promote", "C1b", "--acts", path, patch=now_patch), "blob in HEAD")
+        self.git("update-index", "--no-assume-unchanged", path)
+        self.git("checkout", "--", path)
+        self.assertEqual((self.git("rev-parse", "HEAD"), self.remote(), len(self.entries())), (h_commit, h_commit, before_len))
+        self.admitted(self.jack("decision", "promote", "C1b", "--acts", path, patch=now_patch))
+        prom_sha, entries = self.git("rev-parse", "HEAD"), self.entries()
+        self.assertEqual((self.git("rev-parse", "HEAD^"), self.remote(), len(entries)), (h_commit, prom_sha, before_len + 1))
+        self.assertEqual((entries[-1]["type"], entries[-1]["proposer"], entries[-1]["body"]),
+                         ("decision", "guy", {"kind": "promote", "subject": "C1b",
+                                              "acts": {"path": path, "sha256": hashlib.sha256(csv.encode()).hexdigest(), "commit": h_commit}}))
+        write(runs_file := os.path.join(self.tmp.name, "runs.json"), json.dumps([green]))
+        st = subprocess.run([sys.executable, "tools/status.py", "--subject", "C1b", "--runs", runs_file, "--acts", path,
+                             "--as-of", "2026-10-31T12:30:00Z"], cwd=self.repo, capture_output=True, text=True, check=True).stdout
+        self.assertEqual([ln for ln in st.splitlines() if "sovereign REPAIR" in ln and "promote C1b" in ln], [])
+        self.assertEqual(st.splitlines()[-1], "promote C1b: lawful")
+
     # jack key
 
     def test_key_admitted_and_revocation(self):
