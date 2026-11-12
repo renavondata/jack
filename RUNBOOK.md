@@ -156,6 +156,15 @@ On `main`. KIND is one of `veto promote budget grant transmute fix`; SUBJECT a n
 `promote`, the layer). Entry: `decision` {kind, subject}. The judge admits a `decision` only from a key
 declared in genesis (SPEC §10.14).
 
+**`promote`.** The verb runs `tools/status.py` for the layer on `HEAD`, at the instant it will sign and
+with the `tests` runs GitHub lists, and refuses unless that prints `promote <layer>: lawful`. `--acts FILE`
+gives the status tool the acts table that criterion 7 reads. From C2a-prime's opening push, with `--acts`
+the verb also refuses unless FILE as given matches `transcripts/evidence/[A-Za-z0-9._-]+\.csv` whole and
+its bytes are the blob at that path in `HEAD`'s tree, and the entry's body has a third member, `acts`
+{path, sha256, commit}: the path as given, the SHA-256 of those bytes, and `HEAD`, the parent of the
+commit that carries the entry (BRIEF-C2a-prime, change 4, as its Amendment 7 states it). Without `--acts`
+the body is {kind, subject}.
+
 ## `jack amend ID FILE [--activate-at N]`
 
 On `main`. Refuses without a valid `decision` of kind `transmute` with subject ID in the log ("transmute
