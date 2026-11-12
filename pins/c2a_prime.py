@@ -4,8 +4,8 @@ import subprocess
 import sys
 
 
-def cases(root, *methods):
-    names = [f"tests.test_status.C2aPrimeTest.{method}" for method in methods]
+def cases(root, *methods, suite="tests.test_status.C2aPrimeTest"):
+    names = [f"{suite}.{method}" for method in methods]
     result = subprocess.run([sys.executable, "-E", "-s", "-m", "unittest", "-q", *names],
                             cwd=root, capture_output=True, text=True)
     assert result.returncode == 0, result.stdout + result.stderr
@@ -52,3 +52,7 @@ def window_fix_not_retroactive(root):
 
 def process_unchanged_from_opening(root):
     cases(root, "test_change_3_process_unchanged")
+
+
+def promote_names_committed_table(root):
+    cases(root, "test_decision_promote_names_committed_table", suite="tests.test_jack.Jack")

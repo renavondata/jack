@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 99
+EXPECTED = 100
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1100,6 +1100,11 @@ C2A_PRIME_PINS = [
                 'covered_assigns |= {sub.id for name in covered_funcs if name in defs for sub in ast.walk(defs[name])\n                                if isinstance(sub, ast.Name) and isinstance(sub.ctx, ast.Load) and sub.id in start_assigns}',
                 'covered_assigns = set()'),
         Mutant("tuple_read_at_head", "tools/status.py", 'c2 = set(read_c2_tuple(start_nodes))', 'c2 = set()')]),
+    Pin("promote_names_committed_table", c2a_prime.promote_names_committed_table, [
+        Mutant("committed_check_removed", "tools/jack", 'if tree_bytes(ROOT, head, a.acts) != acts_bytes:', 'if False:'),
+        Mutant("path_form_unchecked", "tools/jack", 'if not re.fullmatch(r"transcripts/evidence/[A-Za-z0-9._-]+\\.csv", a.acts):', 'if False:'),
+        Mutant("acts_left_out_of_body", "tools/jack",
+               'body["acts"] = {"path": a.acts, "sha256": hashlib.sha256(acts_bytes).hexdigest(), "commit": head}', 'pass')]),
 ]
 PINS += C2A_PRIME_PINS
 
