@@ -207,7 +207,7 @@ class C2aPrimeTest(SignedFixture):
     def test_real_log_before_first_fix(self):
         self.assertTrue({"second_window_from_the_end", "second_window_end_is_v5", "second_window_cap", "offlog_from_second_opening",
                          "promote_refused_before_end", "window_fix_is_decision", "window_fix_not_retroactive",
-                         "process_unchanged_from_opening"} <= set(st.VALUE_PINS))
+                         "process_unchanged_from_opening", "promote_names_committed_table"} <= set(st.VALUE_PINS))
         with open(os.path.join(st.ROOT, "log.jsonl")) as f:
             es = [json.loads(line) for line in f]
         prefix = es[:next((i for i, e in enumerate(es) if e["type"] == "decision" and e["body"].get("kind") == "fix"), len(es))]
