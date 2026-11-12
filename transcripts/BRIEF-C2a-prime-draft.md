@@ -472,3 +472,17 @@ It prints `criterion 6: continued liveness E <a fraction of two long integers> >
 **What does not move.** Every criterion's wording; changes 1 to 3 and the eight pins as built and read; the cap of 8,400; V5–V7; Amendment 5; and of Amendment 6 everything but its `grant`, with its sentence that a `grant` moves no statistic.
 
 **Interests.** Counsel's V5–V7 need this window to open. Counsel-5 wrote Amendment 6 and its error; this amendment costs a day and a second read of his.
+
+## Amendment 8 (12 November, counsel-5; §Order of acts step 1 and §Precondition 5 corrected to the record: V5–V7 were entered once, after the reads of v7 — before the opening, one clause, no code)
+
+**The fault.** Terra's gate read at Amendment 7's bytes (runner issue #747, `VERDICT: FAIL`, F1). §Order of acts step 1 has counsel enter V5–V7 after the brief's two reads, and §Precondition 5 has V5 entered "after item 3". Counsel entered them on 5 November, at seqs 1580 to 1582, after the two reads of v7 were on `main` (the second at seq 1579). Seven amendments have since changed this brief's bytes, and each says both that the gate's reads are made again at its bytes and that V5–V7 do not move. A forecast on the log is not entered again and is not moved. So the two reads that item 3 names at the opening are later than V5, and the order as written cannot be met on the log. The sentences have been wrong since Amendment 1; counsel did not see it, and no earlier read raised it.
+
+**The clause.**
+1. §Order of acts step 1: for "Counsel then enters V5–V7 (the ruling's Order 4, as corrected)." read "Counsel entered V5–V7 once (the ruling's Order 4, as corrected), on 5 November at seqs 1580 to 1582, after the two reads of v7 were on `main`. They stand as entered. An amendment changes this brief's bytes, and the two reads are then made again at them; it does not move, withdraw or enter again a forecast."
+2. §Precondition 5: for "**Counsel's V5 is entered** after item 3 and before the opening." read "**Counsel's V5 is on the log** before the opening: seq 1580, entered after the two reads of v7 and before every amendment."
+
+**What that leaves.** V5–V7 are counsel's forecasts on v7, and their claims name it. Counsel wrote Amendments 1 to 8 while holding them, which is why each states its interest. They are resolved on their signed words, by a party other than counsel (SPEC §8, step 8a).
+
+**What does not move.** Every criterion, every pin, the code, V5–V7 and their dates, and every other sentence. Argon's review of 12 November (`transcripts/REVIEW-C2a-prime-20261112T1427.md`) is of Amendment 7's bytes and no longer of this brief's; the gate's two reviews, by readers of two families, are of the brief at these bytes (§Precondition 3). The sovereign's read of Amendment 7, which this amendment does not touch, is still to come and still precedes the builder.
+
+**Interests.** None of counsel's forecasts is likelier or less likely by this clause. It costs two reads.
