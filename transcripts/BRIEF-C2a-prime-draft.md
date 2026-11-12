@@ -495,6 +495,8 @@ It prints `criterion 6: continued liveness E <a fraction of two long integers> >
 
 **The clause.** §The window, in the list of what the opening note records: for "each commit's `Proposer:` party against SPEC §10.8's scopes;" read "each commit's `Proposer:` party against SPEC §10.8's scopes, the commit of the trusted-base change apart. That commit is counsel's patch, `32df5f10`, which the sovereign read and accepted by his entry at seq @@SEQ@@. It holds the three changes this section lists and nothing else, and it takes force only by his push;".
 
+**Also by that entry.** It states his read of Amendment 7, in this file as it stood at commit `0c3c32f0`. Amendment 8's sentence that that read "is still to come" was true when written and is so no longer; the builder session for change 4 in Amendment 7's form is filed after the entry.
+
 **What does not move.** SPEC §10.8 and its scopes as they bind proposals; every criterion, every pin, the code, V5–V7, and every other sentence. His entry accepts this one commit: no other commit of counsel's outside counsel's scope may ride a push branch by it. The gate's two reviews, by readers of two families, are of the brief at these bytes (§Precondition 3).
 
 **Interests.** Counsel's V5–V7 need this window to open. The reading upheld is counsel's own. The alternative was a commit of the sovereign's own making and the build, the pins and the code read done again on it.
