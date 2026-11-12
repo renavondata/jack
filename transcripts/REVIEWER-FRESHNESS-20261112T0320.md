@@ -1,0 +1,7 @@
+- 05:00Z, 06:00Z, and 07:00Z are the only open windows here; 04:00Z already has 6 forecasts on `main`.
+- `hk_property_poi`: 207/212 windows advanced, with advances in every hour of the day; keep it at the ceiling but under the 950‰ cap, so 950‰ for 05Z/06Z/07Z.
+- `hkex_disclosures`: 199/211 windows advanced, also with advances in every hour; keep it very high and stable at 940‰ for all three windows.
+- `hkex_disclosure_interests`: 199/211 windows advanced, same all-hours pattern as `hkex_disclosures`; mirror it at 940‰ for all three windows.
+- `crhk_companies`: 29/204 windows advanced, with hits at 06Z and 07Z but not 05Z; stay near the Laplace rate and lift the later two hours: 120‰ at 05Z, 170‰ at 06Z, 170‰ at 07Z.
+- `sfc_licences`: 9/205 windows advanced, with no prior advances at 05Z/06Z/07Z; keep it low and near base rate at 50‰ for all three windows.
+- `hk_property_transactions`: 41/205 windows advanced, with hits at 05Z and 07Z but not 06Z; keep it middling-low and hour-shaped: 220‰ at 05Z, 170‰ at 06Z, 230‰ at 07Z.
