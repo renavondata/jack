@@ -1,0 +1,128 @@
+[
+  {
+    "forecast": 3981,
+    "dataset": "hkex_disclosures",
+    "url": "https://renavon.com/data/hkex/disclosures",
+    "sha256": "5d8c41ffd80f747bd78ed88e484b75d0db17847cf960e92606dd94b5890a6772",
+    "fetched_at": "2026-11-13T00:12:53Z",
+    "last_updated": "12 November, 2026 (36 minutes ago)",
+    "last_updated_utc": "2026-11-12T23:34:51Z",
+    "window_utc": [
+      "2026-11-12T20:00:00Z",
+      "2026-11-12T21:00:00Z"
+    ],
+    "outcome": 1
+  },
+  {
+    "forecast": 3982,
+    "dataset": "hkex_disclosure_interests",
+    "url": "https://renavon.com/data/hkex/disclosure_interests",
+    "sha256": "4670c2ca5181be6d0fbd0a60a113fa3f3016c01ac2b1971f425cac3b89c75d24",
+    "fetched_at": "2026-11-13T00:12:53Z",
+    "last_updated": "12 November, 2026 (42 minutes ago)",
+    "last_updated_utc": "2026-11-12T23:28:51Z",
+    "window_utc": [
+      "2026-11-12T20:00:00Z",
+      "2026-11-12T21:00:00Z"
+    ],
+    "outcome": 1
+  },
+  {
+    "forecast": 3984,
+    "dataset": "sfc_licences",
+    "url": "https://renavon.com/data/sfc/licences",
+    "sha256": "1da8e9f29bed56b6444dabb1311b527c632e9a69b47c2182942288b4f46b17f1",
+    "fetched_at": "2026-11-13T00:12:53Z",
+    "last_updated": "12 November, 2026 (19 hours ago)",
+    "last_updated_utc": "2026-11-12T05:10:51Z",
+    "window_utc": [
+      "2026-11-12T20:00:00Z",
+      "2026-11-12T21:00:00Z"
+    ],
+    "outcome": 0
+  },
+  {
+    "forecast": 4023,
+    "dataset": "hk_property_poi",
+    "url": "https://renavon.com/data/property/hk_property_poi",
+    "sha256": "17ec4f6c2c282edfb3f2c3b1513a1bce608487ccc6a91329afb9eee4becbb760",
+    "fetched_at": "2026-11-13T00:12:53Z",
+    "last_updated": "12 November, 2026 (36 minutes ago)",
+    "last_updated_utc": "2026-11-12T23:34:51Z",
+    "window_utc": [
+      "2026-11-12T23:00:00Z",
+      "2026-11-13T00:00:00Z"
+    ],
+    "outcome": 1
+  },
+  {
+    "forecast": 4024,
+    "dataset": "hkex_disclosures_hkex",
+    "url": "https://renavon.com/data/hkex/hkex_disclosures",
+    "sha256": "f36f040176cc0a95bc187a0a454f980a479dbabb8ca02c2ece5533223b90b89b",
+    "fetched_at": "2026-11-13T00:12:53Z",
+    "last_updated": "12 November, 2026 (42 minutes ago)",
+    "last_updated_utc": "2026-11-12T23:28:51Z",
+    "window_utc": [
+      "2026-11-12T23:00:00Z",
+      "2026-11-13T00:00:00Z"
+    ],
+    "outcome": 1
+  },
+  {
+    "forecast": 4025,
+    "dataset": "hkex_disclosure_interests_hkex",
+    "url": "https://renavon.com/data/hkex/hkex_disclosure_interests",
+    "sha256": "d2c2b7770045b8ad555a88cffa612d2b4d1cd36f0f6ffbd59b43e6e6edda7175",
+    "fetched_at": "2026-11-13T00:12:53Z",
+    "last_updated": "12 November, 2026 (42 minutes ago)",
+    "last_updated_utc": "2026-11-12T23:28:51Z",
+    "window_utc": [
+      "2026-11-12T23:00:00Z",
+      "2026-11-13T00:00:00Z"
+    ],
+    "outcome": 1
+  },
+  {
+    "forecast": 4026,
+    "dataset": "crhk_companies",
+    "url": "https://renavon.com/data/crhk/crhk_companies",
+    "sha256": "ef995d1205e60c2edcc412b907896c675f2c7d2b8cb8917f2518061c8358fc66",
+    "fetched_at": "2026-11-13T00:12:53Z",
+    "last_updated": "12 November, 2026 (1 hour ago)",
+    "last_updated_utc": "2026-11-12T23:10:51Z",
+    "window_utc": [
+      "2026-11-12T23:00:00Z",
+      "2026-11-13T00:00:00Z"
+    ],
+    "outcome": 1
+  },
+  {
+    "forecast": 4027,
+    "dataset": "hk_property_transactions",
+    "url": "https://renavon.com/data/property/hk_property_transactions",
+    "sha256": "40cea17f060d423970c4afacc35c754d90869c59b001b81afeb551bbffdef811",
+    "fetched_at": "2026-11-13T00:12:53Z",
+    "last_updated": "12 November, 2026 (42 minutes ago)",
+    "last_updated_utc": "2026-11-12T23:28:51Z",
+    "window_utc": [
+      "2026-11-12T23:00:00Z",
+      "2026-11-13T00:00:00Z"
+    ],
+    "outcome": 1
+  },
+  {
+    "forecast": 4028,
+    "dataset": "sfc_licences_sfc",
+    "url": "https://renavon.com/data/sfc/sfc_licences",
+    "sha256": "a2ec740b28cf1a3dd0c6a56c040adbbedb7f149c1e3a25f4de05ca7f04fa44f3",
+    "fetched_at": "2026-11-13T00:12:53Z",
+    "last_updated": "12 November, 2026 (19 hours ago)",
+    "last_updated_utc": "2026-11-12T05:10:51Z",
+    "window_utc": [
+      "2026-11-12T23:00:00Z",
+      "2026-11-13T00:00:00Z"
+    ],
+    "outcome": 0
+  }
+]
