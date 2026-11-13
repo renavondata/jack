@@ -17,15 +17,19 @@ Branch `opening-c2a-prime-3`, head `ced344f9363ce9149e97044027107317b14a4c69`.
   `KILLED 147, SURVIVED 0, STALE 0, TWIN FAILED 0` (#769).
 - **Each commit's party, against SPEC §10.8's scopes**, the trusted-base commit apart:
 
-  | commit | author / committer | `Proposer:` | paths | |
+  | commit | author / committer, as git prints them | `Proposer:` | paths | |
   |---|---|---|---|---|
   | `43df79af` | counsel / Guy Freeman | counsel | `SPEC.md`, `judge/scope.json` | the trusted-base change: counsel's patch, applied by the sovereign's own hand (seqs 4016, 4017) |
-  | `269cc512`, `4c1f9c97`, `0d9c5e8b`, `25274da0`, `a30a6a3b`, `74b0b074` | session on the runner | builder (#697) | `tools/status.py`, `tests/test_status.py` | builder's scope; changes 1 to 3 |
-  | `1db53f43`, `4966d9ff` | session on the runner | builder (#733) | `tools/jack`, `tools/status.py`, `tests/` | builder's scope; change 4 in Amendment 6's form |
-  | `c788e8aa` | session on the runner | builder (#758) | `tools/jack`, `tests/test_jack.py` | builder's scope; change 4 in Amendment 7's form, the form of the tree |
-  | `33ee227a` | session on the runner | reviewer (#769) | none | the merge of the builder's branch into the reviewer's |
-  | `64f7d294`, `5f2a94b9` | session on the runner | reviewer (#703, #769) | `pins/c2a_prime.py`, `pins/pins.py` | reviewer's scope; the eight pins and the ninth |
-  | `ced344f9` | session on the runner | reviewer (#770) | `transcripts/REVIEW-C2a-prime-code.md` | reviewer's scope |
+  | `269cc512`, `4c1f9c97`, `0d9c5e8b`, `25274da0`, `a30a6a3b`, `74b0b074` | Guy Freeman / Guy Freeman | builder (#697) | `tools/status.py`, `tests/test_status.py` | builder's scope; changes 1 to 3 |
+  | `1db53f43`, `4966d9ff` | Guy Freeman / Guy Freeman | builder (#733) | `tools/jack`, `tools/status.py`, `tests/` | builder's scope; change 4 in Amendment 6's form |
+  | `c788e8aa` | Guy Freeman / Guy Freeman | builder (#758) | `tools/jack`, `tests/test_jack.py` | builder's scope; change 4 in Amendment 7's form, the form of the tree |
+  | `33ee227a` | Guy Freeman / Guy Freeman | reviewer (#769) | none | the merge of the builder's branch into the reviewer's |
+  | `64f7d294`, `5f2a94b9` | Guy Freeman / Guy Freeman | reviewer (#703, #769) | `pins/c2a_prime.py`, `pins/pins.py` | reviewer's scope; the eight pins and the ninth |
+  | `ced344f9` | Guy Freeman / Guy Freeman | reviewer (#770) | `transcripts/REVIEW-C2a-prime-code.md` | reviewer's scope |
+
+  Sessions on the runner commit under the runner's git identity, which is the sovereign's name; the party of
+  such a commit is in its trailer. Only the first commit is of his own hand (seq 4017). In the second, third
+  and sixth rows the paths are those of the row's commits together.
 
   The nine builder commits are the re-creation, by one `git cherry-pick`, of the nine built on
   `builder-c2a-prime-rebuild` (`git range-diff` pairs each with its original by `=`; #766). The thirteen
@@ -60,12 +64,14 @@ It checks for itself that:
   an hour; it may be left running;
 - the log holds seven `push` entries, the last at seq 367, and no `decision promote C2a`;
 - the branch head is the commit named above. It makes the push's worktree and checks this before it enters
-  anything.
+  anything;
+- the verb's own read gate passes: it runs `push_read_gate` from `tools/jack`, which reads and writes nothing
+  else, so that a review gone stale or overwritten stops the paste before the `grant` and not after the `fix`.
 
 Counsel's V5–V7 have been on `main` since 5 November (seqs 1580 to 1582).
 
 ```
-cd ~/git/jack && git switch main && [ "$(date -u +%s)" -gt 1794916800 ] && until [ "$(gh api 'repos/renavondata/jack/pulls?state=open&per_page=100' --jq 'map(select(.number!=125 and .number!=316 and .number!=562))|length')" = 0 ] && [ "$(date -u +%M)" -ge 40 ]; do echo "waiting: a proposal is open, or the minute is before 40"; sleep 30; done && git pull --ff-only && [ "$(grep -c '"type":"push"' log.jsonl)" = 7 ] && ! grep -q '"kind":"promote","subject":"C2a"' log.jsonl && git fetch origin && git worktree add -b opening-c2a-prime-3-push ~/git/worktrees/jack/opening-c2a-prime-3-push origin/opening-c2a-prime-3 && [ "$(git -C ~/git/worktrees/jack/opening-c2a-prime-3-push rev-parse HEAD)" = ced344f9363ce9149e97044027107317b14a4c69 ] && tools/jack decision grant "GitHub App renavondata-jack-court[bot]: the court's platform acts on renavondata/jack (opencode-runner #227), in force since 2026-11-04T05:40Z" && tools/jack decision fix "C2a: criterion 7 unmet at the stated end — nine off-log repair rows (acts-20261103T2144); the court's platform acts moved to a GitHub App (opencode-runner #227)" && git fetch origin && git -C ~/git/worktrees/jack/opening-c2a-prime-3-push merge --no-ff --no-edit origin/main -m "merge: main into the opening branch of C2a-prime, after the grant and the fix" -m "Proposer: guy guy-master" && tools/jack push opening-c2a-prime-3-push --opens C2a-prime --review ~/git/worktrees/jack/opening-c2a-prime-3-push/transcripts/REVIEW-C2a-prime-code.md || echo "Stopped. Send counsel everything printed above before pasting anything again."
+cd ~/git/jack && git switch main && [ "$(date -u +%s)" -gt 1794916800 ] && until [ "$(gh api 'repos/renavondata/jack/pulls?state=open&per_page=100' --jq 'map(select(.number!=125 and .number!=316 and .number!=562))|length')" = 0 ] && [ "$(date -u +%M)" -ge 40 ]; do echo "waiting: a proposal is open, or the minute is before 40"; sleep 30; done && git pull --ff-only && [ "$(grep -c '"type":"push"' log.jsonl)" = 7 ] && ! grep -q '"kind":"promote","subject":"C2a"' log.jsonl && git fetch origin && git worktree add -b opening-c2a-prime-3-push ~/git/worktrees/jack/opening-c2a-prime-3-push origin/opening-c2a-prime-3 && [ "$(git -C ~/git/worktrees/jack/opening-c2a-prime-3-push rev-parse HEAD)" = ced344f9363ce9149e97044027107317b14a4c69 ] && python3 -c 'import runpy; runpy.run_path("tools/jack")["push_read_gate"]("opening-c2a-prime-3-push", "C2a-prime")' && tools/jack decision grant "GitHub App renavondata-jack-court[bot]: the court's platform acts on renavondata/jack (opencode-runner #227), in force since 2026-11-04T05:40Z" && tools/jack decision fix "C2a: criterion 7 unmet at the stated end — nine off-log repair rows (acts-20261103T2144); the court's platform acts moved to a GitHub App (opencode-runner #227)" && git fetch origin && git -C ~/git/worktrees/jack/opening-c2a-prime-3-push merge --no-ff --no-edit origin/main -m "merge: main into the opening branch of C2a-prime, after the grant and the fix" -m "Proposer: guy guy-master" && tools/jack push opening-c2a-prime-3-push --opens C2a-prime --review ~/git/worktrees/jack/opening-c2a-prime-3-push/transcripts/REVIEW-C2a-prime-code.md || echo "Stopped. Send counsel everything printed above before pasting anything again."
 ```
 
 **Notes on the paste.**
@@ -74,9 +80,14 @@ cd ~/git/jack && git switch main && [ "$(date -u +%s)" -gt 1794916800 ] && until
   one.
 - The local branch is named `opening-c2a-prime-3-push` so that it does not collide with a branch the runner
   has checked out.
-- If it stops before the `grant`, nothing has been entered. If it stops after the `fix`, the two `decision`
-  entries stand and the push has not been made: by the brief's §Stop and report if, counsel is told before
-  any other act.
+- If it stops before the `grant`, nothing has been entered. If it stops between the `grant` and the `fix`, the
+  `grant` stands alone: it records the App and moves nothing else. If it stops after the `fix`, the two
+  `decision` entries stand and the push has not been made: by the brief's §Stop and report if, counsel is told
+  before any other act. After the `fix` the push can still be refused at the merge, at the verb's own checks
+  or because `main` moved under it.
+- The paste makes a local branch and worktree, `opening-c2a-prime-3-push`, before it enters anything. If it
+  stops at any later step they remain, and a second paste would stop at that step; counsel sends the line
+  that removes them with whatever follows.
 
 ## 3. After the push
 
