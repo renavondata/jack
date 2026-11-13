@@ -102,10 +102,12 @@ cd ~/git/jack && git switch main && [ "$(gh api user --jq .login)" = gfrmin ] &&
 
 ## 3. After the push
 
-Counsel reads the status tool on the new `main` with its evidence: `python3 tools/status.py --subject C2a --runs <file>`,
-the file being the `tests` runs on `main` paged from GitHub at that moment (Amendment 3), and from the
-promotion on `--acts` naming the committed table. Without `--runs` it prints criteria 1 and 2 as short and
-liveness over no items. A rehearsal of 13 November on a copy
+Counsel reads the status tool on the new `main` with its evidence, as `jack decision promote` gives it:
+`python3 tools/status.py --subject C2a --run <run> --runs <runs>`. `<run>` is the `tests` run on `main` at its
+head commit, one JSON object, which alone witnesses criteria 1 and 2; `<runs>` is the list of `tests` runs on
+`main` paged from GitHub at that moment (Amendment 3), which the attack gate and liveness read; from the
+promotion on, `--acts` names the committed table. Without `--run` criteria 1 and 2 print as short, and
+without `--runs` liveness is read over no items. A rehearsal of 13 November on a copy
 of the log (COUNSEL-OPEN row 62; simulated entries, so it tested the status tool and not the verbs) printed
 what the brief predicts, and showed what follows.
 
@@ -129,8 +131,9 @@ what the brief predicts, and showed what follows.
 
   The verb refuses unless the status line reads `lawful` and the file is the one committed at `HEAD`
   (Amendment 7). Between the opening and that paste the sovereign does nothing on GitHub under his own
-  login but the pastes. The classifier types many such acts as `repair` (a merge, a label, a closed pull
-  request, a re-run), others as decisions or comments; one `repair` row makes promotion impossible, and the
+  login but the pastes. The classifier types many such acts as `repair` (a label added or removed, a pull
+  request closed unmerged, a second approval, a dispatch or a re-run of a workflow), others as decisions or
+  comments; one `repair` row makes promotion impossible, and the
   window then fails at its stated end (§Stop and report if).
 - **What the table does not see.** The classifier lists the workflow runs created inside the interval it is
   given, so a re-run inside the window of a run created before the opening is not collected (found on 13
