@@ -64,12 +64,16 @@ The window opens at this push's `ts` and ends at V5's `resolves_by`, `2026-11-30
 
 One paste, on the machine that holds the sovereign's key. It stops at the first line that fails and says so.
 It checks for itself that:
+- the login on this machine works: GitHub answers `gfrmin` (on 13 November it had stopped working for three
+  hours; if this check fails, run `gh auth login -h github.com -w -s workflow` and paste again);
 - it is after `2026-11-17T12:00:00Z`;
 - no proposal is open on `renavondata/jack` (the three standing pull requests #125, #316 and #562 apart: none
   of them is a proposal that can merge), and the minute is 40 or later, so that the next batch cannot merge
-  before the push has landed. It prints `waiting` every thirty seconds until both hold, which can take up to
-  an hour; it may be left running;
-- the log holds seven `push` entries, the last at seq 367, and no `decision promote C2a`;
+  before the push has landed. It prints `waiting` every thirty seconds until both hold. After 120 tries, an
+  hour, it stops and says so, having entered nothing; a call to GitHub that fails inside the wait counts as a
+  try;
+- the log holds seven `push` entries, the last at seq 367, and no `decision promote C2a`, read entry by entry
+  as JSON;
 - the branch head is the commit named above. It makes the push's worktree and checks this before it enters
   anything;
 - the verb's own read gate passes: it runs `push_read_gate` from `tools/jack`, which reads and writes nothing
@@ -78,7 +82,7 @@ It checks for itself that:
 Counsel's V5–V7 have been on `main` since 5 November (seqs 1580 to 1582).
 
 ```
-cd ~/git/jack && git switch main && [ "$(date -u +%s)" -gt 1794916800 ] && until [ "$(gh api 'repos/renavondata/jack/pulls?state=open&per_page=100' --jq 'map(select(.number!=125 and .number!=316 and .number!=562))|length')" = 0 ] && [ "$(date -u +%M)" -ge 40 ]; do echo "waiting: a proposal is open, or the minute is before 40"; sleep 30; done && git pull --ff-only && [ "$(grep -c '"type":"push"' log.jsonl)" = 7 ] && ! grep -q '"kind":"promote","subject":"C2a"' log.jsonl && git fetch origin && git worktree add -b opening-c2a-prime-3-push ~/git/worktrees/jack/opening-c2a-prime-3-push origin/opening-c2a-prime-3 && [ "$(git -C ~/git/worktrees/jack/opening-c2a-prime-3-push rev-parse HEAD)" = ced344f9363ce9149e97044027107317b14a4c69 ] && python3 -c 'import runpy; runpy.run_path("tools/jack")["push_read_gate"]("opening-c2a-prime-3-push", "C2a-prime")' && tools/jack decision grant "GitHub App renavondata-jack-court[bot]: the court's platform acts on renavondata/jack (opencode-runner #227), in force since 2026-11-04T05:40Z" && tools/jack decision fix "C2a: criterion 7 unmet at the stated end — nine off-log repair rows (acts-20261103T2144); the court's platform acts moved to a GitHub App (opencode-runner #227)" && git fetch origin && git -C ~/git/worktrees/jack/opening-c2a-prime-3-push merge --no-ff --no-edit origin/main -m "merge: main into the opening branch of C2a-prime, after the grant and the fix" -m "Proposer: guy guy-master" && tools/jack push opening-c2a-prime-3-push --opens C2a-prime --review ~/git/worktrees/jack/opening-c2a-prime-3-push/transcripts/REVIEW-C2a-prime-code.md || echo "Stopped. Send counsel everything printed above before pasting anything again."
+cd ~/git/jack && git switch main && [ "$(gh api user --jq .login)" = gfrmin ] && [ "$(date -u +%s)" -gt 1794916800 ] && n=0 && until [ "$((n+=1))" -gt 120 ] || { [ "$(gh api 'repos/renavondata/jack/pulls?state=open&per_page=100' --jq 'map(select(.number!=125 and .number!=316 and .number!=562))|length')" = 0 ] && [ "$(date -u +%M)" -ge 40 ]; }; do echo "waiting: a proposal is open, or the minute is before 40"; sleep 30; done && [ "$n" -le 120 ] && git pull --ff-only && python3 -c 'import json; E=[json.loads(l) for l in open("log.jsonl")]; assert [e["seq"] for e in E if e["type"]=="push"][-1:] == [367] and sum(e["type"]=="push" for e in E) == 7 and not any(e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject")=="C2a" for e in E)' && git fetch origin && git worktree add -b opening-c2a-prime-3-push ~/git/worktrees/jack/opening-c2a-prime-3-push origin/opening-c2a-prime-3 && [ "$(git -C ~/git/worktrees/jack/opening-c2a-prime-3-push rev-parse HEAD)" = ced344f9363ce9149e97044027107317b14a4c69 ] && python3 -c 'import runpy; runpy.run_path("tools/jack")["push_read_gate"]("opening-c2a-prime-3-push", "C2a-prime")' && tools/jack decision grant "GitHub App renavondata-jack-court[bot]: the court's platform acts on renavondata/jack (opencode-runner #227), in force since 2026-11-04T05:40Z" && tools/jack decision fix "C2a: criterion 7 unmet at the stated end — nine off-log repair rows (acts-20261103T2144); the court's platform acts moved to a GitHub App (opencode-runner #227)" && git fetch origin && git -C ~/git/worktrees/jack/opening-c2a-prime-3-push merge --no-ff --no-edit origin/main -m "merge: main into the opening branch of C2a-prime, after the grant and the fix" -m "Proposer: guy guy-master" && tools/jack push opening-c2a-prime-3-push --opens C2a-prime --review ~/git/worktrees/jack/opening-c2a-prime-3-push/transcripts/REVIEW-C2a-prime-code.md || echo "Stopped. Send counsel everything printed above before pasting anything again."
 ```
 
 **Notes on the paste.**
@@ -98,7 +102,10 @@ cd ~/git/jack && git switch main && [ "$(date -u +%s)" -gt 1794916800 ] && until
 
 ## 3. After the push
 
-Counsel reads `python3 tools/status.py --subject C2a` on the new `main`. A rehearsal of 13 November on a copy
+Counsel reads the status tool on the new `main` with its evidence: `python3 tools/status.py --subject C2a --runs <file>`,
+the file being the `tests` runs on `main` paged from GitHub at that moment (Amendment 3), and from the
+promotion on `--acts` naming the committed table. Without `--runs` it prints criteria 1 and 2 as short and
+liveness over no items. A rehearsal of 13 November on a copy
 of the log (COUNSEL-OPEN row 62; simulated entries, so it tested the status tool and not the verbs) printed
 what the brief predicts, and showed what follows.
 
@@ -106,10 +113,12 @@ what the brief predicts, and showed what follows.
   `tests` run at the push's commit is green.
 - **The promotion cannot be immediate.** A3.4 reads `procedure 0 : object 0` and `STOP` until the stream's
   entries fall inside the new window. In the rehearsal, twenty hours of batches gave 80 : 240.
-- **Expiries.** Five of counsel's forecasts expire at the opening, as Amendment 2 says (V0, V2, V3, RM-3, and
+- **Expiries.** Five of counsel's forecasts expire at the first entry after `2026-11-17T12:00:00Z`, normally
+  the `grant`, as Amendment 2 says (V0, V2, V3, RM-3, and
   V1 unless a resolver other than counsel has entered it). Four more expire at `2026-11-18T00:00:00Z` (X0, X2,
   X3 and X6, on C2b's exit, which will not exist by then), and N5 is due at 12:00Z that day. Each expiry
-  multiplies continued liveness by about 0.77, and each clean batch by about 1.2; criterion 6 needs 20.
+  multiplies continued liveness by about 0.77, and each clean batch by about 1.2 (the stakes change as the
+  record does, so the factors are approximate); criterion 6 needs 20.
 - **The acts evidence.** Counsel commits the raw and attributed tables of the window by a proposal (§The acts
   evidence), re-runs the attributed command once it has merged, and sends the promotion paste, which names
   the table:
@@ -120,10 +129,13 @@ what the brief predicts, and showed what follows.
 
   The verb refuses unless the status line reads `lawful` and the file is the one committed at `HEAD`
   (Amendment 7). Between the opening and that paste the sovereign does nothing on GitHub under his own
-  login: any such act is a `repair` row, and one row ends the window (§Stop and report if).
+  login but the pastes. The classifier types many such acts as `repair` (a merge, a label, a closed pull
+  request, a re-run), others as decisions or comments; one `repair` row makes promotion impossible, and the
+  window then fails at its stated end (§Stop and report if).
 - **What the table does not see.** The classifier lists the workflow runs created inside the interval it is
   given, so a re-run inside the window of a run created before the opening is not collected (found on 13
   November by a reader's trial; COUNSEL-OPEN row 65). The classifier may not change before the exit
   (§Refusal list). Before the promotion paste counsel also runs it from `2026-11-01T15:04:14Z` and reads the
   rows that fall inside the window; a `repair` row there goes to the sovereign before any promotion, and the
-  C2a report prints both tables.
+  C2a report prints both tables. This narrows the gap and does not close it: a run created before that
+  instant and re-run inside the window is still not collected, and the report says so.
