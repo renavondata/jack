@@ -43,8 +43,11 @@ The templates in this directory are procedure (the sovereign's ruling of 9 Novem
   `transcripts/REVIEW-<window>-code.md` on that branch for the sovereign's `--review` (RUNBOOK, `jack push`; C2a-prime's precedent);
   not proposed (the same placeholders; filed by counsel through the courier's template form).
 - `review-brief.md` — the reviewer's gate review of `transcripts/BRIEF-<window>-draft.md` for a window that has a brief and no
-  window file (C2a-prime, C2b): on PASS, `transcripts/REVIEW-<window>-<stamp>.md` proposed under the reviewer's key (placeholders
-  `{WINDOW}`, `{MODEL}`, `{BRANCH}`, `{STAMP}`, `{NOW}`; no texts list, so the courier needs no window file).
+  window file (C2a-prime, C2b): on PASS, `transcripts/REVIEW-<window>-<stamp>-<family>.md` proposed under the reviewer's key
+  (placeholders `{WINDOW}`, `{MODEL}`, `{BRANCH}`, `{STAMP}`, `{NOW}`; no texts list, so the courier needs no window file).
+- `review-reland.md` — a review already written by `{MODEL}` is re-landed byte for byte under a file name of its own, when
+  `main` does not hold it as the commit that added it left it (13 November: two reviews given one name, one written over the
+  other). One script, no read and no judgement; the same placeholders, and the session's own model is the template's.
 - `c2b-build.md`, `c2b-pins.md`, `c2b-code-review.md` — C2b's window code on its opening push (BRIEF-C2b Amendment 10 clause 5):
   counsel's base `push-c2b-base` is C2a-prime's opening branch with the two trusted-base changes in one commit (the precedent of
   `1c1b27f`); the builder merges it, integrates the pre-built code on `builder-c2b-push-2` and makes it say the amended criteria,

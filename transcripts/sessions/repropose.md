@@ -8,7 +8,7 @@ You are the **{PARTY}** (`JACK_KEY=~/.ssh/jack-{KEY}`, party `{PARTY}`), in the 
 
 PR #{N} (branch `{BRANCH}`, your own key's work) went stale: `main` gained entries before it merged and the herald's verb refused it as CONFLICTING. Nothing in it was wrong. Re-create it here, identically, on the current prefix.
 
-1. **Content.** `git fetch -q origin {BRANCH}`. List the stale branch's commits that are not entry commits: `git log --reverse --format=%H origin/main..origin/{BRANCH} -- . ':!log.jsonl'`. Cherry-pick each in that order (`git cherry-pick <sha>`); if a cherry-pick stops on `log.jsonl`, `git checkout --ours log.jsonl && git add log.jsonl && git cherry-pick --continue` — the entries are re-made below, never copied. After the picks, `git diff --stat origin/main` must show every file PR #{N} changed except `log.jsonl`.
+1. **Content.** `git fetch -q origin {BRANCH}`. List the stale branch's commits that are not entry commits: `git log --reverse --format=%H origin/main..origin/{BRANCH} -- . ':!log.jsonl'`. Cherry-pick each in that order (`git cherry-pick <sha>`); if a cherry-pick stops on `log.jsonl`, `git checkout --ours log.jsonl && git add log.jsonl && git cherry-pick --continue` — the entries are re-made below, never copied. If a cherry-pick stops on any other file, `main` and the stale branch both wrote it: run `git cherry-pick --abort`, propose nothing, and report the file's name. Never choose a side and never edit the file (on 13 November a re-proposal wrote one accepted review over another that had been given the same file name). After the picks, `git diff --stat origin/main` must show every file PR #{N} changed except `log.jsonl`.
 2. **Entries.** Print the stale branch's entries that are not on `main`:
    ```
    python3 - <<'EOF'
