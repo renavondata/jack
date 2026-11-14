@@ -287,9 +287,10 @@ erases); holder counsel; deadline the window's end. Evidence not supplied is unv
 **W5** — counsel's dated writs, the class that scores counsel's own obligations (BRIEF-C2b §Scope (b) and
 Amendments 6–8; on 8 November 2026 two of its rows, `c2a-report` and `runbook-c2b`, are past due and undone): every row of
 `transcripts/COUNSEL-DUE.jsonl`, `{"id", "due", "what", "done": null}`, is a writ held by counsel. W5 lands at
-the `ts` of the first `merge` on the prefix whose `commit` holds `tools/due.py`, after C2b's opening push and
-first under its cap; the file is seeded at the opening with every dated obligation of COUNSEL-OPEN and of
-BRIEF-C2b, and pin `w5_inventory` checks the seeded ids are present at every later tree. It is computed by
+the `ts` of the first `merge` on the prefix whose `commit` holds `tools/due.py`; with the code on C2b's opening
+push, that is the first merge after the push (BRIEF-C2b Amendment 11 clause 4). The seed is the file as `main`
+holds it at the opening push (Amendment 11 clause 3), and pin `w5_inventory` checks the seeded ids are present
+at every later tree. It is computed by
 `python3 tools/due.py [--rev R] [--as-of T] [--root DIR] [--inventory COMMIT]`, **not** by `tools/clerk.py`,
 and printed by `status.py` beside W1–W4. `--rev` names the commit whose file and `log.jsonl` are read (its
 parent's file for the append-only check); `--inventory COMMIT` fails with `W5: missing <id>` when an id seeded
