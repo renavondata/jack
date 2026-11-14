@@ -1,0 +1,734 @@
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-11-14T13:12:19Z
+
+exit status: 0
+
+$ git show 7814940b --format=fuller --stat
+commit 7814940b9bfc538959ba7ab000a2f4c6394fcd90
+Author:     Guy Freeman <guy@publicdatamarket.com>
+AuthorDate: Sun Nov 1 13:32:01 2026 +0200
+Commit:     Guy Freeman <guy@publicdatamarket.com>
+CommitDate: Sun Nov 1 13:32:01 2026 +0200
+
+    decision: promote C1b
+    
+    Proposer: guy guy-master
+
+ log.jsonl | 1 +
+ 1 file changed, 1 insertion(+)
+
+exit status: 0
+
+$ python3 tools/status.py --subject C1b --as-of 2026-11-01T11:31:58Z --runs transcripts/evidence/due-20261114T1310-180-runs.json --acts transcripts/evidence/acts-20261101.csv
+window C1b: 2026-10-31T10:42:10Z .. 2026-11-01T11:31:58Z (as of 2026-11-01T11:31:58Z; prefix to seq 337)
+criterion 1: pins and twins in verified tests run met
+criterion 2: checker agreement in verified tests run met
+criterion 3: counted 6882/6900; kernel 450/500; scope equals SPEC: True met
+criterion 4: attack green on main before first item: 2026-10-31T13:32:21Z met
+criterion 5: live E 214358881/8398080 >= 20; items 9; at promote E 214358881/8398080 met
+criterion 7: C1b enforcement map rows code met
+late-reported repairs: 0 met
+off-log repairs: 0 met
+criterion 6: veto on C1b: none met
+A3.4 ratio: procedure 67 : object 82; at promote 67 : 82 (maximum 5:1) met
+map A5: windows are maxima; exit at the crossing | code: tools/jack v_decision
+map W1: obligations from state and clock, with deadlines | code: tools/clerk.py forecast_writs
+map W3: the herald merges only on green CI | code: tools/clerk.py merge_writs
+map W4: window criteria and the procedure:object ratio | code: tools/status.py assess; tools/clerk.py window_writs
+map admission: trusted base unchanged except by push | code: judge in CI
+map elections: elections of proposers | hand: no witness yet; C2
+map irreversible: keys, pushes, settings gated by the sovereign | code: keys, rulesets
+map runner: no party acts except through entries; second checker for text | hand: sessions
+map validity: keys, chain, types, no self-judgement | code: kernel; two checkers
+J7: 0 of 48 window forecasts unresolved past resolves_by
+promote C1b: lawful
+
+exit status: 0
+
+$ gh run view 41299806101 -R renavondata/jack --log
+tests	UNKNOWN STEP	﻿2026-11-01T10:58:44.3418569Z Current runner version: '2.338.2'
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3444364Z ##[group]Runner Image Provisioner
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3445280Z Hosted Compute Agent
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3445890Z Version: 20261021.618
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3447107Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3447856Z Build Date: 2026-10-21T00:45:21Z
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3448591Z Worker ID: {649b9d0c-c9ed-45c7-8d9c-0626d2d9590f}
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3449326Z Region: westus2
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3449886Z Cloud: Azure
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3450515Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3452425Z ##[group]Operating System
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3453089Z Ubuntu
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3453731Z 24.04.5
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3454338Z LTS
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3454919Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3455507Z ##[group]Runner Image
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3456117Z Image: ubuntu-24.04
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3456759Z Version: 20261025.353.1
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3458074Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3459719Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3460757Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3462196Z ##[group]GITHUB_TOKEN Permissions
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3464214Z Contents: read
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3464965Z Metadata: read
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3465543Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3467879Z Secret source: Actions
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3468922Z Cache mode: write
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3469668Z Prepare workflow directory
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3834176Z Prepare all required actions
+tests	UNKNOWN STEP	2026-11-01T10:58:44.3887918Z Getting action download info
+tests	UNKNOWN STEP	2026-11-01T10:58:44.7416113Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+tests	UNKNOWN STEP	2026-11-01T10:58:44.8720181Z Download action repository 'actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97' (SHA:5fda3b95a4ea91299a34e894583c3862153e4b97)
+tests	UNKNOWN STEP	2026-11-01T10:58:45.0656055Z Complete job name: tests
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1580215Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1581349Z with:
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1582064Z   repository: renavondata/jack
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1585686Z   token: ***
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1586133Z   ssh-strict: true
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1586590Z   ssh-user: git
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1587052Z   persist-credentials: true
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1587548Z   clean: true
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1588010Z   sparse-checkout-cone-mode: true
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1588537Z   fetch-depth: 1
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1588985Z   fetch-tags: false
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1589443Z   show-progress: true
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1589910Z   lfs: false
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1590340Z   submodules: false
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1590799Z   set-safe-directory: true
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1591320Z   allow-unsafe-pr-checkout: false
+tests	UNKNOWN STEP	2026-11-01T10:58:45.1592317Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5008021Z Syncing repository: renavondata/jack
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5010490Z ##[group]Getting Git version info
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5011838Z Working directory is '/home/runner/work/jack/jack'
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5013040Z [command]/usr/bin/git version
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5146298Z git version 2.56.0
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5170407Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5182808Z Temporarily overriding HOME='/home/runner/work/_temp/1639f307-cf5d-484e-92eb-9386e811123e' before making global git config changes
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5185532Z Adding repository directory to the temporary git global config as a safe directory
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5197371Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/jack/jack
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5267189Z Deleting the contents of '/home/runner/work/jack/jack'
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5269705Z ##[group]Determining repository object format
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5272003Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5273828Z ##[group]Initializing the repository
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5275445Z [command]/usr/bin/git init /home/runner/work/jack/jack
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5434476Z hint: Using 'master' as the name for the initial branch. This default branch name
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5436576Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5437706Z hint: to use in all of your new repositories, which will suppress this warning,
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5438587Z hint: call:
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5439055Z hint:
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5439683Z hint: 	git config --global init.defaultBranch <name>
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5440410Z hint:
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5441061Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5442486Z hint: 'development'. The just-created branch can be renamed via this command:
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5443342Z hint:
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5443813Z hint: 	git branch -m <name>
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5444351Z hint:
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5445050Z hint: Disable this message with "git config set advice.defaultBranchName false"
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5456327Z Initialized empty Git repository in /home/runner/work/jack/jack/.git/
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5470143Z [command]/usr/bin/git remote add origin https://github.com/renavondata/jack
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5544895Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5546542Z ##[group]Disabling automatic garbage collection
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5547990Z [command]/usr/bin/git config --local gc.auto 0
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5577773Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5579534Z ##[group]Setting up auth
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5580619Z Removing SSH command configuration
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5585259Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+tests	UNKNOWN STEP	2026-11-01T10:58:45.5634275Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+tests	UNKNOWN STEP	2026-11-01T10:58:45.6097790Z Removing HTTP extra header
+tests	UNKNOWN STEP	2026-11-01T10:58:45.6103781Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+tests	UNKNOWN STEP	2026-11-01T10:58:45.6154846Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+tests	UNKNOWN STEP	2026-11-01T10:58:45.6410808Z Removing includeIf entries pointing to credentials config files
+tests	UNKNOWN STEP	2026-11-01T10:58:45.6426105Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+tests	UNKNOWN STEP	2026-11-01T10:58:45.6477710Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+tests	UNKNOWN STEP	2026-11-01T10:58:45.6752485Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-2c969717-3cc7-4c80-bfd8-912648a74158.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+tests	UNKNOWN STEP	2026-11-01T10:58:45.6810575Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/jack/jack/.git.path /home/runner/work/_temp/git-credentials-2c969717-3cc7-4c80-bfd8-912648a74158.config
+tests	UNKNOWN STEP	2026-11-01T10:58:45.6862078Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/jack/jack/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-2c969717-3cc7-4c80-bfd8-912648a74158.config
+tests	UNKNOWN STEP	2026-11-01T10:58:45.6913799Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-2c969717-3cc7-4c80-bfd8-912648a74158.config
+tests	UNKNOWN STEP	2026-11-01T10:58:45.6965504Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-2c969717-3cc7-4c80-bfd8-912648a74158.config
+tests	UNKNOWN STEP	2026-11-01T10:58:45.7013706Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:45.7015109Z ##[group]Fetching the repository
+tests	UNKNOWN STEP	2026-11-01T10:58:45.7020091Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +b8f08bf6ab1e072bc89de48fc7aabf7eff89166c:refs/remotes/origin/main
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1626143Z From https://github.com/renavondata/jack
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1627987Z  * [new ref]         b8f08bf6ab1e072bc89de48fc7aabf7eff89166c -> origin/main
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1638476Z [command]/usr/bin/git branch --list --remote origin/main
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1680547Z   origin/main
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1692180Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1730723Z b8f08bf6ab1e072bc89de48fc7aabf7eff89166c
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1736537Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1737767Z ##[group]Determining the checkout info
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1739379Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1742580Z [command]/usr/bin/git sparse-checkout disable
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1814808Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1862194Z ##[group]Checking out the ref
+tests	UNKNOWN STEP	2026-11-01T10:58:46.1866316Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+tests	UNKNOWN STEP	2026-11-01T10:58:46.2602222Z Switched to a new branch 'main'
+tests	UNKNOWN STEP	2026-11-01T10:58:46.2624494Z branch 'main' set up to track 'origin/main'.
+tests	UNKNOWN STEP	2026-11-01T10:58:46.2642507Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:46.2706701Z [command]/usr/bin/git log -1 --format=%H
+tests	UNKNOWN STEP	2026-11-01T10:58:46.2750390Z b8f08bf6ab1e072bc89de48fc7aabf7eff89166c
+tests	UNKNOWN STEP	2026-11-01T10:58:46.3184243Z ##[group]Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+tests	UNKNOWN STEP	2026-11-01T10:58:46.3186070Z with:
+tests	UNKNOWN STEP	2026-11-01T10:58:46.3186972Z   python-version: 3.12
+tests	UNKNOWN STEP	2026-11-01T10:58:46.3188009Z   check-latest: false
+tests	UNKNOWN STEP	2026-11-01T10:58:46.3197809Z   token: ***
+tests	UNKNOWN STEP	2026-11-01T10:58:46.3198788Z   update-environment: true
+tests	UNKNOWN STEP	2026-11-01T10:58:46.3199923Z   allow-prereleases: false
+tests	UNKNOWN STEP	2026-11-01T10:58:46.3201030Z   freethreaded: false
+tests	UNKNOWN STEP	2026-11-01T10:58:46.3202183Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4558489Z ##[group]Installed versions
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4629652Z Successfully set up CPython (3.12.15)
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4632443Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4811179Z ##[group]Run python3 -m unittest discover -s tests -t . -v
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4813468Z ^[[36;1mpython3 -m unittest discover -s tests -t . -v^[[0m
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4857406Z shell: /usr/bin/bash -e {0}
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4858548Z env:
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4859733Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4861876Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4863818Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4865542Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4867285Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4869045Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+tests	UNKNOWN STEP	2026-11-01T10:58:46.4870522Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T10:58:47.0626778Z test_duplicate_pubkey_is_bad_key (tests.test_check.Change.test_duplicate_pubkey_is_bad_key) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:47.0757376Z test_key_entry_cannot_govern_itself (tests.test_check.Change.test_key_entry_cannot_govern_itself) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:47.1294018Z test_key_entry_grants_and_revokes (tests.test_check.Change.test_key_entry_grants_and_revokes) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:47.2284171Z test_last_key_power_cannot_be_lost (tests.test_check.Change.test_last_key_power_cannot_be_lost) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:47.2682622Z test_last_key_rule_after_weakness_and_ownership (tests.test_check.Change.test_last_key_rule_after_weakness_and_ownership) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:47.2950551Z test_redeclaration_changes_principal_and_powers (tests.test_check.Change.test_redeclaration_changes_principal_and_powers) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:47.3398963Z test_revocation_does_not_reach_back (tests.test_check.Change.test_revocation_does_not_reach_back) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:47.3537567Z test_unsigned_change_is_no_power (tests.test_check.Change.test_unsigned_change_is_no_power) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:47.6357933Z test_weak_key_is_bad_key_at_declaration (tests.test_check.Change.test_weak_key_is_bad_key_at_declaration) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:47.6501841Z test_weak_key_without_power_is_no_power_first (tests.test_check.Change.test_weak_key_without_power_is_no_power_first) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:47.8833056Z test_ok_and_refused_and_usage (tests.test_check.Cli.test_ok_and_refused_and_usage) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:47.9126530Z test_undecodable_bytes (tests.test_check.Cli.test_undecodable_bytes) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:48.0594456Z test_admitted_ledger_and_its_state (tests.test_check.Ledger.test_admitted_ledger_and_its_state) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:48.5558034Z test_refusals_each_at_its_step (tests.test_check.Ledger.test_refusals_each_at_its_step) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:48.6821246Z test_timestamps_equal_or_later_are_admitted_earlier_is_ts_decreased (tests.test_check.Ledger.test_timestamps_equal_or_later_are_admitted_earlier_is_ts_decreased) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:48.7346205Z test_ts_decreased_is_step_2a_after_shape_before_seq (tests.test_check.Ledger.test_ts_decreased_is_step_2a_after_shape_before_seq) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:48.8508517Z test_activation_and_unique_id_are_schema_before_signature (tests.test_check.OpeningState.test_activation_and_unique_id_are_schema_before_signature) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:48.9073273Z test_genesis_state_and_forward_amendments (tests.test_check.OpeningState.test_genesis_state_and_forward_amendments) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.0753468Z test_new_types_require_power_and_allow_later_grants (tests.test_check.OpeningState.test_new_types_require_power_and_allow_later_grants) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.2337774Z test_push_transmute_and_no_effect_types (tests.test_check.OpeningState.test_push_transmute_and_no_effect_types) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.2835081Z test_bad_signature (tests.test_check.Signatures.test_bad_signature) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.2936432Z test_genesis_must_be_signed_by_its_own_key_with_genesis_power (tests.test_check.Signatures.test_genesis_must_be_signed_by_its_own_key_with_genesis_power) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.3320147Z test_history_rewritten (tests.test_check.Signatures.test_history_rewritten) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.3460677Z test_proposer_mismatch (tests.test_check.Signatures.test_proposer_mismatch) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.3597690Z test_reserved_bytes_are_bad_signature (tests.test_check.Signatures.test_reserved_bytes_are_bad_signature) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.3733180Z test_unknown_key (tests.test_check.Signatures.test_unknown_key) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.4116709Z test_bad_seq (tests.test_check.Structure.test_bad_seq) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.4256076Z test_body_schema (tests.test_check.Structure.test_body_schema) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.4566686Z test_empty_log_is_ok (tests.test_check.Structure.test_empty_log_is_ok) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.4567857Z test_fork_is_parent_mismatch (tests.test_check.Structure.test_fork_is_parent_mismatch) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.4667467Z test_genesis_alone (tests.test_check.Structure.test_genesis_alone) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.4858844Z test_genesis_misplaced (tests.test_check.Structure.test_genesis_misplaced) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.4955808Z test_malformed_and_noncanonical (tests.test_check.Structure.test_malformed_and_noncanonical) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.5222254Z test_merge_shape_only (tests.test_check.Structure.test_merge_shape_only) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.5387572Z test_no_proposer (tests.test_check.Structure.test_no_proposer) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.5847509Z test_only_ten_types (tests.test_check.Structure.test_only_ten_types) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.6033361Z test_parent_mismatch (tests.test_check.Structure.test_parent_mismatch) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.6924629Z test_prefix_property (tests.test_check.Structure.test_prefix_property) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.6976960Z test_shape (tests.test_check.Structure.test_shape) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:49.8819066Z test_batch_is_not_a_count_of_resolutions (tests.test_clerk.ClerkTest.test_batch_is_not_a_count_of_resolutions) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.0155956Z test_evidence_reuse_cannot_regroup_scored_items (tests.test_clerk.ClerkTest.test_evidence_reuse_cannot_regroup_scored_items) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.0370288Z test_exact_prequential_wealth (tests.test_clerk.ClerkTest.test_exact_prequential_wealth) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.0698710Z test_expiry_precedes_own_resolution_and_expired_only_merge (tests.test_clerk.ClerkTest.test_expiry_precedes_own_resolution_and_expired_only_merge) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.1029040Z test_expiry_ties_in_forecast_order (tests.test_clerk.ClerkTest.test_expiry_ties_in_forecast_order) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.1478276Z test_flood_and_byte_identical_projection (tests.test_clerk.ClerkTest.test_flood_and_byte_identical_projection) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.1763672Z test_holders_follow_key_revocation (tests.test_clerk.ClerkTest.test_holders_follow_key_revocation) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.3239546Z test_late_report_never_changes_prior_items_stakes_or_wealth (tests.test_clerk.ClerkTest.test_late_report_never_changes_prior_items_stakes_or_wealth) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.3663331Z test_mixed_batch_keeps_only_fresh_writs (tests.test_clerk.ClerkTest.test_mixed_batch_keeps_only_fresh_writs) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.4494146Z test_real_prefix_and_semantic_twin (tests.test_clerk.ClerkTest.test_real_prefix_and_semantic_twin) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.7185412Z test_repair_subject_never_narrows_taint (tests.test_clerk.ClerkTest.test_repair_subject_never_narrows_taint) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.7580405Z test_repair_without_open_writ_has_no_future_taint (tests.test_clerk.ClerkTest.test_repair_without_open_writ_has_no_future_taint) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.7975213Z test_sovereign_boundary_clears_pending_without_future_expiry (tests.test_clerk.ClerkTest.test_sovereign_boundary_clears_pending_without_future_expiry) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.9226574Z test_sovereign_resolution_and_merge_are_zero (tests.test_clerk.ClerkTest.test_sovereign_resolution_and_merge_are_zero) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:50.9807713Z test_w1_from_entry_strict_deadline_holders_and_discharge (tests.test_clerk.ClerkTest.test_w1_from_entry_strict_deadline_holders_and_discharge) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:51.0212759Z test_window_and_same_timestamp_opening (tests.test_clerk.ClerkTest.test_window_and_same_timestamp_opening) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:53.4692958Z test_crash_as_agreement (tests.test_diff.Differential.test_crash_as_agreement) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:53.5030524Z test_exactly_the_fourteen_reason_codes_are_verdicts (tests.test_diff.Differential.test_exactly_the_fourteen_reason_codes_are_verdicts) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:53.5730157Z test_loose_parse (tests.test_diff.Differential.test_loose_parse) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:53.6354690Z test_prefix_skipped (tests.test_diff.Differential.test_prefix_skipped) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:53.7460099Z test_seed_range (tests.test_diff.Differential.test_seed_range) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:53.7620099Z test_whole_log_only (tests.test_diff.Differential.test_whole_log_only) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9497957Z test_matches_the_judge_on_the_working_tree (tests.test_digest.Digest.test_matches_the_judge_on_the_working_tree) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9499895Z test_refuses_a_tree_holding_a_foreign_object (tests.test_digest.Digest.test_refuses_a_tree_holding_a_foreign_object)
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9600711Z SPEC §10.1: a symbolic link or submodule in the trusted base is named, exit 2, no digest printed. ... /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/tools/digest.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9603252Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9604194Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9605754Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/judge/__init__.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9607194Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9608100Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9609357Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/judge/judge.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9610198Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9610969Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9612634Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/kernel/check.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9613438Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9613957Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9614737Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/SPEC.md'>
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9615488Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:53.9615986Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0232526Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/tools/digest.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0234106Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0235052Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0236595Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/judge/__init__.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0238104Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0239012Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0240725Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/judge/judge.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0241963Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0242485Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0243753Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/kernel/check.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0244570Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0245087Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0245873Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/SPEC.md'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0246627Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0247153Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0918069Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/tools/digest.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0919622Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0920596Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0924159Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/judge/__init__.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0925571Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0926436Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0927893Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/judge/judge.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0929232Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0929904Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0930749Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/kernel/check.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0932117Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0932743Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0933730Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/SPEC.md'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0934481Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.0934997Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1561866Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/tools/digest.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1563337Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1564203Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1565654Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/judge/__init__.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1567006Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1567860Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1569237Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/judge/judge.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1570568Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1571986Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1572865Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/kernel/check.py'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1573656Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1574174Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1574968Z /home/runner/work/jack/jack/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/runner/work/jack/jack/SPEC.md'>
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1575725Z   gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+tests	UNKNOWN STEP	2026-11-01T10:58:54.1576232Z ResourceWarning: Enable tracemalloc to get the object allocation traceback
+tests	UNKNOWN STEP	2026-11-01T10:58:54.2171136Z ok
+tests	UNKNOWN STEP	2026-11-01T10:58:54.6043948Z test_assemble_refused_by_the_kernel_exits_1_and_prints_nothing (tests.test_entry.Entry.test_assemble_refused_by_the_kernel_exits_1_and_prints_nothing) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:54.7937839Z test_assemble_without_its_files_exits_2 (tests.test_entry.Entry.test_assemble_without_its_files_exits_2) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:54.9307921Z test_log_defaults_to_the_repository_root (tests.test_entry.Entry.test_log_defaults_to_the_repository_root) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:55.4279846Z test_prepare_refusals_exit_2_and_write_nothing (tests.test_entry.Entry.test_prepare_refusals_exit_2_and_write_nothing) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:56.0179484Z test_prepare_sign_assemble_current_head (tests.test_entry.Entry.test_prepare_sign_assemble_current_head) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:56.3248892Z test_a_filled_trailer_has_a_party_first_and_at_least_one_more_field (tests.test_jack.Jack.test_a_filled_trailer_has_a_party_first_and_at_least_one_more_field) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:56.4739086Z test_a_key_whose_principal_is_not_a_party_is_refused_before_signing (tests.test_jack.Jack.test_a_key_whose_principal_is_not_a_party_is_refused_before_signing) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:56.9582988Z test_a_trailer_is_filled_only_with_a_party_and_a_key_id (tests.test_jack.Jack.test_a_trailer_is_filled_only_with_a_party_and_a_key_id) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:57.1833076Z test_always_refused_arguments_admin_and_force (tests.test_jack.Jack.test_always_refused_arguments_admin_and_force) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:58.4918066Z test_amend_admitted_after_transmute_and_its_refusals (tests.test_jack.Jack.test_amend_admitted_after_transmute_and_its_refusals) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:58:59.2621902Z test_amend_takes_activate_at_as_given_and_counts_a_transmute_with_an_extra_member (tests.test_jack.Jack.test_amend_takes_activate_at_as_given_and_counts_a_transmute_with_an_extra_member) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:00.2637909Z test_any_failure_after_a_main_verbs_first_effect_returns_main_to_origin_main (tests.test_jack.Jack.test_any_failure_after_a_main_verbs_first_effect_returns_main_to_origin_main) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:00.6934573Z test_branch_verb_push_rejected_prints_the_finishing_commands_and_undoes_nothing (tests.test_jack.Jack.test_branch_verb_push_rejected_prints_the_finishing_commands_and_undoes_nothing) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:01.2410975Z test_decision_admitted_with_the_main_verb_ending (tests.test_jack.Jack.test_decision_admitted_with_the_main_verb_ending) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:01.4497879Z test_decision_refusals (tests.test_jack.Jack.test_decision_refusals) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:02.3178997Z test_dirty_tree_detached_head_and_wrong_branch (tests.test_jack.Jack.test_dirty_tree_detached_head_and_wrong_branch) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:02.9012051Z test_failed_selfcheck_undoes_with_reset_hard_origin_main_and_pushes_nothing (tests.test_jack.Jack.test_failed_selfcheck_undoes_with_reset_hard_origin_main_and_pushes_nothing) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:04.6638816Z test_forecast_is_a_log_only_branch_commit_before_the_proposal_and_a_main_verb_for_guy (tests.test_jack.Jack.test_forecast_is_a_log_only_branch_commit_before_the_proposal_and_a_main_verb_for_guy) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:05.4492923Z test_forecast_refusals_before_signing (tests.test_jack.Jack.test_forecast_refusals_before_signing) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:05.6627765Z test_kernel_refusal_appends_nothing_and_resets (tests.test_jack.Jack.test_kernel_refusal_appends_nothing_and_resets) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:06.6906291Z test_key_admitted_and_revocation (tests.test_jack.Jack.test_key_admitted_and_revocation) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:07.4743711Z test_key_refusals (tests.test_jack.Jack.test_key_refusals) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:07.8065391Z test_main_verbs_require_main_equal_to_origin_main (tests.test_jack.Jack.test_main_verbs_require_main_equal_to_origin_main) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:11.2543146Z test_merge_admits_log_only_commits_after_the_proposal_and_refuses_work (tests.test_jack.Jack.test_merge_admits_log_only_commits_after_the_proposal_and_refuses_work) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:14.2518702Z test_merge_admitted_entry_on_the_proposal_branch_then_github_merges (tests.test_jack.Jack.test_merge_admitted_entry_on_the_proposal_branch_then_github_merges) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:16.9660507Z test_merge_admitted_under_herald_key (tests.test_jack.Jack.test_merge_admitted_under_herald_key) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:17.8927592Z test_merge_refusals (tests.test_jack.Jack.test_merge_refusals) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:18.9450509Z test_merge_refused_before_signing_when_the_judge_failed_on_the_proposal_head (tests.test_jack.Jack.test_merge_refused_before_signing_when_the_judge_failed_on_the_proposal_head) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:19.8278250Z test_merge_refused_before_signing_when_the_tests_failed_on_the_proposal_head (tests.test_jack.Jack.test_merge_refused_before_signing_when_the_tests_failed_on_the_proposal_head) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:23.7297155Z test_merge_refused_when_the_head_moves_off_the_entry_during_the_wait (tests.test_jack.Jack.test_merge_refused_when_the_head_moves_off_the_entry_during_the_wait) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:26.2640737Z test_merge_refused_when_the_proposal_moved_or_was_not_admitted (tests.test_jack.Jack.test_merge_refused_when_the_proposal_moved_or_was_not_admitted) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:29.1668067Z test_merge_waits_for_the_checks_however_long_they_take (tests.test_jack.Jack.test_merge_waits_for_the_checks_however_long_they_take) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:31.9516553Z test_merge_waits_for_the_proposal_head_s_verdict_before_signing (tests.test_jack.Jack.test_merge_waits_for_the_proposal_head_s_verdict_before_signing) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:34.7344202Z test_merge_waits_until_both_checks_are_reported_on_the_head (tests.test_jack.Jack.test_merge_waits_until_both_checks_are_reported_on_the_head) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:37.4868033Z test_merge_waits_until_github_reports_the_head_s_checks (tests.test_jack.Jack.test_merge_waits_until_github_reports_the_head_s_checks) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:37.6047227Z test_no_environment_variable_changes_the_seed_count (tests.test_jack.Jack.test_no_environment_variable_changes_the_seed_count) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:38.0258817Z test_proposal_admitted (tests.test_jack.Jack.test_proposal_admitted) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:38.4573025Z test_proposal_refusals (tests.test_jack.Jack.test_proposal_refusals) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:38.8398939Z test_proposal_with_an_open_pr_does_nothing_more (tests.test_jack.Jack.test_proposal_with_an_open_pr_does_nothing_more) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:42.7929589Z test_push_admitted_with_the_run_of_record_and_a_review (tests.test_jack.Jack.test_push_admitted_with_the_run_of_record_and_a_review) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:43.5670772Z test_push_admitted_without_a_run (tests.test_jack.Jack.test_push_admitted_without_a_run) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:44.8705645Z test_push_and_merge_read_only_filled_trailers (tests.test_jack.Jack.test_push_and_merge_read_only_filled_trailers) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:48.7649498Z test_push_makes_the_run_of_record_itself_never_accepting_one_from_the_branch (tests.test_jack.Jack.test_push_makes_the_run_of_record_itself_never_accepting_one_from_the_branch) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:49.5515253Z test_push_prints_the_worktree_removal_instead_of_remove (tests.test_jack.Jack.test_push_prints_the_worktree_removal_instead_of_remove) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:52.9088131Z test_push_refusals (tests.test_jack.Jack.test_push_refusals) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:56.4454631Z test_push_refused_by_the_kernel_after_the_fast_forward_leaves_main_as_origin_main (tests.test_jack.Jack.test_push_refused_by_the_kernel_after_the_fast_forward_leaves_main_as_origin_main) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:57.8366259Z test_push_refuses_a_run_whose_parts_are_not_of_the_branch_head_or_not_their_range (tests.test_jack.Jack.test_push_refuses_a_run_whose_parts_are_not_of_the_branch_head_or_not_their_range) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:58.6022369Z test_push_review_of_an_empty_file_hashes_the_empty_file (tests.test_jack.Jack.test_push_review_of_an_empty_file_hashes_the_empty_file) ... ok
+tests	UNKNOWN STEP	2026-11-01T10:59:59.8696926Z test_resolve_by_another_party_with_evidence_and_its_refusals (tests.test_jack.Jack.test_resolve_by_another_party_with_evidence_and_its_refusals) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:00.2714041Z test_spec_conflict_admitted_and_refused_off_origin_main (tests.test_jack.Jack.test_spec_conflict_admitted_and_refused_off_origin_main) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:00.5782441Z test_spec_conflict_retitles_the_branch_s_open_pr (tests.test_jack.Jack.test_spec_conflict_retitles_the_branch_s_open_pr) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:00.7229001Z test_trailer_with_less_than_is_refused_before_signing (tests.test_jack.Jack.test_trailer_with_less_than_is_refused_before_signing) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:00.8666970Z test_undeclared_key_is_refused_before_signing (tests.test_jack.Jack.test_undeclared_key_is_refused_before_signing) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:01.1224362Z test_charter_check_precedes_the_kernel (tests.test_judge.Charter.test_charter_check_precedes_the_kernel) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:01.3355559Z test_genesis_charter_hash_must_match_trunks_charter (tests.test_judge.Charter.test_genesis_charter_hash_must_match_trunks_charter) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:01.5058004Z test_no_genesis_no_charter_check (tests.test_judge.Charter.test_no_genesis_no_charter_check) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:02.0655488Z test_cli_exit_codes_and_json (tests.test_judge.Cli.test_cli_exit_codes_and_json) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:05.8117843Z test_decision_requires_original_genesis_blob_not_principal_or_id (tests.test_judge.OpeningGrounds.test_decision_requires_original_genesis_blob_not_principal_or_id) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:07.4122268Z test_freeze_is_strict_and_checks_all_amendments (tests.test_judge.OpeningGrounds.test_freeze_is_strict_and_checks_all_amendments) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:07.9172789Z test_promulgated_charter_even_before_activation (tests.test_judge.OpeningGrounds.test_promulgated_charter_even_before_activation) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:08.2377601Z test_proposal_push_does_not_repair_unrecorded_trunk (tests.test_judge.OpeningGrounds.test_proposal_push_does_not_repair_unrecorded_trunk) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:08.7195068Z test_stale_or_invalid_amendment_does_not_bind_charter (tests.test_judge.OpeningGrounds.test_stale_or_invalid_amendment_does_not_bind_charter) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:11.5176576Z test_transmutation_is_prior_and_names_the_amendment (tests.test_judge.OpeningGrounds.test_transmutation_is_prior_and_names_the_amendment) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:12.5475669Z test_trusted_base_recording (tests.test_judge.OpeningGrounds.test_trusted_base_recording) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:12.6970470Z test_a_foreign_object_outside_paths_is_not_this_items (tests.test_judge.Scope.test_a_foreign_object_outside_paths_is_not_this_items)
+tests	UNKNOWN STEP	2026-11-01T11:00:12.9909555Z SPEC §10.9 reads only under paths: trunk's submodule at an unlisted path, its commit absent, neither ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:13.2866590Z test_a_merge_after_the_entry_counts_against_its_first_parent (tests.test_judge.Scope.test_a_merge_after_the_entry_counts_against_its_first_parent) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:14.6653574Z test_a_party_absent_from_parties_is_bounded_by_paths_only (tests.test_judge.Scope.test_a_party_absent_from_parties_is_bounded_by_paths_only) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:14.9135294Z test_a_trailer_alone_does_not_attribute (tests.test_judge.Scope.test_a_trailer_alone_does_not_attribute) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:15.1635923Z test_attribution_follows_the_kernel (tests.test_judge.Scope.test_attribution_follows_the_kernel) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:16.2945167Z test_code_cap (tests.test_judge.Scope.test_code_cap) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:18.8122059Z test_code_cap_counts_python_shebang_files (tests.test_judge.Scope.test_code_cap_counts_python_shebang_files) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:18.8123572Z test_code_cap_counts_regular_files_only (tests.test_judge.Scope.test_code_cap_counts_regular_files_only)
+tests	UNKNOWN STEP	2026-11-01T11:00:18.9030584Z SPEC §10.10: only mode 100644 and 100755 blobs are counted, read from the git object, a submodule's ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:19.2064342Z test_code_cap_counts_the_whole_head_not_the_diff (tests.test_judge.Scope.test_code_cap_counts_the_whole_head_not_the_diff) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:19.4995186Z test_entry_must_be_appended_not_trunks (tests.test_judge.Scope.test_entry_must_be_appended_not_trunks) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:20.0268871Z test_entry_must_name_a_commit_of_the_proposal (tests.test_judge.Scope.test_entry_must_name_a_commit_of_the_proposal) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:20.8912141Z test_later_commits_change_only_the_log (tests.test_judge.Scope.test_later_commits_change_only_the_log) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:23.6126559Z test_out_of_scope (tests.test_judge.Scope.test_out_of_scope) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:23.6127918Z test_out_of_scope_refuses_a_foreign_object_under_paths (tests.test_judge.Scope.test_out_of_scope_refuses_a_foreign_object_under_paths)
+tests	UNKNOWN STEP	2026-11-01T11:00:28.1770612Z SPEC §10.9: a symbolic link or a submodule under a prefix in paths is refused whatever it points to, ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:29.2746785Z test_party_is_the_principal_of_the_signing_key (tests.test_judge.Scope.test_party_is_the_principal_of_the_signing_key) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:37.4555826Z test_party_scope (tests.test_judge.Scope.test_party_scope) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:38.0293756Z test_party_under_the_law_in_force_at_the_entry (tests.test_judge.Scope.test_party_under_the_law_in_force_at_the_entry) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:38.3183164Z test_rename_out_of_scope_touches_both_paths (tests.test_judge.Scope.test_rename_out_of_scope_touches_both_paths) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:38.6098756Z test_rename_touches_both_paths_for_the_party_too (tests.test_judge.Scope.test_rename_touches_both_paths_for_the_party_too) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:38.6104654Z test_scope_json_is_the_specs (tests.test_judge.Scope.test_scope_json_is_the_specs) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:39.0455141Z test_self_check_skips_items_7_to_10 (tests.test_judge.Scope.test_self_check_skips_items_7_to_10) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:39.6142584Z test_the_last_entry_attributes (tests.test_judge.Scope.test_the_last_entry_attributes) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:40.1936801Z test_the_kernel_that_runs_is_trunks (tests.test_judge.TrunkKernelRuns.test_the_kernel_that_runs_is_trunks) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:40.2222259Z test_a_foreign_object_in_the_proposals_trusted_base_is_refused (tests.test_judge.TrustedBase.test_a_foreign_object_in_the_proposals_trusted_base_is_refused)
+tests	UNKNOWN STEP	2026-11-01T11:00:40.8539295Z SPEC §10.1: a symbolic link or submodule under a trusted path at the head is trusted_path, named, ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:40.8541122Z test_a_foreign_object_in_trunks_trusted_base_is_refused_on_the_self_check_too (tests.test_judge.TrustedBase.test_a_foreign_object_in_trunks_trusted_base_is_refused_on_the_self_check_too)
+tests	UNKNOWN STEP	2026-11-01T11:00:43.5995878Z SPEC §10.1: at either commit; a trunk holding one turns its own self-check red, and every proposal on it; ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:43.7738981Z test_deletion_is_refused (tests.test_judge.TrustedBase.test_deletion_is_refused) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:43.9900868Z test_digest_covers_trusted_base_only (tests.test_judge.TrustedBase.test_digest_covers_trusted_base_only) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:44.8019968Z test_renames_are_refused_although_the_diff_hides_them (tests.test_judge.TrustedBase.test_renames_are_refused_although_the_diff_hides_them) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:44.9930460Z test_trunk_moving_its_trusted_base_requires_a_rebase (tests.test_judge.TrustedBase.test_trunk_moving_its_trusted_base_requires_a_rebase) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:46.4096267Z test_trusted_paths_refused (tests.test_judge.TrustedBase.test_trusted_paths_refused) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:46.8584436Z test_diff_is_against_merge_base (tests.test_judge.Verdicts.test_diff_is_against_merge_base) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:46.9599567Z test_genesis_by_proposal (tests.test_judge.Verdicts.test_genesis_by_proposal) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:47.2086431Z test_kernel_refusal_propagates (tests.test_judge.Verdicts.test_kernel_refusal_propagates) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:47.7238577Z test_merge_checker_must_match_trunk_digest (tests.test_judge.Verdicts.test_merge_checker_must_match_trunk_digest) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:47.8752604Z test_no_logs_anywhere (tests.test_judge.Verdicts.test_no_logs_anywhere) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.1192202Z test_nothing_appended_is_unattributed (tests.test_judge.Verdicts.test_nothing_appended_is_unattributed) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.5018425Z test_prefix_broken (tests.test_judge.Verdicts.test_prefix_broken) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.7915557Z test_valid_appended_entry_is_accepted (tests.test_judge.Verdicts.test_valid_appended_entry_is_accepted) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8294244Z test_every_citation_resolves (tests.test_law.Citations.test_every_citation_resolves) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8295921Z test_eight_names_in_key_declarations (tests.test_log.Body.test_eight_names_in_key_declarations) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8302963Z test_extra_members_allowed_including_dotted_keys (tests.test_log.Body.test_extra_members_allowed_including_dotted_keys) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8303979Z test_genesis (tests.test_log.Body.test_genesis) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8304526Z test_key_declaration (tests.test_log.Body.test_key_declaration) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8305153Z test_ledger_body_schemas (tests.test_log.Body.test_ledger_body_schemas)
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8306893Z SPEC §5 (C1a): p an integer 1-999 and outcome 0 or 1, booleans refused; resolves_by an instant; ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8317116Z test_new_body_schemas (tests.test_log.Body.test_new_body_schemas) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8318079Z test_no_rule_or_repeal_bodies (tests.test_log.Body.test_no_rule_or_repeal_bodies) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8319068Z test_proposal_and_merge (tests.test_log.Body.test_proposal_and_merge) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8320327Z test_ascii_escapes (tests.test_log.Canonical.test_ascii_escapes) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8321098Z test_nested (tests.test_log.Canonical.test_nested) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8322311Z test_sorted_keys_no_whitespace (tests.test_log.Canonical.test_sorted_keys_no_whitespace) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8323301Z test_sha256_of_utf8_bytes (tests.test_log.LineHash.test_sha256_of_utf8_bytes) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8324350Z test_canonical_object_parses (tests.test_log.ParseLine.test_canonical_object_parses) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8325357Z test_duplicate_keys (tests.test_log.ParseLine.test_duplicate_keys) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8326025Z test_float (tests.test_log.ParseLine.test_float) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8326801Z test_integer_bound (tests.test_log.ParseLine.test_integer_bound) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8327675Z test_lone_surrogate (tests.test_log.ParseLine.test_lone_surrogate) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8328654Z test_negative_zero_and_exponent (tests.test_log.ParseLine.test_negative_zero_and_exponent) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8329630Z test_not_json (tests.test_log.ParseLine.test_not_json) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8330381Z test_not_object (tests.test_log.ParseLine.test_not_object) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8331208Z test_raw_non_ascii (tests.test_log.ParseLine.test_raw_non_ascii) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8332241Z test_unsorted_keys (tests.test_log.ParseLine.test_unsorted_keys) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8333282Z test_whitespace_is_not_canonical (tests.test_log.ParseLine.test_whitespace_is_not_canonical) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8334742Z test_surrogate_wins_over_float (tests.test_log.ParseOrder.test_surrogate_wins_over_float) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8336142Z test_empty_proposer_is_shape_valid (tests.test_log.Shape.test_empty_proposer_is_shape_valid) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8337444Z test_field_types (tests.test_log.Shape.test_field_types) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8338201Z test_good_entry (tests.test_log.Shape.test_good_entry) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:48.8339053Z test_missing_and_extra_keys (tests.test_log.Shape.test_missing_and_extra_keys) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:49.8869311Z test_killed_only_by_admitting_the_forbidden_path (tests.test_pins.PartyPins.test_killed_only_by_admitting_the_forbidden_path) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:49.8870901Z test_the_mutant_removes_exactly_that_partys_list (tests.test_pins.PartyPins.test_the_mutant_removes_exactly_that_partys_list) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:49.8901153Z test_pins_are_well_formed (tests.test_pins.Registry.test_pins_are_well_formed) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:49.9099322Z test_copy_excludes_git_and_caches (tests.test_pins.Runner.test_copy_excludes_git_and_caches) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:50.0232670Z test_killed_survived_stale_pending (tests.test_pins.Runner.test_killed_survived_stale_pending) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:50.0419786Z test_twin_failure_is_a_defect (tests.test_pins.Runner.test_twin_failure_is_a_defect) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:50.1813799Z test_all_met_lawful_and_the_verb_signs (tests.test_promotion.Promotion.test_all_met_lawful_and_the_verb_signs) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:50.3112570Z test_attack_run_must_precede_first_item_and_include_attack_file (tests.test_promotion.Promotion.test_attack_run_must_precede_first_item_and_include_attack_file) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:51.5313206Z test_cli_saved_inputs_and_deterministic_clerk (tests.test_promotion.Promotion.test_cli_saved_inputs_and_deterministic_clerk) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:51.7622306Z test_historical_bad_promote_stays_repair_after_later_success (tests.test_promotion.Promotion.test_historical_bad_promote_stays_repair_after_later_success) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:51.8969747Z test_late_report_line_refuses_without_revising_any_bet (tests.test_promotion.Promotion.test_late_report_line_refuses_without_revising_any_bet) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:52.0544309Z test_live_e_not_replaced_by_green_regression_run (tests.test_promotion.Promotion.test_live_e_not_replaced_by_green_regression_run) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:52.1917118Z test_map_printed_and_each_required_hand_row_refuses (tests.test_promotion.Promotion.test_map_printed_and_each_required_hand_row_refuses) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:52.3211257Z test_off_log_repairs_and_unknown_are_w4 (tests.test_promotion.Promotion.test_off_log_repairs_and_unknown_are_w4) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:52.4496407Z test_promotion_accounts_for_expiry_since_last_entry_without_revising_live_items (tests.test_promotion.Promotion.test_promotion_accounts_for_expiry_since_last_entry_without_revising_live_items) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:52.5985616Z test_run_verified_each_field_and_no_signing (tests.test_promotion.Promotion.test_run_verified_each_field_and_no_signing) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:52.7306227Z test_short_tree_criterion_alone_prevents_signing (tests.test_promotion.Promotion.test_short_tree_criterion_alone_prevents_signing) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:53.1876721Z test_stop_ratio_alone_prevents_signing (tests.test_promotion.Promotion.test_stop_ratio_alone_prevents_signing) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:53.3270726Z test_veto_subject_is_exact (tests.test_promotion.Promotion.test_veto_subject_is_exact) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:53.4552681Z test_w3_only_earlier_green_exact_workflow_and_commit_discharge (tests.test_promotion.Promotion.test_w3_only_earlier_green_exact_workflow_and_commit_discharge) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:53.6103380Z test_jack_score_prints_the_brief_s_table_exactly (tests.test_score.Witness.test_jack_score_prints_the_brief_s_table_exactly) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.2276775Z test_overdue_with_as_of_and_refusals (tests.test_score.Witness.test_overdue_with_as_of_and_refusals) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.3863937Z test_the_vector_is_the_brief_s_log (tests.test_score.Witness.test_the_vector_is_the_brief_s_log) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.3998890Z test_named_difference_reserved_bytes (tests.test_sig.Differential.test_named_difference_reserved_bytes) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.4098927Z test_named_difference_s_plus_L (tests.test_sig.Differential.test_named_difference_s_plus_L) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.6800229Z test_random_and_mutated (tests.test_sig.Differential.test_random_and_mutated) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.6803607Z test_noncanonical_point_encodings (tests.test_sig.Ed25519.test_noncanonical_point_encodings) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.6850099Z test_rfc8032_vectors_reject_tampering (tests.test_sig.Ed25519.test_rfc8032_vectors_reject_tampering) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.7059129Z test_rfc8032_vectors_verify (tests.test_sig.Ed25519.test_rfc8032_vectors_verify) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.7110205Z test_s_bounds (tests.test_sig.Ed25519.test_s_bounds) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.7345751Z test_speccheck_edge_cases (tests.test_sig.Ed25519.test_speccheck_edge_cases) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.7516855Z test_exact_parse_rejects_deviations (tests.test_sig.SshSig.test_exact_parse_rejects_deviations) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.7630898Z test_oracle_agrees_on_legit_and_tampered (tests.test_sig.SshSig.test_oracle_agrees_on_legit_and_tampered) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.7632431Z test_parse_real_signature (tests.test_sig.SshSig.test_parse_real_signature) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:54.7634065Z test_reserved_field_must_be_empty (tests.test_sig.SshSig.test_reserved_field_must_be_empty) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:55.1834302Z test_rsa_signature_rejected (tests.test_sig.SshSig.test_rsa_signature_rejected) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:55.1835367Z test_signed_data_layout (tests.test_sig.SshSig.test_signed_data_layout) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:55.2004256Z test_verify_wrapped (tests.test_sig.SshSig.test_verify_wrapped) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:55.2072271Z test_real_keys_are_not_weak (tests.test_sig.WeakKeys.test_real_keys_are_not_weak) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:55.2092412Z test_small_order_and_noncanonical_keys_are_weak (tests.test_sig.WeakKeys.test_small_order_and_noncanonical_keys_are_weak) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:55.2094440Z test_weak_key_text_round_trips_through_pubkey_blob (tests.test_sig.WeakKeys.test_weak_key_text_round_trips_through_pubkey_blob) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:55.2095495Z test_sshstr (tests.test_sig.Wire.test_sshstr) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:55.2272294Z test_every_record_attack_in_section_6_has_a_generator (tests.test_sim.Generators.test_every_record_attack_in_section_6_has_a_generator) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:00:55.2274502Z test_every_refusing_ledger_kind_has_its_reason_and_a_passing_twin (tests.test_sim.Generators.test_every_refusing_ledger_kind_has_its_reason_and_a_passing_twin)
+tests	UNKNOWN STEP	2026-11-01T11:01:14.6562606Z BRIEF-C1.md criterion 2: each new kind's refusing case is refused with its named reason and its twin admitted. ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:14.6726427Z test_generate_is_deterministic_in_the_seed (tests.test_sim.Generators.test_generate_is_deterministic_in_the_seed) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:18.5302248Z test_oracle_agrees_with_kernel_for_every_kind (tests.test_sim.Generators.test_oracle_agrees_with_kernel_for_every_kind) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:18.5513332Z test_retroactive_log_keeps_the_revoked_keys_earlier_entry (tests.test_sim.Generators.test_retroactive_log_keeps_the_revoked_keys_earlier_entry) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:18.5515270Z test_rewriting_a_key_entry_is_not_a_schema_refusal (tests.test_sim.Generators.test_rewriting_a_key_entry_is_not_a_schema_refusal)
+tests	UNKNOWN STEP	2026-11-01T11:01:18.7920889Z Seeds on which `rewriting` hits a key entry: since round 2 a key declaration has exactly four members, ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:23.9135940Z test_seeds_cover_all_kinds (tests.test_sim.Generators.test_seeds_cover_all_kinds) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:23.9375275Z test_self_judging_is_a_judge_level_attack_but_valid_in_the_log (tests.test_sim.Generators.test_self_judging_is_a_judge_level_attack_but_valid_in_the_log) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:27.4364522Z test_simulated_timestamps_never_decrease_but_repeat (tests.test_sim.Generators.test_simulated_timestamps_never_decrease_but_repeat) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:27.4604220Z test_year_one_timestamps_are_zero_padded_on_every_platform (tests.test_sim.Generators.test_year_one_timestamps_are_zero_padded_on_every_platform) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.2257976Z test_properties_hold_on_generated_cases (tests.test_sim.Properties.test_properties_hold_on_generated_cases) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.2259142Z test_property_names (tests.test_sim.Properties.test_property_names) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.2437827Z test_sticky_refusal_detects_a_bad_checker (tests.test_sim.Properties.test_sticky_refusal_detects_a_bad_checker) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.3473930Z test_run_writes_transcript_and_respects_limit (tests.test_sim.Runner.test_run_writes_transcript_and_respects_limit) ... 1/10 seeds (10.0%), 11/s, 0 failures, 0.0m elapsed, ~0.0m left  
+tests	UNKNOWN STEP	2026-11-01T11:01:29.7246476Z 10/10 seeds (100.0%), 21/s, 0 failures, 0.0m elapsed, ~0.0m left  
+tests	UNKNOWN STEP	2026-11-01T11:01:29.7357317Z ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.7516329Z test_worker_reports_a_generator_error_instead_of_dying (tests.test_sim.Runner.test_worker_reports_a_generator_error_instead_of_dying) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.7659897Z test_counts_ratio_and_evidence (tests.test_status.StatusTest.test_counts_ratio_and_evidence) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.7803513Z test_evidence_must_hash (tests.test_status.StatusTest.test_evidence_must_hash) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.7946917Z test_exit_prefix_stops_at_the_window_end (tests.test_status.StatusTest.test_exit_prefix_stops_at_the_window_end) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.8092541Z test_overdue_and_j7_follow_the_clock (tests.test_status.StatusTest.test_overdue_and_j7_follow_the_clock) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.8237203Z test_render_marks_short_lines (tests.test_status.StatusTest.test_render_marks_short_lines) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.8388607Z test_resolution_ratio_follows_its_forecasts_type (tests.test_status.StatusTest.test_resolution_ratio_follows_its_forecasts_type) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.8543991Z test_veto_on_the_subject (tests.test_status.StatusTest.test_veto_on_the_subject) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.8545267Z test_counts_nested_kernel_files_and_follows_no_link (tests.test_tools.CountKernel.test_counts_nested_kernel_files_and_follows_no_link)
+tests	UNKNOWN STEP	2026-11-01T11:01:29.8873806Z CHARTER §9 criterion 3: every python file under kernel/, nested ones too, by the arithmetic of SPEC §10.10; ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.8875281Z test_counts_the_files_and_lines_the_judge_counts (tests.test_tools.CountKernel.test_counts_the_files_and_lines_the_judge_counts)
+tests	UNKNOWN STEP	2026-11-01T11:01:29.8884183Z SPEC §10.10: .py files and files whose first line is a #! line naming python, counted alike. ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.9467519Z test_reports_per_file_and_total_and_limit (tests.test_tools.CountKernel.test_reports_per_file_and_total_and_limit) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:29.9475275Z test_canonical_vectors (tests.test_vectors.SpecVectors.test_canonical_vectors) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:34.0615443Z test_differential_harness_against_itself (tests.test_vectors.SpecVectors.test_differential_harness_against_itself) ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:34.0616321Z test_generator_produces_every_log (tests.test_vectors.SpecVectors.test_generator_produces_every_log)
+tests	UNKNOWN STEP	2026-11-01T11:01:34.6820232Z tools/vectors.py yields logs that are committed, each with its recorded verdict, from fresh keys; others' logs may follow. ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:34.6821360Z test_log_vectors (tests.test_vectors.SpecVectors.test_log_vectors)
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1570773Z Data-driven: every log verdicts.json names, and only those, gives its verdict; every reason is one of the kernel's. ... ok
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1572144Z 
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1572547Z ----------------------------------------------------------------------
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1573443Z Ran 265 tests in 168.144s
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1573825Z 
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1574002Z OK
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1575188Z 10 seeds in 0.5s, 0 property failures → /tmp/tmp729olmtp/20261101T110129Z-10.json
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1902567Z ##[group]Run python3 pins/run.py
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1902916Z ^[[36;1mpython3 pins/run.py^[[0m
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1924892Z shell: /usr/bin/bash -e {0}
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1925149Z env:
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1925429Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1925875Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1926310Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1926700Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1927105Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1927519Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+tests	UNKNOWN STEP	2026-11-01T11:01:35.1927855Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7138867Z pin                              mutant                       status
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7139569Z ------------------------------------------------------------------------
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7140879Z charter_edit_unrecorded          charter_unchecked            KILLED  (AssertionError: {'appended': 0, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'bce50f6dbc42969318)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7142915Z amend_stale                      genesis_charter_compared     KILLED  (AssertionError: {'appended': 0, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '82ebada55b02f5bff4)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7144262Z push_unrecorded                  trusted_base_unchecked       KILLED  (AssertionError: {'appended': 0, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'b02ba8ba21235ef53c)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7145626Z freeze_ignored                   amendment_freeze_unchecked   KILLED  (AssertionError: {'appended': 4, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '0d1417aa86ffed4eb7)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7146983Z one_act_amendment                transmutation_unchecked      KILLED  (AssertionError: {'appended': 2, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '742623fbcf19c93ab7)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7148301Z decision_forged                  sovereign_unchecked          KILLED  (AssertionError: {'appended': 3, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '73c30b6c564e30620b)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7149643Z trusted_path_unguarded           guard_removed                KILLED  (AssertionError: ('kernel/check.py', {'appended': 0, 'detail': 'no appended proposal entry names a commit of th)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7151027Z trusted_path_unguarded           judge_dir_untrusted          KILLED  (AssertionError: ('judge/judge.py', {'appended': 0, 'detail': 'no appended proposal entry names a commit of the)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7153080Z trusted_rename_admitted          path_guard_only              KILLED  (AssertionError: ('SPEC.md', 'docs/SPEC.md', {'appended': 0, 'detail': 'no appended proposal entry names a comm)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7154439Z judge_from_proposal              digest_unchecked             KILLED  (AssertionError: {'appended': 2, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '39a6b77c2a132de01d)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7155684Z unattributed_proposal_admitted   commit_unchecked             KILLED  (AssertionError: {'appended': 1, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'b99219d4dd4f5340c7)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7156806Z unattributed_proposal_admitted   later_commits_unchecked      KILLED  (AssertionError: {'appended': 1, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '664be3b136e956b513)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7157924Z unattributed_proposal_admitted   law_at_end                   KILLED  (AssertionError: {'appended': 2, 'detail': "outside reviewer's paths: sim/x.py", 'kernel2': 'absent', 'ok': Fal)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7159039Z unattributed_proposal_admitted   first_entry_attributes       KILLED  (AssertionError: {'appended': 2, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '835ef16c69716596c1)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7160427Z unattributed_proposal_admitted   party_by_key_id              KILLED  (AssertionError: {'appended': 2, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '17e97e9621206ed8ab)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7161875Z counsel_build_admitted           counsel_unlisted             KILLED  (AssertionError: {'appended': 1, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '3d8942425a00c8925f)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7162926Z builder_pin_admitted             builder_unlisted             KILLED  (AssertionError: {'appended': 2, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '3ae34ecc071e445378)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7163974Z reviewer_code_admitted           reviewer_unlisted            KILLED  (AssertionError: {'appended': 1, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '909bee3e05998c0b7f)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7165021Z scope_unguarded                  scope_unchecked              KILLED  (AssertionError: {'appended': 1, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '2b0e6441c1d7af3582)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7166036Z scope_unguarded                  rename_hides_source          KILLED  (AssertionError: {'appended': 1, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '0f86555b643e5a6f44)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7167038Z cap_unguarded                    cap_unchecked                KILLED  (AssertionError: {'appended': 1, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '80828938e68f9b3b76)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7168040Z shebang_uncounted                py_suffix_only               KILLED  (AssertionError: {'appended': 1, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'bb6b7d27ea8bcb28ca)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7169092Z foreign_object_admitted          mode_unchecked               KILLED  (AssertionError: {'appended': 1, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '5ff49054aa2287c07e)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7170140Z foreign_object_admitted          trusted_mode_unchecked       KILLED  (AssertionError: {'appended': 0, 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'ad996d579544ed6f0b)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7171101Z unsigned_change                  power_unchecked              KILLED  (AssertionError: expected (1, 'no_power'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7172233Z history_rewritten                signature_always_valid       KILLED  (AssertionError: expected (1, 'bad_signature'), got {'detail': '', 'ok': False, 'reason': 'parent_mismatch', 's)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7173203Z fork_admitted                    parent_unchecked             KILLED  (AssertionError: expected (3, 'parent_mismatch'), got {'entries': 4, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7174188Z unattributed_entry               empty_proposer_admitted      KILLED  (AssertionError: expected (1, 'no_proposer'), got {'detail': 'key ann-1 belongs to ann', 'ok': False, 'reason':)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7175338Z unattributed_entry               unknown_key_trusted          KILLED  (AssertionError: expected (1, 'unknown_key'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7176237Z forged_signature_admitted        s_bound_unchecked            KILLED  (AssertionError: expected (1, 'bad_signature'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7177124Z weak_key_admitted                noncanonical_key_admitted    KILLED  (AssertionError: expected (1, 'bad_key'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7177985Z weak_key_admitted                small_order_key_admitted     KILLED  (AssertionError: expected (1, 'bad_key'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7178867Z reserved_bytes_admitted          reserved_unchecked           KILLED  (AssertionError: expected (1, 'bad_signature'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7179754Z ts_not_an_instant                unicode_digits_admitted      KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7180588Z ts_not_an_instant                calendar_unchecked           KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7181842Z deep_nesting_crashes             depth_unbounded              KILLED  (AssertionError: expected (0, 'malformed_json'), got {'detail': 'top-level keys', 'ok': False, 'reason': 'schem)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7182932Z deep_nesting_crashes             recursion_uncaught           KILLED  (AssertionError: expected (0, 'malformed_json'), got {'ok': False, 'reason': 'crash', 'detail': 'e_int=lambda s)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7184005Z big_integer_unreadable           int_digits_limited           KILLED  (AssertionError: expected (0, 'not_canonical'), got {'detail': '', 'ok': False, 'reason': 'malformed_json', 'se)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7184968Z pubkey_reused                    ownership_forgotten          KILLED  (AssertionError: expected (2, 'bad_key'), got {'entries': 3, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7185816Z key_decl_extra_member            extra_members_allowed        KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7186677Z last_key_revocable               last_key_unguarded           KILLED  (AssertionError: expected (1, 'bad_key'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7187617Z kernel2_unrunnable               modes_ignored                KILLED  (AssertionError: {'ok': False, 'reason': 'crash', 'detail': 'judge error: /tmp/tmpgcxgxmog/kernel2/check failed)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7188560Z selfcheck_blind                  judge_errors_ignored         KILLED  (AssertionError: self-check passed a trunk whose kernel2 cannot run)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7189544Z checker_drift                    reason_code_flipped          KILLED  (AssertionError: [('/tmp/tmp8hhebby7/tree/spec/vectors/logs/12_bad_signature_tampered.jsonl', 2, {'ok': False, )
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7190347Z whole_log_only                   prefixes_uncompared          KILLED  (AssertionError)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7191074Z loose_parse                      ok_not_boolean               KILLED  (AssertionError: n=$(($(wc -l < "$1"))); [ $n -eq -1 ] && n=9; echo "{\"ok\":1,\"entries\":$n}")
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7192165Z loose_parse                      exit_status_ignored          KILLED  (AssertionError: n=$(($(wc -l < "$1"))); [ $n -eq -1 ] && n=9; echo "{\"ok\":true,\"entries\":$n}"; exit 1)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7192907Z crash_as_agreement               like_failures_agree          KILLED  (AssertionError: exit 3)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7193453Z prefix_skipped                   empty_prefix_skipped         KILLED  (AssertionError: 0)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7193977Z prefix_skipped                   prefix_off_by_one            KILLED  (AssertionError: 0)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7194659Z clock_runs_backward              ts_unchecked                 KILLED  (AssertionError: expected (2, 'ts_decreased'), got {'entries': 3, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7195696Z self_resolution_admitted         self_unchecked               KILLED  (AssertionError: expected (2, 'self_judged'), got {'entries': 3, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7196693Z dangling_resolution_admitted     target_unchecked             KILLED  (AssertionError: expected (2, 'schema'), got {'ok': False, 'reason': 'crash', 'detail': 'Traceback (most recent)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7197684Z double_resolution_admitted       resolved_unchecked           KILLED  (AssertionError: expected (3, 'schema'), got {'entries': 4, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7198560Z past_forecast_admitted           resolves_by_unchecked        KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7199430Z permille_out_of_range_admitted   p_0_admitted                 KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7200283Z permille_out_of_range_admitted   p_1000_admitted              KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7201133Z boolean_integer_admitted         p_boolean_admitted           KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7202352Z boolean_integer_admitted         outcome_boolean_admitted     KILLED  (AssertionError: expected (2, 'schema'), got {'entries': 3, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7203235Z boolean_integer_admitted         booleans_are_integers        KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7204218Z self_judged_uncoded              self_judged_as_schema        KILLED  (AssertionError: expected (2, 'self_judged'), got {'detail': 'ann made forecast 1', 'ok': False, 'reason': 'sch)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7205302Z self_judged_uncoded              judged_before_signature      KILLED  (AssertionError: expected (2, 'bad_signature'), got {'detail': 'ann made forecast 1', 'ok': False, 'reason': 's)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7206206Z score_not_proper                 linear_score                 KILLED  (| world.screen | 4 | 2 | 0.4500 | 0.5000 | 0.6500 | 0.8959 |)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7206924Z score_not_proper                 minimised_at_999             KILLED  (| world.screen | 4 | 2 | 0.4500 | 0.5000 | 0.5500 | 0.8959 |)
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7207737Z overdue_strictly_after           equality_overdue             KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7208269Z w1_from_entry                    only_when_overdue            KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7208766Z self_holder                      self_filter_dropped          KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7209254Z w3_unwitnessed                   any_run_accepted             KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7209757Z w4_promote_unmet                 repair_never_raised          KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7210278Z promote_refused                  promotion_check_dropped      KILLED  (FAILED (failures=5))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7210869Z promote_refused                  regression_run_for_live_E    KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7211569Z run_verified                     any_run_accepted             KILLED  (FAILED (failures=7))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7212061Z run_verified                     event_unchecked              KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7212559Z escalated                        escalation_silent            KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7213086Z wealth_arithmetic                p0_reestimated               KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7213600Z item_before_open                 preopening_counted           KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7214111Z item_is_batch                    resolutions_counted_singly   KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7214657Z regroup_scored_items             evidence_component_regrouping KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7215371Z expired_writ_zero                late_resolution_success      KILLED  (FAILED (failures=2))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7215884Z expired_writ_zero                empty_batch_success          KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7216420Z repair_erased_from_success       repair_predicate_dropped     KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7216969Z repair_taints_all_open           named_subject_only           KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7217501Z repair_taints_all_open           oldest_only_attribution      KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7218025Z replay_merge_110                 oldest_only_attribution      KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7218558Z late_report_immutable            finalised_item_revised       KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7219095Z late_report_immutable            late_report_line_omitted     KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7219669Z sovereign_resolution_zero        sovereign_completion_as_herald KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7220241Z window_from_the_promote          latest_decision_opens        KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7220783Z window_from_the_promote          latest_counsel_forecast_ends KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7221601Z evidence_unhashed                rehash_skipped               KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7222165Z ratio_misclassified              world_resolution_procedure   KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7222703Z flooding_bounded                 deduplicated_by_claim        KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7223213Z veto_c1b                         veto_subject_ignored         KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7223693Z map_printed                      hand_row_passes              KILLED  (FAILED (failures=1))
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7223985Z 
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7224144Z KILLED 94, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7267180Z ##[group]Run python3 judge/selfcheck.py
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7267536Z ^[[36;1mpython3 judge/selfcheck.py^[[0m
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7288655Z shell: /usr/bin/bash -e {0}
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7288911Z env:
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7289187Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7289640Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7290094Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7290480Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7290876Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7291262Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+tests	UNKNOWN STEP	2026-11-01T11:03:17.7291863Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T11:03:28.4076683Z judge self-check ok: kernel {'entries': 337, 'ok': True}, kernel2 {'entries': 337, 'ok': True}
+tests	UNKNOWN STEP	2026-11-01T11:03:28.4167751Z ##[group]Run python3 harness/diff.py --seeds 300 --b kernel2/check 'spec/vectors/logs/*.jsonl'
+tests	UNKNOWN STEP	2026-11-01T11:03:28.4168448Z ^[[36;1mpython3 harness/diff.py --seeds 300 --b kernel2/check 'spec/vectors/logs/*.jsonl'^[[0m
+tests	UNKNOWN STEP	2026-11-01T11:03:28.4189402Z shell: /usr/bin/bash -e {0}
+tests	UNKNOWN STEP	2026-11-01T11:03:28.4189663Z env:
+tests	UNKNOWN STEP	2026-11-01T11:03:28.4189936Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:03:28.4190393Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+tests	UNKNOWN STEP	2026-11-01T11:03:28.4190837Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:03:28.4191221Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:03:28.4192057Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:03:28.4192462Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+tests	UNKNOWN STEP	2026-11-01T11:03:28.4192791Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9232177Z {
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9232537Z  "logs": 351,
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9232972Z  "prefixes": 2019,
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9233666Z  "uncompared": [],
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9233986Z  "requested": 351,
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9234298Z  "seeds": [
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9234578Z   0,
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9234857Z   300
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9235124Z  ],
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9235529Z  "commit": "b8f08bf6ab1e072bc89de48fc7aabf7eff89166c",
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9236270Z  "seeds_sha256": "011b2ee01a4bb4207b92b8d3d128ec4ce5210f3dc5c1de72dd58436911b14386",
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9236929Z  "disagreements": []
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9237248Z }
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9342589Z ##[group]Run python3 tools/count_kernel.py
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9342964Z ^[[36;1mpython3 tools/count_kernel.py^[[0m
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9363199Z shell: /usr/bin/bash -e {0}
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9363476Z env:
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9363756Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9364209Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9364657Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9365057Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9365459Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9365850Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9366180Z ##[endgroup]
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9641112Z kernel/__init__.py            0
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9641892Z kernel/check.py             138
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9642306Z kernel/log.py               172
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9642804Z kernel/sig.py               140
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9643217Z total                       450
+tests	UNKNOWN STEP	2026-11-01T11:06:50.9783900Z Post job cleanup.
+tests	UNKNOWN STEP	2026-11-01T11:06:51.1172566Z Post job cleanup.
+tests	UNKNOWN STEP	2026-11-01T11:06:51.2212218Z [command]/usr/bin/git version
+tests	UNKNOWN STEP	2026-11-01T11:06:51.2262218Z git version 2.56.0
+tests	UNKNOWN STEP	2026-11-01T11:06:51.2304804Z Temporarily overriding HOME='/home/runner/work/_temp/d02cab75-205f-4019-a7de-20a5e4a48c6a' before making global git config changes
+tests	UNKNOWN STEP	2026-11-01T11:06:51.2306440Z Adding repository directory to the temporary git global config as a safe directory
+tests	UNKNOWN STEP	2026-11-01T11:06:51.2311093Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/jack/jack
+tests	UNKNOWN STEP	2026-11-01T11:06:51.2354271Z Removing SSH command configuration
+tests	UNKNOWN STEP	2026-11-01T11:06:51.2361011Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+tests	UNKNOWN STEP	2026-11-01T11:06:51.2408640Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+tests	UNKNOWN STEP	2026-11-01T11:06:51.2814149Z Removing HTTP extra header
+tests	UNKNOWN STEP	2026-11-01T11:06:51.2822717Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+tests	UNKNOWN STEP	2026-11-01T11:06:51.2861785Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3169759Z Removing includeIf entries pointing to credentials config files
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3170674Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3212188Z includeif.gitdir:/home/runner/work/jack/jack/.git.path
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3212936Z includeif.gitdir:/home/runner/work/jack/jack/.git/worktrees/*.path
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3214101Z includeif.gitdir:/github/workspace/.git.path
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3215063Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3223891Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/jack/jack/.git.path
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3261548Z /home/runner/work/_temp/git-credentials-2c969717-3cc7-4c80-bfd8-912648a74158.config
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3275509Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/jack/jack/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-2c969717\-3cc7\-4c80\-bfd8\-912648a74158\.config
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3326167Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/jack/jack/.git/worktrees/*.path
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3373288Z /home/runner/work/_temp/git-credentials-2c969717-3cc7-4c80-bfd8-912648a74158.config
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3381842Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/jack/jack/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-2c969717\-3cc7\-4c80\-bfd8\-912648a74158\.config
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3430364Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3470726Z /github/runner_temp/git-credentials-2c969717-3cc7-4c80-bfd8-912648a74158.config
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3480726Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-2c969717\-3cc7\-4c80\-bfd8\-912648a74158\.config
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3529991Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3565925Z /github/runner_temp/git-credentials-2c969717-3cc7-4c80-bfd8-912648a74158.config
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3576640Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-2c969717\-3cc7\-4c80\-bfd8\-912648a74158\.config
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3625561Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+tests	UNKNOWN STEP	2026-11-01T11:06:51.3897059Z Removing credentials config '/home/runner/work/_temp/git-credentials-2c969717-3cc7-4c80-bfd8-912648a74158.config'
+tests	UNKNOWN STEP	2026-11-01T11:06:51.4065426Z Cleaning up orphan processes
+
+exit status: 0
+
