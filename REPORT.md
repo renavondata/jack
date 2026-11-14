@@ -613,3 +613,122 @@ the `grant`, the `fix` and C2a-prime's opening push.
   repairs the instrument cannot see, and the App, which is a capability grant.
 - Any writ finalised between the boundary `fix` and the opening push, with its taint (BRIEF-C2a-prime v7;
   `REVIEW-C2a-prime-argon-v7.md` F1's obligation).
+
+# C2a report — part 2 of 2, at the stated end
+
+Counsel's report, [EXIT: date]. Proposer: counsel `claude-opus-5-5`, session
+`session_01VpB3Tk9TibiV88MV9kx8Kr`. Part 1 (5 November, above) gave the standing at seq 1561 and why the
+first window could not promote. This part closes COUNSEL-DUE row `c2a-report`, past due since
+`2026-11-04T06:00:00Z`. **C2a's first window failed at its stated end**, read late as `2026-11-17T12:00:00Z`
+(part 1 §3; the question stays unruled, and no act turned on it). **Exit prefix: [EXIT: the last seq whose
+`ts` is at or before `2026-11-17T12:00:00Z`; its commit; `log.jsonl` SHA-256 there]. The tests run that
+counts: [EXIT: run id, at that commit].** C2a-prime, the window that follows, opened at [EXIT: the push's seq
+and `ts`].
+
+## 1. Verdict against BRIEF-C2a's pre-stated criteria, on the exit prefix
+
+[EXIT: `python3 tools/status.py --subject C2a --as-of 2026-11-17T12:00:00Z --run <run> --runs <runs> --acts
+transcripts/evidence/acts-<stamp>.csv`, its output, and the table in part 1 §1's form. Expected: criteria 3–6
+as at seq 1561 or better; criterion 7 unmet, off-log repairs 9 or more; no `veto`.]
+
+The window failed on criterion 7 alone, from 2026-11-02 22:11 HKT, the first of the nine `repair` rows, to
+its stated end: nearly fifteen days (14:11Z on 2 November to 12:00Z on 17 November) in which no prefix could promote it and none of the
+law allowed it to end. What the record lacked is A6's clause — a window ends at the first prefix on which its
+tool prints that a pre-stated criterion can no longer hold — which the sovereign has placed as C2c's first
+amendment (COUNSEL-OPEN row 39; BRIEF-C2c), after the amendment procedure row 33 requires.
+
+## 2. The acts evidence over the whole window
+
+[EXIT: the raw and attributed tables from `2026-11-01T15:04:14Z` to the stated end, committed by proposal,
+their classifier hash, the count by class, and the re-run of the attributed command once merged. Every
+`repair` row listed with its time, act and object.]
+
+**What the table cannot see.** The collectors `guy_acts2.py` and `guy_acts3.py` list workflow runs by
+`created={START}..{END}`: a re-run inside an interval of a run created before it is not collected (found on
+13 November by sol's read of the accepted C2a-prime brief, #796 and #799; COUNSEL-OPEN row 65). The
+classifier may not change before C2a-prime's exit. [EXIT: the extra run of the classifier from
+`2026-11-01T15:04:14Z` that counsel undertook, and the rows it adds inside either window.]
+
+**Acts outside the instrument, 4 November.** The sovereign merged three pull requests on
+`renavondata/opencode-runner` — #220 (01:13:37Z, the herald no longer re-runs on jack), #227 (03:53:51Z,
+every job's `gh` acting as the court's GitHub App) and #235 (07:26:19Z, two lanes) — and set a label there.
+They are acts of his hand on the platform that the law did not route through an entry, which is the
+definition of `repair` he agreed on 8 November (COUNSEL-OPEN row 46, answer (e)); the classifier reads
+`renavondata/jack` only, so they are in no table. The App of #227 is a capability, recorded by the
+`decision grant` at the boundary.
+
+## 3. Counsel's forecasts on the window
+
+- **V0** (seq 361, p 350): every pre-stated criterion holds on the exit prefix by `2026-11-17T12:00:00Z`. [EXIT:
+  resolved 0 by a resolver other than counsel, or expired.]
+- **V1** (seq 362, p 250): *E*ᵥ reaches 20 within seven days of the opening. Its outcome was fixed on
+  8 November. [EXIT: resolved, by whom, or expired.]
+- **V2** (seq 363, p 900): at the exit prefix an entrant's window weight is below the base rate's. [EXIT.]
+- **V3** (seq 364, p 700): no second push inside the window. [EXIT: resolved on the late reading.]
+- **RM-3** (seq 519, p 800): `decision promote C2a` on `main` before `2026-11-17T12:00:00Z`. It could not win
+  after the first `repair` row. [EXIT.]
+
+None was resolved before the stated end, as BRIEF-C2a-prime recommends (§V0, V2 and V3). A forecast resolved
+after its `resolves_by` is an `expiry` item of the liveness process, scored 0; [EXIT: the items and the
+liveness wealth before and after them].
+
+## 4. Off-log acts between `2026-11-15T15:04:14Z` and C2a-prime's opening
+
+[EXIT: the rows of the attributed table in that interval. On the early reading they fall inside no window;
+on the late reading inside C2a's until `2026-11-17T12:00:00Z`. Both readings listed.] Known before the exit:
+on 14 November the sovereign made, on steel, the base commit of C2b's rebuild (`826a5ad8`, a branch push,
+which the classifier does not collect) and two `decision grant` entries (seqs 4634 and 4643, on the log).
+
+## 5. What the failed window cost
+
+- **The A6 chain** (5 November; his direction: "Record this chain's cost in reads and hours in the C2a
+  report"). Wall clock 4 h 20 min, 16:08:53Z to 20:28:54Z. The sovereign: three messages and two of counsel's
+  analyses read. Three cold reads by fresh sessions, 46 minutes and about 920,000 tokens (14 min and about
+  298,000; 18 min and about 356,000; 14 min and about 266,000). One builder session (opencode-runner #297)
+  with no proposal. Counsel: two drafts of the clause and one of the ruling. Nothing reached the log
+  (`transcripts/A6-CASE-20261105.md`, §The cost).
+- **Thirteen days of a window that could not promote**, 4 to 17 November, spent on the next window's text:
+  BRIEF-C2a-prime v7 and eleven amendments; its window code built on 4 November before his read (A2.10,
+  seq 3432) and built again after it, on a base he applied himself (seqs 3545 to 4017); gate reads by
+  gpt-6-astra, gemini-4-argon, gpt-5.6-terra and gpt-6.1-sol. [EXIT: the counts of reads, sessions and
+  USD from the runner's issues and the providers' bills.]
+- **The lane.** The owner's `gh` token expired at about 10:15Z on 13 November, and the court's timers and
+  jobs, which used it, stopped until 13:06Z. Eight forecasts of the freshness stream were resolved after
+  their deadlines and scored as expiries (seqs 4186, 4187, 4189, 4202–4206; continued liveness 325.8 → 43.9;
+  COUNSEL-OPEN row 66). Since 14 November 00:25Z the App starts every run (runner PR #828).
+
+## 6. Findings left in BRIEF-C2a-prime, as undertaken
+
+The sovereign chose on 13 November that the brief's bytes not change before the opening, and that these
+three findings of sol's read of the accepted text (#796, #799) be listed here (COUNSEL-OPEN row 65):
+
+1. The collectors list runs by creation time, so a re-run inside the window of a run created before it is
+   not collected; Amendment 11's "every act up to that `ts`" says more than the collectors do (§2 above).
+2. The fourth obligation of §What the pins do not enforce has the attributed file produced "from its raw
+   twin"; the classifier reads GitHub and not the twin. What was checked instead: [EXIT: both commands run
+   over one interval and their rows compared].
+3. §Stop and report if gives "naming no attributed acts file" as a case of a `fix` that is a repair for good,
+   which is wrong where a veto (b1) is entered before the early end; none is on the log.
+
+Also noted by sol: two sentences of §The precedent no longer describe the state (row 44), and two charter
+quotations begin with a changed capital. None of the five changes a rule, a criterion, a pin or the code.
+
+## 7. Counsel's errors since part 1, for the record
+
+Each is in the COUNSEL-OPEN row named; the list is not an argument.
+
+- Two formal reads filed in one minute wrote one file name, and a re-proposal session overwrote astra's
+  review with argon's; both were re-landed under family names (row 63).
+- Counsel told the sovereign that nothing expired in the outage of 13 November; eight forecasts did (rows 65,
+  66).
+- Counsel gave him the wrong weekday for the sitting (row 66).
+- Counsel proposed re-creating C2b's code, built from 3 November before his read of its brief, on his new
+  base, which would have carried that code with fresh dates; found before any builder ran (row 67).
+- Counsel diagnosed a doubled upstream for a failed `git pull` before reading his configuration; the paste
+  ran in the runner's shared clone (row 67).
+- Counsel asked him to choose where he had already chosen (A6's place; whether to act early) (row 67).
+
+## 8. What C2a-prime opens with
+
+[EXIT: the opening push's seq, `ts` and commit; the `grant` and the `fix` with their seqs; the window to
+`2026-11-30T00:00:00Z`; the cap at 8,400 and the counted lines; the status line at the first prefix after it.]
