@@ -1,0 +1,6 @@
+- hk_property_poi: 250/256 windows advanced and it has advanced in every hour, so keep it near-certain at 980 for 05:00, 06:00, and 07:00 UTC.
+- hkex_disclosures: 241/255 windows advanced and it has advanced in every hour, so keep it near-certain at 980 for 05:00, 06:00, and 07:00 UTC.
+- hkex_disclosure_interests: 241/255 windows advanced and it has advanced in every hour, so keep it near-certain at 980 for 05:00, 06:00, and 07:00 UTC.
+- crhk_companies: 37/249 windows advanced, with hits at 06Z and 07Z but not 05Z, so use a low-middling pattern: 100 at 05:00, 180 at 06:00, 180 at 07:00 UTC.
+- sfc_licences: 11/249 windows advanced and only 01Z/03Z/04Z have hits, so keep it pinned to the floor at 50 for 05:00, 06:00, and 07:00 UTC.
+- hk_property_transactions: 50/249 windows advanced, with hits at 05Z and 07Z but not 06Z, so use a mixed pattern: 220 at 05:00, 140 at 06:00, 220 at 07:00 UTC.
