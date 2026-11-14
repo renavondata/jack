@@ -66,8 +66,8 @@ The templates in this directory are procedure (the sovereign's ruling of 9 Novem
   sovereign's read (his entry after seq 4634): the first build was written from 3 November before his read of the brief, and no session of these
   templates reads the branches that hold it. Each session first prints the sovereign's own `decision` entries from seq 4634 on and checks the
   brief's SHA-256 (`4fc0422a…`), and writes nothing to a text no entry of his states he read. The base is `builder-c2b-3`: C2a-prime's opening
-  branch `opening-c2a-prime-3` and the trusted-base change applied by his own hand (`826a5ad8`, seq 4634); the builder merges `main` once and
-  builds there; a reviewer of another family writes the pins on `reviewer-c2b-3-pins`; counsel sets `opening-c2b-3` at that branch's head; a
+  branch `opening-c2a-prime-3` and the trusted-base change applied by his own hand (`826a5ad8`, seq 4634); the builder builds
+  there, merging no `main` (the opening paste brings it in); a reviewer of another family writes the pins on `reviewer-c2b-3-pins`; counsel sets `opening-c2b-3` at that branch's head; a
   reviewer of another family than the builder's reads it cold, the read gate on `main` among it, and commits `REVIEW-C2b-code.md` on it.
   Pushed, never proposed; used for this rebuild only. `c2b-build.md`, `c2b-pins.md` and `c2b-code-review.md` built on the first build and are
   not used again.
