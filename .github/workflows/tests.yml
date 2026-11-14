@@ -1,6 +1,11 @@
 # Tests, pins and the kernel line count. On pull_request this is the proposal's
 # own run (informational: the accused's test, CHARTER F1); the run that counts
 # for §9 criterion 1 is the one on push to main, from trunk.
+# Three jobs run the five steps in parallel (measured serial on 2 Nov: unit tests
+# 2:49, pins 1:50, self-check 0:12, sample 3:24 — 8 m 17 s, waited for twice per
+# merge); the gate job keeps the check's name, `tests`, and fails unless all three
+# succeeded. The same commands, each once (BRIEF-C2b §Scope, the opening push's
+# second change; pin workflow_steps_preserved).
 name: tests
 on:
   pull_request:
@@ -10,7 +15,7 @@ on:
 permissions:
   contents: read
 jobs:
-  tests:
+  unit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -19,11 +24,33 @@ jobs:
           python-version: "3.12"
       - name: Unit tests
         run: python3 -m unittest discover -s tests -t . -v
+      - name: Kernel line count (CHARTER §9 criterion 3)
+        run: python3 tools/count_kernel.py
+  pins:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
       - name: Pins (every mutant KILLED, twin passing; checker_drift PENDING until kernel2 exists)
         run: python3 pins/run.py
+  sample:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
       - name: Judge self-check (the production path, trunk against itself; kernel2 must run)
         run: python3 judge/selfcheck.py
       - name: Simulator sample through both checkers (first 2,000 committed seeds; §9 criterion 2)
         run: python3 harness/diff.py --seeds 300 --b kernel2/check 'spec/vectors/logs/*.jsonl'
-      - name: Kernel line count (CHARTER §9 criterion 3)
-        run: python3 tools/count_kernel.py
+  tests:
+    needs: [unit, pins, sample]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: All three green, or this check is red
+        run: |
+          test "${{ needs.unit.result }}" = success && test "${{ needs.pins.result }}" = success && test "${{ needs.sample.result }}" = success
