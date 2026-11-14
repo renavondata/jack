@@ -1,0 +1,176 @@
+Observed at 2026-11-14T07:15:13Z
+$ python3 tools/status.py --subject C1b --as-of 2026-11-01T11:31:58Z --runs transcripts/evidence/runs-tests-20261114T0710.json --acts transcripts/evidence/acts-20261101.csv
+window C1b: 2026-10-31T10:42:10Z .. 2026-11-01T11:31:58Z (as of 2026-11-01T11:31:58Z; prefix to seq 337)
+criterion 1: pins and twins in verified tests run met
+criterion 2: checker agreement in verified tests run met
+criterion 3: counted 6882/6900; kernel 450/500; scope equals SPEC: True met
+criterion 4: attack green on main before first item: 2026-10-31T13:32:21Z met
+criterion 5: live E 214358881/8398080 >= 20; items 9; at promote E 214358881/8398080 met
+criterion 7: C1b enforcement map rows code met
+late-reported repairs: 0 met
+off-log repairs: 0 met
+criterion 6: veto on C1b: none met
+A3.4 ratio: procedure 67 : object 82; at promote 67 : 82 (maximum 5:1) met
+map A5: windows are maxima; exit at the crossing | code: tools/jack v_decision
+map W1: obligations from state and clock, with deadlines | code: tools/clerk.py forecast_writs
+map W3: the herald merges only on green CI | code: tools/clerk.py merge_writs
+map W4: window criteria and the procedure:object ratio | code: tools/status.py assess; tools/clerk.py window_writs
+map admission: trusted base unchanged except by push | code: judge in CI
+map elections: elections of proposers | hand: no witness yet; C2
+map irreversible: keys, pushes, settings gated by the sovereign | code: keys, rulesets
+map runner: no party acts except through entries; second checker for text | hand: sessions
+map validity: keys, chain, types, no self-judgement | code: kernel; two checkers
+J7: 0 of 48 window forecasts unresolved past resolves_by
+promote C1b: lawful
+
+$ python3 tools/status.py --subject C1b --as-of 2026-11-01T11:31:58Z --runs transcripts/evidence/runs-tests-20261114T0710.json --acts transcripts/evidence/acts-20261101.csv --json (selected window and item fields)
+{
+  "start": "2026-10-31T10:42:10Z",
+  "end": "2026-11-01T11:31:58Z",
+  "opening": 188,
+  "prefix_last_seq": 337,
+  "E": "214358881/8398080",
+  "promotion_E": "214358881/8398080",
+  "items": [
+    {
+      "seq": 215,
+      "ts": "2026-10-31T15:50:40Z",
+      "kind": "batch",
+      "forecasts": [
+        198,
+        202
+      ],
+      "repairs": [],
+      "Y": 1,
+      "stake": "0",
+      "E": "1"
+    },
+    {
+      "seq": 268,
+      "ts": "2026-11-01T02:00:15Z",
+      "kind": "batch",
+      "forecasts": [
+        251,
+        252,
+        253
+      ],
+      "repairs": [],
+      "Y": 1,
+      "stake": "22/45",
+      "E": "11/9"
+    },
+    {
+      "seq": 276,
+      "ts": "2026-11-01T03:10:22Z",
+      "kind": "batch",
+      "forecasts": [
+        256,
+        257,
+        258
+      ],
+      "repairs": [],
+      "Y": 1,
+      "stake": "33/40",
+      "E": "121/72"
+    },
+    {
+      "seq": 284,
+      "ts": "2026-11-01T04:10:16Z",
+      "kind": "batch",
+      "forecasts": [
+        264,
+        265,
+        266
+      ],
+      "repairs": [],
+      "Y": 1,
+      "stake": "77/75",
+      "E": "1331/540"
+    },
+    {
+      "seq": 292,
+      "ts": "2026-11-01T05:10:16Z",
+      "kind": "batch",
+      "forecasts": [
+        272,
+        273,
+        274
+      ],
+      "repairs": [],
+      "Y": 1,
+      "stake": "209/180",
+      "E": "14641/3888"
+    },
+    {
+      "seq": 306,
+      "ts": "2026-11-01T06:29:57Z",
+      "kind": "batch",
+      "forecasts": [
+        227,
+        228,
+        229,
+        239,
+        240,
+        241,
+        280,
+        281,
+        282,
+        288,
+        289,
+        290
+      ],
+      "repairs": [],
+      "Y": 1,
+      "stake": "44/35",
+      "E": "161051/27216"
+    },
+    {
+      "seq": 314,
+      "ts": "2026-11-01T08:10:16Z",
+      "kind": "batch",
+      "forecasts": [
+        230,
+        231,
+        232,
+        242,
+        243,
+        244
+      ],
+      "repairs": [],
+      "Y": 1,
+      "stake": "319/240",
+      "E": "1771561/186624"
+    },
+    {
+      "seq": 320,
+      "ts": "2026-11-01T09:40:15Z",
+      "kind": "batch",
+      "forecasts": [
+        233,
+        234,
+        245,
+        246
+      ],
+      "repairs": [],
+      "Y": 1,
+      "stake": "187/135",
+      "E": "19487171/1259712"
+    },
+    {
+      "seq": 332,
+      "ts": "2026-11-01T10:23:44Z",
+      "kind": "batch",
+      "forecasts": [
+        235,
+        236,
+        247,
+        248
+      ],
+      "repairs": [],
+      "Y": 1,
+      "stake": "143/100",
+      "E": "214358881/8398080"
+    }
+  ]
+}
+Conclusion: C1b closed at promote seq 337, 2026-11-01T11:31:58Z; all nine scored items have Y=1, none Y=0. Forecast 183 outcome 0.
