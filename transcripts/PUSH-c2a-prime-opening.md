@@ -62,8 +62,14 @@ The window opens at this push's `ts` and ends at V5's `resolves_by`, `2026-11-30
 
 ## 2. The paste
 
-One paste, on the machine that holds the sovereign's key. It stops at the first line that fails and says so.
+One paste, on steel, the machine that holds the sovereign's key, in his own clone `~/git/jack-guy`, which he made
+on 14 November. Not in `~/git/jack`: that is the runner's working clone, where the herald fetches and pulls every
+two minutes and every session's setup fetches. Two fetches at once write the same `FETCH_HEAD`, which `git pull`
+reads, and a paste of his there stopped on 14 November with `fatal: Cannot fast-forward to multiple branches.`,
+having entered nothing (COUNSEL-OPEN row 67); a lock taken by the herald between the `grant` and the `fix` would
+stop this paste with one entry made. It stops at the first line that fails and says so.
 It checks for itself that:
+- it runs in `~/git/jack-guy`: without that clone it stops at its first command, having entered nothing;
 - the login on this machine works: GitHub answers `gfrmin` (on 13 November it had stopped working for three
   hours; if this check fails, run `gh auth login -h github.com -w -s workflow` and paste again);
 - it is after `2026-11-17T12:00:00Z`;
@@ -82,7 +88,7 @@ It checks for itself that:
 Counsel's V5–V7 have been on `main` since 5 November (seqs 1580 to 1582).
 
 ```
-cd ~/git/jack && git switch main && [ "$(gh api user --jq .login)" = gfrmin ] && [ "$(date -u +%s)" -gt 1794916800 ] && n=0 && until [ "$((n+=1))" -gt 120 ] || { [ "$(gh api 'repos/renavondata/jack/pulls?state=open&per_page=100' --jq 'map(select(.number!=125 and .number!=316 and .number!=562))|length')" = 0 ] && [ "$(date -u +%M)" -ge 40 ]; }; do echo "waiting: a proposal is open, or the minute is before 40"; sleep 30; done && [ "$n" -le 120 ] && git pull --ff-only && python3 -c 'import json; E=[json.loads(l) for l in open("log.jsonl")]; assert [e["seq"] for e in E if e["type"]=="push"][-1:] == [367] and sum(e["type"]=="push" for e in E) == 7 and not any(e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject")=="C2a" for e in E)' && git fetch origin && git worktree add -b opening-c2a-prime-3-push ~/git/worktrees/jack/opening-c2a-prime-3-push origin/opening-c2a-prime-3 && [ "$(git -C ~/git/worktrees/jack/opening-c2a-prime-3-push rev-parse HEAD)" = ced344f9363ce9149e97044027107317b14a4c69 ] && python3 -c 'import runpy; runpy.run_path("tools/jack")["push_read_gate"]("opening-c2a-prime-3-push", "C2a-prime")' && tools/jack decision grant "GitHub App renavondata-jack-court[bot]: the court's platform acts on renavondata/jack (opencode-runner #227), in force since 2026-11-04T05:40Z" && tools/jack decision fix "C2a: criterion 7 unmet at the stated end — nine off-log repair rows (acts-20261103T2144); the court's platform acts moved to a GitHub App (opencode-runner #227)" && git fetch origin && git -C ~/git/worktrees/jack/opening-c2a-prime-3-push merge --no-ff --no-edit origin/main -m "merge: main into the opening branch of C2a-prime, after the grant and the fix" -m "Proposer: guy guy-master" && tools/jack push opening-c2a-prime-3-push --opens C2a-prime --review ~/git/worktrees/jack/opening-c2a-prime-3-push/transcripts/REVIEW-C2a-prime-code.md || echo "Stopped. Send counsel everything printed above before pasting anything again."
+cd ~/git/jack-guy && git switch main && [ "$(gh api user --jq .login)" = gfrmin ] && [ "$(date -u +%s)" -gt 1794916800 ] && n=0 && until [ "$((n+=1))" -gt 120 ] || { [ "$(gh api 'repos/renavondata/jack/pulls?state=open&per_page=100' --jq 'map(select(.number!=125 and .number!=316 and .number!=562))|length')" = 0 ] && [ "$(date -u +%M)" -ge 40 ]; }; do echo "waiting: a proposal is open, or the minute is before 40"; sleep 30; done && [ "$n" -le 120 ] && git pull --ff-only && python3 -c 'import json; E=[json.loads(l) for l in open("log.jsonl")]; assert [e["seq"] for e in E if e["type"]=="push"][-1:] == [367] and sum(e["type"]=="push" for e in E) == 7 and not any(e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject")=="C2a" for e in E)' && git fetch origin && git worktree add -b opening-c2a-prime-3-push ~/git/worktrees/jack-guy/opening-c2a-prime-3-push origin/opening-c2a-prime-3 && [ "$(git -C ~/git/worktrees/jack-guy/opening-c2a-prime-3-push rev-parse HEAD)" = ced344f9363ce9149e97044027107317b14a4c69 ] && python3 -c 'import runpy; runpy.run_path("tools/jack")["push_read_gate"]("opening-c2a-prime-3-push", "C2a-prime")' && tools/jack decision grant "GitHub App renavondata-jack-court[bot]: the court's platform acts on renavondata/jack (opencode-runner #227), in force since 2026-11-04T05:40Z" && tools/jack decision fix "C2a: criterion 7 unmet at the stated end — nine off-log repair rows (acts-20261103T2144); the court's platform acts moved to a GitHub App (opencode-runner #227)" && git fetch origin && git -C ~/git/worktrees/jack-guy/opening-c2a-prime-3-push merge --no-ff --no-edit origin/main -m "merge: main into the opening branch of C2a-prime, after the grant and the fix" -m "Proposer: guy guy-master" && tools/jack push opening-c2a-prime-3-push --opens C2a-prime --review ~/git/worktrees/jack-guy/opening-c2a-prime-3-push/transcripts/REVIEW-C2a-prime-code.md || echo "Stopped. Send counsel everything printed above before pasting anything again."
 ```
 
 **Notes on the paste.**
@@ -96,7 +102,8 @@ cd ~/git/jack && git switch main && [ "$(gh api user --jq .login)" = gfrmin ] &&
   `decision` entries stand and the push has not been made: by the brief's §Stop and report if, counsel is told
   before any other act. After the `fix` the push can still be refused at the merge, at the verb's own checks
   or because `main` moved under it.
-- The paste makes a local branch and worktree, `opening-c2a-prime-3-push`, before it enters anything. If it
+- The paste makes a local branch and worktree, `opening-c2a-prime-3-push` (in `~/git/jack-guy`, the worktree under
+  `~/git/worktrees/jack-guy/`), before it enters anything. If it
   stops at any later step they remain, and a second paste would stop at that step; counsel sends the line
   that removes them with whatever follows.
 
@@ -122,8 +129,8 @@ what the brief predicts, and showed what follows.
   multiplies continued liveness by about 0.77, and each clean batch by about 1.2 (the stakes change as the
   record does, so the factors are approximate); criterion 6 needs 20.
 - **The acts evidence.** Counsel commits the raw and attributed tables of the window by a proposal (§The acts
-  evidence), re-runs the attributed command once it has merged, and sends the promotion paste, which names
-  the table:
+  evidence), re-runs the attributed command once it has merged, and sends the promotion paste, made in
+  `~/git/jack-guy` like this one, which names the table:
 
   ```
   tools/jack decision promote C2a --acts transcripts/evidence/acts-c2a2-<end>.csv
