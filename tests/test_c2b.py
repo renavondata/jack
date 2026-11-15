@@ -123,3 +123,28 @@ class C2b(SignedFixture):
                     # A retrospective file with the right text cannot repair the first prefix.
                     late = commit(root, {"transcripts/evidence/w5/late.txt": witness})
                     self.assertFalse(st.counsel_bound(s, root, late, seed)[0])
+
+    def test_decision_dispatch_signs_only_the_single_lawful_c2b_verdict(self):
+        from types import SimpleNamespace
+        from tests import test_promotion
+        jack = test_promotion.jack
+        args = SimpleNamespace(kind="promote", subject="C2b", acts=None)
+        sha, verdict = "a" * 40, "promote C2b: lawful"
+        def command(*cmd):
+            if cmd[0] == "gh":
+                return SimpleNamespace(stdout=json.dumps([{"workflow_runs": [dict(GREEN, head_sha=sha)]}]))
+            self.assertEqual(cmd[cmd.index("--subject") + 1], "C2b")
+            self.assertEqual(cmd[cmd.index("--as-of") + 1], END)
+            return SimpleNamespace(stdout=verdict)
+        with patch.object(jack, "begin"), patch.object(jack, "git", return_value=sha), patch.object(jack, "run", side_effect=command), \
+                patch.object(jack.entry, "now", return_value=END), patch.object(jack, "main_ending") as ending, \
+                patch.object(jack, "append") as append:
+            jack.v_decision(args)
+            self.assertEqual(ending.call_args.args[2](), dict(kind="promote", subject="C2b"))
+            ending.reset_mock()
+            for verdict in [f"promote C2b: refused: criterion {n}" for n in range(1, 10)] + [
+                    "promote C2a: lawful", "promote C2b: lawful\npromote C2b: refused: criterion 8", ""]:
+                with self.subTest(verdict=verdict), self.assertRaises(jack.Refused):
+                    jack.v_decision(args)
+                ending.assert_not_called()
+                append.assert_not_called()

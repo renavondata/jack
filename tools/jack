@@ -249,7 +249,7 @@ def v_decision(a):
     a.subject or refuse("SUBJECT must be a non-empty string")
     body = {"kind": a.kind, "subject": a.subject}
     if a.kind == "promote":
-        a.subject in ("C1a", "C1b", "C2a") or refuse("promotion criteria unknown for " + a.subject)
+        a.subject in ("C1a", "C1b", "C2a", "C2b") or refuse("promotion criteria unknown for " + a.subject)
         head = git("rev-parse", "HEAD")
         if a.acts is not None:
             if not re.fullmatch(r"transcripts/evidence/[A-Za-z0-9._-]+\.csv", a.acts):
