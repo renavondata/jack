@@ -69,6 +69,33 @@ class StatusTest(unittest.TestCase):
         self.assertTrue(st.status(es, "A3", 14, "2026-10-28T00:00:00Z", root=self.root)["veto"])
         self.assertFalse(st.status(es, "A3", 14, "2026-10-28T00:00:00Z", root=self.root, subject="other")["veto"])
 
+    def test_c2b_reported_acts_require_an_explicit_prior_counsel_reference(self):
+        start, end = "2026-11-18T00:00:00Z", "2026-11-18T01:00:00Z"
+        s = dict(start=start, end=end, as_of=end, prefix=[])
+        label = "reported: sovereign acts in the window with no counsel forecast naming them before the act: "
+        self.assertEqual(st.sovereign_acts(s, None), [label + "unverified (no acts evidence)"])
+        self.assertEqual(st.sovereign_acts(s, []), [label + "0 of 0"])
+        def row(ref, time="08:30", cls="decision"):
+            return dict(time_hkt="2026-11-18 " + time, kind="PR merged", ref=ref, **{"class": cls})
+        acts = [row("PR #40"), row("#41", cls="repair"), row("42"), row("43"), row("44"), row("45"),
+                row("46"), row("47"), row("48", "09:00"), row("49", "08:00"),
+                row("50", "09:01"), row("51", cls="observation")]
+        def forecast(seq, who="counsel", ts="2026-11-18T00:29:59Z", **body):
+            return e(seq, ts, "forecast", who, **body)
+        s["prefix"] = [forecast(0, claim="threshold 40", args={"id": "40"}),
+                       forecast(1, args={"act": "PR #41"}), forecast(2, args={"act": "#42"}),
+                       forecast(3, args={"act": "PR 43"}), forecast(4, "reviewer", args={"act": "44"}),
+                       forecast(5, ts="2026-11-18T00:30:00Z", args={"act": "45"}),
+                       forecast(6, ts="2026-11-18T00:30:01Z", args={"act": "46"}),
+                       forecast(7, args={"act": 47}), forecast(8, args={"act": "48 and 40"})]
+        unnamed = [acts[i] for i in (0, 4, 5, 6, 7, 8)]
+        expected = [label + "6 of 9"] + [" ".join(r[k] for k in ("time_hkt", "class", "kind", "ref")) for r in unnamed]
+        self.assertEqual(st.sovereign_acts(s, acts), expected)
+        s["as_of"] = "2026-11-18T00:29:59Z"
+        self.assertEqual(st.sovereign_acts(s, acts), [label + "0 of 0"])
+        s["as_of"] = "2026-11-19T00:00:00Z"
+        self.assertEqual(st.sovereign_acts(s, acts), expected)
+
     def test_render_marks_short_lines(self):
         with patch.object(st, "tree_facts", return_value=dict(counted=6900, kernel=500, scope=True)):
             text = st.render(st.assess(self.es, "C1a", "2026-10-26T04:00:00Z", self.root, None))

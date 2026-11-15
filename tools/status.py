@@ -593,6 +593,30 @@ def counsel_bound(s, root, rev, inventory):
         return False, ["W5: " + str(exc)]
 
 
+def sovereign_acts(s, acts):
+    """Amendment 13's reported proxy, independent of every promotion criterion."""
+    label = "reported: sovereign acts in the window with no counsel forecast naming them before the act: "
+    if acts is None:
+        return [label + "unverified (no acts evidence)"]
+    start, end = instant(s["start"]), instant(min(s["as_of"], s["end"]))
+    hkt = dt.timezone(dt.timedelta(hours=8))
+    def ref(text):
+        return text.removeprefix("PR ").removeprefix("#")
+    forecasts = [(instant(e["ts"]), ref(e["body"]["args"]["act"])) for e in s["prefix"]
+                 if e["type"] == "forecast" and e["proposer"] == "counsel" and
+                 isinstance(e["body"].get("args", {}).get("act"), str)]
+    total, unnamed = 0, []
+    for row in acts:
+        if row["class"] not in ("decision", "repair"):
+            continue
+        t = dt.datetime.strptime(row["time_hkt"], "%Y-%m-%d %H:%M").replace(tzinfo=hkt)
+        if start < t <= end:
+            total += 1
+            if not any(ts < t and name == ref(row["ref"]) for ts, name in forecasts):
+                unnamed.append(" ".join(row[k] for k in ("time_hkt", "class", "kind", "ref")))
+    return [label + f"{len(unnamed)} of {total}"] + unnamed
+
+
 def assess_c2b(s, facts, verified, root, rev, runs, acts):
     end = min(s["as_of"], s["end"])
     unchanged, same, registered, inventory = c2b_tree_evidence(root, rev, s)
@@ -611,7 +635,8 @@ def assess_c2b(s, facts, verified, root, rev, runs, acts):
             return False
     built = all(present(p) for p in ("tools/elect.py", "sim/election.py", "tests/test_elect.py"))
     attacks = verified and all(present(p) for p in ("tests/test_clerk.py", "tests/test_value.py", "tests/test_elect.py", "tests/test_sim.py"))
-    s.update(value=v, continued_liveness=live, late_reports=process["late_reports"], unverified_fixes=unverified, w5=lines)
+    s.update(value=v, continued_liveness=live, late_reports=process["late_reports"], unverified_fixes=unverified,
+             w5=lines, sovereign_acts=sovereign_acts(s, acts))
     return [(verified and registered, "criterion 1: C2b pins and twins in verified tests run"),
             (verified, "criterion 2: checker agreement in verified tests run"),
             (facts["counted"] <= 10400 and facts["kernel"] <= 500 and facts["scope"] and unchanged,
@@ -729,8 +754,7 @@ def render(s):
                    f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
     if s["subject"] == "C2b":
         lines += ["election: no rounds (BRIEF-C2b Amendment 10)"] + s.get("w5", [])
-        lines += ["sovereign acts in the window with no counsel forecast naming them before the act: "
-                  "unverified (the brief specifies no act-to-forecast matching rule)"]
+        lines += s.get("sovereign_acts", sovereign_acts(s, None))
     lines = s.get("history", []) + lines
     win = [f"window: C2a-prime (second window of C2a, opened seq {s['opening']})"] if s.get("window") == "C2a-prime" else []
     return "\n".join(lines + s.get("unverified_fixes", []) + s.get("repairs", []) + win + [promotion_line(s)])

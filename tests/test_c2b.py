@@ -83,7 +83,7 @@ class C2b(SignedFixture):
                                         window_opening=s["start"])
                 self.assertEqual(s["value"], expected)
                 self.assertIn("election: no rounds (BRIEF-C2b Amendment 10)", st.render(s))
-                self.assertIn("unverified (the brief specifies no act-to-forecast matching rule)", st.render(s))
+                self.assertIn("reported: sovereign acts in the window with no counsel forecast naming them before the act: 0 of 0", st.render(s))
                 self.assertNotIn("V6", st.render(s))
                 wealthy = dict(expected, E_value=20)
                 with patch.object(st.val, "value", return_value=wealthy), patch.object(st, "score_items", return_value=dict(E=Fraction(20), items=[])):
