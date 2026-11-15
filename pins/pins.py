@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 100
+EXPECTED = 108
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1111,15 +1111,102 @@ PINS += C2A_PRIME_PINS
 
 # --- opening read gate pins (BRIEF-C2b §Counsel bound (a); REVIEW-C2b-v1 F7) ---
 push_gate_tests = functools.partial(fixture_tests, "test_push_gate.PushGate")
+
+
+def c2b_cases(case, copy_rel=None):
+    def test(root):
+        if copy_rel:
+            os.makedirs(os.path.dirname(os.path.join(root, copy_rel)), exist_ok=True)
+            shutil.copyfile(os.path.join(os.path.dirname(os.path.dirname(__file__)), copy_rel), os.path.join(root, copy_rel))
+        r = subprocess.run([sys.executable, "-E", "-s", "-m", "unittest", "-q", f"pins.c2b.{case}"],
+                           cwd=root, capture_output=True, text=True)
+        assert r.returncode == 0, r.stdout + r.stderr
+    return test
+
+
 C2B_GATE_PINS = [
     Pin("push_without_read_refused", push_gate_tests("push_without_read_refused"), [
         Mutant("gate_always_admits", "tools/jack", 'def push_read_gate(branch, layer, repo=ROOT):', 'def push_read_gate(branch, layer, repo=ROOT):\n    return')]),
     Pin("read_of_this_text", push_gate_tests("read_of_this_text"), [
         Mutant("brief_bytes_unchecked", "tools/jack", 'if tree_bytes(repo, commit, brief) != current:', 'if False:')]),
-    Pin("read_not_counsels", push_gate_tests("read_not_counsels"), [
-        Mutant("proposer_unchecked", "tools/jack", 'principal_at(entries, i, signer_blob(e)) not in (None, "counsel")', 'True')]),
+    Pin("read_not_counsels", c2b_cases("GateCases.test_read_not_counsels_twins"), [
+        Mutant("proposer_unchecked", "tools/jack", 'principal_at(entries, i, signer_blob(e)) not in (None, "counsel")', 'True'),
+        Mutant("trailer_accepted_for_proposal", "tools/jack", 'for proposal in proposals:',
+               'if any(trailer(x) for x in additions): return\n            for proposal in proposals:'),
+        Mutant("headers_from_edited_blob", "tools/jack",
+               'if g("rev-parse", "--verify", head + ":" + review, ok=False) == blob: return',
+               'if g("rev-parse", "--verify", head + ":" + review, ok=False): return')]),
 ]
 for pin in C2B_GATE_PINS:
     pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
         f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
 PINS += C2B_GATE_PINS
+
+
+# --- C2b W5 and workflow pins (BRIEF-C2b §Counsel bound (b), Amendments 6-8) ---
+C2B_W5_PINS = [
+    Pin("w5_overdue_escalates", c2b_cases("W5Cases.test_w5_overdue_escalates"), [
+        Mutant("never_escalates", "tools/due.py", "escalated=late > 0", "escalated=False"),
+        Mutant("escalates_at_due", "tools/due.py", "escalated=late > 0", "escalated=late >= 0")]),
+    Pin("w5_escalation_history", c2b_cases("W5Cases.test_w5_escalation_history"), [
+        Mutant("late_discharge_cleared", "tools/due.py", "escalated=late > 0", "escalated=late > 0 and seq is None"),
+        Mutant("time_from_cited_entry_alone", "tools/due.py",
+               'effective.append((max(cited["ts"], merge["ts"]), done["seq"]))',
+               'effective.append((cited["ts"], done["seq"]))'),
+        Mutant("time_from_merge_alone", "tools/due.py",
+               'effective.append((max(cited["ts"], merge["ts"]), done["seq"]))',
+               'effective.append((merge["ts"], done["seq"]))'),
+        Mutant("last_merge_taken", "tools/due.py",
+               'for e in sorted(prefix, key=lambda e: e["seq"]):',
+               'for e in sorted(prefix, key=lambda e: e["seq"], reverse=True):'),
+        Mutant("any_line_with_id_merges", "tools/due.py",
+               'if data is not None and (line is None or line in data.splitlines(keepends=True)):',
+               'if data is not None and (line is None or json.loads(line)["id"].encode() in data):'),
+        Mutant("discharge_without_merge", "tools/due.py",
+               '            if merge is not None:\n                effective.append((max(cited["ts"], merge["ts"]), done["seq"]))',
+               '            effective.append((max(cited["ts"], merge["ts"]) if merge else cited["ts"], done["seq"]))'),
+        Mutant("discharges_never_take_effect", "tools/due.py",
+               "when, seq = min(effective, default=(None, None))", "when, seq = None, None"),
+        Mutant("merge_sought_in_whole_log", "tools/due.py",
+               "merge = first_merge(root, prefix, PATH, raw, cache)",
+               "merge = first_merge(root, es, PATH, raw, cache)")]),
+    Pin("w5_done_is_an_entry", c2b_cases("W5Cases.test_w5_done_is_an_entry"), [
+        Mutant("unrelated_entry_discharges", "tools/due.py",
+               'if cited is None or row["id"] not in log.canonical(cited["body"]):', 'if cited is None:'),
+        Mutant("bare_integer_done_admitted", "tools/due.py",
+               'if rid not in rows or not done_ok(row["done"]):', 'if rid not in rows:')]),
+    Pin("w5_rows_append_only", c2b_cases("W5Cases.test_w5_rows_append_only"), [
+        Mutant("earlier_lines_unchecked", "tools/due.py", "if not newer.startswith(older):", "if False:")]),
+    Pin("w5_inventory", c2b_cases("W5Cases.test_w5_inventory", "transcripts/COUNSEL-DUE.jsonl"), [
+        Mutant("seeded_ids_unchecked", "tools/due.py", 'if r["id"] not in present:', "if False:")]),
+    Pin("w5_redate", c2b_cases("W5Cases.test_w5_redate"), [
+        Mutant("redate_ignored", "tools/due.py", '                rows[rid]["due"] = row["due"]', '                pass'),
+        Mutant("any_redate_admitted", "tools/due.py", 'REDATES.get(rid) != row["due"]', 'False'),
+        Mutant("matched_by_id_alone", "tools/due.py", 'REDATES.get(rid) != row["due"]', 'rid not in REDATES'),
+        Mutant("second_redate_admitted", "tools/due.py", 'or rid in redated ', ''),
+        Mutant("seq_test_dropped", "tools/due.py", 'row["seq"] != 1564', 'False'),
+        Mutant("order_test_dropped", "tools/due.py",
+               'for raw in data.splitlines(keepends=True):',
+               'for raw in sorted(data.splitlines(keepends=True), key=lambda r: (b\'"done":{\' in r, b\'"why"\' in r)):')]),
+    Pin("c2b_history_from_w5", c2b_cases("W5Cases.test_c2b_history_from_w5"), [
+        Mutant("every_row_gated", "tools/status.py", 'if landing is None or row["due"] <= landing["ts"]:', 'if False:'),
+        Mutant("every_row_excused", "tools/status.py", 'if landing is None or row["due"] <= landing["ts"]:', 'if True:'),
+        Mutant("excuse_extended_to_criterion_8", "tools/status.py",
+               'all(r["done"] is not None or r["due"] >= end for r in rows)',
+               'all(r["done"] is not None or r["due"] >= end or landing is None or r["due"] <= landing["ts"] for r in rows)'),
+        Mutant("landing_from_last_merge", "tools/status.py",
+               'landing = due.first_merge(root, prefix, "tools/due.py")',
+               'landing = next((e for e in reversed(prefix) if e["type"] == "merge" and due.file_at(root, e["body"]["commit"], "tools/due.py") is not None), None)'),
+        Mutant("due_at_landing_gated", "tools/status.py",
+               'if landing is None or row["due"] <= landing["ts"]:',
+               'if landing is None or row["due"] < landing["ts"]:'),
+        Mutant("gated_when_w5_not_landed", "tools/status.py",
+               'if landing is None or row["due"] <= landing["ts"]:',
+               'if landing is not None and row["due"] <= landing["ts"]:')]),
+    Pin("workflow_steps_preserved", c2b_cases("WorkflowCases.test_workflow_steps_preserved"), [
+        Mutant("sample_step_dropped", ".github/workflows/tests.yml",
+               "      - name: Simulator sample through both checkers (first 2,000 committed seeds; §9 criterion 2)\n"
+               "        run: python3 harness/diff.py --seeds 300 --b kernel2/check 'spec/vectors/logs/*.jsonl'\n", ""),
+        Mutant("gate_not_always_run", ".github/workflows/tests.yml", "    if: always()\n", "")]),
+]
+PINS += C2B_W5_PINS
