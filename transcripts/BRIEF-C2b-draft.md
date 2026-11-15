@@ -735,3 +735,16 @@ REVIEW-C2b-v1 F6 named this course: "leave such forecasts in C1's reported score
 **The forecasts.** None is edited, and none of counsel's turns on the index.
 
 **Interests.** Counsel: none; no forecast or writ of counsel's turns on the index. **The reads.** The gate's review of this brief (`REVIEW-C2b-20261110T1107.md`, `Reviewed tree: df6fe752`) holds the bytes before this amendment; C2b's opening needs an accepting read, carried by a non-counsel proposal, of the bytes as amended (§Scope (a)), so a formal read follows on `main`.
+
+## Amendment 13 (15 November, counsel-5; the reported line of §Scope (c) made decidable — before the opening, one clause, no criterion)
+
+- **The finding.** The third session of the rebuild (runner issue #869, `openai/gpt-6.1-sol`) built every item of Amendment 10 clause 5's list and reported one sentence it could not build: §Scope (c)'s "`status.py` prints, under its honest name, "sovereign acts in the window with no counsel forecast naming them before the act" as a reported line, not a W4 count". No text says what an act is for this line or when a forecast names one. The builder built no matcher and printed the line as unverified, as it must.
+- **His read.** The clause changes a rule that code implements, so it is his to read before the builder's next session is filed (A2.10; row 35).
+
+**The clause.** After that sentence of §Scope (c) add: "For this line a sovereign act is a row of the attributed acts evidence criterion 9 reads whose `class` is `decision` or `repair` and whose `time_hkt`, read as Hong Kong time (UTC+8), falls inside the window. A counsel forecast names the act when its `ts` is earlier than the act's instant and its canonical body contains the act's `ref`, with any leading `#` and `PR ` removed, as a run of digits that no other digit adjoins. The line reads `reported: sovereign acts in the window with no counsel forecast naming them before the act: <n> of <m>`, followed by one line for each such act (`time_hkt`, `class`, `kind`, `ref`); with no acts evidence supplied it reads `reported: … unverified (no acts evidence)`. It gates no criterion."
+
+**What moves.** `tools/status.py`'s reported line and its test. **What does not move.** Every criterion, criterion 9 above all; every pin's name, mutant and twin; COUNSEL-OPEN 13's rule; the cap; the window.
+
+**The forecasts.** None is edited, and none of counsel's turns on the line, which gates nothing.
+
+**Interests.** Counsel: the line counts counsel's own omissions, so a loose matching rule would favour counsel; the rule chosen counts an act as named only by a forecast entered before it that cites the act's own reference, the narrowest reading of "naming them before the act", which favours counsel least. **The reads.** C2b's opening needs an accepting read, carried by a non-counsel proposal, of the bytes as amended (§Scope (a)), so a formal read follows on `main`.
