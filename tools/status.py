@@ -154,12 +154,25 @@ def evidence_ok(root, ev, rev=None):
         return False
 
 
+def c2b_window(es):
+    promotion = next(e for e in es if promotes(e, "C2a"))
+    opening = next(e for e in es if e["type"] == "push" and e["seq"] > promotion["seq"])
+    forecast = next((e for e in es if e["seq"] < opening["seq"] and e["type"] == "forecast" and
+                     e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "X7"), None)
+    end = forecast["body"]["resolves_by"] if forecast else None
+    return opening["seq"], opening["ts"], end if end and opening["ts"] < end else None
+
+
 def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None, decision=None):
     """The figures BRIEF-C1 evaluates on the exit prefix, on the prefix as of `as_of` (an instant string)."""
     now = instant(as_of)
     es = [e for e in es if instant(e["ts"]) <= now]
     v5_ok = True
-    if subject in ("C1b", "C2a"):
+    if subject == "C2b":
+        opening, start, end = c2b_window(es)
+        v5_ok, window = end is not None, "C2b"
+        start, end = instant(start), instant(end or start)
+    elif subject in ("C1b", "C2a"):
         w2 = c2a_prime_window(es) if subject == "C2a" else None
         if w2 is not None and (decision is None or instant(decision["ts"]) > instant(w2[1])):
             opening, start, end = w2[0], w2[1], w2[2] or w2[1]
@@ -278,6 +291,9 @@ def window_bounds(es, name):
         if name == "C2a-prime":
             w2 = c2a_prime_window(es)
             return (w2[1], w2[2], w2[2]) if w2 and w2[2] else None
+        if name == "C2b":
+            _, start, end = c2b_window(es)
+            return (start, end, end) if end else None
     except StopIteration:
         return None
     return None
@@ -490,6 +506,109 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
             (off == 0, f"criterion 7: off-log repairs: {off if off is not None else 'unknown (no acts file)'}")]
 
 
+C2B_PINS = ()  # Filled by the separately delivered §Pins inventory; empty refuses criterion 1.
+
+
+def c2b_tree_evidence(root, rev, s):
+    try:
+        def opening_tree(seq):
+            target, earliest = [e for e in s["prefix"] if e["seq"] <= seq], None
+            for sha in git_bytes(root, "rev-list", "--first-parent", rev).decode().split():
+                if [json.loads(line) for line in tree_bytes(root, sha, "log.jsonl").splitlines()] == target:
+                    earliest = sha
+                elif earliest is not None:
+                    break
+            return earliest
+        start = opening_tree(s["opening"])
+        if start is None:
+            return False, False, False, None
+        commits = [start, rev] + git_bytes(root, "rev-list", f"{start}..{rev}").decode().split()
+        paths = ("judge/scope.json", "SPEC.md", WORKFLOW)
+        def protected(c, p):
+            blob = tree_bytes(root, c, p)
+            return blob.split(b"## 10.", 1)[1].split(b"\n## ", 1)[0] if p == "SPEC.md" else blob
+        unchanged = all(protected(c, p) == protected(start, p) for c in commits for p in paths)
+        old = opening_tree(val.opening_push(s["prefix"])["seq"])
+        kernel = lambda c: git_bytes(root, "ls-tree", "-r", c, "kernel/")
+        unchanged = unchanged and old is not None and all(kernel(c) == kernel(old) for c in commits)
+        unchanged = unchanged and json.loads(tree_bytes(root, start, paths[0]))["cap"] == 10400 and not any(
+            e["type"] == "push" and e["seq"] > s["opening"] for e in s["prefix"])
+        # Amendment 4 uses C2a-prime's dependency-closed process check at C2b's own opening.
+        same = c2a_tree_evidence(root, rev, s["prefix"], s["opening"])[1]
+        pins = tree_bytes(root, rev, "pins/pins.py").decode()
+        registered = bool(C2B_PINS) and all(f'Pin("{n}"' in pins or f"Pin('{n}'" in pins for n in C2B_PINS)
+        return unchanged, same, registered, start
+    except (OSError, ValueError, IndexError, StopIteration, subprocess.CalledProcessError):
+        return False, False, False, None
+
+
+def counsel_bound(s, root, rev, inventory):
+    from tools import due
+    end, prefix = min(s["as_of"], s["end"]), s["prefix"]
+    try:
+        if inventory is None:
+            raise ValueError("opening seed unverified")
+        rows = due.assess(root, rev, prefix, end, inventory)
+        if rows is None:
+            raise ValueError("no COUNSEL-DUE file")
+        lines, missing = due.render(rows).splitlines(), []
+        landing = due.first_merge(root, prefix, "tools/due.py")
+        for row in rows:
+            if row["due"] >= end or row["effective_at"] is not None and row["effective_at"] <= row["due"]:
+                continue
+            if landing is None or row["due"] <= landing["ts"]:
+                continue
+            first = next((e for e in prefix if e["ts"] > row["due"]), None)
+            witness = prefix_tree(root, rev, [e for e in prefix if first and e["seq"] <= first["seq"]]) if first else None
+            found = False
+            if witness:
+                paths = git_bytes(root, "ls-tree", "-r", "--name-only", witness, "transcripts/evidence/w5/").decode().splitlines()
+                for path in paths:
+                    text = tree_bytes(root, witness, path).decode()
+                    if (f"prefix to seq {first['seq']})" in text and
+                            any(line.startswith(f"W5 {row['id']} due {row['due']} ") and "ESCALATED" in line
+                                for line in text.splitlines())):
+                        found = True
+            if not found:
+                missing.append(row["id"])
+        lines += ["W5: timely escalation unverified: " + ", ".join(missing)] if missing else []
+        return not missing and all(r["done"] is not None or r["due"] >= end for r in rows), lines
+    except (OSError, ValueError, UnicodeError, subprocess.CalledProcessError) as exc:
+        return False, ["W5: " + str(exc)]
+
+
+def assess_c2b(s, facts, verified, root, rev, runs, acts):
+    end = min(s["as_of"], s["end"])
+    unchanged, same, registered, inventory = c2b_tree_evidence(root, rev, s)
+    gate = attack_start(root, runs, end, "tests/test_value.py")
+    v = val.value(s["prefix"], as_of=end, attack_green=gate, window_opening=s["start"])
+    live_gate, unverified = attack_start(root, runs, end), []
+    fixes = window_fixes(s["prefix"], root, rev, unverified)
+    process = item_process(s["prefix"], c1b_window(s["prefix"])[0], end, fixes)
+    live = score_items(i for i in process["items"] if live_gate is not None and live_gate < i["ts"])
+    bound, lines = counsel_bound(s, root, rev, inventory)
+    off = off_log_repairs(acts, s["start"], end, overlap=True)
+    def present(p):
+        try:
+            return bool(tree_bytes(root, rev, p))
+        except (OSError, subprocess.CalledProcessError):
+            return False
+    built = all(present(p) for p in ("tools/elect.py", "sim/election.py", "tests/test_elect.py"))
+    attacks = verified and all(present(p) for p in ("tests/test_clerk.py", "tests/test_value.py", "tests/test_elect.py", "tests/test_sim.py"))
+    s.update(value=v, continued_liveness=live, late_reports=process["late_reports"], unverified_fixes=unverified, w5=lines)
+    return [(verified and registered, "criterion 1: C2b pins and twins in verified tests run"),
+            (verified, "criterion 2: checker agreement in verified tests run"),
+            (facts["counted"] <= 10400 and facts["kernel"] <= 500 and facts["scope"] and unchanged,
+             f"criterion 3: counted {facts['counted']}/10400; kernel {facts['kernel']}/500; scope, SPEC 10, workflow and kernel unchanged: {unchanged}"),
+            (attacks, "criterion 4: all attack tests green in verified tests run on main"),
+            (v["E_value"] >= 20, f"criterion 5: value E {v['E_value']:.6f} >= 20"),
+            (same and live_gate is not None and live["E"] >= 20 and not process["late_reports"],
+             f"criterion 6: continued liveness E {live['E']} >= 20; unchanged {same}; late repairs {len(process['late_reports'])}"),
+            (built and verified and registered, "criterion 7: the election, built and not run"),
+            (bound and verified and registered, "criterion 8: counsel bound; gate and seven W5 pins; timely escalation history"),
+            (not s["veto"] and off == 0, f"criterion 9: veto on C2b: {s['veto']}; off-log repairs: {off if off is not None else 'unknown (no acts file)'}")]
+
+
 def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=None, decision=None):
     """One assessment for live status and a promotion's own prefix, tree and instant."""
     if decision is not None:
@@ -501,11 +620,11 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
         run = next((r for r in runs if run_verified(r, rev) and completed_by(r, as_of)), None)
         mapping = None
     s = status(es, "A3", 14, as_of, root, subject, rev, decision=decision)
-    if subject == "C2a" and not s["v5"]:
+    if subject in ("C2a", "C2b") and not s["v5"]:
         unverified = []
         window_fixes([e for e in es if instant(e["ts"]) <= instant(as_of)], root, rev, unverified)
         s.update(subject=subject, unverified_fixes=unverified,
-                 checks=[(False, "C2a-prime has no promotion forecast before its opening")])
+                 checks=[(False, f"{'C2a-prime' if subject == 'C2a' else 'C2b'} has no promotion forecast before its opening")])
         return s
     facts = tree_facts(root, rev)
     verified = run_verified(run, rev) and completed_by(run, as_of)
@@ -513,7 +632,9 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
               (verified, "criterion 2: checker agreement in verified tests run"),
               (facts["counted"] <= 6900 and facts["kernel"] <= 500 and facts["scope"],
                f"criterion 3: counted {facts['counted']}/6900; kernel {facts['kernel']}/500; scope equals SPEC: {facts['scope']}")]
-    if subject == "C2a":
+    if subject == "C2b":
+        checks = assess_c2b(s, facts, verified, root, rev, runs, acts)
+    elif subject == "C2a":
         checks = assess_value(s, facts, verified, root, rev, runs, acts)
     elif subject == "C1b":
         unverified = []
@@ -546,7 +667,8 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
                         f"criterion 4: forecasts {s['forecasts']}/20; proposers {len(s['proposers'])}/3; "
                         f"resolutions {s['resolutions']}/10; world-typed with evidence {s['world_resolutions_with_evidence']}/5"),
                        (verified, "criterion 5: score vectors in verified tests run")])
-    checks.append((not s["veto"], f"criterion {7 if subject == 'C2a' else 6}: veto on {subject}: {'YES' if s['veto'] else 'none'}"))
+    if subject != "C2b":
+        checks.append((not s["veto"], f"criterion {7 if subject == 'C2a' else 6}: veto on {subject}: {'YES' if s['veto'] else 'none'}"))
     exit_procedure = s["procedure"] + int(not any(promotes(e, subject) and (s["window"] != "C2a-prime" or instant(e["ts"]) > instant(s["start"])) for e in s["prefix"]))
     checks.append((exit_procedure <= 5 * s["object"], f"A3.4 ratio: procedure {s['procedure']} : object {s['object']}; "
                    f"at promote {exit_procedure} : {s['object']} (maximum 5:1)"))
@@ -587,7 +709,9 @@ def render(s):
         below = ", ".join(k for k in weights if weights[k] < weights["base"]) or "none"
         lines += [f"value: E {v['E_value']:.6f} over {v['events']} events; window events {v['window_events']}",
                   "elections: " + " / ".join(f"{k} {float(w):.6f}" for k, w in weights.items()) + f"; below base: {below}",
-                  f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
+                   f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
+    if s["subject"] == "C2b":
+        lines += ["election: no rounds (BRIEF-C2b Amendment 10)"] + s.get("w5", [])
     lines = s.get("history", []) + lines
     win = [f"window: C2a-prime (second window of C2a, opened seq {s['opening']})"] if s.get("window") == "C2a-prime" else []
     return "\n".join(lines + s.get("unverified_fixes", []) + s.get("repairs", []) + win + [promotion_line(s)])
@@ -598,7 +722,7 @@ def parser(description):
     ap.add_argument("--log", default=os.path.join(ROOT, "log.jsonl"), help="kernel-checked log (default repository log.jsonl)")
     ap.add_argument("--root", default=ROOT, help="local git repository for tree/history evidence (default this repository)")
     ap.add_argument("--as-of", default=dt.datetime.now(dt.timezone.utc).strftime(FMT), help="UTC YYYY-MM-DDTHH:MM:SSZ; default now")
-    ap.add_argument("--subject", choices=("C1a", "C1b", "C2a"), help="status defaults to the latest opened window")
+    ap.add_argument("--subject", choices=("C1a", "C1b", "C2a", "C2b"), help="status defaults to the latest opened window")
     ap.add_argument("--run", metavar="FILE", help="one Actions workflow-run JSON object for HEAD: tests.yml path, push event, main branch, "
                     "exact SHA, success conclusion, updated_at by as-of; absent leaves criteria 1/2 unverified")
     ap.add_argument("--runs", metavar="FILE", help="JSON array of Actions workflow_runs: historical promotion, attack and W3 witnesses; default empty")
@@ -641,7 +765,7 @@ def inputs(a):
 
 def report(**context):
     decisions = [e for e in context["es"] if e["ts"] <= context["as_of"] and
-                 any(promotes(e, w) for w in ("C1a", "C1b", "C2a"))]
+                 any(promotes(e, w) for w in ("C1a", "C1b", "C2a", "C2b"))]
     w2 = c2a_prime_window([e for e in context["es"] if instant(e["ts"]) <= instant(context["as_of"])]) if context["subject"] == "C2a" else None
     closing = next((e for e in decisions if promotes(e, context["subject"]) and
                     (w2 is None or instant(e["ts"]) > instant(w2[1]))), None)
@@ -668,6 +792,12 @@ def main(argv=None):
         context = inputs(a)
         if a.subject is None and any(e["type"] == "push" and e["seq"] > 337 for e in context["es"]):
             context["subject"] = "C2a"
+        if a.subject is None:
+            try:
+                c2b_window(context["es"])
+                context["subject"] = "C2b"
+            except StopIteration:
+                pass
         s = report(**context)
         print(json.dumps(s, indent=1, default=str) if a.json else render(s))
     except (StopIteration, OSError, ValueError, subprocess.CalledProcessError) as exc:
