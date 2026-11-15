@@ -24,7 +24,7 @@ class C2b(SignedFixture):
         sc = dict(counted=["tests/"], cap=10400)
         files = {"judge/scope.json": json.dumps(sc), "SPEC.md": "## 10. Outside\nat C1 it is:\n```\n" + json.dumps(sc) + "\n```\n",
                  "log.jsonl": self.s.log.text(), st.WORKFLOW: "workflow\n", due.PATH: b"",
-                 "pins/pins.py": "\n".join(f'Pin("{n}", t, m)' for n in st.VALUE_PINS + list(st.C2B_PINS))}
+                 "pins/pins.py": "\n".join(f'Pin("{n}", t, m)' for n in st.VALUE_PINS + list(st.C2B_PINS) + st.C2B_BOUND_PINS)}
         for p in ("tools/status.py", "tools/clerk.py", "tools/elect.py", "sim/election.py", "tests/test_elect.py",
                   "tests/test_sim.py", "tests/test_value.py", "tests/test_clerk.py"):
             with open(os.path.join(st.ROOT, p)) as f:
@@ -83,6 +83,7 @@ class C2b(SignedFixture):
                                         window_opening=s["start"])
                 self.assertEqual(s["value"], expected)
                 self.assertIn("election: no rounds (BRIEF-C2b Amendment 10)", st.render(s))
+                self.assertIn("unverified (the brief specifies no act-to-forecast matching rule)", st.render(s))
                 self.assertNotIn("V6", st.render(s))
                 wealthy = dict(expected, E_value=20)
                 with patch.object(st.val, "value", return_value=wealthy), patch.object(st, "score_items", return_value=dict(E=Fraction(20), items=[])):
@@ -109,8 +110,7 @@ class C2b(SignedFixture):
                 payload = commit(root, {"log.jsonl": self.s.log.text(), **({"tools/due.py": "# W5\n"} if landing else {})})
                 self.s.add("merge", ts="2026-11-18T00:30:00Z", proposal=cited, commit=payload, checker="a" * 64)
                 first = self.s.add("proposal", ts="2026-11-18T01:00:01Z", title="tick", commit="b" * 40)
-                witness = (f"window C2b (as of 2026-11-18T01:00:01Z; prefix to seq {first})\n"
-                           f"W5 task due {deadline} writ: ESCALATED 0.00h past due\n")
+                witness = f"W5 task due {deadline} writ: ESCALATED 0.00h past due\n"
                 commit(root, {"log.jsonl": self.s.log.text(), **({"transcripts/evidence/w5/tick.txt": witness} if tick else {})})
                 discharge = (json.dumps(dict(id="task", done=dict(seq=cited, what="delivered"))) + "\n").encode()
                 payload = commit(root, {due.PATH: row + discharge if discharged else row})
@@ -148,3 +148,14 @@ class C2b(SignedFixture):
                     jack.v_decision(args)
                 ending.assert_not_called()
                 append.assert_not_called()
+
+    def test_pin_inventory_requires_every_named_pin_including_both_amendments(self):
+        self.assertEqual((len(st.C2B_PINS), len(set(st.C2B_PINS)), len(st.C2B_BOUND_PINS)), (33, 33, 10))
+        self.assertTrue({"w5_redate", "c2b_history_from_w5"} <= set(st.C2B_BOUND_PINS) <= set(st.C2B_PINS))
+        text = "\n".join(f'Pin("{name}", t, m)' for name in st.C2B_PINS)
+        with tree({"pins/pins.py": text}) as (root, full):
+            self.assertTrue(st.pins_registered(root, full, st.C2B_PINS))
+            for name in st.C2B_PINS:
+                missing = commit(root, {"pins/pins.py": text.replace(f'Pin("{name}", t, m)', "")})
+                self.assertFalse(st.pins_registered(root, missing, st.C2B_PINS), name)
+                self.assertEqual(st.pins_registered(root, missing, st.C2B_BOUND_PINS), name not in st.C2B_BOUND_PINS)

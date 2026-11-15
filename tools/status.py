@@ -506,7 +506,22 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
             (off == 0, f"criterion 7: off-log repairs: {off if off is not None else 'unknown (no acts file)'}")]
 
 
-C2B_PINS = ()  # Filled by the separately delivered §Pins inventory; empty refuses criterion 1.
+C2B_BOUND_PINS = ("push_without_read_refused read_of_this_text read_not_counsels w5_overdue_escalates "
+                  "w5_escalation_history w5_done_is_an_entry w5_rows_append_only w5_inventory "
+                  "w5_redate c2b_history_from_w5").split()
+C2B_PINS = ("gain_in_unit_interval round_loss_is_mean bad_round_kept exp3_importance exp3_constants "
+            "instance_feedback_complete draw_replays_from_prefix sigma_verifies draw_on_the_grid roster_fixed "
+            "invite_before_session invite_cutoff_W0 invite_p_is_success_rate invite_resolution_strict "
+            "resolver_not_forecaster self_invite rigged_election mixture_untouched_and_continued procedure_types_out "
+            "workflow_steps_preserved window_from_the_push wealth_continues promote_refused").split() + C2B_BOUND_PINS
+
+
+def pins_registered(root, rev, names):
+    try:
+        text = tree_bytes(root, rev, "pins/pins.py").decode()
+        return bool(names) and all(f'Pin("{n}"' in text or f"Pin('{n}'" in text for n in names)
+    except (OSError, UnicodeError, subprocess.CalledProcessError):
+        return False
 
 
 def c2b_tree_evidence(root, rev, s):
@@ -535,8 +550,7 @@ def c2b_tree_evidence(root, rev, s):
             e["type"] == "push" and e["seq"] > s["opening"] for e in s["prefix"])
         # Amendment 4 uses C2a-prime's dependency-closed process check at C2b's own opening.
         same = c2a_tree_evidence(root, rev, s["prefix"], s["opening"])[1]
-        pins = tree_bytes(root, rev, "pins/pins.py").decode()
-        registered = bool(C2B_PINS) and all(f'Pin("{n}"' in pins or f"Pin('{n}'" in pins for n in C2B_PINS)
+        registered = pins_registered(root, rev, C2B_PINS)
         return unchanged, same, registered, start
     except (OSError, ValueError, IndexError, StopIteration, subprocess.CalledProcessError):
         return False, False, False, None
@@ -565,7 +579,9 @@ def counsel_bound(s, root, rev, inventory):
                 paths = git_bytes(root, "ls-tree", "-r", "--name-only", witness, "transcripts/evidence/w5/").decode().splitlines()
                 for path in paths:
                     text = tree_bytes(root, witness, path).decode()
-                    if (f"prefix to seq {first['seq']})" in text and
+                    carrying = git_bytes(root, "log", "-1", "--format=%H", witness, "--", path).decode().strip()
+                    carried_prefix = [json.loads(line) for line in tree_bytes(root, carrying, "log.jsonl").splitlines()]
+                    if (carried_prefix == [e for e in prefix if e["seq"] <= first["seq"]] and
                             any(line.startswith(f"W5 {row['id']} due {row['due']} ") and "ESCALATED" in line
                                 for line in text.splitlines())):
                         found = True
@@ -605,7 +621,8 @@ def assess_c2b(s, facts, verified, root, rev, runs, acts):
             (same and live_gate is not None and live["E"] >= 20 and not process["late_reports"],
              f"criterion 6: continued liveness E {live['E']} >= 20; unchanged {same}; late repairs {len(process['late_reports'])}"),
             (built and verified and registered, "criterion 7: the election, built and not run"),
-            (bound and verified and registered, "criterion 8: counsel bound; gate and seven W5 pins; timely escalation history"),
+            (bound and verified and pins_registered(root, rev, C2B_BOUND_PINS),
+             "criterion 8: counsel bound; gate and seven W5 pins; timely escalation history"),
             (not s["veto"] and off == 0, f"criterion 9: veto on C2b: {s['veto']}; off-log repairs: {off if off is not None else 'unknown (no acts file)'}")]
 
 
@@ -712,6 +729,8 @@ def render(s):
                    f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
     if s["subject"] == "C2b":
         lines += ["election: no rounds (BRIEF-C2b Amendment 10)"] + s.get("w5", [])
+        lines += ["sovereign acts in the window with no counsel forecast naming them before the act: "
+                  "unverified (the brief specifies no act-to-forecast matching rule)"]
     lines = s.get("history", []) + lines
     win = [f"window: C2a-prime (second window of C2a, opened seq {s['opening']})"] if s.get("window") == "C2a-prime" else []
     return "\n".join(lines + s.get("unverified_fixes", []) + s.get("repairs", []) + win + [promotion_line(s)])
