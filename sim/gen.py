@@ -18,7 +18,8 @@ Case = namedtuple("Case", "seed kind lines expected")
 KINDS = ("benign", "retroactive", "forged", "rewriting", "forking", "unattributed", "unsigned_change", "revoked",
          "weak_key", "duplicate_key", "self_judging", "stalling", "flooding", "schema", "structure",
          "ts_decreasing", "forecast_valid", "resolution_valid", "resolution_self", "resolution_dangling", "resolution_double",
-         "forecast_past", "forecast_permille_0", "forecast_permille_1000", "forecast_boolean", "rigged", "colluding")
+         "forecast_past", "forecast_permille_0", "forecast_permille_1000", "forecast_boolean", "rigged", "colluding",
+         "self_invite", "rigged_election")
 TITLES = ("alpha", "beta", "gamma", "delta", "epsilon", "zeta")
 CHECKER = "33" * 32  # the checker digest genesis records in simulated logs
 EPOCH, FMT = datetime.datetime(2026, 1, 1), "%Y-%m-%dT%H:%M:%SZ"
@@ -150,6 +151,8 @@ class Sim:
 
 
 def generate_kind(kind, rng, pool):
+    if kind in ("self_invite", "rigged_election"):
+        return generate_election(kind, rng, pool)
     s = Sim(rng, pool)
     m, lg = s.model, s.lg
     s.prefix()
@@ -283,6 +286,42 @@ def generate_value(kind, rng, pool, s):
     if kind == "rigged":
         s.add("forecast", "ann", body, pool.ann, ts=cutoff)
     return Case(None, kind, s.lg.lines, s.ok())
+
+
+def generate_election(kind, rng, pool, attack=True):
+    """Kernel-valid C2b attacks and their unchanged-body, clerk-signed twins."""
+    import base64
+    from fractions import Fraction
+    from sim import election as el
+    from tools import elect
+    lg = build.Log()
+    declarations = [decl("guy-master", "guy", pool.guy, ALL), decl("reviewer-1", "reviewer", pool.ann, LEDGER),
+                    decl("counsel-1", "counsel", pool.bob, LEDGER), decl("herald-2", "herald", pool.stranger, ["forecast"])]
+    lg.add("genesis", "guy", build.genesis_body(declarations), pool.guy, ts="2026-11-17T22:00:00Z")
+    lg.add("forecast", "counsel", dict(claim="X7", p=550, resolves_by="2026-12-01T12:00:00Z", args=dict(id="X7")),
+           pool.bob, ts="2026-11-17T22:01:00Z")
+    lg.add("decision", "guy", dict(kind="promote", subject="C2a"), pool.guy, ts="2026-11-17T23:00:00Z")
+    lg.add("push", "guy", dict(digest=build.HEX64, review=build.HEX64), pool.guy, ts="2026-11-18T00:00:00Z")
+    w0 = "2026-11-18T01:00:00Z"
+    sigma = elect.sign_sigma(pool.stranger.path, log.pubkey_blob(pool.stranger.pubkey), "freshness", w0)
+    draw = el.draw((Fraction(0),) * el.K, base64.b64decode(sigma))
+    principal, model = el.ROSTER[draw["arm"]]
+    cuts = draw["cuts"]
+    args = dict(stream="freshness", window_utc=[w0, "2026-11-18T02:00:00Z"], round=0, instance=0, sigma=sigma,
+                roster=[list(p) for p in el.ROSTER], principal=principal, model=model, gains=["0/1"] * 3,
+                cuts=[str(c) for c in cuts], propensity=f"{cuts[draw['arm'] + 1] - cuts[draw['arm']]}/{el.GRID}",
+                gamma=repr(el.GAMMA), eta=repr(el.ETA))
+    if attack and kind == "rigged_election":
+        variant = rng.choice(("gains", "sigma", "cuts"))
+        args[variant] = {"gains": ["1/1", "0/1", "0/1"], "sigma": base64.b64encode(bytes(64)).decode(),
+                         "cuts": ["0", "1", "2", str(el.GRID)]}[variant]
+    body = dict(type="election.invite", args=args, p=500, resolves_by="2026-11-18T06:00:00Z",
+                claim=f"stream freshness, window {w0}: the invited entrant <{principal}, {model}> "
+                      "achieves a mean clipped log-loss on the window's six events below the base rate's")
+    own = attack and kind == "self_invite"
+    lg.add("forecast", "reviewer" if own else "herald", body, pool.ann if own else pool.stranger,
+           ts="2026-11-18T00:15:00Z")
+    return Case(None, kind, lg.lines, {"ok": True, "entries": len(lg.lines)})
 
 
 def generate_ledger(kind, rng, pool, s):

@@ -37,6 +37,13 @@ def evaluate(case, pool, checker=check.check):
     v = checker(case.lines)
     if strip(v) != case.expected:
         failures.append(("oracle", f"expected {case.expected}, got {strip(v)}"))
+    if case.kind in ("self_invite", "rigged_election") and v.get("ok"):
+        from tools import elect
+        es = [log.parse_line(line) for line in case.lines]
+        result = elect.audit(es, es[-1]["ts"], lambda _: True)
+        reason = "unkeyed" if case.kind == "self_invite" else "rigged_election"
+        if result["history"] or not any(n == es[-1]["seq"] and why.startswith(reason) for n, why in result["refused"]):
+            failures.append(("oracle", f"election attack not refused as {reason}"))
     if strip(checker(case.lines)) != strip(v):
         failures.append(("deterministic", "second check differs"))
     if v.get("ok"):

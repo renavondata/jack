@@ -49,7 +49,7 @@ class Generators(unittest.TestCase):
         for s in ("b40a8140306b53ae", "bcbd8a8f356f322e", "c2b71f90bf0ef9b8", "1161a16aed6daf91",
                   "8077e437c56c5c02", "0ce62cf5c485ee63", "4f332879346f2a0e", "e9c603ed305d7d56"):
             rng = random.Random(int(s, 16))
-            self.assertEqual(rng.choice(gen.KINDS[:-2]), "rewriting")  # freeze the C1a reproducer's kind draw
+            self.assertEqual(rng.choice(gen.KINDS[:gen.KINDS.index("rigged")]), "rewriting")  # freeze C1a's roster
             case = gen.generate_kind("rewriting", rng, self.pool)
             self.assertEqual(case.kind, "rewriting")
             self.assertIn(case.expected["reason"], ("bad_signature", "parent_mismatch"), s)
@@ -102,6 +102,26 @@ class Generators(unittest.TestCase):
         proposers = [json.loads(l)["proposer"] for l in case.lines]
         i = proposers.index("bob")
         self.assertIn("key", types[i + 1:], "bob's key is revoked after bob's proposal")
+
+    def test_election_attacks_are_kernel_valid_tool_refused_and_have_passing_twins(self):
+        from tools import elect
+        from unittest.mock import patch
+        for kind, reason in (("self_invite", "unkeyed"), ("rigged_election", "rigged_election")):
+            self.assertIn(kind, gen.KINDS)
+            for seed in range(6):
+                attack = gen.generate_election(kind, random.Random(seed), self.pool)
+                self.assertTrue(check.check(attack.lines)["ok"])
+                es = list(map(json.loads, attack.lines))
+                self.assertTrue(elect.audit(es, es[-1]["ts"], lambda _: True)["refused"][0][1].startswith(reason))
+                self.assertEqual(run.evaluate(attack, self.pool), [])
+                with patch.object(elect, "audit", return_value=dict(history=[], refused=[])):
+                    self.assertIn("oracle", [p for p, _ in run.evaluate(attack, self.pool)])
+                twin = gen.generate_election(kind, random.Random(seed), self.pool, attack=False)
+                self.assertTrue(check.check(twin.lines)["ok"])
+                es = list(map(json.loads, twin.lines))
+                result = elect.audit(es, es[-1]["ts"], lambda _: True)
+                self.assertEqual(result["refused"], [])
+                self.assertEqual(len(result["history"]), 1)
 
 
 class Properties(unittest.TestCase):
