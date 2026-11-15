@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 125
+EXPECTED = 129
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1291,5 +1291,27 @@ C2B_ELECT_PINS = [
                'if log.canonical(expected) != log.canonical(f["body"]):', 'if False:'),
         Mutant("draw_from_later_prefix_admitted", "tools/elect.py",
                "before = prefix[:i]", "before = prefix")]),
+    Pin("mixture_untouched_and_continued", c2b_cases("ValueStatusCases.test_mixture_untouched_and_continued",
+                                                     "transcripts/evidence/value-fixture-20261101.json"), [
+        Mutant("uniform_restart_at_window", "tools/value.py",
+               "        q = sum((weights[k] * ps[k] for k in roster), Fraction(0))",
+               "        q = sum(((window_weights if cutoff > window_opening else weights)[k] * ps[k] for k in roster), Fraction(0))")]),
+    Pin("procedure_types_out", c2b_cases("ValueStatusCases.test_procedure_types_out"), [
+        Mutant("counsel_programme_scored", "tools/value.py", "    return None\n",
+               '    return ((typ, body.get("claim")), f["ts"]) if typ == "counsel.programme" else None\n')]),
+    Pin("window_from_the_push_c2b", c2b_cases("ValueStatusCases.test_window_from_the_push_c2b"), [
+        Mutant("c2b_from_merge", "tools/status.py",
+               'opening = next(e for e in es if e["type"] == "push" and e["seq"] > promotion["seq"])',
+               'opening = next(e for e in es if e["type"] == "merge" and e["seq"] > promotion["seq"])'),
+        Mutant("c2b_end_from_x0", "tools/status.py",
+               'e["body"].get("args", {}).get("id") == "X7"',
+               'e["body"].get("args", {}).get("id") == "X0"')]),
+    Pin("promote_refused_c2b", c2b_cases("ValueStatusCases.test_promote_refused_c2b"), [
+        Mutant("value_alone", "tools/status.py",
+               '    return [(verified and registered, "criterion 1: C2b pins and twins in verified tests run"),',
+               '    return [(v["E_value"] >= 20, f"criterion 5: value E {v[\'E_value\']:.6f} >= 20")] or '
+               '[(verified and registered, "criterion 1: C2b pins and twins in verified tests run"),'),
+        Mutant("c2b_signs_without_verdict", "tools/jack",
+               '    if a.kind == "promote":', '    if a.kind == "promote" and a.subject != "C2b":')]),
 ]
 PINS += C2B_ELECT_PINS

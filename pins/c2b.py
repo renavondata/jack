@@ -6,10 +6,11 @@ from fractions import Fraction
 from unittest.mock import patch
 
 from tests.clerk_fixture import SignedFixture, commit, tree
+from tests.test_c2b import C2b
 from tests.test_due import DueTest, discharge, lines, row
 from tests.test_elect import Election, ElectionMathTest
 from tests.test_push_gate import REVIEW, PushGate
-from tests.test_value import CUT, OPEN, calc, e, forecast, resolve, seed
+from tests.test_value import CUT, END, OPEN, Value, calc, e, forecast, resolve, seed
 from tests.test_workflow import WorkflowTest
 from tests import test_status
 from kernel import check
@@ -360,3 +361,58 @@ class ElectionCases(Election):
         attack_es = list(map(json.loads, self.chain.lines))
         self.assertTrue(any(seq == early_inv["seq"] and why.startswith("rigged_election")
                             for seq, why in elect.audit(attack_es, "2026-11-18T03:00:00Z", lambda _: True)["refused"]))
+
+
+class ValueStatusCases(C2b):
+    def test_mixture_untouched_and_continued(self):
+        Value("test_worked_table").test_worked_table()
+        second = "2026-11-01T02:00:00Z"
+        es = seed() + [
+            e(338, "push", ts=OPEN),
+            forecast(339, 900, "counsel"), resolve(340, 339, 1),
+            forecast(341, 900, "counsel", race=2, cutoff=second), resolve(342, 341, 1),
+            e(343, "push", ts=second),
+            e(344, "forecast", "counsel", ts=second, p=500, claim="inv", type="election.invite", resolves_by=END),
+            forecast(345, 900, "counsel", race=3, cutoff="2026-11-01T03:00:00Z"), resolve(346, 345, 1),
+        ]
+        full = val.value(es, no_attack_gate=True)
+        continued = val.value(es, no_attack_gate=True, window_opening=second)
+        self.assertEqual(continued["rows"], full["rows"])
+        self.assertEqual(continued["E_value"], full["E_value"])
+        self.assertEqual(continued["terminal_weights"], full["terminal_weights"])
+        self.assertEqual(continued["own_likelihood_ratio_vs_base"], full["own_likelihood_ratio_vs_base"])
+        self.assertNotEqual(continued["rows"][2]["weights_before"],
+                            dict.fromkeys(continued["rows"][2]["weights_before"], Fraction(1, 5)))
+        self.assertGreater(continued["rows"][2]["lambda"], 0)
+
+    def test_procedure_types_out(self):
+        es = seed() + [forecast(1, 800, "counsel"), resolve(2, 1, 1)]
+        for i, typ in enumerate(("counsel.programme", "proposal.ci", "proposal.count", "review.forecast", "election.invite")):
+            fseq = 10 + 2 * i
+            es += [forecast(fseq, 900, "counsel", type=typ, args={"id": f"P{i}"}), resolve(fseq + 1, fseq, 1)]
+        r = calc(es)
+        self.assertEqual(r["events"], 1)
+        self.assertEqual(r["unkeyed"], [10, 12, 14, 16, 18])
+
+    def test_window_from_the_push_c2b(self):
+        test_status.C2aPrimeTest.c2a_stream(self)
+        self.s.forecast(ts="2026-11-17T00:00:00Z", args={"id": "X0"}, resolves_by="2026-11-18T12:00:00Z")
+        self.s.forecast(ts="2026-11-17T00:00:01Z", args={"id": "X7"}, resolves_by="2026-12-01T12:00:00Z")
+        self.s.add("decision", "guy", ts="2026-11-18T00:00:00Z", kind="promote", subject="C2a")
+        self.s.merge(ts="2026-11-18T00:00:01Z")
+        op = self.s.add("push", "guy", ts="2026-11-18T00:00:02Z", digest="a" * 64, review="0" * 64)
+        self.assertEqual(st.c2b_window(self.s.es), (op, "2026-11-18T00:00:02Z", "2026-12-01T12:00:00Z"))
+        s = st.status(self.s.es, "A3", 14, "2026-11-18T02:00:00Z", subject="C2b")
+        self.assertEqual((s["start"], s["end"], s["entries_in_window"]), ("2026-11-18T00:00:02Z", "2026-12-01T12:00:00Z", 0))
+        for change in (lambda e: e["body"]["args"].update(id="X1"),
+                       lambda e: e["body"].update(resolves_by="2026-11-18T00:00:02Z"),
+                       lambda e: e.update(seq=op + 1)):
+            es = json.loads(json.dumps(self.s.es))
+            change(next(e for e in es if e["body"].get("args", {}).get("id") == "X7"))
+            self.assertEqual(st.promotion_line(st.assess(es, "C2b", "2026-11-18T02:00:00Z", None, None)),
+                             "promote C2b: refused: C2b has no promotion forecast before its opening")
+
+    def test_promote_refused_c2b(self):
+        self.test_criteria_continue_ledgers_require_verified_attacks_and_ignore_invites()
+        self.setUp()
+        self.test_decision_dispatch_signs_only_the_single_lawful_c2b_verdict()
