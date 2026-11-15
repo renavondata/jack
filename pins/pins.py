@@ -1118,8 +1118,7 @@ def c2b_cases(case, copy_rel=None):
         if copy_rel:
             os.makedirs(os.path.dirname(os.path.join(root, copy_rel)), exist_ok=True)
             shutil.copyfile(os.path.join(os.path.dirname(os.path.dirname(__file__)), copy_rel), os.path.join(root, copy_rel))
-        r = subprocess.run([sys.executable, "-E", "-s", "-m", "unittest", "-q", f"pins.c2b.{case}"],
-                           cwd=root, capture_output=True, text=True)
+        r = subprocess.run([sys.executable, "-E", "-s", "-m", "unittest", "-q", f"pins.c2b.{case}"], cwd=root, capture_output=True, text=True)
         assert r.returncode == 0, r.stdout + r.stderr
     return test
 
@@ -1131,50 +1130,31 @@ C2B_GATE_PINS = [
         Mutant("brief_bytes_unchecked", "tools/jack", 'if tree_bytes(repo, commit, brief) != current:', 'if False:')]),
     Pin("read_not_counsels", c2b_cases("GateCases.test_read_not_counsels_twins"), [
         Mutant("proposer_unchecked", "tools/jack", 'principal_at(entries, i, signer_blob(e)) not in (None, "counsel")', 'True'),
-        Mutant("trailer_accepted_for_proposal", "tools/jack", 'for proposal in proposals:',
-               'if any(trailer(x) for x in additions): return\n            for proposal in proposals:'),
-        Mutant("headers_from_edited_blob", "tools/jack",
-               'if g("rev-parse", "--verify", head + ":" + review, ok=False) == blob: return',
-               'if g("rev-parse", "--verify", head + ":" + review, ok=False): return')]),
+        Mutant("trailer_accepted_for_proposal", "tools/jack", 'for proposal in proposals:', 'if any(trailer(x) for x in additions): return\n            for proposal in proposals:'),
+        Mutant("headers_from_edited_blob", "tools/jack", 'if g("rev-parse", "--verify", head + ":" + review, ok=False) == blob: return', 'if g("rev-parse", "--verify", head + ":" + review, ok=False): return')]),
 ]
 for pin in C2B_GATE_PINS:
     pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
         f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
 PINS += C2B_GATE_PINS
 
-
-# --- C2b W5 and workflow pins (BRIEF-C2b §Counsel bound (b), Amendments 6-8) ---
-C2B_W5_PINS = [
+# --- C2b W5, workflow and election pins (BRIEF-C2b §Pins, Amendments 6-8, 12) ---
+C2B_NEW_PINS = [
     Pin("w5_overdue_escalates", c2b_cases("W5Cases.test_w5_overdue_escalates"), [
         Mutant("never_escalates", "tools/due.py", "escalated=late > 0", "escalated=False"),
         Mutant("escalates_at_due", "tools/due.py", "escalated=late > 0", "escalated=late >= 0")]),
     Pin("w5_escalation_history", c2b_cases("W5Cases.test_w5_escalation_history"), [
         Mutant("late_discharge_cleared", "tools/due.py", "escalated=late > 0", "escalated=late > 0 and seq is None"),
-        Mutant("time_from_cited_entry_alone", "tools/due.py",
-               'effective.append((max(cited["ts"], merge["ts"]), done["seq"]))',
-               'effective.append((cited["ts"], done["seq"]))'),
-        Mutant("time_from_merge_alone", "tools/due.py",
-               'effective.append((max(cited["ts"], merge["ts"]), done["seq"]))',
-               'effective.append((merge["ts"], done["seq"]))'),
-        Mutant("last_merge_taken", "tools/due.py",
-               'for e in sorted(prefix, key=lambda e: e["seq"]):',
-               'for e in sorted(prefix, key=lambda e: e["seq"], reverse=True):'),
-        Mutant("any_line_with_id_merges", "tools/due.py",
-               'if data is not None and (line is None or line in data.splitlines(keepends=True)):',
-               'if data is not None and (line is None or json.loads(line)["id"].encode() in data):'),
-        Mutant("discharge_without_merge", "tools/due.py",
-               '            if merge is not None:\n                effective.append((max(cited["ts"], merge["ts"]), done["seq"]))',
-               '            effective.append((max(cited["ts"], merge["ts"]) if merge else cited["ts"], done["seq"]))'),
-        Mutant("discharges_never_take_effect", "tools/due.py",
-               "when, seq = min(effective, default=(None, None))", "when, seq = None, None"),
-        Mutant("merge_sought_in_whole_log", "tools/due.py",
-               "merge = first_merge(root, prefix, PATH, raw, cache)",
-               "merge = first_merge(root, es, PATH, raw, cache)")]),
+        Mutant("time_from_cited_entry_alone", "tools/due.py", 'effective.append((max(cited["ts"], merge["ts"]), done["seq"]))', 'effective.append((cited["ts"], done["seq"]))'),
+        Mutant("time_from_merge_alone", "tools/due.py", 'effective.append((max(cited["ts"], merge["ts"]), done["seq"]))', 'effective.append((merge["ts"], done["seq"]))'),
+        Mutant("last_merge_taken", "tools/due.py", 'for e in sorted(prefix, key=lambda e: e["seq"]):', 'for e in sorted(prefix, key=lambda e: e["seq"], reverse=True):'),
+        Mutant("any_line_with_id_merges", "tools/due.py", 'if data is not None and (line is None or line in data.splitlines(keepends=True)):', 'if data is not None and (line is None or json.loads(line)["id"].encode() in data):'),
+        Mutant("discharge_without_merge", "tools/due.py", '            if merge is not None:\n                effective.append((max(cited["ts"], merge["ts"]), done["seq"]))', '            effective.append((max(cited["ts"], merge["ts"]) if merge else cited["ts"], done["seq"]))'),
+        Mutant("discharges_never_take_effect", "tools/due.py", "when, seq = min(effective, default=(None, None))", "when, seq = None, None"),
+        Mutant("merge_sought_in_whole_log", "tools/due.py", "merge = first_merge(root, prefix, PATH, raw, cache)", "merge = first_merge(root, es, PATH, raw, cache)")]),
     Pin("w5_done_is_an_entry", c2b_cases("W5Cases.test_w5_done_is_an_entry"), [
-        Mutant("unrelated_entry_discharges", "tools/due.py",
-               'if cited is None or row["id"] not in log.canonical(cited["body"]):', 'if cited is None:'),
-        Mutant("bare_integer_done_admitted", "tools/due.py",
-               'if rid not in rows or not done_ok(row["done"]):', 'if rid not in rows:')]),
+        Mutant("unrelated_entry_discharges", "tools/due.py", 'if cited is None or row["id"] not in log.canonical(cited["body"]):', 'if cited is None:'),
+        Mutant("bare_integer_done_admitted", "tools/due.py", 'if rid not in rows or not done_ok(row["done"]):', 'if rid not in rows:')]),
     Pin("w5_rows_append_only", c2b_cases("W5Cases.test_w5_rows_append_only"), [
         Mutant("earlier_lines_unchecked", "tools/due.py", "if not newer.startswith(older):", "if False:")]),
     Pin("w5_inventory", c2b_cases("W5Cases.test_w5_inventory", "transcripts/COUNSEL-DUE.jsonl"), [
@@ -1185,133 +1165,65 @@ C2B_W5_PINS = [
         Mutant("matched_by_id_alone", "tools/due.py", 'REDATES.get(rid) != row["due"]', 'rid not in REDATES'),
         Mutant("second_redate_admitted", "tools/due.py", 'or rid in redated ', ''),
         Mutant("seq_test_dropped", "tools/due.py", 'row["seq"] != 1564', 'False'),
-        Mutant("order_test_dropped", "tools/due.py",
-               'for raw in data.splitlines(keepends=True):',
-               'for raw in sorted(data.splitlines(keepends=True), key=lambda r: (b\'"done":{\' in r, b\'"why"\' in r)):')]),
+        Mutant("order_test_dropped", "tools/due.py", 'for raw in data.splitlines(keepends=True):', 'for raw in sorted(data.splitlines(keepends=True), key=lambda r: (b\'"done":{\' in r, b\'"why"\' in r)):')]),
     Pin("c2b_history_from_w5", c2b_cases("W5Cases.test_c2b_history_from_w5"), [
         Mutant("every_row_gated", "tools/status.py", 'if landing is None or row["due"] <= landing["ts"]:', 'if False:'),
         Mutant("every_row_excused", "tools/status.py", 'if landing is None or row["due"] <= landing["ts"]:', 'if True:'),
-        Mutant("excuse_extended_to_criterion_8", "tools/status.py",
-               'all(r["done"] is not None or r["due"] >= end for r in rows)',
-               'all(r["done"] is not None or r["due"] >= end or landing is None or r["due"] <= landing["ts"] for r in rows)'),
-        Mutant("landing_from_last_merge", "tools/status.py",
-               'landing = due.first_merge(root, prefix, "tools/due.py")',
-               'landing = next((e for e in reversed(prefix) if e["type"] == "merge" and due.file_at(root, e["body"]["commit"], "tools/due.py") is not None), None)'),
-        Mutant("due_at_landing_gated", "tools/status.py",
-               'if landing is None or row["due"] <= landing["ts"]:',
-               'if landing is None or row["due"] < landing["ts"]:'),
-        Mutant("gated_when_w5_not_landed", "tools/status.py",
-               'if landing is None or row["due"] <= landing["ts"]:',
-               'if landing is not None and row["due"] <= landing["ts"]:')]),
+        Mutant("excuse_extended_to_criterion_8", "tools/status.py", 'all(r["done"] is not None or r["due"] >= end for r in rows)', 'all(r["done"] is not None or r["due"] >= end or landing is None or r["due"] <= landing["ts"] for r in rows)'),
+        Mutant("landing_from_last_merge", "tools/status.py", 'landing = due.first_merge(root, prefix, "tools/due.py")', 'landing = next((e for e in reversed(prefix) if e["type"] == "merge" and due.file_at(root, e["body"]["commit"], "tools/due.py") is not None), None)'),
+        Mutant("due_at_landing_gated", "tools/status.py", 'if landing is None or row["due"] <= landing["ts"]:', 'if landing is None or row["due"] < landing["ts"]:'),
+        Mutant("gated_when_w5_not_landed", "tools/status.py", 'if landing is None or row["due"] <= landing["ts"]:', 'if landing is not None and row["due"] <= landing["ts"]:')]),
     Pin("workflow_steps_preserved", c2b_cases("WorkflowCases.test_workflow_steps_preserved"), [
-        Mutant("sample_step_dropped", ".github/workflows/tests.yml",
-               "      - name: Simulator sample through both checkers (first 2,000 committed seeds; §9 criterion 2)\n"
-               "        run: python3 harness/diff.py --seeds 300 --b kernel2/check 'spec/vectors/logs/*.jsonl'\n", ""),
+        Mutant("sample_step_dropped", ".github/workflows/tests.yml", "      - name: Simulator sample through both checkers (first 2,000 committed seeds; §9 criterion 2)\n        run: python3 harness/diff.py --seeds 300 --b kernel2/check 'spec/vectors/logs/*.jsonl'\n", ""),
         Mutant("gate_not_always_run", ".github/workflows/tests.yml", "    if: always()\n", "")]),
-]
-PINS += C2B_W5_PINS
-
-
-# --- C2b election pins (BRIEF-C2b §Scope, §Safety, §Pins, Amendment 12) ---
-C2B_ELECT_PINS = [
     Pin("gain_in_unit_interval", c2b_cases("ElectionCases.test_gain_in_unit_interval"), [
         Mutant("divide_by_ln_1000", "sim/election.py", "math.log(999)", "math.log(1000)")]),
     Pin("round_loss_is_mean", c2b_cases("ElectionCases.test_round_loss_is_mean"), [
         Mutant("losses_summed", "sim/election.py", " / 6 / math.log(999)", " / math.log(999)")]),
     Pin("bad_round_kept", c2b_cases("ElectionCases.test_bad_round_kept"), [
         Mutant("bad_round_dropped", "tools/elect.py", '        if result["settled"]:', '        if result["settled"] and 1 not in result["ns"]:'),
-        Mutant("missing_event_left_out_of_mean", "sim/election.py",
-               "math.fsum(math.log(n) for n in ns) / 6 / math.log(999)",
-               "math.fsum(math.log(n) for n in ns if n > 1) / max(1, sum(n > 1 for n in ns)) / math.log(999)")]),
+        Mutant("missing_event_left_out_of_mean", "sim/election.py", "math.fsum(math.log(n) for n in ns) / 6 / math.log(999)", "math.fsum(math.log(n) for n in ns if n > 1) / max(1, sum(n > 1 for n in ns)) / math.log(999)")]),
     Pin("exp3_importance", c2b_cases("ElectionCases.test_exp3_importance"), [
-        Mutant("by_todays_propensity", "tools/elect.py",
-               'gains[j] = el.update(gains[j], arm, result["gain"], Fraction(a["propensity"]))',
-               'c = el.cuts(el.update(gains[j], arm, result["gain"], Fraction(a["propensity"]))); '
-               'gains[j] = el.update(gains[j], arm, result["gain"], Fraction(c[arm + 1] - c[arm], el.GRID))')]),
+        Mutant("by_todays_propensity", "tools/elect.py", 'gains[j] = el.update(gains[j], arm, result["gain"], Fraction(a["propensity"]))', 'c = el.cuts(el.update(gains[j], arm, result["gain"], Fraction(a["propensity"]))); gains[j] = el.update(gains[j], arm, result["gain"], Fraction(c[arm + 1] - c[arm], el.GRID))')]),
     Pin("exp3_constants", c2b_cases("ElectionCases.test_exp3_constants"), [
-        Mutant("gamma_point_one", "sim/election.py",
-               "GAMMA = min(1, math.sqrt(K * math.log(K) / ((math.e - 1) * HORIZON)))", "GAMMA = 0.1")]),
+        Mutant("gamma_point_one", "sim/election.py", "GAMMA = min(1, math.sqrt(K * math.log(K) / ((math.e - 1) * HORIZON)))", "GAMMA = 0.1")]),
     Pin("instance_feedback_complete", c2b_cases("ElectionCases.test_instance_feedback_complete"), [
-        Mutant("draws_without_previous_resolution", "tools/elect.py",
-               'if j in prior["last"] and not prior["last"][j]["settled"]:', "if False:")]),
+        Mutant("draws_without_previous_resolution", "tools/elect.py", 'if j in prior["last"] and not prior["last"][j]["settled"]:', "if False:")]),
     Pin("draw_replays_from_prefix", c2b_cases("ElectionCases.test_draw_replays_from_prefix"), [
-        Mutant("gains_from_args", "tools/elect.py",
-               'expected = invite_body(before, history, f["ts"], *identity, a["sigma"], evidence)',
-               'expected = invite_body(before, [], f["ts"], *identity, a["sigma"], evidence); '
-               'd = el.draw(tuple(Fraction(g) for g in a["gains"]), base64.b64decode(a["sigma"])); '
-               'expected["args"].update(gains=a["gains"], cuts=[str(c) for c in d["cuts"]], '
-               'propensity=f"{d[\'cuts\'][d[\'arm\']+1]-d[\'cuts\'][d[\'arm\']]}/{el.GRID}", '
-               'principal=el.ROSTER[d["arm"]][0], model=el.ROSTER[d["arm"]][1]); '
-               'expected["claim"] = f["body"]["claim"]')]),
+        Mutant("gains_from_args", "tools/elect.py", 'expected = invite_body(before, history, f["ts"], *identity, a["sigma"], evidence)', 'expected = invite_body(before, [], f["ts"], *identity, a["sigma"], evidence); d = el.draw(tuple(Fraction(g) for g in a["gains"]), base64.b64decode(a["sigma"])); expected["args"].update(gains=a["gains"], cuts=[str(c) for c in d["cuts"]], propensity=f"{d[\'cuts\'][d[\'arm\']+1]-d[\'cuts\'][d[\'arm\']]}/{el.GRID}", principal=el.ROSTER[d["arm"]][0], model=el.ROSTER[d["arm"]][1]); expected["claim"] = f["body"]["claim"]')]),
     Pin("sigma_verifies", c2b_cases("ElectionCases.test_sigma_verifies"), [
-        Mutant("sigma_unchecked", "tools/elect.py",
-               "if len(raw) != 64 or not sig.ed25519_verify(pub[-32:], raw, message):", "if len(raw) != 64:")]),
+        Mutant("sigma_unchecked", "tools/elect.py", "if len(raw) != 64 or not sig.ed25519_verify(pub[-32:], raw, message):", "if len(raw) != 64:")]),
     Pin("draw_on_the_grid", c2b_cases("ElectionCases.test_draw_on_the_grid"), [
-        Mutant("float_u_unassigned", "sim/election.py",
-               "arm = next(k for k in range(K) if boundaries[k] <= u < boundaries[k + 1])",
-               "arm = next(k for k in range(K) if boundaries[k] / GRID <= float(u) / GRID < boundaries[k + 1] / GRID)")]),
+        Mutant("float_u_unassigned", "sim/election.py", "arm = next(k for k in range(K) if boundaries[k] <= u < boundaries[k + 1])", "arm = next(k for k in range(K) if boundaries[k] / GRID <= float(u) / GRID < boundaries[k + 1] / GRID)")]),
     Pin("roster_fixed", c2b_cases("ElectionCases.test_roster_fixed"), [
-        Mutant("non_roster_arm_admitted_in_elect", "tools/elect.py",
-               'if log.canonical(expected) != log.canonical(f["body"]):',
-               'if log.canonical(dict(expected, args=dict(expected["args"], roster=a["roster"]))) != log.canonical(f["body"]):'),
-        Mutant("post_opening_entrant_admitted_in_value", "tools/value.py",
-               '            elif who not in roster:\n                reason = "not in opening roster"',
-               '            elif False:\n                reason = "not in opening roster"')]),
+        Mutant("non_roster_arm_admitted_in_elect", "tools/elect.py", 'if log.canonical(expected) != log.canonical(f["body"]):', 'if log.canonical(dict(expected, args=dict(expected["args"], roster=a["roster"]))) != log.canonical(f["body"]):'),
+        Mutant("post_opening_entrant_admitted_in_value", "tools/value.py", '            elif who not in roster:\n                reason = "not in opening roster"', '            elif False:\n                reason = "not in opening roster"')]),
     Pin("invite_before_session", c2b_cases("ElectionCases.test_invite_before_session"), [
-        Mutant("forecast_before_invite_accepted", "tools/elect.py",
-               'f["seq"] > invite["seq"] and invite["ts"] < f["ts"] < a["window_utc"][0]',
-               'f["ts"] < a["window_utc"][0]')]),
+        Mutant("forecast_before_invite_accepted", "tools/elect.py", 'f["seq"] > invite["seq"] and invite["ts"] < f["ts"] < a["window_utc"][0]', 'f["ts"] < a["window_utc"][0]')]),
     Pin("invite_cutoff_W0", c2b_cases("ElectionCases.test_invite_cutoff_W0"), [
-        Mutant("invite_at_or_after_w0_scored", "tools/elect.py",
-               '    if as_of >= w0:\n        raise ValueError("skipped: W0")',
-               '    if False:\n        raise ValueError("skipped: W0")')]),
+        Mutant("invite_at_or_after_w0_scored", "tools/elect.py", '    if as_of >= w0:\n        raise ValueError("skipped: W0")', '    if False:\n        raise ValueError("skipped: W0")')]),
     Pin("invite_p_is_success_rate", c2b_cases("ElectionCases.test_invite_p_is_success_rate"), [
-        Mutant("p_is_propensity", "tools/elect.py",
-               'p=el.success_rate(prior["successes"][arm])', 'p=round(float(draw["propensity"]) * 1000)')]),
+        Mutant("p_is_propensity", "tools/elect.py", 'p=el.success_rate(prior["successes"][arm])', 'p=round(float(draw["propensity"]) * 1000)')]),
     Pin("invite_resolution_strict", c2b_cases("ElectionCases.test_invite_resolution_strict"), [
-        Mutant("less_or_equal_base_succeeds", "tools/elect.py",
-               "math.prod(Fraction(n, 1000) for n in ns) > math.prod(bases)",
-               "math.prod(Fraction(n, 1000) for n in ns) >= math.prod(bases)")]),
+        Mutant("less_or_equal_base_succeeds", "tools/elect.py", "math.prod(Fraction(n, 1000) for n in ns) > math.prod(bases)", "math.prod(Fraction(n, 1000) for n in ns) >= math.prod(bases)")]),
     Pin("resolver_not_forecaster", c2b_cases("ElectionCases.test_resolver_not_forecaster"), [
-        Mutant("forecaster_resolves_own_round", "tools/elect.py",
-               'if (r["proposer"] != a["principal"] and r["seq"] > f["seq"] and',
-               'if (r["seq"] > f["seq"] and'),
-        Mutant("resolve_plan_names_forecaster", "tools/elect.py",
-               'resolver="builder" if a["principal"] == "reviewer" else "reviewer"',
-               'resolver=a["principal"]')]),
+        Mutant("forecaster_resolves_own_round", "tools/elect.py", 'if (r["proposer"] != a["principal"] and r["seq"] > f["seq"] and', 'if (r["seq"] > f["seq"] and'),
+        Mutant("resolve_plan_names_forecaster", "tools/elect.py", 'resolver="builder" if a["principal"] == "reviewer" else "reviewer"', 'resolver=a["principal"]')]),
     Pin("self_invite", c2b_cases("ElectionCases.test_self_invite_pin"), [
-        Mutant("self_invite_admitted", "tools/elect.py",
-               'if blob != pub or f["proposer"] != "herald" or not sig.verify(message, blob, signature):',
-               'if not sig.verify(message, blob, signature):'),
-        Mutant("unkeyed_herald_admitted", "tools/elect.py",
-               'if d is None or d["principal"] != "herald" or "forecast" not in d["powers"]:',
-               'if d is None:')]),
+        Mutant("self_invite_admitted", "tools/elect.py", 'if blob != pub or f["proposer"] != "herald" or not sig.verify(message, blob, signature):', 'if not sig.verify(message, blob, signature):'),
+        Mutant("unkeyed_herald_admitted", "tools/elect.py", 'if d is None or d["principal"] != "herald" or "forecast" not in d["powers"]:', 'if d is None:')]),
     Pin("rigged_election", c2b_cases("ElectionCases.test_rigged_election_pin"), [
-        Mutant("recomputed_body_unchecked", "tools/elect.py",
-               'if log.canonical(expected) != log.canonical(f["body"]):', 'if False:'),
-        Mutant("draw_from_later_prefix_admitted", "tools/elect.py",
-               "before = prefix[:i]", "before = prefix")]),
-    Pin("mixture_untouched_and_continued", c2b_cases("ValueStatusCases.test_mixture_untouched_and_continued",
-                                                     "transcripts/evidence/value-fixture-20261101.json"), [
-        Mutant("uniform_restart_at_window", "tools/value.py",
-               "        q = sum((weights[k] * ps[k] for k in roster), Fraction(0))",
-               "        q = sum(((window_weights if cutoff > window_opening else weights)[k] * ps[k] for k in roster), Fraction(0))")]),
+        Mutant("recomputed_body_unchecked", "tools/elect.py", 'if log.canonical(expected) != log.canonical(f["body"]):', 'if False:'),
+        Mutant("draw_from_later_prefix_admitted", "tools/elect.py", "before = prefix[:i]", "before = prefix")]),
+    Pin("mixture_untouched_and_continued", c2b_cases("ValueStatusCases.test_mixture_untouched_and_continued", "transcripts/evidence/value-fixture-20261101.json"), [
+        Mutant("uniform_restart_at_window", "tools/value.py", "        q = sum((weights[k] * ps[k] for k in roster), Fraction(0))", "        q = sum(((window_weights if cutoff > window_opening else weights)[k] * ps[k] for k in roster), Fraction(0))")]),
     Pin("procedure_types_out", c2b_cases("ValueStatusCases.test_procedure_types_out"), [
-        Mutant("counsel_programme_scored", "tools/value.py", "    return None\n",
-               '    return ((typ, body.get("claim")), f["ts"]) if typ == "counsel.programme" else None\n')]),
+        Mutant("counsel_programme_scored", "tools/value.py", "    return None\n", '    return ((typ, body.get("claim")), f["ts"]) if typ == "counsel.programme" else None\n')]),
     Pin("window_from_the_push_c2b", c2b_cases("ValueStatusCases.test_window_from_the_push_c2b"), [
-        Mutant("c2b_from_merge", "tools/status.py",
-               'opening = next(e for e in es if e["type"] == "push" and e["seq"] > promotion["seq"])',
-               'opening = next(e for e in es if e["type"] == "merge" and e["seq"] > promotion["seq"])'),
-        Mutant("c2b_end_from_x0", "tools/status.py",
-               'e["body"].get("args", {}).get("id") == "X7"',
-               'e["body"].get("args", {}).get("id") == "X0"')]),
+        Mutant("c2b_from_merge", "tools/status.py", 'opening = next(e for e in es if e["type"] == "push" and e["seq"] > promotion["seq"])', 'opening = next(e for e in es if e["type"] == "merge" and e["seq"] > promotion["seq"])'),
+        Mutant("c2b_end_from_x0", "tools/status.py", 'e["body"].get("args", {}).get("id") == "X7"', 'e["body"].get("args", {}).get("id") == "X0"')]),
     Pin("promote_refused_c2b", c2b_cases("ValueStatusCases.test_promote_refused_c2b"), [
-        Mutant("value_alone", "tools/status.py",
-               '    return [(verified and registered, "criterion 1: C2b pins and twins in verified tests run"),',
-               '    return [(v["E_value"] >= 20, f"criterion 5: value E {v[\'E_value\']:.6f} >= 20")] or '
-               '[(verified and registered, "criterion 1: C2b pins and twins in verified tests run"),'),
-        Mutant("c2b_signs_without_verdict", "tools/jack",
-               '    if a.kind == "promote":', '    if a.kind == "promote" and a.subject != "C2b":')]),
+        Mutant("value_alone", "tools/status.py", '    return [(verified and registered, "criterion 1: C2b pins and twins in verified tests run"),', '    return [(v["E_value"] >= 20, f"criterion 5: value E {v[\'E_value\']:.6f} >= 20")] or [(verified and registered, "criterion 1: C2b pins and twins in verified tests run"),'),
+        Mutant("c2b_signs_without_verdict", "tools/jack", '    if a.kind == "promote":', '    if a.kind == "promote" and a.subject != "C2b":')]),
 ]
-PINS += C2B_ELECT_PINS
+PINS += C2B_NEW_PINS
