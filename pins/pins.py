@@ -661,7 +661,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 108
+EXPECTED = 125
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1210,3 +1210,86 @@ C2B_W5_PINS = [
         Mutant("gate_not_always_run", ".github/workflows/tests.yml", "    if: always()\n", "")]),
 ]
 PINS += C2B_W5_PINS
+
+
+# --- C2b election pins (BRIEF-C2b §Scope, §Safety, §Pins, Amendment 12) ---
+C2B_ELECT_PINS = [
+    Pin("gain_in_unit_interval", c2b_cases("ElectionCases.test_gain_in_unit_interval"), [
+        Mutant("divide_by_ln_1000", "sim/election.py", "math.log(999)", "math.log(1000)")]),
+    Pin("round_loss_is_mean", c2b_cases("ElectionCases.test_round_loss_is_mean"), [
+        Mutant("losses_summed", "sim/election.py", " / 6 / math.log(999)", " / math.log(999)")]),
+    Pin("bad_round_kept", c2b_cases("ElectionCases.test_bad_round_kept"), [
+        Mutant("bad_round_dropped", "tools/elect.py", '        if result["settled"]:', '        if result["settled"] and 1 not in result["ns"]:'),
+        Mutant("missing_event_left_out_of_mean", "sim/election.py",
+               "math.fsum(math.log(n) for n in ns) / 6 / math.log(999)",
+               "math.fsum(math.log(n) for n in ns if n > 1) / max(1, sum(n > 1 for n in ns)) / math.log(999)")]),
+    Pin("exp3_importance", c2b_cases("ElectionCases.test_exp3_importance"), [
+        Mutant("by_todays_propensity", "tools/elect.py",
+               'gains[j] = el.update(gains[j], arm, result["gain"], Fraction(a["propensity"]))',
+               'c = el.cuts(el.update(gains[j], arm, result["gain"], Fraction(a["propensity"]))); '
+               'gains[j] = el.update(gains[j], arm, result["gain"], Fraction(c[arm + 1] - c[arm], el.GRID))')]),
+    Pin("exp3_constants", c2b_cases("ElectionCases.test_exp3_constants"), [
+        Mutant("gamma_point_one", "sim/election.py",
+               "GAMMA = min(1, math.sqrt(K * math.log(K) / ((math.e - 1) * HORIZON)))", "GAMMA = 0.1")]),
+    Pin("instance_feedback_complete", c2b_cases("ElectionCases.test_instance_feedback_complete"), [
+        Mutant("draws_without_previous_resolution", "tools/elect.py",
+               'if j in prior["last"] and not prior["last"][j]["settled"]:', "if False:")]),
+    Pin("draw_replays_from_prefix", c2b_cases("ElectionCases.test_draw_replays_from_prefix"), [
+        Mutant("gains_from_args", "tools/elect.py",
+               'expected = invite_body(before, history, f["ts"], *identity, a["sigma"], evidence)',
+               'expected = invite_body(before, [], f["ts"], *identity, a["sigma"], evidence); '
+               'd = el.draw(tuple(Fraction(g) for g in a["gains"]), base64.b64decode(a["sigma"])); '
+               'expected["args"].update(gains=a["gains"], cuts=[str(c) for c in d["cuts"]], '
+               'propensity=f"{d[\'cuts\'][d[\'arm\']+1]-d[\'cuts\'][d[\'arm\']]}/{el.GRID}", '
+               'principal=el.ROSTER[d["arm"]][0], model=el.ROSTER[d["arm"]][1]); '
+               'expected["claim"] = f["body"]["claim"]')]),
+    Pin("sigma_verifies", c2b_cases("ElectionCases.test_sigma_verifies"), [
+        Mutant("sigma_unchecked", "tools/elect.py",
+               "if len(raw) != 64 or not sig.ed25519_verify(pub[-32:], raw, message):", "if len(raw) != 64:")]),
+    Pin("draw_on_the_grid", c2b_cases("ElectionCases.test_draw_on_the_grid"), [
+        Mutant("float_u_unassigned", "sim/election.py",
+               "arm = next(k for k in range(K) if boundaries[k] <= u < boundaries[k + 1])",
+               "arm = next(k for k in range(K) if boundaries[k] / GRID <= float(u) / GRID < boundaries[k + 1] / GRID)")]),
+    Pin("roster_fixed", c2b_cases("ElectionCases.test_roster_fixed"), [
+        Mutant("non_roster_arm_admitted_in_elect", "tools/elect.py",
+               'if log.canonical(expected) != log.canonical(f["body"]):',
+               'if log.canonical(dict(expected, args=dict(expected["args"], roster=a["roster"]))) != log.canonical(f["body"]):'),
+        Mutant("post_opening_entrant_admitted_in_value", "tools/value.py",
+               '            elif who not in roster:\n                reason = "not in opening roster"',
+               '            elif False:\n                reason = "not in opening roster"')]),
+    Pin("invite_before_session", c2b_cases("ElectionCases.test_invite_before_session"), [
+        Mutant("forecast_before_invite_accepted", "tools/elect.py",
+               'f["seq"] > invite["seq"] and invite["ts"] < f["ts"] < a["window_utc"][0]',
+               'f["ts"] < a["window_utc"][0]')]),
+    Pin("invite_cutoff_W0", c2b_cases("ElectionCases.test_invite_cutoff_W0"), [
+        Mutant("invite_at_or_after_w0_scored", "tools/elect.py",
+               '    if as_of >= w0:\n        raise ValueError("skipped: W0")',
+               '    if False:\n        raise ValueError("skipped: W0")')]),
+    Pin("invite_p_is_success_rate", c2b_cases("ElectionCases.test_invite_p_is_success_rate"), [
+        Mutant("p_is_propensity", "tools/elect.py",
+               'p=el.success_rate(prior["successes"][arm])', 'p=round(float(draw["propensity"]) * 1000)')]),
+    Pin("invite_resolution_strict", c2b_cases("ElectionCases.test_invite_resolution_strict"), [
+        Mutant("less_or_equal_base_succeeds", "tools/elect.py",
+               "math.prod(Fraction(n, 1000) for n in ns) > math.prod(bases)",
+               "math.prod(Fraction(n, 1000) for n in ns) >= math.prod(bases)")]),
+    Pin("resolver_not_forecaster", c2b_cases("ElectionCases.test_resolver_not_forecaster"), [
+        Mutant("forecaster_resolves_own_round", "tools/elect.py",
+               'if (r["proposer"] != a["principal"] and r["seq"] > f["seq"] and',
+               'if (r["seq"] > f["seq"] and'),
+        Mutant("resolve_plan_names_forecaster", "tools/elect.py",
+               'resolver="builder" if a["principal"] == "reviewer" else "reviewer"',
+               'resolver=a["principal"]')]),
+    Pin("self_invite", c2b_cases("ElectionCases.test_self_invite_pin"), [
+        Mutant("self_invite_admitted", "tools/elect.py",
+               'if blob != pub or f["proposer"] != "herald" or not sig.verify(message, blob, signature):',
+               'if not sig.verify(message, blob, signature):'),
+        Mutant("unkeyed_herald_admitted", "tools/elect.py",
+               'if d is None or d["principal"] != "herald" or "forecast" not in d["powers"]:',
+               'if d is None:')]),
+    Pin("rigged_election", c2b_cases("ElectionCases.test_rigged_election_pin"), [
+        Mutant("recomputed_body_unchecked", "tools/elect.py",
+               'if log.canonical(expected) != log.canonical(f["body"]):', 'if False:'),
+        Mutant("draw_from_later_prefix_admitted", "tools/elect.py",
+               "before = prefix[:i]", "before = prefix")]),
+]
+PINS += C2B_ELECT_PINS

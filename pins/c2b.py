@@ -7,10 +7,14 @@ from unittest.mock import patch
 
 from tests.clerk_fixture import SignedFixture, commit, tree
 from tests.test_due import DueTest, discharge, lines, row
+from tests.test_elect import Election, ElectionMathTest
 from tests.test_push_gate import REVIEW, PushGate
+from tests.test_value import CUT, OPEN, calc, e, forecast, resolve, seed
 from tests.test_workflow import WorkflowTest
 from tests import test_status
-from tools import due, status as st
+from kernel import check
+from sim import election as el, gen, run as sim_run
+from tools import due, elect, status as st, value as val
 
 SEED_IDS = ("c2a-acts", "c2a-report", "hkjc-hv-20261104", "D-1", "runbook-c2b",
             "V0", "V1", "V2", "V3", "c2b-report", "c2c-brief")
@@ -173,3 +177,186 @@ class W5Cases(SignedFixture):
 
 class WorkflowCases(WorkflowTest):
     pass
+
+
+class ElectionCases(Election):
+    def test_gain_in_unit_interval(self):
+        ElectionMathTest("test_gain_endpoints_representation_and_bad_round_kept").test_gain_endpoints_representation_and_bad_round_kept()
+        self.assertEqual(el.gain([1] * 6), Fraction(0))
+        self.assertEqual(el.gain([999] * 6), Fraction(1))
+
+    def test_round_loss_is_mean(self):
+        self.assertEqual(el.gain([999] * 6), Fraction(1))
+        self.assertAlmostEqual(float(el.gain([999] * 5 + [1])), 5 / 6)
+
+    def test_bad_round_kept(self):
+        self.test_bad_round_waits_then_keeps_five_sixths_and_freezes_at_deadline()
+        self.setUp()
+        inv = self.invite()
+        self.events(inv)
+        es = list(map(json.loads, self.chain.lines))
+        row = elect.audit(es, "2026-11-18T03:00:00Z", lambda _: True)["rows"][0]
+        self.assertEqual((row["gain"], row["success"]), (Fraction(1), 1))
+
+    def test_exp3_importance(self):
+        ElectionMathTest("test_importance_weight_uses_saved_grid_mass_and_exact_identity").test_importance_weight_uses_saved_grid_mass_and_exact_identity()
+        inv = self.invite()
+        self.events(inv)
+        es = list(map(json.loads, self.chain.lines))
+        audit = elect.audit(es, "2026-11-18T03:00:00Z", lambda _: True)
+        arm = audit["rows"][0]["arm"]
+        saved = Fraction(inv["body"]["args"]["propensity"])
+        self.assertEqual(audit["gains"][0][arm], Fraction(1) / saved)
+
+    def test_exp3_constants(self):
+        ElectionMathTest("test_theorem_constants_and_grid_boundaries").test_theorem_constants_and_grid_boundaries()
+        inv = self.invite()
+        self.assertEqual((inv["body"]["args"]["gamma"], inv["body"]["args"]["eta"]), (repr(el.GAMMA), repr(el.ETA)))
+        self.assertEqual((round(el.GAMMA, 5), round(el.ETA, 5)), (0.15111, 0.05037))
+
+    def test_instance_feedback_complete(self):
+        ElectionMathTest("test_round_zero_strictly_after_opening_and_skips_keep_the_index").test_round_zero_strictly_after_opening_and_skips_keep_the_index()
+        self.test_bad_round_waits_then_keeps_five_sixths_and_freezes_at_deadline()
+        self.setUp()
+        inv = self.invite()
+        self.events(inv)
+        second = self.invite(w0="2026-11-18T05:00:00Z", ts="2026-11-18T03:00:00Z")
+        self.assertEqual((second["body"]["args"]["round"], second["body"]["args"]["instance"]), (4, 0))
+
+    def test_draw_replays_from_prefix(self):
+        import base64
+        self.test_signed_prefix_replay_and_four_independent_instances()
+        self.setUp()
+        def forge_gains(b):
+            forged = (Fraction(5), Fraction(0), Fraction(0))
+            d = el.draw(forged, base64.b64decode(b["args"]["sigma"]))
+            arm = d["arm"]
+            principal, model = el.ROSTER[arm]
+            b["args"].update(gains=["5/1", "0/1", "0/1"], cuts=[str(c) for c in d["cuts"]],
+                             propensity=f"{d['cuts'][arm + 1] - d['cuts'][arm]}/{el.GRID}",
+                             principal=principal, model=model)
+            b["claim"] = (f"stream freshness, window 2026-11-18T01:00:00Z: the invited entrant <{principal}, {model}> "
+                          "achieves a mean clipped log-loss on the window's six events below the base rate's")
+        bad = self.invite(edit=forge_gains)
+        es = list(map(json.loads, self.chain.lines))
+        with self.assertRaisesRegex(ValueError, "rigged_election"):
+            elect.replay(es, bad["seq"], lambda _: True)
+
+    def test_sigma_verifies(self):
+        self.test_sigma_namespace_raw_bytes_determinism_and_key_power()
+        inv = self.invite()
+        es = list(map(json.loads, self.chain.lines))
+        self.assertEqual(elect.replay(es, inv["seq"], lambda _: True)["seq"], inv["seq"])
+        other_sig = elect.sign_sigma(self.signers["herald"].path, elect.clerk(es), "freshness", "2026-11-18T02:00:00Z")
+        self.setUp()
+        bad = self.invite(edit=lambda b: b["args"].update(sigma=other_sig))
+        es_bad = list(map(json.loads, self.chain.lines))
+        with self.assertRaisesRegex(ValueError, "rigged_election"):
+            elect.replay(es_bad, bad["seq"], lambda _: True)
+
+    def test_draw_on_the_grid(self):
+        boundaries = el.cuts((Fraction(0),) * 3)
+        try:
+            arm, mass = el.select(boundaries, el.GRID - 1)
+        except StopIteration:
+            self.fail("maximal hash unassigned on the grid")
+        self.assertEqual((arm, mass), (2, Fraction(boundaries[3] - boundaries[2], el.GRID)))
+
+    def test_roster_fixed(self):
+        inv = self.invite()
+        es = list(map(json.loads, self.chain.lines))
+        self.assertEqual(elect.replay(es, inv["seq"], lambda _: True)["seq"], inv["seq"])
+        self.setUp()
+        bad = self.invite(edit=lambda b: b["args"].update(roster=[list(p) for p in el.ROSTER] + [["counsel", "openai/gpt-5.4-mini"]]))
+        with self.assertRaisesRegex(ValueError, "rigged_election"):
+            elect.replay(list(map(json.loads, self.chain.lines)), bad["seq"], lambda _: True)
+        # Value roster is also fixed at the opening push: a post-opening key declaration is excluded.
+        ves = seed() + [e(1, "key", ts="2026-10-31T12:00:00Z", key_id="herald-2", principal="herald", powers=["forecast"]),
+                        forecast(2, who="herald"), forecast(3, who="counsel"), resolve(4, 2), resolve(5, 3)]
+        vr = calc(ves)
+        self.assertEqual(vr["excluded_forecasts"], [(2, "not in opening roster")])
+        self.assertEqual(set(vr["rows"][0]["forecasts"]), {"counsel"})
+
+    def test_invite_before_session(self):
+        self.test_missing_page_wrong_session_and_self_resolution_are_imputed()
+        self.setUp()
+        inv = self.invite()
+        self.events(inv)
+        es = list(map(json.loads, self.chain.lines))
+        row = elect.audit(es, "2026-11-18T06:00:00Z", lambda _: True)["rows"][0]
+        self.assertEqual((row["gain"], row["success"]), (Fraction(1), 1))
+
+    def test_invite_cutoff_W0(self):
+        self.test_late_invite_revision_and_known_outcome_are_refused()
+        self.setUp()
+        inv = self.invite(w0="2026-11-18T01:00:00Z", ts="2026-11-18T00:15:00Z")
+        es = list(map(json.loads, self.chain.lines))
+        self.assertEqual(elect.audit(es, "2026-11-18T00:15:00Z", lambda _: True)["refused"], [])
+
+    def test_invite_p_is_success_rate(self):
+        ElectionMathTest("test_invite_p_is_half_up_laplace_success_rate_not_propensity").test_invite_p_is_half_up_laplace_success_rate_not_propensity()
+        self.test_invite_success_strict_exact_comparison_and_half_up_rate()
+        self.setUp()
+        inv = self.invite()
+        self.assertEqual(inv["body"]["p"], 500)
+
+    def test_invite_resolution_strict(self):
+        self.test_invite_success_strict_exact_comparison_and_half_up_rate()
+
+    def test_resolver_not_forecaster(self):
+        self.test_missing_page_wrong_session_and_self_resolution_are_imputed()
+        self.setUp()
+        inv = self.invite()
+        self.events(inv)
+        es = list(map(json.loads, self.chain.lines))
+        plan = elect.resolve_plan(es, inv["seq"], "2026-11-18T03:00:00Z", lambda _: True)
+        self.assertEqual(plan["resolver"], "builder" if inv["body"]["args"]["principal"] == "reviewer" else "reviewer")
+        self.assertEqual(plan["outcome"], 1)
+
+    def check_sim_election_kind(self, kind, reason):
+        import random
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            pool = gen.KeyPool(tmp)
+            for s in range(6):
+                attack = gen.generate_election(kind, random.Random(s), pool)
+                self.assertTrue(check.check(attack.lines)["ok"])
+                es = list(map(json.loads, attack.lines))
+                res = elect.audit(es, es[-1]["ts"], lambda _: True)
+                self.assertEqual([w[:len(reason)] for _, w in res["refused"]], [reason])
+                self.assertEqual(sim_run.evaluate(attack, pool), [])
+                twin = gen.generate_election(kind, random.Random(s), pool, attack=False)
+                self.assertTrue(check.check(twin.lines)["ok"])
+                es_twin = list(map(json.loads, twin.lines))
+                res_twin = elect.audit(es_twin, es_twin[-1]["ts"], lambda _: True)
+                self.assertEqual((res_twin["refused"], len(res_twin["history"])), ([], 1))
+
+    def test_self_invite_pin(self):
+        self.test_self_invite()
+        self.check_sim_election_kind("self_invite", "unkeyed")
+        self.setUp()
+        self.test_sigma_namespace_raw_bytes_determinism_and_key_power()
+
+    def test_rigged_election_pin(self):
+        self.test_rigged_election()
+        self.check_sim_election_kind("rigged_election", "rigged_election")
+        # Draw from a later prefix: round 4 drawn using round 0's future resolution, but entered before round 0 resolves.
+        self.setUp()
+        first = self.invite()
+        self.events(first)
+        later_es = list(map(json.loads, self.chain.lines))
+        later_audit = elect.audit(later_es, "2026-11-18T03:00:00Z", lambda _: True)
+        w0 = "2026-11-18T05:00:00Z"
+        sigma = elect.sign_sigma(self.signers["herald"].path, elect.clerk(later_es), "freshness", w0)
+        later_body = elect.invite_body(later_es, later_audit["history"], "2026-11-18T03:00:00Z", "freshness", w0, sigma, lambda _: True)
+        # Twin: entered on the later prefix after round 0's resolutions -> replays cleanly.
+        twin_inv = self.add("forecast", "herald", "2026-11-18T03:00:00Z", later_body)
+        self.assertEqual(elect.replay(list(map(json.loads, self.chain.lines)), twin_inv["seq"], lambda _: True)["seq"], twin_inv["seq"])
+        # Attack: the same body entered at 00:16:00Z before round 0's forecasts/resolutions, followed by round 0's events.
+        self.setUp()
+        first = self.invite()
+        early_inv = self.add("forecast", "herald", "2026-11-18T00:16:00Z", later_body)
+        self.events(first)
+        attack_es = list(map(json.loads, self.chain.lines))
+        self.assertTrue(any(seq == early_inv["seq"] and why.startswith("rigged_election")
+                            for seq, why in elect.audit(attack_es, "2026-11-18T03:00:00Z", lambda _: True)["refused"]))
