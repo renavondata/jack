@@ -247,9 +247,19 @@ def v_push(a):
 def v_decision(a):
     begin(a, True)
     a.subject or refuse("SUBJECT must be a non-empty string")
+    body = {"kind": a.kind, "subject": a.subject}
     if a.kind == "promote":
         a.subject in ("C1a", "C1b", "C2a") or refuse("promotion criteria unknown for " + a.subject)
         head = git("rev-parse", "HEAD")
+        if a.acts is not None:
+            if not re.fullmatch(r"transcripts/evidence/[A-Za-z0-9._-]+\.csv", a.acts):
+                refuse(f"--acts {a.acts!r} must match transcripts/evidence/[A-Za-z0-9._-]+\\.csv")
+            if os.path.islink(acts_path := os.path.join(ROOT, a.acts)) or not os.path.isfile(acts_path):
+                refuse(f"--acts {a.acts}: no such file")
+            acts_bytes = open(acts_path, "rb").read()
+            if tree_bytes(ROOT, head, a.acts) != acts_bytes:
+                refuse(f"--acts {a.acts} does not equal the blob in HEAD")
+            body["acts"] = {"path": a.acts, "sha256": hashlib.sha256(acts_bytes).hexdigest(), "commit": head}
         endpoint = "repos/{owner}/{repo}/actions/workflows/tests.yml/runs"
         def fetch(query):
             pages = json.loads(run("gh", "api", endpoint + query, "--paginate", "--slurp").stdout)
@@ -264,12 +274,12 @@ def v_decision(a):
                     json.dump(value, f)
             command = [sys.executable, "tools/status.py", "--subject", a.subject, "--run", os.path.join(tmp, "run"),
                        "--runs", os.path.join(tmp, "runs"), "--as-of", a.decision_ts]
-            if a.acts:
+            if a.acts is not None:
                 command += ["--acts", a.acts]
             result = run(*command).stdout
         lines = [line for line in result.splitlines() if line.startswith(f"promote {a.subject}:")]
         lines == [f"promote {a.subject}: lawful"] or refuse("\n".join(lines) or "status returned no promotion verdict")
-    main_ending(a, "decision", lambda: {"kind": a.kind, "subject": a.subject}, f"decision: {a.kind} {a.subject}")
+    main_ending(a, "decision", lambda: body, f"decision: {a.kind} {a.subject}")
 
 def v_amend(a):
     begin(a, True)
