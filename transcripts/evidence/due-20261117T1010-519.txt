@@ -1,0 +1,17 @@
+origin/main: 978d75bb531b88134f57edf19b0e8b09c57f9009
+Computation (Python 3; imports json, subprocess, os; from tools import status as st, value as val):
+es = [json.loads(l) for l in subprocess.check_output(['git','show','origin/main:log.jsonl'], text=True).splitlines()]
+runs = json.load(open('transcripts/evidence/runs-tests-20261117T1010.json')) + json.load(open('transcripts/evidence/runs-tests-20261117T1010-historical.json'))
+opening, start, end = st.c2a_window(es)
+gate = st.attack_start(os.getcwd(), runs, end, 'tests/test_value.py')
+assert gate is not None
+now = st.dt.datetime.now(st.dt.timezone.utc).strftime(st.FMT)
+found = [e for e in es if st.promotes(e,'C2a') and e['ts'] < '2026-11-17T12:00:00Z']
+print('observed at:', now)
+print('promote C2a decisions before deadline on origin/main:', json.dumps(found))
+print('UNDECIDED: deadline 2026-11-17T12:00:00Z has not passed, and no qualifying decision is yet on origin/main.')
+
+Output:
+observed at: 2026-11-17T10:16:39Z
+promote C2a decisions before deadline on origin/main: []
+UNDECIDED: deadline 2026-11-17T12:00:00Z has not passed, and no qualifying decision is yet on origin/main.

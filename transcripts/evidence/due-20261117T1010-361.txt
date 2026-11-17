@@ -1,0 +1,34 @@
+origin/main: 978d75bb531b88134f57edf19b0e8b09c57f9009
+Computation (Python 3; imports json, subprocess, os; from tools import status as st, value as val):
+es = [json.loads(l) for l in subprocess.check_output(['git','show','origin/main:log.jsonl'], text=True).splitlines()]
+runs = json.load(open('transcripts/evidence/runs-tests-20261117T1010.json')) + json.load(open('transcripts/evidence/runs-tests-20261117T1010-historical.json'))
+opening, start, end = st.c2a_window(es)
+gate = st.attack_start(os.getcwd(), runs, end, 'tests/test_value.py')
+assert gate is not None
+rev = subprocess.check_output(['git','log','-1','--format=%H','--before='+end,'origin/main'], text=True).strip()
+actual = [json.loads(l) for l in subprocess.check_output(['git','show',rev+':log.jsonl'],text=True).splitlines()]
+assert actual == [e for e in es if e['ts'] <= end]
+print('exact exit tree:', rev, 'last seq:', actual[-1]['seq'])
+s = st.assess(es, 'C2a', end, os.getcwd(), rev, runs=runs)
+print(st.render(s))
+print('UNDECIDED: unverified tests and unknown off-log repairs are missing evidence, not proof criteria failed; forecast resolves_by 2026-11-17T12:00:00Z is still ahead and no promote C2a decision is present.')
+
+Output:
+exact exit tree: 95b6feff81cf93425cba173afe8c639a589cfa2a last seq: 4947
+window C2a: 2026-11-01T15:04:14Z .. 2026-11-15T15:04:14Z (as of 2026-11-15T15:04:14Z; prefix to seq 4947)
+criterion 1: C2a pins and twins in verified tests run SHORT
+criterion 2: checker agreement in verified tests run SHORT
+criterion 3: counted 7784/7800; kernel 450/500; scope equals SPEC and unchanged: True met
+criterion 4: attack green on main before first scored cutoff: 2026-11-01T15:59:44Z met
+criterion 5: value E 1913572802234923356359848838037504.000000 >= 20 met
+criterion 6: continued liveness E 360640140275244358409809197227413432506014479571709426634264855802219449716560461019123316080053385524493558697601426663489637831764349208138752192112305126345003708925329041617090632718774594364506083341410569190843417650674893889980023761799765945636927481116982426177429788773405571192647231904584523647409886079229881379920264902282439775557442373807256201598024132096968273806917675887843338011111792323601784001/2664121087284680462898723789268389370547256788166901214884801681864237723220839601269753533078377053913479606701342582867686629988487897861252725620480191173310272155080851727149658925416243225325829203198415457794069873120609079960172643138968657791158995504604855390608147926220800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 >= 20; unchanged True; attack 2026-10-31T13:32:21Z; late repairs 0 met
+criterion 7: off-log repairs: unknown (no acts file) SHORT
+criterion 7: veto on C2a: none met
+A3.4 ratio: procedure 1131 : object 3449; at promote 1132 : 3449 (maximum 5:1) met
+J7: 1 of 1804 window forecasts unresolved past resolves_by
+overdue forecast 445 (builder) due 2026-11-02T05:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+value: E 1913572802234923356359848838037504.000000 over 1689 events; window events 1689
+elections: guy 0.000000 / counsel 0.000000 / reviewer 1.000000 / builder 0.000000 / base 0.000000; below base: builder
+liveness continued: E 360640140275244358409809197227413432506014479571709426634264855802219449716560461019123316080053385524493558697601426663489637831764349208138752192112305126345003708925329041617090632718774594364506083341410569190843417650674893889980023761799765945636927481116982426177429788773405571192647231904584523647409886079229881379920264902282439775557442373807256201598024132096968273806917675887843338011111792323601784001/2664121087284680462898723789268389370547256788166901214884801681864237723220839601269753533078377053913479606701342582867686629988487897861252725620480191173310272155080851727149658925416243225325829203198415457794069873120609079960172643138968657791158995504604855390608147926220800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 over 403 items (including projected expiries)
+promote C2a: refused: criterion 1: C2a pins and twins in verified tests run; criterion 2: checker agreement in verified tests run; criterion 7: off-log repairs: unknown (no acts file)
+UNDECIDED: unverified tests and unknown off-log repairs are missing evidence, not proof criteria failed; forecast resolves_by 2026-11-17T12:00:00Z is still ahead and no promote C2a decision is present.
