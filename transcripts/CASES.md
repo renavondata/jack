@@ -116,8 +116,9 @@ Judgment: `transcripts/RULING-20261117-constitution.md`.
   meanwhile. (H4) Seq 3432 is not A2.1's first real case: he does not want it refused.
 - **Reads.** A2.1, A2.4, A2.6, A2.7, A2.10; §3 (change); maxims 1 and 4; SPEC §5 and §8 step 9.
 - **Enforced by.** No pin of its own, and none of the four is decidable as put. Of H1: SPEC §8 step 9 in both checkers, and
-  SPEC §10.11 and §10.13 in the judge. Of H2: `tools/jack` `push_read_gate`, pins `push_without_read_refused`,
-  `read_of_this_text`, `read_not_counsels`. H3 and H4: nothing.
+  SPEC §10.11 and §10.13 in the judge. Of H2, in part: `tools/jack` `push_read_gate`, pins `push_without_read_refused`,
+  `read_of_this_text`, `read_not_counsels`, which pass on the first accepting review by a principal other than counsel; the rest of
+  a brief's gate is kept by hand. H3 and H4: nothing.
 - **Not decided.** The paper's directions (into C2c-2's texts, each read by him before any build); its amendment material
   (separate clauses at C2c-3, as counsel read his answer back to him; COUNSEL-OPEN rows 28, 33 and 70); a waiver power;
   the scope of A2.10; whether any gate's terms were met; whether another entry is A2.1's first real case.
