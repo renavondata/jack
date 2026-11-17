@@ -1,6 +1,6 @@
-# BRIEF-C2c-2 (draft v3, PARTIAL, counsel-5, 17 November 2026) — recognition and adjudication: the sovereign's acts as entries naming bytes, the read a text must carry, the push by keys, the monitor
+# BRIEF-C2c-2 (draft v4, PARTIAL, counsel-5, 17 November 2026) — recognition and adjudication: the sovereign's acts as entries naming bytes, the read a text must carry, the push by keys, the monitor
 
-**This is a partial draft and binds nothing.** Written: §0 to §2, of §3 the rules R1 to R3, R5 and R6, and §4 as a table. Not yet written: R4 (the monitor) and R7 (custody), which wait for their texts; `transcripts/windows/C2c-2.json`, which waits for C2c-1's file to be final; §7, the two numbers with their projection, which waits for C2c-1's branch to be final; and §5, §6 and §8 to §10. C2c-2 is pre-stated in BRIEF-C2c-1's §9 and in `transcripts/RESEARCH-meta-jack-20261107.md` §3.2. The sovereign's answers of 17 November 2026 to `transcripts/QUESTION-20261111-constitution.md` §5 ("Then indeed, yes to all 7 questions") are the directions this brief carries.
+**This is a partial draft and binds nothing.** Written: §0 to §2, §3's rules R1 to R7, and §4 as a table. The monitor text and the custody text that R4 and R7 follow are themselves drafts, and R4 depends on three things only the sovereign can say (below). Not yet written: `transcripts/windows/C2c-2.json`, which waits for C2c-1's file to be final; §7, the two numbers with their projection, which waits for C2c-1's branch to be final; and §5, §6 and §8 to §10. C2c-2 is pre-stated in BRIEF-C2c-1's §9 and in `transcripts/RESEARCH-meta-jack-20261107.md` §3.2. The sovereign's answers of 17 November 2026 to `transcripts/QUESTION-20261111-constitution.md` §5 ("Then indeed, yes to all 7 questions") are the directions this brief carries.
 
 ## 0. The law of this window is a file
 
@@ -46,9 +46,17 @@ The rule is the same file's §3, and `RUNBOOK.md`'s paragraph "The push by keys"
 
 *What this leaves.* The checks are tested by their pin's twins and by no push on the record until C2c-3 opens. C2c-3's brief says what a refusal at its own opening costs.
 
-### R4 The monitor
+### R4 The published head, the witnessed log and the verifier
 
-Not yet written. It follows `transcripts/runner/monitor.md` once that text is brought to answer 6, and carries the criteria for publication and verification.
+The rule is `transcripts/runner/monitor.md` as brought to answer 6 (draft v6): publication of every head by jack's own workflow; each published line entered in a Sigsum log under a named policy, with its proof kept; a verifier that recomputes every line, checks every proof and every leaf, and files a writ on any failure; and the same verifier run a second time from a forge that is not GitHub.
+
+**Criterion kind `head_published`** (evidence `monitor`). At every verifier run inside the window, `main`'s head had a line in `HASHES` or was younger than the lag; no `publish.yml` run inside the window concluded other than `success`; and the workflow's state was `active` at every copy of the evidence. `unknown (no monitor)` without the evidence; `unknown (stale monitor)` when its newest copy is older than the file's staleness rule.
+
+**Criterion kind `verifier_record`** (evidence `monitor`). The newest line of the first instance's record is `ok`, within twenty-four hours of the assessed instant, from a GitHub-hosted run; the newest line of the second instance's record is `ok` within the same bound; every failure line of either since the opening names an issue the evidence holds; and at least one line of each since the opening shows steps 8 and 9 run, with every proof accepted and no leaf without a line.
+
+*What they show and do not.* That heads were published, logged and verified while the window ran, by code whose bytes the court holds, on two hosts that are not the owner's. They do not show that the owner does not operate the verifiers: that is R6's row g. And they test the mechanism on the days of the window, not after it.
+
+*What only the sovereign can say before this rule can be built to:* the domain whose DNS carries the log's rate-limit record; where the submit key's private half lives (the monitor text's draft says a user of its own on steel); and which second forge, under whose account.
 
 ### R5 A BLOCK suspends, the sovereign rules, and the reader is scored
 
@@ -81,7 +89,7 @@ Directions of answers 2 and 6 (`transcripts/QUESTION-20261111-constitution.md` �
 | d | A code read is by another family than the build it reads | counsel, who files both | 6: each file's own line | 3, at C2c-3: readers drawn by the clerk (`transcripts/RESEARCH-meta-jack-20261107.md`, B4) |
 | e | `kernel2` is written from the text alone, by another family than the kernel's (CHARTER §3: "a second implementation by a different author") | the builder of `kernel2`; counsel | 6 | **no text sets one.** Counsel's proposal, for his read: with d, by the same draw at C2c-3 |
 | f | No builder session for this window is filed before his read of its texts is on the log | counsel | 4: each build issue's creation instant on the runner against the `ts` of his entry, listed in the report | stays at 4. The push's wishes and descent (SPEC patch §3, checks 6 and 7) gate the commits a push delivers, at rung 3; they do not see when a session was filed, and no text sets a target for the filing itself |
-| g | The monitor is one "that the owner does not operate" (A2.8) | the sovereign | 6 for the account that runs it; the host is on the record | as the monitor text states once it is brought to answer 6 |
+| g | The monitor is one "that the owner does not operate" (A2.8) | the sovereign | 6 for the account that runs each instance; the hosts are on the record | no text sets one beyond the monitor text's `A2.8-operator` row, whose deadline the sovereign sets: it is met when an instance runs under an account that is not his |
 
 Rows b and e name no target that an earlier text set. They are on the window file's `reserved_to_the_sovereign` list until he says.
 
@@ -113,7 +121,7 @@ The window file's list. Criteria 1 to 12 are C2c-1's kinds as its brief leaves t
 | 12 | `ratio` | A3.4, as C2c-1's brief leaves it |
 | 13 | `wishes_named` | R1 |
 | 14 | `covered_reads_replayed` | R2 |
-| 15 | to be named with R4 | `main`'s head published within the lag at every verifier run, with no failed or disabled publication |
-| 16 | to be named with R4 | the verifier's record, once its workflow is installed |
+| 15 | `head_published` | R4 |
+| 16 | `verifier_record` | R4 |
 
 **What the audit of 17 November says of this list** (`transcripts/AUDIT-criteria-20261117.md`). Of the C2c-1 draft it read, it classes criteria 5, 6, 10 and 12 as empty, 7, 8 and 9 as narrow, and 1 to 4 and 11 as sound. Criteria 5 and 6 are the charter's promotion rule and a brief cannot drop them (A2.4); they are carried here with that finding stated, and their removal or repair is an amendment for C2c-3's procedure. Criteria 10 and 12 are carried as C2c-1's brief leaves them after its own tightening. Criterion 7 shows that a session was filed in time and not that it ran, and criterion 9 shows no repair that the acts evidence can see; both are carried as they are, with that said in the report. Criterion 8 is narrower in C2c-1 than its text says because it tests that code was installed; here each row names an operation instead. No criterion from 13 on is met by a system that does nothing: 13 needs his wishes on the log, 14 needs a covered text admitted with a read, and 15 and 16 need a publication and a verification that ran.
