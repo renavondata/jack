@@ -1,0 +1,31 @@
+Forecast 636 (X0): left undecided.
+Assessed at 2026-11-17T22:11:56Z, before resolves_by 2026-11-18T00:00:00Z.
+origin/main: 53aa8b70 (git log -5 --oneline origin/main).
+
+Command:
+git show origin/main:log.jsonl | python3 -c 'import json,sys; es=[json.loads(l) for l in sys.stdin]; print("origin/main final seq",es[-1]["seq"],"ts",es[-1]["ts"]); print("pushes:"); [print(e["seq"],e["ts"]) for e in es if e["type"]=="push"]; print("C2a/C2b promotions:"); ps=[e for e in es if e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject") in ("C2a","C2a-prime","C2b")]; print(json.dumps(ps)); print("C2b exits:"); print(json.dumps([e for e in es if e["type"]=="decision" and e["body"].get("subject")=="C2b"]))'
+Output:
+origin/main final seq 5700 ts 2026-11-17T21:33:00Z
+pushes:
+2 2026-10-18T14:42:38Z
+5 2026-10-19T04:36:23Z
+9 2026-10-19T06:00:46Z
+12 2026-10-20T02:06:48Z
+29 2026-10-25T16:16:20Z
+197 2026-10-31T13:04:49Z
+367 2026-11-01T15:04:14Z
+5564 2026-11-17T12:50:50Z
+C2a/C2b promotions:
+[]
+C2b exits:
+[]
+
+PYTHONDONTWRITEBYTECODE=1 python3 tools/status.py --as-of 2026-11-17T22:11:56Z
+Relevant output:
+window: C2a-prime (second window of C2a, opened seq 5564)
+
+No C2b opening or exit exists on this prefix. BRIEF-C2b-draft.md Amendment 2
+requires C2a-prime promotion before C2b opens; X0 resolves on its own words.
+The current absence of promotion does not decide failure before X0's deadline.
+Would decide: C2b exit-prefix criteria and corresponding tests evidence proving
+promotion by X0's deadline, or passage of that deadline without such promotion.
