@@ -1,4 +1,4 @@
-# SPEC patch for C2c-2 (draft v9, counsel-5, 17 November 2026, after the read of v8 at runner issue #986, `VERDICT: FAIL`) — one kind, one ground, and a push that takes its facts from keys
+# SPEC patch for C2c-2 (draft v10, counsel-5, 18 November 2026, after the read of v9 at runner issue #987, `VERDICT: FAIL`) — one kind, one ground, and a push that takes its facts from keys
 
 This is the text a builder's branch for C2c-2 begins with (RUNBOOK §`jack push`: "a change to SPEC.md that needs code is the first commit of the builder's branch — counsel's patch, applied and read by Guy there"). It binds nothing until that push. The texts on `main` are already named by entries: every `merge` carries the commit it merged and every `push` the trusted digest it authorised. Two things have no entry at all: a direction or ruling of the sovereign's made in a chat, and a read that a convention requires and nothing checks. The patch adds one `decision` kind for the first, and for the second one judge ground and a set of checks in the push verb. `enact` as a unification of `push` and `amend` is not needed for the bootstrap and waits for a case.
 
@@ -8,6 +8,7 @@ This is the text a builder's branch for C2c-2 begins with (RUNBOOK §`jack push`
 
 - *A text outside `transcripts/` could not be named by a wish.* The subject may now name a path anywhere in the repository whose segments have the stated shape (§1).
 - *A merge could leave on `main` covered bytes that no review names* (the reads of v7 and v8, runner #985 and #986): by combining trunk's change with a proposal's, in one file or across a rename. Ground 15 now requires the proposal's head to contain trunk's head, so that a merge has nothing to combine and leaves exactly the tree that was judged (§2).
+- *The push checked one commit and could deliver another* (the read of v9, runner #987): the verb fast-forwarded `main` to the branch's name, which a test run from the branch can move. It now fast-forwards to the commit it checked (§3).
 - *An old verb between the opening push and the new checks.* No push is made in that interval, and BRIEF-C2c-2 makes that a criterion read from the log (§3).
 - *The bound could be measured only by code that could not be built before his read.* v6 fixed the number after the build, which the read of v6 (runner #983) showed cannot be squared with code descending from his read of the final texts. The numbers are now pre-stated in the brief before the build, as every earlier cap was (§4).
 - *A rule taken from an unlisted text still passes.* It does, and no check can stop it. What follows that breach, who attests the list and where the obligation is to go are BRIEF-C2c-2's R6, row a, which is read with this patch.
@@ -103,11 +104,11 @@ A review names bytes and no commit. So a proposal made again by cherry-pick keep
 11. two drafter's commits of two families on one path, and a reader of one of them → refused;
 12. a drafter's commit with two `Model:` trailers → refused;
 13. a merge commit that holds covered bytes neither parent holds → refused;
-14. a merge of `main` that changes no covered path by its own hand → admitted;
+14. a merge of `main` whose tree holds, at every covered change, bytes that one of its parents holds at that path → admitted;
 15. two covered paths, each named by a different qualifying review → admitted;
 16. a review carrying one malformed `Read:` line beside a good one → refused;
 17. the review brought by a proposal whose `commit` merged `main` after the commit that adds the file → admitted.
-18. a head that does not contain trunk's head → refused, whatever it changes; trunk renaming an uncovered file to a covered path while a branch cut before it edits the old path → refused for the same reason; that branch with trunk merged in, the covered destination now holding its edit → refused until a review names those bytes;
+18. a head that does not contain trunk's head → refused, whatever it changes; trunk renaming an uncovered file to a covered path while a branch cut before it edits the old path → refused for the same reason; that branch with trunk merged in, the merge having put its edit at the covered destination → refused by the rule on merges, whatever reviews exist; the edit made instead in a commit after a clean merge of trunk, with a review naming its bytes → admitted;
 
 Mutants: the hash test dropped (3); the model test dropped (4); the trailer not required (5); a branch review accepted (6); the blob test dropped (7); a deletion not counted as a change (8); a commit required (9); models compared as whole strings (10); only the newest drafter's commit read (11); several trailers accepted (12); merge commits skipped (13); every merge refused (14); one review required for all paths (15); malformed lines ignored (16); the adding commit required to be the entry's `commit` itself (17); trunk's head not required as an ancestor (18).
 
@@ -129,6 +130,8 @@ The verb refuses unless all of these hold.
 6. **The texts.** The review carries at least one line `Text: <path>@sha256:<hex>`, each naming a file in M's tree and the SHA-256 of its bytes there; with `--opens LAYER`, one of them names `transcripts/BRIEF-<LAYER>-draft.md`. For each such pair, M's log holds a `wish` by the key ground 14 admits that names the pair, directly or through a read list (§1). A change to `SPEC.md` is written to the patch file that orders it, and that file is what the line names.
 7. **Descent.** For each pair of 6, take the earliest such wish and the first commit W on M's first-parent history whose `log.jsonl` holds it. Every commit reachable from H and not from M has W as an ancestor.
 8. **No covered text.** H differs from M at no path that the `read` list covers, in M's `judge/scope.json` or in H's; and neither list covers a path the verb itself places with a push (the parts of the run of record, `transcripts/diff-`). A covered text reaches `main` by a proposal, under ground 15.
+
+**The effect is bound to what was checked.** The verb fast-forwards `main` to the commit H it resolved at the start, by its hash, and never to the branch's name: the branch's tests run from a worktree that shares the repository's refs and could move the name while they run. After the fast-forward and before it places anything, the verb requires `main`'s head to be H, and otherwise undoes everything and refuses.
 
 **A new read or a new build is a new file.** "Brought" asks for the commit that added the file, and for the bytes that commit brought. A file whose bytes on `main` differ from those satisfies nothing while they differ, so a second build or a second read cannot be recorded by editing the first one's file. After a fix the builder adopts the new tree in a new `BUILT` file, and the reader reads it in a new review.
 
@@ -161,15 +164,16 @@ Every line of the review that begins `Built: `, `Own: ` or `Text: ` has its form
 7. a path outside the reader's own prefixes that R0 changed and at which R1 holds other bytes → refused; R1 made by merging a later `main` into R0 and adding pins → the checks pass;
 8. a pin changed at H with no `Own:` line → refused; an `Own:` line whose hash is not H's → refused; an `Own:` line for a pin that `main` has since brought to the same bytes → the checks pass;
 9. H holding an old pin where M holds a newer one → refused; a pin the reader changed and `main` changed too since the read → refused;
-10. a path changed on both sides since B → refused; `main` moved only in `log.jsonl` and under `transcripts/` since the read → the checks pass;
+10. a path outside the reader's own prefixes changed differently on both sides since B → refused; changed to the same bytes on both → the checks pass; `main` moved only in `log.jsonl` and under `transcripts/` since the read → the checks pass;
 11. no wish naming a `Text:` pair → refused; the pair's bytes changed on M since the read → refused; a wish naming a proper prefix of the bytes → refused; a `Text:` line naming `RUNBOOK.md` with a wish for its bytes → the checks pass;
 12. a wish naming the pair through a read list → the checks pass; through a malformed list → refused;
 13. a commit of the branch that does not descend from W → refused, whenever it was made; such a commit brought in by the merge that makes H, outside R1 → refused;
 14. `--opens LAYER` and no `Text:` line for that layer's brief → refused;
 15. H differing from M at a path covered by M's `read` list → refused; at a path covered only by H's → refused; H's `read` list gaining an entry that covers `transcripts/diff-` → refused;
 16. a `SPEC.md` change with no code path changed, a review, a `Text:` line naming its patch with a wish, and no `Built:` line → the checks pass, and the verb goes on to its other checks.
+17. the branch's name moved to a descendant of H while the verb's check runs → `main` receives H and nothing of the descendant;
 
-Mutants: one for each refusal a twin names, dropping its test; for 5, the copy restored; for 7 and 8, the stricter v5 rule restored (every path equal between R0 and R1; an `Own:` line refused where H equals M).
+Mutants: one for each refusal a twin names, dropping its test; for 5, the copy restored; for 17, the fast-forward made to the branch's name; for 7 and 8, the stricter v5 rule restored (every path equal between R0 and R1; an `Own:` line refused where H equals M).
 
 ## 4. What the push carries, and what goes by proposal before and after it
 
@@ -206,11 +210,11 @@ Nothing under `spec/vectors/` or `sim/` rides in the push (SPEC §10.1, §10.8).
 
 **This is the patch's inventory, not the window's.** BRIEF-C2c-2 lists the whole build: this patch, what `transcripts/runner/monitor.md` orders beyond `publish.yml` (the verifier, the clerk's `W4 monitor` line, its rows of the enforcement map), the custody text's users, and the criteria.
 
-**The count.** No number is stated here. BRIEF-C2c-2 pre-states the kernel's bound `<N>` and the counted cap before the build, from a projection whose arithmetic it shows, as every earlier brief pre-stated its cap; `tests.yml` and the verb's own check call `count_kernel.py --limit <N>` with that number. The builder fits under both or stops and reports. A number changed after a build has begun is a changed text: it is read again, and the build is done again from a commit that carries that read. Today `main` stands at 8,347 of 8,400 counted lines and the kernel at 450 of 500; C2b and C2c-1 open first, and each sets its own cap.
+**The count.** No number is stated here. BRIEF-C2c-2 pre-states the kernel's bound `<N>` and the counted cap before the build, from a projection whose arithmetic it shows, as every earlier brief pre-stated its cap; `tests.yml` and the verb's own check call `count_kernel.py --limit <N>` with that number. The builder fits under both or stops and reports. A number changed after a build has begun is a changed text and is read again. Where the change is of a number and nothing else, the branch is then cut again on the commit that carries his entry, with its commits replayed unchanged, and the code read says that no byte differs but the lines that carry the number (BRIEF-C2c-2 §7). That is not the rebuild that follows a breach: nothing was built to an unread text. Any other change after the build has begun is a new text and a new build. Today `main` stands at 8,347 of 8,400 counted lines and the kernel at 450 of 500; C2b and C2c-1 open first, and each sets its own cap.
 
 ## 5. What this patch does not do
 
-It changes `push` by the checks of §3 and by ending the review copy, and in no other way. It does not change `amend`, `transmute` or the charter's procedure (A2.7, SPEC §10.13). A `wish` transmutes nothing, amends nothing, waives no rule and disposes of no finding. The patch does not add `claim` or `enact`. It does not make the sovereign the author of session templates: a template changes by a counsel proposal with a read on `main`, merged by the herald, as today; ground 15 only refuses the one without the read. It does not make the clerk read prose: a wish's force is read by people and cited by briefs; the clerk prints whether the bytes exist. It does not choose readers: that is C2c-3's.
+It changes `push` by the checks of §3, by ending the review copy and by binding the fast-forward to the commit that was checked, and in no other way. It does not change `amend`, `transmute` or the charter's procedure (A2.7, SPEC §10.13). A `wish` transmutes nothing, amends nothing, waives no rule and disposes of no finding. The patch does not add `claim` or `enact`. It does not make the sovereign the author of session templates: a template changes by a counsel proposal with a read on `main`, merged by the herald, as today; ground 15 only refuses the one without the read. It does not make the clerk read prose: a wish's force is read by people and cited by briefs; the clerk prints whether the bytes exist. It does not choose readers: that is C2c-3's.
 
 ## 6. What the sovereign reads before any builder starts
 
