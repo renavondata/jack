@@ -1,0 +1,275 @@
+Collected at 2026-11-17T13:12:38Z
+$ git rev-parse origin/main
+6c0566c3d5b23bde453cda5c016de4cec9c79bc4
+$ git show origin/main:log.jsonl | python3 -c 'import json,sys; es=[json.loads(l) for l in sys.stdin]; print(json.dumps([e for e in es if e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject")=="C2a" and e["ts"]<"2026-11-17T12:00:00Z"]))'
+[]
+$ git show origin/main:log.jsonl | python3 -c 'import json,sys; print(next(l.strip() for l in sys.stdin if json.loads(l)["seq"]==5563))'
+{"body":{"kind":"fix","subject":"C2a: criterion 7 unmet at the stated end \u2014 nine off-log repair rows (acts-20261103T2144); the court's platform acts moved to a GitHub App (opencode-runner #227)"},"parent":"84c691764d06787b69dec2921783696e0ab82eac9b32d33c9f75e625825974a8","proposer":"guy","seq":5563,"sig":"U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAg8PB6+vR1VWRwcxtmGrWMBS2LtEhofSBX5zUqoRKDSEkAAAAKY29yZS1lbnRyeQAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQyNTUxOQAAAEDBa3SnDdvMIXuf5+NO1GbXUEzwqtuAF99FpSSt9r9T/aDgm+s304l4x0qB/68bhva9kFXQAWsUnMciSVSv6LAO","ts":"2026-11-17T12:44:29Z","type":"decision"}
+Outcome 0: the sovereign fix expressly records criterion 7 unmet at the stated end (nine off-log repair rows). Thus not every pre-stated criterion held. The fix is evidence of failure at that end, not a new deadline. No promote C2a decision preceded the forecast deadline.
+$ python3 tools/status.py --subject C2a --as-of 2026-11-17T12:00:00Z
+C1b history:
+window C1b: 2026-10-31T10:42:10Z .. 2026-11-01T11:31:58Z (as of 2026-11-01T11:31:58Z; prefix to seq 337)
+criterion 1: pins and twins in verified tests run SHORT
+criterion 2: checker agreement in verified tests run SHORT
+criterion 3: counted 6882/6900; kernel 450/500; scope equals SPEC: True met
+criterion 4: attack green on main before first item: unverified SHORT
+criterion 5: live E 1 >= 20; items 0; at promote E 1 SHORT
+criterion 7: C1b enforcement map rows code met
+late-reported repairs: 0 met
+off-log repairs: unknown (no acts file) SHORT
+criterion 6: veto on C1b: none met
+A3.4 ratio: procedure 67 : object 82; at promote 67 : 82 (maximum 5:1) met
+map A5: windows are maxima; exit at the crossing | code: tools/jack v_decision
+map W1: obligations from state and clock, with deadlines | code: tools/clerk.py forecast_writs
+map W3: the herald merges only on green CI | code: tools/clerk.py merge_writs
+map W4: window criteria and the procedure:object ratio | code: tools/status.py assess; tools/clerk.py window_writs
+map admission: trusted base unchanged except by push | code: judge in CI
+map elections: elections of proposers | hand: no witness yet; C2
+map irreversible: keys, pushes, settings gated by the sovereign | code: keys, rulesets
+map runner: no party acts except through entries; second checker for text | hand: sessions
+map validity: keys, chain, types, no self-judgement | code: kernel; two checkers
+J7: 0 of 48 window forecasts unresolved past resolves_by
+promote C1b: refused: criterion 1: pins and twins in verified tests run; criterion 2: checker agreement in verified tests run; criterion 4: attack green on main before first item: unverified; criterion 5: live E 1 >= 20; items 0; at promote E 1; off-log repairs: unknown (no acts file)
+window C2a: 2026-11-01T15:04:14Z .. 2026-11-15T15:04:14Z (as of 2026-11-17T12:00:00Z; prefix to seq 4947)
+criterion 1: C2a pins and twins in verified tests run SHORT
+criterion 2: checker agreement in verified tests run SHORT
+criterion 3: counted 8347/7800; kernel 450/500; scope equals SPEC and unchanged: False SHORT
+criterion 4: attack green on main before first scored cutoff: unverified SHORT
+criterion 5: value E 1.000000 >= 20 SHORT
+criterion 6: continued liveness E 1 >= 20; unchanged False; attack unverified; late repairs 0 SHORT
+criterion 7: off-log repairs: unknown (no acts file) SHORT
+criterion 7: veto on C2a: none met
+A3.4 ratio: procedure 1131 : object 3449; at promote 1132 : 3449 (maximum 5:1) met
+J7: 19 of 1804 window forecasts unresolved past resolves_by
+overdue forecast 445 (builder) due 2026-11-02T05:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4912 (reviewer) due 2026-11-15T19:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4913 (reviewer) due 2026-11-15T19:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4914 (reviewer) due 2026-11-15T19:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4915 (reviewer) due 2026-11-15T19:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4916 (reviewer) due 2026-11-15T19:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4917 (reviewer) due 2026-11-15T19:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4918 (reviewer) due 2026-11-15T20:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4919 (reviewer) due 2026-11-15T20:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4920 (reviewer) due 2026-11-15T20:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4921 (reviewer) due 2026-11-15T20:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4922 (reviewer) due 2026-11-15T20:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4923 (reviewer) due 2026-11-15T20:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4924 (reviewer) due 2026-11-15T21:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4925 (reviewer) due 2026-11-15T21:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4926 (reviewer) due 2026-11-15T21:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4927 (reviewer) due 2026-11-15T21:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4928 (reviewer) due 2026-11-15T21:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4929 (reviewer) due 2026-11-15T21:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4956 (reviewer) due 2026-11-15T22:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4957 (reviewer) due 2026-11-15T22:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4958 (reviewer) due 2026-11-15T22:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4959 (reviewer) due 2026-11-15T22:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4960 (reviewer) due 2026-11-15T22:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4961 (reviewer) due 2026-11-15T22:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4962 (reviewer) due 2026-11-15T23:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4963 (reviewer) due 2026-11-15T23:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4964 (reviewer) due 2026-11-15T23:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4965 (reviewer) due 2026-11-15T23:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4966 (reviewer) due 2026-11-15T23:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4967 (reviewer) due 2026-11-15T23:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4968 (reviewer) due 2026-11-16T00:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4969 (reviewer) due 2026-11-16T00:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4970 (reviewer) due 2026-11-16T00:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4971 (reviewer) due 2026-11-16T00:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4972 (reviewer) due 2026-11-16T00:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 4973 (reviewer) due 2026-11-16T00:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5000 (reviewer) due 2026-11-16T01:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5001 (reviewer) due 2026-11-16T01:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5002 (reviewer) due 2026-11-16T01:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5003 (reviewer) due 2026-11-16T01:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5004 (reviewer) due 2026-11-16T01:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5005 (reviewer) due 2026-11-16T01:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5006 (reviewer) due 2026-11-16T02:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5007 (reviewer) due 2026-11-16T02:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5008 (reviewer) due 2026-11-16T02:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5009 (reviewer) due 2026-11-16T02:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5010 (reviewer) due 2026-11-16T02:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5011 (reviewer) due 2026-11-16T02:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5012 (reviewer) due 2026-11-16T03:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5013 (reviewer) due 2026-11-16T03:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5014 (reviewer) due 2026-11-16T03:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5015 (reviewer) due 2026-11-16T03:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5016 (reviewer) due 2026-11-16T03:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5017 (reviewer) due 2026-11-16T03:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5044 (reviewer) due 2026-11-16T04:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5045 (reviewer) due 2026-11-16T04:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5046 (reviewer) due 2026-11-16T04:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5047 (reviewer) due 2026-11-16T04:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5048 (reviewer) due 2026-11-16T04:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5049 (reviewer) due 2026-11-16T04:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5050 (reviewer) due 2026-11-16T05:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5051 (reviewer) due 2026-11-16T05:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5052 (reviewer) due 2026-11-16T05:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5053 (reviewer) due 2026-11-16T05:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5054 (reviewer) due 2026-11-16T05:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5055 (reviewer) due 2026-11-16T05:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5056 (reviewer) due 2026-11-16T06:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5057 (reviewer) due 2026-11-16T06:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5058 (reviewer) due 2026-11-16T06:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5059 (reviewer) due 2026-11-16T06:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5060 (reviewer) due 2026-11-16T06:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5061 (reviewer) due 2026-11-16T06:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5088 (reviewer) due 2026-11-16T07:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5089 (reviewer) due 2026-11-16T07:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5090 (reviewer) due 2026-11-16T07:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5091 (reviewer) due 2026-11-16T07:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5092 (reviewer) due 2026-11-16T07:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5093 (reviewer) due 2026-11-16T07:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5094 (reviewer) due 2026-11-16T08:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5095 (reviewer) due 2026-11-16T08:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5096 (reviewer) due 2026-11-16T08:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5097 (reviewer) due 2026-11-16T08:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5098 (reviewer) due 2026-11-16T08:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5099 (reviewer) due 2026-11-16T08:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5100 (reviewer) due 2026-11-16T09:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5101 (reviewer) due 2026-11-16T09:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5102 (reviewer) due 2026-11-16T09:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5103 (reviewer) due 2026-11-16T09:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5104 (reviewer) due 2026-11-16T09:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5105 (reviewer) due 2026-11-16T09:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5133 (reviewer) due 2026-11-16T10:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5134 (reviewer) due 2026-11-16T10:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5135 (reviewer) due 2026-11-16T10:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5136 (reviewer) due 2026-11-16T10:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5137 (reviewer) due 2026-11-16T10:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5138 (reviewer) due 2026-11-16T10:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5139 (reviewer) due 2026-11-16T11:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5140 (reviewer) due 2026-11-16T11:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5141 (reviewer) due 2026-11-16T11:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5142 (reviewer) due 2026-11-16T11:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5143 (reviewer) due 2026-11-16T11:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5144 (reviewer) due 2026-11-16T11:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5145 (reviewer) due 2026-11-16T12:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5146 (reviewer) due 2026-11-16T12:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5147 (reviewer) due 2026-11-16T12:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5148 (reviewer) due 2026-11-16T12:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5149 (reviewer) due 2026-11-16T12:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5150 (reviewer) due 2026-11-16T12:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5177 (reviewer) due 2026-11-16T13:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5178 (reviewer) due 2026-11-16T13:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5179 (reviewer) due 2026-11-16T13:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5180 (reviewer) due 2026-11-16T13:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5181 (reviewer) due 2026-11-16T13:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5182 (reviewer) due 2026-11-16T13:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5183 (reviewer) due 2026-11-16T14:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5184 (reviewer) due 2026-11-16T14:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5185 (reviewer) due 2026-11-16T14:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5186 (reviewer) due 2026-11-16T14:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5187 (reviewer) due 2026-11-16T14:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5188 (reviewer) due 2026-11-16T14:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5189 (reviewer) due 2026-11-16T15:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5190 (reviewer) due 2026-11-16T15:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5191 (reviewer) due 2026-11-16T15:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5192 (reviewer) due 2026-11-16T15:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5193 (reviewer) due 2026-11-16T15:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5194 (reviewer) due 2026-11-16T15:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5221 (reviewer) due 2026-11-16T16:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5222 (reviewer) due 2026-11-16T16:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5223 (reviewer) due 2026-11-16T16:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5224 (reviewer) due 2026-11-16T16:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5225 (reviewer) due 2026-11-16T16:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5226 (reviewer) due 2026-11-16T16:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5227 (reviewer) due 2026-11-16T17:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5228 (reviewer) due 2026-11-16T17:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5229 (reviewer) due 2026-11-16T17:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5230 (reviewer) due 2026-11-16T17:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5231 (reviewer) due 2026-11-16T17:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5232 (reviewer) due 2026-11-16T17:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5233 (reviewer) due 2026-11-16T18:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5234 (reviewer) due 2026-11-16T18:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5235 (reviewer) due 2026-11-16T18:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5236 (reviewer) due 2026-11-16T18:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5237 (reviewer) due 2026-11-16T18:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5238 (reviewer) due 2026-11-16T18:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5265 (reviewer) due 2026-11-16T19:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5266 (reviewer) due 2026-11-16T19:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5267 (reviewer) due 2026-11-16T19:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5268 (reviewer) due 2026-11-16T19:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5269 (reviewer) due 2026-11-16T19:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5270 (reviewer) due 2026-11-16T19:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5271 (reviewer) due 2026-11-16T20:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5272 (reviewer) due 2026-11-16T20:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5273 (reviewer) due 2026-11-16T20:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5274 (reviewer) due 2026-11-16T20:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5275 (reviewer) due 2026-11-16T20:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5276 (reviewer) due 2026-11-16T20:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5277 (reviewer) due 2026-11-16T21:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5278 (reviewer) due 2026-11-16T21:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5279 (reviewer) due 2026-11-16T21:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5280 (reviewer) due 2026-11-16T21:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5281 (reviewer) due 2026-11-16T21:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5282 (reviewer) due 2026-11-16T21:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5309 (reviewer) due 2026-11-17T00:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5310 (reviewer) due 2026-11-17T00:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5311 (reviewer) due 2026-11-17T00:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5312 (reviewer) due 2026-11-17T00:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5313 (reviewer) due 2026-11-17T00:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5314 (reviewer) due 2026-11-17T00:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5315 (reviewer) due 2026-11-17T01:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5316 (reviewer) due 2026-11-17T01:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5317 (reviewer) due 2026-11-17T01:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5318 (reviewer) due 2026-11-17T01:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5319 (reviewer) due 2026-11-17T01:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5320 (reviewer) due 2026-11-17T01:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5321 (reviewer) due 2026-11-17T02:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5322 (reviewer) due 2026-11-17T02:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5323 (reviewer) due 2026-11-17T02:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5324 (reviewer) due 2026-11-17T02:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5325 (reviewer) due 2026-11-17T02:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5326 (reviewer) due 2026-11-17T02:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5327 (reviewer) due 2026-11-17T03:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5328 (reviewer) due 2026-11-17T03:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5329 (reviewer) due 2026-11-17T03:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5330 (reviewer) due 2026-11-17T03:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5331 (reviewer) due 2026-11-17T03:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5332 (reviewer) due 2026-11-17T03:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5385 (reviewer) due 2026-11-17T06:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5386 (reviewer) due 2026-11-17T06:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5387 (reviewer) due 2026-11-17T06:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5388 (reviewer) due 2026-11-17T06:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5389 (reviewer) due 2026-11-17T06:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5390 (reviewer) due 2026-11-17T06:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5391 (reviewer) due 2026-11-17T07:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5392 (reviewer) due 2026-11-17T07:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5393 (reviewer) due 2026-11-17T07:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5394 (reviewer) due 2026-11-17T07:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5395 (reviewer) due 2026-11-17T07:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5396 (reviewer) due 2026-11-17T07:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5397 (reviewer) due 2026-11-17T08:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5398 (reviewer) due 2026-11-17T08:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5399 (reviewer) due 2026-11-17T08:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5400 (reviewer) due 2026-11-17T08:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5401 (reviewer) due 2026-11-17T08:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5402 (reviewer) due 2026-11-17T08:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5403 (reviewer) due 2026-11-17T09:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5404 (reviewer) due 2026-11-17T09:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5405 (reviewer) due 2026-11-17T09:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5406 (reviewer) due 2026-11-17T09:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5407 (reviewer) due 2026-11-17T09:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5408 (reviewer) due 2026-11-17T09:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5427 (reviewer) due 2026-11-17T10:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5428 (reviewer) due 2026-11-17T10:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5429 (reviewer) due 2026-11-17T10:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5430 (reviewer) due 2026-11-17T10:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5431 (reviewer) due 2026-11-17T10:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5432 (reviewer) due 2026-11-17T10:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5433 (reviewer) due 2026-11-17T11:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5434 (reviewer) due 2026-11-17T11:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5435 (reviewer) due 2026-11-17T11:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5436 (reviewer) due 2026-11-17T11:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5437 (reviewer) due 2026-11-17T11:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+overdue forecast 5438 (reviewer) due 2026-11-17T11:00:00Z; evidence transcripts/evidence/renavon-freshness-20261031-base.json
+value: E 1.000000 over 0 events; window events 0
+elections: guy 0.200000 / counsel 0.200000 / reviewer 0.200000 / builder 0.200000 / base 0.200000; below base: none
+liveness continued: E 1 over 0 items (including projected expiries)
+sovereign REPAIR: promote C1a seq 188: criterion 1: pins and twins in verified tests run; criterion 2: checker agreement in verified tests run; criterion 5: score vectors in verified tests run
+sovereign REPAIR: promote C1b seq 337: criterion 1: pins and twins in verified tests run; criterion 2: checker agreement in verified tests run; criterion 4: attack green on main before first item: unverified; criterion 5: live E 1 >= 20; items 0; at promote E 1; off-log repairs: unknown (no acts file)
+promote C2a: refused: criterion 1: C2a pins and twins in verified tests run; criterion 2: checker agreement in verified tests run; criterion 3: counted 8347/7800; kernel 450/500; scope equals SPEC and unchanged: False; criterion 4: attack green on main before first scored cutoff: unverified; criterion 5: value E 1.000000 >= 20; criterion 6: continued liveness E 1 >= 20; unchanged False; attack unverified; late repairs 0; criterion 7: off-log repairs: unknown (no acts file)
+
+exit 0
+Status without runs/acts is diagnostic only: unverified gates are not evidence of real failure. The deciding evidence is the sovereign fix above, independently sufficient to falsify the conjunction.
