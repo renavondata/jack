@@ -219,51 +219,83 @@ lists every unresolved forecast whose `resolves_by` is before TS, by `resolves_b
 witness is `spec/vectors/score.jsonl` (the reviewer's; the builder's `tests/vectors/score.jsonl` must agree
 with it in meaning) and its expected table in the brief (pin `score_not_proper`).
 
-## `jack elect` — `python3 tools/elect.py --invite STREAM W0 | --replay SEQ | --resolve-plan SEQ | --table [--as-of T] [--sigma B64] [--log FILE]`
+## `jack elect` — `python3 tools/elect.py --invite STREAM W0 | --replay SEQ | --resolve-plan SEQ | --table [--as-of T] [--log FILE] [--root DIR] [--sigma B64 | --key FILE]`
 
 C2b's election (BRIEF-C2b §Scope: the entrants, the round's gain, the election, the draw; §Order of acts
 step 4). **C2b holds no live round** (BRIEF-C2b Amendment 10): `tools/elect.py` rides C2b's opening push with W5 and their
 pins (clause 5) and is tested, not run — no invite is entered, no per-invite session is filed, `herald-2` holds no
 `forecast` power, and the stream's shape stays the three-window forecast session the diary files. The rest of this
-section describes the verb, and the window that first runs rounds: there the diary consults it before every
+section describes the verb as rebuilt after the sovereign's read and read cold on C2b's opening push branch
+(`transcripts/REVIEW-C2b-code.md`), and the window that first runs rounds: there the diary consults it before every
 forecast session, invites entered before the attack tests are green are not rounds, and from the first invite
 each round's forecasts come from the invited arm's own session, filed per invite, and no session is filed
 without one.
 The roster is fixed in the file, *K* = 3 arms — (reviewer, `openai/gpt-5.4-mini`), (builder,
 `openai/gpt-5.4-mini`), (reviewer, `openai/gpt-6-astra-fast`) — and does not change inside the window (pin
-`roster_fixed`). Four EXP3 instances; round *t*, the *t*-th hourly window after the opening, draws on
-instance *t* mod 4, and only once that instance's previous round is resolved (pin `instance_feedback_complete`).
+`roster_fixed`). Four EXP3 instances, with γ = min(1, √(*K* ln *K* / ((e − 1)·84))) and η = γ/*K* (0.15111 and
+0.05037; pin `exp3_constants`). The window is read from the log: it opens at the first `push` after `decision
+promote C2a` and ends at the `resolves_by` of counsel's forecast `X7` entered before that push (no such
+forecast, or a push at or after its `resolves_by`: `C2b has no opening with a promotion forecast before it`). Round *t* is the hourly window starting at *F* + *t* h,
+where *F* is the first whole UTC hour later than the opening push's `ts`, so the first window after the opening
+is round 0 (BRIEF-C2b Amendment 12); a W0 off the whole hour, before *F* or after the window's end, or a stream
+other than `freshness`, is `round outside the freshness window`. Round *t* draws on instance *t* mod 4, and only
+once that instance's previous round is settled — all six of its events resolved, or its `resolves_by` passed with
+the missing ones counted as below (pin `instance_feedback_complete`).
 The stream is `freshness`; a round's loss ℓ is the mean log-loss over its six events, a missing forecast, a
 missing evidence page or an event unresolved by the invite's deadline counting ln 1000, and the gain is
 (ln 1000 − ℓ) / ln 999 (pins `gain_in_unit_interval`,
 `round_loss_is_mean`, `bad_round_kept`).
 
-- `--invite STREAM W0` — the diary's call for the stream's hourly window starting at W0, before the arm's
-  session is filed. Reads the prefix at `--as-of` (default now; the log must pass the kernel), runs
-  `tests.test_elect.Election.test_self_invite` and `test_rigged_election` and refuses on a red tree; refuses
-  a (stream, W0) already invited (`revision`), a W0 outside the window or a stream other than `freshness`, and
-  a call at or after W0 (`skipped: W0` — the round is skipped, no invite and no session, the hour reported as
-  skipped); exits 3 with `wait: instance j round t unresolved` while the instance's previous round is
-  unresolved, to be called again before W0. Otherwise it prints the round string `election.invite STREAM W0`,
-  signs it under `~/.ssh/jack-herald` (σ; `--sigma` supplies a signature made elsewhere; one that does not
-  verify is `rigged_election`), draws the arm on the 2^256 grid from σ, and prints the entry body — `claim`,
-  `p` (the invite's success event, prequential Laplace over the settled invites, (*s* + 1)/(*n* + 2) in
-  permille; pin `invite_p_is_success_rate`), `type`, `resolves_by`, `args` with `round`, `instance`,
-  `gains`, `cuts`, `propensity`, `gamma`, `eta`, `sigma` — which the diary enters under the herald's key before filing the arm's session (pins
-  `invite_before_session`, `draw_on_the_grid`, `sigma_verifies`, `self_invite`, `rigged_election`). The
-  importance weight divides by the propensity saved in the invite, never a later one. Every other refusal
-  exits 1.
-- `--replay SEQ` — recomputes the invite at seq SEQ from the prefix before it and verifies σ; prints
-  `election invite SEQ: replay verified` or the first error (pin `draw_replays_from_prefix`). Read-only.
-- `--resolve-plan SEQ` — prints the resolver the invite at SEQ routes to, never the arm that forecast
-  (pin `resolver_not_forecaster`). Read-only.
-- `--table` — per arm: rounds invited, Ĝ summed over the instances, mean gain, successes, frequency, mean
-  recorded propensity; per instance: last round and whether it is resolved; the skipped rounds, the
-  diagnostic, the `election.invite` lines of `jack score`, and any invite the audit refused. Read-only.
+Every mode reads `log.jsonl` (`--log`, default the repository's), refuses it whole when the kernel does (`log
+refused by kernel`), keeps the entries with `ts` at or before `--as-of` (default now), and reads evidence pages
+under `--root` (default the repository).
 
-Only `--invite` signs, and only with the herald's key (`~/.ssh/jack-herald`, held on steel, the sovereign's
-machine); the verb checks no host. No mode writes to the tree or to `log.jsonl`.
-The twins are `tests/test_elect.py`'s; the pins are BRIEF-C2b's §Pins.
+- `--invite STREAM W0` — the diary's call for the stream's hourly window starting at W0, before the arm's
+  session is filed. It refuses, in this order and at the first that applies: no opening on the prefix read
+  (`C2b has no opening with a promotion forecast before it`, which is also what an `--as-of` before the
+  opening push gets) or a W0 or stream outside the window (`round outside the freshness window`); a call at
+  or after W0 (`skipped: W0` — the round is skipped, no invite and no session); `herald-2` without the
+  `forecast` power (`unkeyed: herald-2 has no forecast power` — where a call in C2b that passes the first two
+  stops); a (stream, W0) already invited (`revision`); the instance's previous round unsettled (`wait:
+  instance j round t unresolved`, exit 3, to be called again before W0); neither `--sigma` nor `--key` given
+  (`--invite needs --sigma or --key`). It then takes σ from `--sigma` (the raw Ed25519 signature in base64,
+  made elsewhere) if given — `--key` is then ignored — or else signs the round string `election.invite
+  STREAM W0` with `ssh-keygen -Y sign` (namespace `jack-election`) under the private key file `--key` names,
+  refusing an envelope it cannot take apart (`rigged_election: SSHSIG header`, `rigged_election: SSHSIG
+  fields`). Last, it refuses a window one of whose events already has a resolution on the prefix
+  (`rigged_election: an event's outcome is already known`) and a σ that does not verify under `herald-2`'s
+  declared key (`rigged_election: sigma does not verify`). It runs no tests and reads no tests run: that
+  invites before the first green `tests` run holding `tests/test_elect.py` are not rounds is a condition on
+  the diary (§Order of acts step 4, struck for C2b by Amendment 10 clause 4), not on this verb.
+  Otherwise it draws the arm on the 2^256 grid from σ and prints the entry
+  body as JSON — `type` `election.invite`, `claim`, `p` (the invite's success event, prequential Laplace over
+  the invited arm's settled invites, (*s* + 1)/(*n* + 2) in permille rounded half up, clipped to 1–999; pin
+  `invite_p_is_success_rate`),
+  `resolves_by` (W0 + 5 h), and `args` with `stream`, `window_utc` ([W0, W0 + 1 h]), `round`, `instance`,
+  `sigma`, `roster`, `principal`, `model`, `gains`, `cuts`, `propensity`, `gamma`, `eta` — which the diary
+  enters under the herald's key before filing the arm's session (pins `invite_before_session`,
+  `invite_cutoff_W0`, `draw_on_the_grid`, `sigma_verifies`, `self_invite`, `rigged_election`). The importance
+  weight divides by the propensity saved in the invite, never a later one. Every other refusal exits 1.
+- `--replay SEQ` — checks that the invite at seq SEQ is the herald's, signed under `herald-2` as declared on
+  the prefix before it (else `unkeyed: …`), recomputes its body from that prefix and verifies σ; prints
+  `election invite SEQ: replay verified` or the first error (`not an election invite`, `revision`,
+  `rigged_election: …`, among them an invite whose `ts` is at or after its W0; pins `draw_replays_from_prefix`,
+  `invite_cutoff_W0`). Read-only.
+- `--resolve-plan SEQ` — prints, as JSON, the invite's seq, its resolver (`builder` when the invited arm is a
+  reviewer, `reviewer` when it is the builder; never the arm that forecast), the six datasets, `resolves_by`,
+  and the outcome once settled (pin `resolver_not_forecaster`). Read-only.
+- `--table` — prints, as JSON, per arm: rounds invited and settled, Ĝ summed over the instances, mean gain,
+  successes, frequency, mean recorded propensity; per instance: last round and whether it is settled; the
+  skipped rounds from the first accepted invite's round to `--as-of` or the window's end (none before the
+  first accepted invite, and none at all while there is none), every invite the audit refused with its
+  reason, the `election.invite` lines of `jack score`,
+  and the diagnostic (arm frequencies against recorded propensities, with no detection guarantee). Read-only.
+
+Only `--invite` signs, with the key file it is given: the herald's (`~/.ssh/jack-herald`, held on steel, the
+sovereign's machine). The verb checks neither the host nor the path, only that σ verifies under `herald-2`'s
+declared key. No mode writes to the tree or to `log.jsonl`.
+The twins are `pins/c2b.py`'s `ElectionCases`, built on `tests/test_elect.py`'s `Election`; the pins are
+BRIEF-C2b's §Pins.
 
 ## `jack clerk` — `python3 tools/clerk.py [--as-of T] [--runs FILE] [--acts FILE] [--counsel-open FILE]`
 
@@ -287,9 +319,10 @@ erases); holder counsel; deadline the window's end. Evidence not supplied is unv
 **W5** — counsel's dated writs, the class that scores counsel's own obligations (BRIEF-C2b §Scope (b) and
 Amendments 6–8; on 8 November 2026 two of its rows, `c2a-report` and `runbook-c2b`, are past due and undone): every row of
 `transcripts/COUNSEL-DUE.jsonl`, `{"id", "due", "what", "done": null}`, is a writ held by counsel. W5 lands at
-the `ts` of the first `merge` on the prefix whose `commit` holds `tools/due.py`, after C2b's opening push and
-first under its cap; the file is seeded at the opening with every dated obligation of COUNSEL-OPEN and of
-BRIEF-C2b, and pin `w5_inventory` checks the seeded ids are present at every later tree. It is computed by
+the `ts` of the first `merge` on the prefix whose `commit` holds `tools/due.py`; with the code on C2b's opening
+push, that is the first merge after the push (BRIEF-C2b Amendment 11 clause 4). The seed is the file as `main`
+holds it at the opening push (Amendment 11 clause 3), and pin `w5_inventory` checks the seeded ids are present
+at every later tree. It is computed by
 `python3 tools/due.py [--rev R] [--as-of T] [--root DIR] [--inventory COMMIT]`, **not** by `tools/clerk.py`,
 and printed by `status.py` beside W1–W4. `--rev` names the commit whose file and `log.jsonl` are read (its
 parent's file for the append-only check); `--inventory COMMIT` fails with `W5: missing <id>` when an id seeded

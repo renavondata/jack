@@ -722,3 +722,29 @@ REVIEW-C2b-v1 F6 named this course: "leave such forecasts in C1's reported score
 - **Counsel.** Clause 1 corrects counsel's own false figure, which favoured the reading that nothing but criteria 8 and 9 could fail. Clauses 2 and 3 keep off the file four rows that would have failed, at 08:00 HKT on 18 November, a window counsel holds N2 on; the sentence struck is a second step that counsel's plan assumed and did not look for. What still binds counsel is the C2a report and the four V rows, and the liveness the stream earns.
 - **The reader.** As under Amendment 10.
 - **The sovereign.** He read clause 6 with the false figure at 14:27 HKT and was told at about 15:40. This text is his to strike.
+
+## Amendment 12 (14 November, counsel-5; the round index defined — before the opening, one clause)
+
+- **The finding.** The first session of the rebuild (runner issue #857, `openai/gpt-6.1-sol`, under the sovereign's direction at seq 4643) built W5 and `sim/election.py`'s arithmetic and stopped before `tools/elect.py`, on two sentences of §Scope: "round *t* (the *t*-th hourly window after the opening) using instance *t* mod 4" and "`args.round` (the hourly slot index *t* from the opening, kept across skips)". Neither says from which instant the windows are counted or whether the first is 0 or 1, and `args.round`, `args.instance` and every replay of a draw turn on both. The builder chose neither, as it must.
+- **His read.** The clause changes a rule that code implements, so it is his to read before the builder's next session is filed (A2.10; row 35).
+
+**The clause.** In §Scope, for "round *t* (the *t*-th hourly window after the opening)" read: "round *t*, where *t* = (*W0* − *F*) / 1 h, *W0* being the start of the round's hourly window and *F* the first whole UTC hour later than the opening push's `ts` (an opening at exactly a whole hour counts the next one), so that the first hourly window to start after the opening is round 0"; and for "`args.round` (the hourly slot index *t* from the opening, kept across skips)" read: "`args.round` (that *t*, an integer, counted from round 0 and kept across skips)".
+
+**What moves.** `tools/elect.py`'s round index and `args.round`, `args.instance` = *t* mod 4, and the tests and pins that build them. **What does not move.** Every criterion; every pin's name, mutant and twin; Amendment 10 (no round is held in C2b, so no entry of this window turns on the index); the cap; the window.
+
+**The forecasts.** None is edited, and none of counsel's turns on the index.
+
+**Interests.** Counsel: none; no forecast or writ of counsel's turns on the index. **The reads.** The gate's review of this brief (`REVIEW-C2b-20261110T1107.md`, `Reviewed tree: df6fe752`) holds the bytes before this amendment; C2b's opening needs an accepting read, carried by a non-counsel proposal, of the bytes as amended (§Scope (a)), so a formal read follows on `main`.
+
+## Amendment 13 (15 November, counsel-5; the reported line of §Scope (c) made decidable — before the opening, one clause, no criterion)
+
+- **The finding.** The third session of the rebuild (runner issue #869, `openai/gpt-6.1-sol`) built every item of Amendment 10 clause 5's list and reported one sentence it could not build: §Scope (c)'s "`status.py` prints, under its honest name, "sovereign acts in the window with no counsel forecast naming them before the act" as a reported line, not a W4 count". No text says what an act is for this line or when a forecast names one. The builder built no matcher and printed the line as unverified, as it must.
+- **His read.** The clause changes a rule that code implements, so it is his to read before the builder's next session is filed (A2.10; row 35).
+
+**The clause.** After that sentence of §Scope (c) add: "For this line a sovereign act is a row of the attributed acts evidence criterion 9 reads whose `class` is `decision` or `repair` and whose `time_hkt`, read as Hong Kong time (UTC+8), falls inside the window. A counsel forecast names the act when its `ts` is earlier than the act's instant and its `args.act` is a string equal to the act's `ref`, each with any leading `PR ` and `#` removed; a number that appears anywhere else in the forecast names nothing. The line reads `reported: sovereign acts in the window with no counsel forecast naming them before the act: <n> of <m>`, followed by one line for each such act (`time_hkt`, `class`, `kind`, `ref`); with no acts evidence supplied it reads `reported: … unverified (no acts evidence)`. It gates no criterion."
+
+**What moves.** `tools/status.py`'s reported line and its test. **What does not move.** Every criterion, criterion 9 above all; every pin's name, mutant and twin; COUNSEL-OPEN 13's rule; the cap; the window.
+
+**The forecasts.** None is edited, and none of counsel's turns on the line, which gates nothing.
+
+**Interests.** Counsel: the line counts counsel's own omissions, so a loose matching rule would favour counsel. A first draft matched the act's number anywhere in a forecast's body, and a cold read (runner issue #874, F1) showed that it would count PR #40 as named by seq 56, whose claim speaks of a threshold of 40. The rule chosen counts an act as named only by a forecast entered before it whose `args.act` field cites that act and nothing else; no forecast on the log has such a field today, so the line will count every act as unnamed until counsel's forecasts name acts that way. That is the narrowest reading of "naming them before the act", and it favours counsel least. **The reads.** C2b's opening needs an accepting read, carried by a non-counsel proposal, of the bytes as amended (§Scope (a)), so a formal read follows on `main`.

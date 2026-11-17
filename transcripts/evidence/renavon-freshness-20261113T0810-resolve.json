@@ -1,0 +1,50 @@
+[
+  {
+    "dataset": "hk_property_poi",
+    "forecast": 4128,
+    "last_updated": null,
+    "outcome": null,
+    "sha256": "3f2b50d3ba06cb2aa5baedd6ac8ae6915df61bcb2ba72e5130d238f9687de679",
+    "url": "https://renavon.com/data/property/hk_property_poi"
+  },
+  {
+    "dataset": "hkex_disclosures",
+    "forecast": 4129,
+    "last_updated": null,
+    "outcome": null,
+    "sha256": "f5f7a1e91d42fd0307f77428fbf9d452bbc9d507c3ed582573ee1122fbaa8659",
+    "url": "https://renavon.com/data/hkex/hkex_disclosures"
+  },
+  {
+    "dataset": "hkex_disclosure_interests",
+    "forecast": 4130,
+    "last_updated": null,
+    "outcome": null,
+    "sha256": "5117370c930715927733fc04ea36ebe78e89d007da61293cbba797f98ef0b081",
+    "url": "https://renavon.com/data/hkex/hkex_disclosure_interests"
+  },
+  {
+    "dataset": "crhk_companies",
+    "forecast": 4131,
+    "last_updated": null,
+    "outcome": null,
+    "sha256": "11ac11a6c1f663baa0ac88bcd2285bc3edb1d1d7ef88eaee7bffb9b610e531f0",
+    "url": "https://renavon.com/data/crhk/crhk_companies"
+  },
+  {
+    "dataset": "sfc_licences",
+    "forecast": 4132,
+    "last_updated": null,
+    "outcome": null,
+    "sha256": "b928e6b2863355deaf5833a7eb1ad68a010c2fc9be1de4aa1198fcb9e386c4e4",
+    "url": "https://renavon.com/data/sfc/sfc_licences"
+  },
+  {
+    "dataset": "hk_property_transactions",
+    "forecast": 4133,
+    "last_updated": null,
+    "outcome": null,
+    "sha256": "728f58fee7b8da4e591c88dc35eaece5f2ee1c45b154c3c4c13dd902da370436",
+    "url": "https://renavon.com/data/property/hk_property_transactions"
+  }
+]

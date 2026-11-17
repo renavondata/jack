@@ -1,0 +1,20 @@
+origin/main: 978d75bb531b88134f57edf19b0e8b09c57f9009
+Computation (Python 3; imports json, subprocess, os; from tools import status as st, value as val):
+es = [json.loads(l) for l in subprocess.check_output(['git','show','origin/main:log.jsonl'], text=True).splitlines()]
+runs = json.load(open('transcripts/evidence/runs-tests-20261117T1010.json')) + json.load(open('transcripts/evidence/runs-tests-20261117T1010-historical.json'))
+opening, start, end = st.c2a_window(es)
+gate = st.attack_start(os.getcwd(), runs, end, 'tests/test_value.py')
+assert gate is not None
+assert st.instant(end) < st.dt.datetime.now(st.dt.timezone.utc)
+pushes = [e for e in es if e['type']=='push' and e['seq'] > opening and e['ts'] <= end]
+print('C2a window:', opening, start, end)
+print('opening push:', json.dumps(next(e for e in es if e['seq']==opening), sort_keys=True))
+print('subsequent pushes through exit:', json.dumps(pushes))
+assert not pushes
+print('outcome: 1')
+
+Output:
+C2a window: 367 2026-11-01T15:04:14Z 2026-11-15T15:04:14Z
+opening push: {"body": {"digest": "afe633a2f34cc810bff9bb7e08aa3f59c98bcd64310c3f0145eae184a88af08d", "record": "0000000000000000000000000000000000000000000000000000000000000000", "review": "c51320cbccf38d77e4d82d10b06d30fffda4d1db700be5d5d9e9270567aee34e"}, "parent": "359d57aad07bb9baabfd8699cc8a11b2ea4a33df2d86cd689296d062731e1f3b", "proposer": "guy", "seq": 367, "sig": "U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAg8PB6+vR1VWRwcxtmGrWMBS2LtEhofSBX5zUqoRKDSEkAAAAKY29yZS1lbnRyeQAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQyNTUxOQAAAEC/qfKEtgK2f40A81Tif7hh+zoyz/mjIEEMyIe2ICqA9GqBG1A2KgH6jGNYJal/FUrJk/56u7Hh9qcaFbjHSBAD", "ts": "2026-11-01T15:04:14Z", "type": "push"}
+subsequent pushes through exit: []
+outcome: 1

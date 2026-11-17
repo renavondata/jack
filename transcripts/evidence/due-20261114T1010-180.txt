@@ -1,0 +1,33 @@
+Recorded at 2026-11-14T10:13:53Z
+$ python3 tools/status.py --subject C1b --as-of 2026-11-14T09:00:00Z --runs transcripts/evidence/runs-tests-20261114T1010.json
+window C1b: 2026-10-31T10:42:10Z .. 2026-11-01T11:31:58Z (as of 2026-11-01T11:31:58Z; prefix to seq 337)
+criterion 1: pins and twins in verified tests run met
+criterion 2: checker agreement in verified tests run met
+criterion 3: counted 6882/6900; kernel 450/500; scope equals SPEC: True met
+criterion 4: attack green on main before first item: 2026-10-31T13:32:21Z met
+criterion 5: live E 214358881/8398080 >= 20; items 9; at promote E 214358881/8398080 met
+criterion 7: C1b enforcement map rows code met
+late-reported repairs: 0 met
+off-log repairs: unknown (no acts file) SHORT
+criterion 6: veto on C1b: none met
+A3.4 ratio: procedure 67 : object 82; at promote 67 : 82 (maximum 5:1) met
+map A5: windows are maxima; exit at the crossing | code: tools/jack v_decision
+map W1: obligations from state and clock, with deadlines | code: tools/clerk.py forecast_writs
+map W3: the herald merges only on green CI | code: tools/clerk.py merge_writs
+map W4: window criteria and the procedure:object ratio | code: tools/status.py assess; tools/clerk.py window_writs
+map admission: trusted base unchanged except by push | code: judge in CI
+map elections: elections of proposers | hand: no witness yet; C2
+map irreversible: keys, pushes, settings gated by the sovereign | code: keys, rulesets
+map runner: no party acts except through entries; second checker for text | hand: sessions
+map validity: keys, chain, types, no self-judgement | code: kernel; two checkers
+J7: 0 of 48 window forecasts unresolved past resolves_by
+sovereign REPAIR: promote C1b seq 337: off-log repairs: unknown (no acts file)
+promote C1b: refused: off-log repairs: unknown (no acts file)
+
+Exit status: 0
+
+Disposition: LEFT UNDECIDED. All numbered criteria are met, and the log records promote C1b seq 337 at 2026-11-01T11:31:58Z. However the requested promote line remains refused because off-log repairs are unknown without an acts file. Unknown is not evidence of failure or success. Deciding the full promotion claim requires an authenticated acts record covering the C1b window and a status run with that record establishing whether every promotion condition held. No earlier tick evidence file was opened.
+
+Runs fetched in this session using:
+gh api repos/renavondata/jack/actions/workflows/tests.yml/runs?per_page=100&branch=main&event=push&created=2026-10-31..2026-11-01
+Saved: transcripts/evidence/runs-tests-20261114T1010.json

@@ -43,8 +43,11 @@ The templates in this directory are procedure (the sovereign's ruling of 9 Novem
   `transcripts/REVIEW-<window>-code.md` on that branch for the sovereign's `--review` (RUNBOOK, `jack push`; C2a-prime's precedent);
   not proposed (the same placeholders; filed by counsel through the courier's template form).
 - `review-brief.md` — the reviewer's gate review of `transcripts/BRIEF-<window>-draft.md` for a window that has a brief and no
-  window file (C2a-prime, C2b): on PASS, `transcripts/REVIEW-<window>-<stamp>.md` proposed under the reviewer's key (placeholders
-  `{WINDOW}`, `{MODEL}`, `{BRANCH}`, `{STAMP}`, `{NOW}`; no texts list, so the courier needs no window file).
+  window file (C2a-prime, C2b): on PASS, `transcripts/REVIEW-<window>-<stamp>-<family>.md` proposed under the reviewer's key
+  (placeholders `{WINDOW}`, `{MODEL}`, `{BRANCH}`, `{STAMP}`, `{NOW}`; no texts list, so the courier needs no window file).
+- `review-reland.md` — a review already written by `{MODEL}` is re-landed byte for byte under a file name of its own, when
+  `main` does not hold it as the commit that added it left it (13 November: two reviews given one name, one written over the
+  other). One script, no read and no judgement; the same placeholders, and the session's own model is the template's.
 - `c2b-build.md`, `c2b-pins.md`, `c2b-code-review.md` — C2b's window code on its opening push (BRIEF-C2b Amendment 10 clause 5):
   counsel's base `push-c2b-base` is C2a-prime's opening branch with the two trusted-base changes in one commit (the precedent of
   `1c1b27f`); the builder merges it, integrates the pre-built code on `builder-c2b-push-2` and makes it say the amended criteria,
@@ -59,6 +62,15 @@ The templates in this directory are procedure (the sovereign's ruling of 9 Novem
   merges it and builds §The code on `builder-c2a-prime-rebuild`; a reviewer of another family writes §Pins' pins on `reviewer-c2a-prime-rebuild-pins`;
   counsel sets `opening-c2a-prime-rebuild` at that branch's head; a reviewer of another family than the builder's reads it cold and commits
   `REVIEW-C2a-prime-code.md` on it. Pushed, never proposed; used for this rebuild only.
+- `c2b-rebuild.md`, `c2b-rebuild-pins.md`, `c2b-rebuild-code-review.md` — the rebuild of C2b's window code, its tests and its pins after the
+  sovereign's read (his entry after seq 4634): the first build was written from 3 November before his read of the brief, and no session of these
+  templates reads the branches that hold it. Each session first prints the sovereign's own `decision` entries from seq 4634 on and checks the
+  brief's SHA-256 (`4fc0422a…`), and writes nothing to a text no entry of his states he read. The base is `builder-c2b-3`: C2a-prime's opening
+  branch `opening-c2a-prime-3` and the trusted-base change applied by his own hand (`826a5ad8`, seq 4634); the builder builds
+  there, merging no `main` (the opening paste brings it in); a reviewer of another family writes the pins on `reviewer-c2b-3-pins`; counsel sets `opening-c2b-3` at that branch's head; a
+  reviewer of another family than the builder's reads it cold, the read gate on `main` among it, and commits `REVIEW-C2b-code.md` on it.
+  Pushed, never proposed; used for this rebuild only. `c2b-build.md`, `c2b-pins.md` and `c2b-code-review.md` built on the first build and are
+  not used again.
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
   under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
   before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,

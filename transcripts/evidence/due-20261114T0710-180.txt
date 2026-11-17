@@ -1,0 +1,42 @@
+Observed at 2026-11-14T07:15:13Z
+$ python3 tools/status.py --subject C1b --as-of 2026-11-01T11:31:58Z --runs transcripts/evidence/runs-tests-20261114T0710.json --acts transcripts/evidence/acts-20261101.csv
+window C1b: 2026-10-31T10:42:10Z .. 2026-11-01T11:31:58Z (as of 2026-11-01T11:31:58Z; prefix to seq 337)
+criterion 1: pins and twins in verified tests run met
+criterion 2: checker agreement in verified tests run met
+criterion 3: counted 6882/6900; kernel 450/500; scope equals SPEC: True met
+criterion 4: attack green on main before first item: 2026-10-31T13:32:21Z met
+criterion 5: live E 214358881/8398080 >= 20; items 9; at promote E 214358881/8398080 met
+criterion 7: C1b enforcement map rows code met
+late-reported repairs: 0 met
+off-log repairs: 0 met
+criterion 6: veto on C1b: none met
+A3.4 ratio: procedure 67 : object 82; at promote 67 : 82 (maximum 5:1) met
+map A5: windows are maxima; exit at the crossing | code: tools/jack v_decision
+map W1: obligations from state and clock, with deadlines | code: tools/clerk.py forecast_writs
+map W3: the herald merges only on green CI | code: tools/clerk.py merge_writs
+map W4: window criteria and the procedure:object ratio | code: tools/status.py assess; tools/clerk.py window_writs
+map admission: trusted base unchanged except by push | code: judge in CI
+map elections: elections of proposers | hand: no witness yet; C2
+map irreversible: keys, pushes, settings gated by the sovereign | code: keys, rulesets
+map runner: no party acts except through entries; second checker for text | hand: sessions
+map validity: keys, chain, types, no self-judgement | code: kernel; two checkers
+J7: 0 of 48 window forecasts unresolved past resolves_by
+promote C1b: lawful
+
+$ git show e414bb5876cef9f8f9b04a82832f0f43ae18e1f1:transcripts/BRIEF-C1b-draft.md (pre-stated criteria section)
+
+1. Every pin below KILLED with a passing twin in the `tests` run on `main` at the exit prefix.
+2. Both checkers agree on the exit prefix and the committed seeds (C1a criterion 2, unchanged).
+3. Counted lines within the cap of 6,200; the kernel within 500; `judge/scope.json` and SPEC §10's
+   block unchanged.
+4. The attack test green on `main` before the first counted item.
+5. Liveness E ≥ 20 under the bet above on items finalised after the opening, computed from the log.
+6. No `decision` of kind `veto` with subject `C1b`.
+7. The enforcement map reprinted by `status.py` shows the rows C1b moves — obligations from state and
+   clock (W1), window state (W4), the herald's merge on green (W3), windows as maxima (A5, by the
+   verb's refusal) — with an enforcer that is code; the runner's rows and elections are outside this
+   brief and are not read.
+Reported: the procedure : object ratio (A3.4 applies); J7; the weekly acts table.
+
+
+Left undecided: status evaluates the amended cap 6900 and attributed acts table, and prints lawful. Original seventh-read v7 criterion 3 names cap 6200; exit counted lines 6882. Whether the mid-window Amendments 1 and 2 can establish the original forecast's "every pre-stated criterion" requires a ruling on the forecast's terms. No resolution entered for 180.
