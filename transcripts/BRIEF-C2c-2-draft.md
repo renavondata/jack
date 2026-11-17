@@ -1,4 +1,4 @@
-# BRIEF-C2c-2 (draft v6, PARTIAL, counsel-5, 17 November 2026) — recognition and adjudication: the sovereign's acts as entries naming bytes, the read a text must carry, the push by keys, the monitor
+# BRIEF-C2c-2 (draft v7, PARTIAL, counsel-5, 17 November 2026) — recognition and adjudication: the sovereign's acts as entries naming bytes, the read a text must carry, the push by keys, the monitor
 
 **This is a partial draft and binds nothing.** Written: §0 to §2, §3's rules R1 to R7, and §4 as a table. The monitor text and the custody text that R4 and R7 follow are themselves drafts, and R4 depends on three things only the sovereign can say (below). §5 to §10 are written in short form; §7's two numbers are proposals with their arithmetic and are the sovereign's to state. Not yet written: `transcripts/windows/C2c-2.json`, which waits for C2c-1's file to be final. C2c-2 is pre-stated in BRIEF-C2c-1's §9 and in `transcripts/RESEARCH-meta-jack-20261107.md` §3.2. The sovereign's answers of 17 November 2026 to `transcripts/QUESTION-20261111-constitution.md` §5 ("Then indeed, yes to all 7 questions") are the directions this brief carries.
 
@@ -36,7 +36,7 @@ The rule is the same file's §2: ground 15, `unread_text`, with the `read` list.
 
 **Criterion kind `covered_reads_replayed`.** For every commit on `main`'s first-parent history inside the window that is the merge of a proposal and at which a path covered by the `read` list in force differs from the first parent, the criterion runs ground 15 as the judge on `main` at the assessed prefix states it, with the first parent as trunk and the second as the proposal, and requires that it admit. It also requires that at least one such merge exists (the window file's `covered_changes_min`, 1). It is `unmet` when any replay refuses, when a first-parent commit that is no merge of a proposal changes a covered path, or when there is no such merge.
 
-*What it shows and does not.* That no covered text reached `main` in the window round the judge, and that the ground admitted at least one text with a real read: the runbook's and the case index's changes that the patch's §4 orders after the push are such texts. It shows nothing about the quality of a read.
+*What it shows and does not.* That no covered text reached `main` in the window round the judge, and that the ground admitted at least one text with a real read: the case index's and the law map's changes that the patch's §4 orders after the push are such texts. It shows nothing about the quality of a read.
 
 ### R3 A push takes its facts from keys
 
