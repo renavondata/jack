@@ -1,0 +1,25 @@
+origin/main: 978d75bb531b88134f57edf19b0e8b09c57f9009
+Computation (Python 3; imports json, subprocess, os; from tools import status as st, value as val):
+es = [json.loads(l) for l in subprocess.check_output(['git','show','origin/main:log.jsonl'], text=True).splitlines()]
+runs = json.load(open('transcripts/evidence/runs-tests-20261117T1010.json')) + json.load(open('transcripts/evidence/runs-tests-20261117T1010-historical.json'))
+opening, start, end = st.c2a_window(es)
+gate = st.attack_start(os.getcwd(), runs, end, 'tests/test_value.py')
+assert gate is not None
+deadline = (st.instant(start) + st.dt.timedelta(days=7)).strftime(st.FMT)
+assert st.instant(deadline) < st.dt.datetime.now(st.dt.timezone.utc)
+v = val.value(es, as_of=deadline, attack_green=gate)
+first = next(r for r in v['rows'] if r['E_after'] >= 20)
+r = next(e for e in es if e['seq'] == first['resolution_seq'])
+print('opening:', opening, start, 'seven-day endpoint:', deadline)
+print('value attack-green:', gate)
+print('first crossing:', r['seq'], r['ts'], 'E:', first['E_after'])
+print('endpoint: events', v['events'], 'E', v['E_value'])
+assert r['ts'] <= deadline
+print('outcome: 1')
+
+Output:
+opening: 367 2026-11-01T15:04:14Z seven-day endpoint: 2026-11-08T15:04:14Z
+value attack-green: 2026-11-01T15:59:44Z
+first crossing: 789 2026-11-03T03:12:26Z E: 20.13151882440093
+endpoint: events 783 E 424619266505226.4
+outcome: 1
