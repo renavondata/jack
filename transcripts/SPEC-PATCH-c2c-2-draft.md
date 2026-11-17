@@ -1,4 +1,4 @@
-# SPEC patch for C2c-2 (draft v10, counsel-5, 18 November 2026, after the read of v9 at runner issue #987, `VERDICT: FAIL`) — one kind, one ground, and a push that takes its facts from keys
+# SPEC patch for C2c-2 (draft v10, counsel-5, 17 November 2026, after the read of v9 at runner issue #987, `VERDICT: FAIL`) — one kind, one ground, and a push that takes its facts from keys
 
 This is the text a builder's branch for C2c-2 begins with (RUNBOOK §`jack push`: "a change to SPEC.md that needs code is the first commit of the builder's branch — counsel's patch, applied and read by Guy there"). It binds nothing until that push. The texts on `main` are already named by entries: every `merge` carries the commit it merged and every `push` the trusted digest it authorised. Two things have no entry at all: a direction or ruling of the sovereign's made in a chat, and a read that a convention requires and nothing checks. The patch adds one `decision` kind for the first, and for the second one judge ground and a set of checks in the push verb. `enact` as a unification of `push` and `amend` is not needed for the bootstrap and waits for a case.
 
