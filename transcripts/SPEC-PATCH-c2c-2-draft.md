@@ -1,4 +1,4 @@
-# SPEC patch for C2c-2 (draft v7, counsel-5, 17 November 2026, after the read of v6 at runner issue #983, `VERDICT: FAIL`) — one kind, one ground, and a push that takes its facts from keys
+# SPEC patch for C2c-2 (draft v8, counsel-5, 17 November 2026, after the read of v7 at runner issue #985, `VERDICT: FAIL`) — one kind, one ground, and a push that takes its facts from keys
 
 This is the text a builder's branch for C2c-2 begins with (RUNBOOK §`jack push`: "a change to SPEC.md that needs code is the first commit of the builder's branch — counsel's patch, applied and read by Guy there"). It binds nothing until that push. The texts on `main` are already named by entries: every `merge` carries the commit it merged and every `push` the trusted digest it authorised. Two things have no entry at all: a direction or ruling of the sovereign's made in a chat, and a read that a convention requires and nothing checks. The patch adds one `decision` kind for the first, and for the second one judge ground and a set of checks in the push verb. `enact` as a unification of `push` and `amend` is not needed for the bootstrap and waits for a case.
 
@@ -6,7 +6,8 @@ This is the text a builder's branch for C2c-2 begins with (RUNBOOK §`jack push`
 
 **What changed.** The read of v4 (runner #978) blocked the push's use of trailers, the routes by which a covered text could ride a push, the fetch in ground 15 and the drafter's own list of texts; v5 answered those by taking each party's part from a file its own key brought to `main`, by having a review name the bytes it read, and by making the list of texts the code reader's. The read of v5 (runner #981) passed the kernel rule, left ground 15 with fixes and blocked four things, answered here:
 
-- *A text outside `transcripts/` could not be named by a wish.* The subject may now name any path of the repository (§1).
+- *A text outside `transcripts/` could not be named by a wish.* The subject may now name a path anywhere in the repository whose segments have the stated shape (§1).
+- *A clean merge could leave on `main` covered bytes that no review names* (the read of v7, runner #985): where trunk and a proposal change the same covered file in different places. Ground 15 now refuses a proposal whose covered change trunk has also changed (§2).
 - *An old verb between the opening push and the new checks.* No push is made in that interval, and BRIEF-C2c-2 makes that a criterion read from the log (§3).
 - *The bound could be measured only by code that could not be built before his read.* v6 fixed the number after the build, which the read of v6 (runner #983) showed cannot be squared with code descending from his read of the final texts. The numbers are now pre-stated in the brief before the build, as every earlier cap was (§4).
 - *A rule taken from an unlisted text still passes.* It does, and no check can stop it. What follows that breach, who attests the list and where the obligation is to go are BRIEF-C2c-2's R6, row a, which is read with this patch.
@@ -61,7 +62,7 @@ The differential's simulator kind `wish` (`sim/gen.py`) is the builder's proposa
 
 15. **unread_text** — the proposal changes a path that the `read` list of `judge/scope.json` covers, and some such path has no qualifying review on trunk.
 
-**Covered.** A path is covered when a `read` entry matches it. An entry ending in `/` matches the directory. An entry ending in `*` matches every path that begins with the part before the `*` (the `read` list alone admits `*`; `paths`, `parties` and `counted` keep §10's rule). Any other entry matches exactly that file. The ground looks at every covered path that differs between the proposal's merge base with trunk and its head: added, modified or deleted. Call these the proposal's covered changes. A proposal with more than one merge base with trunk is refused on this ground. A covered path that a branch changed and changed back is not among them, and nothing below reads it.
+**Covered.** A path is covered when a `read` entry matches it. An entry ending in `/` matches the directory. An entry ending in `*` matches every path that begins with the part before the `*` (the `read` list alone admits `*`; `paths`, `parties` and `counted` keep §10's rule). Any other entry matches exactly that file. The ground looks at every covered path that differs between the proposal's merge base with trunk and its head: added, modified or deleted. Call these the proposal's covered changes. A proposal with more than one merge base with trunk is refused on this ground. So is a proposal one of whose covered changes trunk has itself changed since the merge base (trunk's bytes at that path differ from the merge base's): the herald's merge could then leave on `main` bytes that are neither trunk's nor the head's, which no review names, and the proposal is made again on trunk as it stands. With that refusal, what a merge leaves at each covered change is the head's bytes. A covered path that a branch changed and changed back is not among the covered changes, and nothing below reads it.
 
 **A qualifying review for a path P** meets all of these. Each is decided from the history and objects the judge already holds — trunk's and the proposal's — and the log; nothing is fetched.
 
@@ -106,8 +107,9 @@ A review names bytes and no commit. So a proposal made again by cherry-pick keep
 15. two covered paths, each named by a different qualifying review → admitted;
 16. a review carrying one malformed `Read:` line beside a good one → refused;
 17. the review brought by a proposal whose `commit` merged `main` after the commit that adds the file → admitted.
+18. trunk and the proposal each changing a different part of one covered file since the merge base, the head's bytes read → refused; the same proposal made again on trunk → admitted;
 
-Mutants: the hash test dropped (3); the model test dropped (4); the trailer not required (5); a branch review accepted (6); the blob test dropped (7); a deletion not counted as a change (8); a commit required (9); models compared as whole strings (10); only the newest drafter's commit read (11); several trailers accepted (12); merge commits skipped (13); every merge refused (14); one review required for all paths (15); malformed lines ignored (16); the adding commit required to be the entry's `commit` itself (17).
+Mutants: the hash test dropped (3); the model test dropped (4); the trailer not required (5); a branch review accepted (6); the blob test dropped (7); a deletion not counted as a change (8); a commit required (9); models compared as whole strings (10); only the newest drafter's commit read (11); several trailers accepted (12); merge commits skipped (13); every merge refused (14); one review required for all paths (15); malformed lines ignored (16); the adding commit required to be the entry's `commit` itself (17); trunk's side not compared (18).
 
 ## 3. The push takes its facts from keys
 
@@ -126,9 +128,9 @@ The verb refuses unless all of these hold.
 5. **Elsewhere the head is the build and `main`, and nothing else.** At every path outside the reader's own prefixes: where R0's bytes equal B's, H holds M's bytes; otherwise, where M's bytes equal B's or equal R0's, H holds R0's bytes; otherwise the push is refused, because both sides changed the path and the build is adopted and read again on a tree that has `main`'s change. `log.jsonl` is a path like any other: a branch adds no entry, and H holds M's log. A path absent from a tree has no bytes there, and two absences are equal.
 6. **The texts.** The review carries at least one line `Text: <path>@sha256:<hex>`, each naming a file in M's tree and the SHA-256 of its bytes there; with `--opens LAYER`, one of them names `transcripts/BRIEF-<LAYER>-draft.md`. For each such pair, M's log holds a `wish` by the key ground 14 admits that names the pair, directly or through a read list (§1). A change to `SPEC.md` is written to the patch file that orders it, and that file is what the line names.
 7. **Descent.** For each pair of 6, take the earliest such wish and the first commit W on M's first-parent history whose `log.jsonl` holds it. Every commit reachable from H and not from M has W as an ancestor.
-8. **No covered text.** H differs from M at no path that the `read` list covers, in M's `judge/scope.json` or in H's. A covered text reaches `main` by a proposal, under ground 15.
+8. **No covered text.** H differs from M at no path that the `read` list covers, in M's `judge/scope.json` or in H's; and neither list covers a path the verb itself places with a push (the parts of the run of record, `transcripts/diff-`). A covered text reaches `main` by a proposal, under ground 15.
 
-**A new read or a new build is a new file.** "Brought" asks for the commit that added the file. A review or a `BUILT` file edited by a later proposal has other bytes than the proposal that added it and satisfies nothing. After a fix the builder adopts the new tree in a new `BUILT` file, and the reader reads it in a new review.
+**A new read or a new build is a new file.** "Brought" asks for the commit that added the file, and for the bytes that commit brought. A file whose bytes on `main` differ from those satisfies nothing while they differ, so a second build or a second read cannot be recorded by editing the first one's file. After a fix the builder adopts the new tree in a new `BUILT` file, and the reader reads it in a new review.
 
 **How a push is assembled.** The builder's branch is cut from a commit of `main` that carries the wishes, and ends at R0. The builder proposes its `BUILT` file from a second branch that holds that file alone: the code branch cannot be proposed, since it changes the trusted base (ground 1). The reader commits its pins and vectors on the code branch itself, which moves that branch from R0 to R1, and proposes its review from a branch that holds the review alone. When both files are on `main`, `main` is merged into the code branch at R1, which gives H, and the sovereign pushes that branch.
 
@@ -164,7 +166,7 @@ Every line of the review that begins `Built: `, `Own: ` or `Text: ` has its form
 12. a wish naming the pair through a read list → the checks pass; through a malformed list → refused;
 13. a commit of the branch that does not descend from W → refused, whenever it was made; such a commit brought in by the merge that makes H, outside R1 → refused;
 14. `--opens LAYER` and no `Text:` line for that layer's brief → refused;
-15. H differing from M at a path covered by M's `read` list → refused; at a path covered only by H's → refused;
+15. H differing from M at a path covered by M's `read` list → refused; at a path covered only by H's → refused; H's `read` list gaining an entry that covers `transcripts/diff-` → refused;
 16. a `SPEC.md` change with no code path changed, a review, a `Text:` line naming its patch with a wish, and no `Built:` line → the checks pass, and the verb goes on to its other checks.
 
 Mutants: one for each refusal a twin names, dropping its test; for 5, the copy restored; for 7 and 8, the stricter v5 rule restored (every path equal between R0 and R1; an `Own:` line refused where H equals M).
@@ -218,7 +220,7 @@ A builder writes code only to a text he has read (A2.10). This patch is one of s
 - `transcripts/REVIEW-audit-3-6-argon.md`, findings D1, D5, D6 and D8, which §4 imports;
 - `RUNBOOK.md`, the paragraphs §4 has counsel propose before the push: the builder builds the verb to them;
 - `transcripts/runner/monitor.md`, whole, after it has been brought to answer 6 (the paper's §3: a witnessed log for the published head, and a verifier on a forge that is not GitHub; the text on `main` puts the verifier on GitHub's runners). That revision is not yet drafted;
-- `transcripts/BRIEF-C2c-2-draft.md` with its window file: the criteria, the paths whose wishes are a criterion (§1), the two numbers of §4 with their projection, the review rule, and for each obligation left to hand what follows its breach and the rung it stands on (§3). In draft, on no branch;
+- `transcripts/BRIEF-C2c-2-draft.md` with its window file: the criteria, the paths whose wishes are a criterion (§1), the two numbers of §4 with their projection, the review rule, and for each obligation left to hand what follows its breach and the rung it stands on (§3). In partial draft, beside this patch on its branch;
 - the custody text (the parties' keys under separate users). Not yet written.
 
 The session templates of §4 are instructions to sessions and restate this patch. A template that adds a rule the code implements is a finding, and the code reader's `Text:` lines are where it would show.
