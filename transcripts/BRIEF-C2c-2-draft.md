@@ -1,6 +1,6 @@
-# BRIEF-C2c-2 (draft v5, PARTIAL, counsel-5, 17 November 2026) — recognition and adjudication: the sovereign's acts as entries naming bytes, the read a text must carry, the push by keys, the monitor
+# BRIEF-C2c-2 (draft v6, PARTIAL, counsel-5, 17 November 2026) — recognition and adjudication: the sovereign's acts as entries naming bytes, the read a text must carry, the push by keys, the monitor
 
-**This is a partial draft and binds nothing.** Written: §0 to §2, §3's rules R1 to R7, and §4 as a table. The monitor text and the custody text that R4 and R7 follow are themselves drafts, and R4 depends on three things only the sovereign can say (below). Not yet written: `transcripts/windows/C2c-2.json`, which waits for C2c-1's file to be final; §7, the two numbers with their projection, which waits for C2c-1's branch to be final; and §5, §6 and §8 to §10. C2c-2 is pre-stated in BRIEF-C2c-1's §9 and in `transcripts/RESEARCH-meta-jack-20261107.md` §3.2. The sovereign's answers of 17 November 2026 to `transcripts/QUESTION-20261111-constitution.md` §5 ("Then indeed, yes to all 7 questions") are the directions this brief carries.
+**This is a partial draft and binds nothing.** Written: §0 to §2, §3's rules R1 to R7, and §4 as a table. The monitor text and the custody text that R4 and R7 follow are themselves drafts, and R4 depends on three things only the sovereign can say (below). §5 to §10 are written in short form; §7's two numbers are proposals with their arithmetic and are the sovereign's to state. Not yet written: `transcripts/windows/C2c-2.json`, which waits for C2c-1's file to be final. C2c-2 is pre-stated in BRIEF-C2c-1's §9 and in `transcripts/RESEARCH-meta-jack-20261107.md` §3.2. The sovereign's answers of 17 November 2026 to `transcripts/QUESTION-20261111-constitution.md` §5 ("Then indeed, yes to all 7 questions") are the directions this brief carries.
 
 ## 0. The law of this window is a file
 
@@ -125,3 +125,44 @@ The window file's list. Criteria 1 to 12 are C2c-1's kinds as its brief leaves t
 | 16 | `verifier_record` | R4 |
 
 **What the audit of 17 November says of this list** (`transcripts/AUDIT-criteria-20261117.md`). Of the C2c-1 draft it read, it classes criteria 5, 6, 10 and 12 as empty, 7, 8 and 9 as narrow, and 1 to 4 and 11 as sound. Criteria 5 and 6 are the charter's promotion rule and a brief cannot drop them (A2.4); they are carried here with that finding stated, and their removal or repair is an amendment for C2c-3's procedure. Criteria 10 and 12 are carried as C2c-1's brief leaves them after its own tightening. Criterion 7 shows that a session was filed in time and not that it ran, and criterion 9 shows no repair that the acts evidence can see; both are carried as they are, with that said in the report. Criterion 8 is narrower in C2c-1 than its text says because it tests that code was installed; here each row names an operation instead. No criterion from 13 on is met by a system that does nothing: 13 needs his wishes on the log, 14 needs a covered text admitted with a read, and 15 and 16 need a publication and a verification that ran.
+
+## 5. The promotion forecast and the end
+
+Before the opening push and after the budget entry, counsel enters the forecast the window file's `promotion` describes, with `args` `{id, window, window_sha256}` and `resolves_by` three days after the opening sitting's instant (`transcripts/RESEARCH-meta-jack-20261107.md` §3.2: "Budget: three days"). That `resolves_by` is the window's end; the window ends at the earlier of it and `decision promote C2c-2` (A5.1); there is no minimum. A reviewer resolves it as BRIEF-C2c-1 §5 has its own resolved, on the same three clauses.
+
+## 6. Deliverables, each after the sovereign's read, pre-built on a branch, read cold before the opening
+
+- what the SPEC patch's §4 lists: before the push, in the push, and after it by proposal;
+- the opening gate of R5, the builder's, in `tools/jack`, with pin `block_suspends`;
+- the four criterion kinds of §4 in `tools/window.py`, each three-valued as BRIEF-C2c-1 R2 requires, with a pin for each whose twins include the case that a system doing nothing leaves the criterion `unmet`;
+- `status.py`'s printed line for the `review.block` score (R5.6);
+- the monitor's: `publish.yml` in the push; `submit.yml` and `verify.yml` as shells in `tools/runner/workflows/`, with the second instance's file for its forge; their pins;
+- the custody text's: the installer and its check, `tools/runner/custody.json`, `run.yml`'s change as a shell, and pin `party_key_unreadable`;
+- the session templates the patch's §4 and the custody text name.
+
+## 7. Scope, the cap and the kernel's bound
+
+Paths as `judge/scope.json` at the opening, with the `read` list of the SPEC patch's §2. **The two numbers below are raises over C2c-1's, and a raise relaxes a control: they are the sovereign's to state in terms, and until he has, they are counsel's proposals.**
+
+- *The kernel's bound.* C2c-1's is 450, and `tools/count_kernel.py` prints 450 today. This window changes `kernel/log.py` in three places: the kind `wish` (no new line), the subject's shape for that kind (an expression and a test, counsel's estimate four lines) and the `NaN` fix (two). Estimate 456. Proposed `<N>`: **460**.
+- *The counted cap.* C2c-1's file states 14,500 and its brief projects the tree its push opens on at 14,123; what C2c-1 itself adds inside its window is not yet known. Counsel's estimate of this window's counted additions (`judge.judge.counted_lines` counts Python under `sim/ harness/ tests/ pins/ tools/`): `tools/jack` 225 (the `wish` verb and its guards, the push's eight checks, R5's gate); `tools/clerk.py` 70; `tools/window.py` and `tools/status.py` 210; `tests/` 740; `pins/` 200; `sim/` 10; the runner's Python 20. About 1,500. Counsel's estimates of this kind have been low before (BRIEF-C2c-1 §7: its first was 3,600 short). Proposed: **C2c-1's cap as it stands at C2c-1's exit, plus 2,000** — 16,500 if that cap is 14,500 — written as a number in the window file when C2c-1's cap is settled.
+
+Both numbers are in this brief's bytes before the sovereign's read and before the build. The builder fits under them or stops and reports. If one must change after the build has begun, the change is an amendment appended to this brief that alters nothing but the number; he reads the addition (the prefix rule); the branch is then cut again on the commit that carries his entry, its commits replayed unchanged; and the code read states that the replay changed no byte but the lines that carry the number. That is not a second build, because no code but those lines was written to the bytes that changed. An amendment that changes anything else is a new text and a new build.
+
+`frozen.pushes_inside_the_window: 0`, as C2c-1's: a further push or a raise inside the window fails criterion 3.
+
+## 8. What this brief does not do
+
+It changes no charter text and adds no change path for one. It does not make a `wish` an order, a waiver or the disposal of a finding (the ruling of 17 November, H1). It does not choose readers (C2c-3). It does not reach the openings before it, and R5 binds first at C2c-3's. It does not drop or repair the value and liveness criteria, which the charter's promotion rule requires (§4). It does not bring the runner's repository under the court beyond what the custody and monitor texts state.
+
+## 9. C2c-3, pre-stated and not designed
+
+C2c-3 opens with the first push after `decision promote C2c-2`, made by the verb with the checks of the SPEC patch's §3 and under the gate of R5. It is the window in which the charter is amended by its own procedure, one clause to an amendment (COUNSEL-OPEN rows 28, 33 and 38), each clause listed in its window file by the SHA-256 of its text before the window opens, and read by a reader the clerk draws. Its brief is written from this window's report.
+
+## 10. Reads, interest, and what is the sovereign's
+
+**Reads.** This brief and its window file are read cold by two families other than counsel's before they are proposed, and by the sovereign before any build.
+
+**Counsel's interest.** Counsel enters the promotion forecast and is scored on it. R5 lowers a bar that readers set on counsel's own texts; it is the sovereign's direction of 11 and 17 November, and counsel gave no advice on it (COUNSEL-OPEN rows 35 and 70). The two numbers of §7 are raises that make counsel's forecast easier to meet.
+
+**Reserved to the sovereign** (the window file's list): the two numbers of §7; R5's `block_days` and its `reserved_clauses`; the targets of R6's rows b and e; the monitor's domain, the place of its submit key, and its second forge and account; the deadline of the `A2.8-operator` row; whether the grants of the custody and monitor texts are entered before or at the opening sitting.
