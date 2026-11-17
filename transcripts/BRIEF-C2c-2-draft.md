@@ -1,4 +1,4 @@
-# BRIEF-C2c-2 (draft v2, PARTIAL, counsel-5, 17 November 2026) — recognition and adjudication: the sovereign's acts as entries naming bytes, the read a text must carry, the push by keys, the monitor
+# BRIEF-C2c-2 (draft v3, PARTIAL, counsel-5, 17 November 2026) — recognition and adjudication: the sovereign's acts as entries naming bytes, the read a text must carry, the push by keys, the monitor
 
 **This is a partial draft and binds nothing.** Written: §0 to §2, of §3 the rules R1 to R3, R5 and R6, and §4 as a table. Not yet written: R4 (the monitor) and R7 (custody), which wait for their texts; `transcripts/windows/C2c-2.json`, which waits for C2c-1's file to be final; §7, the two numbers with their projection, which waits for C2c-1's branch to be final; and §5, §6 and §8 to §10. C2c-2 is pre-stated in BRIEF-C2c-1's §9 and in `transcripts/RESEARCH-meta-jack-20261107.md` §3.2. The sovereign's answers of 17 November 2026 to `transcripts/QUESTION-20261111-constitution.md` §5 ("Then indeed, yes to all 7 questions") are the directions this brief carries.
 
@@ -85,9 +85,13 @@ Directions of answers 2 and 6 (`transcripts/QUESTION-20261111-constitution.md` �
 
 Rows b and e name no target that an earlier text set. They are on the window file's `reserved_to_the_sovereign` list until he says.
 
-### R7 Custody
+### R7 Each party's key is its own
 
-Not yet written. It follows the custody text (one user on the host for each party, each holding its own key), and is row c of R6.
+The rule is the custody text (`transcripts/runner/custody.md`, in draft): one user on the host for each party, holding that party's key and no other; one runner group for each, restricted to the workflow files and commits `tools/runner/custody.json` lists; `run.yml` taking a session's party from the issue's label and no key from its body. It is row c of R6.
+
+**Its criterion is a row of the ratchet (criterion 8).** The row `custody` reads `hand` at the opening tree and `code` at the assessed one, and its witness is the operation of the custody text's §4, observed inside the window and copied into the runner evidence: a builder's session that is refused the reviewer's key by the host and leaves no entry signed by another party's key on any branch; a workflow pushed to a branch of the runner that names the reviewer's group and never starts; and each group's workflow list, read through the API, equal to `custody.json`. The row is `unmet` when any of the three is absent or stale.
+
+*What it shows and does not.* That on the day of the evidence a session could not sign as another party and a pushed workflow could not run as one. It shows nothing about the owner, who is root on the host and owns the organisation, and nothing about what a party's session does with its own key.
 
 ## 4. Criteria
 
