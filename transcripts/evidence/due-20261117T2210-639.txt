@@ -1,0 +1,10 @@
+Forecast 639 (X3): left undecided.
+Evidence produced in this session: due-20261117T2210-636.txt records the exact
+origin/main log-query command and its output, and the status invocation.
+origin/main 53aa8b70 ends at seq 5700, 2026-11-17T21:33:00Z.
+The latest push is seq 5564, 2026-11-17T12:50:50Z; status identifies it as
+C2a-prime's opening. There is no C2a-prime promotion, C2b opening or C2b exit.
+No interval between C2b's opening and exit exists yet; absence of a second push
+on this prefix does not establish this future-window negative claim.
+Would decide: the complete push record between C2b's opening and exit prefix,
+or a witnessed second push strictly within that window.
