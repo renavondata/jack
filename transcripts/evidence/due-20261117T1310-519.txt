@@ -1,0 +1,6 @@
+Collected at 2026-11-17T13:12:38Z
+$ git rev-parse origin/main
+6c0566c3d5b23bde453cda5c016de4cec9c79bc4
+$ git show origin/main:log.jsonl | python3 -c 'import json,sys; es=[json.loads(l) for l in sys.stdin]; print(json.dumps([e for e in es if e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject")=="C2a" and e["ts"]<"2026-11-17T12:00:00Z"]))'
+[]
+Outcome 0: no decision of kind promote with subject C2a exists on this origin/main prefix before the now-passed 2026-11-17T12:00:00Z deadline.
