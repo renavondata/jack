@@ -1,6 +1,14 @@
-# BRIEF-C2c-2 (draft v0, PARTIAL, counsel-5, 17 November 2026) — recognition and adjudication: the sovereign's acts as entries naming bytes, the read a text must carry, the push by keys, the monitor
+# BRIEF-C2c-2 (draft v1, PARTIAL, counsel-5, 17 November 2026) — recognition and adjudication: the sovereign's acts as entries naming bytes, the read a text must carry, the push by keys, the monitor
 
-**This is a partial draft and binds nothing.** It is on a branch so that a reader of `transcripts/SPEC-PATCH-c2c-2-draft.md` can read, beside the patch, the terms the patch leaves to this brief. Written so far: §2 (opening, preconditions and the sovereign's read), and of §3 the rules R5 (the review rule of answer 3) and R6 (what is left to hand, what follows a breach, and the rung of each obligation). Not yet written: §0 (the window is its file), §1, the rules R1 to R4 (the `wish`, ground 15, the push's checks and the monitor, each with its criterion) and R7 (custody), §4 (criteria) with `transcripts/windows/C2c-2.json`, and §5 to §10. C2c-2 is pre-stated in BRIEF-C2c-1's §9 and in `transcripts/RESEARCH-meta-jack-20261107.md` §3.2; the sovereign's answers of 17 November 2026 to `transcripts/QUESTION-20261111-constitution.md` §5 ("Then indeed, yes to all 7 questions") are the directions this brief carries.
+**This is a partial draft and binds nothing.** Written: §0 to §2, of §3 the rules R1 to R3, R5 and R6, and §4 as a table. Not yet written: R4 (the monitor) and R7 (custody), which wait for their texts; `transcripts/windows/C2c-2.json`, which waits for C2c-1's file to be final; and §5 to §10. C2c-2 is pre-stated in BRIEF-C2c-1's §9 and in `transcripts/RESEARCH-meta-jack-20261107.md` §3.2. The sovereign's answers of 17 November 2026 to `transcripts/QUESTION-20261111-constitution.md` §5 ("Then indeed, yes to all 7 questions") are the directions this brief carries.
+
+## 0. The law of this window is a file
+
+`transcripts/windows/C2c-2.json` is this window, as BRIEF-C2c-1 §0 made a window its file: its opening rule, preconditions, promotion forecast, end, numbers, processes, frozen paths, criteria with the evidence each reads, reads, and what is reserved to the sovereign. `tools/status.py` assesses C2c-2 from that file and from nothing in this prose. Where this brief and the file differ, the file governs and the difference is a finding. The file is bound as C2c-1's is: it is final and read before the opening sitting; the sovereign's `decision budget "C2c-2: window file sha256:<hash>; …"` names its hash; counsel's promotion forecast names the same hash; and `status.py` refuses the whole assessment when the file at the assessed prefix does not hash to both.
+
+## 1. Purpose
+
+Three things reach the record that today live in a chat or in a habit. The sovereign's rulings, directions and reads become entries naming bytes (R1). A text that claims force reaches `main` only with a read by another principal and another family, and a push only with each party's part signed for by its own key (R2, R3). And the head of the log is published where the owner cannot quietly rewrite it (R4). The window also carries two things the sovereign directed on 17 November: how a reader's BLOCK is ended (R5), and, for every obligation still kept by hand, what follows its breach and where it is to go (R6).
 
 ## 2. Opening, preconditions and the sovereign's read
 
@@ -10,13 +18,43 @@
 - **What the old verb cannot check, and who does.** The push that opens this window is made before the checks of the SPEC patch's §3 exist. So for this one push the code read is asked to state, with the commands it ran: that every commit of the branch descends from the commit on `main` that carries the grant; that the texts the code implements are the five and no other; and that each of the five has on `main` the bytes the grant names. That is row f of R6 at rung 5 for this push. A breach found then follows the default: the push is not made and the work is done again.
 - **The budget entry** is the sovereign's and names the window file's hash, as in BRIEF-C2c-1 §0. The numbers are read from the file.
 
-## 3. Rules (new in C2c-2; R1 to R4 and R7 not yet written)
+## 3. Rules (new in C2c-2)
+
+Each rule's text is in the file named; this brief adds the criterion that tests it in the window and says what the criterion cannot show.
+
+### R1 The sovereign's acts name bytes
+
+The rule is `transcripts/SPEC-PATCH-c2c-2-draft.md` §1: the `decision` kind `wish`, its subject, the clerk's `W6` line, read lists and the prefix mark.
+
+**Criterion kind `wishes_named`.** The window file's `wishes` is a list of paths: `transcripts/RULING-20261104-window-fix.md`, `transcripts/RULING-20261117-constitution.md` and `transcripts/COUNSEL-OPEN.md`. The criterion is `met` when, for each, the log at the assessed prefix holds a `wish` entered inside the window, by the key ground 14 admits, that names the path with bytes the path held at some commit of `main`'s first-parent history — directly or through a read list — and, for the two rulings, with the bytes the path holds at the assessed tree. It reads the log and the tree only and is never `unknown`.
+
+*What it shows and does not.* That the kind works on the real log from his key through both kernels, the judge and the clerk, and that his two rulings are signed for as they stand. It does not show that he read anything: a wish is his statement.
+
+### R2 A text that claims force carries a read
+
+The rule is the same file's §2: ground 15, `unread_text`, with the `read` list.
+
+**Criterion kind `covered_reads_replayed`.** For every commit on `main`'s first-parent history inside the window that is the merge of a proposal and at which a path covered by the `read` list in force differs from the first parent, the criterion runs ground 15 as the judge on `main` at the assessed prefix states it, with the first parent as trunk and the second as the proposal, and requires that it admit. It also requires that at least one such merge exists (the window file's `covered_changes_min`, 1). It is `unmet` when any replay refuses, when a first-parent commit that is no merge of a proposal changes a covered path, or when there is no such merge.
+
+*What it shows and does not.* That no covered text reached `main` in the window round the judge, and that the ground admitted at least one text with a real read: the runbook's and the case index's changes that the patch's §4 orders after the push are such texts. It shows nothing about the quality of a read.
+
+### R3 A push takes its facts from keys
+
+The rule is the same file's §3, and `RUNBOOK.md`'s paragraph "The push by keys".
+
+**No criterion of its own.** The window has one push, its opening, made by the old verb. Criterion 3 keeps C2c-1's bound that no push is made inside the window, so the old verb is not used again before the new checks exist; and criterion 4 requires the pin `push_unread_code` killed at the exit. The first push the new checks judge is C2c-3's opening.
+
+*What this leaves.* The checks are tested by their pin's twins and by no push on the record until C2c-3 opens. C2c-3's brief says what a refusal at its own opening costs.
+
+### R4 The monitor
+
+Not yet written. It follows `transcripts/runner/monitor.md` once that text is brought to answer 6, and carries the criteria for publication and verification.
 
 ### R5 A BLOCK suspends, the sovereign rules, and the reader is scored
 
 This is the direction of answer 3 (`transcripts/QUESTION-20261111-constitution.md` §2.3 c; his words of 11 November, COUNSEL-OPEN row 57: "Yes, I end disagreements"). **It sets a lower bar than the earlier briefs set: his ruling can stand in for a reader's acceptance.** It binds by this brief once he has read it, from the merge of the proposal that carries its code, and so first at C2c-3's opening. It does not reach an opening made before that. It changes the opening gate in `tools/jack` and nothing in the judge: ground 15 stays as the SPEC patch states it.
 
-**What the gate is today.** `push_read_gate` passes on the first review of the brief that is accepting, at `main`'s bytes, and brought by a principal other than counsel. A failing review beside it refuses nothing in code. "Until two families accept" has been kept by hand.
+**What the gate is today.** `push_read_gate` passes on the first review of the brief that is accepting, at `main`'s bytes, and brought by a principal other than counsel; from C2c-1's opening, for a layer with a window file, it requires as many such reviews as the file's `readers` says, each at the window file's bytes too (RUNBOOK §`jack push`). A failing review beside them refuses nothing in code. "Until two families accept" has been kept by hand.
 
 **The rule.**
 
@@ -46,3 +84,32 @@ Directions of answers 2 and 6 (`transcripts/QUESTION-20261111-constitution.md` �
 | g | The monitor is one "that the owner does not operate" (A2.8) | the sovereign | 6 for the account that runs it; the host is on the record | as the monitor text states once it is brought to answer 6 |
 
 Rows b and e name no target that an earlier text set. They are on the window file's `reserved_to_the_sovereign` list until he says.
+
+### R7 Custody
+
+Not yet written. It follows the custody text (one user on the host for each party, each holding its own key), and is row c of R6.
+
+## 4. Criteria
+
+The window file's list. Criteria 1 to 12 are C2c-1's kinds as its brief leaves them; 13 to 16 are new kinds, built in this window to this text. The promotion is lawful when the file's binding check passes and every line prints `met`.
+
+| | Kind | What it asks in this window |
+|---|---|---|
+| 1 | `verified_run` | pins and twins in a verified tests run on the assessed tree |
+| 2 | `verified_run` | both checkers agree on the assessed log, in that run |
+| 3 | `tree_bounds` | counted lines within the cap and the kernel within `<N>`, the two numbers appended after the build (SPEC patch §4, "The count"); `judge/scope.json` equal to SPEC's block and unchanged since the opening; no frozen path changed; no push inside the window |
+| 4 | `pins_killed` | `text_unread`, `push_unread_code`, `block_suspends`, `nan_not_malformed`, `decision_rotated_master`, `grounds_5_order`, `workflow_go_and_seeds`, and the pins of R1's clerk line, R4 and R7, each killed in that run |
+| 5 | `eprocess` | value, continued, at or above the threshold (CHARTER §6) |
+| 6 | `eprocess` | liveness, continued, at or above the threshold (CHARTER §6) |
+| 7 | `no_claim_past_due_unescalated` | as C2c-1's |
+| 8 | `ratchet` | the rows of `tools/enforcement.json` that this window moves from hand to code: R6's row c (custody), the read of covered texts, and the monitor's publication. Each row's witness is an operation observed in the window, not a file installed |
+| 9 | `count_zero` | zero repair rows in the acts evidence of both repositories and zero on-log repairs |
+| 10 | `undertakings_kept` | as C2c-1's brief leaves it |
+| 11 | `no_veto` | no veto on C2c-2 |
+| 12 | `ratio` | A3.4, as C2c-1's brief leaves it |
+| 13 | `wishes_named` | R1 |
+| 14 | `covered_reads_replayed` | R2 |
+| 15 | to be named with R4 | `main`'s head published within the lag at every verifier run, with no failed or disabled publication |
+| 16 | to be named with R4 | the verifier's record, once its workflow is installed |
+
+**What the audit of 17 November says of this list** (`transcripts/AUDIT-criteria-20261117.md`). Of the C2c-1 draft it read, it classes criteria 5, 6, 10 and 12 as empty, 7, 8 and 9 as narrow, and 1 to 4 and 11 as sound. Criteria 5 and 6 are the charter's promotion rule and a brief cannot drop them (A2.4); they are carried here with that finding stated, and their removal or repair is an amendment for C2c-3's procedure. Criteria 10 and 12 are carried as C2c-1's brief leaves them after its own tightening. Criterion 7 shows that a session was filed in time and not that it ran, and criterion 9 shows no repair that the acts evidence can see; both are carried as they are, with that said in the report. Criterion 8 is narrower in C2c-1 than its text says because it tests that code was installed; here each row names an operation instead. No criterion from 13 on is met by a system that does nothing: 13 needs his wishes on the log, 14 needs a covered text admitted with a read, and 15 and 16 need a publication and a verification that ran.
