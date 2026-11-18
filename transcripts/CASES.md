@@ -100,6 +100,29 @@ Judgment: `transcripts/RULING-20261104-window-fix.md` (PR #290), with the correc
 - **Not decided.** A distinct kind for the boundary act; rulings as entries; a judge below the sovereign; the
   court's reach outside `renavondata/jack` (BRIEF-C2c's draft items 13 and 14, on no branch yet).
 
+### [2026-11-17] constitution — what a `decision` can do; the last word at a pre-stated gate; the record of a ruling; seq 3432 and A2.1
+Judgment: `transcripts/RULING-20261117-constitution.md`.
+- **Question.** Four readings asked by `transcripts/QUESTION-20261111-constitution.md` §5 (answers 1, 3, 4 and 6): can a
+  `decision` suspend a rule or make a past breach lawful, and what is seq 3432's effect; does a `decision` dispose of a
+  reader's finding at a pre-stated gate; where is a ruling recorded and how does it stand against the charter; is
+  seq 3432 A2.1's first real case?
+- **Answer.** Guy, 17 November 2026: "Then indeed, yes to all 7 questions" — to the paper's seven answers, of which these
+  four are readings.
+- **Holding.** (H1) A `decision` has the effect the law in force gives its kind, and no other; what else it says is his
+  signed statement. Seq 3432 is a valid entry; its clauses "may enter by the opening push" and "are answered by this
+  entry" have no effect in law. (H2) No `decision` disposes of a reader's finding, and a gate a brief pre-stated binds
+  until its own terms are met; for the openings of C2a-prime and C2b, the gate as pre-stated. (H3) A ruling is its
+  `RULING-*.md` file, the record of his answer, followed until carried into the charter and yielding to the charter
+  meanwhile. (H4) Seq 3432 is not A2.1's first real case: he does not want it refused.
+- **Reads.** A2.1, A2.4, A2.6, A2.7, A2.10; §3 (change); maxims 1 and 4; SPEC §5 and §8 step 9.
+- **Enforced by.** No pin of its own, and none of the four is decidable as put. Of H1: SPEC §8 step 9 in both checkers, and
+  SPEC §10.11 and §10.13 in the judge. Of H2, in part: `tools/jack` `push_read_gate`, pins `push_without_read_refused`,
+  `read_of_this_text`, `read_not_counsels`, which pass on the first accepting review by a principal other than counsel; the rest of
+  a brief's gate is kept by hand. H3 and H4: nothing.
+- **Not decided.** The paper's directions (into C2c-2's texts, each read by him before any build); its amendment material
+  (separate clauses at C2c-3, as counsel read his answer back to him; COUNSEL-OPEN rows 28, 33 and 70); a waiver power;
+  the scope of A2.10; whether any gate's terms were met; whether another entry is A2.1's first real case.
+
 ## Rulings recorded in the charter's text
 
 Answers of the sovereign that changed the charter, and where each is recorded.
@@ -118,4 +141,4 @@ SPEC §10.7–10 as the judge's grounds, adopted on 16 October 2026 (recorded in
 the budget, `decision` seq 50; COUNSEL-OPEN row 33 (no amendment now; C2a fails at its stated end; C2a-prime
 pre-stated; the identity fix first; amendments judged as jack judges everything else) and row 34 (the direction
 of 4 November 2026 quoted under "How a case enters"); row 35 (the sovereign's reading of corrections 1–4, and his
-direction of the same day on his attention and wall-clock time).
+direction of the same day on his attention and wall-clock time); row 70 (the directions among his seven answers of 17 November 2026, which bind by the briefs that pre-state them).
