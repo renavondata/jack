@@ -1,0 +1,16 @@
+Forecast 815 (X6): LEFT UNDECIDED.
+C2b has no opening or exit prefix on this record. The current line count is not a count at C2b's exit and cannot decide the at-most-9000 claim with Amendment 1's cap in force.
+Deciding evidence required: status.py criterion 3 at the actual C2b exit prefix, including the counted lines and applicable cap.
+
+Command run: python3 tools/status.py --as-of 2026-11-18T19:11:37Z
+Relevant exact output:
+criterion 3: counted 8347/8400; kernel 450/500; scope equals SPEC and unchanged: False SHORT
+window: C2a-prime (second window of C2a, opened seq 5564)
+
+The prefix query saved in due-20261118T1910-638.txt was also run in this session and printed:
+origin/main: 2bbb126e1efc83757c6434100cc76c7d1be56da4
+last entry: 5952 2026-11-18T18:32:59Z
+C2a-prime window: (5564, '2026-11-17T12:50:50Z', '2026-11-30T00:00:00Z')
+C2b window: None
+promotion entries: [(188, '2026-10-31T10:42:10Z', 'C1a'), (337, '2026-11-01T11:31:58Z', 'C1b')]
+last push: 5564 2026-11-17T12:50:50Z
