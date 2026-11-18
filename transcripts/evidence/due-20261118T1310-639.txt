@@ -1,0 +1,13 @@
+Forecast 639 (X3): left undecided.
+
+Commands run and output, 2026-11-18 UTC:
+$ git rev-parse origin/main
+e5b744da7fb6e2f0d442997d64984a27f4158180
+$ git show origin/main:log.jsonl | PYTHONDONTWRITEBYTECODE=1 python3 -c 'import sys,json; es=(json.loads(l) for l in sys.stdin); selected=[e for e in es if e["type"]=="push" or (e["type"]=="decision" and e["body"].get("kind")=="promote")]; print("push seqs:", [e["seq"] for e in selected if e["type"]=="push"]); print("promotions:", [(e["seq"],e["body"]["subject"]) for e in selected if e["type"]=="decision"]); print("last push:", selected[-1]["seq"],selected[-1]["ts"])'
+push seqs: [2, 5, 9, 12, 29, 197, 367, 5564]
+promotions: [(188, 'C1a'), (337, 'C1b')]
+last push: 5564 2026-11-17T12:50:50Z
+$ git log origin/main -1 --format='%h %s' -- judge/scope.json
+43df79af push: C2a-prime opening — cap 8400 (BRIEF-C2a-prime §The window), made again after the sovereign's read
+
+C2b has no opening or exit prefix on this tree. No second push in a window that has not opened is insufficient to decide the claim about the completed C2b window. Deciding X3 needs its actual opening push and exit prefix, then the push entries strictly between them. Deadline 2026-11-18T00:00:00Z has passed. No resolution entered.
