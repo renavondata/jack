@@ -26,7 +26,7 @@ Each rule's text is in the file named; this brief adds the criterion that tests 
 
 The rule is `transcripts/SPEC-PATCH-c2c-2-draft.md` §1: the `decision` kind `wish`, its subject, the clerk's `W6` line, read lists and the prefix mark.
 
-**Criterion kind `wishes_named`.** The window file's `wishes` is a list of paths: `transcripts/RULING-20261104-window-fix.md`, `transcripts/RULING-20261117-constitution.md` and `transcripts/COUNSEL-OPEN.md`. The criterion is `met` when, for each, the log at the assessed prefix holds a `wish` entered inside the window, by the key ground 14 admits, that names the path with bytes the path held at some commit of `main`'s first-parent history — directly or through a read list — and, for the two rulings, with the bytes the path holds at the assessed tree. It reads the log and the tree only and is never `unknown`.
+**Criterion kind `wishes_named`.** The window file's `wishes` is a list of paths: `transcripts/RULING-20261104-window-fix.md`, `transcripts/RULING-20261117-constitution.md` and `transcripts/COUNSEL-OPEN.md`. The criterion is `met` when, for each, the log at the assessed prefix holds a `wish` entered inside the window, by the key ground 14 admits, that names the path and binds it, directly or through a read list (the SPEC patch's §1: the bytes named are in the tree of the commit that carries the wish), and, for the two rulings, with the bytes the path holds at the assessed tree. It reads the log and the tree only and is never `unknown`.
 
 *What it shows and does not.* That the kind works on the real log from his key through both kernels, the judge and the clerk, and that his two rulings are signed for as they stand. It does not show that he read anything: a wish is his statement.
 
