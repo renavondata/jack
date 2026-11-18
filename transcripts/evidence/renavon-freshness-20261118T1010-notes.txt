@@ -1,0 +1,7 @@
+All six raw pages were fetched in this session using curl -sL --max-time 90.
+All six fetches returned curl exit status 0 after the forecast window ended.
+The manifest's last_updated preserves the visible Last refreshed text exactly.
+The exact last_updated_utc is parsed from the same saved page's Dataset JSON-LD
+dateModified (an ISO-8601 timestamp with explicit +00:00 offset), not inferred
+from the rounded relative age in the visible Last refreshed text.
+Outcomes compare that exact UTC instant to window_utc[0], as instructed.
