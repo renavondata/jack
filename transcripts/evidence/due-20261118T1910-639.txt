@@ -1,0 +1,15 @@
+Forecast 639 (X3): LEFT UNDECIDED.
+C2b has no opening or exit prefix on this record. No second push in a window that has not opened cannot establish the claim about the completed C2b window.
+Deciding evidence required: identify C2b's opening push and exit prefix and enumerate every push strictly between them.
+
+Command run: python3 tools/status.py --as-of 2026-11-18T19:11:37Z
+Relevant exact output:
+window: C2a-prime (second window of C2a, opened seq 5564)
+
+The prefix query saved in due-20261118T1910-638.txt was also run in this session and printed:
+origin/main: 2bbb126e1efc83757c6434100cc76c7d1be56da4
+last entry: 5952 2026-11-18T18:32:59Z
+C2a-prime window: (5564, '2026-11-17T12:50:50Z', '2026-11-30T00:00:00Z')
+C2b window: None
+promotion entries: [(188, '2026-10-31T10:42:10Z', 'C1a'), (337, '2026-11-01T11:31:58Z', 'C1b')]
+last push: 5564 2026-11-17T12:50:50Z

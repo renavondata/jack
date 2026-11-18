@@ -1,0 +1,28 @@
+Forecast 638 (X2): LEFT UNDECIDED.
+C2b has no opening or exit prefix on this record. Its deadline passing does not decide the exit-prefix comparison of invited arms and their mean round gains.
+Deciding evidence required: tools/elect.py --table on C2b's actual exit prefix, showing invitation counts and mean round gains for both reviewer arms.
+
+Command run in this session:
+PYTHONDONTWRITEBYTECODE=1 python3 - <<'PY'
+import json,subprocess
+from tools.status import window_bounds,c2a_prime_window
+es=[json.loads(line) for line in open('log.jsonl')]
+print('origin/main:',subprocess.check_output(['git','rev-parse','origin/main'],text=True).strip())
+print('last entry:',es[-1]['seq'],es[-1]['ts'])
+print('C2a-prime window:',c2a_prime_window(es))
+print('C2b window:',window_bounds(es,'C2b'))
+print('promotion entries:',[(e['seq'],e['ts'],e['body']['subject']) for e in es if e['type']=='decision' and e['body'].get('kind')=='promote'])
+e=next(e for e in reversed(es) if e['type']=='push'); print('last push:',e['seq'],e['ts'])
+PY
+
+Output:
+origin/main: 2bbb126e1efc83757c6434100cc76c7d1be56da4
+last entry: 5952 2026-11-18T18:32:59Z
+C2a-prime window: (5564, '2026-11-17T12:50:50Z', '2026-11-30T00:00:00Z')
+C2b window: None
+promotion entries: [(188, '2026-10-31T10:42:10Z', 'C1a'), (337, '2026-11-01T11:31:58Z', 'C1b')]
+last push: 5564 2026-11-17T12:50:50Z
+
+Independent command: python3 tools/status.py --as-of 2026-11-18T19:11:37Z
+Relevant exact output:
+window: C2a-prime (second window of C2a, opened seq 5564)
