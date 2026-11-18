@@ -6,7 +6,7 @@
 
 ### Added to `## jack clerk`
 
-**`W6`, the wishes** (C2c-2: the same §1; from the merge of the proposal that implements it). For each `wish` on the log the clerk prints `W6 wish <seq>: <path>@sha256:<hex> — <commit>`, where `<commit>` is the commit that carries the wish (the one whose `log.jsonl` first holds the entry) when its tree has those bytes at the path, or `— absent` when it has not: a wish binds bytes that `main` held when it was signed. For a read list it prints one further line for each pair in it, ending `via <seq>`, or the one line ending `malformed list`. A line whose bytes extend, as a proper prefix, the bytes an earlier wish names for the same path ends `extends <seq>`, with the latest such wish. `W6` lines are information: they open no writ and have no deadline.
+**`W6`, the wishes** (C2c-2: the same §1; from the merge of the proposal that implements it). For each `wish` on the log the clerk prints `W6 wish <seq>: <path>@sha256:<hex> — <commit>`, where `<commit>` is the commit that carries the wish (the one whose `log.jsonl` first holds the entry) when its tree has those bytes at the path, or `— absent` when it has not: a wish binds bytes that `main` held when it was signed. For a read list it prints one further line for each distinct pair in it, in the list's order, marked `via <seq>` after the commit; a malformed list gives the one line ending `malformed list`. A line whose bytes extend, as a proper prefix, the bytes an earlier wish binds for the same path ends `extends <seq>`, with the latest such wish. The exact form of each line is SPEC §1's ("The `W6` lines, exactly"). `W6` lines are information: they open no writ and have no deadline.
 
 ### Added to `## jack push BRANCH --review FILE | --review none [--opens LAYER]`
 
