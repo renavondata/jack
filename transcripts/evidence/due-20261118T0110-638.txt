@@ -1,0 +1,6 @@
+Forecast 638, X2. Left undecided.
+Command: git show origin/main:log.jsonl, filtering push entries and decision promote entries.
+Output at origin/main 6ab25cd8a87cb41aa4f65d3038580f6ef244b1ec (last seq 5746, ts 2026-11-18T00:32:57Z): C2a promotion entries 0; C2b promotion entries 0; latest push seq 5564, ts 2026-11-17T12:50:50Z.
+Command: PYTHONDONTWRITEBYTECODE=1 python3 tools/status.py --as-of 2026-11-18T00:00:00Z
+Relevant output: window: C2a-prime (second window of C2a, opened seq 5564).
+There is no C2b opening or exit prefix. The claim asks for invitations and comparative mean round gains at C2b's exit prefix; the absence of that prefix does not supply either mean. The decision requires tools/elect.py --table on an actual C2b exit prefix. No resolution entered.
