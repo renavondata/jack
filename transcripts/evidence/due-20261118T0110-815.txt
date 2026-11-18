@@ -1,0 +1,8 @@
+Forecast 815, X6. Left undecided.
+Command: git show origin/main:log.jsonl, filtering push entries and decision promote entries.
+Output at origin/main 6ab25cd8a87cb41aa4f65d3038580f6ef244b1ec (last seq 5746, ts 2026-11-18T00:32:57Z): C2a promotion entries 0; C2b promotion entries 0; latest push seq 5564, ts 2026-11-17T12:50:50Z.
+Command: PYTHONDONTWRITEBYTECODE=1 python3 tools/status.py --as-of 2026-11-18T00:00:00Z
+Relevant output:
+window: C2a-prime (second window of C2a, opened seq 5564)
+criterion 3: counted 8347/8400; kernel 450/500; scope equals SPEC and unchanged: False SHORT
+The displayed count is C2a-prime's, not C2b's exit prefix. No C2b exit prefix exists. The decision requires status.py criterion 3 at an actual C2b exit prefix, compared with the claim's original 9,000 threshold. No resolution entered.

@@ -1,0 +1,34 @@
+Forecast 636, X0. Deadline 2026-11-18T00:00:00Z. Outcome 0.
+Claim: X0, the promotion forecast of BRIEF-C2b v6: every pre-stated criterion of the brief holds on the exit prefix by this forecast's resolves_by, which is the window's latest end - C2b promoted, not failed
+
+Commands run in this session:
+git rev-parse origin/main
+git show origin/main:log.jsonl (JSON filter: all push entries and all decision entries whose kind is promote; summarized below)
+Output:
+origin/main: 6ab25cd8a87cb41aa4f65d3038580f6ef244b1ec
+last entry: 5746 2026-11-18T00:32:57Z
+push seqs and UTC instants:
+2 2026-10-18T14:42:38Z
+5 2026-10-19T04:36:23Z
+9 2026-10-19T06:00:46Z
+12 2026-10-20T02:06:48Z
+29 2026-10-25T16:16:20Z
+197 2026-10-31T13:04:49Z
+367 2026-11-01T15:04:14Z
+5564 2026-11-17T12:50:50Z
+promotions:
+188 2026-10-31T10:42:10Z decision {"kind":"promote","subject":"C1a"}
+337 2026-11-01T11:31:58Z decision {"kind":"promote","subject":"C1b"}
+C2a promotion entries: 0
+C2b promotion entries: 0
+
+PYTHONDONTWRITEBYTECODE=1 python3 tools/status.py --as-of 2026-11-18T00:00:00Z
+Relevant output (the default runs evidence is empty; no inference from unverified CI):
+window C2a: 2026-11-17T12:50:50Z .. 2026-11-30T00:00:00Z (as of 2026-11-18T00:00:00Z; prefix to seq 5738)
+criterion 3: counted 8347/8400; kernel 450/500; scope equals SPEC and unchanged: False SHORT
+window: C2a-prime (second window of C2a, opened seq 5564)
+promote C2a: refused
+
+The full status output's promote C2a refusal also lists unverified tests/attacks/acts and value/liveness SHORT; those default missing-evidence findings are not the basis of this resolution.
+BRIEF-C2b-draft.md Order of acts requires C2a promotion before the opening push. Amendment 2 states X0 resolves on its own words; X7 replaces it as the later promotion forecast, without editing X0.
+No C2a promotion, no C2b opening and no C2b promotion exist through a main prefix after X0's deadline. X0 expressly requires C2b promoted by its own resolves_by, so that dated claim is false. This does not adjudicate a future C2b window or substitute the C2a-prime count for a C2b exit count.
