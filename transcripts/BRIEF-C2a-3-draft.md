@@ -1,8 +1,8 @@
-# BRIEF-C2a-3 — the third window of C2a (draft v3, 18 November 2026, counsel-5, after the reads of v1 and v2 at runner issues #994 and #998, each `VERDICT: FAIL`)
+# BRIEF-C2a-3 — the third window of C2a (draft v4, 18 November 2026, counsel-5, after the reads of v1, v2 and v3 at runner issues #994, #998 and #1000, each `VERDICT: FAIL`)
 
 This file is `transcripts/BRIEF-C2a-3-draft.md`. Wherever a tool reads a name the window is called `C2a-3`. It is a draft: no read has passed it, nothing in it is proposed, and no builder session is filed on it before the sovereign has read it (A2.10: "Code is written to a text Guy has read").
 
-It is written on `transcripts/BRIEF-C2a-prime-draft.md` as `main` holds it, with its Amendments 1 to 11 ("the second brief" below). Every section that states a fact about this boundary is written out here. The read of v1 found that sections left standing by reference said things true of the second window and false of this one, so only rules are now taken by reference, and each place that does so names the sentences it replaces. The read of v2 found one statement of route B's still false: that the `fix` shows as a late report in the tool's assessment before the push. It does not, and §No item changes now says what the tool assesses there.
+It is written on `transcripts/BRIEF-C2a-prime-draft.md` as `main` holds it, with its Amendments 1 to 11 ("the second brief" below). Every section that states a fact about this boundary is written out here. The read of v1 found that sections left standing by reference said things true of the second window and false of this one, so only rules are now taken by reference, and each place that does so names the sentences it replaces. The read of v2 found one statement of route B's still false: that the `fix` shows as a late report in the tool's assessment before the push. It does not, and §No item changes now says what the tool assesses there. The read of v3 found the last section still taken by reference, §The acts evidence, false in one sentence once this window's names were read into it; that section is now written out too.
 
 **Why there is a third window.** C2a-prime cannot be promoted. COUNSEL-OPEN row 69: "At `main` `b88d318e` and after, `tools/status.py --subject C2a` prints criterion 3 as 'scope equals SPEC and unchanged: False'; at the opening push's commit `6c0566c3` it printed True." The verb signs a promotion only when `status.py` prints `promote C2a: lawful`, and no later commit can make that line read so (§The precedent). The sovereign's words on 17 November: "I don't want unlawful revisions any more....". So C2a-prime runs to its stated end, 2026-11-30T00:00:00Z, with no change inside it. A5.1: "A window that reaches its stated end with a criterion unmet has failed (§6, A3.2); the stated end may not be moved." A3.2 requires what follows: "A window that fails is a precedent, fixed by a lawful change and followed by a new pre-stated window; it is never patched in place (§6)." A4.1 permits it: "A window that fails and is followed by a new one continues the same wealth process on the same statistic under the same null; *E* is never set back to 1 and no α is split."
 
@@ -161,7 +161,28 @@ Change 5 is exempt from three refusals: this brief's "nothing in … the functio
 The order that carries the sovereign's answer to the code is the ruling's (correction 2: "his answer is recorded as a ruling and reaches `status.py` only through an order it carries"). If the reads find the exemption beyond this brief's power, the question goes to the sovereign before the opening.
 
 ### The acts evidence
-*The second brief's section stands as its Amendments 6 and 7 leave it, with three replacements.* For `acts-c2a2-<end>` read `acts-c2a3-<end>` in both commands. For C2a-prime's window and opening read C2a-3's. And for "it is a finding in the report and resolves V6 0" read "it is a finding in the report": this window has no V6. The classifier is `transcripts/evidence/guy_acts3.py`, unchanged before C2a-3's exit.
+*Written out for this window: the second brief's section as its Amendments 6, 7 and 11 leave it. Nothing of that section is taken by reference.*
+
+Criterion 7 reads one attributed table, produced by the committed classifier over exactly the window. The classifier is `transcripts/evidence/guy_acts3.py` (SHA-256 `ed0d37ba919412c32ab774ae5217a56e8cbf3c9c5ebe3632c687b18c96a1725b`), unchanged before C2a-3's exit:
+
+`python3 transcripts/evidence/guy_acts3.py renavondata/jack . <opening ts> <end ts> transcripts/evidence/acts-c2a3-<end>.csv`
+
+and its raw twin by the committed collector (`transcripts/evidence/guy_acts2.py`, with its hash file beside it):
+
+`python3 transcripts/evidence/guy_acts2.py renavondata/jack . <opening ts> <end ts> transcripts/evidence/acts-c2a3-<end>-raw.csv`
+
+`<end>` is the table's end instant, in the file's name. Counsel commits both, with the classifier hash file, by a proposal; once it has merged, counsel re-runs the attributed command to the current instant, and the promotion may rest on the committed table only if that re-run holds no `repair` row after `<end>`. The table is named in the `decision`'s `--acts`, and the verb records it (the second brief's change 4, on `main`).
+
+Criterion 7 holds on the exit prefix when three things do:
+- (a) the body of the `promote` at which the exit prefix ends has a member `acts` with exactly the members `path`, `sha256` and `commit`, each a string, matching whole `transcripts/evidence/[A-Za-z0-9._-]+\.csv`, `[0-9a-f]{64}` and `[0-9a-f]{40}`;
+- (b) `commit` is the parent of the first commit on `main` whose `log.jsonl` holds that `promote`, and the file at `path` in that commit's tree has that SHA-256;
+- (c) `tools/status.py`, run on the exit prefix with `--acts` naming that file, prints criterion 7 met.
+
+C2a's report runs the three and prints each. It also re-runs both commands with `<end ts>` one second after the `decision`'s `ts`, so that the collection holds every act up to that `ts`, its own second included, and none after it; it commits the results beside the table and prints any row from `<end>` to the `decision`, the `decision`'s own second included. Such a row does not undo a promotion entered on the prefix it read (A5.1), but it is a finding in the report.
+
+What the table proves is limited, and the report says so. A table with no `repair` row is a measured zero for the acts the classifier sees on `renavondata/jack`. It does not see acts in other repositories, it cannot tell whose hand made an act under the owner's login beyond the declarations it reads, and a declaration can attribute a nearby act wrongly. The command reads GitHub's current record: comment bodies, labels, deletions. Counsel therefore commits the raw table with the attributed one, so the evidence the promotion read stays on `main` whatever GitHub later shows.
+
+Between C2a-prime's stated end, 2026-11-30T00:00:00Z, and C2a-3's opening no window of C2a is open, and the acts of that interval are in no window's acts evidence. C2a's report lists them. C2a-prime's own acts, from its opening at 2026-11-17T12:50:50Z to its stated end, are collected by the same two commands for the report's account of the failed window.
 
 ## Order of acts
 *Replaces the second brief's section of this name.*
@@ -223,7 +244,18 @@ This brief states no minimum length for the window.
   - Mutant: C2a-prime's opening.
 - Route B only: `answered_fix_is_decision`, for change 5. Mutant: every `fix` naming C2a-prime typed a decision, including one entered before the end or after the push.
 
-**What the pins do not enforce.** The second brief's section stands for its nine pins. In addition: no pin shows that `main` moves only by first-parent steps inside the window. That rests on what the herald and the verbs do, and on there being no push inside the window, which criterion 3 tests. Outside that discipline the first-parent path and `main`'s own past can part, in both directions: a fast-forward of `main` to a merge whose second parent holds `main`'s history would hide a tree `main` had held, and a first-parent branch holding another scope would refuse a `main` that never changed. Neither is made by the herald's merges or by any verb but `push`.
+**What the pins do not enforce.** *Written out; the second brief's list brought to this window.* These rules bind and are not pinned; the reads and C2a's report check them:
+- two reads by different model families (the gate admits one accepting read);
+- the sovereign's read of this brief (§Precondition 4), and his own application of the trusted-base patch (§Precondition 6);
+- that the acts table the `promote` names is complete over the window: the verb records which table was read (the second brief's ninth pin), not that it is whole;
+- that an attributed file was produced by the classifier from its raw twin: the hash file names the classifier, it does not attest a run;
+- the App's custody of the court's platform acts, and the hand behind an act under the owner's login;
+- counsel's platform acts in the window;
+- no re-attribution of a row;
+- the acts table's freshness, by the re-run of §The acts evidence;
+- that `main` moves only by first-parent steps inside the window. That rests on what the herald and the verbs do, and on there being no push inside the window, which criterion 3 tests. Outside that discipline the first-parent path and `main`'s own past can part, in both directions: a fast-forward of `main` to a merge whose second parent holds `main`'s history would hide a tree `main` had held, and a first-parent branch holding another scope would refuse a `main` that never changed. Neither is made by the herald's merges or by any verb but `push`.
+
+The ruling's four conditions bound the re-typing route its Order 2 asks about; they do not close it. Once a window's failure is witnessed (route A: by his veto; route B: by the ruling's order), the first `fix` naming it, between its stated end and the next push, is a decision whatever its `subject` says the sovereign did. C2a's report reads the `fix`'s `subject` against the record of the interval.
 
 ## Refusal list
 *Written out; it is the second brief's list brought to this window, with three items added at the end.*
