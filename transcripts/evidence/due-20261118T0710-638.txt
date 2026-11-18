@@ -1,0 +1,24 @@
+Forecast 638 (X2): left undecided.
+Session began at 2026-11-18T07:10:35Z, after resolves_by 2026-11-18T00:00:00Z.
+
+$ git log -1 --format='%H %cI %s' origin/main
+1e226cb70cd6c52d37599e3161668cbf85b66c89 2026-11-18T08:45:46+02:00 Merge pull request #1109 from renavondata/due-builder-20261118T0610
+The commit's UTC instant is 2026-11-18T06:45:46Z.
+
+$ git show origin/main:log.jsonl | rg '"type":"decision".*|"type":"push"' | rg 'C2a|2026-11-17'
+Relevant findings: no decision promote C2a; latest push is seq 5564,
+2026-11-17T12:50:50Z. The preceding decision seq 5563 is kind fix,
+subject beginning C2a: criterion 7 unmet at the stated end.
+
+$ git show origin/main:transcripts/BRIEF-C2a-prime-draft.md | rg -n -A 3 'opening is|opening.*push|first.*push'
+81:C2a-prime opens at the first `push` entry whose `ts` is after 2026-11-17T12:00:00Z, C2a's stated end read late.
+100:The promotion is `decision promote C2a`, entered by `jack decision` with body `{kind, subject}`. The subject stays `C2a` because BRIEF-C2b keys its opening on "the first `push` entry after `decision promote C2a`", and its read is on the record.
+
+$ git ls-tree origin/main tools/elect.py
+(no output)
+
+Thus seq 5564 opens C2a-prime, not C2b. C2b has no opening or exit prefix.
+X2 needs an actual C2b exit prefix and the invitations and mean round gains
+computed there by tools/elect.py --table. Its expired deadline and counsel's
+amended prediction of a zero do not supply the missing exit-prefix evidence.
+No resolution entered.

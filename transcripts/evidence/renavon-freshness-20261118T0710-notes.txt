@@ -1,0 +1,21 @@
+Fresh fetches for forecasts 5776 through 5781, in that order.
+Each URL is recorded in renavon-freshness-20261118T0710-resolve.json.
+For each URL, ran:
+curl -sL --max-time 90 <url> -o transcripts/evidence/renavon-freshness/20261118T0710/<dataset>.html
+Batch start: 2026-11-18T07:11:04Z; end: 2026-11-18T07:11:13Z.
+fetched_at is the saved raw page's completion time (mtime), truncated to UTC seconds.
+
+Each page contains a schema.org Dataset with its dataset name and an explicit
+dateModified instant. last_updated records that exact printed dateModified
+string; last_updated_utc normalizes its +00:00 offset to Z. The visible
+"Last refreshed" card only gives a calendar date and relative hours; sample
+rows' updated_at cells are row timestamps, not the dataset last-update field.
+All six dataset dateModified instants precede 2026-11-18T06:00:00Z.
+
+$ rg -n -A 1 'dateModified|Last refreshed' transcripts/evidence/renavon-freshness/20261118T0710/*.html
+crhk_companies: dateModified 2026-11-18T04:25:57+00:00; Last refreshed 18 November, 2026 (2 hours ago)
+hkex_disclosure_interests: dateModified 2026-11-18T05:26:24+00:00; Last refreshed 18 November, 2026 (1 hour ago)
+hkex_disclosures: dateModified 2026-11-18T05:26:24+00:00; Last refreshed 18 November, 2026 (1 hour ago)
+hk_property_poi: dateModified 2026-11-18T05:31:28+00:00; Last refreshed 18 November, 2026 (1 hour ago)
+hk_property_transactions: dateModified 2026-11-18T05:26:15+00:00; Last refreshed 18 November, 2026 (1 hour ago)
+sfc_licences: dateModified 2026-11-18T04:28:42+00:00; Last refreshed 18 November, 2026 (2 hours ago)
