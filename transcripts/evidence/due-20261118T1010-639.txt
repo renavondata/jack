@@ -1,0 +1,15 @@
+Collected 2026-11-18T10:13:34Z
+Command: git rev-parse origin/main
+315bf1586b63051bb02c738c4026a3f8ebee78e2
+Command: git show origin/main:log.jsonl, project push entries and decision promote entries as seq,ts,type,body
+{"body": {"digest": "f77c28e59d559cd87c54b533911cc78ea7193b5e97f925555d33a09f9ac31da7", "review": "e82946b684fa388469b8d4441289fb83a1d0a2f612c3fc3107ec482959175b94"}, "seq": 2, "ts": "2026-10-18T14:42:38Z", "type": "push"}
+{"body": {"digest": "1db66ff08fdaca4bed5bebe2d5060ca09caf14c5755fcebb65952aa7f67337ba", "review": "0000000000000000000000000000000000000000000000000000000000000000"}, "seq": 5, "ts": "2026-10-19T04:36:23Z", "type": "push"}
+{"body": {"digest": "bf9a798dd8b4ced53d6dcf8ddf0026d2a6565e13a391f5af590aea249ba91cf7", "review": "0000000000000000000000000000000000000000000000000000000000000000"}, "seq": 9, "ts": "2026-10-19T06:00:46Z", "type": "push"}
+{"body": {"digest": "ba8f9a7708d0e18773412c06f6cec5ba75b37514dff5edd4ac7cfc316ccf0a82", "record": "0000000000000000000000000000000000000000000000000000000000000000", "review": "3d3e8ea8876aae3ee76bddd72581127dea54cf09bc7b77e5691eeb13d829cae2"}, "seq": 12, "ts": "2026-10-20T02:06:48Z", "type": "push"}
+{"body": {"digest": "606e6562f9b1d1840b0bf56b219b21bc18875b66266b4f16c384cc8d5a7366df", "record": "69a2b165233195360c35b8b9f7fbec6b1df325458aa9422ec856afa54f120542", "review": "0c0339eec05e9da68cf94494b8d418ab29ec3ac4ba6b4ae394f138719ae6ac2f"}, "seq": 29, "ts": "2026-10-25T16:16:20Z", "type": "push"}
+{"body": {"kind": "promote", "subject": "C1a"}, "seq": 188, "ts": "2026-10-31T10:42:10Z", "type": "decision"}
+{"body": {"digest": "30976b3b4525dd5ab50369c7bd53930bb39bb552f0ca15f66d17e0566fe10000", "record": "0000000000000000000000000000000000000000000000000000000000000000", "review": "b04f011f777fb056a903fb434a2a50f4c950e1e03758208fd4c7b8a2f1742954"}, "seq": 197, "ts": "2026-10-31T13:04:49Z", "type": "push"}
+{"body": {"kind": "promote", "subject": "C1b"}, "seq": 337, "ts": "2026-11-01T11:31:58Z", "type": "decision"}
+{"body": {"digest": "afe633a2f34cc810bff9bb7e08aa3f59c98bcd64310c3f0145eae184a88af08d", "record": "0000000000000000000000000000000000000000000000000000000000000000", "review": "c51320cbccf38d77e4d82d10b06d30fffda4d1db700be5d5d9e9270567aee34e"}, "seq": 367, "ts": "2026-11-01T15:04:14Z", "type": "push"}
+{"body": {"digest": "578fe97874b0a344ba9aef374de54054138a82baab5e8857b6849c203a1ac0b3", "record": "0000000000000000000000000000000000000000000000000000000000000000", "review": "4b2152be0ee15b57edfa73b02817a861355a22e159c56b4b343c237ca9efc940"}, "seq": 5564, "ts": "2026-11-17T12:50:50Z", "type": "push"}
+Undecided: BRIEF-C2b-draft.md lines 35-43 require an opening push after decision promote C2a. No decision promote C2a or C2b opening/exit exists on this prefix. The future C2b exit prefix is required to decide forecast 639.
