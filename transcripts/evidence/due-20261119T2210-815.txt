@@ -1,0 +1,13 @@
+Forecast 815 (X6): LEFT UNDECIDED.
+Session clock: 2026-11-19T22:10:47Z. Forecast deadline: 2026-11-18T00:00:00Z.
+Commands run in this session:
+$ git log origin/main --oneline --grep='push:' -12
+Latest opening push: 6c0566c3 push: opening-c2a-prime-3-push
+No C2b opening push appears.
+$ git log origin/main --format='%h %s' --grep='decision: promote C2a'
+(no output)
+$ git show 6c0566c3:judge/scope.json
+The scope has cap 8400; latest opening push is C2a-prime, not C2b.
+Read BRIEF-C2b-draft.md lines 35-44 and tools/status.py criterion 3: the required count is a property of an exit tree, not today's working tree or an unlanded opening branch.
+There is no C2b opening or exit prefix. Deadline passage does not select a substitute tree.
+Would decide: status.py criterion 3 on the actual C2b exit prefix, establishing its counted lines against 9000 and the Amendment 1 cap condition. No resolution entered.
