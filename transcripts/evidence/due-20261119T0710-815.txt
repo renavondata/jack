@@ -1,0 +1,4 @@
+Forecast 815 (X6): left undecided.
+Session-produced origin/main command and output: transcripts/evidence/due-20261119T0710-638.txt.
+origin/main 5083f57c3b24af31f70a17b91ee8fbe9525fff9a ends at seq 6129 (2026-11-19T06:35:01Z). Its last push is seq 5564, the C2a-prime opening; there is no C2b opening or exit prefix.
+X6 requires status.py criterion 3 on the actual C2b exit prefix, assessing the stated at-most-9000 count and Amendment 1 cap terms. Today's tree or an unmerged opening branch is not that exit prefix. The expired resolves_by does not decide those terms.

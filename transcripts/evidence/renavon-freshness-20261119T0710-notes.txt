@@ -1,0 +1,3 @@
+Each raw HTML page was fetched afresh with curl -sL --max-time 90 URL -o SAVED_PATH; fetched_at is date -u +%Y-%m-%dT%H:%M:%SZ printed immediately after that curl completed successfully.
+The last_updated values in renavon-freshness-20261119T0710-resolve.json are the public pages' Dataset JSON-LD dateModified fields, copied verbatim (explicit +00:00 timezone). They identify dataset modification instants, rather than dates inferred from sample rows. Each page contains exactly one dateModified value. Comparison is against the forecast's UTC lower window bound, not an upper-bound test.
+Raw page directory: transcripts/evidence/renavon-freshness/20261119T0710/.
