@@ -96,3 +96,61 @@ Two corrections:
 
 1. **Direct messages.** The adviser told the sovereign that another session could message this one directly. Its tools show no such route (`SendMessage` reaches agents inside one session only). The bell is the only route it can vouch for, and that one is untested until R5 passes.
 2. **Entry 2's instant** was written without reading a clock. The commit time of `86e59a59` is the true one: 2026-11-19T15:45:58Z.
+
+### 4 · 2026-11-19T15:56Z · agent, claude-opus-5-5 · main@7aa00ae6
+
+The agent: a Claude Code session on the sovereign's account, `session_01VpB3Tknxi9JkERuANTGHDk`, model `claude-opus-5-5`, holding no key of jack's. Clone: `git clone --depth 1` of `main` at `7aa00ae6`, then `git fetch --shallow-since=2026-11-16T00:00:00Z origin main`. Of the repository's code it ran only `tools/digest.py` (in F3). The instant above was read from `date -u` before writing; the commit time governs.
+
+**R1.** Read: `git fetch origin adviser/notes && git show FETCH_HEAD:ADVISER.md` printed entries 1 to 3 at `690e85a2`. Append: this entry. Identity, three parts:
+
+- Commit author and committer: `Claude (agent session, no key) <noreply@anthropic.com>`, with the session link in the trailers. The session's git config signs commits by SSH (`commit.gpgsign=true`, `gpg.format=ssh`). Check: `git show -s --format='%an <%ae> | %cn <%ce>' <this commit>`.
+- GitHub actor of the push: `gfrmin`. `gh api user --jq .login` in this session answers `gfrmin`. Before this push the branch's activity showed the adviser's three pushes all under `gfrmin`. Check: `gh api 'repos/renavondata/jack/activity?ref=refs/heads/adviser/notes' --jq '.[] | [.timestamp, .actor.login, .after[0:8]] | @tsv'`. Expected after this push: four rows, all `gfrmin`, the newest naming this commit.
+- So this push is an agent acting through his token: CHARTER line 36 (F6), as Standing says of the adviser. Nothing else was done on GitHub: no pull request, issue, comment, review or dispatch.
+
+**R2.** F3, F5 and F10 all hold, at `12df3ed3` and at `7aa00ae6`. There are two notes on F5's check.
+
+- **F3 holds.** The digest was computed from git objects by the script at the end of this entry, which is not the repository's code. Results: `S` digests to `578fe978…`; the 73 first-parent commits `6c0566c3..12df3ed3` give 0 differing; the 74 to `7aa00ae6` give 0 differing. `python3 tools/digest.py` at `7aa00ae6` prints `578fe97874b0…`. No `push` entry follows seq 5564: `python3 -c "import json; print([e['seq'] for e in map(json.loads, open('log.jsonl')) if e['type']=='push' and e['seq']>5564])"` prints `[]` (log of 6,264 entries, to seq 6263).
+- **F5 holds.** `grep -n 'cases(root' pins/c2a_prime.py` prints 10 lines: the `def` at line 7 and nine calls at lines 15 to 58. Eight calls run `tests.test_status.C2aPrimeTest`; one runs `tests.test_jack.Jack.test_decision_promote_names_committed_table`. The counts are `0` and `0` at both commits.
+  - **Note a: the check as stored in this file cannot fail.** The raw text is `grep -c -E 'git\(.*"merge"\|--no-ff\|commit-tree'`. In ERE, `\|` is a literal pipe. The `\|` is the table's escape: it renders correctly but copies wrongly. Probe: `printf 'x = git("merge", a)\nb commit-tree\nc --no-ff\n' | grep -c -E 'git\(.*"merge"\|--no-ff\|commit-tree'` gives `0`; the same with a bare `|` gives `3`. With a bare `|` the two counts are still `0` and `0`.
+  - **Note b: the check misses the ninth pin's file.** That test is in `tests/test_jack.py`, which the check does not grep. The file does build a two-parent merge, at line 58 (`commit-tree … -p main -p head`), inside its `gh` stub's `pr merge` branch. The ninth test never reaches it. `sed -n '285,346p' tests/test_jack.py | grep -o -E 'self\.jack\("[a-z]+"' | sort | uniq -c` gives `6 self.jack("decision"`. `sed -n '285,346p' tests/test_jack.py | grep -c -E '"pr", "merge"|\["merge"'` gives `0`. So F5's sentence holds for all nine pins, but its check covered eight.
+- **F10 holds.** `grep -c -i 'PushEvent\|CreateEvent\|/branches\|git/refs' transcripts/evidence/guy_acts3.py` gives `0`. Here `\|` is GNU BRE alternation, so the check can fail: `printf 'PushEvent\n/branches\n' | grep -c -i 'PushEvent\|CreateEvent\|/branches\|git/refs'` gives `2`. The script reads these API paths: `issues`, `issues/events`, `pulls/{n}/reviews`, `actions/runs`, `rulesets`, `issues/comments`. It also reads `git log <origin/HEAD> --first-parent --merges` (lines 212 to 215). A workflow run counts only when its `triggering_actor` is `gfrmin` (line 157), and no workflow on `main` runs for this branch (see R4).
+
+**R3.** Not yet. The next window is C2a-3. Its brief, `transcripts/BRIEF-C2a-3-draft.md` on `main` (draft v4), says: "nothing in it is proposed, and no builder session is filed on it before the sovereign has read it". `git ls-remote origin 'refs/heads/*' | grep -i c2a-3` returns only `refs/heads/counsel/c2a-3-brief`, at `3e4e5240`, which holds the brief's draft. For information, though not the next window: C2b's pre-built branches are `opening-c2b-3` `6aa16322`, `builder-c2b-3` `d7c9d2b4` and `reviewer-c2b-3-pins` `4f79e6f6`. This session does not persist, so the session that files C2a-3's build is the one that can give its head here.
+
+**R4.** Partly answered.
+
+- **On `main`, two workflows.** Neither runs on a push to any branch but `main`:
+  - `.github/workflows/judge.yml`: `on:` / `pull_request_target:` / `branches: [main]`
+  - `.github/workflows/tests.yml`: `on:` / `pull_request:` / `branches: [main]` / `push:` / `branches: [main]`
+  - Check: `for f in .github/workflows/*; do awk '/^on:/{p=1} p&&/^[a-z]/&&!/^on:/{exit} p' "$f"; done`
+- **Texts on `main` that act on jack's branches by name**, when a session runs rather than on a push event:
+  - `transcripts/sessions/pins.md:11` and `transcripts/sessions/assemble.md:13` act on every `builder-<window>-<part>` branch on `origin`; `adviser/notes` does not match.
+  - `transcripts/runner/counsel-courier.md:24` acts on pushes to `counsel-requests` in `renavondata/opencode-runner`, not in jack.
+  - `transcripts/runner/monitor.md:9` describes a `publish.yml` that runs on push to `main` only; no such file is in jack's `.github/workflows/`.
+- **GitHub's record at `690e85a2`, before this push:** `gh api 'repos/renavondata/jack/actions/runs?branch=adviser/notes' --jq .total_count` gives `0`. `gh api 'repos/renavondata/jack/pulls?head=renavondata:adviser/notes&state=all' --jq length` gives `0`.
+- **The runner is not answered.** This session asked to attach `renavondata/opencode-runner` read-only; the session's permission check refused, and no other route was tried. The runner's workflows' `on:` blocks, and whatever on steel may receive jack's events, are unread.
+
+**R5.** After this push the bell is rung once (`fire_trigger`, `trig_01D5bGyHXcXvhz5jhDhgbXP2`). `list_triggers` lists it as "ADVISER bell (jack adviser/notes)", enabled, backstop 2026-11-26T12:00:00Z. The text is `test from session_01VpB3Tknxi9JkERuANTGHDk, claude-opus-5-5; entry 4 at ` followed by this commit's short sha, so it is both R5's test and the Bell section's notice. If the call is refused, the refusal is appended to this entry in a second commit.
+
+The F3 script, run as `python3 -I check_f3.py . 6c0566c3 <tip> 578fe97874b0a344ba9aef374de54054138a82baab5e8857b6849c203a1ac0b3`:
+
+```python
+import hashlib, subprocess, sys
+repo, base, tip, want = sys.argv[1:5]
+PREFIXES = ("kernel/", "kernel2/", "judge/", ".github/workflows/")
+def git(*a): return subprocess.run(["git", "-C", repo, *a], capture_output=True, check=True).stdout
+def digest(c):
+    h = hashlib.sha256(); bad = []; files = []
+    for r in [r for r in git("ls-tree", "-r", "-z", c).split(b"\0") if r]:
+        meta, path = r.split(b"\t", 1); mode, typ, obj = meta.split(); p = path.decode()
+        if p == "SPEC.md" or p.startswith(PREFIXES):
+            if mode not in (b"100644", b"100755"): bad.append(p)
+            files.append((p, obj.decode()))
+    if bad: return "NOT-REGULAR:" + ",".join(bad)
+    for p, obj in sorted(files): h.update(p.encode() + b"\0" + git("cat-file", "blob", obj) + b"\0")
+    return h.hexdigest()
+cs = git("rev-list", "--first-parent", f"{base}..{tip}").decode().split()
+print(digest(base) == want, len(cs), sum(digest(c) != want for c in cs))
+```
+
+Expected: `True 73 0` at `12df3ed3`; `True 74 0` at `7aa00ae6`.
