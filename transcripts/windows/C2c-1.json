@@ -66,7 +66,7 @@
     {"id": 11, "kind": "no_veto", "args": {},
      "text": "no veto on C2c-1"},
     {"id": 12, "kind": "ratio", "args": {"max": "ratio_max"},
-     "text": "A3.4: procedure to object at most 5 : 1 over the window, the exit promote counted; object as A3.4 reads it today"}
+     "text": "A3.4: procedure to object at most 5 : 1 over the window, the exit promote counted; object as the brief's Amendment 2 defines it"}
   ],
   "world_types": {"file": "transcripts/world-types.json", "sha256": "310e775437eb31f7372db7b8d1e11fdbda920c49be3104fff1b9075da81a03e8",
                   "entry": {"resolver_inputs": "list of strings", "reads_record": "bool", "scheduled_by": "a path under transcripts/sessions/ or none"},

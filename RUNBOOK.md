@@ -151,7 +151,7 @@ failure `main` returns to `origin/main`, BRANCH untouched, and a merge commit th
 (point 6 (f)). `--remove` removes BRANCH's worktree afterwards.
 
 **`--opens LAYER`, the read gate** (#182, 2 November; BRIEF-C2b §Scope (a)). Required when the candidate changes
-`judge/scope.json`, refused when it does not; LAYER is letters, digits, `_` and `-`, and the layer is read
+`judge/scope.json` (Amendment 3, point 6 (c); today, when BRANCH does), refused when it does not; LAYER is letters, digits, `_` and `-`, and the layer is read
 from `--opens`, never from `scope.json`'s `layer`. The verb then requires, on `origin/main`,
 `transcripts/BRIEF-LAYER-draft.md` and at least one `transcripts/REVIEW-LAYER-*.md` that
 - begins `VERDICT: ACCEPT` or `VERDICT: ACCEPT WITH OBLIGATIONS`;
@@ -223,8 +223,8 @@ a verb that departs from the text is a finding, whichever of the two moved last.
 **The verbs that end on `main` follow a moved `main`: text before code.** Amendment 3 of
 `transcripts/BRIEF-C2c-1-draft.md`, which the sovereign read before this text was proposed (log seq 6121), is
 what the builder builds `tools/jack` to for the six verbs that end by pushing `main`: `key`, `decision`,
-`amend`, `push`, and the master key's `forecast` and `resolve`. This runbook's sentences marked "(Amendment 3,
-point N)" say what that clause says, and where they are shorter than the clause or differ from it the clause governs. **Until the
+`amend`, `push`, and the master key's `forecast` and `resolve`. Every sentence of this runbook that cites Amendment 3
+or one of its points ("point N") says what that clause says, and where they are shorter than the clause or differ from it the clause governs. **Until the
 builder's code for it is on `main`, `tools/jack` does not do what those sentences say**: a main verb still
 requires HEAD to equal `origin/main`, a failed push of `main` is still a refusal with no new attempt, and
 `push` still refuses a BRANCH that does not contain `origin/main`; a paste for the sovereign still waits for a
