@@ -1,0 +1,20 @@
+Forecast 638 (X2): LEFT UNDECIDED.
+Session clock: 2026-11-19T22:10:47Z. Forecast deadline: 2026-11-18T00:00:00Z.
+Commands run in this session:
+$ git log origin/main --oneline --grep='push:' -12
+6c0566c3 push: opening-c2a-prime-3-push
+43df79af push: C2a-prime opening — cap 8400 (BRIEF-C2a-prime §The window), made again after the sovereign's read
+e4042123 jack push: require a signed current read for --opens
+64d2e720 push: push-c2a-7800
+cd9d8eba push: C2a opening — cap 7800
+b2176804 push: push-cap-6900
+32d3a01f push: c1a-ledger
+40fab174 push: c1-parties
+dbc1d5e5 key: guy-master holds amend, push and decision; push: the trusted base in force; the run of record and the cold reads
+$ git log origin/main --format='%h %s' --grep='decision: promote C2a'
+(no output)
+$ git show 6c0566c3:judge/scope.json
+The scope has cap 8400; latest opening push is C2a-prime, not C2b.
+Read BRIEF-C2b-draft.md lines 35-44: C2b opens after C2a promotion, at its opening push, with exit a crossing and maximum window fourteen days.
+There is no C2b opening or exit prefix. Deadline passage does not supply the missing prefix.
+Would decide: an actual C2b exit prefix, then tools/elect.py --table on that prefix showing reviewer/astra-fast invitation count and both reviewer arms' mean round gains. No resolution entered.
