@@ -29,22 +29,37 @@ cannot be implemented files `spec_conflict` rather than deciding.
   principal is `guy`; the verbs test the principal) prompts for its passphrase; party keys do not.
 - **Commits.** A verb's commit message is `<type>: <summary>` — `key: <KEY_ID>`, `proposal: <title>`,
   `spec_conflict: <section>`, `merge: #<N>`, `push: <BRANCH>`, `decision: <KIND> <SUBJECT>`, `amend: <ID>` — an
-  optional body, and as its **last paragraph** `Proposer: <party> <key_id>`. A trailer is **filled** when it is
+  optional body (the one merge commit `push` may make is instead `Merge main into BRANCH (jack push)`, Amendment
+  3, point 6 (b)), and as its **last paragraph** `Proposer: <party> <key_id>`. A trailer is **filled** when it is
   one line whose first field is one of the five party names, at least one field follows it, and no field
   contains `<`: the verbs write `<party> <key_id>`, and a commit made by hand carries
   `<party> <model id> <session id>`, as the judge read it at C0. An unfilled trailer is refused, written or read.
 - **No environment variable** changes what a verb requires or does. `JACK_KEY` names a key and nothing else;
   the tests patch constants in-process, never through the environment.
-- **Up to date and clean.** Every verb fetches first. Main verbs require HEAD to equal `origin/main`; branch
-  verbs require the branch to contain `origin/main`. A tree with anything the verb does not itself stage, a
+- **Up to date and clean.** Every verb fetches first. A verb that ends by pushing `main` goes on when HEAD equals
+  `origin/main`, fast-forwards local `main` to it when HEAD is an ancestor of it, and otherwise refuses, all
+  before the log is read (Amendment 3, point 1); `merge` requires HEAD to equal `origin/main`, as before;
+  branch verbs require the branch to contain `origin/main`. A tree with anything the verb does not itself stage, a
   detached HEAD in the caller's copy, `main` for a branch verb or any other branch for a main verb: refused.
 - **Refused in code, always:** `--admin`; `--force` or `+` refspecs; deleting any remote branch; creating a
-  tag; rewriting any commit. A verb only appends commits, and a push that is not a fast-forward is a refusal,
-  never a retry with force.
+  tag; rewriting any commit. A verb only appends commits; no push is forced, and no attempt pushes anything but a
+  fast-forward of `main`. When a verb's push of `main` fails, the verb fetches again before it undoes anything
+  (Amendment 3, point 3): if its commit is `origin/main` or an ancestor of it, the push landed and the verb ends
+  as a success; otherwise, if `origin/main` is no longer the attempt's **base** (the commit `origin/main` named at the
+  attempt's one fetch before its push, point 2), the verb undoes its effects and
+  makes a new attempt from its first precondition, using nothing computed, read or signed before (point 4);
+  otherwise it undoes its effects and refuses, printing what `git push` printed; and if that second fetch fails
+  it undoes its effects locally and refuses, saying that it does not know whether the entry landed. A verb makes
+  at most **five** attempts, the first included, and `push` at most **three**; when the last attempt ends
+  because `main` moved again, the verb undoes its effects and refuses with `main moved during each of N
+  attempts` (point 5).
 - **Main verbs** (`key`, `decision`, `amend`, `push`) run on `main`: effect, entry, commit, `judge/selfcheck.py`,
-  push, in that order, and `main`'s run watched. Whatever fails before the push leaves `main` equal to
-  `origin/main` with nothing of the verb's left in the tree and nothing pushed; the remote never shows an
-  effect without its entry or an entry without its effect.
+  push, in that order, and `main`'s run watched; the master key's `forecast` and `resolve` end by pushing `main`
+  too, and Amendment 3 binds those six verbs. One attempt is the verb from its first precondition to its push
+  of `main`, on its base (Amendment 3, point 2). Whatever fails
+  before the push leaves `main` equal to `origin/main` with nothing of the verb's left in the tree and nothing
+  pushed, and is a refusal, never a new attempt (point 3); the remote never shows an effect without its entry
+  or an entry without its effect.
 - **`merge`** runs on `main` but appends its entry to the proposal's branch (SPEC §10.6); its effect is
   GitHub's merge, performed only after the judge has admitted the entry. It has no undo: nothing it does
   reaches `main` except through the judge.
@@ -106,24 +121,36 @@ same two checks, independently of the verb. When the clerk holds `merge`, this v
 ## `jack push BRANCH --review FILE | --review none [--opens LAYER]`
 
 The only way a change to the trusted base reaches `main`, and the only verb that pushes to `main` anything
-but an entry. On `main`; BRANCH is a local branch another party built, and the verb never commits to it.
-Refuses, each with its reason: BRANCH not containing `origin/main`; a trusted-base digest equal to `main`'s
-("nothing to push: propose and merge"); a commit on BRANCH not on `main` without a filled trailer; the check
-(as `proposal`) failing on BRANCH's tree. **The run of record** is required when `kernel/` or any kernel2
+but an entry. On `main`; BRANCH is a local branch another party built, and the verb never commits to it or
+moves its ref; it resolves BRANCH once, at the first attempt, to a commit (Amendment 3, point 6 (a)). The
+**candidate** is that commit when it contains `origin/main`, and otherwise one merge commit the verb makes in a
+temporary worktree, its first parent `origin/main` and its second BRANCH's commit, its tree chosen path by path
+with no file's content merged (point 6 (b)); every check below is of the candidate (point 6 (c)).
+Refuses, each with its reason: on a later attempt, BRANCH no longer naming the commit it named at the first; a candidate
+that is BRANCH's commit of whose `log.jsonl` `origin/main`'s is not a byte prefix; where the candidate would
+be a merge commit, a path both sides changed differently from their single merge base and from each other,
+BRANCH's `log.jsonl` differing from that merge base's, no merge base or more than one, a gitlink on either
+side, or a path that would be both a file and a directory (point 6 (b)); a name the verb would write under
+`transcripts/` that the candidate's tree already holds, or a review whose basename is a part's name (point
+6 (e)); on an attempt after the first, a `push` entry on the base's log beyond the log of the first attempt's
+base (point 7); a trusted-base digest equal to `main`'s
+("nothing to push: propose and merge"); a commit the candidate has and `main` lacks without a filled trailer; the check
+(as `proposal`) failing on the candidate's tree. **The run of record** is required when `kernel/` or any kernel2
 production source (`checker.go canonical.go ed25519.go signature.go main.go`) differs from `main`'s, and is
 made by the verb itself, never accepted from BRANCH (the accused does not write its own test, CHARTER §1 F1):
 `kernel2/check` built once, then `harness/diff.py --seeds A:B --b kernel2/check` in twelve parts,
 `transcripts/diff-100000-<T>-part00..11.json`, contiguous from 0 to 100,000, each reporting `commit` equal to
-BRANCH's head, `logs` equal to its range, no disagreement, nothing uncompared; anything else is a refusal.
+the candidate's commit (Amendment 3, point 6 (c)), `logs` equal to its range, no disagreement, nothing uncompared; anything else is a refusal.
 `--review FILE` is copied to `transcripts/` and its SHA-256 is the entry's `review`, an empty file included;
-`--review none` records 64 zeros and warns that this push was not read. Effect: BRANCH fast-forwarded onto
-`main` (never a merge commit, never a rebase), the parts and the review placed under `transcripts/`, and
+`--review none` records 64 zeros and warns that this push was not read. Effect: local `main` fast-forwarded to
+the candidate (never a rebase, and a merge commit only the one point 6 (b) makes), the parts and the review placed under `transcripts/`, and
 entry `push` {digest: `tools/digest.py` of the tree now on `main`; review; record: the SHA-256 of the twelve
 parts' bytes concatenated in name order, or 64 zeros when no run was required — an optional member, SPEC §5},
 committed `push: BRANCH`; the self-check runs with the new trusted base and the entry both in place. On any
-failure `main` returns to `origin/main`, BRANCH untouched. `--remove` removes BRANCH's worktree afterwards.
+failure `main` returns to `origin/main`, BRANCH untouched, and a merge commit the verb made is on no branch
+(point 6 (f)). `--remove` removes BRANCH's worktree afterwards.
 
-**`--opens LAYER`, the read gate** (#182, 2 November; BRIEF-C2b §Scope (a)). Required when BRANCH changes
+**`--opens LAYER`, the read gate** (#182, 2 November; BRIEF-C2b §Scope (a)). Required when the candidate changes
 `judge/scope.json`, refused when it does not; LAYER is letters, digits, `_` and `-`, and the layer is read
 from `--opens`, never from `scope.json`'s `layer`. The verb then requires, on `origin/main`,
 `transcripts/BRIEF-LAYER-draft.md` and at least one `transcripts/REVIEW-LAYER-*.md` that
@@ -139,6 +166,11 @@ an accepted review's first lines breaks it. The gate establishes the provenance 
 nothing about its reasoning. Example, C2a-prime's opening: `jack push opening-c2a-prime --opens C2a-prime
 --review <worktree>/transcripts/REVIEW-C2a-prime-code.md`, after the sovereign's `decision grant` and
 `decision fix` (BRIEF-C2a-prime v7 §Order of acts).
+
+Apart from those tests of the reviews, the gate is given the candidate and makes one further test of it
+(Amendment 3, point 6 (d)): the candidate's bytes at `transcripts/BRIEF-LAYER-draft.md`, at
+`transcripts/windows/LAYER.json` where `origin/main` holds that file, and at each review the gate counts, must
+equal `origin/main`'s; if any differs the push is refused, naming the path.
 
 **A layer with a window file (BRIEF-C2c-1 §2 and §6; in force for every opening push after C2c-1's, whose
 own push carries this extension and so is gated by the rule above and the sovereign's check at the
@@ -187,6 +219,16 @@ is never red by design. A change to `SPEC.md` that needs no code is pushed on it
 This runbook is counsel's and `tools/jack` the builder's, so they cannot share a proposal (`party_scope`):
 the text lands first, by counsel's `proposal`, and the builder builds to the text on `main` (A2 clause 9);
 a verb that departs from the text is a finding, whichever of the two moved last.
+
+**The verbs that end on `main` follow a moved `main`: text before code.** Amendment 3 of
+`transcripts/BRIEF-C2c-1-draft.md`, which the sovereign read before this text was proposed (log seq 6121), is
+what the builder builds `tools/jack` to for the six verbs that end by pushing `main`: `key`, `decision`,
+`amend`, `push`, and the master key's `forecast` and `resolve`. This runbook's sentences marked "(Amendment 3,
+point N)" say what that clause says, and where they are shorter than the clause or differ from it the clause governs. **Until the
+builder's code for it is on `main`, `tools/jack` does not do what those sentences say**: a main verb still
+requires HEAD to equal `origin/main`, a failed push of `main` is still a refusal with no new attempt, and
+`push` still refuses a BRANCH that does not contain `origin/main`; a paste for the sovereign still waits for a
+quiet minute.
 
 ## `jack forecast "CLAIM" --p N --by TS [--type T --args JSON]`
 
