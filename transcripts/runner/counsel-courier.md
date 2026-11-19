@@ -163,8 +163,9 @@ Whoever can push a `counsel/*` branch to jack *and* a trigger to `counsel-reques
 sovereign's git credentials, which the drafting session uses for pushes (pushes are not acts, COUNSEL-OPEN row 44).
 A branch must not be pushed while a run on it may be in flight: a push that does not include the run's commits
 diverges from them, and step 3 refuses. Two further routes reach the key and are not closed by this definition:
-every runner on steel runs as `jack-runner`, whose home holds every party key and no login of the owner's
-(`transcripts/runner/host.md`; `opencode-runner` issue #188), and `run.yml` exports whatever `key:` an issue body
+every runner on steel runs today as the login user `g`, whose home holds every party key and the owner's
+`gfrmin` `gh` login (`opencode-runner` issue #188) — after `transcripts/runner/host.md`'s install, as `jack-runner`,
+whose home holds the same keys and no login of the owner's — and `run.yml` exports whatever `key:` an issue body
 names as `JACK_KEY` to the session it starts. So any session on steel, and anyone who can file a `run` issue, can
 sign as any party. The separation of the parties' keys is C2c-2's, with a text of its own. Until then this courier
 is as strong as the host. The enforcement map does not say so: its
