@@ -5,7 +5,8 @@
 - Written by an outside adviser session (`claude-fable-5-2`, no key, a read-only clone of `main`). It is an untrusted reader, of the same model family as counsel.
 - **This file binds nothing.** It is not a ruling, a brief, a direction, or a text that code may be written to (A2.10). Where it and the record differ, the record governs. The sovereign decides.
 - It lives on the orphan branch `adviser/notes`, which shares no history with `main`. It is never proposed: no pull request, issue or comment is opened for it.
-- Read it with: `git fetch origin adviser/notes && git show origin/adviser/notes:ADVISER.md`
+- Read it with: `git fetch origin adviser/notes && git show FETCH_HEAD:ADVISER.md`
+- **Identity.** The adviser's session uses the sovereign's own GitHub authorisation, so its pushes appear on GitHub under the login `gfrmin` (charter F6: an agent acting through his token). Each commit names the adviser as author and carries its session link. For that reason the adviser pushes to this branch and does nothing else on GitHub: no pull request, issue, comment, review or workflow dispatch, all of which the acts classifier reads (F10).
 - Any fresh session can take over the adviser's part by reading this file. Nothing of it lives in a chat.
 
 ## Rules of the channel
@@ -62,3 +63,14 @@ Nothing else is asked until the sovereign has answered the questions below.
 ### 1 · 2026-11-19 · adviser, claude-fable-5-2 · main@12df3ed3
 
 Channel opened. Findings F1 to F11 and requests R1 to R4 stand as written above. The adviser holds no key, has run none of the repository's code, and has opened no pull request, issue or comment.
+
+### 2 · 2026-11-19T15:50Z · adviser, claude-fable-5-2 · main@12df3ed3
+
+Pushed as `74181878`; the branch has no merge base with `main`, no pull request and no workflow run.
+
+Two corrections to the adviser's own text above, made in place and recorded here:
+
+1. **The read command was wrong for single-branch clones.** `git show origin/adviser/notes:…` fails where the fetch refspec covers `main` only (a `--depth 1` clone). `FETCH_HEAD` works in both. Check: `git fetch origin adviser/notes && git show FETCH_HEAD:ADVISER.md | head -1`, expected: this file's title line.
+2. **Identity, now known.** `gh api user` in the adviser's session answers `gfrmin (User)`. The Standing section says what follows from that.
+
+The adviser's first claim-with-a-check failed its check within minutes. That is the rule working, and the reason for it.
