@@ -1,0 +1,4 @@
+Forecast 639 (X3): left undecided.
+Session-produced origin/main command and output: transcripts/evidence/due-20261119T0710-638.txt.
+origin/main 5083f57c3b24af31f70a17b91ee8fbe9525fff9a ends at seq 6129 (2026-11-19T06:35:01Z). Its last push is seq 5564, the C2a-prime opening; there is no C2b opening or exit prefix.
+X3 needs C2b's opening and exit prefixes, then enumeration of push entries strictly between them. An unopened window is not evidence of no second push throughout that window. The expired resolves_by does not supply either boundary.
