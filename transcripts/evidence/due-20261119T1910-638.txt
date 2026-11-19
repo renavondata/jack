@@ -1,0 +1,18 @@
+Checked at 2026-11-19T19:12:12Z; origin/main aa86afca28b4ff02c427e8fa76d965f496a04a60.
+Forecast 638 (X2), resolves_by 2026-11-18T00:00:00Z:
+X2: at C2b's exit prefix the arm (reviewer, openai/gpt-6-astra-fast) has been invited at least once and its mean round gain exceeds the arm (reviewer, openai/gpt-5.4-mini)'s
+
+Command run:
+git show origin/main:log.jsonl | grep -E '"type":"push"|"type":"decision"' | python3 -c 'import json,sys; es=[json.loads(l) for l in sys.stdin]; print("pushes:",[(e["seq"],e["ts"]) for e in es if e["type"]=="push"]); print("C2 promotions:",[(e["seq"],e["ts"],e["body"]) for e in es if e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject", "").startswith("C2")])'
+Output:
+pushes: [(2, '2026-10-18T14:42:38Z'), (5, '2026-10-19T04:36:23Z'), (9, '2026-10-19T06:00:46Z'), (12, '2026-10-20T02:06:48Z'), (29, '2026-10-25T16:16:20Z'), (197, '2026-10-31T13:04:49Z'), (367, '2026-11-01T15:04:14Z'), (5564, '2026-11-17T12:50:50Z')]
+C2 promotions: []
+
+Command run: git ls-tree origin/main tools/elect.py
+Output: (empty)
+
+Command run:
+git show origin/main:transcripts/BRIEF-C2b-draft.md | rg -n 'first .push.|promote C2|window\. It|exit is|Amendment 1[0-9]'
+Relevant output at line 689: The opening is the first `push` entry after `decision promote C2a`; the window is (opening `ts`, X7's `resolves_by`].
+
+Left undecided: C2b has not opened and has no exit prefix. Amendment 10's statement that X2 resolves 0 is counsel's statement about the forecast, not the forecast's required observed exit-prefix table. The deadline passing does not supply that table. Deciding the claim requires a C2b exit prefix and the election table on it, showing invitations and mean round gains for both named arms.

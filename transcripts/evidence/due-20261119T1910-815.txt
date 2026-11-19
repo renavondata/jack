@@ -1,0 +1,15 @@
+Checked at 2026-11-19T19:12:12Z; origin/main aa86afca28b4ff02c427e8fa76d965f496a04a60.
+Forecast 815 (X6), resolves_by 2026-11-18T00:00:00Z:
+X6: the counted lines of C2b's exit prefix are at most 9,000 (the number v6 named), with Amendment 1's cap of 9,800 in force - the fit the reviewer priced at 0.40 under v6
+
+Command run:
+git show origin/main:log.jsonl | grep -E '"type":"push"|"type":"decision"' | python3 -c 'import json,sys; es=[json.loads(l) for l in sys.stdin]; print("pushes:",[(e["seq"],e["ts"]) for e in es if e["type"]=="push"]); print("C2 promotions:",[(e["seq"],e["ts"],e["body"]) for e in es if e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject", "").startswith("C2")])'
+Output:
+pushes: [(2, '2026-10-18T14:42:38Z'), (5, '2026-10-19T04:36:23Z'), (9, '2026-10-19T06:00:46Z'), (12, '2026-10-20T02:06:48Z'), (29, '2026-10-25T16:16:20Z'), (197, '2026-10-31T13:04:49Z'), (367, '2026-11-01T15:04:14Z'), (5564, '2026-11-17T12:50:50Z')]
+C2 promotions: []
+
+Command run:
+git show origin/main:transcripts/BRIEF-C2b-draft.md | rg -n 'first .push.|promote C2|window\. It|exit is|Amendment 1[0-9]'
+Relevant output at line 689: The opening is the first `push` entry after `decision promote C2a`; the window is (opening `ts`, X7's `resolves_by`].
+
+Left undecided: C2b has not opened and no exit-prefix tree exists to count. Current-main counts and a later draft cap cannot substitute for the forecast's exit-prefix criterion 3 evidence. Deciding it requires identifying that exit tree, counting it using status.py criterion 3, and checking the cap in force against the claim's own terms.
