@@ -1,0 +1,68 @@
+[
+  {
+    "forecast": 6142,
+    "dataset": "hk_property_poi",
+    "url": "https://renavon.com/data/property/hk_property_poi",
+    "sha256": "7444dd5492d8827425c80ad5c36e3232cf01b5ad0eb29a556a654b641da64caa",
+    "fetched_at": "2026-11-19T11:10:00Z",
+    "last_updated": "2026-11-19T10:32:15+00:00",
+    "last_updated_utc": "2026-11-19T10:32:15Z",
+    "window_utc": ["2026-11-19T10:00:00Z", "2026-11-19T11:00:00Z"],
+    "outcome": 1
+  },
+  {
+    "forecast": 6143,
+    "dataset": "hkex_disclosures",
+    "url": "https://renavon.com/data/hkex/hkex_disclosures",
+    "sha256": "c5888c39890a340f3f77941ea7952cce43987b01d49fc2182f862b07b663ebb2",
+    "fetched_at": "2026-11-19T11:10:00Z",
+    "last_updated": "2026-11-19T10:26:51+00:00",
+    "last_updated_utc": "2026-11-19T10:26:51Z",
+    "window_utc": ["2026-11-19T10:00:00Z", "2026-11-19T11:00:00Z"],
+    "outcome": 1
+  },
+  {
+    "forecast": 6144,
+    "dataset": "hkex_disclosure_interests",
+    "url": "https://renavon.com/data/hkex/hkex_disclosure_interests",
+    "sha256": "5c36191f30f452ac58f212523d31d68781607b583073e3f1761ae3adb94edd17",
+    "fetched_at": "2026-11-19T11:10:00Z",
+    "last_updated": "2026-11-19T10:26:51+00:00",
+    "last_updated_utc": "2026-11-19T10:26:51Z",
+    "window_utc": ["2026-11-19T10:00:00Z", "2026-11-19T11:00:00Z"],
+    "outcome": 1
+  },
+  {
+    "forecast": 6145,
+    "dataset": "crhk_companies",
+    "url": "https://renavon.com/data/crhk/crhk_companies",
+    "sha256": "e613241711049c5f25ee4527147c2b316cf26e97c02bf6b8bf5c83ed4c5db97e",
+    "fetched_at": "2026-11-19T11:10:00Z",
+    "last_updated": "2026-11-19T09:24:45+00:00",
+    "last_updated_utc": "2026-11-19T09:24:45Z",
+    "window_utc": ["2026-11-19T10:00:00Z", "2026-11-19T11:00:00Z"],
+    "outcome": 0
+  },
+  {
+    "forecast": 6146,
+    "dataset": "sfc_licences",
+    "url": "https://renavon.com/data/sfc/sfc_licences",
+    "sha256": "1dafb9e214b39e03d7313765bb5fe4557d5f6dd8b0fd13755cbe2a007491a7fb",
+    "fetched_at": "2026-11-19T11:10:00Z",
+    "last_updated": "2026-11-19T04:29:13+00:00",
+    "last_updated_utc": "2026-11-19T04:29:13Z",
+    "window_utc": ["2026-11-19T10:00:00Z", "2026-11-19T11:00:00Z"],
+    "outcome": 0
+  },
+  {
+    "forecast": 6147,
+    "dataset": "hk_property_transactions",
+    "url": "https://renavon.com/data/property/hk_property_transactions",
+    "sha256": "65faace2f1da4f5e654130ee50959585e5daa918e59edd53acfca15b63e0f16e",
+    "fetched_at": "2026-11-19T11:10:00Z",
+    "last_updated": "2026-11-19T05:26:01+00:00",
+    "last_updated_utc": "2026-11-19T05:26:01Z",
+    "window_utc": ["2026-11-19T10:00:00Z", "2026-11-19T11:00:00Z"],
+    "outcome": 0
+  }
+]
