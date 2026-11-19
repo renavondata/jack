@@ -1,0 +1,15 @@
+Forecast 638 (X2): left undecided.
+Inspected origin/main in this session, 2026-11-19 UTC.
+Command (Python heredoc):
+import json, subprocess
+es=[json.loads(x) for x in subprocess.check_output(['git','show','origin/main:log.jsonl'],text=True).splitlines()]
+print('origin/main:',subprocess.check_output(['git','rev-parse','origin/main'],text=True).strip())
+print('last entry:',es[-1]['seq'],es[-1]['ts'])
+print('push entries:',[(e['seq'],e['ts'],e['body'].get('opens')) for e in es if e['type']=='push'])
+print('C2b decision entries:',[e for e in es if e['type']=='decision' and e['body'].get('subject')=='C2b'])
+Output:
+origin/main: 5083f57c3b24af31f70a17b91ee8fbe9525fff9a
+last entry: 6129 2026-11-19T06:35:01Z
+push entries: [(2, '2026-10-18T14:42:38Z', None), (5, '2026-10-19T04:36:23Z', None), (9, '2026-10-19T06:00:46Z', None), (12, '2026-10-20T02:06:48Z', None), (29, '2026-10-25T16:16:20Z', None), (197, '2026-10-31T13:04:49Z', None), (367, '2026-11-01T15:04:14Z', None), (5564, '2026-11-17T12:50:50Z', None)]
+C2b decision entries: []
+The latest push, seq 5564, opens C2a-prime; no C2b opening or exit prefix exists. X2 requires tools/elect.py --table on C2b's actual exit prefix, including invitations and mean round gains for the two named arms. Expiration of resolves_by alone does not decide that predicate.
