@@ -1,0 +1,5 @@
+Observed at 2026-11-19T10:11:55Z.
+Command and complete filtered output: transcripts/evidence/due-20261119T1010-638.txt (produced in this session).
+origin/main: f65c788bbcdde13709c674751ea5dfb9c009a46b, through seq 6175 at 2026-11-19T09:47:01Z.
+The only C2a/C2a-prime/C2b promote or veto decision is seq 5879, veto C2a-prime, at 2026-11-18T12:01:17Z. No C2a/C2a-prime promotion or C2b opening/exit prefix exists.
+Forecast 639 (X3) left undecided: no completed C2b window exists to bound the push count. Absence of a window does not establish that a completed window had no second push. The opening and actual exit prefixes, with all intervening push entries, would decide it.
