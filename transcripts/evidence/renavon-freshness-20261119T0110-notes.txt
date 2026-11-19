@@ -1,0 +1,12 @@
+The six pages were fetched in this session using curl -sL --max-time 120 URL -o PATH.
+Every curl exited 0. fetched_at in the manifest is the UTC completion time.
+The saved HTML's Dataset JSON-LD dateModified (line 75 on each page) is the
+explicit, timezone-bearing last-updated instant used in the manifest. The
+visible evidence panels call this "Last refreshed" and "Data through" but
+display only a calendar date and relative age. No sample-row timestamp or
+relative-age arithmetic was substituted for the Dataset dateModified.
+
+Manifest: transcripts/evidence/renavon-freshness-20261119T0110-resolve.json
+Raw pages: transcripts/evidence/renavon-freshness/20261119T0110/<dataset>.html
+All six fetches completed after 2026-11-19T01:00:00Z.
+Threshold: 2026-11-19T00:00:00Z, inclusive.
