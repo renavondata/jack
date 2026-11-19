@@ -1,0 +1,19 @@
+Observed at 2026-11-19T10:11:55Z.
+Command: git rev-parse origin/main
+Output: f65c788bbcdde13709c674751ea5dfb9c009a46b
+Command: git show origin/main:log.jsonl | python3 -c 'import sys,json; es=[json.loads(l) for l in sys.stdin]; print("last_seq",es[-1]["seq"],"last_ts",es[-1]["ts"]); print("push entries:"); [print(e["seq"],e["ts"]) for e in es if e["type"]=="push"]; print("C2a/C2a-prime/C2b promote or veto decisions:"); [print(e["seq"],e["ts"],e["body"]) for e in es if e["type"]=="decision" and e["body"].get("subject") in ("C2a","C2a-prime","C2b") and e["body"].get("kind") in ("promote","veto")]'
+Output:
+last_seq 6175 last_ts 2026-11-19T09:47:01Z
+push entries:
+2 2026-10-18T14:42:38Z
+5 2026-10-19T04:36:23Z
+9 2026-10-19T06:00:46Z
+12 2026-10-20T02:06:48Z
+29 2026-10-25T16:16:20Z
+197 2026-10-31T13:04:49Z
+367 2026-11-01T15:04:14Z
+5564 2026-11-17T12:50:50Z
+C2a/C2a-prime/C2b promote or veto decisions:
+5879 2026-11-18T12:01:17Z {'kind': 'veto', 'subject': 'C2a-prime'}
+
+Forecast 638 (X2) left undecided. No C2a/C2a-prime promotion or C2b opening/exit prefix exists in this main prefix. Deadline expiry alone does not determine the comparison at C2b's exit. A completed C2b window and tools/elect.py --table at its actual exit prefix would decide it.
