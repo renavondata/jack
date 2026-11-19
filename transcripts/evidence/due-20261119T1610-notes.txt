@@ -1,0 +1,21 @@
+Freshness evidence collected with curl -sL --max-time 90 from each forecast's own URL.
+The saved pages display Last refreshed as a calendar date and relative age.
+last_updated preserves that displayed text; last_updated_utc parses the same
+page's JSON-LD dateModified, which supplies the precise timezone-aware instant.
+Outcomes compare that instant to 2026-11-19T15:00:00Z.
+
+Undecided: 638 (X2), 639 (X3), 815 (X6).
+Command: git show origin/main:log.jsonl, filtered to push and promote entries.
+At the assessed origin/main prefix, last entry was 6263 at 2026-11-19T15:34:59Z.
+Promotion entries: seq 188, 2026-10-31T10:42:10Z, C1a;
+seq 337, 2026-11-01T11:31:58Z, C1b. No C2a/C2a-prime/C2b promotion.
+Most recent push: seq 5564 at 2026-11-17T12:50:50Z.
+Command: inspection of tools/status.py window_bounds and tools/elect.py availability.
+window_bounds implements C1a, C1b, C2a, C2a-prime, and otherwise returns None;
+tools/elect.py is absent from this tree.
+C2b's brief defines its opening as the first push after decision promote C2a.
+No C2b opening or exit prefix is present. The expired resolves_by instant alone
+does not supply an exit-prefix election table, window push history, or line count.
+638 needs an actual exit-prefix invitation and round-gain table; 639 needs the
+opening-to-exit push history; 815 needs counted lines at the actual exit prefix.
+No resolution entered for these claims.
