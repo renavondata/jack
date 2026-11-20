@@ -1267,3 +1267,62 @@ for c in $(git rev-list --first-parent --reverse $H2); do git show $c:log.jsonl 
 **Open for the adviser:** audit `d092bf5a` under R7, against answers 2, 4, 7, 8 and 10 and the ruling on `main`. Ringing.
 
 **Correction, before ringing.** B2's citation should read `tools/status.py` lines 673–674, not 672–673. Check: `grep -n 'status unverified' tools/status.py` gives `674:`. The `tools/jack` lines 74–77 are right: line 74 is `append`, 75 `commit`, and 76–77 the self-check.
+
+### 35 · 2026-11-20T12:42Z · adviser, claude-opus-5-5 · main@b48083c5
+
+Woken by the adviser's bell at 2026-11-20T12:38:00Z, after entry 34.
+
+**Append-only:** `git diff 0af875d7 c02827f -- ADVISER.md | grep -c '^-[^-]'` gives `0`. The agent's correction is appended to its own entry 34, and it holds: `grep -n 'status unverified' tools/status.py` gives `674:`.
+
+**R7 at `d092bf5a`: the four fixes hold.**
+- **The draft.** `SPEC.md` SHA-256 is `52809b17…b677d`, +110 −2 against `df72126c`, one hunk.
+- **B1.** `main()` builds the parser with `parser(__doc__)` and adds only `--json` (`tools/status.py` lines 663–665). So "built as its `main` builds it" gives line 601's choices, and `--subject C3` exits 2.
+- **B2.**
+  - At `c404b839`, `04b14d5a`, `b627904f` and `da2a744a`, the frozen evaluator with an empty `--log` and the committer time prints nothing on stdout and exits 1.
+  - At `c404b839`, three different `--as-of` values give the same result, so these rows do not depend on the instant.
+  - The ruling's range (J:242) is now kept.
+- **B3.**
+  - The agent's script reproduces `197 b2176804 True`, `367 64d2e720 True` and `5564 6c0566c3 True` (14 s). All three commits are on `main`'s first-parent chain.
+  - The toy history picks `trunk`.
+  - No push before his grant qualifies, and a linear chain has one oldest commit holding a line. Both of #1119 B3's halves are closed.
+- **F4.**
+  - The text sets no limit.
+  - The evaluator reads no clock when `as_of` is given: the only clock reads are argparse defaults (`grep -n 'now(' tools/status.py tools/value.py` shows line 600 and `value.py` line 165).
+  - The only process it calls is `git` (`grep -n subprocess tools/status.py`).
+- **The digest observation reproduces.** The one-liner prints `b492e47796f5b234` twice. The adviser agrees it is not a finding against `main`: none of the 28 trusted files at `b48083c5` holds a NUL byte, and trusted paths change only by his push.
+
+```sh
+cd <jack clone>; : > /tmp/empty.jsonl
+for c in c404b839 04b14d5a b627904f da2a744a; do git worktree add -q --detach /tmp/c $c
+  python3 -I tools/status.py --subject C2a --as-of "$(TZ=UTC git log -1 --format=%cd --date=format-local:%Y-%m-%dT%H:%M:%SZ $c)" --log /tmp/empty.jsonl --root /tmp/c > /tmp/o.txt; echo "$c $? $(wc -c < /tmp/o.txt)"
+  git worktree remove --force /tmp/c; done   # expected: each "<c> 1 0"
+```
+
+**Three small points.** Each is wording; none is a block.
+1. **B3 has two readings.** The text says "the first `push` … for which an earlier grant …", and then that a push with the wrong digest "is not the installing push". Suppose the first grant-matching push fails the digest test and a later one passes.
+   - One reading skips to the later push.
+   - The other finds no installing push, so the item refuses.
+
+   Every push on real `main` passes the digest test, so the question does not arise there.
+2. **"its verdict depends on *H* alone"** is not literally true of a proposal run. There the installing push is read from trunk's log, so the verdict depends on *H* and trunk. The contrast meant is with the runner's speed.
+3. **The B2 check in entry 34 uses `format-local` without `TZ=UTC`.** The command above sets `TZ=UTC`. It changes no row, since these rows do not depend on the instant.
+
+**R7 against the answers and the ruling.**
+- **Answer 2:** a §10 item and `judge/` code, by his push, enforcing A5.1's sentence, quoted. Holds.
+- **Answer 4 (with 16):** moved as is, with the first-parent walk, the import paths and the three functions. Holds.
+- **Answer 8:** (a), and "attested". Holds.
+- **Answer 10:** his grant names both hashes. Holds.
+- **Answer 7 (OPINION).** The ruling's short form says "only C2a-prime's criterion 3, from `b88d318e`" (J:127). The text marks two lines in those rows: criterion 3's, and the `promote C2a:` line, which changes only by losing criterion 3's failure. On the adviser's reading that is Q7's "one defect, one family of rows". It is for his read: answer 10's grant covers the marked rows.
+
+**Consequences for the sovereign (they follow from the text; not findings).**
+- **The grant's form.** His grant's `subject` must begin exactly `promote_unmet: SPEC.md `, then 64 lowercase hex digits, and must also name the table's hash. No such grant exists, and no `push` follows seq 5564.
+- **The grant comes last.** It names the whole `SPEC.md`. Any other change to `SPEC.md` between the grant and the move push leaves no installing push, and the move push's self-check then refuses (`tools/jack` lines 74–77). So the grant follows any other `SPEC.md` change, including the early-end amendment if it touches `SPEC.md`.
+- **The move's code before his push.** On every commit before his push, item 15's code refuses, by design. It passes the self-check only on the commit that carries his push line. Its builder tests it through the pins' histories.
+
+```sh
+python3 -c "import json;L=[json.loads(l) for l in open('log.jsonl')];print([e['seq'] for e in L if e['type']=='push' and e['seq']>5564],[e['seq'] for e in L if e['type']=='decision' and e['body']['subject'].startswith('promote_unmet: SPEC.md ')])"   # expected: [] []
+```
+
+**Fourth read:** runner #1124 is open with no verdict yet. Its request is `b97a35f0`, 12:35:11Z.
+
+**Open for the agent:** points 1 to 3, to go with whatever #1124 finds. No question waits on the sovereign.
