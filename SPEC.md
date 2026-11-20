@@ -457,26 +457,30 @@ Items 7–10 apply only to a proposal whose head differs from trunk; the self-ch
     commit message with `[skip ci]`, for instance) is judged at the next. A run costs
     one assessment per entry commit of each judged promotion. An evaluator that cannot
     decide (an error, absent history, a window it does not know) refuses, as a checker's
-    silence does (§9). The item sets no time limit, so its verdict depends only on *H*
-    and trunk, never on a runner's speed. A run that ends with no verdict lets nothing
-    through: a proposal's `judge` check does not pass, and the push verb's self-check
-    (`tools/jack` lines 76–77) has not passed. Of the evidence the judge checks presence
-    and hash only, never that a file is a true copy of the workflow run or the acts
-    table it stands for: the sovereign attests it by signing the entry that names it,
-    and the judge's report lists each such file under `attested`. The verb that enters a
-    promotion commits the three files with the entry, in one commit on the commit it
-    assessed. Both workflows that run the judge check out the whole history. Pins
-    `promote_while_unmet` (a judged `promote` whose evaluator line reads `refused` is
-    admitted), `evidence_substituted` (a named file whose bytes differ from its `sha256`
-    is admitted), `promote_tree_changed` (an entry commit that changes a path besides
-    `log.jsonl` and its evidence is admitted, even when another entry commit of the same
-    line does not), `promote_retroactive` (a `promote` before the installing push is
-    judged, or a push whose `SPEC.md` no earlier grant names is taken as the installing
-    push), `evaluator_not_in_force` (an assessed commit whose trusted-base digest is not
-    the one in force is used) and `promote_judged_once` (only promotions added since the
+    silence does (§9). Like item 5 with the kernel, the item assumes that the trusted
+    code it runs halts; the evaluator as moved does, for its loops run over finite
+    inputs. A later evaluator that does not halt on some input is a defect of the
+    trusted base, which only his push repairs, and not a verdict. The item sets no time
+    limit, so each verdict it gives depends only on *H* and trunk, never on a runner's
+    speed. A run that ends with no verdict lets nothing through: a proposal's `judge`
+    check does not pass, and the push verb's self-check (`tools/jack` lines 76–77) has
+    not passed. Of the evidence the judge checks presence and hash only, never that a
+    file is a true copy of the workflow run or the acts table it stands for: the
+    sovereign attests it by signing the entry that names it, and the judge's report
+    lists each such file under `attested`. The verb that enters a promotion commits the
+    three files with the entry, in one commit on the commit it assessed. The installing
+    push makes both workflows that run the judge (`judge.yml` and `tests.yml`) check out
+    the whole history; `tests.yml` does not today. Pins `promote_while_unmet` (a judged
+    `promote` whose evaluator line reads `refused` is admitted), `evidence_substituted`
+    (a named file whose bytes differ from its `sha256` is admitted),
+    `promote_tree_changed` (an entry commit that changes a path besides `log.jsonl` and
+    its evidence is admitted, even when another entry commit of the same line does not),
+    `promote_retroactive` (a `promote` before the installing push is judged, or a push
+    whose `SPEC.md` no earlier grant names is taken as the installing push),
+    `evaluator_not_in_force` (an assessed commit whose trusted-base digest is not the
+    one in force is used) and `promote_judged_once` (only promotions added since the
     previous head are judged, so one pushed with `[skip ci]` is never judged), each with
     its passing twin.
-
 Items 11–15 apply to every judged log, the self-check included.
 
 **The promotion evaluator** is `judge/status.py` with `judge/value.py`, which the
@@ -495,18 +499,22 @@ is today, `tools/status.py` and `tools/value.py` with SHA-256
 if the move's parent holds those bytes. The frozen table of those outputs is
 `spec/vectors/promotion-replay.json`, which a reviewer session computes with those files
 and proposes under `spec/vectors/` (A2.9). It names a commit of `main`, *T*, no earlier
-than `b88d318e`. Its rows are every first-parent commit of `main` up to *T*; each
-records, for one run, the evaluator's standard output, line by line, and its exit
-status. A run at a commit *c* is the evaluator's command line with `--subject C2a`,
-`--as-of` the `ts` of the last line of *c*'s `log.jsonl`, `--log` that file, `--root` a
-checkout of *c*, and no `--run`, `--runs`, `--acts`, `--map` or `--json`; where *c*
-holds no `log.jsonl` (the first four first-parent commits of `main`), `--as-of` is *c*'s
-committer time in §4's UTC form and `--log` an empty file; the evaluator run is the
-frozen files, or the change's, whatever *c* holds. The move passes only if, run as each
-row states, it prints every unmarked line byte for byte as recorded, every marked line
-as its mark states, and the same exit status; and if, at every first-parent commit after
-*T* up to its parent, its run prints what the frozen files' run prints there, under the
-same marks. A line is marked wrong only by Guy: before the move is built, his
+than `b88d318e`, that holds those bytes. Its rows are every first-parent commit of
+`main` up to *T*; each records, for one run, the evaluator's standard output, line by
+line, and its exit status. A run at a commit *c* is the evaluator's command line with
+`--subject C2a`, `--as-of` the `ts` of the last line of *c*'s `log.jsonl`, `--log` that
+file, `--root` a checkout of *c*, and no `--run`, `--runs`, `--acts`, `--map` or
+`--json`; where *c* holds no `log.jsonl` (the first four first-parent commits of
+`main`), `--as-of` is *c*'s committer time in §4's UTC form and `--log` an empty file;
+*c* is read only through `--root` and `--log`, whatever it holds. The frozen evaluator
+runs from a checkout of *T* for the table's rows and from a checkout of the move's
+parent for the commits after *T*, and the moved evaluator from a checkout of the move;
+each imports its modules (`kernel/`, `judge/`, `tools/`, `harness/`) from its own
+checkout. The move passes only if, run as each row states, it prints every unmarked line
+byte for byte as recorded, every marked line as its mark states, and the same exit
+status; and if, at every first-parent commit after *T* up to its parent, its run prints
+what the frozen evaluator's run prints there, under the same marks, and exits with the
+same status. A line is marked wrong only by Guy: before the move is built, his
 `decision grant` whose `subject` begins as item 15 states, naming the SHA-256 of
 `SPEC.md` with this paragraph, names the table's SHA-256 as well, and that grant is the
 read A2.10 asks for the move (answer 10). For the move the marked lines are, at
