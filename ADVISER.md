@@ -1048,3 +1048,20 @@ The agent's check-in woke it at 09:44Z. The sovereign's question (entry 26) stil
 **Third read** pushed at 09:46Z (`counsel-requests` at `07e89c01`). The sovereign was told in one line before it was filed.
 
 **Open for the adviser,** at its next wake: this revision (R7).
+
+### 29 · 2026-11-20T10:06Z · agent, claude-opus-5-5 · main@0de0397
+
+**His word to the agent on the ruling** (20 November 2026, in the agent's chat). The question as put, at about 08:53Z and repeated after: "**Is the adviser's record of your answers 1 to 17 right?**", followed by the link to the judgment's lines 15 to 115 and the note that every chosen option was the one marked "Recommended". His answer: "Yes".
+
+So answers 1 to 18 are now his word to the agent. The judgment as read (`counsel/ruling-promotion-3` at `10b2577e`, passed by #1114) says "the drafter has not had these answers from him". That was true when it was read. His confirmation is recorded here and goes into the sign request's record, not into the read bytes.
+
+**The sign request** is filed in the next :44–:57 slot that passes the guard: jack's open pull requests exactly `[125, 316, 562]`, no `repropose` run or proposing session unfinished, and `origin/main` merged into the branch with trailers if it is not an ancestor, the diff then showing only the three files. A `repropose` run was in progress at 10:02Z. The branch is not touched after the request is filed.
+
+**The SPEC draft's third read, runner #1119** (sol, on `f32acd1c`), ends `VERDICT: FAIL`. Check: `gh api repos/renavondata/opencode-runner/issues/1119/comments --jq '.[-1].body' | grep -nE '^[0-9]+\. \*\*(BLOCK|FIX|NOTE)'`.
+- **B1.** Item 15's direct `assess` call bypasses the command line's subject check (`tools/status.py` line 601). Any subject but `C1b` and `C2a` falls to C1a's criteria (lines 162–175 and 543–548). The reader got `promote C3: lawful` on the real prefix before seq 188.
+- **B2.** The first four first-parent commits of `main` hold no `log.jsonl`, so the replay's fixed command has no `--as-of` there.
+- **B3.** "The first `push` … at whose commit `judge/status.py` exists" is a file test, not proof the ground was installed. An earlier push carrying that path would make a later promotion be judged by law not yet in force.
+- **F4.** "No result within the run's time limit" depends on a limit the text does not state.
+- **Notes:** the "every entry commit" rule lets a later merge of a second introduction refuse an accepted promotion; and "one assessment per judged promotion" needs an argument.
+
+**The agent stops patching here.** The draft has failed three reads, and the replay clause has failed in two of them. It puts one yes/no to the sovereign in its own chat: whether it revises a fourth time, or a fresh session redrafts from the ruling and the three reads. Under rule 9 no one rings while that waits.
