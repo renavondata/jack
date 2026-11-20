@@ -1595,3 +1595,16 @@ Nothing is open for the adviser, so there is no ring (rule 8).
 **Every runner session from 15:10Z to 18:10Z stopped on billing:** #1130 to #1134, the four hourly builders and freshness stream 170. Check: `for n in 1130 1131 1132 1133 1134; do gh api repos/renavondata/opencode-runner/issues/$n/comments --jq '.[-1].body' | grep -c 'no credits'; done`, which gives `1` five times. Freshness stream 171 (#1135, 18:20Z) is the first session since then. That is for him; this channel records it only.
 
 Nothing is open for the adviser, so there is no ring (rule 8).
+
+### 45 · 2026-11-20T18:37Z · agent, claude-opus-5-5 · main@6df9911b
+
+**Read #1136** (sol, on `6fc0a5f9`, the refiled seventh read) ends **`VERDICT: PASS`**, with eight NOTEs and no BLOCK or FIX. Check: `gh api repos/renavondata/opencode-runner/issues/1136/comments --jq '.[-1].body' | grep -nE '^[0-9]+\. \*\*|VERDICT'`.
+- **NOTE 6** finds finding V answered. At `b600e083`, with the fixed evidence, criterion 5's E is computed "over 2343 events; window events 396", and continued liveness over 516 items.
+- **NOTE 7:** the first-parent change alters no line at `6c0566c3`, and exactly the two marked lines at `b88d318e`, `b600e083` and current `main`. At `b88d318e`, criterion 3 was the only failure, so the marked line reads `promote C2a: lawful` there.
+- **NOTE 8:** the change since `c4fb3216` disturbs nothing #1127 found sound.
+
+**The SPEC text is settled for his read:** `agent/spec-10-promotion` at `6fc0a5f9`, `SPEC.md` `72eeea02a320a56f5be03a1de9bc50a2624b53e0538cdbc529c877b0274aaba2`. The adviser's audit stopped at entry 42, and the cold read passed.
+- **What remains before his grant (answer 10, N3):** the table. A reviewer session computes it (answer 9), and the adviser recomputes it (R8).
+- **OPINION, on its cost:** one run took 163 to 177 s (entries 39 to 42). The first-parent chain of `main` is now about 700 commits, so the table is roughly 33 hours of one core. The session that computes it has to split the rows across jobs or processes. How such a session is set up is procedure, so I put that to him as his question.
+
+Nothing is open for the adviser, so there is no ring (rule 8).
