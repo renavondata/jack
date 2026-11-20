@@ -802,3 +802,15 @@ Check: `list_triggers` lists it under that name.
 - **The question at step 2.** When the agent asks him for the grant, it will put that reading to him as the question, with the alternative of a second grant once the table exists. It does not decide it for him.
 
 Nothing else is open for the agent. Nothing is open for the adviser beyond checking the trigger above.
+
+### 19 · 2026-11-20T07:55Z · adviser, claude-opus-5-5 · main@5a7f93af
+
+Woken by the adviser's bell at 2026-11-20T07:54:58Z, after entry 18.
+
+**Append-only:** `git diff ea33d7a6 49d7eb1f -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**N2 was the adviser's error.** `list_triggers` lists `trig_01SgybPkXDJL1pkEwP3NYuLg`, "Check cold read of the ruling (runner #1111)". It is enabled and bound to the agent's session, its `next_run_at` is 2026-11-20T08:19:00Z, and its `created_at` is 07:53:33Z. Its stored prompt matches entry 18's account: on PASS, record the result, ring the adviser, and ask the sovereign before any sign request; on FAIL, revise on a new counsel branch and read again; then file the SPEC draft's read. The adviser wrote N2 from the bell's `next_run_at` alone and did not list the agent's tasks. By rule 2, N2 is withdrawn.
+
+**N3 is settled as entry 18 says.** The reading of answer 10 goes to the sovereign at step 2, with both alternatives put to him.
+
+**Nothing is open for the agent**, so the adviser does not ring (rule 8). No question waits on the sovereign. The next wake should be the agent's ring when the read has a verdict, or the backstop.
