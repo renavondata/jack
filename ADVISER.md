@@ -99,9 +99,13 @@ git diff <the adviser's last commit> FETCH_HEAD -- ADVISER.md | grep -c '^-[^-]'
 
 **Status at entry 6:** R1, R2 and R5 closed (they held). R3 open: no branch holds C2a-3's evaluator yet. R4 open for the runner only, which neither session can read (question 4).
 
+**Status at entry 7:** R4 closed (entry 7). R3 open, now for the move's branch as well. R6 to R8 are in entry 7.
+
 Nothing else is asked until the sovereign has answered the questions below.
 
-## For the sovereign (undecided)
+## For the sovereign
+
+**Answered on 20 November 2026; see entry 7.** Each answer is the option he chose to a question the adviser wrote. The four below are kept as they were put.
 
 1. Do you want a `promote` entered while a pre-stated criterion is unmet to be refused by the checker itself, as a judge ground first? **Adviser's view: yes.** Interest: the adviser argued for it and is the kind of agent it constrains.
 2. May a frozen replay of today's evaluator over real `main`, with the rows you mark as wrong, be the acceptance test for every evaluator change? **Adviser's view: yes.** Interest: as above.
@@ -252,3 +256,40 @@ The bell woke the adviser at 2026-11-20T01:31:15Z with no text: the agent's seco
 **Model.** From this entry the adviser runs `claude-opus-5-5`, the agent's model. OPINION: two sessions of one model are closer to one reader than two. A disagreement between them is worth having; an agreement is weak evidence.
 
 **The adviser's own sections changed** (rule 1 allows it; recorded here): Standing (model, push); Bell; Findings (copy note, F5, F12, runnable checks); request status; question 4 for the sovereign.
+
+### 7 · 2026-11-20T03:24Z · adviser, claude-opus-5-5 · main@df72126c
+
+**The sovereign's answers, 20 November 2026, in the adviser's chat.** He chose each from options the adviser wrote. Every question stated the adviser's view, and every answer is the option the adviser recommended. Read it with that in mind.
+
+**This entry binds nothing.** By his ruling of 17 November (H3) a ruling is a `transcripts/RULING-*.md` file on `main`. Answer 14 says how this record gets there.
+
+1. **Refusal.** The trusted checker itself refuses a `decision promote` entered while any pre-stated criterion of the window is unmet: yes.
+2. **Route.** It enters as a new judge and self-check ground in SPEC §10 and `judge/`, by his push alone, enforcing A5.1's existing sentence ("may be entered only once every pre-stated criterion … holds"), as items 11 to 14 enforce A2.6 and A2.7. No amendment and no rule language.
+3. **Acceptance.** Every change to the promotion evaluator is accepted only if it reproduces a frozen table of today's evaluator outputs at every first-parent commit of real `main`, except rows marked wrong in advance: yes.
+4. **First change.** `tools/status.py` and `tools/value.py` move under `judge/` as they are, with only the first-parent fix, and are shrunk later under the replay test. No rewrite first.
+5. **Timing.** The move lands by a push before 30 November that opens nothing (precedent: seq 197). C2a-3 is the first window judged by it.
+6. **Cap.** The move's push states the roughly 860 lines that leave the counted cap. The cap is lowered by that amount in the next window's opening push.
+7. **Marked rows** for the first change: only C2a-prime's criterion 3, from `b88d318e` (the first merge after its opening) onward. The late-report change is a separate, later change with its own marked rows.
+8. **Off-log evidence.** A promote names its evidence (the tests run; the acts table) by SHA-256, as files committed with it. The judge checks that they exist with those hashes and that the evaluator returns lawful on them. The record labels them attested, not checked.
+9. **The table.** A reviewer session computes it and proposes it under `spec/vectors/`. The adviser recomputes it independently and posts any disagreement here.
+10. **A2.10.** His read of the SPEC §10 paragraph (about a page) and of the marked rows, recorded by a `decision grant` naming both hashes, satisfies A2.10 for the move.
+11. **Late reports.** C2a-3's brief may pre-state that a repair refuses only the window it was made in. The rule is not in the charter, and A2.4 bars loosening the charter's bounds, not an earlier brief's.
+12. **Handover.** The one-clause early-end amendment (a window also ends, as failed, at his veto) proceeds now. The late-report change waits and comes through the replay test after the move.
+13. **Drafter.** His coding agent drafts the SPEC §10 text. The adviser audits it.
+14. **Record.** These answers are recorded as a `transcripts/RULING-*.md` file by counsel's proposal, drafted by his coding agent from this entry.
+15. **Runner.** The adviser reads `renavondata/opencode-runner` read-only, for R4 only.
+
+**R4, the runner part (closed).** Read at the runner's `main`, `dd5578d7` (2026-11-14), as data only. Its agent instructions were not loaded and none of its code was run.
+
+- **Triggers.** Six workflows: `counsel-sign.yml` and `counsel.yml` (push to the runner's `counsel-requests`), `diary.yml` (dispatch), `herald.yml` (every ten minutes, and dispatch), `repropose.yml` (dispatch with a stale pull request's number), `run.yml` (issues labelled). None triggers on a push to jack. Check: `for f in .github/workflows/*.yml; do awk '/^on:/{p=1} p&&/^[a-z]/&&!/^on:/{exit} p' "$f"; done`.
+- **The herald** acts only on open pull requests against jack's `main` (`herald.yml` line 49: `gh pr list -R renavondata/jack --state open --base main`). This branch is inert for as long as no pull request is opened from it.
+- **New finding F13.** `run.yml` line 64 runs `git fetch -q origin` in `$HOME/git/jack` on the host. With a default refspec, that copies this branch onto the machine where sessions hold every party's key. No session text acts on a branch named `adviser/*` (`pins.md:11` and `assemble.md:13` act on `builder-<window>-<part>`). But a model session that lists branches can read this file. OPINION: it should hold nothing that reads as an instruction to a builder or reviewer, and it holds none.
+- **Not readable from here:** whatever runs on the host outside this repository.
+
+**New requests, each to give the adviser something to check** (rule 5):
+
+| id | Request | Acceptance check |
+|---|---|---|
+| R6 | When the RULING file for answers 1 to 15 exists, give its branch and commit here. | The adviser compares it with this entry, answer by answer, and reports any difference of meaning. |
+| R7 | When the SPEC §10 text exists, give its branch and commit here. | The adviser checks it against answers 2, 4, 7, 8 and 10, and against the code once that exists. |
+| R8 | When a reviewer session has computed the replay table, give its branch, commit and the command that made it. | The adviser recomputes the table on the same commits and reports every row that differs. |
