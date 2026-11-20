@@ -420,16 +420,16 @@ Items 7–10 apply only to a proposal whose head differs from trunk; the self-ch
     whose commit `judge/status.py` exists; until there is one, it judges none. The
     promotions at seqs 188 and 337 come before it and are not judged: an entry is
     judged by the law in force before it (CHARTER §2, maxim 2). Let *H* be the commit
-    judged (trunk for the self-check, the proposal's head otherwise), and an entry's
-    *commit* the commit reachable from *H* whose `log.jsonl` holds the entry's line
-    and none of whose parents' does. A judged `promote` at seq *i* is refused unless
-    all four hold:
+    judged (trunk for the self-check, the proposal's head otherwise), and an *entry
+    commit* of a `promote` any commit reachable from *H* whose `log.jsonl` holds the
+    entry's line and none of whose parents' does. A judged `promote` at seq *i* is
+    refused unless, for every entry commit it has, all four hold:
     (a) its `body.evidence` is an object with exactly the members `run`, `runs` and
     `acts`, each an object with exactly `path`, a path under `transcripts/evidence/`,
-    and `sha256`, hex64; and at the entry's commit each path is a regular file whose
+    and `sha256`, hex64; and at the entry commit each path is a regular file whose
     bytes have that SHA-256;
-    (b) the entry's commit has one parent, the *assessed commit*, whose `log.jsonl` is
-    exactly lines 0 to *i*−1; and against it the entry's commit changes `log.jsonl` by
+    (b) the entry commit has one parent, the *assessed commit*, whose `log.jsonl` is
+    exactly lines 0 to *i*−1; and against it the entry commit changes `log.jsonl` by
     appending line *i* alone, adds the three evidence paths, and changes nothing else;
     (c) the assessed commit's trusted-base digest (item 1) is the trusted base in
     force at seq *i* (§7);
@@ -457,8 +457,9 @@ Items 7–10 apply only to a proposal whose head differs from trunk; the self-ch
     the commit it assessed. Both workflows that run the judge check out the whole
     history. Pins `promote_while_unmet` (a judged `promote` whose evaluator line reads
     `refused` is admitted), `evidence_substituted` (a named file whose bytes differ
-    from its `sha256` is admitted), `promote_tree_changed` (an entry's commit that
-    changes a path besides `log.jsonl` and its evidence is admitted),
+    from its `sha256` is admitted), `promote_tree_changed` (an entry commit that
+    changes a path besides `log.jsonl` and its evidence is admitted, even when
+    another entry commit of the same line does not),
     `promote_retroactive` (a `promote` before the installing push is judged),
     `evaluator_not_in_force` (an assessed commit whose trusted-base digest is not the
     one in force is used) and `promote_judged_once` (only promotions added since the
@@ -484,24 +485,27 @@ only if the move's parent holds those bytes. The frozen table of those outputs i
 `spec/vectors/promotion-replay.json`, which a reviewer session computes with those
 files and proposes under `spec/vectors/` (A2.9). It names a commit of `main`, *T*, no
 earlier than `b88d318e`. Its rows are every first-parent commit of `main` up to *T*;
-each states the command (its text output, not `--json`), instant and evidence it was
-run with, and records the evaluator's standard output, line by line, and its exit
-status. The move passes only if, run as each row states, it prints every unmarked
-line byte for byte as recorded, every marked line as its mark states, and the same
-exit status; and if, at every first-parent commit after *T* up to its parent, run the
-same way, it prints what those files print there, under the same marks. A line is
-marked wrong only by Guy: before the move is built, his `decision grant` names the
-SHA-256 of `SPEC.md` with this paragraph and of the table, and that grant is the read
-A2.10 asks for the move (answer 10). For the move the marked lines are, at `b88d318e`
-and at every later first-parent commit: C2a-prime's criterion 3 line, which must read
-as recorded with `False SHORT` replaced by `True met`; and the `promote C2a:` line,
-which must read as recorded with criterion 3's failure and one adjoining `; ` removed
-from the list after `refused: `, or as `promote C2a: lawful` if none is left (answer
-7). A later change to the evaluator is accepted the same way, against a table of the
-evaluator it changes and with the lines his grant for it marks. Pin `replay_drift`:
-an evaluator that changes an unmarked line, prints a marked line otherwise than its
-mark states, or is moved from other bytes than those named, is admitted; twin, the
-moved evaluator passes.
+each records, for one run, the evaluator's standard output, line by line, and its
+exit status. A run at a commit *c* is the evaluator's command line with `--subject
+C2a`, `--as-of` the `ts` of the last line of *c*'s `log.jsonl`, `--log` that file,
+`--root` a checkout of *c*, and no `--run`, `--runs`, `--acts`, `--map` or `--json`;
+the evaluator run is the frozen files, or the change's, whatever *c* holds. The move
+passes only if, run as each row states, it prints every unmarked line byte for byte
+as recorded, every marked line as its mark states, and the same exit status; and if,
+at every first-parent commit after *T* up to its parent, its run prints what the
+frozen files' run prints there, under the same marks. A line is marked wrong only by
+Guy: before the move is built, his `decision grant` names the SHA-256 of `SPEC.md`
+with this paragraph and of the table, and that grant is the read A2.10 asks for the
+move (answer 10). For the move the marked lines are, at `b88d318e` and at every later
+first-parent commit: C2a-prime's criterion 3 line, which must read as recorded with
+`False SHORT` replaced by `True met`; and the `promote C2a:` line, which must read as
+recorded with criterion 3's failure and one adjoining `; ` removed from the list
+after `refused: `, or as `promote C2a: lawful` if none is left (answer 7). A later
+change to the evaluator is accepted the same way, against a table of the evaluator it
+changes and with the lines his grant for it marks. Pin `replay_drift`: an evaluator
+that changes an unmarked line, prints a marked line otherwise than its mark states,
+or is moved from other bytes than those named, is admitted; twin, the moved evaluator
+passes.
 
 `judge/scope.json` is under `judge/`, so it is trusted base and changes only
 by Guy's own push. Its members are `layer` (a string), `paths` and `counted`
