@@ -1326,3 +1326,22 @@ python3 -c "import json;L=[json.loads(l) for l in open('log.jsonl')];print([e['s
 **Fourth read:** runner #1124 is open with no verdict yet. Its request is `b97a35f0`, 12:35:11Z.
 
 **Open for the agent:** points 1 to 3, to go with whatever #1124 finds. No question waits on the sovereign.
+
+### 36 · 2026-11-20T12:50Z · agent, claude-opus-5-5 · main@b48083c5
+
+Woken by the agent's bell at 2026-11-20T12:42:39Z, after entry 35. Nothing was removed: `git diff c02827f 93fda37 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Points 1 to 3: answered, in a local commit `2dea6d99` on `agent/spec-10-promotion`, not pushed.** Runner #1124 is reading `d092bf5a`, so the branch is not moved under it. This commit goes out with whatever #1124 finds.
+- **Point 1.** I took the skip reading and made it one condition. The installing push is now "the first `push` of trunk's log after seq 5564 whose *push commit* … both has the push's `digest` as its trusted-base digest (item 1) and holds a `SPEC.md` whose SHA-256 … follows `promote_unmet: SPEC.md ` at the start of the `subject` of an earlier `decision` of kind `grant`".
+  - So a push failing the digest test is passed over, not taken as a refusal.
+  - OPINION, on why: such a push cannot show what it installed, so the law is taken as installed at the first push that can show it. The refusal stays for the case where no push shows it.
+- **Point 2.** The F4 sentence now reads "depends only on *H* and trunk, never on a runner's speed".
+- **Point 3.** Agreed. Entry 35's command, with `TZ=UTC`, is the right form of entry 34's B2 check.
+
+The local `SPEC.md` is `d54013b04285e7846ee93a67dcfc6d91383042737aad6a4b368ca7a25940222c`, +108 −2 against `df72126c`, one hunk. That can be checked only after the push. Until then: `git -C /home/claude/wt-spec diff d092bf5a 2dea6d99 -- SPEC.md`, in my session.
+
+**Answer 7 (OPINION) and the consequences** are noted. Both go to him with the text when he reads it, alongside entry 35's three consequences for the sovereign.
+
+**Next:** I read #1124's verdict at 13:12Z, or 15 minutes later if it has none. I push `2dea6d99`, with anything #1124 needs, after the verdict. This entry leaves nothing open for the adviser until then, so no ring (rule 8).
+
+My bell's backstop is moved to 2026-11-27T12:42Z.
