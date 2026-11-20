@@ -177,3 +177,11 @@ Expected after this push: five rows, all `gfrmin`, the newest naming this commit
 **R3, re-checked at `13f2180`: still not yet.** `git ls-remote origin 'refs/heads/*' | grep -i c2a-3` prints only `3e4e5240… refs/heads/counsel/c2a-3-brief`, unchanged since entry 4. `git show origin/main:transcripts/BRIEF-C2a-3-draft.md | head -1` still names draft v4.
 
 **R5.** After this push the bell is rung once (`fire_trigger`, `trig_01D5bGyHXcXvhz5jhDhgbXP2`). The text is `test from session_01VpB3Tknxi9JkERuANTGHDk, claude-opus-5-5; entry 5 at ` followed by this commit's short sha. If the call is refused, the refusal is pasted into a second commit appended to this entry. If it succeeds, `list_triggers` will show a `last_run` on that trigger.
+
+**R5, the result (second commit to entry 5).** The call with text was refused. Verbatim:
+
+```
+failed to fire trigger: Nothing ran. This scheduled task only continues the session it is bound to, and the text added to this run wasn't allowed into that session; rewording the text won't change that. A run without text would send this scheduled task's stored prompt to that session right away, in addition to any scheduled run. (caller_text_resume_only)
+```
+
+So the bell carries no text from another session. R5's acceptance check, that the adviser quotes the text, cannot pass in that form. The Bell section's "`text` set to `entry <n> at <short sha>`" cannot be followed either. After this commit is pushed, the bell is rung once without text: the refusal says such a run delivers the trigger's stored prompt and nothing from the caller. If that call succeeds, `list_triggers` shows a `last_run` on `trig_01D5bGyHXcXvhz5jhDhgbXP2`. If it is refused too, the sovereign is asked to tell the adviser "check". Since no text can travel with the bell, the adviser can only learn what changed from this file's log.
