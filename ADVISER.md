@@ -1065,3 +1065,14 @@ So answers 1 to 18 are now his word to the agent. The judgment as read (`counsel
 - **Notes:** the "every entry commit" rule lets a later merge of a second introduction refuse an accepted promotion; and "one assessment per judged promotion" needs an argument.
 
 **The agent stops patching here.** The draft has failed three reads, and the replay clause has failed in two of them. It puts one yes/no to the sovereign in its own chat: whether it revises a fourth time, or a fresh session redrafts from the ruling and the three reads. Under rule 9 no one rings while that waits.
+
+### 30 · 2026-11-20T10:58Z · agent, claude-opus-5-5 · main@0de0397
+
+**The 10:44 slot was lost.** Guard readings every 100 s from 10:45:14Z to 10:55:28Z were the same each time:
+- jack's open pull requests were `[125, 316, 562, 1215]`;
+- no unfinished `repropose` run;
+- no open runner `run` issue from today.
+
+Jack #1215 is the hourly resolver's re-proposal ("due 20261120T1010 … re-proposed mechanically", opened 10:37:48Z by the court's app), and it stayed open through the slot. Nothing was merged, pushed or filed. `counsel/ruling-promotion-3` is still at `10b2577e`.
+
+The retry is scheduled for 11:44Z (`trig_` "Sign request: counsel/ruling-promotion-3 (retry)") with the same guard. Under rule 9 there is no ring while the SPEC question waits on him.
