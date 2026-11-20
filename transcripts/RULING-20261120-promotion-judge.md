@@ -1,6 +1,6 @@
 # Ruling of 20 November 2026: the judge refuses a promotion entered while a pre-stated criterion is unmet, the promotion evaluator moves under `judge/`, and four readings
 
-**Draft, fourth version.** Written by the sovereign's coding agent (`session_01VpB3Tknxi9JkERuANTGHDk`, `claude-opus-5-5`, holding no key of jack's), as his answer 14 directs. It is drafted from entries 7, 9 and 15 of `ADVISER.md` on the orphan branch `adviser/notes`, at commits `db9938597df4d400d2ae872569fbef5fc2c24666`, `b9f68c77e65f929d70a3b4369a4bec09073a4527` (entry 9's questions are lines 392 to 486 there) and `6184da04995b857472facca9a675b209d31395ea` (entry 15's question, lines 699 to 703). By H3 of the ruling of 17 November a ruling is a `transcripts/RULING-*.md` file, and by answer 14 this one reaches `main` by counsel's proposal. Texts on `main` are cited at `df72126c8d7cbb6b97353eb854d4c8f72c773313`; `main` at `5a7f93af` holds the same bytes for every text cited.
+**Draft, fifth version.** Written by the sovereign's coding agent (`session_01VpB3Tknxi9JkERuANTGHDk`, `claude-opus-5-5`, holding no key of jack's), as his answer 14 directs. It is drafted from entries 7, 9 and 15 of `ADVISER.md` on the orphan branch `adviser/notes`, at commits `db9938597df4d400d2ae872569fbef5fc2c24666`, `b9f68c77e65f929d70a3b4369a4bec09073a4527` (entry 9's questions are lines 392 to 486 there) and `6184da04995b857472facca9a675b209d31395ea` (entry 15's question, lines 699 to 703). By H3 of the ruling of 17 November a ruling is a `transcripts/RULING-*.md` file, and by answer 14 this one reaches `main` by counsel's proposal. Texts on `main` are cited at `df72126c8d7cbb6b97353eb854d4c8f72c773313`; `main` at `1ce692c` holds the same bytes for every text cited except `log.jsonl`, which has grown since; every fact about the log is cited at `df72126c`.
 
 ## The record and its limits
 
@@ -175,10 +175,10 @@ The ruling of 17 November recorded readings of the charter as holdings, and its 
 
 ### Readings
 
-**H1. A judge ground may enforce a sentence already in the charter, by his push, with no amendment** (answer 2). The ground of answer 1 enforces A5.1's "may be entered only once every pre-stated criterion of the window holds", as items 11 to 14 enforce A2.6 and A2.7. It adds no rule language and no amendment.
+**H1. A judge ground may enforce A5.1's sentence by his push, with no amendment** (answer 2). The ground of answer 1 enforces A5.1's "may be entered only once every pre-stated criterion of the window holds", as items 11 to 14 enforce A2.6 and A2.7. It adds no rule language and no amendment.
 *Enforced by:* nothing until the push that installs it. From then on, SPEC §10 item 15 in `judge/judge.py` and in the self-check, with its pins (draft text: branch `agent/spec-10-promotion`).
 
-**H2. A push that opens nothing is lawful between windows, but not inside C2a-prime's window, whose brief refuses a second push** (answers 5 and 17; precedent seq 197). So the move's push lands only after C2a-prime has ended, by the early-end amendment and a fresh veto.
+**H2. A push that opens nothing is lawful between windows, but not inside C2a-prime's window, whose brief refuses a second push** (answers 5 and 17). So the move's push lands only after C2a-prime has ended, by the early-end amendment and a fresh veto. Seq 197 is the precedent Q5 names for a push that opens nothing; SPEC §10 also records that push as "a third finding against the pre-statement".
 *Enforced by:* nothing. `tools/status.py` reads such a push as C2a-prime's criterion 3 unmet (lines 434 and 435), and refuses nothing.
 
 **H3. His read satisfies A2.10 for the move when a `decision grant` records it by naming the hashes of the SPEC §10 paragraph and of the marked rows** (answer 10).
@@ -187,7 +187,7 @@ The ruling of 17 November recorded readings of the charter as holdings, and its 
 **H4. A2.4 bars a brief from loosening the charter's bounds, not an earlier brief's** (answer 11). The late-report rule is in no charter text, so C2a-3's brief may pre-state that a repair refuses only the window it was made in.
 *Enforced by:* nothing.
 
-**H5. Of off-log evidence the judge can check presence and hash only, and the record labels it attested, not checked** (answer 8, its last two sentences).
+**H5. Of off-log evidence the judge checks presence and hash, not truth, and the record labels it attested, not checked** (answer 8, its last two sentences). The evaluator must still find the promotion lawful on that evidence (answer 8's second sentence).
 *Enforced by:* SPEC §10 item 15 (a) and the `attested` member of the judge's report (draft).
 
 ### Directions
@@ -218,7 +218,7 @@ The first version of this draft said it found no answer that a text on `main` fo
 3. **The evaluator's imports.** `tools/value.py` takes three functions from `tools/entry.py`, which imports `harness/keys.py`. Settled by answer 16: the three functions move.
 4. **The evaluator reads its own source by path.** `tools/status.py` lines 436 and 437 read `tools/status.py` from the opening's tree and from the tree assessed.
    - After the move that path is absent at later commits, so that comparison fails there.
-   - No window that can still be promoted depends on it. C2a-prime ends at a veto, and C2a-3's change 4 is itself a change to the evaluator, which after the move comes by his push and the replay test.
+   - No window that can still be promoted depends on it. C2a-prime ends at a veto. C2a-3's change 4 is itself a change to the evaluator: after the move it comes by his push and the replay test, and it must read the evaluator's own source where the move puts it.
    - The SPEC draft leaves it as it is, under answer 4's "only".
 5. **History.** The evaluator walks first-parent history (`prefix_tree`, `c2a_tree_evidence`), and `tests.yml` checks out at the default depth. The SPEC draft has both workflows that run the judge check out the whole history: a change under `.github/workflows/`, in the same push.
 6. **C2c-1's verb.** From C2c-1's opening, the verb RUNBOOK describes "writes nothing to the tree", while answer 8 commits the evidence with the entry. That is for C2c-1's brief to reconcile before its opening, and is not decided here.
@@ -229,18 +229,21 @@ The first version of this draft said it found no answer that a text on `main` fo
 8. **Answer 6's number.** It is 859 lines by SPEC §10.10's count at `df72126c`, adjusted by whatever else the move changes in counted files, such as the imports of `tools/entry.py`'s three functions. The push states the exact number.
 9. **A2.4 read otherwise on `main`.** BRIEF-C2c-1's draft cites A2.4 for "Nothing a predecessor's criterion required is dropped". Under H4 that is BRIEF-C2c-1's own rule, which it may keep for its own layer; A2.4 does not require it.
 10. **The early-end amendment and the move** (answers 12 and 17).
-    - The amendment now comes into force before the move. If its code changes `tools/status.py`, that change lands first, in `tools/`, by a builder's proposal.
-    - The replay table is to be computed on the evaluator the move moves. So it is computed after that change, or that change's lines are marked.
+    - The amendment now comes into force before the move. If its code changes `tools/status.py`, that change lands in `tools/` before the move.
+    - The evaluator the move moves would then not be the one whose outputs the frozen table records ("today's evaluator outputs", Q3). Q4's chosen "Behaviour identical to today except the marked rows" and Q7's "One defect, one family of rows" could not both hold for the move.
+    - The answers do not settle which gives way. If the amendment needs that code, the question goes to him; this file decides nothing of it.
     - Between the `amend` and its height no push is lawful (A2.7; SPEC §10.12).
 11. **The early end and the ruling of 4 November.** That ruling's condition 3 ("the entry's `ts` is after that end and its `seq` precedes the next window's opening `push`") and v4's route-A text are written for a window that ends at its stated end. How a window ended at a veto reads under them is for the amendment's own text, and is not decided here.
+12. **Earlier directions on how the charter is amended.** COUNSEL-OPEN row 33 records that "the charter is amended again only through a process judged as jack judges everything else", and names that process's parts. Row 69 records that "the removal of criterion 5 and the early-end clause go to C2c-3, each as its own amendment under row 33's procedure". Answers 12 and 17 bring the early-end amendment forward to now. They do not say whether row 33's procedure still applies to it. That is not decided here; it is for the amendment's own text and for him.
 
 ## What this ruling does not decide
 
 - The names, members and paths in the SPEC draft: `promote_unmet`, `body.evidence`, the pins, `spec/vectors/promotion-replay.json`, and the definition of the installing push. These are the drafter's, for his read (answer 10).
-- The table's range, instants and evidence (answer 9; request R8 of `ADVISER.md`).
+- The table's instants, evidence and command (answer 9; request R8 of `ADVISER.md`). Its range is not open: Q3 asks for "every first-parent commit of real main".
 - How an attested file counts in a window's report.
 - C2c-1's promote verb (point 6).
-- The early-end amendment's text, how it reads with the ruling of 4 November (point 11), and the late-report change's code and marked lines (answers 7 and 12).
+- The early-end amendment's text, how it reads with the ruling of 4 November (point 11), whether row 33's procedure applies to it (point 12), and the late-report change's code and marked lines (answers 7 and 12).
+- Which of Q4 and Q7 gives way if the amendment's code changes the evaluator before the move (point 10).
 - The adviser's proviso to answer 17, which is not part of his answer.
 
 ## Orders
