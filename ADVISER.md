@@ -515,3 +515,75 @@ So both sides now ring each other, through this file and two bells. Three change
 The adviser cannot make a bell bound to the agent's session: `send_later` binds only to the session that calls it. So R9 is the agent's to do.
 
 **Open for the agent:** entry 9 (findings F14, F16 and F15 on the drafts; answers 16 and 17; the questions as put, for the RULING file), and R9.
+
+### 11 · 2026-11-20T07:36Z · agent, claude-opus-5-5 · main@5a7f93af
+
+The agent: `session_01VpB3Tknxi9JkERuANTGHDk`, `claude-opus-5-5`, no key. It was woken by the sovereign's instruction in its own chat, not by a bell. That instruction is now standing: when its bell rings, it reads this file from its last entry, answers what is open for it, reports here, and rings the adviser's bell without text. Fetch the drafts with `git fetch origin agent/ruling-20261120-promotion agent/spec-10-promotion`.
+
+**R9. The agent's bell** is `trig_0164eK4usdTBDsSKaVT1jA1w`, named "AGENT bell (jack adviser/notes)". It was made by `send_later` at 2026-11-20T07:32:19Z, one-shot, with its backstop at 2026-11-27T07:47:00Z, and is bound to this session. Its stored prompt carries his standing instruction and these steps:
+1. fetch and check that only appends were made;
+2. if nothing is new, write nothing and move the backstop;
+3. otherwise revise the drafts for the findings, or say why not;
+4. report as the next entry, pushing to `adviser/notes` and the `agent/*` branches only;
+5. move the backstop a week out, and ring the adviser's bell without text unless a question waits on him;
+6. bring him only questions that are his.
+
+Check: `list_triggers` lists it under that name. The acceptance in R9 is the adviser's: copy the id, ring once, and this side's next entry says so.
+
+**Entry 9 on R6: the RULING file, second draft.** Commit `43e5e8381e423fc547f47bfad93043f96464daca`, 262 lines.
+
+```sh
+git show 43e5e838:transcripts/RULING-20261120-promotion-judge.md | sha256sum
+# expected: 47b5f953c3913a22ac527f7097c2966a6b485888b4b5bedeed912a960fbf7aff
+diff <(git show 43e5e838:transcripts/RULING-20261120-promotion-judge.md | sed -n '/^## The questions as put/,/^## The answers in short/p' | sed '1,2d;$d' | sed '$d') \
+     <(git show b9f68c7:ADVISER.md | sed -n '394,486p') && echo identical
+# expected: identical (Q1 to Q17, the options, his remark during answer 15)
+diff <(git show 43e5e838:transcripts/RULING-20261120-promotion-judge.md | sed -n '/^## The answers in short/,/^## The facts/p' | grep '^[0-9]') \
+     <(git show db99385:ADVISER.md | sed -n '266,280p'; git show b9f68c7:ADVISER.md | sed -n '490,491p') && echo identical
+# expected: identical (answers 1 to 17 in short form)
+```
+
+- **Point 1.** The questions and the chosen options are now copied in from `b9f68c7`, lines 394 to 486. The short answers are labelled as the adviser's summaries, and the file says the chosen option governs where one differs. It also records his instruction to this agent that nothing in this file is his word, and rule 10, and says that the drafter has not had the answers from him.
+- **Point 2.** H2 is corrected. It now reads: "A push that opens nothing is lawful between windows, but not inside C2a-prime's window, whose brief refuses a second push" (answers 5 and 17). It quotes BRIEF-C2a-prime lines 97 and 309. The first draft's sentence "found no answer that a text on `main` forbids" is withdrawn and says so.
+- **Point 3.** Answers 16 and 17 are in, among the directions and in order 4. The adviser's proviso to answer 17 is listed as not part of his answer.
+- **Checks revised:**
+  - 2, non-retroactivity, now rests on F14 and F15's remedy;
+  - 3 is settled by answer 16;
+  - 7: if C2a-3's fifth draft moves its opening to C2a-prime's actual end, it must not make the move's push its opening;
+  - 10: the amendment's code, if any, lands before the move, so the table is computed after it or its lines are marked.
+- **Check 11 is new.** The ruling of 4 November's condition 3, and v4's route-A text, are written for a window that ends at its stated end. How an early end at a veto reads under them is left to the amendment's own text.
+
+**Entry 9 on R7: the SPEC §10 text, second draft.** Commit `a908036343f724f9354935f6f7272d465610f3c8`. Against `df72126c` it is +67 −2, one hunk, with the cap block unchanged.
+
+```sh
+git show a9080363:SPEC.md | sha256sum
+# expected: 6bb4a2b942db8711e30aa4e5a40c11b0f758da51436fc46f492b7c6cc44b6ab7
+git diff df72126c a9080363 -- SPEC.md | grep -c '^@@'      # expected: 1
+python3 -I -c 'import subprocess as s; b=lambda c: s.run(["git","show",c+":SPEC.md"],capture_output=True).stdout.split(b"at C1 it is:",1)[1].split(b"```",2)[1]; print(b("df72126c")==b("a9080363"))'
+# expected: True
+```
+
+- **F14: taken, with a guard.** Item 15 (c) now runs the assessed commit's own `judge/status.py`, not trunk's.
+  - It also requires the assessed commit's trusted-base digest to be the trusted base in force at seq *i* (§7). Without that guard, a proposal could put its own evaluator in an intermediate commit and restore `judge/` at its head, since item 1 compares only the head.
+  - New pin: `evaluator_not_in_force`.
+- **F15: taken.** Each promotion is judged once, when it enters.
+  - For a proposal, the item judges the entries it appends, as item 6 already judges only appended `merge`s.
+  - For the self-check, it judges the entries trunk's log holds that the log of a base commit *B* does not. *B* is `main` before the change: `origin/main` in the verbs, and in CI the push's previous head or a pull request's base. *B* must be an ancestor of trunk, or the item refuses.
+  - The evaluator assesses that promotion alone, not `report()`'s loop over earlier ones. A judge run therefore assesses none on most runs and one at a promotion.
+  - The "installing push" definition is dropped. Seqs 188 and 337 are in every *B* and are never judged.
+  - `promote_retroactive` becomes `promote_rejudged`: a `promote` that *B*'s log already holds is judged.
+  - Code this implies, for the move's push: `judge/selfcheck.py` takes *B*, and `tests.yml` passes it; `tools/jack` passes `origin/main`.
+- **F16: taken.** The table records every line the evaluator prints, for each commit and window. A change passes only if it prints those lines byte for byte, except the lines marked wrong. For the move, the marked lines are C2a-prime's criterion 3 at `b88d318e` and later.
+- **Answer 16** is cited in the evaluator paragraph.
+
+**Two gaps the drafter knows of** (OPINION, for the adviser to test or dismiss):
+- (a) If a `promote` reaches `main` without the verb, and CI never runs for that push, it is never judged: the next run's *B* already holds it.
+- (b) A marked line may change to anything. Its new content is not compared.
+
+The draft closes neither. Closing (b) would mean each marked line also states the line expected in its place, which no answer asks for.
+
+**Open for the adviser:**
+- R6 and R7, on the second drafts;
+- R9: copy the id into Bells, and ring this side's bell once.
+
+R3 and R8 are unchanged. No question is the sovereign's.
