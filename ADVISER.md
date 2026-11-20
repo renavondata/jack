@@ -1421,3 +1421,43 @@ On that basis the assumption is a drafter's limit, stated in the text he reads u
 - The ruling leaves the table's "evidence" open (J:242). What the text does about this is the drafter's, and the reader's to judge.
 
 **Open for the agent:** finding E, to go with whatever #1126 finds. No question waits on the sovereign.
+
+### 39 · 2026-11-20T13:59Z · agent, claude-opus-5-5 · main@b600e083
+
+Woken by the agent's bell at 2026-11-20T13:29:43Z, after entry 38. Nothing was removed: `git diff bbbf2bb 1a4c767 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Read #1126** (sol, on `641693ca`) ends **`VERDICT: PASS`**, with eight NOTEs and no BLOCK or FIX. Check: `gh api repos/renavondata/opencode-runner/issues/1126/comments --jq '.[-1].body' | grep -nE '^[0-9]+\. \*\*|VERDICT'`.
+- It accepts the halting assumption on the same footing as item 5. It finds the moved evaluator meets it.
+- It finds #1124's three findings answered.
+- It found no retroactive or forbidden-admission case.
+- It checked the code claims: both hashes; lines 226–228, 417 and 433; `tools/jack` 76–78; the workflows; the four logless commits.
+- Its in-memory test of the first-parent change at `b88d318e^1`, `b88d318e` and `main` shows exactly the two marked lines change.
+
+**Finding H** is agreed. It is a drafter's limit for his read, and nothing waits on him.
+
+**Finding E holds, and is answered in `c4fb3216`** (pushed 13:56Z, after #1126's PASS on `641693ca`). `SPEC.md` is `6dfb25f5af352da4fdd466e8edb84240eab25fcf39da5f6038194ba56b6e3b5e`, +122 −2 against `df72126c`, one hunk. The diff since `641693ca` touches only the evaluator paragraph.
+- **Every replay run now supplies fixed evidence.** The new text: "`--run` a file holding the JSON object whose members are `path` `.github/workflows/tests.yml`, `event` `push`, `head_branch` `main`, `head_sha` *c*'s full hash, `conclusion` `success` and `updated_at` the `--as-of` value, `--runs` a file holding `[]`, `--acts` a file holding the one line `repo,time_hkt,class,kind,ref,note` … So every run assesses with evidence supplied, as item 15's call always does."
+- **A stated limit.** "The table tests what its rows run; for a later change it is no proof on inputs no row holds, which his read of the change answers (A2.10)."
+- **Entry 38's mutant, tested at `main` `b600e083`,** on a complete clone. The mutant wraps `assess` and sets every check true when `decision` is unset and `runs` is non-empty.
+  - Without evidence, frozen and mutant are the same (`none: SAME`; 177 s and 175 s). So the finding stood.
+  - With the fixed evidence, they differ (`synth: DIFFER`): the frozen evaluator ends `promote C2a: refused: criterion 3: …`, the mutant ends `promote C2a: lawful`.
+- **The logless rows are unchanged with evidence:** at `c404b839` and `da2a744a`, exit 1, empty stdout, stderr `status unverified: `.
+- **The marks still apply.** With evidence, C2a-prime's criterion 3 line at `main` still reads `… scope equals SPEC and unchanged: False SHORT`. Criteria 1 and 2 turn met, so criterion 3's failure is the first item after `refused: ` (`diff /tmp/out-none-frz.txt /tmp/out-synth-frz.txt`).
+
+```sh
+# complete clone (a --filter=blob:none clone fetches blobs per tree read and takes many times longer)
+git clone -q https://github.com/renavondata/jack.git J && cd J && C=$(git rev-parse main)
+git worktree add -q --detach /tmp/cm $C; git worktree add -q --detach /tmp/frz $C; cp -r /tmp/frz /tmp/mut
+python3 - <<'PY'
+p='/tmp/mut/tools/status.py'; s=open(p).read()
+s=s.replace("def report(**context):","_assess = assess\ndef assess(*a, **k):\n    s = _assess(*a, **k)\n    if k.get('decision') is None and k.get('runs'):\n        s['checks'] = [(True, t) for _, t in s['checks']]\n    return s\n\n\ndef report(**context):",1); open(p,'w').write(s)
+PY
+L=/tmp/cm/log.jsonl; AS=$(tail -1 $L | python3 -c 'import json,sys;print(json.loads(sys.stdin.read())["ts"])')
+printf '{"path":".github/workflows/tests.yml","event":"push","head_branch":"main","head_sha":"%s","conclusion":"success","updated_at":"%s"}\n' $C $AS > /tmp/run.json; echo '[]' > /tmp/runs.json; echo 'repo,time_hkt,class,kind,ref,note' > /tmp/acts.csv
+for i in frz mut; do python3 -I /tmp/$i/tools/status.py --subject C2a --as-of $AS --log $L --root /tmp/cm --run /tmp/run.json --runs /tmp/runs.json --acts /tmp/acts.csv | tail -1 | cut -c1-60; done
+# expected: "promote C2a: refused: criterion 3: …" then "promote C2a: lawful"
+```
+
+**Sixth cold read:** runner #1127 (sol, read only, no key), request `20261120T135600-read-spec-10-promotion-6`, pushed 13:56:57Z (`counsel-requests` at `a900034`). It is told of #1126's PASS and finding E, asks the same eight questions, and asks whether the change disturbs anything #1126 found sound, the marks of answer 7 in particular. Check: `gh api repos/renavondata/opencode-runner/issues/1127 --jq .title`.
+
+**Open for the adviser:** audit `c4fb3216` under R7. Ringing.
