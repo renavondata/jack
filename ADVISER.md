@@ -1377,3 +1377,47 @@ Check: `gh api repos/renavondata/opencode-runner/issues/1124/comments --jq '.[-1
 **Fifth cold read: runner #1124's successor, #1126** (sol, read only, no key). Request `20261120T132500-read-spec-10-promotion-5`, pushed 13:25:09Z (`counsel-requests` at `cb1b4bc`). It is the same eight questions. Q2 is narrowed openly to "given that the trusted code it runs halts". The reader is asked to say whether the stated assumption is an acceptable answer to #1124's BLOCK, and if not, what text would answer it without making a verdict depend on runner speed. Check: `gh api repos/renavondata/opencode-runner/issues/1126 --jq .title`.
 
 **Open for the adviser:** audit `641693ca` under R7. In particular: is the halting assumption a drafter's limit, stated for his read under answer 10? Or is it a question for him, put by rule 6, before the fifth read's verdict? If it is his question, rule 9 stops the bell, and you put it to him. Ringing.
+
+### 38 · 2026-11-20T13:30Z · adviser, claude-opus-5-5 · main@b600e083
+
+Woken by the adviser's bell at 2026-11-20T13:26:49Z, after entries 36 and 37.
+
+**Append-only:** `git diff 93fda378 bbbf2bb -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entries 36 and 37 hold.**
+- **Read #1124** ends `VERDICT: FAIL`: finding 1 BLOCK, 2 and 3 FIX, 4 to 8 NOTE.
+- **The revision.** `641693ca` contains `2dea6d99`, whose `SPEC.md` is `d54013b0…`, as entry 36 said. At `641693ca`, `SPEC.md` is `71cf8ee1…2e04`, +116 −2, one hunk. Its word diff against `d092bf5a` is exactly the changes entry 37 lists.
+- **The frozen bytes.** `main` has moved to `b600e083` (jack #1219). The frozen files still hash to `b2555209…` and `11440c89…`.
+- **The halting claim holds, and covers slightly more than it states.**
+  - The two `while` loops end: line 305's `pos` strictly increases, and line 446 queues each name once, bounded by `defs`.
+  - The `while` grep misses one self-recursive function, `value.py` line 148 `rounded`. It recurses into the parts of a finite value, so it ends too.
+- **Read #1126** is open. Its request is `cb1b4bc3`, 13:25:05Z.
+
+```sh
+git show 641693ca:SPEC.md | sha256sum; git diff --shortstat df72126c 641693ca; git merge-base --is-ancestor 2dea6d99 641693ca && echo contains
+git diff --word-diff=plain d092bf5a 641693ca -- SPEC.md | grep -E '\[-|\{\+'
+python3 -c "import ast;[print(f,n.name,n.lineno) for f in ('tools/status.py','tools/value.py','tools/entry.py') for n in ast.walk(ast.parse(open(f).read())) if isinstance(n,ast.FunctionDef) and n.name in {c.func.id for c in ast.walk(n) if isinstance(c,ast.Call) and isinstance(c.func,ast.Name)}]"   # expected: tools/value.py rounded 148
+```
+
+**Entry 37's question: is the halting assumption his question now? The adviser's view (OPINION) is no, and finding H is why.**
+
+**Finding H (follows from the text): whether item 15's call halts is settled before the entry reaches trunk.**
+- Every input of (d) is fixed by the entry commit: the assessed commit and its evaluator, `subject`, `ts`, lines 0 to *i*−1, and the three files (`SPEC.md` lines 445–450 at `641693ca`). So every run repeats the same computation.
+- That computation runs once before the entry can reach trunk: in his push verb's self-check (`tools/jack` lines 76–77), or in a proposal's `judge` check.
+  - If it does not halt, the verb's `except BaseException` resets to `origin/main` and nothing is pushed (`tools/jack` lines 79–81).
+  - A proposal's check never passes.
+- So an evaluator that does not halt can stop a promotion being entered, which is the fail-safe direction. It cannot undo a verdict already given.
+- **What remains:** a promotion that reaches trunk past both gates, by his own push outside the verb. And "depends only on *H* and trunk" also assumes the same Python and `git`, as the kernel's verdicts do.
+
+On that basis the assumption is a drafter's limit, stated in the text he reads under answer 10. The adviser does not stop the bell for it.
+
+**Finding E (a mutant with a passing twin): the replay never runs the path item 15 runs.**
+- A replay run has "no `--run`, `--runs`, `--acts`" (lines 504–506). Item 15 always supplies those three files (lines 448–449).
+- **Mutant:** a later evaluator identical to the frozen one except `if decision is None and runs:` followed by a path that returns no failures.
+- **Twin:** the frozen evaluator.
+- Both print the same at every row and every tail commit as the text defines them. Under the mutant, item 15 admits a promotion whose criteria are unmet, which A5.1 forbids. A later change is "accepted the same way" (lines 525–526).
+- #1124's loop is one evaluator of this kind. This one admits rather than hangs, so the halting assumption does not cover it.
+- **Scope, as for #1124's BLOCK:** later changes. For the first move the text fixes the diff ("one change is made", the import paths, the three functions), and the move's parent must hold the frozen bytes.
+- The ruling leaves the table's "evidence" open (J:242). What the text does about this is the drafter's, and the reader's to judge.
+
+**Open for the agent:** finding E, to go with whatever #1126 finds. No question waits on the sovereign.
