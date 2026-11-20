@@ -505,34 +505,36 @@ line, and its exit status. A run at a commit *c* is the evaluator's command line
 `--subject C2a`, `--as-of` the `ts` of the last line of *c*'s `log.jsonl`, `--log` that
 file, `--root` a checkout of *c*, `--run` a file holding the JSON object whose members
 are `path` `.github/workflows/tests.yml`, `event` `push`, `head_branch` `main`,
-`head_sha` *c*'s full hash, `conclusion` `success` and `updated_at` the `--as-of` value,
-`--runs` a file holding `[]`, `--acts` a file holding the one line
+`head_sha` *c*'s full hash, `conclusion` `success` and `updated_at` the `ts` of line 0
+of *c*'s `log.jsonl`, `--runs` a file holding `[]`, `--acts` a file holding the one line
 `repo,time_hkt,class,kind,ref,note`, and no `--map` or `--json`. So every run assesses
-with evidence supplied, as item 15's call always does. Where *c* holds no `log.jsonl`
-(the first four first-parent commits of `main`), `--as-of` is *c*'s committer time in
-§4's UTC form and `--log` an empty file. *c*'s tree is read only through `--root` and
-`--log`, whatever it holds. The frozen evaluator runs from a checkout of *T* for the
-table's rows and from a checkout of the move's parent for the commits after *T*, and the
-moved evaluator from a checkout of the move; each imports its modules (`kernel/`,
-`judge/`, `tools/`, `harness/`) from its own checkout. The move passes only if, run as
-each row states, it prints every unmarked line byte for byte as recorded, every marked
-line as its mark states, and the same exit status; and if, at every first-parent commit
-after *T* up to its parent, its run prints what the frozen evaluator's run prints there,
-under the same marks, and exits with the same status. A line is marked wrong only by
-Guy: before the move is built, his `decision grant` whose `subject` begins as item 15
-states, naming the SHA-256 of `SPEC.md` with this paragraph, names the table's SHA-256
-as well, and that grant is the read A2.10 asks for the move (answer 10). For the move
-the marked lines are, at `b88d318e` and at every later first-parent commit: C2a-prime's
-criterion 3 line, which must read as recorded with `False SHORT` replaced by `True met`;
-and the `promote C2a:` line, which must read as recorded with criterion 3's failure and
-one adjoining `; ` removed from the list after `refused: `, or as `promote C2a: lawful`
-if none is left (answer 7). A later change to the evaluator is accepted the same way,
-against a table of the evaluator it changes and with the lines his grant for it marks.
-The table tests what its rows run; for a later change it is no proof on inputs no row
-holds, which his read of the change answers (A2.10). Pin `replay_drift`: an evaluator
-that changes an unmarked line, prints a marked line otherwise than its mark states, or
-is moved from other bytes than those named, is admitted; twin, the moved evaluator
-passes.
+with evidence supplied, as item 15's call always does, and the attack gates of criteria
+4 to 6, wherever *c*'s tree holds the attack test each reads, open at the log's first
+instant, so that the row computes the window's e-values over its items and events. Where
+*c* holds no `log.jsonl` (the first four first-parent commits of `main`), `--as-of` and
+`updated_at` are *c*'s committer time in §4's UTC form and `--log` an empty file. *c*'s
+tree is read only through `--root` and `--log`, whatever it holds. The frozen evaluator
+runs from a checkout of *T* for the table's rows and from a checkout of the move's
+parent for the commits after *T*, and the moved evaluator from a checkout of the move;
+each imports its modules (`kernel/`, `judge/`, `tools/`, `harness/`) from its own
+checkout. The move passes only if, run as each row states, it prints every unmarked line
+byte for byte as recorded, every marked line as its mark states, and the same exit
+status; and if, at every first-parent commit after *T* up to its parent, its run prints
+what the frozen evaluator's run prints there, under the same marks, and exits with the
+same status. A line is marked wrong only by Guy: before the move is built, his
+`decision grant` whose `subject` begins as item 15 states, naming the SHA-256 of
+`SPEC.md` with this paragraph, names the table's SHA-256 as well, and that grant is the
+read A2.10 asks for the move (answer 10). For the move the marked lines are, at
+`b88d318e` and at every later first-parent commit: C2a-prime's criterion 3 line, which
+must read as recorded with `False SHORT` replaced by `True met`; and the `promote C2a:`
+line, which must read as recorded with criterion 3's failure and one adjoining `; `
+removed from the list after `refused: `, or as `promote C2a: lawful` if none is left
+(answer 7). A later change to the evaluator is accepted the same way, against a table of
+the evaluator it changes and with the lines his grant for it marks. The table tests what
+its rows run; for a later change it is no proof on inputs no row holds, which his read
+of the change answers (A2.10). Pin `replay_drift`: an evaluator that changes an unmarked
+line, prints a marked line otherwise than its mark states, or is moved from other bytes
+than those named, is admitted; twin, the moved evaluator passes.
 
 `judge/scope.json` is under `judge/`, so it is trusted base and changes only
 by Guy's own push. Its members are `layer` (a string), `paths` and `counted`
