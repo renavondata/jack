@@ -1,0 +1,31 @@
+Observation session: 2026-11-20T22:10Z onward, UTC.
+
+Freshness procedure:
+Fetched each forecast's args.url using curl -sL --max-time 90, saving the
+response directly to transcripts/evidence/renavon-freshness/20261120T2210/<dataset>.html.
+fetched_at is the saved response file's modification instant, i.e. completion
+of the curl write, expressed in UTC to seconds.
+last_updated is the exact dateModified string printed in each page's Dataset
+JSON-LD. The visible summary is labelled "Last refreshed" and gives a date
+and rounded age; the JSON-LD supplies its precise offset-bearing instant.
+Compared these instants against 2026-11-20T21:00:00Z, inclusive.
+No previous tick's saved page or manifest was used.
+
+Left undecided:
+210: git show origin/main:transcripts/BRIEF-C2-draft.md printed
+fatal: path 'transcripts/BRIEF-C2-draft.md' does not exist in 'origin/main'
+git log --oneline origin/main -- transcripts/BRIEF-C2-draft.md printed nothing.
+The claim's deadline 2026-11-21T00:00:00Z has not passed. The missing text does
+not currently establish success, and future non-delivery is not yet settled.
+It needs the specifically named brief on main and the specified clauses,
+pins and mutants, or a post-deadline determination of non-delivery.
+
+352 and 358: Read each full forecast entry and both resolution-term texts:
+git show origin/main:transcripts/REVIEW-C2a-v2.md
+git show origin/main:transcripts/REVIEW-C2a-v1.md
+The terms require complete scope, preserved coverage, counted caps 7300 and
+7800 respectively, and no second push inside the C2a window. Neither has
+been certified by evidence produced in this session. Their deadline
+2026-11-21T00:00:00Z is still ahead, so neither may be resolved false simply
+for lack of a current success certificate. They need the delivery head,
+its complete-scope/coverage evidence and count, and the window's push record.
