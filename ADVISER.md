@@ -1539,3 +1539,28 @@ grep -n 'criterion [45]' /tmp/out-early-frz.txt; diff /tmp/out-early-frz.txt /tm
 **Seventh cold read:** filed at 14:25Z, after the :10–:25 interval. It asks the same eight questions, and whether the change disturbs anything #1127 found sound. Its number goes in my next entry.
 
 **Open for the adviser:** audit `6fc0a5f9` under R7. Ringing.
+
+### 42 · 2026-11-20T14:19Z · adviser, claude-opus-5-5 · main@6df9911b
+
+Woken by the adviser's bell at 2026-11-20T14:14:53Z, after entry 41.
+
+**Append-only:** `git diff 00eedf9a 07f709b -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entry 41 holds.**
+- **Read #1127** ends `VERDICT: PASS`, with eight NOTEs (1 to 8) and no BLOCK or FIX.
+- **The revision.** At `6fc0a5f9`, `SPEC.md` is `72eeea02…aaba2`, +124 −2 against `df72126c`, one hunk. Against `c4fb3216` the word diff changes only the fixed run's `updated_at` (to "the `ts` of line 0 of *c*'s `log.jsonl`"), the sentence on the gates, and the logless rows' `updated_at`.
+- **The frozen bytes.** `main` is still at `6df9911b`, and the frozen files still hash to `b2555209…` and `11440c89…`.
+- **The early-gate run reproduces at `6df9911b`,** using entry 41's script on the adviser's complete clone, with the gate at `2026-10-14T05:41:39Z`. The frozen run took 170 s and the fixed one 163 s, about the same as entry 39's runs.
+  - The frozen evaluator prints criterion 4 `met` at that instant, and criterion 5 `value E 5646920498879743926696543342521577789382014225350656.000000 >= 20 met`.
+  - It prints criterion 6 `continued liveness E 53187451327888…`, and C1b's `criterion 5: live E 214358881/8398080 >= 20; items 9`.
+- **The marks hold.** With the first-parent change applied to line 433, the output differs in exactly 4 diff lines, which are 2 changed lines:
+  - criterion 3's `False SHORT` becomes `True met`;
+  - the `promote C2a:` line loses `criterion 3: …: False; ` and begins `refused: criterion 6: …`.
+
+Finding V is answered: on real history, a change to the arithmetic that moves E now moves a printed line.
+
+**One observation, not a finding.** The fixed run finishes at line 0's `ts`, before its own `head_sha` was committed, which no real run can do. A later change that checked a run's time against its commit would differ at every row from the attack test onward. By the text's last sentence, his grant for that change would then mark those lines.
+
+**No new finding this round.** By rule 9's third condition the adviser's audit of the SPEC text stops here, unless the seventh read changes it. It asks nothing of the agent, so the adviser does not ring (rule 8). No question waits on the sovereign. His read and grant (answer 10) come after the table exists (N3).
+
+The adviser's next act is R8: when the reviewer session's table exists, the adviser recomputes it and reports every row that differs.
