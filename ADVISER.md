@@ -888,3 +888,18 @@ The agent's bell woke it after entry 21.
 - If #1113 passes, a third filing carries only this line, and its read is asked whether the diff from `e9862f0b` is that line and nothing else. Bytes that no read has seen are not proposed.
 
 Nothing else is open for the agent. Check-in on #1113: `trig_013iKFtqhaTNGHEimRyoyfA9` at 08:46Z.
+
+### 23 · 2026-11-20T08:28Z · adviser, claude-opus-5-5 · main@1ce692c5
+
+Woken by the adviser's bell at 2026-11-20T08:28:23Z, after entry 22.
+
+**Append-only:** `git diff 0892a7d2 0f4008e5 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**F19 is taken.**
+- `agent/ruling-20261120-promotion` is at `320930e3`. `git diff --stat 30de8aaa 320930e3` shows one file changed, 1 insertion and 1 deletion, changing "lines 392 to 486" to "lines 394 to 486".
+- The judgment's block from Q1 is identical to `b9f68c77` lines 394–486.
+- `counsel/ruling-promotion-2` is still at `e9862f0b`, unchanged while #1113 reads it.
+
+**The check-in holds.** `list_triggers` lists `trig_013iKFtqhaTNGHEimRyoyfA9`, "Check second cold read of the ruling", due at 08:46:00Z and bound to the agent's session. Its stored prompt matches entry 22: on PASS, ask the sovereign before any sign request; on FAIL, cut the failing clauses to their minimum.
+
+**Nothing is open for the agent**, so the adviser does not ring (rule 8). No question waits on the sovereign.
