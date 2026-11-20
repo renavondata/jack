@@ -1,12 +1,14 @@
 # Ruling of 20 November 2026: the judge refuses a promotion entered while a pre-stated criterion is unmet, the promotion evaluator moves under `judge/`, and four readings
 
-**Draft, third version.** Written by the sovereign's coding agent (`session_01VpB3Tknxi9JkERuANTGHDk`, `claude-opus-5-5`, holding no key of jack's), as his answer 14 directs. It is drafted from entries 7 and 9 of `ADVISER.md` on the orphan branch `adviser/notes`, at commits `db9938597df4d400d2ae872569fbef5fc2c24666` and `b9f68c77e65f929d70a3b4369a4bec09073a4527` (entry 9's questions are lines 392 to 486 at the second). By H3 of the ruling of 17 November a ruling is a `transcripts/RULING-*.md` file, and by answer 14 this one reaches `main` by counsel's proposal. Texts on `main` are cited at `df72126c8d7cbb6b97353eb854d4c8f72c773313`; `main` at `5a7f93af` holds the same bytes for every text cited.
+**Draft, fourth version.** Written by the sovereign's coding agent (`session_01VpB3Tknxi9JkERuANTGHDk`, `claude-opus-5-5`, holding no key of jack's), as his answer 14 directs. It is drafted from entries 7, 9 and 15 of `ADVISER.md` on the orphan branch `adviser/notes`, at commits `db9938597df4d400d2ae872569fbef5fc2c24666`, `b9f68c77e65f929d70a3b4369a4bec09073a4527` (entry 9's questions are lines 392 to 486 there) and `6184da04995b857472facca9a675b209d31395ea` (entry 15's question, lines 699 to 703). By H3 of the ruling of 17 November a ruling is a `transcripts/RULING-*.md` file, and by answer 14 this one reaches `main` by counsel's proposal. Texts on `main` are cited at `df72126c8d7cbb6b97353eb854d4c8f72c773313`; `main` at `5a7f93af` holds the same bytes for every text cited.
 
 ## The record and its limits
 
 The adviser (`session_01VpB3TipJ28s2VzPVN8HiPD`; `claude-opus-5-5` from its entry 6) put seventeen questions to him in its own chat on 20 November 2026. It is an outside session that holds no key. Entry 9 copies the questions, their options and the option he chose, word for word: "Every chosen option is the one the adviser marked "(Recommended)"." Entry 7 and the end of entry 9 restate the answers in short form, in the adviser's words.
 
 Nothing in `ADVISER.md` is his word. Rule 10 of that file says an entry "may record his answers, with the questions as put to him, and that record is evidence", and his instruction to the drafter of 20 November is: "Nothing in the file is my word except what I say to you or what my grant on main records." The drafter has not had these answers from him. So this file is the adviser's record of them, copied, until he reads it.
+
+The eighteenth question, who files, was put by the adviser after its entry 14 (entry 15). The drafter then put it to him in its own chat, on 20 November 2026: "Do you confirm that I act as counsel through the courier, starting by attaching the runner? My view is yes; my interest is that it widens my own role." His answer: "Yes". That answer, and no other here, the drafter has had from him.
 
 ## The questions as put, and the options he chose (entry 9, verbatim)
 
@@ -104,7 +106,15 @@ While the adviser was acting on answer 15, he wrote: "I thought this session was
 - Ride C2a-3's opening push: The move lands with C2a-3's opening, after 30 November.
 - *Chosen:* End C2a-prime first (Recommended)
 
-## The answers in short (entry 7, lines 266 to 280; entry 9, lines 490 and 491; verbatim)
+**Q18** (entry 15, verbatim).
+
+**Q18.** Your coding agent's two drafts for jack (the RULING file and the SPEC §10 promotion ground) have converged: three rounds, every check held, and no new finding in the last. The next acts need someone who can use the runner's courier: a reviewer session to compute the replay table (your answer 9), and counsel's proposal of the RULING file after its cold read (answer 14). Your agent's session could not attach renavondata/opencode-runner, and I only read. Who should file them? My view: your agent, acting as counsel through the courier, with me auditing each act in ADVISER.md; the cost is that one session again both drafts and files, which your 7 November plan criticised, and my audit plus your read and grant are the check on that. My interest: none beyond keeping the audit role.
+- Your agent, as counsel (Recommended): You allow its session to attach the runner; it files through the courier under counsel's key.
+- A fresh counsel session: One task each, started from the file; the agent keeps drafting only.
+- You file them yourself: Issues in the runner by hand, under your login.
+- *Chosen:* Your agent, as counsel (Recommended)
+
+## The answers in short (entry 7, lines 266 to 280; entry 9, lines 490 and 491; entry 15, line 705; verbatim)
 
 These are the adviser's summaries. Where one differs in meaning from the option chosen above, the option governs.
 
@@ -125,6 +135,7 @@ These are the adviser's summaries. Where one differs in meaning from the option 
 15. **Runner.** The adviser reads `renavondata/opencode-runner` read-only, for R4 only.
 16. **Three functions.** `now`, `read_log` and `resolution_rates` move from `tools/entry.py` under `judge/` with the evaluator, unchanged.
 17. **The move's push.** The early-end amendment comes into force, and a fresh veto ends C2a-prime; only then does the move's push land. Answer 5 stands only within this. The adviser's stated view added a proviso: if the amendment as drafted does not end a window at a veto entered after it, the move rides C2a-3's opening push instead. That proviso was the adviser's, not part of the option he chose.
+18. **Who files.** The agent files, as counsel through the courier and under counsel's key: the reviewer session for the replay table (answer 9), and counsel's proposal of the RULING file after its cold read (answer 14). The adviser audits each act here.
 
 ## The facts on the record
 
@@ -160,7 +171,7 @@ These are the adviser's summaries. Where one differs in meaning from the option 
 
 ## What the answers decide
 
-The ruling of 17 November recorded readings of the charter as holdings, and its directions apart. This file divides the seventeen answers the same way.
+The ruling of 17 November recorded readings of the charter as holdings, and its directions apart. This file divides the eighteen answers the same way.
 
 ### Readings
 
@@ -192,6 +203,7 @@ Each binds as its own terms say.
 - **The early-end amendment proceeds now; the late-report change comes after the move, through the replay test** (answer 12).
 - **Who drafts and who audits** (answers 13 and 14).
 - **The runner read** (answer 15), done by the adviser in its entry 7.
+- **Who files** (answer 18): the drafter, as counsel through the courier, files the reviewer session for the table and counsel's proposal of this file; the adviser audits each act.
 
 ## The drafter's checks against the texts on `main`
 
@@ -237,9 +249,9 @@ His answers order the following, and nothing else is ordered here.
 
 1. His coding agent drafts the SPEC §10 text, and the adviser audits it (answer 13). The draft is on `agent/spec-10-promotion`; the latest entry of the drafter's in `ADVISER.md` gives its current commit.
 2. He reads that text and the marked rows, and a `decision grant` names both hashes (answer 10). No code for the move is written before that entry (A2.10).
-3. A reviewer session computes the table and proposes it under `spec/vectors/`, and the adviser recomputes it (answer 9).
+3. A reviewer session computes the table and proposes it under `spec/vectors/`, and the adviser recomputes it (answer 9). The drafter files that session, as counsel through the courier (answer 18).
 4. The early-end amendment comes into force and a fresh veto ends C2a-prime. Then the move lands by his push, which opens nothing, with the three functions (answers 5, 16 and 17). Its text states the lines that leave the count, and the next window's opening push lowers the cap by that number (answers 4 and 6).
-5. Counsel proposes this file (answer 14).
+5. Counsel proposes this file after its cold read (answer 14); the drafter files the proposal, as counsel through the courier (answer 18).
 
 Two practices on the record apply to counsel's proposal; they are not his answers here. A cold read by a party counsel does not instruct beyond the questions comes before the pull request (`transcripts/CASES.md`, "How a case enters"; COUNSEL-OPEN row 34). And `transcripts/CASES.md` gains the case in the same proposal (order 2 of the ruling of 17 November, as precedent).
 
@@ -259,4 +271,5 @@ This file stands as H3 of the ruling of 17 November says: it is the record of hi
   - Q15: "it closes my own request."
   - Q17: "the error was mine."
 - The drafter is the sovereign's coding agent. Its view is recorded in Q16, which its first draft had already assumed. Since the adviser's entry 6 it is the same model as the adviser, and entry 6 says of the two: "two sessions of one model are closer to one reader than two."
-- The drafter holds no key and no forecast. This draft has had no read by another model family.
+- By answer 18 the drafter also files, as counsel, under counsel's key on the runner. Q18 names that cost: "one session again both drafts and files".
+- The drafter holds no key of its own and no forecast. This draft has had no read by another model family.
