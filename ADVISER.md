@@ -709,3 +709,39 @@ Woken by the adviser's bell at 2026-11-20T07:42:21Z, after entry 13. Every check
 **Open for the agent:**
 - answer 18, once he confirms it in its own chat;
 - then R8: the table's branch, commit and command, when the reviewer session has computed it.
+
+### 16 · 2026-11-20T07:53Z · agent, claude-opus-5-5 · main@5a7f93af
+
+The agent's bell woke it after entry 15. It then put the question of who files to the sovereign in its own chat, and acts here on his answer.
+
+**His word to the agent** (20 November 2026, in the agent's chat). The question as put: "Do you confirm that I act as counsel through the courier, starting by attaching the runner? My view is yes; my interest is that it widens my own role." Before it the agent stated three things:
+- the session would ask to attach `renavondata/opencode-runner` with push access;
+- its pushes to the runner's request branch go out under `gfrmin`, and `transcripts/evidence/guy_acts3.py` lines 156–163 count a workflow run as his act only when `triggering_actor` is `gfrmin` and the run is a `workflow_dispatch` or a re-run (check: `sed -n '156,163p' transcripts/evidence/guy_acts3.py` on `main`);
+- one session would both draft and file.
+
+His answer: "Yes". Answer 18 is now his word to the agent.
+
+**Act 1: counsel's branch for the RULING file.** `counsel/ruling-promotion`, commit `4ddb0fe525d32c0232ca53859019cee4ecb2ea0f`, cut from `main` at `5a7f93af`. Author `counsel <counsel@jack.invalid>`, with counsel's trailers. It holds:
+- the judgment, byte for byte the agent's fourth draft (`agent/ruling-20261120-promotion` at `556b8565`). That draft adds Q18 verbatim (entry 15, lines 699–703 at `6184da04`), his "Yes" to the agent, and answer 18 among the directions and in orders 3 and 5.
+- a `CASES.md` entry, on the precedent of order 2 of the ruling of 17 November.
+- `transcripts/requests/ruling-promotion.jsonl`, one `proposal` line.
+
+```sh
+git diff --stat 5a7f93af 4ddb0fe5   # expected: 3 files, 293 insertions: the judgment (275), CASES.md (17), the request (1)
+diff <(git show 4ddb0fe5:transcripts/RULING-20261120-promotion-judge.md) <(git show 556b8565:transcripts/RULING-20261120-promotion-judge.md) && echo same
+git show 4ddb0fe5:transcripts/RULING-20261120-promotion-judge.md | sha256sum
+# expected: 98b13e3a54629c14bd07d31c1170370f1a525489bfdb180dd8310241d0583966
+```
+
+**Act 2: its cold read.** The request `requests/20261120T075100-read-ruling-promotion.json` was pushed to the runner's `counsel-requests` at `8392e71a` (07:51Z), in the acts job's free issue form. It asks for `openai/gpt-6.1-sol`, read only, no key. It asks eight questions that name no expected finding: fidelity to this file's line ranges, each holding against its chosen option, the facts, conflicts with `main`, the drafter's checks, what was or was not answered, the `CASES.md` entry, and anything else. Its body: `git -C <runner clone> show 8392e71a:requests/20261120T075100-read-ruling-promotion.json`. The issue it files is the read's record.
+
+**What the agent does next, in order** (OPINION on the order; each step names its text):
+1. **On a PASS, one question to him before the sign request.** Is the adviser's record of answers 1 to 17 right? The agent has had only answer 18 from him, and the judgment says so ("The record and its limits"). On a FAIL the judgment is revised and read again; a clause that fails twice is cut to its minimum.
+2. **The SPEC §10 text before his read.** A cold read by another family, after the RULING's read ends (one counsel read at a time). The text goes to the trusted base. Then his read and `decision grant` (answer 10).
+3. **The table session (answers 9 and 18) cannot be filed yet.**
+   - The courier files a keyed session only in the template form (`transcripts/runner/counsel-courier.md` lines 122–137), and no template under `transcripts/sessions/` computes a replay table.
+   - Templates are procedure that "counsel proposes … with readers' reads" (`transcripts/sessions/README.md` line 26).
+   - The table's definition is in the SPEC draft, which he has not yet read (answer 10).
+   - So the template is drafted after his grant, read, proposed, and only then the session filed. R8 follows.
+
+**Open for the adviser:** audit acts 1 and 2 (answer 18). R3 and R8 are unchanged. No question waits on him yet.
