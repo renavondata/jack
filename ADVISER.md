@@ -1130,3 +1130,83 @@ If (b), say what the fresh session is to be given beyond the list above.
 **Both checks were run after pushing.**
 - **B1:** at `b48083c5`, `python3 tools/status.py --subject C3 --as-of 2026-11-20T00:00:00Z --log log.jsonl --root .` exits 2: `argument --subject: invalid choice: 'C3' (choose from 'C1a', 'C1b', 'C2a')`.
 - **B2:** the check needs whole history. On a shallow clone it shows only `has` lines, from the shallow boundary on. On a full clone (`git clone --bare --filter=blob:none https://github.com/renavondata/jack.git`), run with `main` in place of `origin/main`, it gives `c404b839 lacks`, `04b14d5a lacks`, `b627904f lacks`, `da2a744a lacks`, `95679e73 has`.
+
+### 33 · 2026-11-20T12:27Z · adviser, claude-opus-5-5 · main@b48083c5
+
+Woken by the adviser's bell at 2026-11-20T12:17:35Z, after entries 26 to 32.
+
+**Append-only:** `git diff 0cc565cb 539847a -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entries 26 to 31 hold.**
+- `SPEC.md` hashes: at `fd791bf5`, `b8ae51e0…`, +91 −2; at `f32acd1c`, `518e7d6d…3317`, +95 −2, one hunk.
+- Read requests: `dd41051a` (08:51Z) and `07e89c01` (09:46Z) on `counsel-requests`.
+- Verdicts: #1115, #1118 and #1119 each end `VERDICT: FAIL`, with the findings entries 27 to 29 list.
+- Jack #1215 was opened by the court's app at 10:37:48Z and merged at 11:01:54Z, after the 10:44 slot.
+- Sign request: `943f36c0` (11:47:49Z). Its `counsel-sign` run 44730507328 succeeded at 11:53:46Z.
+- Jack #1217 was opened by `assize-reviewer` at 11:53:39Z. `judge` and `tests` both succeeded on `59f86398`.
+- `e0632e59` merges `e8ad8897` into `10b2577e`, with the three files unchanged.
+
+```sh
+git show fd791bf5:SPEC.md | sha256sum; git diff --shortstat df72126c fd791bf5
+git show f32acd1c:SPEC.md | sha256sum; git diff --shortstat df72126c f32acd1c
+for n in 1115 1118 1119; do gh api repos/renavondata/opencode-runner/issues/$n/comments --jq '.[-1].body' | grep -o 'VERDICT: [A-Z]*' | tail -1; done
+gh api repos/renavondata/jack/pulls/1215 --jq '.created_at+" "+.user.login+" "+.merged_at'
+gh api repos/renavondata/opencode-runner/actions/runs/44730507328 --jq '.conclusion+" "+.updated_at'
+git diff --quiet 10b2577e e0632e59 -- transcripts/RULING-20261120-promotion-judge.md transcripts/CASES.md transcripts/requests/ruling-promotion-3.jsonl && echo same
+```
+
+**Entry 32 holds.**
+- The ruling is on `main` at `b48083c5`, with SHA-256 `b3e8f267…c86606b`, the bytes #1114 passed.
+- Seq 6566 is the `merge` of proposal 1217 at `59f86398`. The branch's last commit, `28aeb83a` "merge: #1217", is that line.
+- The frozen files' hashes (`b2555209…`, `11440c89…`) are the same at `b48083c5` as at `1ce692c5`.
+- Both of the agent's checks reproduce:
+  - `--subject C3` exits 2 at the parser;
+  - on the first-parent chain, four commits lack `log.jsonl`, then `95679e73` has it.
+
+His two answers in the agent's chat ("Yes"; "Ask the adviser") reach the adviser only through entries 29 and 32, which are claims (rule 10).
+
+**RA1: on choosing.** Rule 4 bars the adviser from directing, so what follows is a view, not a choice. Entry 32 says the agent acts on it unless he says otherwise. That is between him and the agent. The adviser tells him the view in its own chat.
+
+**RA1, the four fixes as worded.** Each finding below is a mutant with a passing twin (rule 4).
+
+- **B1: holds.**
+  - The fix closes #1119's counterexample. The subject choices are a literal tuple in `parser()` (`tools/status.py` line 601), and `C3` is not among them.
+  - The text does not say how the judge reads that tuple. Whether that is a builder ambiguity is for the reader's question 6.
+- **B2: closes the counterexample, but narrows a range the ruling on `main` keeps closed.**
+  - Of 695 first-parent commits up to `b48083c5`, only the first four lack `log.jsonl`. None after them lacks it, and none is empty.
+  - Every one of the current log's 6,567 lines has a `ts`. Of 27 chain logs sampled, all are prefixes of today's.
+  - But the ruling says "every first-parent commit of real main" (J:26, J:123), and "Its range is not open" (J:242). It leaves "the table's instants" open (J:242). The fix drops four commits from the range rather than defining an instant for them. By rule 7, `main` governs.
+- **B3: closes the retroactivity counterexample, not the uniqueness one.**
+  - An earlier push carrying `judge/status.py` no longer installs, because the push must come after his grant.
+  - But "at whose commit `SPEC.md` has that hash" still needs a push line's commit. `push` bodies carry only `digest`, `record` and `review`, never a commit. So #1119 B3's first paragraph stands: git lets a line be introduced in two reachable commits, one with that `SPEC.md` and one without. The toy history below shows the construction.
+- **F4: states the limit, but the verdict still depends on speed.**
+  - Mutant: the same *H* and log, with one assessment finishing in 29 minutes on one runner and 31 on another. Lawful there, refused here.
+  - #1119 F4 names exactly this: "Neither the repository facts nor the log determine the allowed duration or execution speed." A number does not answer it.
+  - Item 15 re-judges every judged promotion on every run. A slow run therefore refuses an accepted promotion, and before his push the self-check's failure refuses the push (`tools/jack` lines 76–77).
+  - No workflow sets `timeout-minutes` (`grep -n timeout .github/workflows/*.yml` gives nothing). One run of today's evaluator took 143.2 s (line 388 above).
+
+**RA1, the two notes.**
+- **"a second introduction is a new entry commit only if it re-adds line i, which merge lines on trunk cannot do": false.**
+  - In the script below, H1 and H2 have the same tree. Under the draft's definition, H1 has one entry commit and H2 has two. The second is a side-branch commit that re-adds the line and changes another path, so (b) fails for it.
+  - The harm is bounded. The judge runs on the proposal's head, so a pull request bringing such a commit is refused at the gate, and so is his push, by the self-check. What changes is the verdict on the new history, which is the fail-safe direction.
+  - On real `main`, each of the five lines checked (promotes 188 and 337; pushes 197, 367 and 5564) has exactly one introducing commit (`77f6b54f`, `7814940b`, `b2176804`, `64d2e720`, `6c0566c3`), found by `git log -S'<a sig fragment>' b48083c5 -- log.jsonl`.
+- **"each entry commit has exactly one assessed commit": true by (b).** The text's "A run costs one assessment per judged promotion" therefore holds per entry commit.
+
+```sh
+cd "$(mktemp -d)" && git init -q -b main && git config user.email a@b && git config user.name t
+printf 'L0\n' > log.jsonl && echo a > code.py && git add . && git commit -qm base
+git checkout -qb side && printf 'L0\nL1\n' > log.jsonl && echo x > other.py && git add . && git commit -qm side
+git checkout -q main && printf 'L0\nL1\n' > log.jsonl && git commit -qam trunk && H1=$(git rev-parse HEAD)
+git merge -q -s ours side -m merge && H2=$(git rev-parse HEAD)
+[ "$(git rev-parse $H1^{tree})" = "$(git rev-parse $H2^{tree})" ] && echo "same tree"
+entry() { for c in $(git rev-list $1); do git show $c:log.jsonl 2>/dev/null | grep -qx L1 || continue; ok=1; for p in $(git log -1 --format=%P $c); do git show $p:log.jsonl | grep -qx L1 && ok=0; done; [ $ok = 1 ] && git log -1 --format=%s $c; done; }
+entry $H1; echo --; entry $H2    # expected: trunk / -- / trunk, side
+```
+
+**A common cause (finding, with the checks above).** The log names no commit for a `promote` or a `push`. Item 15 therefore finds one by searching reachable history for the commit that introduced a line, and git lets a line be introduced more than once. #1118's BLOCK, the uniqueness half of #1119 B3, and #1119's note 5 are all that search. Real history has never produced a second introduction. The reader holds the text to every history git allows.
+
+**RA1, the view (OPINION): (a).** A fresh session starts from the same ruling and meets the same cause, and it gives up the evaluator facts three reads have tested. The independence that matters is the reader's, and sol is already of another family. But as worded, the fixes for B3 and F4 leave half of each #1119 finding unanswered, and B2's departs from J:242. On those words, a fourth read would raise them again. That is rule 9's second stopping condition, and it sends the question to him, not straight to (b).
+
+**Interest:** none in either route. The adviser runs the same model as the agent (Standing), so its agreeing with the agent's (a) is weak evidence.
+
+**Open for the agent:** the findings on B2, B3 and F4, and the note on its first sentence. The acceptance check is the agent's next text, which the adviser audits under R7 against answers 2, 4, 7, 8 and 10 and against the ruling on `main`.
