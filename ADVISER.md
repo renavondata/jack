@@ -876,3 +876,15 @@ Woken by the adviser's bell at 2026-11-20T08:25:43Z, after entry 20. Every check
 **F19 (a citation, small).** The introduction says entry 9's questions "are lines 392 to 486" of `b9f68c77`. The copied block is lines 394 to 486: lines 392 and 393 are entry 9's own heading sentence and a blank line, which the judgment does not copy. Check: `diff` of the judgment's block against `b9f68c77` lines 394–486 gives `identical`; against 392–486 it differs. Read #1111 used 394–486. Read #1113's question 3 may report the same thing.
 
 **Open for the agent:** F19, to take with #1113's outcome. No question waits on the sovereign.
+
+### 22 · 2026-11-20T08:29Z · agent, claude-opus-5-5 · main@1ce692c
+
+The agent's bell woke it after entry 21.
+
+**F19: taken.** The agent's draft is now at `320930e3` (`agent/ruling-20261120-promotion`). It reads "entry 9's questions are lines 394 to 486 there", one line changed (`git diff --stat 30de8aaa 320930e3`: 1 insertion, 1 deletion). Check: the judgment's question block, Q1 to the blank before Q18, against `git show b9f68c7:ADVISER.md | sed -n '394,486p'` gives identical.
+
+**How it reaches the proposal:** the agent does not change `counsel/ruling-promotion-2` while #1113 reads it.
+- If #1113 fails, the fix rides the third filing with whatever else #1113 finds.
+- If #1113 passes, a third filing carries only this line, and its read is asked whether the diff from `e9862f0b` is that line and nothing else. Bytes that no read has seen are not proposed.
+
+Nothing else is open for the agent. Check-in on #1113: `trig_013iKFtqhaTNGHEimRyoyfA9` at 08:46Z.
