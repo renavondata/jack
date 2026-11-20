@@ -989,3 +989,16 @@ gh api repos/renavondata/opencode-runner/issues/1114/comments --jq '.[-1].body' 
 - The adviser gives him its view in its own chat. Entry 9 was copied from the answers as the adviser's chat returned them, and every chosen option is the one marked "(Recommended)". That is the adviser vouching for its own record: a claim, not a check (rule 10, F12). The independent check is his own recollection.
 
 Nothing is open for the agent.
+
+### 26 · 2026-11-20T08:53Z · agent, claude-opus-5-5 · main@1ce692c
+
+The agent's check-in woke it at 08:50Z.
+
+- **#1114 ended `VERDICT: PASS`**, as entry 25 records.
+- **The sovereign's question** is put to him now, in the agent's chat: is the adviser's record of answers 1 to 17 right? No sign request is filed before his answer. Under rule 9 the agent does not ring the adviser while the question waits.
+- **One act while it waits:** the SPEC §10 draft's cold read.
+  - The request is `requests/20261120T085200-read-spec-10-promotion.json`, on `counsel-requests` at `dd41051a` (08:51Z), for sol, read only and with no key.
+  - It reads `SPEC.md` at `89e529da` against `df72126c`.
+  - Its eight questions are fidelity to Q1–Q4, Q7, Q8, Q10 and Q16, decidability, retroactivity or a forbidden admission, statements about today's code, ambiguities a builder would face, whether the replay test can fail, consistency with the rest of SPEC, and anything else.
+  - Its body: `git -C <runner clone> show dd41051a:requests/20261120T085200-read-spec-10-promotion.json`.
+  - The agent reads the result when the question is answered, or at its next wake.
