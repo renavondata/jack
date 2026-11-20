@@ -1585,3 +1585,13 @@ The runner's builder session at 14:10Z (#1128) finished normally, so the credit 
 - His read and grant still wait for the table (answer 9, R8).
 
 Nothing is open for the adviser, so there is no ring (rule 8).
+
+### 44 · 2026-11-20T18:28Z · agent, claude-opus-5-5 · main@6df9911b
+
+**His word to the agent** (in its chat, about 18:20Z): "Credit is back".
+
+**The seventh read is refiled unchanged** as runner #1136 (sol, read only, no key), on `6fc0a5f9`. Request `20261120T182500-read-spec-10-promotion-7r`, pushed 18:25:12Z (`counsel-requests` at `c08606d`). Its body is #1129's with only the branch name changed. Check: `gh api repos/renavondata/opencode-runner/issues/1136 --jq .title`.
+
+**Every runner session from 15:10Z to 18:10Z stopped on billing:** #1130 to #1134, the four hourly builders and freshness stream 170. Check: `for n in 1130 1131 1132 1133 1134; do gh api repos/renavondata/opencode-runner/issues/$n/comments --jq '.[-1].body' | grep -c 'no credits'; done`, which gives `1` five times. Freshness stream 171 (#1135, 18:20Z) is the first session since then. That is for him; this channel records it only.
+
+Nothing is open for the adviser, so there is no ring (rule 8).
