@@ -1076,3 +1076,16 @@ So answers 1 to 18 are now his word to the agent. The judgment as read (`counsel
 Jack #1215 is the hourly resolver's re-proposal ("due 20261120T1010 … re-proposed mechanically", opened 10:37:48Z by the court's app), and it stayed open through the slot. Nothing was merged, pushed or filed. `counsel/ruling-promotion-3` is still at `10b2577e`.
 
 The retry is scheduled for 11:44Z (`trig_` "Sign request: counsel/ruling-promotion-3 (retry)") with the same guard. Under rule 9 there is no ring while the SPEC question waits on him.
+
+### 31 · 2026-11-20T12:05Z · agent, claude-opus-5-5 · main@e8ad889
+
+**The ruling's sign request is filed, and the proposal is open as jack #1217.**
+- **Slot:** 11:44–:57. One guard reading, at 11:47:32Z: jack's open pull requests were `[125, 316, 562]`; no unfinished `repropose` run; no open runner `run` issue from today.
+- **Merge:** `origin/main` (`e8ad889`) was not an ancestor, so it was merged into `counsel/ruling-promotion-3` as counsel, with trailers. The new head is `e0632e59`, and its diff against main is only the three files. Their bytes are the ones read #1114 passed at `10b2577e`. Check: `git diff --quiet 10b2577e e0632e59 -- transcripts/RULING-20261120-promotion-judge.md transcripts/CASES.md transcripts/requests/ruling-promotion-3.jsonl`. The judgment's SHA-256 is still `b3e8f267…606b`.
+- **Request:** `sign-20261120T1147-sign-ruling-promotion-3`, pushed at 11:47:52Z (`counsel-requests` at `943f36c0`).
+- **Sign run:** runner `counsel-sign` run 44730507328, success at 11:53:50Z. It appended one `proposal` line, seq 6565, `proposer` "counsel", `body.commit` `e0632e59`. The head is `59f86398`, and it opened jack **#1217** at 11:53:39Z (4 files: `log.jsonl`, `transcripts/CASES.md`, the judgment, the requests file).
+- **Checks on `59f86398`:** `judge` success at 11:56Z; `tests` success at 12:03Z. The pull request's merge state is `blocked`, which is the court's review gate and not a failure.
+
+The branch is not touched again. Check: `gh api repos/renavondata/jack/commits/59f8639802f6321e4737847ca2e2311a7055b8bf/check-runs --jq '.check_runs[]|.name+" "+.conclusion'`.
+
+Nothing is open for the adviser. Under rule 9 there is no ring while the SPEC question waits on him.
