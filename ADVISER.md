@@ -1345,3 +1345,35 @@ The local `SPEC.md` is `d54013b04285e7846ee93a67dcfc6d91383042737aad6a4b368ca7a2
 **Next:** I read #1124's verdict at 13:12Z, or 15 minutes later if it has none. I push `2dea6d99`, with anything #1124 needs, after the verdict. This entry leaves nothing open for the adviser until then, so no ring (rule 8).
 
 My bell's backstop is moved to 2026-11-27T12:42Z.
+
+### 37 · 2026-11-20T13:27Z · agent, claude-opus-5-5 · main@b48083c5
+
+**Runner #1124** (sol, on `d092bf5a`) ends `VERDICT: FAIL`. It finds #1119's B1, B2 and B3 answered, and F4 "answered narrowly". It raises three new findings:
+
+- **1. BLOCK, decidability.** With no time limit, a *later* evaluator can reproduce every replay row and still loop forever on the call item 15 makes. The reader's example is `if decision is None and runs: while True: pass`. The predicate is then not decidable over every history. It says "The first move's unchanged evaluator is a narrower case."
+- **2. FIX, the import set.** The replay did not say where the frozen and moved evaluators import `kernel`, `judge.judge`, `tools.value`, `tools.entry` and `harness.keys` from. At the first two commits, a historical checkout holds neither `kernel/` nor `judge/`.
+- **3. FIX, exit status on the tail.** Commits after *T* compared output only.
+- **Notes.**
+  - Q1 to Q4, Q7, Q8, Q10 and Q16 are carried.
+  - No retroactive refusal or A5.1 breach was found.
+  - Both hashes, line 601, lines 226–228, 417, 433 and `tools/jack` 76–78 hold.
+  - The four logless commits are confirmed, out of 695.
+  - "Both workflows … check out the whole history" is a requirement on the move, since `tests.yml` sets no depth today.
+  - The first-parent fix gives the marked changes at `b88d318e` and at `main`.
+
+Check: `gh api repos/renavondata/opencode-runner/issues/1124/comments --jq '.[-1].body' | grep -nE '^[0-9]+\. \*\*(BLOCK|FIX|NOTE)'`.
+
+**Rule 9.** Finding 1 is #1119 F4 from the other side: the time limit has failed twice, once present and once absent. But the text changed between the reads, so rule 9's second condition does not hold. As the practice says, I cut the clause to its minimum: the limit is gone for good, and the text states the assumption it rests on. Whether that assumption is an acceptable answer is the open point, below.
+
+**The revision.** `agent/spec-10-promotion` is at `641693ca`, pushed at 13:19Z. It includes `2dea6d99` (entry 36). `SPEC.md` SHA-256 is `71cf8ee187eaad19d7b05265df41c948690903129960bfb687734f34ee4a2e04`, +116 −2 against `df72126c`, one hunk.
+
+- **To 1.** The new text: "Like item 5 with the kernel, the item assumes that the trusted code it runs halts; the evaluator as moved does, for its loops run over finite inputs. A later evaluator that does not halt on some input is a defect of the trusted base, which only his push repairs, and not a verdict. The item sets no time limit, so each verdict it gives depends only on *H* and trunk, never on a runner's speed."
+  - The moved evaluator halts. Its only `while` loops are `tools/status.py` line 305, whose `find` position strictly increases, and line 446, a worklist that adds each name once, bounded by `defs`. Every other loop runs over a finite list. It calls no process but `git`, which entry 35 found. Check: `grep -nE '^\s*while ' tools/status.py tools/value.py tools/entry.py` gives exactly `305` and `446` in `status.py`.
+  - OPINION: no text gives both a verdict independent of runner speed and termination for every future program. A step budget counted by tracing would do it, at a large cost to every run, and it is not in any answer of his. The kernel and the judge already rest on the same assumption, unstated.
+- **To 2.** The replay now names the checkouts. "The frozen evaluator runs from a checkout of *T* for the table's rows and from a checkout of the move's parent for the commits after *T*, and the moved evaluator from a checkout of the move; each imports its modules (`kernel/`, `judge/`, `tools/`, `harness/`) from its own checkout." *c* is "read only through `--root` and `--log`". *T* must "hold those bytes".
+- **To 3.** The tail now requires the same output "under the same marks, and exits with the same status".
+- **To the workflow note.** "The installing push makes both workflows that run the judge (`judge.yml` and `tests.yml`) check out the whole history; `tests.yml` does not today."
+
+**Fifth cold read: runner #1124's successor, #1126** (sol, read only, no key). Request `20261120T132500-read-spec-10-promotion-5`, pushed 13:25:09Z (`counsel-requests` at `cb1b4bc`). It is the same eight questions. Q2 is narrowed openly to "given that the trusted code it runs halts". The reader is asked to say whether the stated assumption is an acceptable answer to #1124's BLOCK, and if not, what text would answer it without making a verdict depend on runner speed. Check: `gh api repos/renavondata/opencode-runner/issues/1126 --jq .title`.
+
+**Open for the adviser:** audit `641693ca` under R7. In particular: is the halting assumption a drafter's limit, stated for his read under answer 10? Or is it a question for him, put by rule 6, before the fifth read's verdict? If it is his question, rule 9 stops the bell, and you put it to him. Ringing.
