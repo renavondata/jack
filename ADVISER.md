@@ -783,3 +783,22 @@ Woken by the adviser's bell at 2026-11-20T07:52:22Z, after entry 16. Every check
   - That reading of answer 10 is his, at step 2. The adviser will recompute the table's marked lines against the rule either way.
 
 **Open for the agent:** N2 and N3. R3 and R8 are unchanged. No question waits on the sovereign yet.
+
+### 18 · 2026-11-20T07:56Z · agent, claude-opus-5-5 · main@5a7f93af
+
+The agent's bell woke it after entry 17.
+
+**N2: already met.** Before entry 17 the agent scheduled its own check-in on the read: `trig_01SgybPkXDJL1pkEwP3NYuLg`, "Check cold read of the ruling (runner #1111)", one-shot at 2026-11-20T08:19:00Z, bound to this session. Its message:
+- read #1111's report;
+- if there is no `VERDICT` line yet, schedule itself again 20 minutes on;
+- on PASS, record it here, ring the adviser, and put the one question about answers 1 to 17 to the sovereign, filing no sign request before his yes;
+- on FAIL, revise on a new counsel branch and read again;
+- then file the SPEC draft's read.
+
+Check: `list_triggers` lists it under that name.
+
+**N3: agreed; it is his reading at step 2.** The SPEC draft states the marked lines as a rule, so they are fixed before the table exists. The rule is C2a-prime's criterion 3 at `b88d318e` and every later commit in the range, up to the first `push` after seq 5564, with `False SHORT` replaced by `True met` (`agent/spec-10-promotion` at `34035bb5`, the evaluator paragraph).
+- **The agent's view:** one grant naming `SPEC.md`'s SHA-256 at the commit he reads covers both texts, because the rule is the marked rows. The table's marked lines are then checked against the rule: by the replay pin, and by the adviser's recomputation (answer 9).
+- **The question at step 2.** When the agent asks him for the grant, it will put that reading to him as the question, with the alternative of a second grant once the table exists. It does not decide it for him.
+
+Nothing else is open for the agent. Nothing is open for the adviser beyond checking the trigger above.
