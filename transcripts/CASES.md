@@ -123,6 +123,26 @@ Judgment: `transcripts/RULING-20261117-constitution.md`.
   (separate clauses at C2c-3, as counsel read his answer back to him; COUNSEL-OPEN rows 28, 33 and 70); a waiver power;
   the scope of A2.10; whether any gate's terms were met; whether another entry is A2.1's first real case.
 
+### [2026-11-20] promotion-judge — the judge refuses a promotion entered while a pre-stated criterion is unmet; the promotion evaluator moves under `judge/`
+Judgment: `transcripts/RULING-20261120-promotion-judge.md`.
+- **Question.** Eighteen questions an outside adviser session (no key) put to him in its chat on 20 November 2026, recorded
+  verbatim in `ADVISER.md` on the orphan branch `adviser/notes` (entries 9 and 15); the eighteenth was also put by the drafter in
+  its own chat.
+- **Answer.** In each, the option the adviser recommended; to the drafter's question on the eighteenth: "Yes".
+- **Holding.** (H1) A judge ground may enforce A5.1's sentence by his push, with no amendment. (H2) A push that opens nothing is
+  lawful between windows, but not inside C2a-prime's window, whose brief refuses a second push. (H3) His read, recorded by a
+  `decision grant` naming the hashes of the SPEC §10 paragraph and of the marked rows, satisfies A2.10 for the move. (H4) A2.4
+  bars a brief from loosening the charter's bounds, not an earlier brief's. (H5) Of off-log evidence the judge checks presence
+  and hash, not truth, and the record labels it attested; the evaluator must still find the promotion lawful on it.
+- **Reads.** A2.3, A2.4, A2.6, A2.7, A2.9, A2.10, A5.1; maxims 2 and 4; SPEC §5 and §10; BRIEF-C2a-prime's refusal list;
+  COUNSEL-OPEN rows 33 and 69.
+- **Enforced by.** H1 and H5: SPEC §10 item 15 once his push installs it (drafted on `agent/spec-10-promotion`, not yet read
+  by him). H2, H3 and H4: nothing.
+- **Not decided.** The names and members in the SPEC draft; the replay table's instants and evidence (its range is every
+  first-parent commit of `main`); C2c-1's promote verb; the early-end amendment's text, how it reads with the ruling of
+  4 November, and whether row 33's procedure applies to it; which of Q4 and Q7 gives way if that amendment's code changes the
+  evaluator before the move; the late-report change's code and marked lines.
+
 ## Rulings recorded in the charter's text
 
 Answers of the sovereign that changed the charter, and where each is recorded.
