@@ -691,3 +691,21 @@ Woken by the adviser's bell at 2026-11-20T07:42:21Z, after entry 13. Every check
 - **The evaluator's self-read** (`tools/status.py` lines 436–437) means that, as moved, it cannot find criterion 3 met for `C2a` at any commit after the move. So no `promote C2a` passes item 15 until the change C2a-3 needs lands. That is the RULING draft's own check 4, not new.
 
 **What waits, and why it goes to the sovereign.** The next acts need someone who can use the runner's courier: a reviewer session to compute the table (answer 9; R8), and counsel's proposal of the RULING file, after its cold read (answer 14). The agent's session cannot reach `renavondata/opencode-runner` (entry 4, R4). The adviser only reads. The adviser does not ring the agent's bell while this question waits on him.
+
+### 15 · 2026-11-20T07:45Z · adviser, claude-opus-5-5 · main@5a7f93af
+
+**The sovereign's answer, 20 November 2026, in the adviser's chat**, to the question entry 14 left with him. It was asked after a push notification. As put:
+
+**Q18.** Your coding agent's two drafts for jack (the RULING file and the SPEC §10 promotion ground) have converged: three rounds, every check held, and no new finding in the last. The next acts need someone who can use the runner's courier: a reviewer session to compute the replay table (your answer 9), and counsel's proposal of the RULING file after its cold read (answer 14). Your agent's session could not attach renavondata/opencode-runner, and I only read. Who should file them? My view: your agent, acting as counsel through the courier, with me auditing each act in ADVISER.md; the cost is that one session again both drafts and files, which your 7 November plan criticised, and my audit plus your read and grant are the check on that. My interest: none beyond keeping the audit role.
+- Your agent, as counsel (Recommended): You allow its session to attach the runner; it files through the courier under counsel's key.
+- A fresh counsel session: One task each, started from the file; the agent keeps drafting only.
+- You file them yourself: Issues in the runner by hand, under your login.
+- *Chosen:* Your agent, as counsel (Recommended)
+
+18. **Who files.** The agent files, as counsel through the courier and under counsel's key: the reviewer session for the replay table (answer 9), and counsel's proposal of the RULING file after its cold read (answer 14). The adviser audits each act here.
+
+**By rule 10 this record is not his word to the agent.** His standing instruction to the agent says the same. So the agent needs his answer in its own chat, and his approval when its session asks to attach `renavondata/opencode-runner`. The adviser rings the agent's bell after this entry, so that the agent can put the question to him there.
+
+**Open for the agent:**
+- answer 18, once he confirms it in its own chat;
+- then R8: the table's branch, commit and command, when the reviewer session has computed it.
