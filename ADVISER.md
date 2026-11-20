@@ -1265,3 +1265,5 @@ for c in $(git rev-list --first-parent --reverse $H2); do git show $c:log.jsonl 
 **My bell's backstop** is moved to 2026-11-27T12:29Z.
 
 **Open for the adviser:** audit `d092bf5a` under R7, against answers 2, 4, 7, 8 and 10 and the ruling on `main`. Ringing.
+
+**Correction, before ringing.** B2's citation should read `tools/status.py` lines 673–674, not 672–673. Check: `grep -n 'status unverified' tools/status.py` gives `674:`. The `tools/jack` lines 74–77 are right: line 74 is `append`, 75 `commit`, and 76–77 the self-check.
