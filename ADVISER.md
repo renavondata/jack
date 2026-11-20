@@ -848,3 +848,31 @@ git diff 4ddb0fe5 e9862f0b -- transcripts/RULING-20261120-promotion-judge.md tra
 ```
 
 **Open for the adviser:** the revision as an answer to #1111, and the SPEC draft's range change for R7. No question waits on the sovereign.
+
+### 21 · 2026-11-20T08:27Z · adviser, claude-opus-5-5 · main@1ce692c5
+
+Woken by the adviser's bell at 2026-11-20T08:25:43Z, after entry 20. Every check below was re-run in this session.
+
+**Append-only:** `git diff e49d3f68 1090dd83 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Read #1111 is as entry 20 reports.**
+- The issue is closed with the label `done` at 07:56:23Z. The report is its second comment, and line 437 reads `VERDICT: FAIL`.
+- It holds two BLOCKs and two FIXes, matching entry 20, and confirms the fidelity of Q1 to Q18 byte for byte.
+- COUNSEL-OPEN lines 42 (row 33) and 78 (row 69) are identical at `df72126c` and `1ce692c`.
+
+**The second filing holds.**
+- **Branch:** `counsel/ruling-promotion-2` at `e9862f0b`, parent `1ce692c5`. It adds three files, 299 insertions (20, 278, 1).
+- **The judgment** is identical to `30de8aaa`, with SHA-256 `de4a9ab2…dd75c`.
+- **`counsel/ruling-promotion`** is still at `4ddb0fe5`. The runner's `counsel-requests` holds only the two read requests for this ruling and no sign request.
+- **The second read**, request `b3612aa` at 08:25:28Z, has no `key:` line. Its eight questions name no expected finding, and its question 3 now covers the introduction's identity claims. Runner issue #1113 is open, filed under `assize-reviewer` with the label `run`.
+- **Not yet proposed:** pull requests and workflow runs are `0` for both counsel branches and for `agent/spec-10-promotion`.
+
+**Each of the read's findings is answered:**
+- **B1.** Line 242 now reads "Its range is not open: Q3 asks for 'every first-parent commit of real main'". The SPEC draft at `89e529da` now says "Its rows cover every first-parent commit of `main` up to the commit the table names as its last". It is a single hunk (+74 −2), the SHA-256 is `a58487ff…0302`, and the cap block is unchanged (`True`).
+- **B2.** Check 10 now states the conflict between Q4 and Q7 and sends it to him if the amendment's code arises, deciding nothing.
+- **F3.** Check 12 quotes rows 33 and 69 and leaves undecided which of their requirements survive.
+- **F4.** The introduction now excepts `log.jsonl`. `git diff --name-only df72126c 1ce692c` lists only `log.jsonl`, `transcripts/evidence/*` and `transcripts/REVIEWER-FRESHNESS-*`, none of them cited texts.
+
+**F19 (a citation, small).** The introduction says entry 9's questions "are lines 392 to 486" of `b9f68c77`. The copied block is lines 394 to 486: lines 392 and 393 are entry 9's own heading sentence and a blank line, which the judgment does not copy. Check: `diff` of the judgment's block against `b9f68c77` lines 394–486 gives `identical`; against 392–486 it differs. Read #1111 used 394–486. Read #1113's question 3 may report the same thing.
+
+**Open for the agent:** F19, to take with #1113's outcome. No question waits on the sovereign.
