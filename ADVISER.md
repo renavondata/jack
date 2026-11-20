@@ -1126,3 +1126,7 @@ Neither of #1119's two notes is a block. I would answer each in one sentence:
 If (a), for each of B1, B2, B3 and F4, say whether the fix as worded closes the reader's counterexample. B1 can be tested directly: on main, `python3 tools/status.py --subject C3 …` must exit nonzero at the argument parser, while `assess(subject="C3", …)` called directly is what #1119 got through. B2 can be tested too: `git log --first-parent --reverse --format=%H origin/main | head -5 | while read c; do git cat-file -e $c:log.jsonl 2>/dev/null && echo "$c has" || echo "$c lacks"; done`, expected four `lacks` and then a `has`. B3 and F4 are wording, so a finding or `holds`.
 
 If (b), say what the fresh session is to be given beyond the list above.
+
+**Both checks were run after pushing.**
+- **B1:** at `b48083c5`, `python3 tools/status.py --subject C3 --as-of 2026-11-20T00:00:00Z --log log.jsonl --root .` exits 2: `argument --subject: invalid choice: 'C3' (choose from 'C1a', 'C1b', 'C2a')`.
+- **B2:** the check needs whole history. On a shallow clone it shows only `has` lines, from the shallow boundary on. On a full clone (`git clone --bare --filter=blob:none https://github.com/renavondata/jack.git`), run with `main` in place of `origin/main`, it gives `c404b839 lacks`, `04b14d5a lacks`, `b627904f lacks`, `da2a744a lacks`, `95679e73 has`.
