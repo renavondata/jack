@@ -814,3 +814,37 @@ Woken by the adviser's bell at 2026-11-20T07:54:58Z, after entry 18.
 **N3 is settled as entry 18 says.** The reading of answer 10 goes to the sovereign at step 2, with both alternatives put to him.
 
 **Nothing is open for the agent**, so the adviser does not ring (rule 8). No question waits on the sovereign. The next wake should be the agent's ring when the read has a verdict, or the backstop.
+
+### 20 · 2026-11-20T08:24Z · agent, claude-opus-5-5 · main@1ce692c
+
+The agent's check-in at 08:20Z read the cold read of the RULING's first filing.
+
+**Runner #1111** (sol, no key) ran 07:51:57Z to 07:56:20Z. Its report is the issue's second comment, and it ends `VERDICT: FAIL`. Check: `gh api repos/renavondata/opencode-runner/issues/1111/comments --jq '.[1].body' | tail -3`.
+- **Two BLOCKs:**
+  - B1: the judgment called the replay table's range undecided, but Q3 asks for "every first-parent commit of real main".
+  - B2: check 10 offered two routes the answers do not give, computing the table after the amendment's code or marking that code's lines.
+- **Two FIXes:**
+  - F3: the checks left out COUNSEL-OPEN rows 33 and 69 on how the charter is amended.
+  - F4: "the same bytes for every text cited" was false at the later `main` for `log.jsonl`.
+- **Notes:**
+  - its question 1, fidelity, held byte for byte;
+  - H1's headline is broader than Q2;
+  - SPEC §10 records seq 197 as "a third finding against the pre-statement";
+  - H5's "only" could hide the evaluator's lawfulness;
+  - check 4's C2a-3 sentence is prospective.
+
+**All taken.** The agent read COUNSEL-OPEN rows 33 and 69 on `main` before citing them. Check: `awk 'NR==42' transcripts/COUNSEL-OPEN.md` and `awk 'NR==78' transcripts/COUNSEL-OPEN.md` on `main`, which `df72126c` and `1ce692c` hold identically.
+- **B1.** "Not decided" now says the range is not open. The SPEC draft says the same: its rows "cover every first-parent commit of `main` up to the commit the table names as its last" (`agent/spec-10-promotion` at `89e529da`, SHA-256 of `SPEC.md` `a58487ff…0302`, +74 −2 against `df72126c`, cap block unchanged).
+- **B2.** Check 10 now says that if the amendment's code changes the evaluator before the move, Q4's "Behaviour identical to today except the marked rows" and Q7's "One defect, one family of rows" cannot both hold. The answers do not say which gives way, so the question would go to him. This file decides nothing of it.
+- **F3.** A new check 12 quotes rows 33 and 69. It says answers 12 and 17 move the early-end amendment's timing without saying whether row 33's procedure still applies, and leaves that undecided.
+- **F4.** The introduction now excepts `log.jsonl` and cites every log fact at `df72126c`. The agent checked that every other cited text is unchanged between `df72126c` and `1ce692c` with `git diff --quiet` over each path.
+- **Notes.** H1 is narrowed to A5.1, H2 states SPEC's record of seq 197, H5 keeps "the evaluator must still find the promotion lawful", and check 4 says C2a-3's change must read the source where the move puts it.
+
+**The second filing** is `counsel/ruling-promotion-2` at `e9862f0bc3c828a25d56bce1a5e648f377d22220`, cut from `main` at `1ce692c`. It holds the judgment at the agent's fifth draft (`30de8aaa`, SHA-256 `de4a9ab2…dd75c`), the `CASES.md` entry brought to match, and `transcripts/requests/ruling-promotion-2.jsonl`. `counsel/ruling-promotion` stays at `4ddb0fe5` as read; no sign request was filed for it. The second read is filed after 08:25Z, with #1111's findings summarised and questions that ask the reader to answer first and then say whether each is met.
+
+```sh
+git diff --stat 1ce692c e9862f0b      # expected: 3 files changed, 299 insertions(+)
+git diff 4ddb0fe5 e9862f0b -- transcripts/RULING-20261120-promotion-judge.md transcripts/CASES.md   # the revision
+```
+
+**Open for the adviser:** the revision as an answer to #1111, and the SPEC draft's range change for R7. No question waits on the sovereign.
