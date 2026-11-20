@@ -1,6 +1,6 @@
 # Ruling of 20 November 2026: the judge refuses a promotion entered while a pre-stated criterion is unmet, the promotion evaluator moves under `judge/`, and four readings
 
-**Draft, second version.** Written by the sovereign's coding agent (`session_01VpB3Tknxi9JkERuANTGHDk`, `claude-opus-5-5`, holding no key of jack's), as his answer 14 directs. It is drafted from entries 7 and 9 of `ADVISER.md` on the orphan branch `adviser/notes`, at commits `db9938597df4d400d2ae872569fbef5fc2c24666` and `b9f68c77e65f929d70a3b4369a4bec09073a4527` (entry 9's questions are lines 392 to 486 at the second). By H3 of the ruling of 17 November a ruling is a `transcripts/RULING-*.md` file, and by answer 14 this one reaches `main` by counsel's proposal. Texts on `main` are cited at `df72126c8d7cbb6b97353eb854d4c8f72c773313`; `main` at `5a7f93af` holds the same bytes for every text cited.
+**Draft, third version.** Written by the sovereign's coding agent (`session_01VpB3Tknxi9JkERuANTGHDk`, `claude-opus-5-5`, holding no key of jack's), as his answer 14 directs. It is drafted from entries 7 and 9 of `ADVISER.md` on the orphan branch `adviser/notes`, at commits `db9938597df4d400d2ae872569fbef5fc2c24666` and `b9f68c77e65f929d70a3b4369a4bec09073a4527` (entry 9's questions are lines 392 to 486 at the second). By H3 of the ruling of 17 November a ruling is a `transcripts/RULING-*.md` file, and by answer 14 this one reaches `main` by counsel's proposal. Texts on `main` are cited at `df72126c8d7cbb6b97353eb854d4c8f72c773313`; `main` at `5a7f93af` holds the same bytes for every text cited.
 
 ## The record and its limits
 
@@ -202,7 +202,7 @@ The first version of this draft said it found no answer that a text on `main` fo
 1. **"The trusted checker itself"** (answer 1) is read with answer 2 and Q1–Q2: the judge and its self-check, not the kernel.
    - SPEC §8 and §9 do not change. A log that holds a promotion the judge refuses is still valid to both checkers, and §3's "The checker is the only adjudicator of validity" stands.
    - `jack decision` runs the self-check before it pushes, so a promotion the judge refuses is never pushed and costs only resubmission.
-2. **No retroactive refusal.** Seqs 188 and 337 were entered with no committed evidence. The SPEC draft judges each promotion once, when it enters, by the evaluator in force at it (entry 9, F14 and F15). So those two are never judged, and no later evaluator re-judges an earlier promotion (maxim 2).
+2. **No retroactive refusal.** Seqs 188 and 337 were entered with no committed evidence. The SPEC draft judges only promotions after the push that installs the ground, each by the evaluator in force at it, on every run (entries 9 and 12, F14 and F17). So those two are never judged, no later evaluator re-judges an earlier promotion (maxim 2), and a promotion whose push started no run is judged at the next.
 3. **The evaluator's imports.** `tools/value.py` takes three functions from `tools/entry.py`, which imports `harness/keys.py`. Settled by answer 16: the three functions move.
 4. **The evaluator reads its own source by path.** `tools/status.py` lines 436 and 437 read `tools/status.py` from the opening's tree and from the tree assessed.
    - After the move that path is absent at later commits, so that comparison fails there.
@@ -224,7 +224,7 @@ The first version of this draft said it found no answer that a text on `main` fo
 
 ## What this ruling does not decide
 
-- The names, members and paths in the SPEC draft: `promote_unmet`, `body.evidence`, the pins, `spec/vectors/promotion-replay.json`, and the base commit *B*. These are the drafter's, for his read (answer 10).
+- The names, members and paths in the SPEC draft: `promote_unmet`, `body.evidence`, the pins, `spec/vectors/promotion-replay.json`, and the definition of the installing push. These are the drafter's, for his read (answer 10).
 - The table's range, instants and evidence (answer 9; request R8 of `ADVISER.md`).
 - How an attested file counts in a window's report.
 - C2c-1's promote verb (point 6).
@@ -235,7 +235,7 @@ The first version of this draft said it found no answer that a text on `main` fo
 
 His answers order the following, and nothing else is ordered here.
 
-1. His coding agent drafts the SPEC §10 text, and the adviser audits it (answer 13). The draft is on `agent/spec-10-promotion`; entry 11 of `ADVISER.md` gives its current commit.
+1. His coding agent drafts the SPEC §10 text, and the adviser audits it (answer 13). The draft is on `agent/spec-10-promotion`; the latest entry of the drafter's in `ADVISER.md` gives its current commit.
 2. He reads that text and the marked rows, and a `decision grant` names both hashes (answer 10). No code for the move is written before that entry (A2.10).
 3. A reviewer session computes the table and proposes it under `spec/vectors/`, and the adviser recomputes it (answer 9).
 4. The early-end amendment comes into force and a fresh veto ends C2a-prime. Then the move lands by his push, which opens nothing, with the three functions (answers 5, 16 and 17). Its text states the lines that leave the count, and the next window's opening push lowers the cap by that number (answers 4 and 6).
