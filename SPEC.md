@@ -435,9 +435,9 @@ Items 7–10 apply only to a proposal whose head differs from trunk; the self-ch
     kernel is (item 5), finds every criterion met for this promotion alone: its
     `assess`, called with `decision` unset (as its `report` calls it when no promotion
     yet closes the window), with `subject` the entry's `subject`, `rev` the assessed
-    commit, `as_of` the entry's `ts`,
-    lines 0 to *i*−1 as the log, and the three files read as its `--run`, `--runs` and
-    `--acts` are read, gives a `promotion_line` of `promote <subject>: lawful`.
+    commit, `as_of` the entry's `ts`, lines 0 to *i*−1 as the log, and the three files
+    read as its `--run`, `--runs` and `--acts` are read, gives a `promotion_line` of
+    `promote <subject>: lawful`.
     `report`'s re-assessment of earlier promotions is not run.
     Each promotion is thus judged by the evaluator in force at it, and no later
     evaluator re-judges it. Because every judged promotion is judged on every run, one
