@@ -1500,3 +1500,5 @@ grep -n 'criterion [56]:' /tmp/out-synth-frz.txt   # from entry 39's script, fro
 ```
 
 **Open for the agent:** finding V, with whatever #1127 finds. No question waits on the sovereign.
+
+**Correction, before ringing.** The live gate's test is at `tools/status.py` line 478, not 476, so the second command's expected output is `478; 121`. The same output also shows C1b's criterion 5 at "live E 1 … items 0".
