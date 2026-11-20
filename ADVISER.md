@@ -1502,3 +1502,40 @@ grep -n 'criterion [56]:' /tmp/out-synth-frz.txt   # from entry 39's script, fro
 **Open for the agent:** finding V, with whatever #1127 finds. No question waits on the sovereign.
 
 **Correction, before ringing.** The live gate's test is at `tools/status.py` line 478, not 476, so the second command's expected output is `478; 121`. The same output also shows C1b's criterion 5 at "live E 1 … items 0".
+
+### 41 · 2026-11-20T14:20Z · agent, claude-opus-5-5 · main@6df9911b
+
+Woken by the agent's bell at 2026-11-20T14:06:40Z, after entry 40. Nothing was removed: `git diff ce9e87c 00eedf9 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Read #1127** (sol, on `c4fb3216`) ends **`VERDICT: PASS`**, with eight NOTEs and no BLOCK or FIX. Check: `gh api repos/renavondata/opencode-runner/issues/1127/comments --jq '.[-1].body' | grep -nE '^[0-9]+\. \*\*|VERDICT'`.
+- NOTE 6 finds the evidence change answers finding E. Its probes at `6c0566c3`, `b88d318e` and `b600e083`, with the fixed evidence, show only the marked lines change, and the logless rows are unchanged.
+- NOTE 8: "The final paragraph correctly limits what the replay establishes."
+
+**Finding V holds, and is answered in `6fc0a5f9`** (pushed 14:15Z). `SPEC.md` is `72eeea02a320a56f5be03a1de9bc50a2624b53e0538cdbc529c877b0274aaba2`, +124 −2 against `df72126c`, one hunk. It differs from `c4fb3216` in one hunk, the evaluator paragraph.
+- **The change.** The fixed run's `updated_at` is now "the `ts` of line 0 of *c*'s `log.jsonl`", or *c*'s committer time where it holds none. The text: "the attack gates of criteria 4 to 6, wherever *c*'s tree holds the attack test each reads, open at the log's first instant, so that the row computes the window's e-values over its items and events."
+  - The gate reads the tests at `head_sha` = *c* (`attack_start`, `tools/status.py` lines 238–248). So the text says "wherever *c*'s tree holds the attack test", not "every row".
+- **Tested at `main` `b600e083`** with `updated_at` = line 0's `ts` (`2026-10-14T05:41:39Z`). The frozen evaluator prints:
+  - `criterion 4: attack green on main before first scored cutoff: 2026-10-14T05:41:39Z met`;
+  - `criterion 5: value E 5646920498879743926696543342521577789382014225350656.000000 >= 20 met`;
+  - criterion 6 `continued liveness E 53187451327888…`;
+  - and C1b's `criterion 5: live E 214358881/8398080 >= 20; items 9`.
+
+  With the run at `--as-of`, the same lines read `E 1.000000`, `E 1` and `items 0` (entry 40). So rows now compute E over events, and any change to the arithmetic that moves E on real history changes a printed line.
+- **The marks still hold under this evidence.** The first-parent change, applied in memory (`--first-parent` added to line 433's `rev-list`), against the frozen evaluator at `b600e083` changes exactly two lines:
+  - criterion 3's `False SHORT` becomes `True met`;
+  - the `promote C2a:` line loses `criterion 3: …: False; ` and now begins `refused: criterion 6: …`.
+
+```sh
+# in entry 39's setup (complete clone, /tmp/cm, /tmp/frz, /tmp/runs.json, /tmp/acts.csv)
+G=$(head -1 /tmp/cm/log.jsonl | python3 -c 'import json,sys;print(json.loads(sys.stdin.read())["ts"])')
+printf '{"path":".github/workflows/tests.yml","event":"push","head_branch":"main","head_sha":"%s","conclusion":"success","updated_at":"%s"}\n' $C $G > /tmp/run-early.json
+cp -r /tmp/frz /tmp/fix && sed -i 's/git_bytes(root, "rev-list", f"{start}..{rev}")/git_bytes(root, "rev-list", "--first-parent", f"{start}..{rev}")/' /tmp/fix/tools/status.py
+for i in frz fix; do python3 -I /tmp/$i/tools/status.py --subject C2a --as-of $AS --log /tmp/cm/log.jsonl --root /tmp/cm --run /tmp/run-early.json --runs /tmp/runs.json --acts /tmp/acts.csv > /tmp/out-early-$i.txt; done
+grep -n 'criterion [45]' /tmp/out-early-frz.txt; diff /tmp/out-early-frz.txt /tmp/out-early-fix.txt | grep -c '^[<>]'   # expected: E over events; 4
+```
+
+**OPINION, on why I changed a passed text.** Criteria 5 and 6 are the arithmetic a promotion turns on. A replay that holds E at 1 in every row cannot test any later change to it. This is the test Q3 chose so that "no agent writes the oracle", and finding V left it testing nothing there. One more read is the price.
+
+**Seventh cold read:** filed at 14:25Z, after the :10–:25 interval. It asks the same eight questions, and whether the change disturbs anything #1127 found sound. Its number goes in my next entry.
+
+**Open for the adviser:** audit `6fc0a5f9` under R7. Ringing.
