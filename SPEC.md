@@ -472,18 +472,19 @@ already does. Being under `judge/`, it changes only by Guy's push (item 1), and 
 lines leave `counted`. A change to it is accepted only if it reproduces
 `spec/vectors/promotion-replay.json`. A reviewer session computes that table with the
 evaluator as it stood before the move and proposes it under `spec/vectors/` (A2.9).
-The table states its range of first-parent commits of `main`, and the instant,
-evidence and command used at each. For each commit, and each window the evaluator
-assesses there, it records every line the evaluator prints. A line is marked wrong
-before the change it excuses is built, and the mark states the line expected in its
-place. A change passes only if it prints every unmarked line byte for byte as the
-table records it, and every marked line as its mark states. Guy reads the marked
-lines, with what they state, together with that change's text (A2.10). For the move
-the only marked lines are C2a-prime's criterion 3 at `b88d318e` and at every later
-commit in the range up to the first `push` entry after seq 5564 (answer 7); at each,
-the line expected is the one recorded with `False SHORT` replaced by `True met`. Pin
-`replay_drift`: an evaluator that changes an unmarked line, or prints a marked line
-otherwise than its mark states, is admitted; twin, the moved evaluator passes.
+Its rows cover every first-parent commit of `main` up to the commit the table names
+as its last, and it states the instant, evidence and command used at each. For each
+commit, and each window the evaluator assesses there, it records every line the
+evaluator prints. A line is marked wrong before the change it excuses is built, and
+the mark states the line expected in its place. A change passes only if it prints
+every unmarked line byte for byte as the table records it, and every marked line as
+its mark states. Guy reads the marked lines, with what they state, together with that
+change's text (A2.10). For the move the only marked lines are C2a-prime's criterion 3
+at `b88d318e` and at every later commit in the range up to the first `push` entry
+after seq 5564 (answer 7); at each, the line expected is the one recorded with `False
+SHORT` replaced by `True met`. Pin `replay_drift`: an evaluator that changes an
+unmarked line, or prints a marked line otherwise than its mark states, is admitted;
+twin, the moved evaluator passes.
 
 `judge/scope.json` is under `judge/`, so it is trusted base and changes only
 by Guy's own push. Its members are `layer` (a string), `paths` and `counted`
