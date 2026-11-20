@@ -416,21 +416,19 @@ Items 7–10 apply only to a proposal whose head differs from trunk; the self-ch
     "may be entered only once every pre-stated criterion of the window holds on the
     log's current prefix and on the tree at its commit"; the checkers' verdict (§8) does
     not change. On every run the item judges each `promote` whose `seq` exceeds that of
-    the *installing push*: the first `push` of trunk's log after seq 5564 for which an
-    earlier `decision` of kind `grant` has a `subject` that begins
-    `promote_unmet: SPEC.md ` followed by the SHA-256, in 64 lowercase hex digits, of
-    the `SPEC.md` in the trusted base that push authorises. That `SPEC.md` is read at
-    the push's *push commit*, the oldest commit on trunk's first-parent chain whose
-    `log.jsonl` holds the push's line; a push whose push commit's trusted-base digest
-    (item 1) is not its `digest` is not the installing push. If trunk's log has no
-    installing push, the item refuses: the judge running it came in by no push of a
-    `SPEC.md` his grant names (answer 10). The promotions at seqs 188 and 337 come
-    before it and are not judged: an entry is judged by the law in force before it
-    (CHARTER §2, maxim 2). Let *H* be the commit judged (trunk for the self-check, the
-    proposal's head otherwise), and an *entry commit* of a `promote` any commit
-    reachable from *H* whose `log.jsonl` holds the entry's line and none of whose
-    parents' does. A judged `promote` at seq *i* is refused unless, for every entry
-    commit it has, all four hold:
+    the *installing push*: the first `push` of trunk's log after seq 5564 whose *push
+    commit*, the oldest commit on trunk's first-parent chain whose `log.jsonl` holds the
+    push's line, both has the push's `digest` as its trusted-base digest (item 1) and
+    holds a `SPEC.md` whose SHA-256, in 64 lowercase hex digits, follows
+    `promote_unmet: SPEC.md ` at the start of the `subject` of an earlier `decision` of
+    kind `grant`. If trunk's log has no installing push, the item refuses: the judge
+    running it came in by no push of a `SPEC.md` his grant names (answer 10). The
+    promotions at seqs 188 and 337 come before it and are not judged: an entry is judged
+    by the law in force before it (CHARTER §2, maxim 2). Let *H* be the commit judged
+    (trunk for the self-check, the proposal's head otherwise), and an *entry commit* of
+    a `promote` any commit reachable from *H* whose `log.jsonl` holds the entry's line
+    and none of whose parents' does. A judged `promote` at seq *i* is refused unless,
+    for every entry commit it has, all four hold:
     (a) its `body.evidence` is an object with exactly the members `run`, `runs` and
     `acts`, each an object with exactly `path`, a path under `transcripts/evidence/`,
     and `sha256`, hex64; and at the entry commit each path is a regular file whose bytes
@@ -459,13 +457,13 @@ Items 7–10 apply only to a proposal whose head differs from trunk; the self-ch
     commit message with `[skip ci]`, for instance) is judged at the next. A run costs
     one assessment per entry commit of each judged promotion. An evaluator that cannot
     decide (an error, absent history, a window it does not know) refuses, as a checker's
-    silence does (§9). The item sets no time limit, so its verdict depends on *H* alone,
-    never on a runner's speed. A run that ends with no verdict lets nothing through: a
-    proposal's `judge` check does not pass, and the push verb's self-check (`tools/jack`
-    lines 76–77) has not passed. Of the evidence the judge checks presence and hash
-    only, never that a file is a true copy of the workflow run or the acts table it
-    stands for: the sovereign attests it by signing the entry that names it, and the
-    judge's report lists each such file under `attested`. The verb that enters a
+    silence does (§9). The item sets no time limit, so its verdict depends only on *H*
+    and trunk, never on a runner's speed. A run that ends with no verdict lets nothing
+    through: a proposal's `judge` check does not pass, and the push verb's self-check
+    (`tools/jack` lines 76–77) has not passed. Of the evidence the judge checks presence
+    and hash only, never that a file is a true copy of the workflow run or the acts
+    table it stands for: the sovereign attests it by signing the entry that names it,
+    and the judge's report lists each such file under `attested`. The verb that enters a
     promotion commits the three files with the entry, in one commit on the commit it
     assessed. Both workflows that run the judge check out the whole history. Pins
     `promote_while_unmet` (a judged `promote` whose evaluator line reads `refused` is
