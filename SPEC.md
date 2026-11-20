@@ -411,8 +411,63 @@ Items 7–10 apply only to a proposal whose head differs from trunk; the self-ch
     mutable, as a separate move). Pin `one_act_amendment`.
 14. **decision_by_other** — a `decision` entry not signed by a key declared in
     genesis (the sovereign's acts are his own; CHARTER §7). Pin `decision_forged`.
+15. **promote_unmet** — a `decision` of kind `promote` that the promotion evaluator
+    (below) does not find lawful. It enforces CHARTER A5.1, under which a promotion
+    "may be entered only once every pre-stated criterion of the window holds on the
+    log's current prefix and on the tree at its commit"; the checkers' verdict (§8)
+    does not change. Let *H* be the commit judged (trunk for the self-check, the
+    proposal's head otherwise), and an entry's *commit* the oldest commit on *H*'s
+    first-parent chain whose `log.jsonl` holds the entry's line. The item judges each
+    `promote` whose `seq` exceeds that of the *installing push*, the first `push`
+    entry after seq 5564 at whose commit `judge/status.py` exists. The promotions at
+    seqs 188 and 337 come before it and are not judged: an entry is judged by the law
+    in force before it (CHARTER §2, maxim 2). A judged `promote` at seq *i* is refused
+    unless all three hold:
+    (a) its `body.evidence` is an object with exactly the members `run`, `runs` and
+    `acts`, each an object with exactly `path`, a path under `transcripts/evidence/`,
+    and `sha256`, hex64; and at the entry's commit each path is a regular file whose
+    bytes have that SHA-256;
+    (b) on the same chain, before the entry's commit, there is a commit whose
+    `log.jsonl` is exactly lines 0 to *i*−1; the last such commit is the *assessed
+    commit*;
+    (c) trunk's `judge/status.py`, extracted from git as the kernel is (item 5),
+    assessing the window the entry's `subject` names, at the entry's `ts`, on lines 0
+    to *i*−1 and the assessed commit's tree and history, with the three files as its
+    `--run`, `--runs` and `--acts`, prints `promote <subject>: lawful`.
+    An evaluator that cannot decide (an error, absent history, a window it does not
+    know) refuses, as a checker's silence does (§9). Of the evidence the judge checks
+    presence and hash only, never that a file is a true copy of the workflow run or
+    the acts table it stands for: the sovereign attests it by signing the entry that
+    names it, and the judge's report lists each such file under `attested`. The verb
+    that enters a promotion commits the three files with the entry, in one commit.
+    Both workflows that run the judge check out the whole history. Pins
+    `promote_while_unmet` (a judged `promote` whose evaluator line reads `refused` is
+    admitted), `evidence_substituted` (a named file whose bytes differ from its
+    `sha256` is admitted) and `promote_retroactive` (a `promote` before the installing
+    push is judged), each with its passing twin.
 
-Items 11–14 apply to every judged log, the self-check included.
+Items 11–15 apply to every judged log, the self-check included.
+
+**The promotion evaluator** is `judge/status.py` with `judge/value.py`, which the
+installing push moves from `tools/` as they are (Guy's ruling of 20 November 2026,
+`transcripts/RULING-20261120-promotion-judge.md`, answer 4). The evaluator imports
+nothing outside the standard library and the trusted base, so the three functions
+`judge/value.py` takes from `tools/entry.py` (`now`, `read_log`, `resolution_rates`)
+come under `judge/` with it, unchanged. Besides that and the import paths, one change
+is made: criterion 3's walk of the commits since an opening follows first parents
+only (`git rev-list --first-parent`), as the same function's other walk already does.
+Being under `judge/`, it changes only by Guy's push (item 1), and its lines leave
+`counted`. A change to it is accepted only if it reproduces
+`spec/vectors/promotion-replay.json`. A reviewer session computes that table with the
+evaluator as it stood before the move and proposes it under `spec/vectors/` (A2.9).
+The table states its range of first-parent commits of `main`, and the instant,
+evidence and command used at each. For each commit, and each window the evaluator
+assesses there, it records whether every criterion line printed reads `met`. A row is
+marked wrong before the change it excuses is built, and Guy reads the marked rows
+with that change's text (A2.10). For the move the only marked rows are C2a-prime's
+criterion 3 at `b88d318e` and at every later commit in the range (the same ruling,
+answer 7). Pin `replay_drift`: an evaluator that changes an unmarked row is admitted;
+twin, the moved evaluator passes.
 
 `judge/scope.json` is under `judge/`, so it is trusted base and changes only
 by Guy's own push. Its members are `layer` (a string), `paths` and `counted`
