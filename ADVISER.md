@@ -154,3 +154,26 @@ print(digest(base) == want, len(cs), sum(digest(c) != want for c in cs))
 ```
 
 Expected: `True 73 0` at `12df3ed3`; `True 74 0` at `7aa00ae6`.
+
+### 5 · 2026-11-20T01:30Z · agent, claude-opus-5-5 · main@13f2180
+
+The same session as entry 4 (`session_01VpB3Tknxi9JkERuANTGHDk`, `claude-opus-5-5`, no key). The sovereign's request to answer R1 to R5 reached it a second time on 20 November. Entry 4 already answers R1 to R4. This entry corrects entry 4 on R5, re-checks the two answers that can change with time (R1, R3), and rings the bell. The instant above was read from `date -u`; the commit time governs.
+
+**Correction to entry 4: the bell was not rung.** Entry 4 says "After this push the bell is rung once". The session ended after that push and before the call, and no refusal commit followed. What entry 4 described was an intention, not an act. Evidence (tool output, not a repository check): `list_triggers` at 2026-11-20T01:29Z shows `trig_01D5bGyHXcXvhz5jhDhgbXP2`, "ADVISER bell (jack adviser/notes)", `enabled: true`, `next_run_at: 2026-11-26T12:00:00Z`, with no `last_run` and no `last_fired_at`. Rule 2 would have caught it. The bell is rung below.
+
+**R1, re-checked.** `gh api user --jq .login` gives `gfrmin`. `gh api 'repos/renavondata/jack/activity?ref=refs/heads/adviser/notes' --jq '.[] | [.timestamp, .actor.login, .activity_type, .after[0:8]] | @tsv'` before this push gave the following, which is what entry 4 expected:
+
+```
+2026-11-19T15:57:07Z	gfrmin	push	0e950338
+2026-11-19T15:49:27Z	gfrmin	push	690e85a2
+2026-11-19T15:46:01Z	gfrmin	push	86e59a59
+2026-11-19T15:45:16Z	gfrmin	branch_creation	74181878
+```
+
+Expected after this push: five rows, all `gfrmin`, the newest naming this commit. At `0e950338`, `gh api 'repos/renavondata/jack/actions/runs?branch=adviser/notes' --jq .total_count` gives `0`, and `gh api 'repos/renavondata/jack/pulls?head=renavondata:adviser/notes&state=all' --jq length` gives `0`. The author, committer and signing are as entry 4 states. Check: `git show -s --format='%an <%ae> | %cn <%ce>' <this commit>`.
+
+**R2 and R4** stand as entry 4 gives them, at `12df3ed3` and `7aa00ae6`. They were not re-run at `13f2180`. R4's runner part is still unanswered.
+
+**R3, re-checked at `13f2180`: still not yet.** `git ls-remote origin 'refs/heads/*' | grep -i c2a-3` prints only `3e4e5240… refs/heads/counsel/c2a-3-brief`, unchanged since entry 4. `git show origin/main:transcripts/BRIEF-C2a-3-draft.md | head -1` still names draft v4.
+
+**R5.** After this push the bell is rung once (`fire_trigger`, `trig_01D5bGyHXcXvhz5jhDhgbXP2`). The text is `test from session_01VpB3Tknxi9JkERuANTGHDk, claude-opus-5-5; entry 5 at ` followed by this commit's short sha. If the call is refused, the refusal is pasted into a second commit appended to this entry. If it succeeds, `list_triggers` will show a `last_run` on that trigger.
