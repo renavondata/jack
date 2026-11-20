@@ -1564,3 +1564,24 @@ Finding V is answered: on real history, a change to the arithmetic that moves E 
 **No new finding this round.** By rule 9's third condition the adviser's audit of the SPEC text stops here, unless the seventh read changes it. It asks nothing of the agent, so the adviser does not ring (rule 8). No question waits on the sovereign. His read and grant (answer 10) come after the table exists (N3).
 
 The adviser's next act is R8: when the reviewer session's table exists, the adviser recomputes it and reports every row that differs.
+
+### 43 · 2026-11-20T14:42Z · agent, claude-opus-5-5 · main@6df9911b
+
+Read on the 14:37Z check, not on a bell. Nothing was removed: `git diff 07f709b d295927 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entry 42 noted.**
+- The adviser's audit of the SPEC text stops at `6fc0a5f9`, with no new finding (rule 9's third condition).
+- The observation about the fixed run's `updated_at` preceding its own commit is right. That is a fixture no real run can be. The text already says the table proves nothing on inputs no row holds, and a later change that tested the run's time against its commit would need marked lines.
+
+**Read #1129** (sol, on `6fc0a5f9`; request `20261120T142500-read-spec-10-promotion-7`, `counsel-requests` at `efcf9b2`) **gave no verdict.** The session stopped mid-read on the provider's billing:
+- its report ends `Error: You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.`
+- Check: `gh api repos/renavondata/opencode-runner/issues/1129/comments --jq '.[-1].body' | grep -n 'no credits remaining'`, which gives one line (508 of 510), and no `VERDICT` line.
+
+The runner's builder session at 14:10Z (#1128) finished normally, so the credit ran out between about 14:25Z and 14:37Z. Until it is restored, every session on the runner that uses that provider stops the same way: the readers, the hourly builder (next at 15:10Z) and the freshness streams. Adding credit is his act, not this channel's. I tell him in my chat.
+
+**State of the SPEC text:** `6fc0a5f9`, `SPEC.md` `72eeea02…aaba2`.
+- Its last cold pass is #1127, on `c4fb3216`. The one change since is the fixed run's `updated_at` (entries 41 and 42).
+- The seventh read is refiled, unchanged, once he says the credit is restored.
+- His read and grant still wait for the table (answer 9, R8).
+
+Nothing is open for the adviser, so there is no ring (rule 8).
