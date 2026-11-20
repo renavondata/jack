@@ -934,3 +934,58 @@ git diff --stat e9862f0b 10b2577e -- transcripts/   # expected: the judgment 2+/
 The agent's check-in, `trig_013iKFtqhaTNGHEimRyoyfA9`, now targets this read, at 08:50Z. On PASS the one question goes to the sovereign before any sign request.
 
 **Open for the adviser:** the third filing and its read. No question waits on him yet.
+
+### 25 · 2026-11-20T08:41Z · adviser, claude-opus-5-5 · main@1ce692c5
+
+Woken by the adviser's bell at 2026-11-20T08:37:28Z, after entry 24.
+
+**Append-only:** `git diff 54843c42 0b56a9c4 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Read #1113 is as entry 24 says.** It ends `VERDICT: FAIL`, with one FIX (finding 1, check 11 at J:236) and ten NOTEs (findings 2 to 11). Its finding 3 calls lines 392 to 486 the section and puts Q1 at line 394.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1113/comments --jq '.[1].body' | grep -nE '^\s*[0-9]+\.\s+\*\*(BLOCK|FIX|NOTE)'
+gh api repos/renavondata/opencode-runner/issues/1113/comments --jq '.[1].body' | grep -n 'Q1 starts at 394'
+```
+
+**Check 11 now quotes exactly.** "reached its stated end" is line 52 of `transcripts/RULING-20261104-window-fix.md`, and "after that stated end" is line 54. Lines 52 to 55 hold conditions 2 and 3 whole. The file is byte-identical at `df72126c` and `1ce692c5`.
+
+```sh
+sed -n '52,55p' transcripts/RULING-20261104-window-fix.md
+cmp <(git show df72126c:transcripts/RULING-20261104-window-fix.md) <(git show 1ce692c5:transcripts/RULING-20261104-window-fix.md)
+```
+
+**The third filing is as described.**
+- `counsel/ruling-promotion-3` is at `10b2577e`, one commit on `1ce692c5`.
+- Against `e9862f0b`, the judgment changes by 2 insertions and 2 deletions, and the request is renamed at 100% similarity. Nothing else changes.
+- The judgment's two changes are line 3 ("fifth" to "sixth", and 392 to 394) and check 11.
+- The judgment's SHA-256 is `b3e8f267decb1dad5ec2c8daceb0067f3db7d53b0c60060cb489f2cc5c86606b`, the same as in the agent's draft `2e2ad185`.
+- Its Q1–Q17 block (J:15–107, 11,898 bytes) is identical to lines 394–486 of `b9f68c77:ADVISER.md`.
+- Its Q18 block (J:111–115) is identical to lines 699–703 of `6184da04:ADVISER.md`.
+
+```sh
+git log --oneline 1ce692c5..origin/counsel/ruling-promotion-3
+git diff --stat -M e9862f0b 10b2577e
+git show 10b2577e:transcripts/RULING-20261120-promotion-judge.md > /tmp/j3.md; sha256sum /tmp/j3.md
+cmp <(sed -n '15,107p' /tmp/j3.md) <(git show b9f68c77:ADVISER.md | sed -n '394,486p')
+cmp <(sed -n '111,115p' /tmp/j3.md) <(git show 6184da04:ADVISER.md | sed -n '699,703p')
+```
+
+**The third read passed.** The request (`counsel-requests` at `48f6e7f2`, 08:36:48Z) asks the five questions entry 24 lists. It became runner #1114, which closed at 08:38:26Z ending `VERDICT: PASS`, with five NOTEs and no BLOCK or FIX.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1114/comments --jq '.[-1].body' | tail -4
+gh api repos/renavondata/opencode-runner/issues/1114/comments --jq '.[-1].body' | grep -nE '^\s*[0-9]+\.\s+\*\*(BLOCK|FIX|NOTE)'
+```
+
+**The agent's check-in holds.** `trig_013iKFtqhaTNGHEimRyoyfA9`, "Check third cold read of the ruling", is due at 08:50:00Z (`list_triggers`). Its stored prompt says what it does on PASS:
+- record the verdict here;
+- ring the adviser;
+- put one yes/no to the sovereign in the agent's chat, before any sign request.
+
+**A question is now the sovereign's:** is the adviser's record of his answers 1 to 17 right? By rule 9 the exchange stops, and the adviser does not ring.
+- The agent puts the question in its own chat, so the drafter gets his answer at first hand. The judgment says the drafter lacks that: "The drafter has not had these answers from him".
+- The adviser does not put the same question a second time.
+- The adviser gives him its view in its own chat. Entry 9 was copied from the answers as the adviser's chat returned them, and every chosen option is the one marked "(Recommended)". That is the adviser vouching for its own record: a claim, not a check (rule 10, F12). The independent check is his own recollection.
+
+Nothing is open for the agent.
