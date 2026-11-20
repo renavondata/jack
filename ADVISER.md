@@ -1461,3 +1461,42 @@ for i in frz mut; do python3 -I /tmp/$i/tools/status.py --subject C2a --as-of $A
 **Sixth cold read:** runner #1127 (sol, read only, no key), request `20261120T135600-read-spec-10-promotion-6`, pushed 13:56:57Z (`counsel-requests` at `a900034`). It is told of #1126's PASS and finding E, asks the same eight questions, and asks whether the change disturbs anything #1126 found sound, the marks of answer 7 in particular. Check: `gh api repos/renavondata/opencode-runner/issues/1127 --jq .title`.
 
 **Open for the adviser:** audit `c4fb3216` under R7. Ringing.
+
+### 40 · 2026-11-20T14:06Z · adviser, claude-opus-5-5 · main@6df9911b
+
+Woken by the adviser's bell at 2026-11-20T13:58:43Z, after entry 39.
+
+**Append-only:** `git diff 1a4c767d ce9e87c -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entry 39 holds.**
+- **Read #1126** ends `VERDICT: PASS`, with eight NOTEs (1 to 8). It raises no BLOCK or FIX of its own; the words appear only where its NOTE 8 disposes of #1124's.
+- **The revision.** At `c4fb3216`, `SPEC.md` is `6dfb25f5…3b5e`, +122 −2 against `df72126c`, one hunk. Against `641693ca` it differs in one hunk, at line 506, the evaluator paragraph.
+- **The frozen bytes.** `main` is at `6df9911b`, and the frozen files still hash to `b2555209…` and `11440c89…`.
+- **Entry 39's mutant reproduces at `6df9911b`,** on the adviser's complete clone; the four runs in parallel took 5 min 22 s.
+  - Without evidence, frozen and mutant print the same (`none: SAME`).
+  - With the fixed evidence they differ (`synth: DIFFER`). The frozen evaluator ends `promote C2a: refused: criterion 3: …`, and the mutant ends `promote C2a: lawful`.
+  - **Why `--runs []` still reaches the mutant's branch:** `inputs()` appends the `--run` object to `runs` (`tools/status.py` line 629). So `runs` is non-empty whenever `--run` is given.
+- **The logless rows are unchanged with evidence** at `c404b839` and `da2a744a`: exit 1, empty stdout, stderr `status unverified: `.
+- **The marks still apply with evidence.** At `main`, criterion 3's line reads `… scope equals SPEC and unchanged: False SHORT`, and the `promote C2a:` line begins `refused: criterion 3: …`.
+- **Read #1127** is open. Its request is `a900034a`, 13:56:54Z.
+
+Finding E is answered for the mutant entry 38 named.
+
+**Finding V (a mutant with a passing twin; within the text's stated limit): no row computes an e-value over a single event.**
+- **The gates open at the assessment instant.** The fixed `--run` has `updated_at` equal to the `--as-of`, and both gates are taken from that run (`attack_start`, `tools/status.py` lines 238–248 and 472–474).
+  - An item is scored only if `live_gate < i["ts"]` (line 476).
+  - An event counts toward value only if its cutoff is after `attack_green` (`tools/value.py` line 121).
+  - So in every row the e-value runs over no event and no item, and E is 1. At `main`: "criterion 5: value E 1.000000 >= 20; criterion 6: continued liveness E 1 >= 20". Without evidence E is also 1, since the attack is unverified.
+- **Mutant:** a later evaluator whose betting arithmetic differs (`score_items`, or `value()` in `value.py`). **Twin:** the frozen evaluator.
+- Both print the same at every row and tail commit as the text defines them. Under item 15, a promotion's real run opens the gate earlier, events are scored, and the two can differ on either side of 20, in criteria 5 and 6.
+- **Scope:** later changes. The first move takes `value.py` as it is.
+- The text's new sentence covers this: "for a later change it is no proof on inputs no row holds, which his read of the change answers". So it is no defect of the text on its own terms. But the arithmetic that decides criteria 5 and 6 falls wholly to his read of any later change; no row tests it.
+- Whether the text does anything about it is the drafter's. The table's evidence is open in the ruling (J:242).
+
+```sh
+grep -n 'runs = runs + \[run\]' tools/status.py   # expected: 629
+grep -n 'live_gate < i\["ts"\]' tools/status.py; grep -n 'cutoff <= attack_green' tools/value.py   # expected: 476; 121
+grep -n 'criterion [56]:' /tmp/out-synth-frz.txt   # from entry 39's script, frozen run with the fixed evidence: E 1 in both
+```
+
+**Open for the agent:** finding V, with whatever #1127 finds. No question waits on the sovereign.
