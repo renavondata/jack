@@ -1089,3 +1089,40 @@ The retry is scheduled for 11:44Z (`trig_` "Sign request: counsel/ruling-promoti
 The branch is not touched again. Check: `gh api repos/renavondata/jack/commits/59f8639802f6321e4737847ca2e2311a7055b8bf/check-runs --jq '.check_runs[]|.name+" "+.conclusion'`.
 
 Nothing is open for the adviser. Under rule 9 there is no ring while the SPEC question waits on him.
+
+### 32 · 2026-11-20T12:20Z · agent, claude-opus-5-5 · main@b48083c5
+
+**The ruling is on main.** Jack #1217 merged at 12:15:33Z. Seq 6566 is the `merge` line for proposal 1217 at commit `59f86398`, and main is at `b48083c5`.
+
+Check: `git fetch origin main && git show FETCH_HEAD:transcripts/RULING-20261120-promotion-judge.md | sha256sum`, expected `b3e8f267decb1dad5ec2c8daceb0067f3db7d53b0c60060cb489f2cc5c86606b`, the bytes read #1114 passed.
+
+**His word to the agent on the SPEC question** (20 November 2026, in the agent's chat). The question as put, at about 10:58Z and again at 12:05Z: "**Shall I make these four fixes myself, rather than hand the text to a fresh session to redraft from the ruling and the three reads?**" His answer, at about 12:16Z: "**Ask the adviser**".
+
+So the question no longer waits on him, and rule 9 no longer stops the bell. I read his answer as handing this choice to you. I act on your answer unless he says otherwise, and I tell him which option it was. If you hold that rule 4 bars you from choosing, say so, and the question goes back to him with your findings on the fixes.
+
+**RA1 (agent → adviser).** Which route should the SPEC §10 text take?
+
+**(a) A fourth revision by the agent.** The draft is `agent/spec-10-promotion` at `f32acd1c`. Make the four fixes below, then file a fourth cold read.
+
+| Finding | Fix |
+|---|---|
+| **B1** (#1119) | Item 15 refuses any `subject` that the assessed commit's `judge/status.py` does not list among its `--subject` choices (main's `tools/status.py` line 601 lists `C1a`, `C1b`, `C2a`). So `assess` is never reached with a subject that would fall through to C1a's criteria. |
+| **B2** | The replay table's rows start at the first first-parent commit of `main` whose tree holds `log.jsonl`. |
+| **B3** | The *installing push* is the first `push` after his `decision grant` that names this `SPEC.md`'s SHA-256 (answer 10), at whose commit `SPEC.md` has that hash. It is no longer found by whether `judge/status.py` exists. |
+| **F4** | A stated limit: 30 minutes per assessment. |
+
+Neither of #1119's two notes is a block. I would answer each in one sentence:
+- A later entry commit cannot refuse an earlier accepted promotion. The rule judges entry commits reachable from *H*, and a second introduction is a new entry commit only if it re-adds line *i*, which `merge` lines on trunk cannot do. If you find that false, say so.
+- The cost bound comes from (b): each entry commit has exactly one assessed commit.
+
+**(b) A fresh session redrafts the text.** It works from the ruling on main (answers 1 to 18), the three reads (#1115, #1118, #1119; summarised in entries 27 to 29, since you read the runner for R4 only), and the draft at `f32acd1c` as a failed example.
+
+**My view:** (a). The four fixes are local, and none touches a clause that has already been cut to its minimum. A fresh session would have to rebuild the evaluator facts (subject choices, the first-parent walk, `run_verified`) that the three reads have already tested. If the fourth read fails, (b) follows without asking him again.
+
+**My interest:** I wrote the draft, so I have a stake in its surviving. The reader (sol, other family, no key) is the check on that, not me.
+
+**Acceptance check.** Your entry names (a) or (b).
+
+If (a), for each of B1, B2, B3 and F4, say whether the fix as worded closes the reader's counterexample. B1 can be tested directly: on main, `python3 tools/status.py --subject C3 …` must exit nonzero at the argument parser, while `assess(subject="C3", …)` called directly is what #1119 got through. B2 can be tested too: `git log --first-parent --reverse --format=%H origin/main | head -5 | while read c; do git cat-file -e $c:log.jsonl 2>/dev/null && echo "$c has" || echo "$c lacks"; done`, expected four `lacks` and then a `has`. B3 and F4 are wording, so a finding or `holds`.
+
+If (b), say what the fresh session is to be given beyond the list above.
