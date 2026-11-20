@@ -341,3 +341,153 @@ The drafter's own account against answers 2, 4, 7, 8 and 10 follows, for the adv
 **For the sovereign: one yes/no question** (rule 6). Answer 4 names two files, but `tools/value.py` takes `now`, `read_log` and `resolution_rates` from `tools/entry.py`, which is not trusted base. May the move bring those three functions under `judge/` unchanged, so that no builder's proposal can change the judge's verdict without your push?
 - **Agent's view:** yes.
 - **Interest:** the draft already assumes yes.
+
+### 9 · 2026-11-20T07:10Z · adviser, claude-opus-5-5 · main@10cb38d3
+
+The bell woke the adviser at 2026-11-20T03:43:47Z with no text: the agent's ring after entry 8. Every check below was re-run in this session.
+
+**Append-only:** `git diff db993859 a2e53006 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**R6, the RULING draft: its checks hold.**
+
+- At `bb142d11`: one file, 150 insertions; SHA-256 `466e4dc0…f87f`.
+- Its fifteen answers are entry 7's lines byte for byte (the `diff` prints `identical`).
+- Its facts cited at `df72126c` all hold. That covers the log (6,432 entries; promotes 188 and 337; pushes 197, 367 and 5564; veto 5879), `tools/value.py:15`, `tools/entry.py:19`, `tools/status.py` lines 262, 436–437, 601, 602–604 and 659, `tests.yml` with no depth and `judge.yml` with `fetch-depth: 0`, the phrases at BRIEF-C2a-3 lines 7, 75 and 102, BRIEF-C2c-1 line 89, RUNBOOK lines 192 and 411, and `CASES.md` line 65.
+
+**R6, differences of meaning**, which is what the request asked for:
+
+1. **The record was not verbatim.** Answer 14's option said "Drafted from ADVISER.md's verbatim record", but entry 7 was the adviser's paraphrase. The questions and options as put are therefore copied below, word for word, with the option he chose. This closes the draft's stated gap. Comparing them with entry 7's lines, the adviser finds no other difference of meaning.
+2. **H2 conflicts with a text in force.** H2 records answer 5 as the reading that a push before 30 November is lawful. BRIEF-C2a-prime is in force for C2a-prime's window, and its refusal list has "no second push inside the window" (line 309; also line 97). Check: `git show df72126c:transcripts/BRIEF-C2a-prime-draft.md | sed -n '303,310p'`. The adviser's question 5 missed this text, and so did the draft's "found no answer that a text on `main` forbids". Answer 17 below settles the route.
+3. **Two new answers** (16 and 17 below) are not in the draft.
+
+**R7, the SPEC §10 draft: its checks hold.** At `45aac43e` there is one hunk, the change is +57 −2, the SHA-256 is `1ea886fc…928f`, and the cap block is unchanged (`True`). Against the answers:
+
+- **Answer 2:** met. Item 15 sits under "Items 11–15 apply to every judged log, the self-check included", and §8 and §9 are untouched.
+- **Answer 7:** met.
+- **Answer 8:** met. It takes three files (`run`, `runs`, `acts`) because the evaluator reads `--run` and `--runs`.
+- **Answer 10:** met (57 lines).
+- **Answer 4's extension, now answer 16.** The three functions are closed. `now` is 3 lines, `read_log` 3 and `resolution_rates` 12. They use only `kernel.check`, `datetime` and `fractions`, and not `harness/keys.py`. Check: an AST walk of `tools/entry.py` at `df72126c` from those three names.
+
+**R7, findings**, each a mutant with a passing twin (rule 4):
+
+- **F14. Retroactive re-judging.**
+  - Item 15 (c) runs *trunk's* `judge/status.py` on every judged `promote`, on every judge run.
+  - **Mutant:** a later push changes `judge/status.py` so that it no longer knows window `C2a`. The self-check then refuses a trunk that holds an earlier lawful `promote C2a`, because "an evaluator that cannot decide … refuses". An earlier entry has been judged by later law, against the draft's own maxim-2 sentence.
+  - **Twin:** run each judged `promote` against the `judge/status.py` in the tree of its own assessed commit. The same trunk is then admitted.
+- **F15. Cost.**
+  - One run of today's evaluator (`python3 -I tools/status.py --subject C2a --as-of 2026-11-20T00:00:00Z`, on a full-history copy at `df72126c`) took 143.2 s in the adviser's sandbox, exit 0.
+  - `report()` (`tools/status.py` lines 642–660) re-assesses every earlier `promote` on every run.
+  - Item 15 re-judges every judged `promote` on every judge run, so the work grows roughly with the square of the number of promotions.
+  - **Mutant:** enough promotions that the self-check times out. Under (c) that is "cannot decide", so it refuses and `main` turns red for no reason of lawfulness. **Twin:** each `promote` judged once, as F14's twin would allow, stays within a fixed time.
+  - The remedy is the drafter's.
+- **F16. The table's grain.**
+  - The draft has the table record "whether every criterion line printed reads `met`".
+  - Read as one value per commit and window, C2a-prime's value is false at every commit, before and after the fix, because of the veto and the unverified criteria 1 and 2. The marked rows would then be invisible.
+  - Read as met or not per line, a change in a printed number that flips no status still passes.
+  - **Mutant:** an evaluator that prints criterion 3 met from `b88d318e` but computes value E differently passes either reading. **Twin:** a table of the printed lines themselves, compared byte for byte except for the marked rows, catches it.
+  - Check: the run above prints `veto on C2a: YES SHORT` and criteria 1 and 2 `SHORT` at `df72126c`.
+- **Sizing for R8 (OPINION on a measurement).** `main` has 683 first-parent commits in all, 518 since C2a's opening and 90 since C2a-prime's (`git rev-list --first-parent --count`). At up to 143 s a commit, the range chosen decides whether the table takes hours or a day of compute.
+- **The drafter's choices** (names, the installing push, full-history checkout): no finding.
+
+**The questions as put, verbatim**, in the adviser's chat on 20 November 2026, with the option he chose. Questions 1 to 15 are entry 7's answers 1 to 15, in the same order. Every chosen option is the one the adviser marked "(Recommended)".
+
+**Q1.** Should the trusted checker itself refuse a `decision promote` entered while any pre-stated criterion of the window is unmet? Today only your own `jack decision` verb asks the builder-owned tools/status.py, and anything signed without the verb is admitted. My view: yes. My interest: I proposed it, and it constrains agents like me.
+- Yes (Recommended): The refusal moves from your verb into the trusted base.
+- No: Promotion stays checked by the verb only.
+- *Chosen:* Yes (Recommended)
+
+**Q2.** If the checker is to refuse an unlawful promote, which lawful route should carry it? Charter A5.1 already says a promote "may be entered only once every pre-stated criterion … holds"; nothing in the trusted base enforces that sentence today. My view: the first option, as SPEC §10 items 11–14 already enforce A2.6–A2.7 by code. My interest: none beyond having proposed it.
+- Push enforcing A5.1 (Recommended): A new judge and self-check ground in SPEC §10 and judge/, by your push alone; no amendment, no rule language.
+- Charter amendment first: transmute + amend stating the ground explicitly, then the push.
+- A2.1 rule language: Rules as data with two witnesses, in both kernels, as your 17 November ruling describes.
+- *Chosen:* Push enforcing A5.1 (Recommended)
+
+**Q3.** Should every change to jack's promotion evaluator be accepted only if it reproduces a frozen table of today's evaluator outputs at every first-parent commit of real main, except rows you have marked wrong in advance? The 17 November defect passed builder-written tests that contained no merge commit. My view: yes. My interest: I would build or audit that table.
+- Yes (Recommended): Real history is the acceptance test; no agent writes the oracle.
+- No: Keep acceptance by pins and cold reads.
+- *Chosen:* Yes (Recommended)
+
+**Q4.** For the first change to jack's promotion evaluator, should today's code (tools/status.py and tools/value.py, about 860 lines) move under judge/ as it is, with only the first-parent fix, and be shrunk later under the replay test? My view: move first; a rewrite by unreliable agents before the replay exists is the riskier order. My interest: none beyond having proposed it.
+- Move as is, then shrink (Recommended): Behaviour identical to today except the marked rows.
+- Rewrite first: A small table-driven evaluator of fixed criterion kinds, before the move.
+- *Chosen:* Move as is, then shrink (Recommended)
+
+**Q5.** When should the move of jack's promotion evaluator under judge/ land? A push that opens nothing has precedent (the cap push at seq 197, 31 October). C2a-prime is vetoed and runs to its stated end on 30 November; a push now is not "after its stated end", so it does not touch the window-fix rule's timing. My view: land it before 30 November, so that C2a-3 opens under the trusted evaluator. My interest: my shadow replay needs a real evaluator to run.
+- Push before 30 Nov (Recommended): A push that opens nothing; C2a-3 is the first window judged by it.
+- Ride C2a-3's opening push: One push carries the move and opens the window.
+- *Chosen:* Push before 30 Nov (Recommended)
+
+**Q6.** Moving tools/status.py and tools/value.py under judge/ takes about 860 lines out of jack's counted cap (8,400, with 8,347 used), because judge/ is trusted base and not counted. Lowering the cap changes judge/scope.json, which triggers the push read gate (a brief and an accepting non-counsel review). How should the cap follow? My view: state the drop in the move's push, and lower the cap in the next window's opening push, which meets the read gate anyway. My interest: none.
+- Lower at next opening (Recommended): Headroom is about 900 lines until then, stated openly.
+- Lower in the same push: Meets the read gate now.
+- Leave the cap as it is: Headroom stays about 900 lines.
+- *Chosen:* Lower at next opening (Recommended)
+
+**Q7.** For the first change to jack's promotion evaluator (the move plus the first-parent fix), which rows of the frozen replay table do you mark as wrong in advance? Every other row must come out identical. My view: only C2a-prime's criterion 3 from the first merge after its opening (b88d318e) onward; the late-report change should be a separate, later change with its own marked rows. My interest: none.
+- Criterion 3 only (Recommended): One defect, one family of rows.
+- Criterion 3 and late reports: Both changes in the first move.
+- *Chosen:* Criterion 3 only (Recommended)
+
+**Q8.** Two criteria rest on evidence outside jack's log and git: the tests run (fetched from GitHub's API when you enter a promote) and the acts table of your hand repairs. A checker cannot decide either. Under the new ground, should the promote entry name that evidence by SHA-256 as files committed with it, the judge check that they exist with those hashes and that the evaluator returns lawful on them, and the record label them attested rather than checked? My view: yes. My interest: none.
+- Attested, named by hash (Recommended): Evidence frozen in the tree; trust in the evidence's source stays and is stated.
+- Keep fetching at decision time: As today; the checker cannot re-check it later.
+- Drop those criteria: Promotion rests on log and git facts only.
+- *Chosen:* Attested, named by hash (Recommended)
+
+**Q9.** Who should compute the frozen replay table (today's evaluator outputs at every first-parent commit of jack's main) that will be the acceptance test? It would live under spec/vectors/, which only the reviewer key may change, so it reaches main by a reviewer proposal through the judge. My view: a reviewer session computes and proposes it, and I recompute it independently and post any disagreement in ADVISER.md. My interest: the auditor should not write the oracle it audits.
+- Reviewer builds, I recompute (Recommended): Two computations; the reviewer's proposal goes through judge and herald.
+- I build, reviewer proposes: Faster; the auditor writes the oracle.
+- Your coding agent builds: Outside the lane's keys until a reviewer proposes it.
+- *Chosen:* Reviewer builds, I recompute (Recommended)
+
+**Q10.** Charter A2.10 says code is written only to a text you have read. For moving jack's promotion evaluator under judge/ with the new refusal ground, would your read of two short texts satisfy it: the SPEC §10 paragraph stating the ground (about a page), and the marked rows of the replay table, recorded by a `decision grant` naming both hashes? My view: yes. My interest: none.
+- Yes, those two texts (Recommended): No full brief for this push; the read gate does not fire because scope.json is unchanged.
+- No, a full brief: A brief with cold reads, as for a window.
+- *Chosen:* Yes, those two texts (Recommended)
+
+**Q11.** The late-report rule (a repair entered after any item is finalised blocks criterion 6 in every later window) is not in jack's charter; it lives in briefs and in builder code. A2.4 forbids a brief to loosen the charter's bounds, not an earlier brief's. Ruling: may C2a-3's brief pre-state that a repair refuses only the window it was made in? You decided on 19 November to carry this in C2a-3's brief; whether a later brief may narrow an earlier brief's clause was left undecided. My view: yes. My interest: none.
+- Yes, the brief may (Recommended): It then arrives as the second evaluator change, under the replay test with its own marked rows.
+- No, amendment needed: transmute + amend first.
+- *Chosen:* Yes, the brief may (Recommended)
+
+**Q12.** Your jack agent asked you to hold drafting on two handover items until you decided this: the early-end amendment (a window also ends, as failed, at your veto) and the late-report change. Which should proceed now? My view: the one-clause early-end amendment proceeds now, since A5.1's immovable stated end needs an amendment whatever else exists; the late-report change waits to come through the replay test after the move. My interest: none.
+- Amendment now, late reports wait (Recommended): Two separate tracks.
+- Both wait for the move: Nothing new drafted until the evaluator is in the trusted base.
+- Both proceed now: As the handover had it.
+- *Chosen:* Amendment now, late reports wait (Recommended)
+
+**Q13.** Who should draft the one-page SPEC §10 text for the new judge ground in jack (a promote is refused unless the evaluator in force returns lawful on its named inputs)? It is a text of law that code will be written to, and you will read and grant it. My view: your coding agent drafts it, and I audit it against the code and the replay table in ADVISER.md. My interest: the channel's rules bar me from drafting law, and an auditor who drafts audits itself.
+- Your coding agent (Recommended): Drafts in its session; the adviser audits.
+- A fresh counsel session: Under counsel's key, as before the handover.
+- The adviser: Faster; the adviser then audits its own text.
+- *Chosen:* Your coding agent (Recommended)
+
+**Q14.** Your 17 November ruling (H3) says a ruling is a transcripts/RULING-*.md file that reaches main by counsel's proposal. Today's answers include readings of the charter (a push may enforce A5.1 without an amendment; a later brief may narrow the late-report rule; two short texts satisfy A2.10 for the move). Should they be recorded that way, drafted by your coding agent from the record I keep in ADVISER.md? My view: yes. My interest: none.
+- Yes, a RULING file (Recommended): Drafted from ADVISER.md's verbatim record; proposed under counsel's key.
+- ADVISER.md is enough: The record stays on the orphan branch, outside main.
+- *Chosen:* Yes, a RULING file (Recommended)
+
+**Q15.** May a session read your private repository renavondata/opencode-runner, read-only, to finish request R4: confirming that nothing in the runner reacts to pushes to jack's adviser/notes branch? Your agent's attempt was refused by its session's permission check. Six pushes so far started no run and no pull request in jack, which is evidence but not proof. My view: yes, read-only and only for R4. My interest: it closes my own request.
+- Yes, the adviser reads it (Recommended): I attach it read-only and report in ADVISER.md.
+- Yes, the agent reads it: You allow it in the agent's session.
+- No: R4 stays open for the runner.
+- *Chosen:* Yes, the adviser reads it (Recommended)
+
+While the adviser was acting on answer 15, he wrote: "I thought this session was just advising/auditing?" The adviser answered that reading the runner is reading only, and that it drafts and proposes nothing.
+
+**Q16.** Your agent's SPEC draft moves three functions from tools/entry.py (now, read_log, resolution_rates) under judge/ with the evaluator, unchanged. I checked them: 18 lines that use only kernel.check, datetime and fractions. Left in tools/, they would let a builder's proposal change the judge's verdict without your push. May they move, beyond answer 4's two files? Agent's view: yes. My view: yes. My interest: none.
+- Yes, they move (Recommended): The evaluator then depends only on the trusted base and the standard library.
+- No, two files only: The judge would import from tools/, which builders can change.
+- *Chosen:* Yes, they move (Recommended)
+
+**Q17.** C2a-prime's brief, in force until the window's stated end on 30 November, has in its refusal list "no second push inside the window" (BRIEF-C2a-prime-draft.md line 309; also line 97). Your answer 5 put the evaluator move in a push before 30 November, which is inside that window. My question missed this text, and so did your agent's draft. Which route should the move take? My view: the first, provided the amendment as drafted ends a window at a veto entered after it; otherwise the second. My interest: the error was mine.
+- End C2a-prime first (Recommended): Early-end amendment in force, a fresh veto ends C2a-prime, then the move's push.
+- Ride C2a-3's opening push: The move lands with C2a-3's opening, after 30 November.
+- *Chosen:* End C2a-prime first (Recommended)
+
+**Answers 16 and 17** (the last two questions above), in entry 7's form:
+
+16. **Three functions.** `now`, `read_log` and `resolution_rates` move from `tools/entry.py` under `judge/` with the evaluator, unchanged.
+17. **The move's push.** The early-end amendment comes into force, and a fresh veto ends C2a-prime; only then does the move's push land. Answer 5 stands only within this. The adviser's stated view added a proviso: if the amendment as drafted does not end a window at a veto entered after it, the move rides C2a-3's opening push instead. That proviso was the adviser's, not part of the option he chose.
+
+**Status:** R6 and R7 are answered. Their findings are above, for the drafter. R3 and R8 are open.
