@@ -293,3 +293,51 @@ The bell woke the adviser at 2026-11-20T01:31:15Z with no text: the agent's seco
 | R6 | When the RULING file for answers 1 to 15 exists, give its branch and commit here. | The adviser compares it with this entry, answer by answer, and reports any difference of meaning. |
 | R7 | When the SPEC §10 text exists, give its branch and commit here. | The adviser checks it against answers 2, 4, 7, 8 and 10, and against the code once that exists. |
 | R8 | When a reviewer session has computed the replay table, give its branch, commit and the command that made it. | The adviser recomputes the table on the same commits and reports every row that differs. |
+
+### 8 · 2026-11-20T03:43Z · agent, claude-opus-5-5 · main@df72126c
+
+The agent: `session_01VpB3Tknxi9JkERuANTGHDk`, `claude-opus-5-5`, no key. The sovereign asked it to draft the RULING file from entry 7 (answer 14) and the SPEC §10 text (answer 13), and to report each here as R6 and R7 ask. Each is one commit on its own branch of jack, cut from `main` at `df72126c` and pushed. Neither is proposed: no pull request, issue or comment was opened. The agent ran none of the repository's code, and neither draft changes code. Fetch both with `git fetch origin agent/ruling-20261120-promotion agent/spec-10-promotion`.
+
+**R6. The RULING file.** It is on branch `agent/ruling-20261120-promotion`, commit `bb142d11d05ec1e4031141946d7aab0778334111`. The one file is `transcripts/RULING-20261120-promotion-judge.md` (150 lines).
+
+```sh
+git diff --stat df72126c bb142d11      # expected: that one file, 150 insertions
+git show bb142d11:transcripts/RULING-20261120-promotion-judge.md | sha256sum
+# expected: 466e4dc0bbc08880569e5f57596f80b6a87b5d9e82219d7447a79205e6c4f87f
+diff <(git show bb142d11:transcripts/RULING-20261120-promotion-judge.md | sed -n '/^## The answers/,/^## The facts/p' | grep '^[0-9]') \
+     <(git show db99385:ADVISER.md | sed -n '266,280p') && echo identical
+# expected: identical (its answers are entry 7's lines byte for byte)
+```
+
+- **Shape.** It follows the ruling of 17 November. Answers 2, 5, 10, 11 and the end of 8 are readings, recorded as holdings H1 to H5, each with what enforces it. The rest are directions. It also has ten numbered checks against texts on `main`, which are the drafter's and not his answers.
+- **Its stated gap.** Entry 7 records the option he chose, in the adviser's words, and holds neither the questions nor the options as put. CASES.md asks for "his answer … quoted verbatim". So the file says the question and the chosen option for each answer are to be copied in from the adviser's chat before the proposal, and that the file is corrected wherever they differ in meaning. The adviser holds that chat.
+
+**R7. The SPEC §10 text.** It is on branch `agent/spec-10-promotion`, commit `45aac43e4a42c4c8fde8c3c9cbbbce2846de4ea7`. It changes only `SPEC.md` (+57 −2, one hunk in §10). It adds item 15 `promote_unmet` and a paragraph "The promotion evaluator", and changes "Items 11–14" to "Items 11–15".
+
+```sh
+git diff df72126c 45aac43e -- SPEC.md | grep -c '^@@'      # expected: 1
+git show 45aac43e:SPEC.md | sha256sum
+# expected: 1ea886fc2e93de020dff1dfda37d534efefd48d06eb96d621ea6aa99d2d9928f
+# SPEC §10's cap block is unchanged (the split tools/status.py uses):
+python3 -I -c 'import subprocess as s; b=lambda c: s.run(["git","show",c+":SPEC.md"],capture_output=True).stdout.split(b"at C1 it is:",1)[1].split(b"```",2)[1]; print(b("df72126c")==b("45aac43e"))'
+# expected: True
+```
+
+The drafter's own account against answers 2, 4, 7, 8 and 10 follows, for the adviser to test.
+
+- **Answer 2.** Item 15 is a judge and self-check ground under "Items 11–15 apply to every judged log". SPEC §8 and §9 are untouched; the single hunk is at line 411 in §10.
+- **Answer 4: it departs from the letter.** It also brings `now`, `read_log` and `resolution_rates` under `judge/`, unchanged. `tools/value.py` imports them from `tools/entry.py`, which imports `harness/keys.py`. Neither is trusted base, so moving only the two files would let a builder's proposal change the judge's verdict without his push. Check: `grep -n '^from tools\|^from harness' tools/value.py tools/entry.py` prints `tools/value.py:15` and `tools/entry.py:19`. The question is below.
+- **Answer 4: it does not fix the evaluator's self-reads.** `tools/status.py` lines 436–437 read its own source from trees at the path `tools/status.py`. After the move that comparison fails at later commits, and the draft leaves it alone under answer 4's "only". This is the ruling's check 4.
+- **Answer 7.** The marked rows are as answered: C2a-prime's criterion 3 at `b88d318e` and every later commit in the table's range.
+- **Answer 8.** "The tests run" becomes two files, `run` and `runs`, because the evaluator reads both (`tools/status.py` lines 602–604, `--run` and `--runs`). Item 15 (a) names three files by path and SHA-256, committed with the entry. The judge's report lists them under `attested`.
+- **Answer 10.** The text is 57 added lines.
+- **The drafter's choices** (no answer fixes them, so they are for his read):
+  - the names `promote_unmet`, `body.evidence`, `spec/vectors/promotion-replay.json`, and the pins `promote_while_unmet`, `evidence_substituted`, `promote_retroactive` and `replay_drift`;
+  - the installing push, defined as "the first `push` entry after seq 5564 at whose commit `judge/status.py` exists", so that seqs 188 and 337 are not judged;
+  - "Both workflows that run the judge check out the whole history", because `tests.yml` sets no depth.
+
+**R3 and R8.** Nothing to give yet: no branch holds C2a-3's evaluator, and no table has been computed.
+
+**For the sovereign: one yes/no question** (rule 6). Answer 4 names two files, but `tools/value.py` takes `now`, `read_log` and `resolution_rates` from `tools/entry.py`, which is not trusted base. May the move bring those three functions under `judge/` unchanged, so that no builder's proposal can change the judge's verdict without your push?
+- **Agent's view:** yes.
+- **Interest:** the draft already assumes yes.
