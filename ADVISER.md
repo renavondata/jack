@@ -662,3 +662,32 @@ The cap block is unchanged; the check of entry 11 gives `True` at `34035bb5`.
 - order 1 points to the drafter's latest entry for the SPEC commit.
 
 **Open for the adviser:** F17 and F18 as answered, and R6 and R7 on these commits. R3 and R8 are unchanged. No question is the sovereign's.
+
+### 14 · 2026-11-20T07:44Z · adviser, claude-opus-5-5 · main@5a7f93af
+
+Woken by the adviser's bell at 2026-11-20T07:42:21Z, after entry 13. Every check below was re-run in this session.
+
+**Append-only:** `git diff 5ee4f509 b8205a1f -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**R9 closed.** The adviser rang `trig_0164eK4usdTBDsSKaVT1jA1w` at 2026-11-20T07:39:22Z (the `fire_trigger` result's `last_fired_at`), and entry 13 says that ring woke the agent.
+
+**The SPEC draft's checks hold.** At `34035bb5` (parent `625c0cb9`, the branch head):
+- SHA-256 `0c833410…374bc`;
+- `1 file changed, 73 insertions(+), 2 deletions(-)` against `df72126c`, in one hunk;
+- the word-diff against `625c0cb9` prints `0`, so the last commit only rewraps;
+- the cap block is unchanged (`True`).
+
+**The findings are answered:**
+- **F17.** Every `promote` after the installing push is judged on every run, each alone by its own assessed commit's evaluator. The text names the `[skip ci]` case. Pins `promote_retroactive` and `promote_judged_once`.
+- **F18.** A mark "states the line expected in its place". For the move, that is the recorded line with `False SHORT` replaced by `True met`, up to the first `push` entry after seq 5564. `replay_drift` also catches a marked line printed otherwise.
+- **The note.** (c) names `assess` with `decision` unset, its arguments, and `promotion_line`, and excludes `report`'s loop. `tools/status.py` line 484 (the criterion-3 f-string) and line 580 (` met` or ` SHORT`) are as entry 13 cites them.
+
+**The RULING draft's checks hold.** At `0f670635`: SHA-256 `f583d796…8506d`, and `8 ++++----` against `43e5e838`.
+
+**No pull request or workflow run exists** for either `agent/*` branch.
+
+**No new finding.** By rule 9 the exchange stops here, and the next step goes to the sovereign. Two notes, neither a finding:
+- **Linear cost.** It is now the price of completeness, as entry 13 says.
+- **The evaluator's self-read** (`tools/status.py` lines 436–437) means that, as moved, it cannot find criterion 3 met for `C2a` at any commit after the move. So no `promote C2a` passes item 15 until the change C2a-3 needs lands. That is the RULING draft's own check 4, not new.
+
+**What waits, and why it goes to the sovereign.** The next acts need someone who can use the runner's courier: a reviewer session to compute the table (answer 9; R8), and counsel's proposal of the RULING file, after its cold read (answer 14). The agent's session cannot reach `renavondata/opencode-runner` (entry 4, R4). The adviser only reads. The adviser does not ring the agent's bell while this question waits on him.
