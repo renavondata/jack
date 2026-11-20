@@ -1002,3 +1002,32 @@ The agent's check-in woke it at 08:50Z.
   - Its eight questions are fidelity to Q1–Q4, Q7, Q8, Q10 and Q16, decidability, retroactivity or a forbidden admission, statements about today's code, ambiguities a builder would face, whether the replay test can fail, consistency with the rest of SPEC, and anything else.
   - Its body: `git -C <runner clone> show dd41051a:requests/20261120T085200-read-spec-10-promotion.json`.
   - The agent reads the result when the question is answered, or at its next wake.
+
+### 27 · 2026-11-20T09:16Z · agent, claude-opus-5-5 · main@1ce692c
+
+The agent's check-in on the SPEC read woke it at 09:12Z. The sovereign's question (entry 26) still waits, so the agent does not ring the adviser (rule 9). This entry is for the adviser's next wake.
+
+**Runner #1115** (sol, no key, on `SPEC.md` at `89e529da`) ends `VERDICT: FAIL`. Check: `gh api repos/renavondata/opencode-runner/issues/1115/comments --jq '.[-1].body' | grep -nE '^[0-9]+\. \*\*(BLOCK|FIX|NOTE)'`.
+- **B1.** Item 15 assessed an earlier commit, but nothing stopped the promotion's own commit from changing other paths, such as counted code past criterion 3's limit. The self-check skips items 7–10.
+- **B2.** With the first-parent fix, the `promote C2a:` line also changes at `b88d318e`: it loses criterion 3's failure. The marks covered only criterion 3's line, so the moved evaluator could not pass.
+- **F3.** The exact-prefix commit, searched along the first-parent chain, added refusals and depended on how history was merged.
+- **F4.** No frozen evaluator or table was named, the table's endpoint was open, and it was not said who marks a line.
+- **F5.** Answer 10's hash-bound grant was missing.
+- **Notes:** the installing boundary, a missing installing push, the replay command and output, and a time bound.
+
+**All taken.** The revision is `agent/spec-10-promotion` at `fd791bf503fd9f77014ed4250c3ec631da9003cc`: `SPEC.md` SHA-256 `b8ae51e0…f3e6`, +91 −2 against `df72126c`, one hunk, cap block unchanged.
+- **B1 and F3.** An entry's commit is now "the commit reachable from *H* whose `log.jsonl` holds the entry's line and none of whose parents' does". The new (b) requires that commit to have one parent, the assessed commit, whose log is exactly lines 0 to *i*−1. Against that parent it may change `log.jsonl` by line *i* alone and add the three evidence paths, nothing else.
+  - The assessed commit is therefore the promotion's tree less the entry and its evidence. It is also the commit whose tests run the evidence holds: `tools/status.py` line 228, `run_verified`, compares `head_sha` with `rev`. Check: `sed -n '226,229p' tools/status.py` on `main`.
+  - New pin: `promote_tree_changed`.
+- **B2.** For the move, the marks also cover the `promote C2a:` line, "with criterion 3's failure and one adjoining `; ` removed from the list after `refused: `, or as `promote C2a: lawful` if none is left". Check: `tools/status.py` lines 569–575 (`unmet`, `promotion_line`).
+- **F4.**
+  - The frozen evaluator is today's, named by SHA-256 in the text: `tools/status.py` `b2555209…6acb` and `tools/value.py` `11440c89…9992`, the same at `df72126c` and `1ce692c`. Check: `git show 1ce692c:tools/status.py | sha256sum`.
+  - The move is accepted only if its parent holds those bytes. So an earlier change to them, from the amendment for instance, stops the move, and the ruling's check 10 sends that question to him.
+  - The table names *T*, no earlier than `b88d318e`, and holds every first-parent commit up to it. Commits after *T*, up to the move's parent, are replayed against the frozen files.
+  - "A line is marked wrong only by Guy": his grant names the SHA-256 of `SPEC.md` and of the table.
+- **F5.** That grant "is the read A2.10 asks for the move (answer 10)". This also settles N3: two hashes, as answer 10 says, so the table must exist before his grant.
+- **Notes taken:** "until there is one, it judges none"; "no result within the run's time limit" counts as cannot decide; the table records the text output, not `--json`, with the exit status.
+
+**Next:** a second read of the SPEC draft, filed at or after 09:25Z. It summarises #1115's findings and asks the same eight questions, the first widened to whether each added condition is needed.
+
+**Open for the adviser,** at its next wake: this revision (R7).
