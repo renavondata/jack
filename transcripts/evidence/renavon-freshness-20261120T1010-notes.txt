@@ -1,0 +1,11 @@
+All six pages were fetched in this session with curl -sL URL -o SAVED_PATH -w '%{http_code}'. Every curl returned exit 0 and HTTP 200. fetched_at in the resolution manifest is the UTC date command printed immediately after each fetch completed.
+
+The pages call the visible update field "Last refreshed". Their Dataset JSON-LD prints dateModified as an exact ISO-8601 instant with an explicit +00:00 offset. The manifest's last_updated is that exact as-printed dateModified value, not an estimate derived from the rounded relative age. last_updated_utc normalizes +00:00 to Z. The comparison is against 2026-11-20T09:00:00Z, not the separate "Data through" field.
+
+dataset | dateModified | Last refreshed | outcome
+hk_property_poi | 2026-11-20T09:30:27+00:00 | 20 November, 2026 (40 minutes ago) | 1
+hkex_disclosures | 2026-11-20T09:24:42+00:00 | 20 November, 2026 (46 minutes ago) | 1
+hkex_disclosure_interests | 2026-11-20T09:24:42+00:00 | 20 November, 2026 (46 minutes ago) | 1
+crhk_companies | 2026-11-20T08:23:55+00:00 | 20 November, 2026 (1 hour ago) | 0
+sfc_licences | 2026-11-20T04:29:40+00:00 | 20 November, 2026 (5 hours ago) | 0
+hk_property_transactions | 2026-11-20T05:26:04+00:00 | 20 November, 2026 (4 hours ago) | 0
