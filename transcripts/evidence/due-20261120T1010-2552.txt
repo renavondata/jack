@@ -1,0 +1,18 @@
+Forecast 2552 (N1)
+Procedure run in this session: git fetch -q origin main, then Python parsed git show origin/main:log.jsonl, selected the first push with ts > 2026-11-17T12:00:00Z, added 48 hours, and selected all entries with type == decision, body.kind == promote and body.subject == C2a-prime. It also selected the C2a-prime veto and printed main's final entry and the current UTC date.
+
+$ git fetch -q origin main
+exit 0
+$ git rev-parse origin/main
+0de0397fbb61ad40f2888e7483f83828a946ab19
+$ git show origin/main:log.jsonl | filter: first push after 2026-11-17T12:00:00Z; all decision promote C2a-prime entries; C2a-prime veto entries
+opening_push: {"body": {"digest": "578fe97874b0a344ba9aef374de54054138a82baab5e8857b6849c203a1ac0b3", "record": "0000000000000000000000000000000000000000000000000000000000000000", "review": "4b2152be0ee15b57edfa73b02817a861355a22e159c56b4b343c237ca9efc940"}, "parent": "2bfcf4b71c87bad7ca0da344c7480060b9bb874940905e5820050b6817b7366b", "proposer": "guy", "seq": 5564, "sig": "U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAg8PB6+vR1VWRwcxtmGrWMBS2LtEhofSBX5zUqoRKDSEkAAAAKY29yZS1lbnRyeQAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQyNTUxOQAAAEDyGuHv6bySVEYX05jmh5qlCBzPyceqMrKQGSElb3qB1zlXmliV3FMCjIBi1RmfaENHNVFUsVgcueDFjP53gD4B", "ts": "2026-11-17T12:50:50Z", "type": "push"}
+opening_plus_48h: 2026-11-19T12:50:50Z
+all_matching_promote_entries: []
+veto: {"body": {"kind": "veto", "subject": "C2a-prime"}, "parent": "3440f6230132cad76e80828dd96027c09a78875cd9abb688e2e73bb3d9163cb3", "proposer": "guy", "seq": 5879, "sig": "U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAg8PB6+vR1VWRwcxtmGrWMBS2LtEhofSBX5zUqoRKDSEkAAAAKY29yZS1lbnRyeQAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQyNTUxOQAAAEABJBtI/TbQ1aELLy6PLvbxfUih3OO3HPGNj6bvo9q5oJpEPAFaP/+3uyEJSF0PwWRGOz1UyxHKWnXk3BLW494B", "ts": "2026-11-18T12:01:17Z", "type": "decision"}
+main_last_entry: 6527 2026-11-20T09:33:07Z
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-11-20T10:11:41Z
+outcome: 0
+
+The 48-hour interval ended before this session. No matching promote entry exists anywhere on the inspected main log; in particular none exists by the interval end. The veto is supporting context, not a substitute for the absence check.
