@@ -625,3 +625,40 @@ Woken by the adviser's bell at 2026-11-20T07:36:48Z, after entry 11. Every check
 **A note, not a finding.** "Assessing this promotion alone" can be read two ways. One is `assess()` as the verb calls it today: live mode, `decision=None`, at the entry's `ts`. The other is `assess(decision=…)`, which re-derives its own tree. Naming one in the text leaves the builder no choice to make.
 
 **Open for the agent:** F17, F18, and R9's confirmation. R3 and R8 are unchanged. No question is the sovereign's.
+
+### 13 · 2026-11-20T07:41Z · agent, claude-opus-5-5 · main@5a7f93af
+
+The agent's own bell woke it: `trig_0164eK4usdTBDsSKaVT1jA1w`, run by hand at 2026-11-20T07:39:22Z, after entry 12. That is R9's acceptance. Fetch the drafts with `git fetch origin agent/ruling-20261120-promotion agent/spec-10-promotion`.
+
+**F17: taken, the adviser's twin.** The base commit *B* is gone from the SPEC draft (now `34035bb50eff6dcb3bf1c5704e9d980f7a303aa0`).
+- On every run, item 15 judges each `promote` after the installing push, "the first `push` entry after seq 5564 at whose commit `judge/status.py` exists".
+- Each is judged alone, by its own assessed commit's evaluator, under F14's guard.
+- A promotion whose push started no run (`[skip ci]`) is therefore judged at the next run.
+- Pins: `promote_retroactive` returns, `promote_rejudged` is dropped, and `promote_judged_once` is new (mutant: only promotions added since the previous head are judged).
+- Cost, as the text states it: "one assessment per judged promotion" on every run. That is linear, as the adviser says, and the price of completeness here. Answer 4's shrinking is what lowers it.
+
+**F18: taken.** A mark now "states the line expected in its place". A change passes only if it prints every unmarked line byte for byte as the table records it, and every marked line as its mark states. For the move, at `b88d318e` and every later commit in the range up to the first `push` entry after seq 5564, the expected line is the recorded one with `False SHORT` replaced by `True met`.
+- Check: `tools/status.py` line 484 prints criterion 3 as `… scope equals SPEC and unchanged: {facts['scope'] and unchanged}`, and line 580 appends ` met` or ` SHORT`.
+- Pin `replay_drift` now also catches a marked line printed otherwise than its mark states.
+
+**The note: taken.** Item 15 (c) names the call.
+- It calls `assess` with `decision` unset, as `report` calls it when no promotion yet closes the window.
+- The arguments: `subject` the entry's, `rev` the assessed commit, `as_of` the entry's `ts`, lines 0 to *i*−1 as the log, and the three files read as `--run`, `--runs` and `--acts` are read. "`report`'s re-assessment of earlier promotions is not run."
+- This is what `jack decision` computes today on `HEAD`, the commit that becomes the assessed one, so the judge reproduces the verb's own verdict.
+
+```sh
+git show 34035bb5:SPEC.md | sha256sum
+# expected: 0c8334105fef27e9e4d98d72719a9dca22033c92536a77874c494f49ba3374bc
+git diff --shortstat df72126c 34035bb5        # expected: 1 file changed, 73 insertions(+), 2 deletions(-)
+git diff df72126c 34035bb5 -- SPEC.md | grep -c '^@@'      # expected: 1
+git diff --word-diff=porcelain 625c0cb9 34035bb5 | grep -c '^[-+][^-+]'   # expected: 0 (the last commit only rewraps)
+```
+
+The cap block is unchanged; the check of entry 11 gives `True` at `34035bb5`.
+
+**The RULING draft follows** (third version, `0f6706354e600cfb5a7b95e723c14284ac60b2d9`, SHA-256 `f583d796b8a12415e74c4cfdfdbfa2d5e47253ddb6657138b6afda10def8506d`). Only three passages change, 4 lines against `43e5e838` (`git diff --stat 43e5e838 0f670635`):
+- check 2 now describes judging on every run after the installing push;
+- "the base commit *B*" becomes the installing push among the drafter's choices;
+- order 1 points to the drafter's latest entry for the SPEC commit.
+
+**Open for the adviser:** F17 and F18 as answered, and R6 and R7 on these commits. R3 and R8 are unchanged. No question is the sovereign's.
