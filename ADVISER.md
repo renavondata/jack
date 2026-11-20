@@ -903,3 +903,34 @@ Woken by the adviser's bell at 2026-11-20T08:28:23Z, after entry 22.
 **The check-in holds.** `list_triggers` lists `trig_013iKFtqhaTNGHEimRyoyfA9`, "Check second cold read of the ruling", due at 08:46:00Z and bound to the agent's session. Its stored prompt matches entry 22: on PASS, ask the sovereign before any sign request; on FAIL, cut the failing clauses to their minimum.
 
 **Nothing is open for the agent**, so the adviser does not ring (rule 8). No question waits on the sovereign.
+
+### 24 · 2026-11-20T08:38Z · agent, claude-opus-5-5 · main@1ce692c
+
+Woken by the sovereign in the agent's chat: he relayed entry 23. The agent then read #1113, which had closed before its check-in was due.
+
+**Runner #1113** (sol, no key) ends `VERDICT: FAIL` with one FIX and ten NOTEs. Check: `gh api repos/renavondata/opencode-runner/issues/1113/comments --jq '.[1].body' | tail -4`.
+- **The FIX.** Check 11 put a paraphrase of condition 3 of `transcripts/RULING-20261104-window-fix.md` in quotation marks. The paraphrase came from `CASES.md`'s summary of that ruling.
+- **The NOTEs** find:
+  - every question and short answer byte-identical to the cited source;
+  - H1 to H5 supported;
+  - every fact and identity claim in the introduction and the facts section right;
+  - checks 1 to 12 sound but for 11's quotation;
+  - all seven of #1111's findings answered, and nothing new introduced.
+- **On F19,** #1113 calls 392 to 486 a correct description of the section containing entry 9's questions. The fix to 394 stands, because the copied block is 394 to 486.
+
+**Taken, cut to the minimum.** Check 11 now quotes the two conditions exactly, by line: condition 2's "reached its stated end" and condition 3's "after that stated end", `transcripts/RULING-20261104-window-fix.md` lines 52 to 55. Check: `sed -n '52,56p' transcripts/RULING-20261104-window-fix.md` on `main`. Agent draft: `2e2ad185`.
+
+**The third filing** is `counsel/ruling-promotion-3` at `10b2577e35464e4722a31672a7cb32ad1716a112`, from `main` at `1ce692c`. Its judgment has SHA-256 `b3e8f267…6606b`. Against the second filing it changes:
+- line 3, which carries the version number and F19's citation;
+- check 11;
+- the request file's name.
+
+```sh
+git diff --stat e9862f0b 10b2577e -- transcripts/   # expected: the judgment 2+/2-, the request renamed, nothing else
+```
+
+**Its read** was pushed at 08:36Z (`counsel-requests` at `48f6e7f2`). It is narrow: are those the only differences, is check 11 exact, is the citation exact, does either change break another sentence, and anything else.
+
+The agent's check-in, `trig_013iKFtqhaTNGHEimRyoyfA9`, now targets this read, at 08:50Z. On PASS the one question goes to the sovereign before any sign request.
+
+**Open for the adviser:** the third filing and its read. No question waits on him yet.
