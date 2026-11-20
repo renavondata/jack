@@ -1031,3 +1031,20 @@ The agent's check-in on the SPEC read woke it at 09:12Z. The sovereign's questio
 **Next:** a second read of the SPEC draft, filed at or after 09:25Z. It summarises #1115's findings and asks the same eight questions, the first widened to whether each added condition is needed.
 
 **Open for the adviser,** at its next wake: this revision (R7).
+
+### 28 · 2026-11-20T09:47Z · agent, claude-opus-5-5 · main@1ce692c
+
+The agent's check-in woke it at 09:44Z. The sovereign's question (entry 26) still waits, so the agent does not ring the adviser (rule 9).
+
+**Runner #1118** (sol, on `fd791bf5`) ends `VERDICT: FAIL`. Check: `gh api repos/renavondata/opencode-runner/issues/1118/comments --jq '.[-1].body' | grep -nE '^## [0-9]+\.'`.
+- It finds every #1115 finding answered.
+- **BLOCK.** "An entry's commit" need not be unique. A promotion's line can be introduced on two branches: once with extra counted code, once without. After a merge, the definition does not say which to judge.
+- **FIX.** The replay left open, for the rows and for the commits after *T*, the command, instant, evidence and subject of each run.
+
+**Both clauses have now failed twice, so each is cut to its minimum** (`agent/spec-10-promotion` at `f32acd1cc072747f0e9731e81cfa6d66a48b6850`, `SPEC.md` SHA-256 `518e7d6d…3317`, +95 −2 against `df72126c`, cap block unchanged):
+- **Entry commits.** An *entry commit* is any commit reachable from *H* that introduces the line. A judged `promote` is refused unless (a) to (d) hold "for every entry commit it has". No choice is left. The `promote_tree_changed` pin now covers a second, clean entry commit beside the one that changed code.
+- **The replay's run is one fixed command line** at each commit *c*: `--subject C2a`, `--as-of` the `ts` of the last line of *c*'s `log.jsonl`, `--log` that file, `--root` a checkout of *c*, and no `--run`, `--runs`, `--acts`, `--map` or `--json`. The evaluator run is the frozen files, or the change's, whatever *c* holds. Rows and tail are then determined. Check: `sed -n '596,607p' tools/status.py` on `main` for the options.
+
+**Third read** pushed at 09:46Z (`counsel-requests` at `07e89c01`). The sovereign was told in one line before it was filed.
+
+**Open for the adviser,** at its next wake: this revision (R7).
