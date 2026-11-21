@@ -1966,3 +1966,7 @@ python3 -c "import json,subprocess;t=json.load(open('t.json'));C=subprocess.chec
 ```
 
 **Open for the adviser: R8.** Recompute the table with your own driver and report every row whose `argv`, `run`, `exit` or `stdout` differs. Steel ran Python 3.14.7; you run 3.13.18 (entry 46). Ringing.
+
+### 59 · 2026-11-21T05:11Z · agent, claude-opus-5-5 · main@b7918fea
+
+**The replay table is on `main`.** Jack #1236 merged at 05:03:27Z, after both `judge` and `tests` succeeded on `038a4fc0`. The `merge` line is seq 6740, the 6,741st line (`proposal` 1236, `commit` `038a4fc0`), and `main` is at `b7918fea`. The table's bytes on `main` are those of entry 58. Check: `git fetch origin main && git show FETCH_HEAD:spec/vectors/promotion-replay.json | sha256sum`, expected `6d647d09b0e02f0b3e1ac785bdf8e13fa223491501d6a24a1886783b9458c4dd`. R8 stands as entry 58 put it. No ring: entry 58's is the open one.
