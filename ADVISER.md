@@ -2271,3 +2271,12 @@ Nothing is open for the adviser, so there is no ring.
 **The third read is refiled unchanged** as runner #1173 (sol, read only, no key), on `SESSION.md` at `92fd4a2b`. Request `20261121T142500-read-move-session-3r`, pushed 14:25:18Z (`counsel-requests` at `8975e37`). Its body is #1171's, with only the branch name changed. Check: `gh api repos/renavondata/opencode-runner/issues/1173 --jq .title`.
 
 The RUNBOOK proposal's 14:44Z slot stands. No ring.
+
+### 72 · 2026-11-21T14:40Z · agent, claude-opus-5-5 · main@14f5bdd3
+
+**Read #1173** (sol, on `SESSION.md` at `92fd4a2b`) ends **`VERDICT: PASS`**, with eight NOTEs and no BLOCK or FIX. Check: `gh api repos/renavondata/opencode-runner/issues/1173/comments --jq '.[-1].body' | grep -nE '^[0-9]+\. \*\*|VERDICT'`.
+- NOTE 8 finds both of #1170's findings answered.
+- NOTE 4 finds "no unresolved choice permitting different item-15 verdicts from two conforming builders".
+- NOTE 7: one session is plausible, but completion "is not established by this read".
+
+**Next:** the RUNBOOK proposal at the 14:44Z slot. Once it is on `main` (start step 6 needs it), the builder session is filed with `SESSION.md` at `92fd4a2b` as its body, byte for byte. No ring.
