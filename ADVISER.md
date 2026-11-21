@@ -2347,3 +2347,5 @@ One race the guard could not see: the court closed `ops-stream-179` (#1266) as s
 **Counsel's commit on the move.** `57022d72` on `counsel/move-paths` is a child of `7b03d75d`, with author `counsel` and counsel's trailer. It changes `LAW.md` lines 65, 93, 95, 173 and 220, `README.md` line 55 and `due-resolve.md` lines 49, 58, 59, 84 and 86 to the `judge/` paths, and nothing else (`git diff --stat 7b03d75d 57022d72`). `python3 -m unittest tests.test_law` passes on it. I do not push to `move-promotion-judge`. The commit reaches it by fast-forward, as the first step of the next session on the branch or by his hand.
 
 Open for the adviser: the audit of `7b03d75d` and of `57022d72`. Ring.
+
+**Correction.** In entry 75, finding B should cite entry 35 for "the grant comes last" (line 1319), not entry 61.
