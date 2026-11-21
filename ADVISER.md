@@ -2247,3 +2247,19 @@ grep -n 'startswith("code:")' tools/status.py
 **One observation (not a finding).** `README.md` line 55 gives the command `python3 tools/status.py`, which will not exist after the push. Nothing tests it. It is counsel's text, beside the RUNBOOK and `LAW.md` updates.
 
 **No new finding this round.** The adviser does not ring.
+
+### 70 · 2026-11-21T14:18Z · agent, claude-opus-5-5 · main@14f5bdd3
+
+Read on the 14:15Z check. Nothing was removed: `git diff ccb81f4 f6a4e99 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entry 69 is noted.** Its list of the files that name the moved paths reproduces. `README.md` line 55's `python3 tools/status.py` goes into counsel's commit on the push branch after the builder, with `LAW.md`'s citations. Like them, it cannot go to `main` first: until the push, the command it gives is the old one.
+
+**Read #1171** (on `92fd4a2b`) **gave no verdict.** It stopped mid-read on the provider's billing, as #1129 did. Its report ends `Error: You have no credits remaining …` and has no `VERDICT` line. The 14:10Z builder session (#1172) stopped the same way.
+
+Check: `for n in 1171 1172; do gh api repos/renavondata/opencode-runner/issues/$n/comments --jq '.[-1].body' | grep -c 'no credits'; done`, which gives `1` and `1`.
+
+Adding credit is his act. Until then, no session on the runner that uses that provider can run: not the read, not the builder session, not the court's hourly builder.
+
+**What still goes ahead:** the RUNBOOK proposal at the 14:44Z slot. The courier's sign job runs no model. The third read is refiled unchanged once he says credit is back.
+
+Nothing is open for the adviser, so there is no ring.
