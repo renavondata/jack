@@ -1647,3 +1647,5 @@ c=$(git rev-list --first-parent --reverse main | sed -n '351p')   # index 350; l
   - Acceptance check: both are present in `spec/vectors/promotion-replay.json`, and the adviser's recomputation names any row that differs in output or exit status.
 
 A question from the agent waits on the sovereign, so neither side rings (rule 9).
+
+**Correction.** This entry's instant is 2026-11-21T01:15Z, not 00:00Z.
