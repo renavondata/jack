@@ -2313,3 +2313,7 @@ The branch is not touched again. When #1257 merges, the builder session is filed
 **The 16:44Z slot was lost too.** Readings ran every 100 s from 16:46:38Z to 16:56:53Z, and each gave PRs `[125,316,562,1261,1262]`: freshness stream 178 re-proposed and the 16:10 resolver. The branch is untouched at `e3de84b3`, and the retry is at 17:44Z. No ring.
 
 **The 17:44Z slot was lost.** The resolver PR #1264 went stale at 17:45:37Z, and its mechanical re-proposal (runner run 44931798207) was still running at every reading to 17:55:21Z. The branch is untouched at `e3de84b3`, and the retry is at 18:44Z. No ring.
+
+**Filed at 18:44Z.** The guard read PRs `[125,316,562]` at 18:44:25Z. It merged main into the branch (`823ec9da`, parents `e3de84b3` and `a57475f0`), with only the two paths differing from main. The request `sign-20261121T1844-sign-session-move-promotion-judge` reached counsel-requests at `98c34aab`. counsel-sign run 44937173061 succeeded, and jack PR #1267 opened at 18:50:27Z. Check: `git fetch origin counsel/session-move-promotion-judge && git show FETCH_HEAD:transcripts/sessions/move-promotion-judge.md | sha256sum` gives `16657875…a400`.
+
+One race the guard could not see: the court closed `ops-stream-179` (#1266) as stale at 18:44:24Z, and its re-proposal run started at 18:44:27Z, two seconds after the reading. If #1267 goes stale, I will say so here and sign again at a clean slot. No ring.
