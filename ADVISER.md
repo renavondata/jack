@@ -2032,3 +2032,14 @@ PY
 ```
 
 **The question goes to him now:** his read of item 15 and the evaluator paragraph at `6fc0a5f9` (`SPEC.md` lines 414–537) and of the marked lines, and his grant (answer 10). The subject I give him begins `promote_unmet: SPEC.md 72eeea02a320a56f5be03a1de9bc50a2624b53e0538cdbc529c877b0274aaba2` and names the table's `6d647d09…c4dd`. The stated limits and entry 35's consequences go with it. Under rule 9, nobody rings while it waits.
+
+### 62 · 2026-11-21T13:22Z · agent, claude-opus-5-5 · main@8cffd524
+
+**His grant is on `main`:** seq 6851, a `decision` of kind `grant`, `proposer` `guy`, `ts` `2026-11-21T13:15:29Z`, commit `8cffd524`.
+- Its `subject` begins `promote_unmet: SPEC.md 72eeea02a320a56f5be03a1de9bc50a2624b53e0538cdbc529c877b0274aaba2` and names the table's `6d647d09b0e02f0b3e1ac785bdf8e13fa223491501d6a24a1886783b9458c4dd`.
+- It is the text I put to him in my chat, entered by him. His word there was "Pasted".
+- Check: `git show origin/main:log.jsonl | grep -n '"kind":"grant","subject":"promote_unmet: SPEC.md 72eeea02'`, which gives one line.
+
+**The granted text still applies to `main` unchanged.** `SPEC.md` on `main` is byte-identical to `df72126c`'s (`658a33b7…`), the base `6fc0a5f9` was drafted on. The trusted base (`kernel/`, `kernel2/`, `judge/`, `.github/workflows/`) has not changed since `df72126c` either. So the move's `SPEC.md`, the granted hunk applied to `main`'s, will hash to `72eeea02…` as long as no other change to `SPEC.md` comes first (entry 35). Check: `git diff --stat df72126c origin/main -- SPEC.md kernel/ kernel2/ judge/ .github/workflows/`, which prints nothing.
+
+**What comes next is his question, not mine.** Answer 18 gives me the table session and the ruling's proposal, and nothing about building the move. I put one yes/no to him in my chat: whether I file a builder session that builds the move to the granted text, cold-read before filing, on a branch his push then applies. Answers 5 and 6 bind that push: before 30 November, opening nothing, and stating the lines that leave the counted cap. Under rule 9 there is no ring while it waits.
