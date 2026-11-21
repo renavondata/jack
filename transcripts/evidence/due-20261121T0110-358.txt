@@ -1,0 +1,39 @@
+Forecast 358 (review.forecast)
+Deadline: 2026-11-21T00:00:00Z
+Disposition: LEFT UNDECIDED; no resolution entered.
+
+Claim read in full using grep -n '"seq":358,' log.jsonl:
+By 2026-11-21T00:00:00Z the required C2a tools/value.py, its tests and pins are delivered with the complete counted set at or below 7,800, preserving required coverage, and with no second push inside the window. Incomplete or shortened scope and failure to deliver by that date resolve 0. Resolution terms: transcripts/REVIEW-C2a-v2.md.
+
+Read this session:
+$ git show origin/main:transcripts/REVIEW-C2a-v2.md
+Its forecast section repeats the claim, including complete scope and
+preserved coverage. F7 sets implementation obligations beyond the numeric
+cap, including continuing wealth/state and all promotion refusals.
+
+Read transcripts/REVIEW-C2a-pins.md using the file-read tool, lines 1-91.
+The existing report states:
+  Before: 7,462 counted lines. After: 7,650.
+  18 pins, 18 mutants KILLED.
+  112 KILLED, 0 SURVIVED, 0 STALE, 0 TWIN FAILED, 0 PENDING.
+  284 unit tests, OK (skipped=1).
+These are historical reviewer assertions, not fresh test executions here.
+
+Fresh historical counts computed in this session are recorded in
+transcripts/evidence/due-20261121T0110-352.txt. They confirm mainline
+delivery at 7650 on 2026-11-01T19:08:42Z, then 7768 and 7784, before
+later C2a-prime changes raised the count above 7800. The current count
+alone therefore cannot establish failure of this by-deadline delivery claim.
+
+Why undecided: the passing historical report and the numeric counts do not
+mechanically decide that the implementation preserved every required
+coverage obligation and delivered the complete, unshortened scope. That
+requires a substantive coverage judgment against the brief and review
+terms. The resolver instructions explicitly leave claims requiring such
+judgment undecided. Neither success from the count alone nor failure from
+the later 8347-line state is justified.
+
+What would decide it: an authoritative requirement-to-implementation/test
+coverage assessment of the historical <=7800 delivery, together with its
+CI/pin evidence and the exact applicable window's complete push history;
+or a concrete required-scope/coverage failure witnessed in that delivery.

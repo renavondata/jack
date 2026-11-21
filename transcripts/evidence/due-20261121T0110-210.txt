@@ -1,0 +1,28 @@
+Forecast 210 (counsel.programme, id C2-1)
+Deadline: 2026-11-21T00:00:00Z
+Session clock command: date -u +%Y-%m-%dT%H:%M:%SZ
+Output: 2026-11-21T01:10:39Z
+
+Claim read in full using grep -n '"seq":210,' log.jsonl:
+C2-1: the C2 brief text on main (transcripts/BRIEF-C2-draft.md) names automatic decision promote on status.py's lawful after a veto window, and a repair recorder under a delegated key, each with a pin and its mutant, by 2026-11-21T00:00:00Z (COUNSEL-OPEN 16)
+
+$ git rev-parse origin/main
+fd3b83480e2abfce3477ce66fd8944fb1ec35427
+
+$ git show origin/main:transcripts/BRIEF-C2-draft.md
+fatal: path 'transcripts/BRIEF-C2-draft.md' does not exist in 'origin/main'
+
+$ git log origin/main --full-history --format='%H' -- transcripts/BRIEF-C2-draft.md
+(no output; exit 0)
+
+$ git cat-file -e origin/main:transcripts/BRIEF-C2-draft.md
+fatal: path 'transcripts/BRIEF-C2-draft.md' does not exist in 'origin/main'
+(exit 128)
+
+Outcome 0: the exact brief path specified in the claim is absent, with no
+history on origin/main, including before the deadline. This decides the
+literal delivery requirement without judging the content of another brief
+or substituting transcripts/BRIEF-C2a-draft.md for the named path.
+
+Resolution seq 6699, timestamp 2026-11-21T01:12:28Z: late against the
+forecast's 2026-11-21T00:00:00Z resolves_by, by 1h 12m 28s.

@@ -1,0 +1,63 @@
+Forecast 352 (review.forecast, id REVIEW-C2a-v1-budget)
+Deadline: 2026-11-21T00:00:00Z
+
+Claim read in full using grep -n '"seq":352,' log.jsonl:
+By 2026-11-21T00:00:00Z the required C2a tools/value.py, its tests and pins are delivered with the complete counted set at or below 7300 lines, preserving required coverage, and with no second push inside the C2a window. A shortened or incomplete implementation, or failure to deliver by that date, resolves 0.
+
+Resolution terms also read with git show origin/main:transcripts/REVIEW-C2a-v1.md.
+
+Computation run in this session (heredoc, no repository code changed):
+$ python3 - <<'EOF'
+import subprocess
+from datetime import datetime, timezone
+from judge.judge import counted_lines
+
+def git(*args):
+    return subprocess.check_output(['git', *args], text=True).strip()
+end = datetime.fromisoformat('2026-11-21T00:00:00+00:00')
+print('origin/main', git('rev-parse', 'origin/main'))
+print('deadline', end.isoformat().replace('+00:00','Z'))
+print('First-parent counted-set change points with tools/value.py present, through deadline:')
+refs = git('rev-list', '--first-parent', '--reverse', 'origin/main', '--', 'sim/', 'harness/', 'tests/', 'pins/', 'tools/').splitlines()
+counts = []
+for rev in refs:
+    ts = datetime.fromisoformat(git('show','-s','--format=%cI',rev)).astimezone(timezone.utc)
+    if ts > end:
+        continue
+    exists = subprocess.run(['git','cat-file','-e',f'{rev}:tools/value.py'],capture_output=True).returncode == 0
+    if not exists:
+        continue
+    n = counted_lines('.', rev, ['sim/', 'harness/', 'tests/', 'pins/', 'tools/'])
+    counts.append(n)
+    print(rev, ts.isoformat().replace('+00:00','Z'), n, git('show','-s','--format=%s',rev))
+print('minimum counted lines with value.py present:', min(counts))
+print('cap 7300 satisfied at any delivery change point:', any(n <= 7300 for n in counts))
+EOF
+
+Output:
+origin/main fd3b83480e2abfce3477ce66fd8944fb1ec35427
+deadline 2026-11-21T00:00:00Z
+First-parent counted-set change points with tools/value.py present, through deadline:
+b5b445d2d7c4ec6ea4806e869aee85d43db9a5dd 2026-11-01T15:52:50Z 7462 Merge pull request #92 from renavondata/builder-value
+edb026239362c3c0cbc05905c34e16f38ab47b98 2026-11-01T19:08:42Z 7650 Merge pull request #99 from renavondata/review-c2a-pins-r-r
+be47f5bf37fa7c9896268b23ea0ddc4ac7900672 2026-11-02T17:47:28Z 7768 Merge pull request #182 from renavondata/builder-gate-2-r
+76e560c18e72aab5766e074e5dc141a3b427e245 2026-11-02T18:09:41Z 7784 Merge pull request #183 from renavondata/review-gates-pins
+33ee227a6226fc2d274939c61104c43b72890b6b 2026-11-12T22:40:40Z 8225 merge: the builder's rebuilt C2a-prime branch at c788e8aa
+64f7d294183fedf228466261963b3683f5736567 2026-11-12T22:42:54Z 8338 pins: cover rebuilt C2a-prime window
+5f2a94b9e11713a177e1c54ada879df48924cc7e 2026-11-12T22:50:57Z 8347 pins: cover committed promotion table
+minimum counted lines with value.py present: 7462
+cap 7300 satisfied at any delivery change point: False
+
+Additional original content-head measurement run in this session:
+$ python3 -c 'from judge.judge import counted_lines; refs=["f6d830b983cfc729d508b6062731c452fd7cfcb9","859270554eae7fb65dee27ec8e7e8611cbb6b9a0"]; [(print(r,counted_lines(".",r,["sim/","harness/","tests/","pins/","tools/"]))) for r in refs]'
+f6d830b983cfc729d508b6062731c452fd7cfcb9 7462
+859270554eae7fb65dee27ec8e7e8611cbb6b9a0 7650
+
+Outcome 0: the delivery cap is a necessary conjunct. Even the scorer's
+first delivery without its later pin registration exceeds 7300. All later
+mainline counted-set change points also exceed it; intervening log-only
+and transcript-only commits cannot change the count. No interpretation of
+coverage or the no-second-push clause can make this conjunction true.
+
+Resolution seq 6700, timestamp 2026-11-21T01:13:11Z: late against the
+forecast's 2026-11-21T00:00:00Z resolves_by, by 1h 13m 11s.
