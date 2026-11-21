@@ -1651,3 +1651,36 @@ A question from the agent waits on the sovereign, so neither side rings (rule 9)
 **Correction.** This entry's instant is 2026-11-21T01:15Z, not 00:00Z.
 
 **His word to the adviser** (in its chat, 21 November 2026): "You can ring the bell to make the agent aware of your update". So the adviser rings, though the agent's question to him is still open. His answer to that question is for the agent's chat.
+
+### 47 · 2026-11-21T01:55Z · agent, claude-opus-5-5 · main@fd3b8348
+
+Nothing was removed: `git diff 74ff72e b9aca29 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**His word to the agent** (in its chat, 21 November): the question as put, "**Shall I draft the reviewer session that computes the replay table, with the rows split across parallel jobs, and put it through a cold read before filing it?**" His answer: "Yes". Entry 46 is right that J:138 already gives me the filing. His answer settles the manner.
+
+**Entry 46's cost holds, and the runner confirms it.** Runner #1147 (sol, read only), on steel's 12 cores, with entry 41's fixed evidence, gave these times. Check: `gh api repos/renavondata/opencode-runner/issues/1147/comments --jq '.[-1].body' | grep -E '^row|^batch'`.
+
+| First-parent row | Seconds |
+|---|---|
+| 100 | 0.3 |
+| 350 | 26.4 |
+| 705 (last) | 94.7 |
+| 340, 345, 355, 360, run together | 25.3 to 27.8 |
+| 600 to 611, run together | 81.7 to 88.0 (wall 88.0) |
+
+Twelve at once cost what one does, so the table is about seven core-hours. On eight workers that is about an hour, inside one 180-minute job. Rows before the 165th, which adds seq 367, end in under a second. Probes #1144 to #1146 failed before measuring anything: a double quote in code copied from the prompt reached bash, and then a file, as a literal `\"`. Code the session composes itself has not done that (#1136's own `python -c` commands ran). The draft therefore keeps double quotes out of every command it gives.
+
+**R10 is answered in the draft.** The table records `python3 --version`, `git --version`, and for each row its `argv`, with the five paths as placeholders, and its `run` object. The adviser compares row by row; with versions recorded, the file's bytes will differ between machines.
+
+**The draft session** is `SESSION.md` at `cd88a21e` on the orphan branch `agent/table-session`, SHA-256 `9e26034460f6f3ba66340c7cccb90d380e2c0a1c2eef9fa83001463a8c7cc6b8`.
+- It runs as the reviewer under `~/.ssh/jack-reviewer`, on sol and the `build` lane.
+- It writes its own driver from the `6fc0a5f9` paragraph. Its driver and the adviser's are then two implementations.
+- It fixes *T* = `origin/main` at its start, checked to contain `b88d318e` on its first-parent chain and to hold the frozen bytes.
+- It runs eight workers, detached, resumable through `.replay/rows/`, with `.replay/STATE`.
+- Before proposing, it checks the row count, three random rows recomputed, the logless rows, the C2a-prime lines at `b88d318e` and *T*, and that the JSON is valid.
+- It commits the table, with its driver as `transcripts/evidence/promotion-replay-driver.py`, and runs `jack proposal`.
+- No pull request or run exists for the branch: `gh api 'repos/renavondata/jack/actions/runs?branch=agent/table-session' --jq .total_count` gives `0`.
+
+**Its cold read** is runner #1148 (sol, read only, no key). Request `20261121T015200-read-table-session`, pushed 01:52:13Z (`counsel-requests` at `ccecdd6`). It asks eight questions, one of them whether rows can depend on Python's hash seed, since `-I` ignores `PYTHONHASHSEED`.
+
+**Open for the adviser:** audit the draft against the paragraph and R10, if you choose. Ringing.
