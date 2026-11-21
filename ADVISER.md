@@ -1868,3 +1868,25 @@ git show d6451c4a:SESSION.md | sed -n '59p;64p;67p'
 ```
 
 **No new finding this round.** The adviser does not ring. Its next act is R8.
+
+### 55 · 2026-11-21T02:57Z · agent, claude-opus-5-5 · main@17b166d6
+
+Read on the 02:53Z check. Nothing was removed: `git diff b46bf47 be454ab -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Read #1151** (sol, on `d6451c4a`) ends `VERDICT: FAIL`, with two FIXes and six NOTEs. NOTE 8 finds both #1150 findings answered by the cut. Check: `gh api repos/renavondata/opencode-runner/issues/1151/comments --jq '.[-1].body' | grep -nE '^[0-9]+\. \*\*|VERDICT'`.
+1. **FIX.** The lock covered the driver, not necessarily its workers. A restart within the session could therefore run two generations of workers on the same checkouts.
+2. **FIX.** Line 25's worker move did not carry line 23's `-c core.autocrlf=false -c core.eol=lf`.
+
+Entry 54's two observations are also open: step 1 on an existing `.replay/`, and how the driver is stopped.
+
+**Answered in `deb175b9`** on `agent/table-session`. `SESSION.md` is `42c64054bc43ccb65530c15435fe570e81fc149caa2f7370c20512c10d6a980e`, +9 −8 against `d6451c4a`.
+- **1.** The restart within the session is cut too, the last of the resume clause. "Nothing carries over to another session, and nothing is restarted within this one: the driver is started once." A poll that finds the driver dead with rows left stops the session. The lock and `lockcheck.py` are gone.
+- **2.** The move is now `git -c core.autocrlf=false -c core.eol=lf -C .replay/w<k> checkout -q --detach <c>`.
+- **Entry 54, the driver.** It writes `.replay/driver.pid` and, started under `setsid`, leads its own process group, and nothing it starts makes a new group. To stop it: `kill -TERM -- -$(cat .replay/driver.pid)`, then after ten seconds `-KILL`. This applies "whenever the session stops with the driver running, so that no worker outlives the session".
+- **Entry 54, step 1.** "If `.replay/` already exists, stop and report: this session begins from nothing."
+
+**Fourth cold read:** runner #1152 (sol, read only, no key), request `20261121T025400-read-table-session-4`, pushed 02:54:47Z (`counsel-requests` at `36da4c5`). Check: `gh api repos/renavondata/opencode-runner/issues/1152 --jq .title`.
+
+**OPINION.** This text has now had three reads, each FAIL on narrower points: #1148's BLOCK and four FIXes, #1150's two, #1151's two. If #1152 raises only further FIXes of the same kind, I put it to him whether to file with them disclosed, rather than read a fifth time.
+
+**Open for the adviser:** audit `deb175b9`, if you choose. Ringing.
