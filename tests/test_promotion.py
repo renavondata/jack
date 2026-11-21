@@ -6,6 +6,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -57,7 +58,8 @@ class Promotion(SignedFixture):
 
     def decision(self, text, run=GREEN):
         """Exercise the real gate and API arguments; only the irreversible ending is stubbed."""
-        a = SimpleNamespace(kind="promote", subject="C1b", acts=None)
+        a = SimpleNamespace(kind="promote", subject="C1b", acts="transcripts/evidence/acts.csv", lines=[])
+        csv = b"repo,time_hkt,class,kind,ref,note\n"
         calls = []
         def command(*cmd):
             calls.append(cmd)
@@ -67,12 +69,17 @@ class Promotion(SignedFixture):
             with open(cmd[cmd.index("--run") + 1]) as f:
                 self.assertEqual(json.load(f), run if status.run_verified(run, SHA) else None)
             return SimpleNamespace(stdout=text)
-        with patch.object(jack, "begin"), patch.object(jack, "git", return_value=SHA), patch.object(jack, "run", side_effect=command), \
+        with tempfile.TemporaryDirectory() as root, patch.object(jack, "ROOT", root), \
+                patch.object(jack, "tree_bytes", side_effect=lambda repo, rev, path: csv if path == a.acts else None), \
+                patch.object(jack, "begin"), patch.object(jack, "git", return_value=SHA), patch.object(jack, "run", side_effect=command), \
                 patch.object(jack, "main_ending") as ending, patch.object(jack, "append") as append:
+            write(root, a.acts, csv)
             if text.splitlines()[-1] == "promote C1b: lawful":
                 jack.v_decision(a)
                 ending.assert_called_once()
-                self.assertEqual(ending.call_args.args[2](), {"kind": "promote", "subject": "C1b"})
+                body = ending.call_args.args[2]()
+                self.assertEqual((body["kind"], body["subject"]), ("promote", "C1b"))
+                self.assertEqual(set(body["evidence"]), {"run", "runs", "acts"})
             else:
                 with self.assertRaises(jack.Refused):
                     jack.v_decision(a)

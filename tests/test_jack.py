@@ -15,6 +15,7 @@ import unittest
 from harness import build, gitfix, keys
 from judge.judge import digest as commit_digest, judge
 from kernel import log
+from tests.promotion_fixture import install, pad, prepare
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KERNEL2_CHECK = ("#!/bin/sh\nexec %s -E -s -c \"import sys; sys.path.insert(0, '%s'); from kernel.check import main; "
@@ -108,11 +109,12 @@ def template(tmp):
     write(os.path.join(repo, "tests/test_ok.py"), "import unittest\n\n\nclass Ok(unittest.TestCase):\n    def test_ok(self):\n        pass\n")
     write(os.path.join(repo, "pins/run.py"), "import os, sys\nsys.exit(os.path.exists(os.path.join(os.path.dirname(__file__), 'FAIL')))\n")
     write(os.path.join(repo, "kernel2/build.sh"), "#!/bin/sh\ntrue\n", 0o755)
-    write(os.path.join(repo, "kernel2/check"), KERNEL2_CHECK, 0o755)
+    write(os.path.join(repo, "kernel2/check"), KERNEL2_CHECK.replace(ROOT, repo), 0o755)
     write(os.path.join(repo, ".gitignore"), "__pycache__/\n*.pyc\nkernel2/.cache/\n")
+    prepare(repo, w)
     gitfix.commit_all(repo, "the tree")
-    write(os.path.join(repo, "log.jsonl"), w.log(charter=gitfix.CHARTER_SHA256, checker=commit_digest(repo, "HEAD")).text())
-    gitfix.commit_all(repo, "genesis")
+    lg = w.log(charter=gitfix.CHARTER_SHA256, checker=commit_digest(repo, "HEAD"))
+    install(repo, lg, w)
     write(os.path.join(repo, "README.md"), "readme, revised\n")
     gitfix.commit_all(repo, "a commit after genesis, so that origin/main~1 has a log")
     subprocess.run(["git", "clone", "-q", "--bare", repo, os.path.join(tmp, "origin.git")], check=True)
@@ -297,9 +299,11 @@ class Jack(unittest.TestCase):
                charter=gitfix.CHARTER_SHA256, checker=chk), self.w.guy, ts="2026-10-31T11:00:00Z")
         for k_id, who, k in (("counsel-1", "counsel", self.w.parties["counsel"]), ("herald-2", "herald", self.w.herald)):
             lg.add("key", "guy", build.decl(k_id, who, k, build.ALL), self.w.guy, ts="2026-10-31T11:00:00Z")
+        pad(lg, self.w, ts="2026-10-31T11:00:00Z")
         lg.add("forecast", "counsel", {"claim": "l0", "p": 500, "resolves_by": "2026-11-03T00:00:00Z", "args": {"id": "L0"}},
                self.w.parties["counsel"], ts="2026-10-31T11:01:00Z")
         op = json.loads(lg.add("decision", "guy", {"kind": "promote", "subject": "C1a"}, self.w.guy, ts="2026-10-31T11:02:00Z"))["seq"]
+        install(self.repo, lg, self.w, ts="2026-10-31T11:02:00Z")
         for _ in range(9):
             f = json.loads(lg.add("forecast", "counsel", {"claim": "c", "p": 500, "resolves_by": "2026-11-03T00:00:00Z",
                                   "type": "world.fixture"}, self.w.parties["counsel"], ts="2026-10-31T12:00:00Z"))["seq"]
@@ -333,9 +337,20 @@ class Jack(unittest.TestCase):
         self.admitted(self.jack("decision", "promote", "C1b", "--acts", path, patch=now_patch))
         prom_sha, entries = self.git("rev-parse", "HEAD"), self.entries()
         self.assertEqual((self.git("rev-parse", "HEAD^"), self.remote(), len(entries)), (h_commit, prom_sha, before_len + 1))
-        self.assertEqual((entries[-1]["type"], entries[-1]["proposer"], entries[-1]["body"]),
-                         ("decision", "guy", {"kind": "promote", "subject": "C1b",
-                                              "acts": {"path": path, "sha256": hashlib.sha256(csv.encode()).hexdigest(), "commit": h_commit}}))
+        body = entries[-1]["body"]
+        self.assertEqual((entries[-1]["type"], entries[-1]["proposer"], body["kind"], body["subject"]),
+                         ("decision", "guy", "promote", "C1b"))
+        self.assertEqual(body["acts"], {"path": path, "sha256": hashlib.sha256(csv.encode()).hexdigest(), "commit": h_commit})
+        self.assertEqual(set(body["evidence"]), {"run", "runs", "acts"})
+        expected = {"run": json.dumps(green).encode(), "runs": json.dumps([green]).encode(), "acts": csv.encode()}
+        for name, ev in body["evidence"].items():
+            self.assertEqual(set(ev), {"path", "sha256"})
+            self.assertTrue(ev["path"].startswith("transcripts/evidence/"))
+            self.assertEqual(read(os.path.join(self.repo, ev["path"])), expected[name])
+            self.assertEqual(hashlib.sha256(expected[name]).hexdigest(), ev["sha256"])
+            self.assertEqual(self.git("ls-tree", h_commit, "--", ev["path"]), "")
+        changed = set(self.git("diff", "--name-only", h_commit, prom_sha).splitlines())
+        self.assertEqual(changed, {"log.jsonl"} | {ev["path"] for ev in body["evidence"].values()})
         write(runs_file := os.path.join(self.tmp.name, "runs.json"), json.dumps([green]))
         st = subprocess.run([sys.executable, "judge/status.py", "--subject", "C1b", "--runs", runs_file, "--acts", path,
                              "--as-of", "2026-10-31T12:30:00Z"], cwd=self.repo, capture_output=True, text=True, check=True).stdout
@@ -789,8 +804,9 @@ class Jack(unittest.TestCase):
         charter = read(os.path.join(self.repo, "CHARTER.md"))
         self.refused(self.jack("amend", "A3", text, "--activate-at", "0"), "the kernel refuses the amend entry", signed=True)
         self.assertEqual((read(os.path.join(self.repo, "CHARTER.md")), self.git("rev-parse", "HEAD")), (charter, self.remote()))
-        self.admitted(self.jack("amend", "A3", text, "--activate-at", "99"))
-        self.assertEqual(self.entries()[-1]["body"]["activate_at"], 99)
+        height = len(self.entries()) + 99
+        self.admitted(self.jack("amend", "A3", text, "--activate-at", str(height)))
+        self.assertEqual(self.entries()[-1]["body"]["activate_at"], height)
 
 
 if __name__ == "__main__":

@@ -12,6 +12,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from sim import gen
+from harness.gitfix import write
 from kernel import check
 from tests.clerk_fixture import SignedFixture, NOW, commit, tree
 from tests.test_promotion import jack, GREEN, EARLY
@@ -266,13 +267,17 @@ class Attacks(SignedFixture):
             self.assertFalse(st.c2a_tree_evidence(root, changed, self.s.es, 339)[0])
             self.assertFalse(st.c2a_tree_evidence(root, restored, self.s.es, 339)[0])
             self.assertEqual(st.c2a_tree_evidence(root, head, self.s.es, 339), (True, True, True))
-            a = SimpleNamespace(kind="promote", subject="C2a", acts=None)
+            a = SimpleNamespace(kind="promote", subject="C2a", acts="transcripts/evidence/acts.csv", lines=[])
+            csv = b"repo,time_hkt,class,kind,ref,note\n"
+            write(root, a.acts, csv)
             def command(*cmd):
                 if cmd[0] == "gh":
                     return SimpleNamespace(stdout=json.dumps([{"workflow_runs": runs}]))
                 self.assertEqual(cmd[cmd.index("--subject")+1], "C2a")
                 return SimpleNamespace(stdout=st.render(s))
-            with patch.object(jack, "begin"), patch.object(jack, "git", return_value=head), patch.object(jack, "run", side_effect=command), \
+            with patch.object(jack, "ROOT", root), \
+                    patch.object(jack, "tree_bytes", side_effect=lambda repo, rev, path: csv if path == a.acts else None), \
+                    patch.object(jack, "begin"), patch.object(jack, "git", return_value=head), patch.object(jack, "run", side_effect=command), \
                     patch.object(jack, "main_ending") as ending, patch.object(jack, "append") as append:
                 with self.assertRaises(jack.Refused):
                     jack.v_decision(a)

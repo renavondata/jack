@@ -248,15 +248,18 @@ def v_decision(a):
     begin(a, True)
     a.subject or refuse("SUBJECT must be a non-empty string")
     body = {"kind": a.kind, "subject": a.subject}
+    placed = {}
     if a.kind == "promote":
         a.subject in ("C1a", "C1b", "C2a") or refuse("promotion criteria unknown for " + a.subject)
         head = git("rev-parse", "HEAD")
+        a.acts is not None or refuse("promote requires --acts: run, runs and acts evidence must all be committed")
         if a.acts is not None:
             if not re.fullmatch(r"transcripts/evidence/[A-Za-z0-9._-]+\.csv", a.acts):
                 refuse(f"--acts {a.acts!r} must match transcripts/evidence/[A-Za-z0-9._-]+\\.csv")
             if os.path.islink(acts_path := os.path.join(ROOT, a.acts)) or not os.path.isfile(acts_path):
                 refuse(f"--acts {a.acts}: no such file")
-            acts_bytes = open(acts_path, "rb").read()
+            with open(acts_path, "rb") as f:
+                acts_bytes = f.read()
             if tree_bytes(ROOT, head, a.acts) != acts_bytes:
                 refuse(f"--acts {a.acts} does not equal the blob in HEAD")
             body["acts"] = {"path": a.acts, "sha256": hashlib.sha256(acts_bytes).hexdigest(), "commit": head}
@@ -272,14 +275,30 @@ def v_decision(a):
             for name, value in (("run", next((r for r in current if run_verified(r, head)), None)), ("runs", history)):
                 with open(os.path.join(tmp, name), "w") as f:
                     json.dump(value, f)
+            with open(os.path.join(tmp, "acts"), "wb") as f:
+                f.write(acts_bytes)
             command = [sys.executable, "judge/status.py", "--subject", a.subject, "--run", os.path.join(tmp, "run"),
-                       "--runs", os.path.join(tmp, "runs"), "--as-of", a.decision_ts]
-            if a.acts is not None:
-                command += ["--acts", a.acts]
+                       "--runs", os.path.join(tmp, "runs"), "--acts", os.path.join(tmp, "acts"), "--as-of", a.decision_ts]
             result = run(*command).stdout
+            body["evidence"] = {}
+            for name in ("run", "runs", "acts"):
+                with open(os.path.join(tmp, name), "rb") as f:
+                    data = f.read()
+                path = f"transcripts/evidence/promote-{len(a.lines)}-{name}-" + hashlib.sha256(data).hexdigest()
+                if tree_bytes(ROOT, head, path) is not None or os.path.lexists(os.path.join(ROOT, path)):
+                    refuse(f"promotion evidence path already exists: {path}")
+                placed[path] = data
+                body["evidence"][name] = {"path": path, "sha256": hashlib.sha256(data).hexdigest()}
         lines = [line for line in result.splitlines() if line.startswith(f"promote {a.subject}:")]
         lines == [f"promote {a.subject}: lawful"] or refuse("\n".join(lines) or "status returned no promotion verdict")
-    main_ending(a, "decision", lambda: body, f"decision: {a.kind} {a.subject}")
+        git("rev-parse", "HEAD") == head or refuse("HEAD changed during promotion assessment")
+    def effect():
+        for path, data in placed.items():
+            os.makedirs(os.path.dirname(os.path.join(ROOT, path)), exist_ok=True)
+            with open(os.path.join(ROOT, path), "xb") as f:
+                f.write(data)
+        return body
+    main_ending(a, "decision", effect, f"decision: {a.kind} {a.subject}", ["log.jsonl", *placed])
 
 def v_amend(a):
     begin(a, True)
