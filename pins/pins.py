@@ -664,7 +664,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 100
+EXPECTED = 106
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1126,3 +1126,43 @@ for pin in C2B_GATE_PINS:
     pin.test.__doc__ = (pin.test.__doc__ or "BRIEF-C2b named fixture and passing twin.") + "\n" + "\n".join(
         f"{pin.name}: {m.name}; single-occurrence guard in {m.path}: {m.find!r}" for m in pin.mutants)
 PINS += C2B_GATE_PINS
+
+
+# --- SPEC §10.15: the pins ride the installing push with its code ------------
+promotion_judge_tests = functools.partial(fixture_tests, "test_promotion_judge.Promotions")
+
+
+def promotion_cases(*methods):
+    return lambda root: fixture_module(root, "pins.promotion.Cases", methods)
+
+
+def fixture_module(root, module, methods):
+    r = subprocess.run([sys.executable, "-E", "-s", "-m", "unittest", "-q",
+                        *(f"{module}.test_{m}" for m in methods)], cwd=root, capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+
+
+PINS += [
+    Pin("promote_while_unmet", promotion_judge_tests("lawful_and_attested_on_selfcheck",
+        "unmet_criteria_and_skipped_ci_are_refused_on_later_runs"), [
+        Mutant("refusal_admitted", "judge/judge.py",
+               'if result.returncode != 0 or json.loads(result.stdout) != f"promote {e[\'body\'][\'subject\']}: lawful":', 'if False:')]),
+    Pin("evidence_substituted", promotion_judge_tests("lawful_and_attested_on_selfcheck",
+        "evidence_shape_hash_presence_and_regular_files"), [
+        Mutant("hash_unchecked", "judge/judge.py", ' or hashlib.sha256(data[name]).hexdigest() != ev["sha256"]', '')]),
+    Pin("promote_tree_changed", promotion_judge_tests("lawful_and_attested_on_selfcheck",
+        "entry_must_append_alone_add_evidence_and_change_nothing_else", "every_entry_commit_including_a_bad_side_branch_is_judged"), [
+        Mutant("other_paths_admitted", "judge/judge.py", ' or changed_by(repo, c) != paths | {LOG}', ''),
+        Mutant("side_entry_ignored", "judge/judge.py", '            for c in carrying:',
+               '            for c in carrying:\n                if c not in git(repo, "rev-list", "--first-parent", head).splitlines():\n                    continue')]),
+    Pin("promote_retroactive", promotion_cases("preinstallation", "ungranted_installation"), [
+        Mutant("earlier_promotions_judged", "judge/judge.py", 'e["seq"] > installation and e["type"] == "decision"',
+               'e["type"] == "decision"'),
+        Mutant("ungranted_spec_installs", "judge/judge.py", 'hashlib.sha256(spec).hexdigest() in grants', 'True')]),
+    Pin("evaluator_not_in_force", promotion_judge_tests("lawful_and_attested_on_selfcheck",
+        "assessed_digest_must_be_in_force", "later_evaluator_does_not_rejudge_earlier_promotion"), [
+        Mutant("assessed_digest_unchecked", "judge/judge.py", 'if foreign(repo, assessed, TRUSTED) or digest(repo, assessed) != trusted:', 'if False:')]),
+    Pin("promote_judged_once", promotion_cases("skipped_promotion_on_later_run"), [
+        Mutant("old_promotions_skipped", "judge/judge.py", 'e["seq"] > installation and e["type"] == "decision"',
+               'e["seq"] >= len(trunk_entries) and e["seq"] > installation and e["type"] == "decision"')]),
+]
