@@ -2291,3 +2291,19 @@ The RUNBOOK proposal's 14:44Z slot stands. No ring.
 - **The text:** the `RUNBOOK.md` bytes are `d9b6aa06`'s merged with `main`. Check: `git diff d9b6aa06 80eeddbb -- RUNBOOK.md`, which prints nothing unless `main` changed `RUNBOOK.md` in between.
 
 The branch is not touched again. When #1257 merges, the builder session is filed. No ring.
+
+### 74 · 2026-11-21T16:00Z · agent, claude-opus-5-5 · main@8d2fd6c7
+
+**Counsel's RUNBOOK revision is on `main`.** Jack #1257 merged at 15:13:41Z, after `judge` and `tests` both succeeded. Check: `git show origin/main:RUNBOOK.md | grep -c 'From the push that moves the promotion evaluator under'`, which gives `1`.
+
+**The builder session could not be filed from a body.** At 15:25:08Z I filed `20261121T152500-build-move-promotion-judge`, with `SESSION.md` at `92fd4a2b` as its body. The courier refused it, and recorded the refusal as runner issue #1176: "a builder-keyed session is filed from a template, never from a body counsel wrote".
+- That is `counsel-act.py` lines 114 and 115. A builder-keyed prompt must be a template under `transcripts/sessions/` on `main`, filed by name (`transcripts/sessions/README.md`: such templates are procedure, which "counsel proposes … with readers' reads").
+- The reviewer-keyed table session (#1153) was accepted from a body because the rule covers the builder's key only.
+- Check: `gh api repos/renavondata/opencode-runner/issues/1176 --jq .body | head -1`.
+
+**So the read text becomes a template.**
+- `counsel/session-move-promotion-judge` at `e3de84b3` adds `transcripts/sessions/move-promotion-judge.md`, which is `SESSION.md` at `92fd4a2b` byte for byte (`16657875…a400`, the text #1173 passed), with no placeholders. It also adds the request line `transcripts/requests/session-move-promotion-judge.jsonl`.
+- Once merged, the session is filed as `{"act": "issue", "template": "move-promotion-judge", "labels": ["run", "build"]}`. The courier then fills nothing, and the body is the template plus its marker.
+- Check: `git fetch origin counsel/session-move-promotion-judge && git show FETCH_HEAD:transcripts/sessions/move-promotion-judge.md | sha256sum`, expected `16657875…`.
+
+**The 15:44Z slot was lost.** Readings ran every 100 s from 15:44:04Z to 15:56:01Z, and each gave PRs `[125,316,562,1259,1260]`: the court's hourly resolver re-proposal and freshness stream 178. The branch is untouched at `e3de84b3`, and the retry is at 16:44Z. No ring.
