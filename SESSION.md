@@ -12,11 +12,12 @@ This branch is a **push branch**: the sovereign applies it to `main` with `jack 
 
 **Where you start.** A builder session has built the move on this branch, ending at `7b03d75d4d3a429be9054d97136721feb605aaad`. Counsel's commit `57022d72e56fcf53015f949e0eae197b0a839a6b`, on `origin/counsel/move-paths`, follows it: it changes the evaluator's paths in `LAW.md`, `README.md` and `transcripts/sessions/due-resolve.md`, and nothing else.
 1. Run `git fetch -q origin main move-promotion-judge counsel/move-paths`.
-2. `git status --porcelain` must print nothing.
+2. `git status --porcelain`: if it prints nothing, go on. If it lists only paths under `pins/` or `transcripts/`, an earlier session of this prompt stopped before committing: read `git status` and `git diff`, keep what is sound, and go on. Otherwise stop and report.
 3. `git merge-base --is-ancestor 7b03d75d4d3a429be9054d97136721feb605aaad origin/move-promotion-judge` must succeed.
 4. Then:
    - if `git rev-parse HEAD` equals `git rev-parse origin/move-promotion-judge`, go on;
    - otherwise, if `git merge-base --is-ancestor HEAD origin/move-promotion-judge` succeeds, run `git merge -q --ff-only origin/move-promotion-judge`;
+   - otherwise, if `git merge-base --is-ancestor origin/move-promotion-judge HEAD` succeeds, an earlier session of this prompt committed without pushing. Run `git log --format='%h %(trailers:key=Proposer,valueonly)' origin/move-promotion-judge..HEAD`. If every commit it lists is `57022d72` or has a `Proposer:` trailer beginning `reviewer`, run `git push origin move-promotion-judge` and go on;
    - otherwise the worktree holds other work: stop and report, and reset nothing.
 5. If `git merge-base --is-ancestor 57022d72e56fcf53015f949e0eae197b0a839a6b HEAD` fails, take counsel's commit in:
    - `git rev-parse HEAD` must print `7b03d75d4d3a429be9054d97136721feb605aaad`;
@@ -27,6 +28,12 @@ This branch is a **push branch**: the sovereign applies it to `main` with `jack 
 7. `python3 -m unittest tests.test_law` must pass.
 
 If any check fails, stop and report. Never change `SPEC.md`: the sovereign's grant at log seq 6851 names it by that hash.
+
+**Why the pins ride the push.** RUNBOOK's Working copies has a reviewer read cold in a copy with no history and propose its pins. Here that cannot work: the pins test code that reaches `main` only by the sovereign's push, and the push's own check runs `pins/run.py` (`tools/jack`, `CHECK`), so pins proposed to `main` first would fail there. So the pins ride the push with the code, as C2a-prime's rode its opening push (`transcripts/sessions/c2a-prime-pins.md`: "the pins ride the opening push with the code"). That is this session's departure from Working copies, and the reason for it.
+
+**What is not this session's.** Two things the push needs are done apart from you, and your report names both as not done here:
+- the full acceptance replay, every row of `spec/vectors/promotion-replay.json` and every first-parent commit after its *T* up to the move's parent, which the paragraph requires and `replay_drift` only samples;
+- merging `main` into this branch, which `tools/jack`'s `v_push` requires and which is done just before the push, because `main` moves every hour.
 
 **If an earlier session of this prompt ran here,** `git log --oneline 57022d72..HEAD` lists its commits. Continue from them, and do not write again a pin that is committed and passes.
 
@@ -40,7 +47,7 @@ Read them whole first. The sovereign read that text before the build (CHARTER A2
 
 1. **The pins the move left behind.** The move put `tools/status.py` and `tools/value.py` at `judge/status.py` and `judge/value.py`. It also put `now`, `read_log` and `resolution_rates` from `tools/entry.py` into `judge/entries.py`.
    - Re-aim each mutant whose target moved at the code as it now stands, so that the same edit is made and killed. That covers the 68 PENDING mutants and `worked_table`'s STALE one.
-   - Change each pin's own imports or runs of the old paths, among them `pins/c2a.py`'s, which `per_type_base`'s twin fails on.
+   - Change each pin's own imports or runs of the old paths, among them `pins/c2a.py`'s, which `per_type_base`'s twin fails on. That pin's mutant `base_per_dataset` also targets `tools/entry.py`, where the code no longer is; its failing twin hides that.
    - A fixture that writes the evaluator's source into a synthetic history **at the path `tools/status.py`** keeps that path. The evaluator reads that path from a tree (`judge/status.py`, the two lines in `c2a_tree_evidence` that read `tools/status.py`).
 2. **The seven twins the installation broke.** Every repository `harness/gitfix.make_repo` builds now carries a signed grant and an installing push after seq 5564, because item 15 refuses a trunk without one. The twins of `charter_edit_unrecorded`, `amend_stale`, `freeze_ignored`, `one_act_amendment`, `foreign_object_admitted`, `kernel2_unrunnable` and `selfcheck_blind` assumed a log of a few lines: fixed activation heights, a fixed entry count, or a genesis rebound under a signed suffix. Repair only that assumption, so that each twin again tests what its pin names on the longer log. Then run that pin and confirm that each of its mutants is KILLED by the behaviour the pin names.
 3. **Item 15's six pins**, each with its passing twin, exactly as the text describes each:
@@ -76,13 +83,15 @@ Read them whole first. The sovereign read that text before the build (CHARTER A2
 - (a) `python3 -m unittest discover -s tests -t .`: every test passes, `tests/test_pins.py` and `tests/test_law.py` included;
 - (b) `python3 pins/run.py --transcript transcripts/evidence/move-promotion-judge-pins-review.txt`: exit 0, with SURVIVED 0, STALE 0, TWIN FAILED 0 and PENDING 0. Give its counts and how long it took;
 - (c) the lines under `judge/scope.json`'s `counted` prefixes, counted as judge item 10 counts them (`judge.judge.counted_lines`), at your head: at most 8,400. Also run `python3 tools/count_kernel.py`;
-- (d) `git diff --name-only 57022d72e56fcf53015f949e0eae197b0a839a6b HEAD` lists only paths under `pins/` and `transcripts/`.
+- (d) `git diff --name-only 57022d72e56fcf53015f949e0eae197b0a839a6b HEAD` lists only paths under `pins/` and `transcripts/`;
+- (e) each of the seven new pins (`promote_while_unmet`, `evidence_substituted`, `promote_tree_changed`, `promote_retroactive`, `evaluator_not_in_force`, `promote_judged_once`, `replay_drift`) is registered, and `python3 pins/run.py --only` with those seven names shows each mutant KILLED and no twin failed. The registry test's list of required names predates them, so (a) and (b) alone do not show that they exist.
 
 **Report.** Write it to `transcripts/PINS-move-promotion-judge.md`, commit it with the pin transcript, and push. Give:
 - the branch head;
 - checks (a) to (d);
 - for each pin you changed in steps 1 and 2, what you changed and why;
 - for each new pin, its mutants and what kills each;
-- anything in the text you could not pin as it stands, quoted, with the reason.
+- anything in the text you could not pin as it stands, quoted, with the reason;
+- the two things above that are not this session's, as outstanding.
 
 End with one line: `PUSHED <head>` or `STOPPED: <reason>`.
