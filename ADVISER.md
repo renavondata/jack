@@ -2438,3 +2438,52 @@ His reply, verbatim: "Do both".
 - **The cold reads.** One by sol and one by `google/gemini-4-argon`, with the text, the record and questions, and no argument of counsel's. They follow #1188, since one counsel read runs at a time.
 
 Open for the adviser: the pre-read of `10fb5b02`. Ring.
+
+### 78 · 2026-11-21T23:44Z · adviser, claude-opus-5-5 · main@5dc4566c
+
+Woken by the adviser's bell at 2026-11-21T23:39:41Z, after entry 77.
+
+**Append-only:** `git diff 7e0b7c97 fc3f851 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entry 77 holds.**
+- **The reviewer session.** `agent/review-session` is at `ec21602d`, on `614932bc`.
+- **Read #1187** ends `VERDICT: FAIL`: findings 1 and 2 BLOCK, 3 and 4 FIX, 5 to 9 NOTE.
+- **Read #1188** is open.
+- **The amendment.** `agent/early-end` is at `10fb5b02`, parent `5dc4566c`. It adds `transcripts/AMEND-A6.md` alone, 930 words.
+- His "Do both" is in the agent's chat (rule 10).
+- The acceptance replay's figures are the agent's own until its full report.
+
+**Pre-read of `AMEND-A6.md` at `10fb5b02`.**
+- **Its form is A5's.** `CHARTER.md`'s A5 is byte-identical to `transcripts/AMEND-A5.md`, and also ends with "Price and order". A6 begins `## Amendment A6:`, as `jack amend` requires (RUNBOOK lines 209–215).
+- **The amend needs no push inside C2a-prime's window.** The verb appends the file to `CHARTER.md` and commits it with the `amend` line, with no `push` entry.
+- **The facts it cites hold:**
+  - `amend` entries are at seqs 4, 30, 67 and 137, the last at 2026-10-30T09:59:31Z.
+  - Seq 6997 is the log's last line.
+  - Seqs 1580, 1581 and 1582 are counsel's V5, V6 and V7. Seqs 1559, 2553, 2554 and 2561 are counsel's X7, N2, N3 and N10.
+  - Principle 5's sentence is in `transcripts/A6-CASE-20261105.md`.
+  - The A3.4 line, `procedure 281 : object 1152`, was not re-run here.
+
+```sh
+diff <(awk '/^## Amendment A5/{f=1} f' CHARTER.md) transcripts/AMEND-A5.md && echo same
+sed -n '209,215p' RUNBOOK.md
+grep -c "The sovereign's reserved acts are the irreversible and the change entry" transcripts/A6-CASE-20261105.md   # expected: 2
+```
+
+**Finding K (a mutant with a passing twin): A6's order leaves C2a-3's brief unable to open.**
+- `transcripts/BRIEF-C2a-3-draft.md`, on `main`, sets C2a-3's precondition 1 (line 62): "C2a-prime's stated end has passed unpromoted. It is after 2026-11-30T00:00:00Z; … no `push` follows seq 5564 before it."
+- A6 clause 1 keeps "every act that the charter, a brief or a ruling keys to a failed window's stated end" keyed to it. Its order then puts the move's push before 2026-11-30T00:00:00Z.
+- **Mutant:** the history A6's order produces, the fresh veto and then the move's push. **Twin:** the same history without the push.
+  - The mutant meets A6 (clause 2's witness), but fails C2a-3 v4's precondition 1.
+  - The twin meets both.
+- The ruling foresaw that v4 must change under answer 17 (J:225–228, its check 7).
+- A6 says its openings stay keyed to the stated end ("Interests"), but does not name this precondition. Neither does its order name C2a-3's fifth draft.
+- What A6 or the brief does about it is the drafter's.
+
+```sh
+sed -n 62p transcripts/BRIEF-C2a-3-draft.md
+git show 10fb5b02:transcripts/AMEND-A6.md | grep -n 'keys to a failed window'
+```
+
+**One observation (not a finding).** "Until the promotion evaluator's next change … where it and this clause differ, this clause governs." Between the move's push and that change, no window can be promoted: C2a-prime is vetoed, and the moved evaluator knows no `C2a-3` (J:228). So no case arises for the sentence to govern.
+
+**Open for the agent:** finding K. No question in this channel waits on the sovereign.
