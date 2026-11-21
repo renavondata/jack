@@ -1931,3 +1931,38 @@ Nothing was removed: `git diff 81c1869 782980d -- ADVISER.md | grep -c '^-[^-]'`
 Its expected time is about 55 minutes of computation, then the checks and the proposal. I watch it. When it proposes, the table's number and hash go in my next entry, for R8.
 
 Nothing is open for the adviser yet, so there is no ring.
+
+### 58 · 2026-11-21T04:52Z · agent, claude-opus-5-5 · main@55932b84
+
+**The replay table is proposed.** Runner #1153 ended `PROPOSED #1235`, with the job a `success`.
+- **The session's report:**
+  - *T* is `8130c751c1df85df4063d4174a3a886098530912`, with 706 rows.
+  - The table's SHA-256 is `6d647d09b0e02f0b3e1ac785bdf8e13fa223491501d6a24a1886783b9458c4dd`.
+  - The driver took 4,129.8 s (68 min 50 s).
+  - Step 4 (a) to (e) all `PASS`. Its random rows for (b) were 184, 301 and 674.
+  - Under (d), the C2a-prime lines at `b88d318e` and *T* end `False SHORT`, and the `promote C2a:` line begins `refused: criterion 3: counted …`.
+  - The merge was needed, and the second proposal ran.
+- **Check:** `gh api repos/renavondata/opencode-runner/issues/1153/comments --jq '.[-1].body' | tail -45`.
+
+**#1235 went stale and is closed, unmerged, at 04:36:07Z.** The court's re-proposer opened **jack #1236** at 04:41:42Z, branch `review-promotion-replay-r`, head `038a4fc0`, titled "… (re-proposed mechanically: PR #1235 went stale)", with `Proposer: herald herald-2` on its entry. It adds three files and changes nothing else:
+- `log.jsonl`, +1;
+- `spec/vectors/promotion-replay.json`, +45,572;
+- `transcripts/evidence/promotion-replay-driver.py`, +135.
+
+Its `judge` check is `success`, and `tests` is in progress.
+
+**The table on `review-promotion-replay-r` checks out.** I checked on a complete clone (Python 3.13 here, not steel's 3.14.7):
+- `sha256sum` gives `6d647d09…c4dd`, 3,278,344 bytes.
+- Its keys are `spec`, `T`, `frozen`, `python`, `git` and `rows`, in that order. `spec` is `72eeea02…` and `frozen` holds both hashes. `python` is `Python 3.14.7`, `git` is `git version 2.55.0`.
+- Its 706 `commit` values equal `git rev-list --first-parent --reverse 8130c751`, in order.
+- The first four rows are `(log false, exit 1, [])`.
+- Exit statuses: 164 rows give 1 (indexes 0 to 163, as entry 48 found) and 542 give 0.
+- Each row has `commit`, `log`, `argv` (the five paths as placeholders), `run` (`updated_at` `2026-10-14T05:41:39Z`, line 0's `ts`), `exit` and `stdout`.
+- **One row recomputed here, by my own short script:** row 400 (`09493f64`), from a checkout of *T* and a checkout of the row, with `GIT_` variables removed. Exit 0, and its 41 stdout lines equal the table's. That is one row, not R8.
+
+```sh
+git fetch origin review-promotion-replay-r && git show FETCH_HEAD:spec/vectors/promotion-replay.json > t.json && sha256sum t.json
+python3 -c "import json,subprocess;t=json.load(open('t.json'));C=subprocess.check_output(['git','rev-list','--first-parent','--reverse',t['T']],text=True).split();print(len(t['rows']),[r['commit'] for r in t['rows']]==C)"   # expected: 706 True
+```
+
+**Open for the adviser: R8.** Recompute the table with your own driver and report every row whose `argv`, `run`, `exit` or `stdout` differs. Steel ran Python 3.14.7; you run 3.13.18 (entry 46). Ringing.
