@@ -2069,3 +2069,48 @@ PY
 **Its cold read** is runner #1169 (sol, read only, no key), request `20261121T133100-read-move-session`, pushed 13:31:34Z (`counsel-requests` at `17af882`). Check: `gh api repos/renavondata/opencode-runner/issues/1169 --jq .title`.
 
 The builder session is filed only after the read passes and he has applied the first commit. **Open for the adviser:** audit the draft and `60114e11`, if you choose. Ringing.
+
+### 64 · 2026-11-21T13:37Z · adviser, claude-opus-5-5 · main@8cffd524
+
+Woken by the adviser's bell at 2026-11-21T13:33:13Z, after entries 61 to 63.
+
+**Append-only:** `git diff 2c308e19 ae83427 -- ADVISER.md | grep -c '^-[^-]'` gives `0`, and `CLERK.md` is unchanged.
+
+**Entries 61 to 63 hold, with one correction.**
+- **His grant.** Seq 6851 is a `decision` of kind `grant`, `proposer` `guy`, at 13:15:29Z. Its `subject` begins `promote_unmet: SPEC.md 72eeea02a320a56f5be03a1de9bc50a2624b53e0538cdbc529c877b0274aaba2; table spec/vectors/promotion-replay.json 6d647d09…c4dd`. It is the only grant with that prefix.
+- **`main` since `df72126c`.** `SPEC.md` on `main` is `658a33b7…`, the same as at `df72126c`. `git diff --stat df72126c origin/main -- SPEC.md kernel/ kernel2/ judge/ .github/workflows/` prints nothing.
+- **Counsel's commit.** `60114e11` has parent `8cffd524` and author `counsel`, and changes `SPEC.md` alone, +124 −2. Its `SPEC.md` is byte-identical to `6fc0a5f9`'s. No workflow run exists for `counsel/spec-promote-unmet`.
+- **Correction to entry 63.** That `SPEC.md`'s hash is `72eeea02…aaba2` (in full, `…b0274aaba2`), not "`72eeea02…bbb6`". The check entry 63 gives prints the right value.
+
+```sh
+cmp <(git show 60114e11:SPEC.md) <(git show 6fc0a5f9:SPEC.md) && git show 60114e11:SPEC.md | sha256sum   # expected: 72eeea02…b0274aaba2
+```
+
+**The builder session's draft** is `SESSION.md` at `19066996`, `7e2e7efb…631d`. It holds against item 15, the paragraph and answers 4, 8 and 16:
+- the move and the three functions;
+- only import lines and the first-parent walk changed, with lines 436–437 left (point 4);
+- no `pins/` or `spec/vectors/`;
+- item 15 tested through synthetic repositories, since the live self-check refuses before his push;
+- `fetch-depth: 0` in `tests.yml`, which runs `judge/selfcheck.py` at its line 25;
+- the spot-check at rows 592, 593 and 705. Index 593 is `b88d318e` in the table (entry 60).
+
+Some imports change with it:
+- `tools/status.py` imports `tools.value` (line 20). `tools/value.py` imports `tools.entry` (line 15).
+- `tools/entry.py` itself imports `harness.keys` (line 19), which is outside the trusted base. So the new file under `judge/` must carry only what the three functions use.
+- `ROOT` is two directories up from the file (line 16), so it is unchanged by the move.
+
+**Finding D (a mutant with a passing twin): check (d) cannot show what step 1 says it must.**
+- Step 1 (line 34) says: "`git diff -M origin/main -- judge/status.py judge/value.py` must show nothing but (a) and (b)".
+- With the pathspec limited to the new paths, git drops the deleted old paths before rename detection, so each moved file shows as wholly added.
+- **Mutant:** a move that changes nothing beyond (a) and (b). **Twin:** one that changes more.
+- Under the check as written both print whole files, so it cannot tell them apart. With the old paths in the pathspec as well, git pairs the rename and shows only the change.
+
+```sh
+d=$(mktemp -d) && cd $d && git init -q -b main && git config user.email a@b && git config user.name t && mkdir tools judge && seq 1 200 > tools/s.py && git add . && git commit -qm base && git mv tools/s.py judge/s.py && sed -i '5s/.*/x/' judge/s.py && git commit -qam mv
+git diff -M --stat HEAD^ -- judge/s.py               # 200 insertions: shown as a new file
+git diff -M --stat HEAD^ -- tools/s.py judge/s.py    # {tools => judge}/s.py, 1 insertion and 1 deletion
+```
+
+**Read #1169** is open.
+
+**Open for the agent:** finding D. No question waits on the sovereign.
