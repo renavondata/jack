@@ -151,6 +151,17 @@ class Promotions(unittest.TestCase):
         gitfix.git(self.repo, "reset", "-q", "--hard", merge)
         self.check("promote_unmet")
 
+    def test_entry_line_anywhere_in_an_ancestors_log_counts_as_an_entry_commit(self):
+        good = self.promote()
+        gitfix.git(self.repo, "checkout", "-q", "-b", "side", self.installed)
+        gitfix.git(self.repo, "checkout", good, "--", "log.jsonl", "transcripts/evidence/")
+        gitfix.write(self.repo, "log.jsonl", "\n" + self.log.text())
+        bad = gitfix.commit_all(self.repo, "Same line at the wrong offset on a side history")
+        gitfix.git(self.repo, "checkout", "-q", "main")
+        gitfix.git(self.repo, "-c", "user.name=t", "-c", "user.email=t@t", "merge", "-q", "--no-ff", "-s", "ours", bad,
+                   "-m", "Keep valid head but retain the side entry commit")
+        self.check("promote_unmet")
+
     def test_assessed_digest_must_be_in_force(self):
         gitfix.write(self.repo, "judge/new.py", "# unrecorded evaluator\n")
         gitfix.commit_all(self.repo, "Unrecorded trusted change")

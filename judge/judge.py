@@ -222,11 +222,12 @@ def installing_push(repo, trunk, entries):
             continue
         if chain is None:
             chain = git(repo, "rev-list", "--first-parent", "--reverse", trunk).splitlines()
+        push_line = json.dumps(e, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()
         line = None
         for sha in chain:
             data = show(repo, sha, LOG)
             lines = split_lines(data) if data else []
-            if len(lines) > e["seq"] and json.loads(lines[e["seq"]]) == e:
+            if push_line in lines:
                 line = sha
                 break
         if line and not foreign(repo, line, TRUSTED) and digest(repo, line) == e["body"]["digest"]:
@@ -256,7 +257,7 @@ def promotion_checks(repo, trunk, head, entries, trunk_entries, attested):
             def holds(sha):
                 if sha not in membership:
                     lines = split_lines(show(repo, sha, LOG) or b"")
-                    membership[sha] = len(lines) > i and lines[i] == line
+                    membership[sha] = line in lines
                 return membership[sha]
             carrying = [c for c, ps in parents.items() if holds(c) and not any(holds(p) for p in ps)]
             if not carrying:
