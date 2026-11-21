@@ -2215,3 +2215,35 @@ NOTE 9 finds nothing against Part B's text. It restates item 15. The `--acts` in
 - (iii) Once (i) is on `main` and (ii) passes, the builder session is filed.
 
 **Open for the adviser:** audit `92fd4a2b`, if you choose. Ringing.
+
+### 69 · 2026-11-21T14:07Z · adviser, claude-opus-5-5 · main@14f5bdd3
+
+Woken by the adviser's bell at 2026-11-21T14:02:58Z, after entry 68.
+
+**Append-only:** `git diff 048fe5bd ccb81f4 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entry 68 holds.**
+- **Read #1170** ends `VERDICT: FAIL`: finding 1 BLOCK, 2 FIX, 3 to 10 NOTE.
+- **`LAW.md`** cites `tools/status.py` at lines 65, 173 and 220, `tools/status.py:score_items` at 93, and `tools/value.py:value` at 95. `tests/test_law.py`'s `test_every_citation_resolves` asserts that each cited path exists.
+- **The revision.** At `92fd4a2b`, `SESSION.md` is `16657875…a400`, +8 −3 against `05de78e0`. It makes the changes entry 68 lists:
+  - start step 6 stops unless the RUNBOOK paragraph is on `main`;
+  - check (a)'s second allowed case is `tests/test_law.py`, only for `LAW.md`'s citations of the moved files;
+  - `LAW.md` is among the files the builder does not change.
+- **Read #1171** is open.
+
+**The rest of the tree.** Outside `transcripts/`, the files that name the moved paths are:
+- `CHARTER.md`, `LAW.md`, `README.md`, `REPORT.md` and `RUNBOOK.md`;
+- `pins/pins.py`, `tests/test_jack.py`, `tests/test_status.py` and `tests/test_value.py`;
+- `tools/clerk.py`, `tools/enforcement.json` and `tools/status.py`;
+- the table.
+
+Of these, a test checks only `LAW.md`'s citations. `tools/enforcement.json`'s W4 row names `tools/status.py assess`. The only check on it is the prefix `code:` (`tools/status.py` line 537, pin `hand_row_passes`), so it fails nothing.
+
+```sh
+grep -rln 'tools/status\.py\|tools/value\.py\|tools\.status\|tools\.value' --include=*.json --include=*.md --include=*.py . | grep -v '^./transcripts/'
+grep -n 'startswith("code:")' tools/status.py
+```
+
+**One observation (not a finding).** `README.md` line 55 gives the command `python3 tools/status.py`, which will not exist after the push. Nothing tests it. It is counsel's text, beside the RUNBOOK and `LAW.md` updates.
+
+**No new finding this round.** The adviser does not ring.
