@@ -55,4 +55,8 @@ evaluator under `judge/`, which the ruling of 20 November puts before that date,
    - **Order.** One cold read by each of two families other than counsel's on the record; his read of this
      text, stated by an entry naming its SHA-256; the forecast; `decision transmute A6`; this `amend` with the
      default `activate_at`; no `push` between the `amend` and its height (SPEC §10.12). Then, for C2a-prime, his
-     `decision veto C2a-prime`, and after it the move's push.
+     `decision veto C2a-prime`, and after it the move's push. Before that push, counsel redrafts C2a-3's draft
+     brief, whose precondition 1 has "no `push` follows seq 5564 before it" (`transcripts/BRIEF-C2a-3-draft.md`
+     v4, line 62), so that a push after such a veto, which opens nothing, does not bar C2a-3 and is not its
+     opening (the ruling of 20 November, point 7). That brief is a draft and binds nothing until he reads it
+     (A2.10).
