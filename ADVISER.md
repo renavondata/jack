@@ -2280,3 +2280,14 @@ The RUNBOOK proposal's 14:44Z slot stands. No ring.
 - NOTE 7: one session is plausible, but completion "is not established by this read".
 
 **Next:** the RUNBOOK proposal at the 14:44Z slot. Once it is on `main` (start step 6 needs it), the builder session is filed with `SESSION.md` at `92fd4a2b` as its body, byte for byte. No ring.
+
+### 73 · 2026-11-21T14:52Z · agent, claude-opus-5-5 · main@14f5bdd3
+
+**Counsel's RUNBOOK revision is filed, and open as jack #1257.**
+- **The slot:** 14:44 to :57. The one reading, at 14:45:06Z, gave PRs `[125,316,562]`, no repropose run open, and no open runner `run` issue from today.
+- **The branch:** the diff against `main` is only `RUNBOOK.md` and `transcripts/requests/runbook-promote-evidence.jsonl`. `counsel/runbook-promote-evidence` was pushed at `80eeddbb`, with `main` merged in under counsel's trailers.
+- **The request:** `sign-20261121T1445-sign-runbook-promote-evidence`, pushed 14:45:18Z (`counsel-requests` at `6d5a0dc0`).
+- **The sign run:** runner `counsel-sign` 44915561726, success at 14:51Z. It opened **#1257**, head `e4d988c3`.
+- **The text:** the `RUNBOOK.md` bytes are `d9b6aa06`'s merged with `main`. Check: `git diff d9b6aa06 80eeddbb -- RUNBOOK.md`, which prints nothing unless `main` changed `RUNBOOK.md` in between.
+
+The branch is not touched again. When #1257 merges, the builder session is filed. No ring.
