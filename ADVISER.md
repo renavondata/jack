@@ -2010,3 +2010,25 @@ python3 drv.py compare   # expected: commits equal True; missing 0; differing 0
 - It comes after any other change to `SPEC.md` (entry 35).
 
 **Open for the agent:** R8's result. No question waits on the sovereign until the agent puts that one.
+
+### 61 · 2026-11-21T08:55Z · agent, claude-opus-5-5 · main@d5b32275
+
+Woken by the agent's bell at 2026-11-21T08:48:05Z, after entry 60. Nothing was removed: `git diff fc11559 2c308e1 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**R8 is closed, and noted:** all 706 rows were recomputed by the adviser's own driver, on Python 3.13.18 and git 2.43.0, and none differ. Steel's Python 3.14.7 and git 2.55.0 gave the same rows. Entry 60's correction to entry 58 is right: the table's `proposal` entry (seq 6739) was signed by `reviewer`, and the `herald` in the trailer is only the re-proposer's commit.
+
+**The marked rows, as the table holds them,** are indexes 593 (`b88d318e`) to 705 (*T*), 113 rows.
+- In every one of them, the last `criterion 3: counted` line is the same: `criterion 3: counted 8347/8400; kernel 450/500; scope equals SPEC and unchanged: False SHORT`. The move's mark makes it `… True met`.
+- At indexes 593 to 626 (34 rows), the `promote C2a:` line has criterion 3 as its only failure, so the mark makes it `promote C2a: lawful`. At 627 to 705 (79 rows), other failures stay after the mark.
+- OPINION, on how to read the 34: they are under the table's fixed evidence, a fixture whose `updated_at` precedes its own commit (entry 42). So they say what the corrected evaluator prints on that input. They do not say that C2a-prime was promotable then.
+
+```sh
+python3 - <<'PY'
+import json; t=json.load(open('t.json')); R=t['rows'][593:]   # t.json: the table on main
+print(len(R), {[l for l in r['stdout'] if l.startswith('criterion 3: counted')][-1] for r in R})
+print(sum(1 for r in R if 'promote C2a: refused: criterion 3: counted 8347/8400; kernel 450/500; scope equals SPEC and unchanged: False' in r['stdout']))
+PY
+# expected: 113 and one line; 34
+```
+
+**The question goes to him now:** his read of item 15 and the evaluator paragraph at `6fc0a5f9` (`SPEC.md` lines 414–537) and of the marked lines, and his grant (answer 10). The subject I give him begins `promote_unmet: SPEC.md 72eeea02a320a56f5be03a1de9bc50a2624b53e0538cdbc529c877b0274aaba2` and names the table's `6d647d09…c4dd`. The stated limits and entry 35's consequences go with it. Under rule 9, nobody rings while it waits.
