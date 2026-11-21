@@ -2408,3 +2408,33 @@ The adviser agrees with findings A to G as stated. Finding E is a cost of the te
 2. **C2b's prepared opening will need its own replay.** `opening-c2b-3` (`6aa16322`, 15 November) changes `tools/status.py` by +189 lines and changes `judge/scope.json`. After the move it no longer applies, and its evaluator change becomes "a later change to the evaluator": a table of the moved evaluator, and his grant marking lines. Its window opens only after a promotion of C2a (`c2b_window`), so it does not compete with the move's slot.
 
 **No new finding this round.** The adviser does not ring. The next acts are the reviewer session, the cold review for `--review`, the early-end amendment and a fresh veto (B), and his push, each to be put to him.
+
+### 77 · 2026-11-21T23:45Z · agent, claude-opus-5-5 · main@5dc4566c
+
+**Entry 76 is noted.** Its two observations reproduce (`git grep` over `transcripts/sessions/`), and I take them as stated.
+
+**His answer.** I put two questions to him at about 23:10Z:
+1. "Shall I draft and cold-read the reviewer session for the move branch, to be filed once a read passes?"
+2. "Is the early-end amendment (brief 2) being drafted in another session? If not, shall I take it up next?"
+
+His reply, verbatim: "Do both".
+
+**The reviewer session.** The draft is `SESSION.md` on `agent/review-session`. It is reviewer-keyed, sol, on `move-promotion-judge`.
+- Its steps: take in `57022d72` by fast-forward; re-aim the path-blocked mutants; repair the seven twins of finding D; write item 15's six pins and `replay_drift`.
+- #1187 read draft 1 (`614932bc`) and failed it with two BLOCKs and two FIXes:
+  - the full acceptance replay was neither assigned nor named outstanding;
+  - no one was given the merge of `main` that `v_push` needs;
+  - resumption did not cover a HEAD ahead of the remote;
+  - the departure from RUNBOOK's Working copies was not stated.
+- Draft 2 (`ec21602d`) names the replay and the merge as done apart from the session and reported outstanding. It adds the resumption cases, states why the pins ride the push (C2a-prime's precedent, `c2a-prime-pins.md`), and adds check (e) for the seven names. Check: `git diff 614932bc ec21602d -- SESSION.md`.
+- #1188 is reading draft 2 now.
+
+**The acceptance replay** runs here, apart from any session. `/home/claude/accept/run_accept.py`, a script outside the repository, runs the moved evaluator at `7b03d75d` on every row of the table, under the marks, and then on the 14 first-parent commits after *T* up to `2d99d242` against the frozen evaluator at `2d99d242`. At 23:39Z, 330 rows had run and none differed. I will report the whole result.
+
+**The early-end amendment, draft 1.** `transcripts/AMEND-A6.md` on `agent/early-end` (`10fb5b02`), 930 words, in A5's form. Open for the adviser as a pre-read, before the cold reads.
+- **The clause.** A window also ends, as failed, at a sovereign `veto` naming it at or above A6's `activate_at`. Its stated end does not move, and acts keyed to it stay keyed (the 4 November fix, A5.2).
+- **The other clauses.** Clause 2 gives the witnesses. Clause 3 gives the price, the departures (principle 5; rows 28, 33 and 69; RUNBOOK's order), what reads it (no code needed to bind; the evaluator's next change reads the end, with pin `vetoed_window_continues`, sized), the interests (V5 and V7 decidable 0 already; V6 read under the law at its entry, by A2.7), a forecast at p 0.7 and the order.
+- **Why the stated end stays.** Under BRIEF-C2a-prime's change 2, condition 3, as built, a fix before the stated end is a repair. Moving it would need the evaluator changed first, which only a push after the move can do.
+- **The cold reads.** One by sol and one by `google/gemini-4-argon`, with the text, the record and questions, and no argument of counsel's. They follow #1188, since one counsel read runs at a time.
+
+Open for the adviser: the pre-read of `10fb5b02`. Ring.
