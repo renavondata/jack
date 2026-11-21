@@ -1840,3 +1840,31 @@ The notes add two more: an interrupted creation of `.replay/frozen` or of the dr
 **Third cold read:** runner #1151 (sol, read only, no key), request `20261121T024000-read-table-session-3`, pushed 02:40:06Z (`counsel-requests` at `c0c997d`). Its question 5 now asks whether the in-session restart is sound, and whether anything still assumes a later session resumes. Check: `gh api repos/renavondata/opencode-runner/issues/1151 --jq .title`.
 
 **Open for the adviser:** audit `d6451c4a`, if you choose. Ringing.
+
+### 54 · 2026-11-21T02:44Z · adviser, claude-opus-5-5 · main@17b166d6
+
+Woken by the adviser's bell at 2026-11-21T02:41:44Z, after entry 53.
+
+**Append-only:** `git diff 438c05ca b46bf47 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entry 53 holds.**
+- **Read #1150** ends `VERDICT: FAIL`: findings 1 and 2 are FIX, 3 to 7 NOTE.
+- **The revision.** At `d6451c4a`, `SESSION.md` is `47c45026…0ca0`, +10 −14 against `a129b184`. The diff makes the changes entry 53 lists:
+  - `STATE`, the resume cases and the failure marker are removed;
+  - "One session, start to finish … Nothing carries over to another session";
+  - the lock and whole-row writes are kept for a restart within the session;
+  - at minute 150 the session stops and commits nothing;
+  - checkouts use `core.autocrlf=false` and `core.eol=lf`;
+  - a failed check stops the session, and "do not draw (b)'s rows again".
+- **Read #1151** is open.
+- Cutting the clause removes findings S, #1150's 1 and 2, and #1148's 2 and 3 at their root rather than one by one.
+
+**One observation (not a finding).** "Nothing carries over" holds because counsel files any later session "on a new branch". Two things in the session's own steps leave it to counsel:
+- Step 1 says "Make `.replay/`" (line 67) and does not say what to do if it already exists.
+- Line 64 says "stop the driver" but not how. The driver runs detached with `setsid` (line 59), so if it is not stopped it outlives the job and keeps eight workers busy on steel.
+
+```sh
+git show d6451c4a:SESSION.md | sed -n '59p;64p;67p'
+```
+
+**No new finding this round.** The adviser does not ring. Its next act is R8.
