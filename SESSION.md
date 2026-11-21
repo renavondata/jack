@@ -19,6 +19,7 @@ This branch is a **push branch**: the sovereign applies it to `main` with `jack 
    - otherwise, if `git merge-base --is-ancestor HEAD origin/main` succeeds, the runner cut a fresh branch from `main`: run `git reset -q --hard origin/move-promotion-judge`;
    - otherwise the worktree holds other work: stop and report, and reset nothing.
 5. `sha256sum SPEC.md` must give `72eeea02a320a56f5be03a1de9bc50a2624b53e0538cdbc529c877b0274aaba2`.
+6. Counsel's revision of RUNBOOK must already be on `main`, since the promote verb is built to it (RUNBOOK, Text before code): `git show origin/main:RUNBOOK.md | grep -c 'From the push that moves the promotion evaluator under'` prints 1. If it prints 0, stop: the text is not yet on `main`.
 
 If any check fails, stop and report. Never change `SPEC.md`: the sovereign's grant at log seq 6851 names it by that hash, and a push whose `SPEC.md` differs installs nothing.
 
@@ -56,14 +57,18 @@ Read them whole before writing code. The sovereign read that text before this bu
    - it commits the three evidence files (the tests run, the runs and the acts table it assessed with) under `transcripts/evidence/`, with the entry, in one commit on the commit it assessed;
    - the entry's `body.evidence` is `{run, runs, acts}`, each `{path, sha256}`.
 
-   Keep the rest of what it does today. Counsel's revision of RUNBOOK lands on `main` before the sovereign's push (RUNBOOK, Text before code). It restates item 15 for this verb, and the moved paths, and adds nothing to them. So the text you build the verb to is item 15. Say in your report every place where RUNBOOK on `main` today still describes the old behaviour or paths.
+   Keep the rest of what it does today. Build it to item 15 and to counsel's paragraph on `main` in RUNBOOK's `jack decision` section, the one beginning "From the push that moves the promotion evaluator under `judge/`", which restates item 15 for this verb and adds nothing to it. Say in your report every other place where RUNBOOK on `main` still describes the old behaviour or paths.
 5. **The workflows.** `.github/workflows/tests.yml` checks out the whole history (`fetch-depth: 0`), as `judge.yml` already does.
 6. **Your tests,** under `tests/`, for what you built: item 15's conditions (a) to (d), the installing push, the move. Pins are not yours.
 
-**What you do not do.** Change no `SPEC.md`, `CHARTER.md`, `RUNBOOK.md`, `judge/scope.json`, `pins/` or `spec/vectors/`. Run no `tools/jack` verb, and do not propose. Build nothing for C2a-3, C2c-1 or any later window.
+**What you do not do.** Change no `SPEC.md`, `CHARTER.md`, `RUNBOOK.md`, `LAW.md`, `judge/scope.json`, `pins/` or `spec/vectors/`. Run no `tools/jack` verb, and do not propose. Build nothing for C2a-3, C2c-1 or any later window.
 
 **Checks before you push.** Run each and copy its result into your report:
-- (a) `python3 -m unittest discover -s tests -t .`. Every failure must be in a test of `pins/` itself, such as `tests/test_pins.py`'s check that each mutant's target exists, and must fail only because a pin names a path or text that this move took elsewhere. That includes the mutants of the three functions taken from `tools/entry.py`. List each such failure. Fix any other failure. Do not weaken a test of `pins/` to make it pass: the reviewer updates the pins on this branch after you;
+- (a) `python3 -m unittest discover -s tests -t .`. A failure is allowed only in two cases:
+  - in a test of `pins/` itself, such as `tests/test_pins.py`'s check that each mutant's target exists, and only because a pin names a path or text this move took elsewhere, including the mutants of the three functions taken from `tools/entry.py`. The reviewer updates the pins on this branch after you;
+  - in `tests/test_law.py`, and only because `LAW.md` cites `tools/status.py` or `tools/value.py`. `LAW.md` is counsel's, and counsel updates its citations on this branch after you.
+
+  List each such failure. Fix any other. Do not weaken either test to make it pass;
 - (b) `python3 pins/run.py`: list every failing pin, and say for each whether it fails only because a path or text moved;
 - (c) `python3 tools/count_kernel.py`; and the lines under `judge/scope.json`'s `counted` prefixes, counted as judge item 10 counts them, at `origin/main` and at your head, both numbers. The sovereign's push states their difference (ruling, answer 6);
 - (d) the diff in step 1 shows only (a) and (b);
