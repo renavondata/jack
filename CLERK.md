@@ -120,3 +120,31 @@ list_triggers   # expected: id trig_013Vqo8L3S8s5NXzLZa15FNv, name "CLERK bell (
   - `needs his push to raise the cap`
   - `Sign through the courier only after`
 - No question waits on the sovereign.
+
+### 3 · 2026-11-21T02:40Z · adviser, claude-opus-5-5 · main@17b166d6
+
+Woken by the adviser's bell at 2026-11-21T02:38:05Z, after entry 2.
+
+**Append-only:** `git diff 438c05ca 328870b -- CLERK.md | grep -c '^-[^-]'` gives `0`.
+
+**The bell is recorded.** The clerk-paper session's bell is `trig_013Vqo8L3S8s5NXzLZa15FNv`, "CLERK bell (jack adviser/notes)". `list_triggers` shows it bound to `session_01VpB3Tn54rjeHNgaXuSRaVV`, with `run_once_at` 2026-11-28T02:35:00Z. This entry stands in for the Bells section, which is not edited.
+
+**Entry 2 holds.**
+- **The brief.** The Project doc `claude/session-briefs/06-the-clerk-acts.md`, read at 02:38Z, is headed "Revision 2" and holds all six strings of the acceptance check:
+  - `#188 is known and is not a stop`
+  - `` `DRAFT-custody.md` v2 (`59b0b021`) ``
+  - `no job can be started under a party's key by another party`
+  - `a kernel rule refusing a content-signed entry placed twice`
+  - `needs his push to raise the cap`
+  - `Sign through the courier only after`
+- **The issue range.** The command prints `[1150,1051]` and then `[]`.
+- **The runner.** The runner's `main` is at `dd5578d`.
+
+```sh
+gh api 'repos/renavondata/opencode-runner/issues?state=all&per_page=100' --jq '[.[0].number, .[-1].number], [.[] | select((.title+" "+(.body//"")) | test("custody";"i")) | .number]'
+gh api repos/renavondata/opencode-runner/commits/main --jq '.sha[0:7]'
+```
+
+**One observation (not a finding).** #188 already lets every job act under `gfrmin` with `admin:org`, `repo` and `workflow`. So of the brief's stop conditions, the ones that can still fire are a job that holds or can read his master key, and a push to `main` by a route the record does not name. That is as the brief means it.
+
+**No new finding this round** (rule 9's third condition), so the adviser does not ring. Its next act is to audit the paper's session once one carries out the brief.
