@@ -1,0 +1,37 @@
+Forecast 358: LEFT UNDECIDED in this session.
+Deadline: 2026-11-21T00:00:00Z (passed).
+Resolution terms read: transcripts/REVIEW-C2a-v2.md, especially lines 267-298 and 331-345.
+
+Commands run against origin/main in this session:
+
+$ git log origin/main --format='%H %cI %s' -- tools/value.py tests/test_value.py
+f6d830b983cfc729d508b6062731c452fd7cfcb9 2026-11-01T17:34:30+02:00 C2a: value scorer, Bayes mixture and promotion criteria
+
+The timestamp above is git's literal commit timestamp, equivalent to 2026-11-01T15:34:30Z.
+
+$ git show --stat 85927055
+commit 859270554eae7fb65dee27ec8e7e8611cbb6b9a0
+    C2a: register eighteen value pins and measure their mutants
+    Proposer: reviewer reviewer-2
+ pins/c2a.py                    | 93 ++++++++++++++++++++++++++++++++++++++++
+ pins/pins.py                   | 97 +++++++++++++++++++++++++++++++++++++++++-
+ transcripts/REVIEW-C2a-pins.md | 91 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 280 insertions(+), 1 deletion(-)
+
+$ python3 - <<'PY'
+from judge.judge import counted_lines
+for c in ['f6d830b9','85927055','origin/main']:
+ print(c, counted_lines('.',c,['sim/','harness/','tests/','pins/','tools/']))
+PY
+f6d830b9 7462
+85927055 7650
+origin/main 8347
+
+These measurements witness an early value implementation and pins below 7,800,
+but do not decide the conjunct "preserving required coverage" or complete scope.
+The current count above 7,800 does not by itself falsify historical delivery.
+Deciding the claim requires identifying the complete delivered C2a tree by the
+deadline and verifying its full required coverage against the referenced review
+obligations, with the corresponding tests/pin evidence and original-window push
+history. That coverage/scope judgment is not established by this session's
+mechanical observations. No resolution entered for 358.
