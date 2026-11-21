@@ -1970,3 +1970,43 @@ python3 -c "import json,subprocess;t=json.load(open('t.json'));C=subprocess.chec
 ### 59 · 2026-11-21T05:11Z · agent, claude-opus-5-5 · main@b7918fea
 
 **The replay table is on `main`.** Jack #1236 merged at 05:03:27Z, after both `judge` and `tests` succeeded on `038a4fc0`. The `merge` line is seq 6740, the 6,741st line (`proposal` 1236, `commit` `038a4fc0`), and `main` is at `b7918fea`. The table's bytes on `main` are those of entry 58. Check: `git fetch origin main && git show FETCH_HEAD:spec/vectors/promotion-replay.json | sha256sum`, expected `6d647d09b0e02f0b3e1ac785bdf8e13fa223491501d6a24a1886783b9458c4dd`. R8 stands as entry 58 put it. No ring: entry 58's is the open one.
+
+### 60 · 2026-11-21T08:50Z · adviser, claude-opus-5-5 · main@d5b32275
+
+Woken by the adviser's bell at 2026-11-21T04:48:13Z, after entries 57 and 58. Entry 59 arrived during the work.
+
+**Append-only:** `git diff 782980d6 fc11559 -- ADVISER.md | grep -c '^-[^-]'` gives `0`, and `CLERK.md` is unchanged.
+
+**Entries 57 to 59 hold.**
+- **#1235 and #1236.** #1235 closed unmerged at 04:36:07Z. #1236, by the court's app, merged at 05:03:27Z, with `judge` and `tests` both `success` on `038a4fc0`.
+- **Who proposed the table.** Its proposal entry, seq 6739, has `proposer` `reviewer`. The `herald` in its trailer is the re-proposer's commit, not the entry's signer.
+- **The bytes on `main`.** At `d5b32275`, `spec/vectors/promotion-replay.json` is `6d647d09…c4dd`.
+
+```sh
+git fetch origin main && git show FETCH_HEAD:spec/vectors/promotion-replay.json | sha256sum
+git diff origin/main...origin/review-promotion-replay-r -- log.jsonl | grep '^+{' | cut -c1-120   # before the merge: seq 6739, proposer reviewer
+```
+
+**R8: the adviser's recomputation agrees with the table in every row.**
+- **The driver.** The adviser's own, `R8-driver.py` on this branch, SHA-256 `deafb9b2…31bb9`. It was written from the `6fc0a5f9` paragraph without reading `transcripts/evidence/promotion-replay-driver.py`.
+- **How it ran.** Python 3.13.18 and git 2.43.0 here; the table records Python 3.14.7 and git 2.55.0. Two workers, from 04:50Z to 08:46Z: 7.83 core-hours.
+- **The result.** All 706 rows were recomputed. 0 are missing and 0 differ in `commit`, `log`, `argv`, `run` (its members and their order), `exit` or `stdout`.
+- **The commits** equal `git rev-list --first-parent --reverse 8130c751`.
+- ***T* = `8130c751`** is on `main`'s first-parent chain. Its `tools/status.py` and `tools/value.py` hash to `b2555209…` and `11440c89…`, the frozen bytes. The table's `spec` is `72eeea02…`.
+- **Exits:** 1 at 164 rows, 0 at 542.
+- **At `b88d318e`** (index 593), the last `criterion 3: counted` line ends `False SHORT`, and the `promote C2a:` line begins `promote C2a: refused: criterion 3: counted`.
+
+```sh
+git fetch origin adviser/notes && git show FETCH_HEAD:R8-driver.py > drv.py   # set REPO and BASE to your paths
+python3 drv.py setup 8130c751c1df85df4063d4174a3a886098530912 2
+python3 drv.py work 0 2 & python3 drv.py work 1 2; wait
+python3 drv.py compare   # expected: commits equal True; missing 0; differing 0
+```
+
+**R8 is closed with no disagreement.**
+
+**What remains (from the texts; for the agent to put to him):** his read and grant (answer 10).
+- The grant's `subject` begins `promote_unmet: SPEC.md 72eeea02a320a56f5be03a1de9bc50a2624b53e0538cdbc529c877b0274aaba2` (item 15 at `6fc0a5f9`). It also names the table's SHA-256, `6d647d09b0e02f0b3e1ac785bdf8e13fa223491501d6a24a1886783b9458c4dd`.
+- It comes after any other change to `SPEC.md` (entry 35).
+
+**Open for the agent:** R8's result. No question waits on the sovereign until the agent puts that one.
