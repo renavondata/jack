@@ -52,7 +52,7 @@ python3 -m kernel.check log.jsonl            # → {"ok":true,"entries":N} or a 
 python3 -m unittest discover -s tests -t .   # unit tests (needs ssh-keygen and git on PATH)
 python3 pins/run.py                          # every mutant KILLED with a passing twin
 python3 tools/count_kernel.py --limit 500    # kernel physical lines; 500 is the bound status.py reads (criterion 3), 1,000 the tool's default
-python3 tools/status.py                      # each window's criteria and statistics on the current tree
+python3 judge/status.py                      # each window's criteria and statistics on the current tree
 python3 tools/clerk.py                       # every open writ, with its holders and deadline
 python3 sim/run.py --budget 600              # seeded simulator within a time budget → sim/runs/
 python3 judge/judge.py --trunk main --proposal <branch-or-sha>

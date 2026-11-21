@@ -46,7 +46,7 @@ keep=["id","name","path","event","status","conclusion","head_branch","head_sha",
 json.dump([{k:x.get(k) for k in keep} for x in runs], open("transcripts/evidence/runs-tests-{STAMP}.json","w"), indent=0); print("runs saved:", len(runs))
 EOF
 ```
-then the table, with `END` set to *I* exactly as the claim states it (the heredoc is a computation, not repository code; it calls the four functions `assess_value` in `tools/status.py` calls — confirm that by reading `assess_value` first):
+then the table, with `END` set to *I* exactly as the claim states it (the heredoc is a computation, not repository code; it calls the four functions `assess_value` in `judge/status.py` calls — confirm that by reading `assess_value` first):
 ```
 python3 - <<'EOF' > transcripts/evidence/crossing-{STAMP}-<I without punctuation>.txt
 import json, os, sys
@@ -55,8 +55,8 @@ ROOT, RUNS = os.getcwd(), "transcripts/evidence/runs-tests-{STAMP}.json"
 START, END = "2026-11-01T15:04:14Z", "<I>"
 sys.path.insert(0, ROOT)
 from kernel import check
-from tools import status as st
-from tools import value as val
+from judge import status as st
+from judge import value as val
 with open(os.path.join(ROOT, "log.jsonl"), "rb") as f:
     lines = check.read_lines(f.read())
 assert check.check(lines)["ok"]
@@ -81,8 +81,8 @@ for T in instants:
 print(f"# max over instants of min(value E, liveness E): {float(best[0]):.6f} at {best[1]}")
 EOF
 ```
-The header line must name both gates (neither `None`; otherwise the runs file is incomplete — leave the claim undecided). Spot-check one row against `python3 tools/value.py --as-of <ts> --attack-green <value gate>` and `python3 tools/status.py --as-of <ts> --runs transcripts/evidence/runs-tests-{STAMP}.json | grep '^liveness continued'`. If the last line's maximum is below 20, the claim is **0**; if 20 or more, it is **1** only if that row's `ts` is before *I* (it is, by construction) — and then stop and report before resolving, because a crossing is the sovereign's business too. Evidence string: `"joint table <file>: max over every prefix before <I> of min(value E, continued liveness E) = <value> at <ts>"`. Several crossing claims with the same *I* share one table; a claim with a later *I* needs its own run. The instant *I* must have passed; a claim whose *I* is still ahead is left undecided (it is not yet false).
+The header line must name both gates (neither `None`; otherwise the runs file is incomplete — leave the claim undecided). Spot-check one row against `python3 judge/value.py --as-of <ts> --attack-green <value gate>` and `python3 judge/status.py --as-of <ts> --runs transcripts/evidence/runs-tests-{STAMP}.json | grep '^liveness continued'`. If the last line's maximum is below 20, the claim is **0**; if 20 or more, it is **1** only if that row's `ts` is before *I* (it is, by construction) — and then stop and report before resolving, because a crossing is the sovereign's business too. Evidence string: `"joint table <file>: max over every prefix before <I> of min(value E, continued liveness E) = <value> at <ts>"`. Several crossing claims with the same *I* share one table; a claim with a later *I* needs its own run. The instant *I* must have passed; a claim whose *I* is still ahead is left undecided (it is not yet false).
 
-*Anything else* (`counsel.programme`, `review.forecast`, untyped) — read the whole entry: the claim, `args.evidence`, `args.id`. Decide it only if the claim's own terms are settled by evidence you can produce in this session with the tools on this tree (`git log`/`git show` on `origin/main`, `tools/status.py`, `tools/value.py`, `tools/jack score`, the GitHub API) and the claim's instant has passed or the claim is already true. Save what you ran and what it printed under `transcripts/evidence/due-{STAMP}-<seq>.txt` and name that file in the evidence string. If the claim needs a procedure you cannot complete here (a joint statistic over many prefixes, a table counsel keeps, a judgement about text), leave it undecided and say exactly what would decide it.
+*Anything else* (`counsel.programme`, `review.forecast`, untyped) — read the whole entry: the claim, `args.evidence`, `args.id`. Decide it only if the claim's own terms are settled by evidence you can produce in this session with the tools on this tree (`git log`/`git show` on `origin/main`, `judge/status.py`, `judge/value.py`, `tools/jack score`, the GitHub API) and the claim's instant has passed or the claim is already true. Save what you ran and what it printed under `transcripts/evidence/due-{STAMP}-<seq>.txt` and name that file in the evidence string. If the claim needs a procedure you cannot complete here (a joint statistic over many prefixes, a table counsel keeps, a judgement about text), leave it undecided and say exactly what would decide it.
 
 **Order:** the `tools/jack resolve <seq> --outcome <o> --evidence "<…>"` commands first (each commits `log.jsonl` itself; the writs with the earliest `resolves_by` first), then one commit for the evidence files (`git add transcripts/evidence/...` by name; never `git add -A`), then — last of all, never before a resolution is entered — `tools/jack proposal --title "due {STAMP}: <k> resolved (<types>)"` — it runs the test suite and can take ten minutes, so call it with the bash tool's `timeout` set to `900000`. If the push is refused, run the two commands the verb prints and report their output. If nothing on the list is decided, propose nothing. Report: the PR number; each resolution as (seq, outcome, your resolution's UTC time against the forecast's `resolves_by`); and *left undecided*: each seq with the reason.

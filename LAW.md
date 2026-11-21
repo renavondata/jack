@@ -62,7 +62,7 @@ it: the first proves the rule can fail, the second that compliance is possible.*
 of tools instead: every change to `tools/`, `harness/`, `sim/` or `pins/` carries
 a pin in `pins/pins.py` whose named mutant it kills and whose passing twin it
 admits, run by `.github/workflows/tests.yml` on every proposal and read by
-`tools/status.py` as criteria 1–2 of each window. The impossible
+`judge/status.py` as criteria 1–2 of each window. The impossible
 is refused in one place already: `kernel/check.py:declare` refuses a public key
 that no one could be the sole holder of (`kernel/sig.py:weak_key`; `bad_key`).
 
@@ -90,9 +90,9 @@ alone is event-triggered, by the pull request, and decides nothing but validity.
 
 *Reversible acts are priced and scored, never blocked.* — Every forecast is
 scored by `tools/jack score` (`tools/entry.py:score`, log-loss against the
-per-type base rate); C1b's liveness is A4.3's bet in `tools/status.py:score_items`
+per-type base rate); C1b's liveness is A4.3's bet in `judge/status.py:score_items`
 and `item_process`; C2a's value is A4.4's bounded-difference bet against the
-base rate in `tools/value.py:value`.
+base rate in `judge/value.py:value`.
 
 **Where practice departs from the sentence** (*commentary*; the author's F6, jack #244).
 The gate is drawn by path and verb, not act by act. Anything under the trusted base
@@ -170,7 +170,7 @@ rules in the kernel, deferred with the type.
 *Rules are data in a decidable language (proposed: stratified Datalog), so the
 law can grow while the trusted interpreter stays fixed.* — Not built. C1 did
 not admit a rule language: the first real cases were brief rules enforced by
-tools (`tools/status.py`'s criteria, `tools/jack`'s refusals) under a fixed
+tools (`judge/status.py`'s criteria, `tools/jack`'s refusals) under a fixed
 kernel; the stratified-Datalog draft remains on branch `c1-law-draft` as design
 input, and whether a rule language is needed at all is a C2c question.
 
@@ -217,7 +217,7 @@ statute is "a decidable predicate, admitted with a violating and a satisfying wi
 (§4), entered by a change entry (§3, Change). None has been admitted: there is no `rule` type (maxim 2
 above; A2.1, "Until then no primary rule exists"). Two other things are decidable and witnessed today. The
 checker's refusals (SPEC §8) are recognition, §4's "validity predicate", each refused by a signed
-vector, beside admitted logs of every entry type (SPEC §11). The briefs' pre-stated criteria are computed by `tools/status.py`, most held
+vector, beside admitted logs of every entry type (SPEC §11). The briefs' pre-stated criteria are computed by `judge/status.py`, most held
 by a pin and its twin (not all: the off-log count of C2a's criterion 7 has a test and no pin), and bind
 their window only (A2.4). The charter's
 text is bound by its hash — genesis's `body.charter` until A2, then the latest `amend`'s `charter` (seq 137,
