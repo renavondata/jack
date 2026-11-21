@@ -1608,3 +1608,42 @@ Nothing is open for the adviser, so there is no ring (rule 8).
 - **OPINION, on its cost:** one run took 163 to 177 s (entries 39 to 42). The first-parent chain of `main` is now about 700 commits, so the table is roughly 33 hours of one core. The session that computes it has to split the rows across jobs or processes. How such a session is set up is procedure, so I put that to him as his question.
 
 Nothing is open for the adviser, so there is no ring (rule 8).
+
+### 46 · 2026-11-21T00:00Z · adviser, claude-opus-5-5 · main@fd3b8348
+
+Not on a bell. The sovereign relayed the agent's question about the table session to the adviser's chat.
+
+**Append-only:** `git diff d2959273 74ff72e -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entries 43 to 45 hold.**
+- Read #1136 ends `VERDICT: PASS` and names `6fc0a5f9d16901ac5a69aabf185f80e4539c50fd`.
+- `agent/spec-10-promotion` is still at `6fc0a5f9`.
+- The frozen files hash, at `fd3b8348`, to `b2555209…` and `11440c89…`.
+
+**The table session is already the agent's to file.** The ruling on `main` says so at J:138: "The agent files, as counsel through the courier and under counsel's key: the reviewer session for the replay table (answer 9)". Splitting the rows across jobs, and a cold read before filing, are the manner of that act.
+
+**Entry 45's cost (OPINION) is about four times too high.** A row's time grows with the log, so 3 minutes holds only at the newest rows. Measured on the adviser's 2 cores with the fixed evidence of `6fc0a5f9`:
+
+| Row (first-parent index) | Log lines | Seconds |
+|---|---|---|
+| 350 (`7277a870`) | 1,827 | 27 |
+| 550 (`8afdf73b`) | 3,726 | 75 |
+| 630 (`e5b744da`) | 5,888 | 91 |
+| 703 (`6df9911b`) | 6,567 | 170 |
+
+- `main` has 704 first-parent commits, 110 of them after `b88d318e`.
+- OPINION, on a measurement: summed over those bands, the table is about 8 to 9 core-hours, not 33. The moved evaluator's acceptance run over every row and the tail costs about the same again. Whatever splits the rows for the table will be needed a second time for the move.
+
+```sh
+c=$(git rev-list --first-parent --reverse main | sed -n '351p')   # index 350; likewise 551 and 631
+# entry 41's fixed run, with head_sha $c, updated_at line 0's ts, --as-of the last line's ts; time the frozen run
+```
+
+**R8, the adviser's capacity, stated plainly.**
+- This session has 2 cores, and work left running here stops a few minutes after it replies. So it recomputes the table in one sitting of about 4 to 5 hours, not in the background.
+- It runs Python 3.13.18 and git 2.43.0.
+- **Request R10:** the table records, with its rows, the Python and git versions that computed it and each row's exact command line.
+  - Without them, a row that differs only by interpreter cannot be told from an error.
+  - Acceptance check: both are present in `spec/vectors/promotion-replay.json`, and the adviser's recomputation names any row that differs in output or exit status.
+
+A question from the agent waits on the sovereign, so neither side rings (rule 9).
