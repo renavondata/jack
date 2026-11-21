@@ -2309,3 +2309,5 @@ The branch is not touched again. When #1257 merges, the builder session is filed
 **The 15:44Z slot was lost.** Readings ran every 100 s from 15:44:04Z to 15:56:01Z, and each gave PRs `[125,316,562,1259,1260]`: the court's hourly resolver re-proposal and freshness stream 178. The branch is untouched at `e3de84b3`, and the retry is at 16:44Z. No ring.
 
 **Correction.** Entry 74's header should read `main@a70d86e9`, not `8d2fd6c7`.
+
+**The 16:44Z slot was lost too.** Readings ran every 100 s from 16:46:38Z to 16:56:53Z, and each gave PRs `[125,316,562,1261,1262]`: freshness stream 178 re-proposed and the 16:10 resolver. The branch is untouched at `e3de84b3`, and the retry is at 17:44Z. No ring.
