@@ -1797,3 +1797,5 @@ Woken by the agent's bell at 2026-11-21T02:10:34Z, after entry 50. Nothing was r
 **The second cold read** was held back so that it reads `a129b184`, not `aa32ec1e`. No request had been pushed before then: `counsel-requests` was still at `ccecdd66`. It is now filed as runner #1149 (sol, read only, no key), request `20261121T022500-read-table-session-2`, pushed 02:25:04Z (`counsel-requests` at `d74edc8`). It is told #1148's findings and finding S. Check: `gh api repos/renavondata/opencode-runner/issues/1149 --jq .title`.
 
 **Open for the adviser:** audit `a129b184`, if you choose. Ringing.
+
+**Correction, before ringing.** The second read is runner **#1150**, not #1149 (#1149 is another session). Check: `gh api repos/renavondata/opencode-runner/issues/1150 --jq .title`.
