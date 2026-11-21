@@ -8,22 +8,19 @@ You are the **reviewer** (`JACK_KEY=~/.ssh/jack-reviewer`, party `reviewer`), in
 
 **Quoting.** Code copied from a prompt on this runner has had its double quotes turned into a literal `\"`, in commands and in files alike (runners #1144 to #1146), and the code failed; code a session composes itself has not. So put no double quote in any shell command, and write your driver's strings in single quotes. Run `python3 -m py_compile` on each file you write before you run it. Every command below is written that way.
 
-**Where this session stands.**
-- If `.replay/STATE` begins `step 4 failed`, the check failed in an earlier session, and that is final. Report the line and stop, with `STOPPED: <the line>`. Do not run step 4 again, and do not propose.
-- Otherwise, if `.replay/STATE` exists, an earlier session on this branch began the work. Go on from the step it names; do not start again.
-- If `.replay/` exists without `STATE`, an earlier session stopped inside step 1. Remove it: `git worktree remove --force` each checkout under it, then `rm -rf .replay` and `git worktree prune`. Then begin at step 1.
-- Otherwise begin at step 1.
+**One session, start to finish.** This session computes the whole table and proposes it, or it stops and reports. Nothing carries over to another session. If it stops, counsel reads the report and may file a fresh session on a new branch, which begins again from nothing.
 
 **What you compute.** The table is defined by one paragraph of a draft change to `SPEC.md`. It is the sovereign's to read; nothing in it is in force. Run `git fetch -q origin agent/spec-10-promotion` and read the paragraph headed "The promotion evaluator" in `git show 6fc0a5f9:SPEC.md`, from "The frozen table of those outputs" to "and exits with the same status." Build exactly the rows it defines, and nothing else from the draft: no marks, no moved evaluator, no tail. The ruling on `main` is `transcripts/RULING-20261120-promotion-judge.md` (answers 3, 7 and 9). Write your own driver for the runs from that paragraph; that the adviser computes the same table separately, from its own driver, is the check on yours.
 
 **Fixed for this session**, where the paragraph leaves a choice open:
-- *T* is `origin/main` at step 1: `git rev-parse origin/main > .replay/T`, written once and never again; a resumed session reads it. Then check all three:
+- *T* is `origin/main` at step 1: `git rev-parse origin/main > .replay/T`, written once. Then check all three:
   - `b88d318e` is on its first-parent chain (`git rev-list --first-parent $T | grep -c ^b88d318e` prints 1);
   - `git show $T:tools/status.py | sha256sum` gives `b255520996cef0ec20691c46cbc236ce5826dc166d16697762fa85f30fe86acb`;
   - `git show $T:tools/value.py | sha256sum` gives `11440c89429513b49922658d419b0bc6c8e625b15701b335576eedf537cf9992`.
 
   If any check fails, stop and report.
 - **The rows** are `git rev-list --first-parent --reverse $T`: every commit, in that order.
+- **Checkouts** are made with `git -c core.autocrlf=false -c core.eol=lf`, so that no file is converted on checkout.
 - **The frozen evaluator** runs from a detached checkout of *T* at `.replay/frozen`, as `python3 -I .replay/frozen/tools/status.py …`. Its imports therefore come from that checkout.
 - **Worker *k*** has its own detached checkout `.replay/w<k>`. It moves it to each of its rows' commit with `git -C .replay/w<k> checkout -q --detach <c>`. That checkout is the row's `--root`, and its `log.jsonl` the row's `--log`; where the commit holds none, `--log` is an empty file. Each row's evidence files go under `.replay/ev/`.
   - `--run` is a file holding `json.dumps(run)` of the object the paragraph names, with members in its order.
@@ -60,15 +57,14 @@ The whole table is therefore about seven core-hours.
 - Run **eight** workers, not twelve: the diary's sessions share this machine.
 - Give the latest rows to the workers first, so that the long rows do not all fall at the end.
 - A single command here stops at fifteen minutes, and the job at 180. So start the driver detached: `nohup setsid python3 .replay/driver.py > .replay/driver.log 2>&1 &`.
-- **One driver at a time.** The driver holds an exclusive, non-blocking `fcntl.flock` on `.replay/driver.lock` for as long as it runs, and exits at once if another holds it. Write a small `.replay/lockcheck.py` that tries the same lock and prints `held` or `free`. Run it before you start a driver and whenever you resume. If it prints `held`, a driver is running: poll it, and start none.
-- **Rows written whole.** The driver writes each finished row to `.replay/rows/<index>.json.tmp`, then renames it to `.replay/rows/<index>.json` with `os.replace`. On start it deletes every `.tmp` file, and every row file that does not parse as JSON, and computes those rows again. It skips the other rows already there, so a restart resumes.
+- **One driver at a time.** The driver holds an exclusive, non-blocking `fcntl.flock` on `.replay/driver.lock` for as long as it runs, and exits at once if another holds it. Write a small `.replay/lockcheck.py` that tries the same lock and prints `held` or `free`. Run it before you start the driver, or start it again. If it prints `held`, a driver is running: poll it, and start none.
+- **Rows written whole.** The driver writes each finished row to `.replay/rows/<index>.json.tmp`, then renames it to `.replay/rows/<index>.json` with `os.replace`. On start it deletes every `.tmp` file, and every row file that does not parse as JSON, and computes those rows again. It skips the other rows already there, so that if the driver dies, starting it again in this session goes on where it stopped.
 - Poll about every ten minutes with one command that prints the rows done and the time. Poll a running row only through `.replay/rows/` and `.replay/driver.log`.
-- Keep `.replay/STATE` current: one line naming the next step.
 
-If at minute 150 of this session rows remain, stop polling and leave `.replay/` in place. Write `step 2: resume the driver (check the lock first)` to `.replay/STATE`, and report how many rows are done. A later session on this branch resumes. Never commit, or propose, a partial table.
+If at minute 150 of this session rows remain, stop the driver, commit nothing, and report how many rows are done. Never commit, or propose, a partial table.
 
 **Steps.**
-1. Make `.replay/` and write `step 1` to `.replay/STATE` before anything else in it. Fix *T* (unless `.replay/T` exists) and make the checks above. Create `.replay/frozen`, the worker checkouts and the driver, each unless it exists. Then write `step 2` to `STATE`.
+1. Make `.replay/`, fix *T* and make the checks above. Create `.replay/frozen`, the worker checkouts and the driver.
 2. Run the driver to the last row.
 3. Assemble the table from `.replay/rows/`.
 4. **Check before proposing,** and print each result:
@@ -78,7 +74,7 @@ If at minute 150 of this session rows remain, stop polling and leave `.replay/` 
    - (d) at `b88d318e` and at *T*, the **last** stdout line beginning `criterion 3: counted` ends in `False SHORT`, and the line beginning `promote C2a:` begins `promote C2a: refused: criterion 3: counted`; print both lines at both rows;
    - (e) `python3 -m json.tool spec/vectors/promotion-replay.json > /dev/null && echo valid`, then `sha256sum spec/vectors/promotion-replay.json`.
 
-   If any check fails, write `step 4 failed: <which>` to `STATE` and stop. Do not propose. That line is final for every later session (see "Where this session stands"), so a check is never drawn again until it passes.
+   If any check fails, stop and report which. Do not propose, and do not draw (b)'s rows again.
 5. **Record and propose.**
    - Copy your driver to `transcripts/evidence/promotion-replay-driver.py`, as the record of how the table was made.
    - `git add` exactly `spec/vectors/promotion-replay.json` and that file.
@@ -91,6 +87,6 @@ If at minute 150 of this session rows remain, stop polling and leave `.replay/` 
 - *T*, the row count and the table's SHA-256;
 - the output of the checks in step 4;
 - the driver's wall time, and the pull request number;
-- or, if you stopped at minute 150, the rows done.
+- or, if you stopped, why, and the rows done.
 
-End with one line: `PROPOSED #<n>`, `RESUME: <rows done>/<rows>`, or `STOPPED: <reason>`.
+End with one line: `PROPOSED #<n>`, or `STOPPED: <reason>` (with the rows done, if it stopped at minute 150).
