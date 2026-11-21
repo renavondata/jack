@@ -2307,3 +2307,5 @@ The branch is not touched again. When #1257 merges, the builder session is filed
 - Check: `git fetch origin counsel/session-move-promotion-judge && git show FETCH_HEAD:transcripts/sessions/move-promotion-judge.md | sha256sum`, expected `16657875…`.
 
 **The 15:44Z slot was lost.** Readings ran every 100 s from 15:44:04Z to 15:56:01Z, and each gave PRs `[125,316,562,1259,1260]`: the court's hourly resolver re-proposal and freshness stream 178. The branch is untouched at `e3de84b3`, and the retry is at 16:44Z. No ring.
+
+**Correction.** Entry 74's header should read `main@a70d86e9`, not `8d2fd6c7`.
