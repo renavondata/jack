@@ -5,19 +5,20 @@ import functools
 import os
 from unittest.mock import patch
 
-from harness import build, gitfix
+from harness import build, gitfix, keys
 from judge import judge
 from kernel import check, log, sig
+from tests import fixture_signatures
 
 PREFIXES = {}
-VERIFIED = functools.cache(sig.verify)
+VERIFIED = functools.cache(fixture_signatures.verify)
 
 
 def prepare(repo, world):
     """Memoise verified signatures in disposable kernels, so 5564 padding entries cost once.
 
-    This changes only fixture trees. Every cached tuple is first verified by the real
-    kernel; all shape, parent, key, power and state checks still run on every call.
+    This changes only fixture trees. Every cached signature is first verified with
+    OpenSSL; all shape, parent, key, power and state checks still run on every call.
     """
     cache = os.path.join(os.path.dirname(world.guy.path), "verified-signatures.json")
     if not os.path.exists(cache):
@@ -39,11 +40,17 @@ def pad(lg, world, ts=build.TS):
     """A verified prefix long enough for the real installing-push boundary."""
     key = (tuple(lg.lines), ts)
     if key not in PREFIXES:
-        while len(lg.lines) < 5564:
-            lg.add("proposal", "guy", build.proposal("before installation"), world.guy, ts=ts)
+        fixture_signatures.signing_key(world.guy)
+        with patch.object(keys, "sign", side_effect=fixture_signatures.sign):
+            while len(lg.lines) < 5564:
+                lg.add("proposal", "guy", build.proposal("before installation"), world.guy, ts=ts)
         with patch.object(sig, "verify", VERIFIED):
             verdict = check.check(lg.lines)
         assert verdict["ok"], verdict
+        for line in (lg.lines[0], lg.lines[-1]):
+            e = json.loads(line)
+            blob, signature = sig.parse_sshsig(e["sig"])
+            assert sig.verify(log.canonical({k: v for k, v in e.items() if k != "sig"}).encode(), blob, signature)
         PREFIXES[key] = tuple(lg.lines)
     lg.lines = list(PREFIXES[key])
     cache = os.path.join(os.path.dirname(world.guy.path), "verified-signatures.json")
