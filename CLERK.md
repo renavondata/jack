@@ -169,3 +169,35 @@ git ls-remote https://github.com/renavondata/opencode-runner refs/heads/main  # 
 ```
 
 **Open for the adviser:** nothing yet. This entry does not ring. The next entry carries the inventory's stop-condition result.
+
+### 5 · 2026-11-21T14:40Z · clerk-paper session (`session_01VpB3TmrXo8QB1Qa3EdgZSU`), claude-opus-5-5 · main@14f5bdd3
+
+**The brief's stop condition fired; drafting has not begun.** One finding goes to the sovereign today, before any drafting, as brief 6 §"When to stop" requires. A question waits on him, so under rule 9 this entry does not ring.
+
+**Finding S1. Every job on steel can read the file of his master key, by the record's own texts, and no text says so.**
+
+1. His pastes run on steel, in the same home as the runner's clone. `transcripts/PUSH-c2a-prime-opening.md` §2: "One paste, on steel, the machine that holds the sovereign's key, in his own clone `~/git/jack-guy` … Not in `~/git/jack`: that is the runner's working clone". `host.md` §2 takes the runner's clone to be `/home/g`'s (`--old-home DIR … (default /home/g) … whose git/jack is checked`).
+2. His pastes name no key, so the verbs sign with the default. No `PUSH-*.md` on `main` sets `JACK_KEY` or `--key`; `tools/jack` line 314 defaults `--key` to `JACK_KEY`, else `~/.ssh/id_ed25519`.
+3. Every job can read every file in `g`'s home, `~/.ssh` included. Runner #188 (open): "`g` also holds the rest of that home directory (ssh keys, keyrings and so on). Any step of any job on these runners can read all of it."
+4. What the record says instead. `host.md` line 3 names "every party key" and the `gfrmin` login, not his key; line 9 says "the runner holds no key of his", of the state after the install; `transcripts/QUESTION-20261111-constitution.md` puts "the master key on hardware after the rotation" in C2c-2.
+
+```sh
+git grep -n "the machine that holds the sovereign's key" origin/main -- transcripts/PUSH-c2a-prime-opening.md   # expected: line 65
+git grep -n -E 'JACK_KEY|--key' origin/main -- 'transcripts/PUSH-*.md'                                          # expected: no output
+sed -n 314p tools/jack | grep -o 'expanduser("~/.ssh/id_ed25519")'                                               # expected: one match
+gh api repos/renavondata/opencode-runner/issues/188 --jq '.state, (.body | test("ssh keys, keyrings"))'          # expected: open, true
+```
+
+- **OPINION, the limits.** The texts do not say that his shell sets no `JACK_KEY`, or that the master key is `g`'s `id_ed25519` and not a file elsewhere. The key prompts for a passphrase (RUNBOOK line 29), so a job that reads the file holds a ciphertext to attack offline, not a signature. Whether an agent holding the unlocked key is reachable from a job is not in any text. Only he can say where the key is; this session has not looked at steel and will not.
+- **Cost under B5 of a hand fix, stated first (brief 6; 00-common rule 6).** Moving or re-protecting a file on steel is an act on another host than GitHub, outside every instrument (B5's residue). Entered as a `decision fix` naming no failed window, it is a repair and a late report, and `tools/status.py` then refuses criterion 6 while it is on the prefix. This session recommends no fix.
+
+**#188 is recorded, as the brief says, as the inventory's first row, and is not a stop.** A push to `main` under the `gfrmin` login is a route the record names: #188 ("can push to every repo") with `host.md` line 9 ("administrators exempt").
+
+**Inventory read so far (runner `dd5578d7`, read whole):** the six workflows; `counsel-act.py`, `counsel-sign.py`, `repropose.py`, `worktree-cleanup.sh`, `gh-as-app`; `host/herald-tick.service.d/app.conf`, `host/jack-diary.service.d/app.conf`. Two files the brief's list omits are in `.github/scripts/`: `gh-as-app` (21 lines) and `test-worktree-cleanup.sh` (87). The drop-ins call `~/.config/jack/gh-as-app-timer`, whose bytes are in neither repository. The brief's eight line counts re-verified: 92 56 135 113 98 72 168 326.
+
+```sh
+git -C opencode-runner ls-files .github/scripts && wc -l opencode-runner/.github/scripts/{gh-as-app,test-worktree-cleanup.sh}   # expected: six scripts; 21, 87
+grep -c 'gh-as-app-timer' opencode-runner/host/*/app.conf                                                                      # expected: 1 each
+```
+
+**State for a session taking over.** Waiting on his answer to S1. Not done: the jack texts the brief lists, the paper, both reads, filing. No branch `counsel/clerk` exists. This session's bell is `trig_01Pic1twqkSY44EX8MQ5Y3wG`.
