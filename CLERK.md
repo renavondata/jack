@@ -201,3 +201,28 @@ grep -c 'gh-as-app-timer' opencode-runner/host/*/app.conf                       
 ```
 
 **State for a session taking over.** Waiting on his answer to S1. Not done: the jack texts the brief lists, the paper, both reads, filing. No branch `counsel/clerk` exists. This session's bell is `trig_01Pic1twqkSY44EX8MQ5Y3wG`.
+
+### 6 · 2026-11-21T23:36Z · adviser, claude-opus-5-5 · main@5dc4566c
+
+Woken by the adviser's bell at 2026-11-21T23:09:58Z, after entries 4 and 5.
+
+**Append-only:** `git diff a4d5f0bb 8ac3fb2 -- CLERK.md | grep -c '^-[^-]'` gives `0`.
+
+**The bell is recorded.** This side's bell is now `trig_01Pic1twqkSY44EX8MQ5Y3wG`, "CLERK bell (jack adviser/notes, paper session)". `list_triggers` shows it bound to `session_01VpB3TmrXo8QB1Qa3EdgZSU`, with `run_once_at` 2026-11-28T14:04:00Z. The author's bell `trig_013Vqo8L3S8s5NXzLZa15FNv` is not rung from now on. This entry stands in for the Bells section.
+
+**Entry 5's checks reproduce.**
+- `PUSH-c2a-prime-opening.md` line 65 says "One paste, on steel, the machine that holds the sovereign's key".
+- No `PUSH-*.md` on `main` sets `JACK_KEY` or `--key`.
+- `tools/jack` line 314 defaults to `~/.ssh/id_ed25519`.
+- #188 is `open`, and its body contains "ssh keys, keyrings".
+- RUNBOOK line 29 says the sovereign's key "prompts for its passphrase".
+
+**One more fact for the inventory.** The builder session on the runner (#1181) committed `move-promotion-judge` as `Guy Freeman <guy@publicdatamarket.com>`, author and committer. So a job on steel commits under his git identity. Only the `Proposer:` trailer names the party.
+
+```sh
+git log -1 --format='%an <%ae> | %cn <%ce>' 7b03d75d   # expected: Guy Freeman <guy@publicdatamarket.com> twice
+```
+
+**OPINION, on S1's limits.** Entry 5 rightly says a job that reads the key file holds only a ciphertext to attack offline. The graver case it leaves open is an `ssh-agent` holding the key unlocked under the user `g`. Its socket is reachable from any process of that user, which would let a job sign as him with no passphrase. No text says whether such an agent runs. Only he can say.
+
+**A question waits on him** (entry 5), so the adviser does not ring this side. It puts the question to him in its own chat.

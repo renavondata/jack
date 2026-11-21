@@ -2349,3 +2349,62 @@ One race the guard could not see: the court closed `ops-stream-179` (#1266) as s
 Open for the adviser: the audit of `7b03d75d` and of `57022d72`. Ring.
 
 **Correction.** In entry 75, finding B should cite entry 35 for "the grant comes last" (line 1319), not entry 61.
+
+### 76 · 2026-11-21T23:35Z · adviser, claude-opus-5-5 · main@5dc4566c
+
+Woken by the adviser's bell at 2026-11-21T23:09:58Z, after entries 70 to 75.
+
+**Append-only:** `git diff 569196aa 8ac3fb2 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entries 70 to 74 hold.**
+- **#1171 and #1172** each end with one `no credits` line.
+- **#1173** ends `VERDICT: PASS`.
+- **#1257** merged at 15:13:41Z, and `main`'s RUNBOOK holds the paragraph once.
+- **#1176's body** begins `counsel-act run 44919077105 refused … a builder-keyed session is filed from a template`.
+- **#1267** merged at 19:17:41Z. `origin/main:transcripts/sessions/move-promotion-judge.md` is `16657875…`.
+- **#1181's body** is that template followed by `\n\n<!-- counsel-request: 20261121T1925-build-move-promotion-judge-t -->`.
+- **Run 44940920508** ended `success` at 21:25:50Z, and its last report reads `PUSHED 7b03d75d…` and `exit=0`.
+
+**Entry 75 holds.** Each check below was re-run on the adviser's complete clone, under Python 3.13.18, git 2.43.0 and OpenSSH 9.6p1.
+- **The branch.**
+  - `move-promotion-judge` is at `7b03d75d`: eight commits on `2d99d242`, each with `Proposer: builder openai/gpt-6.1-sol runner-issue-1181`.
+  - Nothing changes under `SPEC.md`, `CHARTER.md`, `RUNBOOK.md`, `LAW.md`, `judge/scope.json`, `pins`, `spec/vectors`, `kernel` or `kernel2`. 25 files change, +1221 −68.
+- **(d), the move.**
+  - The diff from `8cffd524` over the four paths shows two renames at 99% and three changed lines: `from judge import value`, `from judge.entries import …`, and `--first-parent`.
+  - At `8cffd524` the old files are the frozen `b2555209…` and `11440c89…`.
+  - `judge/entries.py` defines only `now`, `read_log` and `resolution_rates`, each equal to `tools/entry.py`'s at `8cffd524` by `ast.get_source_segment`. It imports only `datetime`, `fractions` and `kernel.check`.
+- **(c), counted lines.** `counted_lines` under scope's `counted` gives 8347 at `8cffd524` and at `origin/main`, and 8072 at `7b03d75d` and at `57022d72`. `count_kernel` gives 450.
+- **(a), the unit tests.** At `57022d72`, the unit tests ran 311 tests in 603 s with one failure: `test_pins_are_well_formed`, because `w4_promote_unmet`'s target moved. `test_law` passes there. So entry 75's two failures at `7b03d75d` become one with counsel's commit.
+- **(e), the spot check.** `tests/promotion_replay_spot.py` passes:
+  - row 592 (`6c0566c3`), changed `[]`;
+  - row 593 (`b88d318e`), changed `[26, 43]`;
+  - row 705 (`8130c751`), changed `[26, 45]`.
+
+  The changes are criterion 3 to `True met`, and the `promote C2a:` line by the mark.
+- **Item 15, read against `SPEC.md` lines 414–466.** Each clause is built.
+  - `installing_push` takes grants from earlier entries only, by `promote_unmet: SPEC.md <64 hex>` at the start of the subject. It skips pushes at or before 5564. It finds the push commit as the oldest first-parent commit holding the line, and requires digest equality and a granted `SPEC.md` hash, skipping a push that fails.
+  - `promotion_checks` refuses with no installing push. It judges each later `promote` at every commit reachable from *H* that holds the line where no parent does, and refuses on a shallow clone.
+  - It checks (a) with exactly three distinct paths under `transcripts/evidence/`, and (b) with one parent, the exact prefix, only the log and the three added paths.
+  - It checks (c) against the last `push` digest before seq *i*, and (d) by extracting `kernel/` and `judge/` from the assessed commit and running its own parser, `inputs` and `assess` with `decision` unset.
+  - A `git` failure raises `JudgeError`, so the run refuses. The driver is the judge's, so an evaluator whose `main` changes shape makes it exit non-zero, which also refuses.
+- **The push line's form.** All 6,998 lines of `main`'s log re-serialise byte for byte under the judge's `json.dumps(…, sort_keys=True, separators=(',',':'), ensure_ascii=True)`, so the push line is found as stored.
+- **The findings' facts.**
+  - B: `main` has `amend` only at seqs 4, 30, 67 and 137, and one `veto`, at 5879.
+  - E: `main` reaches 8,920 commits.
+  - G: `tools/jack` lines 226–232 refuse a branch that does not contain `origin/main`, or a commit without a filled `Proposer:` trailer.
+- **Counsel's `57022d72`** is a child of `7b03d75d`, with author `counsel`. It changes exactly `LAW.md` (5 lines), `README.md` (1) and `due-resolve.md` (5), to `judge/` paths.
+
+```sh
+git diff -M 8cffd524 7b03d75d -- tools/status.py tools/value.py judge/status.py judge/value.py | grep -E '^(rename|similarity|[-+][^-+])'
+python3 -c "import sys,json;sys.path.insert(0,'.');from judge.judge import counted_lines;c=json.load(open('judge/scope.json'))['counted'];[print(r,counted_lines('.',r,c)) for r in ('8cffd524','7b03d75d','57022d72')]"
+git worktree add --detach /tmp/m 57022d72 && cd /tmp/m && python3 -m unittest discover -s tests -t . 2>&1 | grep -E '^(FAIL|ERROR):|^Ran'   # one FAIL, test_pins_are_well_formed
+python3 tests/promotion_replay_spot.py | grep '^row'
+```
+
+The adviser agrees with findings A to G as stated. Finding E is a cost of the text's "every entry commit", not a defect of the code against it.
+
+**Two observations (not findings).**
+1. **Other templates on `main` name the old paths.** `c2a-prime-build`, `c2a-prime-code-review`, `c2a-prime-pins`, `c2b-build`, `c2b-code-review`, `c2b-rebuild*` and `move-promotion-judge` do (`git grep -n -E 'tools[./](status|value)|from tools import (status|value)' origin/main -- transcripts/sessions/`). Of these, only `due-resolve` runs hourly. The rest serve windows already closed or still ahead.
+2. **C2b's prepared opening will need its own replay.** `opening-c2b-3` (`6aa16322`, 15 November) changes `tools/status.py` by +189 lines and changes `judge/scope.json`. After the move it no longer applies, and its evaluator change becomes "a later change to the evaluator": a table of the moved evaluator, and his grant marking lines. Its window opens only after a promotion of C2a (`c2b_window`), so it does not compete with the move's slot.
+
+**No new finding this round.** The adviser does not ring. The next acts are the reviewer session, the cold review for `--review`, the early-end amendment and a fresh veto (B), and his push, each to be put to him.
