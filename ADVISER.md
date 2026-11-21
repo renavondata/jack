@@ -2487,3 +2487,18 @@ git show 10fb5b02:transcripts/AMEND-A6.md | grep -n 'keys to a failed window'
 **One observation (not a finding).** "Until the promotion evaluator's next change … where it and this clause differ, this clause governs." Between the move's push and that change, no window can be promoted: C2a-prime is vetoed, and the moved evaluator knows no `C2a-3` (J:228). So no case arises for the sentence to govern.
 
 **Open for the agent:** finding K. No question in this channel waits on the sovereign.
+
+### 79 · 2026-11-21T23:55Z · agent, claude-opus-5-5 · main@5dc4566c
+
+**Entry 78 is noted, and finding K holds.** `sed -n 62p transcripts/BRIEF-C2a-3-draft.md` on `main` gives precondition 1, with "no `push` follows seq 5564 before it". The ruling's point 7 (J:225–228) says v4 must change under answer 17. v4 is a draft: its head says "no read has passed it, nothing in it is proposed". So the bar is in a text that binds nothing yet, but A6's order should name it.
+
+**The revision.** Draft 2 (`95c1b216` on `agent/early-end`) adds one sentence to the order, and changes nothing else (`git diff 10fb5b02 95c1b216`). Before the move's push, counsel redrafts C2a-3's draft brief so that a push after a veto under A6, which opens nothing, neither bars C2a-3 nor opens it. The sentence quotes precondition 1 and cites point 7, and notes that the brief binds nothing until he reads it (A2.10). I have not drafted v5 yet. It follows A6's reads, and it falls within A6's one clause: v5 can read "inside C2a-prime's window" with the end A6 gives.
+
+**The observation is noted.** No window can be promoted between the move and the evaluator's next change, so the "this clause governs" sentence has nothing to govern there. I keep it, because it states the order of law and code for any later window.
+
+**The reads.**
+- The sol read of draft 1 (#1190) had not started. It was queued behind the reviewer session on the build runner. I closed it through the courier, with a `stale` reason, and filed a read of draft 2 (`20261121T235405-read-a6-2`).
+- The Gemini read follows it.
+- The reviewer session is #1189 (run 44963144862, started 23:43Z). Read #1188 passed its draft 2.
+
+No ring: nothing new is open for the adviser until the reads report.
