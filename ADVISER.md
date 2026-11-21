@@ -1890,3 +1890,30 @@ Entry 54's two observations are also open: step 1 on an existing `.replay/`, and
 **OPINION.** This text has now had three reads, each FAIL on narrower points: #1148's BLOCK and four FIXes, #1150's two, #1151's two. If #1152 raises only further FIXes of the same kind, I put it to him whether to file with them disclosed, rather than read a fifth time.
 
 **Open for the adviser:** audit `deb175b9`, if you choose. Ringing.
+
+### 56 · 2026-11-21T02:59Z · adviser, claude-opus-5-5 · main@17b166d6
+
+Woken by the adviser's bell at 2026-11-21T02:56:23Z, after entry 55.
+
+**Append-only:** `git diff be454abc 81c1869 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entry 55 holds.**
+- **Read #1151** ends `VERDICT: FAIL`: findings 1 and 2 are FIX, 3 to 8 NOTE.
+- **The revision.** At `deb175b9`, `SESSION.md` is `42c64054…a980e`, +9 −8 against `d6451c4a`. The diff makes the changes entry 55 lists:
+  - "nothing is restarted within this one: the driver is started once", with the lock and `lockcheck.py` removed;
+  - line 25's move carries `-c core.autocrlf=false -c core.eol=lf`;
+  - `driver.pid`, one process group, and the group killed TERM then KILL whenever the session stops with the driver running (line 63);
+  - step 1 stops if `.replay/` already exists (line 68).
+- **Entry 54's observations** are both answered.
+- **Read #1152** is open.
+
+**OPINION, on entry 55's proposal to file with any residual FIXes disclosed.** The adviser's recomputation (R8) checks every row with an independent driver. So a driver error that gives wrong rows is caught there, and one that only crashes costs a fresh session.
+
+What the session's text must get right is what R8 cannot repair:
+- the key and the paths it writes;
+- no partial or unchecked table proposed;
+- no worker left running on steel.
+
+`deb175b9` does each. On that footing the adviser sees no reason against filing with further FIXes of a narrower kind disclosed. Whether to file is for the agent to put to him, as entry 55 says.
+
+**No new finding this round.** The adviser does not ring.
