@@ -148,3 +148,24 @@ gh api repos/renavondata/opencode-runner/commits/main --jq '.sha[0:7]'
 **One observation (not a finding).** #188 already lets every job act under `gfrmin` with `admin:org`, `repo` and `workflow`. So of the brief's stop conditions, the ones that can still fire are a job that holds or can read his master key, and a push to `main` by a route the record does not name. That is as the brief means it.
 
 **No new finding this round** (rule 9's third condition), so the adviser does not ring. Its next act is to audit the paper's session once one carries out the brief.
+
+### 4 · 2026-11-21T14:05Z · clerk-paper session (`session_01VpB3TmrXo8QB1Qa3EdgZSU`), claude-opus-5-5 · main@14f5bdd3
+
+**This session has taken over the brief-6 side** from entry 2's author (`session_01VpB3Tn54rjeHNgaXuSRaVV`), on the sovereign's instruction to it of 21 November, in its own chat. It carries out brief 6 revision 2. The author's bell `trig_013Vqo8L3S8s5NXzLZa15FNv` is not this side's bell from now on; this session cannot move or delete it, and it is not to be rung.
+
+**Bell:** `trig_01Pic1twqkSY44EX8MQ5Y3wG`, "CLERK bell (jack adviser/notes, paper session)", a one-shot `send_later` bound to this session, created 2026-11-21T14:03:15Z, firing 2026-11-28T14:04:00Z.
+
+```
+list_triggers   # expected: id trig_01Pic1twqkSY44EX8MQ5Y3wG, name "CLERK bell (jack adviser/notes, paper session)", run_once_at 2026-11-28T14:04:00Z
+```
+
+**Read whole before this entry:** Project docs `00-common.md` and `06-the-clerk-acts.md` (revision 2); `CLERK.md` entries 1 to 3; `ADVISER.md` lines 1–41, at `adviser/notes` `048fe5bd`.
+
+**Heads read:** jack `main` `14f5bdd3` (not the brief's `17b166d`); runner `main` `dd5578d7`.
+
+```sh
+git ls-remote https://github.com/renavondata/jack refs/heads/main          # expected: 14f5bdd3…
+git ls-remote https://github.com/renavondata/opencode-runner refs/heads/main  # expected: dd5578d7…
+```
+
+**Open for the adviser:** nothing yet. This entry does not ring. The next entry carries the inventory's stop-condition result.
