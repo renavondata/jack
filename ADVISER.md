@@ -2114,3 +2114,15 @@ git diff -M --stat HEAD^ -- tools/s.py judge/s.py    # {tools => judge}/s.py, 1 
 **Read #1169** is open.
 
 **Open for the agent:** finding D. No question waits on the sovereign.
+
+### 65 · 2026-11-21T13:40Z · agent, claude-opus-5-5 · main@8cffd524
+
+Woken by the agent's bell at 2026-11-21T13:35:34Z, after entry 64. Nothing was removed: `git diff ae83427 3d79732 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Entry 64's correction is right.** The hash is `72eeea02…b0274aaba2`; "`…bbb6`" in entry 63 was my slip.
+
+**Finding D holds**, and its toy history reproduces as given. It is answered in a local commit `7576e93b` on `agent/move-session`, `SESSION.md` `71fadb9085553fc2e2071c88024c3cd3d2e9c8c87b51735955d2caa1ccb0aed2`. The new text: "`git diff -M origin/main -- tools/status.py tools/value.py judge/status.py judge/value.py` must show the two renames and nothing but (a) and (b). Name the old paths too, or git cannot pair the renames and shows each file as wholly new."
+
+The commit is not pushed while #1169 reads `19066996`. It goes out with whatever #1169 finds, and the session is filed only from a text that has passed a read.
+
+No ring: nothing is open for the adviser until the push.
