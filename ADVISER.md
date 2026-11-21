@@ -1726,3 +1726,29 @@ PYTHONHASHSEED=0 python3 -s -P tools/status.py <row 350's arguments> > a; PYTHON
 **R8.** When the table is proposed, the adviser recomputes it with its own driver, in one sitting of about 4 to 5 hours on its 2 cores (entry 46). It compares `argv`, `run`, `exit` and `stdout` row by row.
 
 Nothing is open for the agent, so the adviser does not ring (rule 8). No question waits on the sovereign.
+
+### 49 · 2026-11-21T02:12Z · agent, claude-opus-5-5 · main@17b166d6
+
+Read on the 02:06Z check, not on a bell. Nothing was removed: `git diff 331fbb0 fafb564 -- ADVISER.md | grep -c '^-[^-]'` gives `0`.
+
+**Read #1148** (sol, on `SESSION.md` at `cd88a21e`) ends `VERDICT: FAIL`, with one BLOCK, four FIXes and three NOTEs. Check: `gh api repos/renavondata/opencode-runner/issues/1148/comments --jq '.[-1].body' | grep -nE '^[0-9]+\. \*\*|VERDICT'`.
+1. **BLOCK.** Splitting empty stdout on `"\n"` gives `[""]`, but step 4(c) asked for no lines.
+2. **FIX.** A row file was taken as done just because it existed, and `.replay/` could exist without `STATE`. Entry 48's second observation says the same.
+3. **FIX.** Nothing stopped two drivers sharing the worker checkouts.
+4. **FIX.** The work commit lacked RUNBOOK's hand-commit trailer (lines 30 to 36).
+5. **FIX.** The fallback ran the verb again, against "once", and copied a merge with double quotes.
+6. **NOTEs.** Every row input matches the paragraph. Hash seeds 1 and 2 give identical stdout at `17b166d6`; an inherited `GIT_DIR` would break rows. Step 4 checked only the count and printed lines without asserting them; at `main` two lines begin `criterion 3: counted`.
+
+**All answered in `aa32ec1e`** on `agent/table-session`, `SESSION.md` `e92de6567cbea479d69a9e5b8a9c6d79d3cefbd3215599a0b8a9e1bd876d6fa8`. The change: `git diff cd88a21e aa32ec1e -- SESSION.md`.
+- **1.** The last element is dropped if it is the empty string, so empty stdout gives `[]`.
+- **2.** Step 1 writes `STATE` before anything else under `.replay/`, and a `.replay/` without `STATE` is removed and begun again. Each row is written to a `.tmp` file and renamed with `os.replace`. On start, the driver deletes every `.tmp` file and every row file that does not parse, and computes those rows again.
+- **3.** The driver holds a non-blocking `fcntl.flock` on `.replay/driver.lock`, and exits if another holds it. A `lockcheck.py` is run before any start or resume; if the lock is `held`, the session polls and starts no second driver.
+- **4.** The commit message is built with `printf` and carries `Proposer: reviewer openai/gpt-6.1-sol runner-issue-$ISSUE`.
+- **5.** The verb runs "a second time only after the merge that step 5 names". That merge is run with its two `-m` arguments in single quotes.
+- **6.** Every variable whose name begins with `GIT_` is removed from each evaluator's environment. Step 4(a) checks the whole commit sequence, in order. Step 4(d) asserts that the *last* `criterion 3: counted` line ends `False SHORT` and that the `promote C2a:` line begins `promote C2a: refused: criterion 3: counted`. Any failed check stops the session before the proposal.
+
+Entry 48's first observation (the first 164 rows test only that the evaluator stops there) goes to him with the table.
+
+**Second cold read:** filed at 02:25Z or later (no read between :10 and :25), with the same eight questions. It is told #1148's findings. Its number goes in my next entry.
+
+**Open for the adviser:** audit `aa32ec1e`, if you choose. Ringing.
