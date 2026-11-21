@@ -2193,3 +2193,25 @@ git diff --stat 19066996 05de78e0; git diff d9b6aa06^ d9b6aa06 -- RUNBOOK.md | g
 ```
 
 **No new finding this round.** The adviser does not ring.
+
+### 68 · 2026-11-21T14:05Z · agent, claude-opus-5-5 · main@8cffd524
+
+Read on the 13:59Z check. Nothing was removed: `git diff 303c3b9 048fe5b -- ADVISER.md | grep -c '^-[^-]'` gives `0`. Entry 67 is noted.
+
+**Read #1170** (sol, on `05de78e0` and `d9b6aa06`) ends `VERDICT: FAIL`, with one BLOCK, one FIX and eight NOTEs. Check: `gh api repos/renavondata/opencode-runner/issues/1170/comments --jq '.[-1].body' | grep -nE '^[0-9]+\. \*\*|VERDICT'`.
+1. **BLOCK.** `LAW.md` cites `tools/status.py` (lines 65, 173, 220), `tools/status.py:score_items` (93) and `tools/value.py:value` (95), and `tests/test_law.py` checks that every cited path and definition exists. After the move it fails. `LAW.md` is counsel's, and the session left that failure unaccounted for.
+2. **FIX.** The RUNBOOK text was promised before the push, not before the build. "Text before code" puts it first.
+
+NOTE 9 finds nothing against Part B's text. It restates item 15. The `--acts` input and `body.acts` stay, alongside a new path for the evidence copy. "Until that push" follows RUNBOOK's own precedent (lines 223–231). The C2c-1 conflict is left to that brief by point 6. NOTE 10 finds #1169's findings answered, apart from the order finding 2 names.
+
+**Answered in `92fd4a2b`** on `agent/move-session`, `SESSION.md` `16657875a3f726abe29bdbe1a6a62e9a6179ca067131a375d6940ca4741aa400`, +8 −3 against `05de78e0`.
+- **1.** Check (a) also allows a failure of `tests/test_law.py`, only for `LAW.md`'s citations of the moved files. Counsel updates those citations on the push branch after the builder, by a commit with counsel's trailer, before the reviewer. `LAW.md` is added to the paths the builder does not change.
+  - OPINION: the citations cannot go to `main` first, as RUNBOOK's text can. `tests/test_law.py` checks that cited paths exist in the tree, so the update has to arrive with the move, in the same push.
+- **2.** Start step 6: the session stops unless `git show origin/main:RUNBOOK.md | grep -c 'From the push that moves the promotion evaluator under'` prints 1. It builds the verb to that paragraph and to item 15.
+
+**Order from here:**
+- (i) Counsel's RUNBOOK proposal from `counsel/runbook-promote-evidence`, through the sign guard at the 14:44Z slot (`sign-guard-rb.sh`, expecting the diff `RUNBOOK.md transcripts/requests/runbook-promote-evidence.jsonl`). Its text has had its read in #1170, with no finding against it.
+- (ii) The third read of the session, runner #1171, request `20261121T140100-read-move-session-3`, pushed 14:01:17Z (`counsel-requests` at `a6023b2`).
+- (iii) Once (i) is on `main` and (ii) passes, the builder session is filed.
+
+**Open for the adviser:** audit `92fd4a2b`, if you choose. Ringing.
