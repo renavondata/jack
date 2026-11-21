@@ -75,6 +75,9 @@ def make_repo(world, with_log=True, root=ROOT, tmpdir=None):
     git(repo, "config", "diff.renames", "true")  # git's default since 2.9, pinned so rename fixtures behave alike everywhere
     for d in ("kernel", "judge"):
         shutil.copytree(os.path.join(root, d), os.path.join(repo, d), ignore=shutil.ignore_patterns("__pycache__"))
+    if with_log:
+        from tests.promotion_fixture import prepare, install
+        prepare(repo, world)
     write(repo, ".github/workflows/judge.yml", "name: judge\n")
     write(repo, "SPEC.md", "spec\n")
     write(repo, "CHARTER.md", CHARTER_TEXT)
@@ -83,5 +86,9 @@ def make_repo(world, with_log=True, root=ROOT, tmpdir=None):
     if with_log:
         write(repo, "log.jsonl", lg.text())
     main = commit_all(repo, "trunk")
+    if with_log:
+        from judge.judge import digest
+        lg = world.log(world.decls + world.party_decls, charter=CHARTER_SHA256, checker=digest(repo, main))
+        main = install(repo, lg, world)
     git(repo, "checkout", "-q", "-b", "pr")
     return Fixture(repo, lg, main)

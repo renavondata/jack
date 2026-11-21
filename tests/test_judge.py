@@ -13,6 +13,7 @@ from harness.build import proposal
 from harness.gitfix import git, write
 from judge import judge
 from pins.fixtures import bind_genesis, make_repo, propose
+from tests.promotion_fixture import install
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.executable
@@ -64,7 +65,7 @@ class Verdicts(Fixture):
         n = int.from_bytes(blob[10:14], "big")
         fp = "SHA256:" + base64.b64encode(hashlib.sha256(blob[14:14 + n]).digest()).decode().rstrip("=")
         self.assertEqual(r["signers"], [fp])
-        self.assertEqual(r["verdict"], {"ok": True, "entries": 2})
+        self.assertEqual(r["verdict"], {"ok": True, "entries": len(self.lg.lines)})
         self.assertEqual(r["trusted_digest"], judge.digest(repo, self.main))
         self.assertEqual(r["kernel2"], "absent")
 
@@ -104,7 +105,7 @@ class Verdicts(Fixture):
         self.lg.add("key", "ann", build.decl("x", "ann", self.w.stranger, ["proposal"]), self.w.ann)
         self.append(repo, "unsigned change")
         r = self.judge(repo)
-        self.assertEqual((r["ok"], r["reason"], r["verdict"]["seq"]), (False, "no_power", 1))
+        self.assertEqual((r["ok"], r["reason"], r["verdict"]["seq"]), (False, "no_power", len(self.lg.lines) - 1))
 
     def test_merge_checker_must_match_trunk_digest(self):
         repo = self.repo()
@@ -185,7 +186,9 @@ class TrustedBase(Fixture):
         gitfix.place(repo, kind, rel, target)
         self.main = commit_all(repo, "trunk's trusted base")  # bind_genesis digests HEAD, so the object is committed first
         if kind != "absent":
-            self.main = bind_genesis(repo, self.lg, self.w)
+            self.lg = self.w.log(self.w.decls + self.w.party_decls, charter=gitfix.CHARTER_SHA256,
+                                 checker=judge.digest(repo, "HEAD"))
+            self.main = install(repo, self.lg, self.w)
         git(repo, "checkout", "-q", "pr")
         git(repo, "reset", "-q", "--hard", "main")
         return repo
@@ -282,7 +285,7 @@ class OpeningGrounds(Fixture):
         git(repo, "reset", "-q", "--hard", "main")
 
     def amend(self, id_="A2", height=20, charter=gitfix.CHARTER_SHA256):
-        self.lg.add("amend", "guy", {"id": id_, "charter": charter, "activate_at": height}, self.w.guy)
+        self.lg.add("amend", "guy", {"id": id_, "charter": charter, "activate_at": height + 5565}, self.w.guy)
 
     def decision(self, subject="A2", kind="transmute", key=None, proposer="guy"):
         self.lg.add("decision", proposer, {"kind": kind, "subject": subject}, key or self.w.guy)

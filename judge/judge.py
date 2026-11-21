@@ -16,6 +16,7 @@ import hashlib
 import itertools
 import json
 import os
+import re
 import stat
 import subprocess
 import sys
@@ -208,11 +209,125 @@ def strip(v):
     return {k: x for k, x in v.items() if k != "detail"} if isinstance(v, dict) else v
 
 
+def installing_push(repo, trunk, entries):
+    """First qualifying push in trunk's log; its push commit is on trunk's first-parent chain."""
+    grants = set()
+    chain = None
+    for e in entries:
+        if e["type"] == "decision" and e["body"].get("kind") == "grant":
+            match = re.match(r"promote_unmet: SPEC.md ([0-9a-f]{64})(?![0-9a-f])", e["body"]["subject"])
+            if match:
+                grants.add(match[1])
+        if e["type"] != "push" or e["seq"] <= 5564 or not grants:
+            continue
+        if chain is None:
+            chain = git(repo, "rev-list", "--first-parent", "--reverse", trunk).splitlines()
+        line = None
+        for sha in chain:
+            data = show(repo, sha, LOG)
+            lines = split_lines(data) if data else []
+            if len(lines) > e["seq"] and json.loads(lines[e["seq"]]) == e:
+                line = sha
+                break
+        if line and not foreign(repo, line, TRUSTED) and digest(repo, line) == e["body"]["digest"]:
+            spec = show(repo, line, "SPEC.md")
+            if spec is not None and hashlib.sha256(spec).hexdigest() in grants:
+                return e["seq"]
+    return None
+
+
+def promotion_checks(repo, trunk, head, entries, trunk_entries, attested):
+    """SPEC §10.15: replay every post-installation promotion at every entry commit."""
+    try:
+        installation = installing_push(repo, trunk, trunk_entries)
+        if installation is None:
+            raise JudgeError("trunk has no installing push")
+        promotions = [e for e in entries if e["seq"] > installation and e["type"] == "decision"
+                      and e["body"].get("kind") == "promote"]
+        if not promotions:
+            return None
+        parents = dict((p[0], p[1:]) for ln in git(repo, "rev-list", "--parents", head).splitlines() if (p := ln.split()))
+        # Rev-list may hide parents at a shallow boundary: never treat that as complete history.
+        if git(repo, "rev-parse", "--is-shallow-repository") == "true":
+            raise JudgeError("promotion history is shallow")
+        for e in promotions:
+            i, line = e["seq"], split_lines(show(repo, head, LOG))[e["seq"]]
+            membership = {}
+            def holds(sha):
+                if sha not in membership:
+                    lines = split_lines(show(repo, sha, LOG) or b"")
+                    membership[sha] = len(lines) > i and lines[i] == line
+                return membership[sha]
+            carrying = [c for c, ps in parents.items() if holds(c) and not any(holds(p) for p in ps)]
+            if not carrying:
+                raise JudgeError(f"promote seq {i}: no entry commit")
+            evidence = e["body"].get("evidence")
+            if not isinstance(evidence, dict) or set(evidence) != {"run", "runs", "acts"}:
+                raise JudgeError(f"promote seq {i}: evidence must name run, runs and acts")
+            for name, ev in evidence.items():
+                if (not isinstance(ev, dict) or set(ev) != {"path", "sha256"} or
+                    not isinstance(ev["path"], str) or not ev["path"].startswith("transcripts/evidence/") or
+                    any(p in ("", ".", "..") for p in ev["path"].split("/")) or
+                    not isinstance(ev["sha256"], str) or not re.fullmatch("[0-9a-f]{64}", ev["sha256"])):
+                    raise JudgeError(f"promote seq {i}: malformed {name} evidence")
+            paths = {ev["path"] for ev in evidence.values()}
+            if len(paths) != 3:
+                raise JudgeError(f"promote seq {i}: evidence paths are not three added files")
+            for c in carrying:
+                tree = dict((p, mode) for mode, p in modes(repo, c))
+                data = {n: show(repo, c, ev["path"]) for n, ev in evidence.items()}
+                for name, ev in evidence.items():
+                    if tree.get(ev["path"]) not in REGULAR or data[name] is None or hashlib.sha256(data[name]).hexdigest() != ev["sha256"]:
+                        raise JudgeError(f"promote seq {i} at {c}: {name} evidence absent, nonregular or wrong hash")
+                    attested.append(dict(seq=i, commit=c, name=name, **ev))
+                if len(parents[c]) != 1:
+                    raise JudgeError(f"promote seq {i} at {c}: entry commit must have one parent")
+                assessed = parents[c][0]
+                prefix_lines = split_lines(show(repo, head, LOG))[:i]
+                prefix = b"".join(l + b"\n" for l in prefix_lines)
+                if (split_lines(show(repo, assessed, LOG) or b"") != prefix_lines or
+                    split_lines(show(repo, c, LOG) or b"") != prefix_lines + [line]):
+                    raise JudgeError(f"promote seq {i} at {c}: entry is not appended alone to its exact prefix")
+                added = {p for p in paths if show(repo, assessed, p) is None}
+                if added != paths or changed_by(repo, c) != paths | {LOG}:
+                    raise JudgeError(f"promote seq {i} at {c}: entry commit changes other paths or does not add evidence")
+                trusted = next((x["body"]["digest"] for x in reversed(entries[:i]) if x["type"] == "push"),
+                               entries[0]["body"]["checker"])
+                if foreign(repo, assessed, TRUSTED) or digest(repo, assessed) != trusted:
+                    raise JudgeError(f"promote seq {i}: assessed evaluator is not the trusted base in force")
+                with tempfile.TemporaryDirectory() as tmp:
+                    for directory in ("kernel/", "judge/"):
+                        extract(repo, assessed, directory, tmp)
+                    # The driver belongs to this judge; the parser, inputs and assess belong to the assessed tree.
+                    driver = os.path.join(os.path.dirname(__file__), "evaluate.py")
+                    with open(driver, "rb") as f:
+                        code = f.read()
+                    with open(os.path.join(tmp, "judge", "evaluate.py"), "wb") as f:
+                        f.write(code)
+                    log_path = os.path.join(tmp, "prefix.jsonl")
+                    with open(log_path, "wb") as f:
+                        f.write(prefix)
+                    evidence_files = []
+                    for name in ("run", "runs", "acts"):
+                        path = os.path.join(tmp, name)
+                        with open(path, "wb") as f:
+                            f.write(data[name])
+                        evidence_files.append(path)
+                    cmd = [sys.executable, "-E", "-s", "-m", "judge.evaluate", os.path.abspath(repo), assessed,
+                           e["ts"], e["body"]["subject"], log_path, *evidence_files]
+                    result = subprocess.run(cmd, cwd=tmp, capture_output=True)
+                    if result.returncode != 0 or json.loads(result.stdout) != f"promote {e['body']['subject']}: lawful":
+                        raise JudgeError(f"promote seq {i} at {c}: evaluator refused or could not decide: "
+                                         + (result.stdout + result.stderr).decode(errors="replace")[-1000:])
+    except (JudgeError, OSError, ValueError, KeyError, TypeError, IndexError) as x:
+        return "promote_unmet", str(x)
+
+
 def judge(repo, trunk_ref, proposal_ref):
     trunk, head = rev(repo, trunk_ref), rev(repo, proposal_ref)
     report = {"trunk": trunk, "proposal": head, "touched": touched(repo, trunk, head),
               "trusted_digest": None, "appended": 0, "signers": [], "verdict": None,
-              "kernel2": "absent", "proposer": None, "ok": False, "reason": None, "detail": ""}
+              "kernel2": "absent", "proposer": None, "ok": False, "reason": None, "detail": "", "attested": []}
 
     def refuse(reason, detail=""):
         return dict(report, reason=reason, detail=detail)
@@ -273,6 +388,9 @@ def judge(repo, trunk_ref, proposal_ref):
         n = int.from_bytes(blob[10:14], "big")
         if e["type"] == "decision" and base64.b64encode(blob[14:14 + n]).decode() not in founders:
             return refuse("decision_by_other", f"decision at seq {e['seq']} is not signed by a genesis key")
+    failure = promotion_checks(repo, trunk, head, entries, [json.loads(l) for l in old], report["attested"])
+    if failure:
+        return refuse(*failure)
     return dict(report, ok=True)
 
 
