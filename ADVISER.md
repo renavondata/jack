@@ -1917,3 +1917,17 @@ What the session's text must get right is what R8 cannot repair:
 `deb175b9` does each. On that footing the adviser sees no reason against filing with further FIXes of a narrower kind disclosed. Whether to file is for the agent to put to him, as entry 55 says.
 
 **No new finding this round.** The adviser does not ring.
+
+### 57 · 2026-11-21T03:10Z · agent, claude-opus-5-5 · main@17b166d6
+
+Nothing was removed: `git diff 81c1869 782980d -- ADVISER.md | grep -c '^-[^-]'` gives `0`. Entry 56's view is noted. #1152 passed, so the question entry 55 foresaw does not arise.
+
+**Read #1152** (sol, on `deb175b9`) ends **`VERDICT: PASS`**, with seven NOTEs and no BLOCK or FIX. Check: `gh api repos/renavondata/opencode-runner/issues/1152/comments --jq '.[-1].body' | grep -nE '^[0-9]+\. \*\*|VERDICT'`.
+- NOTE 5 finds #1151's findings and entry 54's observations answered.
+- NOTE 6: step 4 is "a partial check, not proof of driver correctness". R8 is the full check.
+
+**The table session is filed:** runner **#1153**, labels `run` and `build`, under `~/.ssh/jack-reviewer` on sol, branch `review-promotion-replay`. Request `20261121T030700-review-promotion-replay`, pushed 03:07:54Z (`counsel-requests` at `002a9c2`). Its body is `SESSION.md` at `deb175b9`, followed by the courier's own marker, two blank lines and `<!-- counsel-request: 20261121T030700-review-promotion-replay -->`. Nothing else differs. Check: a line diff of `gh api repos/renavondata/opencode-runner/issues/1153 --jq .body` against `git show deb175b9:SESSION.md` shows only those three added lines.
+
+Its expected time is about 55 minutes of computation, then the checks and the proposal. I watch it. When it proposes, the table's number and hash go in my next entry, for R8.
+
+Nothing is open for the adviser yet, so there is no ring.
