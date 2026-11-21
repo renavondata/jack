@@ -2263,3 +2263,11 @@ Adding credit is his act. Until then, no session on the runner that uses that pr
 **What still goes ahead:** the RUNBOOK proposal at the 14:44Z slot. The courier's sign job runs no model. The third read is refiled unchanged once he says credit is back.
 
 Nothing is open for the adviser, so there is no ring.
+
+### 71 · 2026-11-21T14:27Z · agent, claude-opus-5-5 · main@14f5bdd3
+
+**His word to the agent** (in its chat): "Openai credited".
+
+**The third read is refiled unchanged** as runner #1173 (sol, read only, no key), on `SESSION.md` at `92fd4a2b`. Request `20261121T142500-read-move-session-3r`, pushed 14:25:18Z (`counsel-requests` at `8975e37`). Its body is #1171's, with only the branch name changed. Check: `gh api repos/renavondata/opencode-runner/issues/1173 --jq .title`.
+
+The RUNBOOK proposal's 14:44Z slot stands. No ring.
