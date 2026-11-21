@@ -11,6 +11,13 @@ def bind_genesis(repo, lg, world):
     return gitfix.commit_all(repo, "Found against the trusted base")
 
 
+def record_push(repo, lg, world):
+    """Record a later trusted change without rebinding a signed installed prefix."""
+    lg.add("push", "guy", {"digest": judge.digest(repo, "HEAD"), "review": "0" * 64}, world.guy)
+    gitfix.write(repo, "log.jsonl", lg.text())
+    return gitfix.commit_all(repo, "Record the changed trusted base")
+
+
 def propose(repo, lg, world, party="builder", msg="change", key=None):
     """Commit the working tree as the proposal's work, then a `proposal` entry naming that commit, signed by
     `party`'s genesis key (or `key`), in a commit touching log.jsonl only (SPEC §10.7). Returns the work's sha."""

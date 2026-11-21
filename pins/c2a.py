@@ -3,7 +3,7 @@ import copy
 import unittest
 from fractions import Fraction as F
 from tests.test_value import seed, forecast, resolve, calc, worked_entries, e, OPEN, CUT, END
-from tools import value as v, status as st
+from judge import value as v, status as st
 
 
 class Cases(unittest.TestCase):

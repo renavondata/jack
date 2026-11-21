@@ -23,7 +23,7 @@ from collections import namedtuple
 from harness import build, diff, gitfix, keys, runner
 from harness.build import proposal
 from kernel import log, sig
-from pins.fixtures import bind_genesis, ledger_cases, make_repo, propose
+from pins.fixtures import ledger_cases, make_repo, propose, record_push
 
 Pin = namedtuple("Pin", "name test mutants")
 Mutant = namedtuple("Mutant", "name path find replace")
@@ -246,8 +246,8 @@ def t_foreign_object(root):
         fx = make_repo(world(), root=root)
         gitfix.git(fx.repo, "checkout", "-q", "main")
         gitfix.place(fx.repo, kind, "kernel/vendor")
-        commit(fx.repo, "trunk's trusted base")  # bind_genesis digests HEAD, so the object is committed first
-        bind_genesis(fx.repo, fx.log, world())
+        commit(fx.repo, "trunk's trusted base")
+        record_push(fx.repo, fx.log, world())
         r = runner.judge_with(root, fx.repo, "main", "main")
         if kind == "file":
             assert r.get("ok") is True, r
@@ -292,7 +292,7 @@ def charter_judged(root, charter=None, amend=None):
         gitfix.write(fx.repo, "CHARTER.md", charter)
     if amend is not None:
         fx.log.add("decision", "guy", {"kind": "transmute", "subject": "A2"}, w.guy)
-        fx.log.add("amend", "guy", {"id": "A2", "charter": amend, "activate_at": 9}, w.guy)
+        fx.log.add("amend", "guy", {"id": "A2", "charter": amend, "activate_at": len(fx.log.lines) + 9}, w.guy)
         gitfix.write(fx.repo, "log.jsonl", fx.log.text())
     commit(fx.repo, "Guy changes the charter")
     gitfix.git(fx.repo, "checkout", "-q", "pr")
@@ -321,8 +321,9 @@ def t_amend_stale(root):
 
 def t_freeze_ignored(root):
     w = world()
-    for height, reason in ((4, "push_during_amendment"), (3, None)):
+    for offset, reason in ((3, "push_during_amendment"), (2, None)):
         fx = make_repo(w)
+        height = len(fx.log.lines) + offset
         fx.log.add("decision", "guy", {"kind": "transmute", "subject": "A2"}, w.guy)
         fx.log.add("amend", "guy", {"id": "A2", "charter": gitfix.CHARTER_SHA256, "activate_at": height}, w.guy)
         fx.log.add("push", "guy", {"digest": json.loads(fx.log.lines[0])["body"]["checker"], "review": "0" * 64}, w.guy)
@@ -341,7 +342,7 @@ def t_one_act_amendment(root):
         fx = make_repo(w)
         if transmute:
             fx.log.add("decision", "guy", {"kind": "transmute", "subject": "A2"}, w.guy)
-        fx.log.add("amend", "guy", {"id": "A2", "charter": gitfix.CHARTER_SHA256, "activate_at": 9}, w.guy)
+        fx.log.add("amend", "guy", {"id": "A2", "charter": gitfix.CHARTER_SHA256, "activate_at": len(fx.log.lines) + 9}, w.guy)
         gitfix.write(fx.repo, "log.jsonl", fx.log.text())
         propose(fx.repo, fx.log, w, msg="Amend")
         r = judged(root, fx)
@@ -510,13 +511,14 @@ def t_kernel2_runnable(root):
     fx = make_repo(world())
     gitfix.git(fx.repo, "checkout", "-q", "main")
     gitfix.write(fx.repo, "kernel2/check", '#!/bin/sh\nexec "$(dirname "$0")/helper.sh" "$@"\n')
-    gitfix.write(fx.repo, "kernel2/helper.sh", "#!/bin/sh\necho '{\"ok\":true,\"entries\":1}'\n")
+    count = len(fx.log.lines) + 1  # the push recording this helper follows
+    gitfix.write(fx.repo, "kernel2/helper.sh", "#!/bin/sh\necho '" + json.dumps({"ok": True, "entries": count}) + "'\n")
     for name in ("check", "helper.sh"):
         os.chmod(os.path.join(fx.repo, "kernel2", name), 0o755)
     commit(fx.repo, "kernel2 whose launcher calls a helper")
-    bind_genesis(fx.repo, fx.log, world())
+    record_push(fx.repo, fx.log, world())
     r = runner.judge_with(root, fx.repo, "main", "main")
-    assert r.get("ok") is True and r.get("kernel2") == {"ok": True, "entries": 1}, r
+    assert r.get("ok") is True and r.get("kernel2") == {"ok": True, "entries": count}, r
 
 
 def t_selfcheck_blind(root):
@@ -525,11 +527,12 @@ def t_selfcheck_blind(root):
         fx = make_repo(world())
         gitfix.git(fx.repo, "checkout", "-q", "main")
         gitfix.write(fx.repo, "kernel2/check", '#!/bin/sh\nexec "$(dirname "$0")/helper.sh" "$@"\n')
-        gitfix.write(fx.repo, "kernel2/helper.sh", "#!/bin/sh\necho '{\"ok\":true,\"entries\":1}'\n")
+        count = len(fx.log.lines) + 1
+        gitfix.write(fx.repo, "kernel2/helper.sh", "#!/bin/sh\necho '" + json.dumps({"ok": True, "entries": count}) + "'\n")
         os.chmod(os.path.join(fx.repo, "kernel2", "check"), 0o755)
         os.chmod(os.path.join(fx.repo, "kernel2", "helper.sh"), helper_mode)
         commit(fx.repo, "kernel2")
-        bind_genesis(fx.repo, fx.log, world())
+        record_push(fx.repo, fx.log, world())
         return fx.repo
     def run(r):
         import subprocess
@@ -838,7 +841,7 @@ status_tests = functools.partial(fixture_tests, "test_status.StatusTest")
 W1_TEST = clerk_tests("w1_from_entry_strict_deadline_holders_and_discharge")
 W1_OPEN = 'if e["type"] == "forecast" and e["seq"] > opening and e["seq"] not in resolved:'
 TAINT = '            for _, repairs in opened.values():\n                repairs.append(seq)'
-OLDEST_TAINT = Mutant("oldest_only_attribution", "tools/status.py", TAINT,
+OLDEST_TAINT = Mutant("oldest_only_attribution", "judge/status.py", TAINT,
                       '            for _, repairs in list(opened.values())[:1]:\n                repairs.append(seq)')
 BATCH = '            finalise(e, "batch", sorted(pending), not royal)'
 
@@ -875,41 +878,41 @@ C1B_PINS = [
                'r.get("path") == status.WORKFLOW and r.get("head_sha") == e["body"]["commit"] and\n'
                '                    r.get("conclusion") == "success" and status.completed_by(r, e["ts"])', 'True')]),
     Pin("w4_promote_unmet", promotion_tests("historical_bad_promote_stays_repair_after_later_success"), [
-        Mutant("repair_never_raised", "tools/status.py", '        if failures:\n', '        if False:\n')]),
+        Mutant("repair_never_raised", "judge/status.py", '        if failures:\n', '        if False:\n')]),
     Pin("promote_refused", promotion_tests("all_met_lawful_and_the_verb_signs", "veto_subject_is_exact",
                                          "short_tree_criterion_alone_prevents_signing", "stop_ratio_alone_prevents_signing",
                                          "map_printed_and_each_required_hand_row_refuses", "live_e_not_replaced_by_green_regression_run"), [
         Mutant("promotion_check_dropped", "tools/jack",
                '        lines == [f"promote {a.subject}: lawful"] or refuse("\\n".join(lines) or "status returned no promotion verdict")', '        pass'),
-        Mutant("regression_run_for_live_E", "tools/status.py", 's["E"] >= 20 and s["promotion_E"] >= 20', 'verified')]),
+        Mutant("regression_run_for_live_E", "judge/status.py", 's["E"] >= 20 and s["promotion_E"] >= 20', 'verified')]),
     Pin("run_verified", promotion_tests("all_met_lawful_and_the_verb_signs", "run_verified_each_field_and_no_signing"), [
-        Mutant("any_run_accepted", "tools/status.py",
+        Mutant("any_run_accepted", "judge/status.py",
                'return isinstance(run, dict) and all(run.get(k) == v for k, v in (',
                'return isinstance(run, dict) and all(True or run.get(k) == v for k, v in ('),
-        Mutant("event_unchecked", "tools/status.py", '("event", "push"), ', '')]),
+        Mutant("event_unchecked", "judge/status.py", '("event", "push"), ', '')]),
     Pin("escalated", W1_TEST, [
         Mutant("escalation_silent", "tools/clerk.py", 'f" ESCALATED to {w[\'sovereign\']}"', '""')]),
     Pin("wealth_arithmetic", clerk_tests("exact_prequential_wealth"), [
-        Mutant("p0_reestimated", "tools/status.py", '    result, successes, capital = [], 0, Fraction(1)',
+        Mutant("p0_reestimated", "judge/status.py", '    result, successes, capital = [], 0, Fraction(1)',
                '    items = list(items)\n    P0 = Fraction(sum(i["Y"] for i in items) + 1, len(items) + 2)\n'
                '    result, successes, capital = [], 0, Fraction(1)')]),
     Pin("item_before_open", clerk_tests("window_and_same_timestamp_opening"), [
-        Mutant("preopening_counted", "tools/status.py", 'if typ == "forecast" and seq > after_seq:', 'if typ == "forecast":')]),
+        Mutant("preopening_counted", "judge/status.py", 'if typ == "forecast" and seq > after_seq:', 'if typ == "forecast":')]),
     Pin("item_is_batch", clerk_tests("batch_is_not_a_count_of_resolutions"), [
-        Mutant("resolutions_counted_singly", "tools/status.py", BATCH,
+        Mutant("resolutions_counted_singly", "judge/status.py", BATCH,
                '            for member in sorted(pending):\n                finalise(e, "batch", [member], not royal)')]),
     Pin("regroup_scored_items", clerk_tests("evidence_reuse_cannot_regroup_scored_items"), [
-        Mutant("evidence_component_regrouping", "tools/status.py", '"Y": int(success and not repairs)})',
+        Mutant("evidence_component_regrouping", "judge/status.py", '"Y": int(success and not repairs)})',
                '"Y": int(success and not repairs)})\n' + REGROUP)]),
     Pin("expired_writ_zero", clerk_tests("expiry_precedes_own_resolution_and_expired_only_merge", "mixed_batch_keeps_only_fresh_writs",
                                         "expiry_ties_in_forecast_order", "batch_is_not_a_count_of_resolutions"), [
-        Mutant("late_resolution_success", "tools/status.py", 'if forecast["body"]["resolves_by"] < e["ts"]:',
+        Mutant("late_resolution_success", "judge/status.py", 'if forecast["body"]["resolves_by"] < e["ts"]:',
                'if forecast["body"]["resolves_by"] < e["ts"] and not (e["type"] == "resolution" and e["body"]["forecast"] == f):'),
-        Mutant("empty_batch_success", "tools/status.py", 'if typ == "merge" and pending:', 'if typ == "merge":')]),
+        Mutant("empty_batch_success", "judge/status.py", 'if typ == "merge" and pending:', 'if typ == "merge":')]),
     Pin("repair_erased_from_success", clerk_tests("repair_subject_never_narrows_taint"), [
-        Mutant("repair_predicate_dropped", "tools/status.py", '"Y": int(success and not repairs)', '"Y": int(success)')]),
+        Mutant("repair_predicate_dropped", "judge/status.py", '"Y": int(success and not repairs)', '"Y": int(success)')]),
     Pin("repair_taints_all_open", clerk_tests("repair_subject_never_narrows_taint"), [
-        Mutant("named_subject_only", "tools/status.py", TAINT,
+        Mutant("named_subject_only", "judge/status.py", TAINT,
                '            named = [(f, rs) for f, rs in opened.values() if f["body"]["claim"] == body.get("subject")]\n'
                '            for _, repairs in named or opened.values():\n                repairs.append(seq)'),
         OLDEST_TAINT]),
@@ -917,34 +920,34 @@ C1B_PINS = [
     Pin("late_report_immutable", lambda root: (
         clerk_tests("late_report_never_changes_prior_items_stakes_or_wealth")(root),
         promotion_tests("all_met_lawful_and_the_verb_signs", "late_report_line_refuses_without_revising_any_bet")(root)), [
-        Mutant("finalised_item_revised", "tools/status.py", '                late_reports.append(seq)',
+        Mutant("finalised_item_revised", "judge/status.py", '                late_reports.append(seq)',
                '                late_reports.append(seq)\n                for item in items:\n'
                '                    if body.get("subject") in map(str, item["forecasts"]):\n                        item["Y"] = 0'),
-        Mutant("late_report_line_omitted", "tools/status.py", '        checks.append((n == 0, f"late-reported repairs: {n}"))', '        pass')]),
+        Mutant("late_report_line_omitted", "judge/status.py", '        checks.append((n == 0, f"late-reported repairs: {n}"))', '        pass')]),
     Pin("sovereign_resolution_zero", clerk_tests("sovereign_resolution_and_merge_are_zero", "batch_is_not_a_count_of_resolutions"), [
-        Mutant("sovereign_completion_as_herald", "tools/status.py", '        royal = signer_blob(e) in sovereign',
+        Mutant("sovereign_completion_as_herald", "judge/status.py", '        royal = signer_blob(e) in sovereign',
                '        royal = signer_blob(e) in sovereign and typ not in ("resolution", "merge")')]),
     Pin("window_from_the_promote", clerk_tests("window_and_same_timestamp_opening"), [
-        Mutant("latest_decision_opens", "tools/status.py",
+        Mutant("latest_decision_opens", "judge/status.py",
                'opening = next(e for e in es if e["type"] == "decision" and\n                   promotes(e, "C1a"))',
                'opening = next(e for e in reversed(es) if e["type"] == "decision")'),
-        Mutant("latest_counsel_forecast_ends", "tools/status.py",
+        Mutant("latest_counsel_forecast_ends", "judge/status.py",
                'l0 = next(e for e in es if e["seq"] < opening["seq"] and e["type"] == "forecast" and\n'
                '              e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "L0")',
                'l0 = next(e for e in reversed(es) if e["type"] == "forecast" and e["proposer"] == "counsel")')]),
     Pin("evidence_unhashed", status_tests("counts_ratio_and_evidence", "evidence_must_hash"), [
-        Mutant("rehash_skipped", "tools/status.py", 'hashlib.sha256(tree_bytes(root, rev, path)).hexdigest() == ev[7:]',
+        Mutant("rehash_skipped", "judge/status.py", 'hashlib.sha256(tree_bytes(root, rev, path)).hexdigest() == ev[7:]',
                'tree_bytes(root, rev, path) is not None')]),
     Pin("ratio_misclassified", status_tests("counts_ratio_and_evidence", "resolution_ratio_follows_its_forecasts_type"), [
-        Mutant("world_resolution_procedure", "tools/status.py",
+        Mutant("world_resolution_procedure", "judge/status.py",
                'or (e["type"] == "resolution" and e["body"]["forecast"] in world))', ')')]),
     Pin("flooding_bounded", clerk_tests("w1_from_entry_strict_deadline_holders_and_discharge", "flood_and_byte_identical_projection"), [
         Mutant("deduplicated_by_claim", "tools/clerk.py", W1_OPEN,
                W1_OPEN[:-1] + ' and not any(es[w["seq"]]["body"]["claim"] == e["body"]["claim"] for w in writs):')]),
     Pin("veto_c1b", promotion_tests("veto_subject_is_exact"), [
-        Mutant("veto_subject_ignored", "tools/status.py", 'and e["body"].get("subject") == subject for e in prefix)', 'for e in prefix)')]),
+        Mutant("veto_subject_ignored", "judge/status.py", 'and e["body"].get("subject") == subject for e in prefix)', 'for e in prefix)')]),
     Pin("map_printed", promotion_tests("map_printed_and_each_required_hand_row_refuses"), [
-        Mutant("hand_row_passes", "tools/status.py", 'mapping.get(k, {}).get("enforcer", "").startswith("code:")',
+        Mutant("hand_row_passes", "judge/status.py", 'mapping.get(k, {}).get("enforcer", "").startswith("code:")',
                'mapping.get(k, {}).get("enforcer", "").startswith(("code:", "hand:"))')]),
 ]
 PINS += C1B_PINS
@@ -994,46 +997,46 @@ PROMOTE_GUARD = '        lines == [f"promote {a.subject}: lawful"] or refuse("\\
 
 C2A_PINS = [
     Pin("worked_table", t_value_worked, [
-        Mutant("laplace_n_plus_3", "tools/entry.py", "fractions.Fraction(s + 1, n + 2)", "fractions.Fraction(s + 1, n + 3)")]),
+        Mutant("laplace_n_plus_3", "judge/entries.py", "fractions.Fraction(s + 1, n + 2)", "fractions.Fraction(s + 1, n + 3)")]),
     Pin("forecast_before_cutoff", value_tests("forecast_before_cutoff"), [
-        Mutant("latest_forecast", "tools/value.py", 'for f in g["candidates"]:', 'for f in reversed(g["candidates"]):')]),
+        Mutant("latest_forecast", "judge/value.py", 'for f in g["candidates"]:', 'for f in reversed(g["candidates"]):')]),
     Pin("rigged", lambda root: (value_tests("rigged")(root), c2a_cases("rigged_record")(root), value_attacks("three_refused")(root)), [
-        Mutant("cutoff_forecast_included", "tools/value.py", 'if f["ts"] >= g["cutoff"] or r is not None and', 'if r is not None and')]),
+        Mutant("cutoff_forecast_included", "judge/value.py", 'if f["ts"] >= g["cutoff"] or r is not None and', 'if r is not None and')]),
     Pin("revision", value_tests("revision"), [
-        Mutant("second_replaces_first", "tools/value.py", 'elif who in g["forecasts"]:', 'elif False and who in g["forecasts"]:')]),
+        Mutant("second_replaces_first", "judge/value.py", 'elif who in g["forecasts"]:', 'elif False and who in g["forecasts"]:')]),
     Pin("weights_from_resolved_prefix", value_tests("weights_from_resolved_prefix"), [
-        Mutant("terminal_weights", "tools/value.py", '        q = sum((weights[k] * ps[k] for k in roster), Fraction(0))', TERMINAL_Q)]),
+        Mutant("terminal_weights", "judge/value.py", '        q = sum((weights[k] * ps[k] for k in roster), Fraction(0))', TERMINAL_Q)]),
     Pin("abstention_is_base", value_tests("abstention_is_base"), [
-        Mutant("abstention_half", "tools/value.py", '(None, b))[1] for k in roster', '(None, Fraction(1, 2)))[1] for k in roster')]),
+        Mutant("abstention_half", "judge/value.py", '(None, b))[1] for k in roster', '(None, Fraction(1, 2)))[1] for k in roster')]),
     Pin("one_event_one_key", value_tests("one_event_one_key"), [
-        Mutant("grouped_by_claim", "tools/value.py", 'def event(f):', CLAIM_EVENT)]),
+        Mutant("grouped_by_claim", "judge/value.py", 'def event(f):', CLAIM_EVENT)]),
     Pin("grouping_by_principal", lambda root: (value_tests("grouping_by_principal")(root), value_attacks("three_refused")(root)), [
-        Mutant("two_keys_two_entrants", "tools/value.py", 'list(dict.fromkeys(d["principal"] for d in keys.values() if "forecast" in d["powers"]))',
+        Mutant("two_keys_two_entrants", "judge/value.py", 'list(dict.fromkeys(d["principal"] for d in keys.values() if "forecast" in d["powers"]))',
                '[d["key_id"] for d in keys.values() if "forecast" in d["powers"]]')]),
     Pin("uniform_prior", value_tests("uniform_prior"), [
-        Mutant("counsel_double", "tools/value.py", 'weights = {k: Fraction(1, len(roster)) for k in roster}',
+        Mutant("counsel_double", "judge/value.py", 'weights = {k: Fraction(1, len(roster)) for k in roster}',
                'weights = normalize({k: Fraction(2 if k == "counsel" else 1) for k in roster})')]),
     Pin("no_learning_rate", value_tests("no_learning_rate"), [
-        Mutant("eta_half", "tools/value.py", 'weights = normalize({k: weights[k] * ls[k] for k in roster})',
+        Mutant("eta_half", "judge/value.py", 'weights = normalize({k: weights[k] * ls[k] for k in roster})',
                'weights = normalize({k: weights[k] * math.sqrt(ls[k]) for k in roster})')]),
     Pin("exact_probabilities", value_tests("exact_probabilities"), [
-        Mutant("one_float_division", "tools/value.py", 'return {k: v / total for k, v in values.items()}',
+        Mutant("one_float_division", "judge/value.py", 'return {k: v / total for k, v in values.items()}',
                'return {k: v / float(total) for k, v in values.items()}')]),
     Pin("per_type_base", lambda root: (value_tests("per_type_base")(root), c2a_cases("per_dataset")(root)), [
-        Mutant("base_per_dataset", "tools/entry.py", 'typ = f["body"].get("type", "free")',
+        Mutant("base_per_dataset", "judge/entries.py", 'typ = f["body"].get("type", "free")',
                'typ = (f["body"].get("type", "free"), f["body"].get("args", {}).get("dataset"))')]),
     Pin("bounded_difference", value_tests("bounded_difference"), [
-        Mutant("no_clip", "tools/value.py", 'return min(Fraction(999, 1000), max(Fraction(1, 1000), p))', 'return p')]),
+        Mutant("no_clip", "judge/value.py", 'return min(Fraction(999, 1000), max(Fraction(1, 1000), p))', 'return p')]),
     Pin("lambda_predictable", value_tests("lambda_predictable"), [
-        Mutant("current_item_in_lambda", "tools/value.py", 'x, lam = difference(q, b, y), stake(prior)',
+        Mutant("current_item_in_lambda", "judge/value.py", 'x, lam = difference(q, b, y), stake(prior)',
                'x, lam = difference(q, b, y), stake(prior + [difference(q, b, y)])')]),
     Pin("factor_algebra", c2a_cases("factor_tree"), [
-        Mutant("factor_plus_one_fiftieth", "tools/value.py", 'return 1 + lam * x', 'return 1 + lam * x + 1/50')]),
+        Mutant("factor_plus_one_fiftieth", "judge/value.py", 'return 1 + lam * x', 'return 1 + lam * x + 1/50')]),
     Pin("window_from_the_push", c2a_cases("opening_merge"), [
-        Mutant("from_brief_merge", "tools/value.py", 'return next(e for e in es if e["type"] == "push" and e["seq"] > 337)',
+        Mutant("from_brief_merge", "judge/value.py", 'return next(e for e in es if e["type"] == "push" and e["seq"] > 337)',
                'return next(e for e in es if e["type"] == "merge" and e["seq"] > 337)')]),
     Pin("wealth_continues", c2a_cases("second_window"), [
-        Mutant("reset_at_second_window", "tools/value.py", '        wealth *= step',
+        Mutant("reset_at_second_window", "judge/value.py", '        wealth *= step',
                '        wealth = (1.0 if cutoff > window_opening and not any(row["cutoff"] > window_opening for row in rows) else wealth) * step')]),
     Pin("promote_refused_value", value_attacks("promote_refused_value"), [
         Mutant("signs_below_twenty", "tools/jack", PROMOTE_GUARD, '        pass')]),
@@ -1051,55 +1054,55 @@ from pins import c2a_prime
 
 C2A_PRIME_PINS = [
     Pin("second_window_from_the_end", c2a_prime.second_window_from_the_end, [
-        Mutant("first_push_after_c2a_opening", "tools/status.py",
+        Mutant("first_push_after_c2a_opening", "judge/status.py",
                'e["seq"] > opening["seq"] and\n                instant(e["ts"]) > instant(v0_end)', 'e["seq"] > 337'),
-        Mutant("first_push_after_c2a_end", "tools/status.py",
+        Mutant("first_push_after_c2a_end", "judge/status.py",
                'instant(e["ts"]) > instant(v0_end)', 'instant(e["ts"]) > instant(c2a_window(es)[2])')]),
     Pin("second_window_end_is_v5", c2a_prime.second_window_end_is_v5, [
-        Mutant("v0_is_second_end", "tools/status.py",
+        Mutant("v0_is_second_end", "judge/status.py",
                'return op2["seq"], op2["ts"], v5["body"]["resolves_by"] if v5 else None',
                'return op2["seq"], op2["ts"], v0["body"]["resolves_by"] if v5 else None'),
-        Mutant("late_v5_accepted", "tools/status.py",
+        Mutant("late_v5_accepted", "judge/status.py",
                'e["seq"] < op2["seq"]', 'e["seq"] > op2["seq"]')]),
     Pin("second_window_cap", c2a_prime.second_window_cap, [
-        Mutant("cap_7800", "tools/status.py", 'cap = 8400 if is_prime else 7800\n        scope_at', 'cap = 7800\n        scope_at'),
-        Mutant("cap_from_head", "tools/status.py", 'original = scope_at(start)\n        unchanged', 'original = scope_at(rev)\n        unchanged = True\n        #')]),
+        Mutant("cap_7800", "judge/status.py", 'cap = 8400 if is_prime else 7800\n        scope_at', 'cap = 7800\n        scope_at'),
+        Mutant("cap_from_head", "judge/status.py", 'original = scope_at(start)\n        unchanged', 'original = scope_at(rev)\n        unchanged = True\n        #')]),
     Pin("offlog_from_second_opening", c2a_prime.offlog_from_second_opening, [
-        Mutant("offlog_from_c2a_opening", "tools/status.py", 'off_log_repairs(acts, s["start"], end, overlap=is_prime)',
+        Mutant("offlog_from_c2a_opening", "judge/status.py", 'off_log_repairs(acts, s["start"], end, overlap=is_prime)',
                'off_log_repairs(acts, c2a_window(s["prefix"])[1], end, overlap=is_prime)'),
-        Mutant("minute_must_begin_in_window", "tools/status.py",
+        Mutant("minute_must_begin_in_window", "judge/status.py",
                '(s <= e and t <= e and t + dt.timedelta(seconds=60) > s if overlap else s <= t <= e)',
                '(s <= t <= e)')]),
     Pin("promote_refused_before_end", c2a_prime.promote_refused_before_end, [
-        Mutant("v5_always_second_window", "tools/status.py",
+        Mutant("v5_always_second_window", "judge/status.py",
                'w2 = c2a_prime_window(es) if subject == "C2a" else None',
                'w2 = c2a_prime_window(es) or (0, "2026-11-17T12:00:00Z", next(e["body"]["resolves_by"] for e in es if e["type"] == "forecast" and e["body"].get("args", {}).get("id") == "V5")) if subject == "C2a" else None'),
-        Mutant("prime_veto_ignored", "tools/status.py", 'e["body"].get("subject") in ("C2a", "C2a-prime")',
+        Mutant("prime_veto_ignored", "judge/status.py", 'e["body"].get("subject") in ("C2a", "C2a-prime")',
                'e["body"].get("subject") == "C2a"')]),
     Pin("window_fix_is_decision", c2a_prime.window_fix_is_decision, [
-        Mutant("fix_typed_repair", "tools/status.py", 'typ == "decision" and body["kind"] != "fix"', 'typ == "decision"'),
-        Mutant("condition_2_ended_without_promotion", "tools/status.py", 'if veto_ok or acts_ok:', 'if not any(names_window(es, x, "promote", name) for x in es):'),
-        Mutant("veto_read_late", "tools/status.py", 'instant(x["ts"]) <= instant(w_early)', 'instant(x["ts"]) <= instant(w_late)'),
-        Mutant("acts_interval_read_late", "tools/status.py", 't + dt.timedelta(seconds=60) <= e_dt', 't + dt.timedelta(seconds=60) <= instant(w_late)'),
-        Mutant("condition_3_read_early", "tools/status.py", 'instant(e["ts"]) <= instant(bounds[2])', 'instant(e["ts"]) <= instant(bounds[1])'),
-        Mutant("condition_1_contains_name", "tools/status.py", 'subj.startswith(w + ":")', 'True'),
-        Mutant("next_push_bound_dropped", "tools/status.py", 'if next_push is not None and e["seq"] >= next_push["seq"]:', 'if False:'),
-        Mutant("condition_4_dropped", "tools/status.py", 'if name is None or any(x["seq"] < e["seq"]', 'if name is None or False and any(x["seq"] < e["seq"]'),
-        Mutant("carrying_commit_is_head", "tools/status.py", 'head = rev or git_bytes(root, "rev-parse", "HEAD").decode().strip()', 'return rev or git_bytes(root, "rev-parse", "HEAD").decode().strip()'),
-        Mutant("attribution_dropped", "tools/status.py", 'if veto_ok or acts_ok:', 'if True:'),
-        Mutant("raw_substring_names_csv", "tools/status.py", 'and subject_names(subject, fname)', 'and fname[:-4] in subject'),
-        Mutant("push_clears_all_fixes", "tools/status.py", 'repairs[:] = [r for r in repairs if r not in active_fixes]', 'repairs.clear(); late_reports.append(-1)')]),
+        Mutant("fix_typed_repair", "judge/status.py", 'typ == "decision" and body["kind"] != "fix"', 'typ == "decision"'),
+        Mutant("condition_2_ended_without_promotion", "judge/status.py", 'if veto_ok or acts_ok:', 'if not any(names_window(es, x, "promote", name) for x in es):'),
+        Mutant("veto_read_late", "judge/status.py", 'instant(x["ts"]) <= instant(w_early)', 'instant(x["ts"]) <= instant(w_late)'),
+        Mutant("acts_interval_read_late", "judge/status.py", 't + dt.timedelta(seconds=60) <= e_dt', 't + dt.timedelta(seconds=60) <= instant(w_late)'),
+        Mutant("condition_3_read_early", "judge/status.py", 'instant(e["ts"]) <= instant(bounds[2])', 'instant(e["ts"]) <= instant(bounds[1])'),
+        Mutant("condition_1_contains_name", "judge/status.py", 'subj.startswith(w + ":")', 'True'),
+        Mutant("next_push_bound_dropped", "judge/status.py", 'if next_push is not None and e["seq"] >= next_push["seq"]:', 'if False:'),
+        Mutant("condition_4_dropped", "judge/status.py", 'if name is None or any(x["seq"] < e["seq"]', 'if name is None or False and any(x["seq"] < e["seq"]'),
+        Mutant("carrying_commit_is_head", "judge/status.py", 'head = rev or git_bytes(root, "rev-parse", "HEAD").decode().strip()', 'return rev or git_bytes(root, "rev-parse", "HEAD").decode().strip()'),
+        Mutant("attribution_dropped", "judge/status.py", 'if veto_ok or acts_ok:', 'if True:'),
+        Mutant("raw_substring_names_csv", "judge/status.py", 'and subject_names(subject, fname)', 'and fname[:-4] in subject'),
+        Mutant("push_clears_all_fixes", "judge/status.py", 'repairs[:] = [r for r in repairs if r not in active_fixes]', 'repairs.clear(); late_reports.append(-1)')]),
     Pin("window_fix_not_retroactive", c2a_prime.window_fix_not_retroactive, [
-        Mutant("fix_applies_immediately", "tools/status.py", 'if seq in window_fixes:', 'if False:'),
-        Mutant("fix_never_clears", "tools/status.py", 'if typ == "push" and active_fixes:', 'if False:')]),
+        Mutant("fix_applies_immediately", "judge/status.py", 'if seq in window_fixes:', 'if False:'),
+        Mutant("fix_never_clears", "judge/status.py", 'if typ == "push" and active_fixes:', 'if False:')]),
     Pin("process_unchanged_from_opening", c2a_prime.process_unchanged_from_opening, [
-        Mutant("change2_functions_omitted", "tools/status.py", 'targets = {"item_process"} | c2', 'targets = set()'),
-        Mutant("references_not_transitive", "tools/status.py", 'refs, queue = set(c2), list(c2)', 'refs, queue = set(), []'),
-        Mutant("callers_omitted", "tools/status.py", 'covered_funcs |= refs | callers_in(start_nodes) | callers_in(rev_nodes)', 'covered_funcs |= refs'),
-        Mutant("assignments_omitted", "tools/status.py",
+        Mutant("change2_functions_omitted", "judge/status.py", 'targets = {"item_process"} | c2', 'targets = set()'),
+        Mutant("references_not_transitive", "judge/status.py", 'refs, queue = set(c2), list(c2)', 'refs, queue = set(), []'),
+        Mutant("callers_omitted", "judge/status.py", 'covered_funcs |= refs | callers_in(start_nodes) | callers_in(rev_nodes)', 'covered_funcs |= refs'),
+        Mutant("assignments_omitted", "judge/status.py",
                 'covered_assigns |= {sub.id for name in covered_funcs if name in defs for sub in ast.walk(defs[name])\n                                if isinstance(sub, ast.Name) and isinstance(sub.ctx, ast.Load) and sub.id in start_assigns}',
                 'covered_assigns = set()'),
-        Mutant("tuple_read_at_head", "tools/status.py", 'c2 = set(read_c2_tuple(start_nodes))', 'c2 = set()')]),
+        Mutant("tuple_read_at_head", "judge/status.py", 'c2 = set(read_c2_tuple(start_nodes))', 'c2 = set()')]),
     Pin("promote_names_committed_table", c2a_prime.promote_names_committed_table, [
         Mutant("committed_check_removed", "tools/jack", 'if tree_bytes(ROOT, head, a.acts) != acts_bytes:', 'if False:'),
         Mutant("path_form_unchecked", "tools/jack", 'if not re.fullmatch(r"transcripts/evidence/[A-Za-z0-9._-]+\\.csv", a.acts):', 'if False:'),
