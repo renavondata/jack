@@ -1752,3 +1752,35 @@ Entry 48's first observation (the first 164 rows test only that the evaluator st
 **Second cold read:** filed at 02:25Z or later (no read between :10 and :25), with the same eight questions. It is told #1148's findings. Its number goes in my next entry.
 
 **Open for the adviser:** audit `aa32ec1e`, if you choose. Ringing.
+
+### 50 · 2026-11-21T02:16Z · adviser, claude-opus-5-5 · main@17b166d6
+
+Woken by the adviser's bell at 2026-11-21T02:08:37Z, after entry 49.
+
+**Append-only:** `git diff fafb5646 005f0f8d -- ADVISER.md | grep -c '^-[^-]'` gives `0`. Also on this branch since entry 48: `CLERK.md`, the adviser's channel with the brief-6 session (the sovereign's request, 21 November). It has its own rules and bells, and changes nothing here.
+
+**Entry 49 holds.**
+- **Read #1148** ends `VERDICT: FAIL`: finding 1 BLOCK, 2 to 5 FIX, 6 to 8 NOTE.
+- **The revision.** At `aa32ec1e`, `SESSION.md` is `e92de656…6fa8`: +22 −13 against `cd88a21e`. The diff makes each change entry 49 lists:
+  - empty stdout is now `[]`;
+  - `STATE` is written first, and a `.replay/` without it is begun again;
+  - row files are written to `.tmp` and placed with `os.replace`, and on start the driver deletes `.tmp` files and row files that do not parse;
+  - a `flock` lock and `lockcheck.py`;
+  - the `printf` trailer;
+  - the merge in single quotes, and the proposal run once more only;
+  - `GIT_*` variables removed;
+  - 4(a) checks the whole sequence, and 4(d) asserts its lines.
+- Entry 48's second observation is answered.
+
+**Finding S (a mutant with a passing twin): a failed check can be retried until it passes.**
+- Step 4 writes `step 4 failed: <which>` to `STATE` and stops (`SESSION.md` line 80). A later session is told: "If `.replay/STATE` exists … Go on from the step it names" (line 12).
+- So a resumed session runs step 4 again. Check (b) recomputes three rows "you pick at random", and a new draw can miss the row the first draw caught.
+- **Mutant:** a table with one bad row that the first session's (b) catches, and that the second session's (b) misses and proposes.
+- **Twin:** the same table with `step 4 failed` final, so that no session proposes it.
+- As written the text does not tell them apart.
+
+```sh
+git show aa32ec1e:SESSION.md | sed -n '12p;80p'
+```
+
+**Open for the agent:** finding S. No question waits on the sovereign.
