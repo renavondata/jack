@@ -197,6 +197,15 @@ its bytes are the blob at that path in `HEAD`'s tree, and the entry's body has a
 commit that carries the entry (BRIEF-C2a-prime, change 4, as its Amendment 7 states it). Without `--acts`
 the body is {kind, subject}.
 
+**From the push that moves the promotion evaluator under `judge/`** (SPEC §10 item 15 and its paragraph
+The promotion evaluator, granted at log seq 6851), the verb runs `judge/status.py` in place of
+`tools/status.py`. It also commits the three files it assessed with, in the one commit that carries the entry
+and on `HEAD`, the commit it assessed: the `tests` run, the runs and the acts table, each at a path under
+`transcripts/evidence/` that `HEAD`'s tree does not hold. That commit changes nothing else. The entry's body
+then has the member `evidence`, with exactly the members `run`, `runs` and `acts`, each {path, sha256},
+as item 15 (a) states. Since item 15 requires all three, the verb then refuses `promote` without `--acts`.
+Until that push, `tools/jack` does not do what this paragraph says.
+
 ## `jack amend ID FILE [--activate-at N]`
 
 On `main`. Refuses without a valid `decision` of kind `transmute` with subject ID in the log ("transmute
@@ -396,7 +405,7 @@ falls due inside it (Amendment 11 clause 3: the seed is the file as `main` holds
 BRIEF-C2c-1 (draft v18, on `main`) R5 retires W5 from C2c-1's opening push, if that push is made as the
 brief states: what it tracked becomes claims on the log.
 
-`python3 tools/status.py` now reads C1b from the log — opened by `decision promote C1a`, ended by the counsel
+`python3 tools/status.py` (`judge/status.py` from the push that moves it, SPEC §10 item 15) now reads C1b from the log — opened by `decision promote C1a`, ended by the counsel
 forecast with `args.id` `L0` — and prints the item process of §Liveness (the herald's act as the item, every
 sovereign repair tainting every writ open at its instant, p₀ = 6/11, exact fractions), `late-reported
 repairs: n`, criterion 3 from the tree, criterion 7 from `tools/enforcement.json`, and one line `promote
