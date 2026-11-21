@@ -2043,3 +2043,29 @@ PY
 **The granted text still applies to `main` unchanged.** `SPEC.md` on `main` is byte-identical to `df72126c`'s (`658a33b7…`), the base `6fc0a5f9` was drafted on. The trusted base (`kernel/`, `kernel2/`, `judge/`, `.github/workflows/`) has not changed since `df72126c` either. So the move's `SPEC.md`, the granted hunk applied to `main`'s, will hash to `72eeea02…` as long as no other change to `SPEC.md` comes first (entry 35). Check: `git diff --stat df72126c origin/main -- SPEC.md kernel/ kernel2/ judge/ .github/workflows/`, which prints nothing.
 
 **What comes next is his question, not mine.** Answer 18 gives me the table session and the ruling's proposal, and nothing about building the move. I put one yes/no to him in my chat: whether I file a builder session that builds the move to the granted text, cold-read before filing, on a branch his push then applies. Answers 5 and 6 bind that push: before 30 November, opening nothing, and stating the lines that leave the counted cap. Under rule 9 there is no ring while it waits.
+
+### 63 · 2026-11-21T13:35Z · agent, claude-opus-5-5 · main@8cffd524
+
+**His word to the agent** (in its chat, 21 November): the question as put, "**Shall I file a builder session that builds the move to the granted text on a branch, after a cold read of its prompt, for you to apply by push?**" His answer: "Yes".
+
+**The move's first commit, prepared for him.** RUNBOOK's "Text before code" puts counsel's patch first on the builder's branch, "applied and read by Guy there". Seq 4017 is the precedent: he cherry-picked counsel's commit himself.
+- Counsel's commit is `60114e11` on `counsel/spec-promote-unmet`, parent `8cffd524`. It changes only `SPEC.md`, +124 −2, to the bytes of `6fc0a5f9`. Its `SPEC.md` is `72eeea02…bbb6`, and its trailer is counsel's.
+- No pull request or run exists for it: `gh api 'repos/renavondata/jack/actions/runs?branch=counsel/spec-promote-unmet' --jq .total_count` gives `0`.
+- Check: `git fetch origin counsel/spec-promote-unmet && git show FETCH_HEAD:SPEC.md | sha256sum`, expected `72eeea02…`.
+
+**The builder session's draft** is `SESSION.md` at `19066996` on the orphan branch `agent/move-session`, SHA-256 `7e2e7efbf8584f7a3949dbe4d1531682dbbd9ba209908db44608d696f25d631d`. It runs as builder, on sol, branch `move-promotion-judge`: a push branch, so no verb and no proposal.
+- **Start:** it checks that the branch holds exactly the one cherry-picked commit, and that `SPEC.md` is `72eeea02…`.
+- **Builds:**
+  1. the move: two `git mv`, the three functions into one file under `judge/`, only the import lines and the first-parent fix changed, and lines 436 and 437 left, per point 4;
+  2. the callers, with `pins/` and `spec/vectors/` left to the reviewer;
+  3. item 15 in `judge/judge.py` and the self-check;
+  4. the promote verb's three evidence files;
+  5. `fetch-depth: 0` in `tests.yml`;
+  6. its own tests.
+- **Checks:** unit tests; pins, with those failing only on moved paths listed; the kernel count; the step 1 diff; and a spot check of rows 592, 593 and 705 against the table on `main`.
+- It pushes by minute 160 at the latest.
+- **What follows it, each to be put to him:** a reviewer session to update the pins' paths, add item 15's pins and run the acceptance replay; a cold review for `--review`; then his `jack push`.
+
+**Its cold read** is runner #1169 (sol, read only, no key), request `20261121T133100-read-move-session`, pushed 13:31:34Z (`counsel-requests` at `17af882`). Check: `gh api repos/renavondata/opencode-runner/issues/1169 --jq .title`.
+
+The builder session is filed only after the read passes and he has applied the first commit. **Open for the adviser:** audit the draft and `60114e11`, if you choose. Ringing.
