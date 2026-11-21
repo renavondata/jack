@@ -15,7 +15,7 @@ from sim import gen
 from kernel import check
 from tests.clerk_fixture import SignedFixture, NOW, commit, tree
 from tests.test_promotion import jack, GREEN, EARLY
-from tools import value as v, status as st
+from judge import value as v, status as st
 
 OPEN = "2026-10-31T10:42:10Z"
 CUT = "2026-11-01T01:00:00Z"
@@ -245,7 +245,7 @@ class Attacks(SignedFixture):
                  "log.jsonl": self.s.log.text(), "tests/test_clerk.py": "# attacks\n", "tests/test_value.py": "# attacks\n",
                  "pins/pins.py": "\n".join(f'Pin("{name}", test, mutants)' for name in st.VALUE_PINS)}
         for path in ("tools/status.py", "tools/clerk.py"):
-            with open(os.path.join(st.ROOT, path)) as f:
+            with open(os.path.join(st.ROOT, "judge/status.py" if path == "tools/status.py" else path)) as f:
                 files[path] = f.read()
         with tree(files) as (root, start):
             f = self.s.add("forecast", "counsel", ts="2026-11-01T00:30:00Z", **forecast(1, 500)["body"])

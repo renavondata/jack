@@ -3,7 +3,6 @@
 jack forecast and jack resolve, and jack score's tables (RUNBOOK.md). Generates no key. Not kernel.
 """
 import argparse
-import datetime
 import decimal
 import fractions
 import hashlib
@@ -18,17 +17,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 from harness.keys import dearmour  # noqa: E402
 from kernel import check, log  # noqa: E402
+from judge.entries import now, read_log, resolution_rates  # noqa: E402
 
 LOG = os.path.join(ROOT, "log.jsonl")
 
 
 class Usage(Exception):
     """Exit 2: nothing written."""
-
-
-def read_log(path):
-    with open(path, "rb") as f:
-        return check.read_lines(f.read())
 
 
 def unsigned(a):
@@ -82,11 +77,6 @@ def assemble(a):
     return 0
 
 
-def now():
-    """The verb's clock, UTC, in SPEC §4's form; the kernel never reads one."""
-    return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-
 def forecast_body(a, now):
     """jack forecast's body, or Usage: N in 1-999, TS an instant not earlier than the verb's clock, a claim; args an object."""
     try:
@@ -127,20 +117,6 @@ def fmt(x):
     """Four decimals, half to even, of the exact value (a Fraction, or a float's binary value)."""
     q = fractions.Fraction(x)
     return str((decimal.Decimal(q.numerator) / decimal.Decimal(q.denominator)).quantize(decimal.Decimal("0.0001"), decimal.ROUND_HALF_EVEN))
-
-
-def resolution_rates(es):
-    """C1's prequential Laplace base: every resolution, pooled by type, in seq order."""
-    forecasts, seen = {}, {}
-    for e in sorted(es, key=lambda e: e["seq"]):
-        if e["type"] == "forecast":
-            forecasts[e["seq"]] = e
-        if e["type"] == "resolution":
-            f = forecasts[e["body"]["forecast"]]
-            typ = f["body"].get("type", "free")
-            s, n = seen.get(typ, (0, 0))
-            yield e, f, fractions.Fraction(s + 1, n + 2), (s, n)
-            seen[typ] = (s + e["body"]["outcome"], n + 1)
 
 
 def score(lines, as_of=None):

@@ -17,7 +17,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 from kernel import check  # noqa: E402
 from judge.judge import counted_lines, signer_blob  # noqa: E402
-from tools import value as val  # noqa: E402
+from judge import value as val  # noqa: E402
 
 FMT = "%Y-%m-%dT%H:%M:%SZ"
 P0 = Fraction(6, 11)  # BRIEF-C1b v7; never estimated from the live window
@@ -430,7 +430,7 @@ def c2a_tree_evidence(root, rev, prefix, opening):
         scope_at = lambda sha: (tree_bytes(root, sha, "judge/scope.json"),
                                 tree_bytes(root, sha, "SPEC.md").split(b"at C1 it is:", 1)[1].split(b"```", 2)[1])
         original = scope_at(start)
-        unchanged = all(scope_at(c) == original for c in [rev] + git_bytes(root, "rev-list", f"{start}..{rev}").decode().split())
+        unchanged = all(scope_at(c) == original for c in [rev] + git_bytes(root, "rev-list", "--first-parent", f"{start}..{rev}").decode().split())
         unchanged = unchanged and json.loads(original[0])["cap"] == cap and not any(
             e["type"] == "push" and e["seq"] > opening for e in prefix)
         start_nodes = ast.parse(tree_bytes(root, start, "tools/status.py")).body

@@ -267,12 +267,12 @@ def v_decision(a):
         current = fetch(f"?head_sha={head}&event=push&branch=main")
         history = fetch("?event=push&branch=main")
         a.decision_ts = entry.now()  # the assessed instant is the instant signed, including expiry boundaries
-        from tools.status import run_verified
+        from judge.status import run_verified
         with tempfile.TemporaryDirectory() as tmp:
             for name, value in (("run", next((r for r in current if run_verified(r, head)), None)), ("runs", history)):
                 with open(os.path.join(tmp, name), "w") as f:
                     json.dump(value, f)
-            command = [sys.executable, "tools/status.py", "--subject", a.subject, "--run", os.path.join(tmp, "run"),
+            command = [sys.executable, "judge/status.py", "--subject", a.subject, "--run", os.path.join(tmp, "run"),
                        "--runs", os.path.join(tmp, "runs"), "--as-of", a.decision_ts]
             if a.acts is not None:
                 command += ["--acts", a.acts]
@@ -308,7 +308,8 @@ def main(argv):
     read.add_argument("verb", nargs="?")
     readonly, rest = read.parse_known_args(argv)
     if readonly.verb in ("status", "clerk"):
-        from tools import status, clerk
+        from judge import status
+        from tools import clerk
         return {"status": status.main, "clerk": clerk.main}[readonly.verb](rest)
     ap = argparse.ArgumentParser(prog="jack", description=__doc__)
     ap.add_argument("--key", default=os.environ.get("JACK_KEY", os.path.expanduser("~/.ssh/id_ed25519")))

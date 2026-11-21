@@ -285,7 +285,7 @@ class Jack(unittest.TestCase):
     def test_decision_promote_names_committed_table(self):
         csv, path = "repo,time_hkt,class,kind,ref,note\n", "transcripts/evidence/acts-c2a2.csv"
         scope = {"counted": ["tests/"], "cap": 6900, "layer": "C1b", "paths": ["tests/", "tools/", "transcripts/"], "parties": {}}
-        for rel in ("tools/status.py", "tools/value.py", "tools/enforcement.json"):
+        for rel in ("judge/status.py", "judge/value.py", "tools/enforcement.json"):
             shutil.copy2(os.path.join(ROOT, rel), os.path.join(self.repo, rel))
         for rel, txt in (("judge/scope.json", json.dumps(scope)), ("SPEC.md", f"at C1 it is:\n```\n{json.dumps(scope)}\n```\n"),
                          ("tests/test_clerk.py", "# attack\n"), ("transcripts/acts.csv", csv),
@@ -337,7 +337,7 @@ class Jack(unittest.TestCase):
                          ("decision", "guy", {"kind": "promote", "subject": "C1b",
                                               "acts": {"path": path, "sha256": hashlib.sha256(csv.encode()).hexdigest(), "commit": h_commit}}))
         write(runs_file := os.path.join(self.tmp.name, "runs.json"), json.dumps([green]))
-        st = subprocess.run([sys.executable, "tools/status.py", "--subject", "C1b", "--runs", runs_file, "--acts", path,
+        st = subprocess.run([sys.executable, "judge/status.py", "--subject", "C1b", "--runs", runs_file, "--acts", path,
                              "--as-of", "2026-10-31T12:30:00Z"], cwd=self.repo, capture_output=True, text=True, check=True).stdout
         self.assertEqual([ln for ln in st.splitlines() if "sovereign REPAIR" in ln and "promote C1b" in ln], [])
         self.assertEqual(st.splitlines()[-1], "promote C1b: lawful")

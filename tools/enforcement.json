@@ -1,7 +1,7 @@
 {
   "W1": {"principle": "obligations from state and clock, with deadlines", "enforcer": "code: tools/clerk.py forecast_writs"},
   "W3": {"principle": "the herald merges only on green CI", "enforcer": "code: tools/clerk.py merge_writs"},
-  "W4": {"principle": "window criteria and the procedure:object ratio", "enforcer": "code: tools/status.py assess; tools/clerk.py window_writs"},
+  "W4": {"principle": "window criteria and the procedure:object ratio", "enforcer": "code: judge/status.py assess; tools/clerk.py window_writs"},
   "A5": {"principle": "windows are maxima; exit at the crossing", "enforcer": "code: tools/jack v_decision"},
   "validity": {"principle": "keys, chain, types, no self-judgement", "enforcer": "code: kernel; two checkers"},
   "admission": {"principle": "trusted base unchanged except by push", "enforcer": "code: judge in CI"},

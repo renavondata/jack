@@ -5,7 +5,7 @@ import unittest
 from contextlib import contextmanager
 
 from harness import build, gitfix, keys
-from tools import status
+from judge import status
 
 NOW, DUE, LATE = "2026-10-31T12:00:00Z", "2026-11-03T00:00:00Z", "2026-11-03T00:00:01Z"
 

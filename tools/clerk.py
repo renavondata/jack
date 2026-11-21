@@ -13,8 +13,8 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
-from tools import status  # noqa: E402
-from tools.status import c1b_window  # noqa: E402
+from judge import status  # noqa: E402
+from judge.status import c1b_window  # noqa: E402
 
 
 def forecast_writs(entries, runs, now):

@@ -1,4 +1,4 @@
-"""tools/status.py: the window's figures from synthetic entries (hermetic; no log on disk, no clock)."""
+"""judge/status.py: the window's figures from synthetic entries (hermetic; no log on disk, no clock)."""
 import contextlib
 import hashlib
 import io
@@ -7,7 +7,7 @@ import os
 import unittest
 from unittest.mock import patch
 
-from tools import status as st
+from judge import status as st
 from harness.gitfix import write
 from tests.clerk_fixture import SignedFixture, commit, tree
 
@@ -104,7 +104,7 @@ class C2aPrimeTest(SignedFixture):
         files = {"judge/scope.json": json.dumps(s78), "SPEC.md": spec_of(s78), "log.jsonl": "\n".join(self.s.log.lines[:-1]) + "\n",
                  "tests/test_clerk.py": "# a\n", "tests/test_value.py": "# a\n", "pins/pins.py": "\n".join(f'Pin("{n}", t, m)' for n in st.VALUE_PINS)}
         for path in ("tools/status.py", "tools/clerk.py"):
-            with open(os.path.join(st.ROOT, path)) as f:
+            with open(os.path.join(st.ROOT, "judge/status.py" if path == "tools/status.py" else path)) as f:
                 files[path] = f.read()
         row = lambda hkt: dict(repo="renavondata/jack", time_hkt=hkt, **{"class": "repair"}, kind="fix", ref="", note="")
         with tree(files) as (root, pre_sha):
@@ -184,7 +184,7 @@ class C2aPrimeTest(SignedFixture):
         self.s.forecast(ts="2026-11-16T00:00:00Z", args={"id": "V5"}, resolves_by="2026-11-30T00:00:00Z")
         op2 = self.s.add("push", "guy", ts="2026-11-18T00:00:00Z", digest="a" * 64, review="0" * 64)
         scope = {"counted": ["tests/"], "cap": 8400}
-        with open(os.path.join(st.ROOT, "tools/status.py")) as f, open(os.path.join(st.ROOT, "tools/clerk.py")) as cf:
+        with open(os.path.join(st.ROOT, "judge/status.py")) as f, open(os.path.join(st.ROOT, "tools/clerk.py")) as cf:
             src, clerk_src = f.read(), cf.read()
         files = {"judge/scope.json": json.dumps(scope), "SPEC.md": "at C1 it is:\n```\n" + json.dumps(scope) + "\n```\n",
                  "log.jsonl": self.s.log.text(), "tools/status.py": src, "tools/clerk.py": clerk_src,

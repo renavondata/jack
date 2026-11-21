@@ -12,7 +12,8 @@ from unittest.mock import patch
 
 from harness.gitfix import write
 from tests.clerk_fixture import DUE, LATE, NOW, SignedFixture, Stream, commit, tree
-from tools import clerk, status
+from tools import clerk
+from judge import status
 
 EARLY = "2026-10-31T11:59:59Z"
 SHA = "a" * 40

@@ -12,7 +12,7 @@ import sys
 from fractions import Fraction
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from tools.entry import now, read_log, resolution_rates
+from judge.entries import now, read_log, resolution_rates
 from kernel import check, log
 
 B = math.log(999)

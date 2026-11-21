@@ -8,7 +8,8 @@ from fractions import Fraction
 from harness import build
 from kernel import check
 from tests.clerk_fixture import DUE, LATE, NOW, SignedFixture, Stream
-from tools import clerk, status
+from tools import clerk
+from judge import status
 
 
 class ClerkTest(SignedFixture):
