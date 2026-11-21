@@ -2126,3 +2126,42 @@ Woken by the agent's bell at 2026-11-21T13:35:34Z, after entry 64. Nothing was r
 The commit is not pushed while #1169 reads `19066996`. It goes out with whatever #1169 finds, and the session is filed only from a text that has passed a read.
 
 No ring: nothing is open for the adviser until the push.
+
+### 66 · 2026-11-21T13:50Z · agent, claude-opus-5-5 · main@8cffd524
+
+**His word to the agent** (in its chat): "cherry picking done".
+- `move-promotion-judge` is at `2d99d242`, one commit over `main`. Its author is `counsel`, its committer `Guy Freeman`, and its message is `60114e11`'s with counsel's trailer.
+- Its `SPEC.md` is `72eeea02a320a56f5be03a1de9bc50a2624b53e0538cdbc529c877b0274aaba2`, and its parent is `8cffd524`.
+- Check: `git fetch origin move-promotion-judge && git log --format='%an|%cn|%s' origin/main..FETCH_HEAD && git show FETCH_HEAD:SPEC.md | sha256sum`.
+
+**Read #1169** (sol, on `19066996`) ends `VERDICT: FAIL`, with two BLOCKs, three FIXes and four NOTEs. Check: `gh api repos/renavondata/opencode-runner/issues/1169/comments --jq '.[-1].body' | grep -nE '^[0-9]+\. \*\*|VERDICT'`.
+1. **BLOCK:** entry 64's finding D, found independently.
+2. **BLOCK:** check (a) required the unit tests to pass, but `tests/test_pins.py` fails until the reviewer updates the pins. That includes mutants of the three functions taken from `tools/entry.py`.
+3. **FIX:** the start procedure did not cover each worktree case.
+4. **FIX:** deferring the RUNBOOK revision until after the push conflicts with "Text before code".
+5. **FIX:** the caller search missed grouped imports, and did not set apart the fixtures that write `tools/status.py` into a synthetic history for lines 436–437.
+
+NOTE 7 confirms check (e)'s rows: 592 is `6c0566c3`, unchanged; 593 is `b88d318e`, which becomes `lawful`; 705 is `8130c751`. NOTE 9 adds that `count_kernel` gives no counted-line figure for answer 6.
+
+**Answered in `05de78e0`** on `agent/move-session`, `SESSION.md` `1a69e8e117ad33834982cb24d9be1af322f85e2417b207795c281fd0f9a233dd`. That includes `7576e93b`.
+- **1.** The diff now names the old paths too.
+- **2.** Check (a) now passes only if every failure is in a test of `pins/` and fails only because a pin names a moved path or text. Each is listed, and no test of `pins/` may be weakened.
+- **3.** The start procedure: fetch `main` and the branch, then check the tree is clean and holds exactly one commit over `main`. If `HEAD` is the branch, go on. If `HEAD` is an ancestor of `main` (a fresh branch), reset to it. Otherwise stop, and reset nothing.
+- **4.** Counsel's RUNBOOK revision lands on `main` before his push.
+- **5.** The search now finds grouped imports, and the fixture case is named as not a caller.
+- **Also:** counted lines at `origin/main` and at the head, both reported, for the push's statement under answer 6.
+
+**Counsel's RUNBOOK revision** is `d9b6aa06` on `counsel/runbook-promote-evidence`: +10 −1 in `RUNBOOK.md`, plus `transcripts/requests/runbook-promote-evidence.jsonl`.
+- After the `--acts` paragraph it adds one paragraph, "From the push that moves the promotion evaluator under `judge/`". In it the verb:
+  - runs `judge/status.py`;
+  - commits the three files, at new paths under `transcripts/evidence/`, in the one commit that carries the entry, on `HEAD`;
+  - writes `evidence` {run, runs, acts}, each {path, sha256}, as item 15 (a) states;
+  - refuses `promote` without `--acts`, since item 15 requires all three.
+
+  It ends: "Until that push, `tools/jack` does not do what this paragraph says."
+- Line 399 names `judge/status.py` from that push.
+- It goes to `main` by counsel's proposal after its read, and before his push.
+
+**One read for both:** runner #1170 (sol, read only, no key), request `20261121T134600-read-move-session-2`, pushed 13:46:28Z (`counsel-requests` at `149fdeb`). It asks the same questions, plus a Part B question: does the revision restate item 15 and add nothing, and does it conflict with the C2c-1 or `--acts` paragraphs?
+
+**Open for the adviser:** audit `05de78e0` and `d9b6aa06`, if you choose. Ringing.
