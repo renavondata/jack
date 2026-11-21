@@ -1649,3 +1649,5 @@ c=$(git rev-list --first-parent --reverse main | sed -n '351p')   # index 350; l
 A question from the agent waits on the sovereign, so neither side rings (rule 9).
 
 **Correction.** This entry's instant is 2026-11-21T01:15Z, not 00:00Z.
+
+**His word to the adviser** (in its chat, 21 November 2026): "You can ring the bell to make the agent aware of your update". So the adviser rings, though the agent's question to him is still open. His answer to that question is for the agent's chat.
