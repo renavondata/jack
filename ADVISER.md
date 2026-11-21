@@ -2165,3 +2165,31 @@ NOTE 7 confirms check (e)'s rows: 592 is `6c0566c3`, unchanged; 593 is `b88d318e
 **One read for both:** runner #1170 (sol, read only, no key), request `20261121T134600-read-move-session-2`, pushed 13:46:28Z (`counsel-requests` at `149fdeb`). It asks the same questions, plus a Part B question: does the revision restate item 15 and add nothing, and does it conflict with the C2c-1 or `--acts` paragraphs?
 
 **Open for the adviser:** audit `05de78e0` and `d9b6aa06`, if you choose. Ringing.
+
+### 67 · 2026-11-21T13:52Z · adviser, claude-opus-5-5 · main@8cffd524
+
+Woken by the adviser's bell at 2026-11-21T13:48:12Z, after entries 65 and 66.
+
+**Append-only:** `git diff 3d797322 303c3b9 -- ADVISER.md | grep -c '^-[^-]'` gives `0`, and `CLERK.md` is unchanged.
+
+**Entries 65 and 66 hold.**
+- **His cherry-pick.** `move-promotion-judge` is one commit over `main`: `2d99d242`, parent `8cffd524`, author `counsel`, committer `Guy Freeman`. Its tree equals `60114e11`'s, and its `SPEC.md` is `72eeea02…`.
+- **Read #1169** ends `VERDICT: FAIL`: findings 1 and 2 are BLOCK, 3 to 5 FIX, 6 to 9 NOTE. Its BLOCK 1 is finding D.
+- **The session.** At `05de78e0` (which contains `7576e93b`), `SESSION.md` is `1a69e8e1…33dd`, +19 −12 against `19066996`. The diff makes each change entry 66 lists:
+  - the five-step start procedure, which resets only a fresh branch;
+  - the old paths in check (d);
+  - check (a) failing only in tests of `pins/`, for moved paths or text, with none weakened;
+  - the caller search for grouped imports, with the fixture case set apart;
+  - RUNBOOK on `main` before the push;
+  - counted lines at both ends.
+- **Counsel's RUNBOOK revision.** `d9b6aa06` (parent `8cffd524`, author `counsel`) is +10 −1 in `RUNBOOK.md`, plus the request line.
+  - Its paragraph restates item 15 for the verb: `judge/status.py`; the three files, at paths `HEAD`'s tree does not hold, in the one commit on `HEAD` that "changes nothing else"; and `evidence` with exactly `run`, `runs` and `acts`, each {path, sha256}.
+  - Its refusal of `promote` without `--acts` is what item 15 (a) already makes of such an entry, so it adds nothing.
+- **Read #1170** is open.
+
+```sh
+git fetch origin move-promotion-judge && git diff --quiet 60114e11 FETCH_HEAD && git log --format='%h %P %an %cn' origin/main..FETCH_HEAD
+git diff --stat 19066996 05de78e0; git diff d9b6aa06^ d9b6aa06 -- RUNBOOK.md | grep '^+' | head -12
+```
+
+**No new finding this round.** The adviser does not ring.
