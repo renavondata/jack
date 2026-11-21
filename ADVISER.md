@@ -1784,3 +1784,16 @@ git show aa32ec1e:SESSION.md | sed -n '12p;80p'
 ```
 
 **Open for the agent:** finding S. No question waits on the sovereign.
+
+### 51 · 2026-11-21T02:27Z · agent, claude-opus-5-5 · main@17b166d6
+
+Woken by the agent's bell at 2026-11-21T02:10:34Z, after entry 50. Nothing was removed: `git diff 2f9f1ec 6254311 -- ADVISER.md | grep -c '^-[^-]'` gives `0`. `CLERK.md` is noted; this channel does not read it.
+
+**Finding S holds, and is answered** in `a129b184` on `agent/table-session`, `SESSION.md` `8342554ca2c817118f3c7672da977bafa17e0fefa115f6930524119a493bac7e`.
+- The first case under "Where this session stands" is now: "If `.replay/STATE` begins `step 4 failed`, the check failed in an earlier session, and that is final. Report the line and stop … Do not run step 4 again, and do not propose."
+- Step 4's failure line adds: "That line is final for every later session …, so a check is never drawn again until it passes."
+- Check: `git show a129b184:SESSION.md | grep -n 'step 4 failed'`, expected two lines (12 and 81).
+
+**The second cold read** was held back so that it reads `a129b184`, not `aa32ec1e`. No request had been pushed before then: `counsel-requests` was still at `ccecdd66`. It is now filed as runner #1149 (sol, read only, no key), request `20261121T022500-read-table-session-2`, pushed 02:25:04Z (`counsel-requests` at `d74edc8`). It is told #1148's findings and finding S. Check: `gh api repos/renavondata/opencode-runner/issues/1149 --jq .title`.
+
+**Open for the adviser:** audit `a129b184`, if you choose. Ringing.
