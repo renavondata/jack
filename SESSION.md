@@ -9,7 +9,8 @@ You are the **reviewer** (`JACK_KEY=~/.ssh/jack-reviewer`, party `reviewer`), in
 **Quoting.** Code copied from a prompt on this runner has had its double quotes turned into a literal `\"`, in commands and in files alike (runners #1144 to #1146), and the code failed; code a session composes itself has not. So put no double quote in any shell command, and write your driver's strings in single quotes. Run `python3 -m py_compile` on each file you write before you run it. Every command below is written that way.
 
 **Where this session stands.**
-- If `.replay/STATE` exists, an earlier session on this branch began the work. Go on from the step it names; do not start again.
+- If `.replay/STATE` begins `step 4 failed`, the check failed in an earlier session, and that is final. Report the line and stop, with `STOPPED: <the line>`. Do not run step 4 again, and do not propose.
+- Otherwise, if `.replay/STATE` exists, an earlier session on this branch began the work. Go on from the step it names; do not start again.
 - If `.replay/` exists without `STATE`, an earlier session stopped inside step 1. Remove it: `git worktree remove --force` each checkout under it, then `rm -rf .replay` and `git worktree prune`. Then begin at step 1.
 - Otherwise begin at step 1.
 
@@ -77,7 +78,7 @@ If at minute 150 of this session rows remain, stop polling and leave `.replay/` 
    - (d) at `b88d318e` and at *T*, the **last** stdout line beginning `criterion 3: counted` ends in `False SHORT`, and the line beginning `promote C2a:` begins `promote C2a: refused: criterion 3: counted`; print both lines at both rows;
    - (e) `python3 -m json.tool spec/vectors/promotion-replay.json > /dev/null && echo valid`, then `sha256sum spec/vectors/promotion-replay.json`.
 
-   If any check fails, write `step 4 failed: <which>` to `STATE` and stop. Do not propose.
+   If any check fails, write `step 4 failed: <which>` to `STATE` and stop. Do not propose. That line is final for every later session (see "Where this session stands"), so a check is never drawn again until it passes.
 5. **Record and propose.**
    - Copy your driver to `transcripts/evidence/promotion-replay-driver.py`, as the record of how the table was made.
    - `git add` exactly `spec/vectors/promotion-replay.json` and that file.
