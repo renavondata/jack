@@ -203,6 +203,35 @@ class Promotions(unittest.TestCase):
             self.assertIsNone(judge.installing_push(self.repo, "HEAD", altered))
         self.assertIsNone(judge.installing_push(self.repo, "HEAD", es[:5564] + es[5565:] + es[5564:5565]))
 
+    def test_installation_uses_oldest_first_parent_push_commit_not_later_repair(self):
+        good_tree = gitfix.git(self.repo, "rev-parse", "HEAD^{tree}")
+        gitfix.write(self.repo, "SPEC.md", "not the granted SPEC\n")
+        gitfix.git(self.repo, "add", "SPEC.md")
+        bad_tree = gitfix.git(self.repo, "write-tree")
+        args = ("-c", "user.name=t", "-c", "user.email=t@t", "commit-tree")
+        bad = gitfix.git(self.repo, *args, bad_tree, "-p", self.installed + "^", "-m", "Wrong push commit")
+        later = gitfix.git(self.repo, *args, good_tree, "-p", bad, "-m", "Later repaired tree")
+        gitfix.git(self.repo, "reset", "-q", "--hard", later)
+        self.check("promote_unmet")
+
+    def test_subject_acceptance_comes_from_main_not_a_separate_choices_list(self):
+        with open(os.path.join(self.repo, "judge/status.py")) as f:
+            source = f.read()
+        source += '''
+def main(argv=None):
+    ap = parser(__doc__)
+    ap._option_string_actions["--subject"].choices = ("C1b",)
+    ap.parse_args(argv)
+    raise AssertionError("report must not run")
+'''
+        gitfix.write(self.repo, "judge/status.py", source)
+        gitfix.commit_all(self.repo, "Main has narrower subject parser")
+        self.log.add("push", "guy", {"digest": judge.digest(self.repo, "HEAD"), "review": "0" * 64}, self.w.guy)
+        gitfix.write(self.repo, "log.jsonl", self.log.text())
+        gitfix.commit_all(self.repo, "Record evaluator")
+        self.promote(subject="C1a")
+        self.check("promote_unmet")
+
 
 if __name__ == "__main__":
     unittest.main()
