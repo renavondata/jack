@@ -284,9 +284,11 @@ def promotion_checks(repo, trunk, head, entries, trunk_entries, attested):
                 if len(parents[c]) != 1:
                     raise JudgeError(f"promote seq {i} at {c}: entry commit must have one parent")
                 assessed = parents[c][0]
+                assessed_modes = dict((p, mode) for mode, p in modes(repo, assessed))
                 prefix_lines = split_lines(show(repo, head, LOG))[:i]
                 prefix = b"".join(l + b"\n" for l in prefix_lines)
-                if (split_lines(show(repo, assessed, LOG) or b"") != prefix_lines or
+                if (tree.get(LOG) != assessed_modes.get(LOG) or
+                    split_lines(show(repo, assessed, LOG) or b"") != prefix_lines or
                     split_lines(show(repo, c, LOG) or b"") != prefix_lines + [line]):
                     raise JudgeError(f"promote seq {i} at {c}: entry is not appended alone to its exact prefix")
                 added = {p for p in paths if show(repo, assessed, p) is None}

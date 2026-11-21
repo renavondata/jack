@@ -91,6 +91,9 @@ class Promotions(unittest.TestCase):
     def test_unmet_criteria_and_skipped_ci_are_refused_on_later_runs(self):
         self.promote(lawful=False)
         self.check("promote_unmet")
+        result = subprocess.run([sys.executable, os.path.join(ROOT, "judge/selfcheck.py"), "--repo", self.repo], capture_output=True)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn(b"promote_unmet", result.stdout)
         gitfix.write(self.repo, "README.md", "a later run\n")
         gitfix.commit_all(self.repo, "Later unrelated commit")
         self.check("promote_unmet")
@@ -127,6 +130,14 @@ class Promotions(unittest.TestCase):
         self.log = build.Log(self.lg.lines)
         self.log.add("decision", "guy", {"kind": "grant", "subject": "extra entry"}, self.w.guy)
         self.promote()
+        self.check("promote_unmet")
+
+    def test_appending_the_entry_does_not_authorise_a_log_mode_change(self):
+        self.promote()
+        os.chmod(os.path.join(self.repo, "log.jsonl"), 0o755)
+        # Fold the mode change into the entry commit, leaving its bytes lawful.
+        gitfix.git(self.repo, "reset", "-q", "--soft", self.installed)
+        gitfix.commit_all(self.repo, "Entry and unrelated mode change")
         self.check("promote_unmet")
 
     def test_every_entry_commit_including_a_bad_side_branch_is_judged(self):
