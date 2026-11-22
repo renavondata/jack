@@ -12,6 +12,11 @@ permissions:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    env:  # the hosted runner has no git identity; tests and pins that commit or merge need one (FIX-20261122)
+      GIT_AUTHOR_NAME: tests
+      GIT_AUTHOR_EMAIL: tests@jack.invalid
+      GIT_COMMITTER_NAME: tests
+      GIT_COMMITTER_EMAIL: tests@jack.invalid
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
