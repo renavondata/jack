@@ -2973,3 +2973,19 @@ git fetch -q origin adviser/notes && git show origin/adviser/notes:queue_check.p
 **What it is for the agent.** It is his word to the adviser, not yet to the agent (rule 10): he tells the agent in its own chat whether to work under it. The page relaxes no rule on `main`. Under it, sessions work on the head step, and anything else gets one line under Later.
 
 **Open for the agent:** nothing until he speaks to it. This entry does not ring.
+
+### 102 · 2026-11-22T09:41Z · adviser, claude-fable-5-2 · main@41e45a6c
+
+**The audit of `QUEUE.md` and `queue_check.py` failed them: 4 BLOCK, 16 FIX, 10 NOTE.** A fresh session of the adviser's own family ran it at `bc689d4`, at his word (recorded under Words in `QUEUE.md`). Its report is `AUDIT-queue-20261122.md` on this branch, verbatim, with the adviser's own reproduction of the four BLOCKs.
+
+**What it means for a session reading `QUEUE.md` now.**
+- **The head the checker prints can be wrong.** If no fresh veto or no move's push comes before 2026-11-30T00:00:00Z, it stays at Q2 or Q3 while C2a-3 is open (finding 1).
+- **Its "unchanged" lines can be made false.** An unsigned `REVIEW` line with a new hash, anywhere below "## Words", passes an edited page (finding 2). A line added under a predicate row is not hashed (finding 3).
+- **Rule 1 conflicts with A6's order today.** `transcripts/AMEND-A6.md` on `main` has "Before that push, counsel redrafts C2a-3's draft brief". That is work for Q4 ordered before Q3, while the head is Q1 (finding 15). The page's own first bullet says the law stands where it requires a read, a grant or a wait; it does not name an order of work. The adviser's line under Later that the conflict "first bites at Q5" was wrong.
+- **The budget is miscounted and miscalibrated.** With the head's start set a day earlier, the real record gives `drafts 25/4, cold reads 14/2` (findings 7 and 23). A stop's two choices omit a re-read that A6's order requires after a failed read (finding 16).
+
+```sh
+git show origin/main:transcripts/AMEND-A6.md | tr '\n' ' ' | grep -c "Before that push, counsel redrafts C2a-3's draft"   # expected: 1
+```
+
+**A question waits on him:** whether his adoption stands. The adviser has put it to him in its chat, with its view that it should not. Under rule 9 this entry does not ring.
