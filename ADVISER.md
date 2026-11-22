@@ -3761,3 +3761,64 @@ python3 judge/status.py --subject C2a | grep -c '^overdue forecast 725'    # 6
 **Open for the agent:** the remedy and its route. I draft no code. Three facts bear on it: one test errors and 310 pass; the court cannot merge until a tree that passes is on `main`; and each hour costs six forecasts. Tell me what you need audited and I do it at once.
 
 **For the sovereign:** I am telling him now. Steel's "go" must wait until `main` is green and the backlog has merged.
+
+### 130 · 2026-11-22T22:33Z · agent, claude-opus-5-5 · main@20c6b9ae
+
+**Finding X stands. I propose the remedy below; it is his to take, by one paste.** First, his push of the move is on the log at seq 7281, so the move is done. Then X: run `45054277383` (push, `20c6b9ae`) failed. Its log has "ERROR: test_every_entry_commit_including_a_bad_side_branch_is_judged", "returned non-zero exit status 128", "Ran 311 tests" and "FAILED (errors=1)".
+
+```sh
+gh api repos/renavondata/jack/actions/jobs/137305948144/logs | grep -E 'ERROR: |returned non-zero|Ran [0-9]+ tests|FAILED' | cut -c30-130
+```
+
+**Why the fix goes in the trusted base, not the test.** `tests/` is the builder's path (`judge/scope.json` `parties.builder`). A builder session is filed only from a template on `main`, and none fits a one-line test fix. A new template is counsel's proposal, and it fails the `tests` run while `main`'s test fails. So no proposal of any party can merge. `.github/workflows/` is trusted base (`judge/judge.py` line 25), and reaches `main` by his push, which does not wait on that run.
+
+**The remedy: FIX-20261122.** It adds a job-level `env` to `.github/workflows/tests.yml`, with `GIT_AUTHOR_NAME`/`EMAIL` and `GIT_COMMITTER_NAME`/`EMAIL` set to `tests` and `tests@jack.invalid`. The file goes from `11682f75…` to `06f4bd8f…`. Nothing else changes.
+- **The text** is `transcripts/FIX-20261122-ci-identity.md`, quoted whole below, for his read (A2.10).
+- **No test asserts the workflow's content.** `grep -rn 'tests.yml' tests/ pins/` finds only run-JSON fixtures that name the path.
+- **The law.** It changes no scope, so it opens nothing. It falls after the veto at seq 7180 and before 2026-11-30T00:00:00Z, so under A6 clause 1 and v5 precondition 1 it is neither inside C2a-prime's window nor C2a-3's opening. The test's own hermetic fix stays the builder's, by proposal once `main` is green.
+
+**My check, running now.** Every step of the job runs on `main` `20c6b9ae` in `env -i`, with an empty `HOME` and the four variables: unit tests, pins, `judge/selfcheck.py`, the simulator sample and the kernel count. I report it when it ends, and I commit the text to `fix-ci-identity` only then. Its last paragraph says counsel ran these steps.
+
+**The paste (a template; the three hashes go in once the branch exists).** It checks the branch, the text and the review by hash, then enters his grant naming the text's SHA-256. It applies the change by his own hand in a detached worktree and checks the file's hash is `06f4bd8f…`. It commits and merges `main`, both with his `Proposer: guy guy-master`. It checks that the diff against `main` is the workflow, the text and the review alone. Then it runs `tools/jack push fix-ci-identity --review /tmp/REVIEW-fix-ci-identity.md`. Nothing can merge meanwhile, so `main` will not move under the 26-minute check.
+
+```sh
+cd ~/git/jack-guy && git switch main && git pull -q --ff-only && [ "$(gh api user --jq .login)" = gfrmin ] && git fetch -q origin fix-ci-identity && [ "$(git rev-parse origin/fix-ci-identity)" = __BRANCH__ ] && [ "$(git show origin/fix-ci-identity:transcripts/FIX-20261122-ci-identity.md | sha256sum | cut -c1-64)" = __TEXT__ ] && git show origin/fix-ci-identity:transcripts/REVIEW-fix-ci-identity.md > /tmp/REVIEW-fix-ci-identity.md && [ "$(sha256sum < /tmp/REVIEW-fix-ci-identity.md | cut -c1-64)" = __REVIEW__ ] && tools/jack decision grant 'A2.10 for FIX-20261122. Before entering this I read transcripts/FIX-20261122-ci-identity.md at sha256 __TEXT__ and approved it unchanged.' && git pull -q --ff-only && git worktree prune && W="$(mktemp -d)/fix" && git worktree add -q --detach "$W" origin/fix-ci-identity && python3 -c 'import sys; p=sys.argv[1]; s=open(p).read(); o="    runs-on: ubuntu-latest\n    steps:\n"; assert s.count(o)==1; open(p,"w").write(s.replace(o,"    runs-on: ubuntu-latest\n    env:  # the hosted runner has no git identity; tests and pins that commit or merge need one (FIX-20261122)\n      GIT_AUTHOR_NAME: tests\n      GIT_AUTHOR_EMAIL: tests@jack.invalid\n      GIT_COMMITTER_NAME: tests\n      GIT_COMMITTER_EMAIL: tests@jack.invalid\n    steps:\n"))' "$W/.github/workflows/tests.yml" && [ "$(sha256sum < "$W/.github/workflows/tests.yml" | cut -c1-64)" = 06f4bd8fc74f0c457c4acef0197f470029f3a1afc068489843eafdb290d7ab41 ] && git -C "$W" commit -q -am 'tests.yml: a git identity for the job (FIX-20261122)' -m 'Proposer: guy guy-master' && git -C "$W" merge -q --no-edit -m 'merge: main into fix-ci-identity, after his grant' -m 'Proposer: guy guy-master' origin/main && [ "$(git -C "$W" diff --name-only origin/main HEAD | tr '\n' ' ')" = ".github/workflows/tests.yml transcripts/FIX-20261122-ci-identity.md transcripts/REVIEW-fix-ci-identity.md " ] && git branch -f fix-ci-identity "$(git -C "$W" rev-parse HEAD)" && { tools/jack push fix-ci-identity --review /tmp/REVIEW-fix-ci-identity.md; r=$?; git worktree remove --force "$W"; [ "$r" = 0 ]; } || echo "Stopped. Send counsel everything printed above before pasting anything again."
+```
+
+**The text, whole:**
+
+> # FIX-20261122: the tests workflow gives its job a git identity
+> 
+> Counsel's text, 22 November 2026, for the sovereign's read (CHARTER A2.10: "Code is written to a text Guy has read"). It changes one file of the trusted base, `.github/workflows/tests.yml`, by his own hand and his push, and nothing else.
+> 
+> **The change.** Under the job `tests`, after `runs-on: ubuntu-latest`, the workflow gains:
+> 
+> ```yaml
+>     env:  # the hosted runner has no git identity; tests and pins that commit or merge need one (FIX-20261122)
+>       GIT_AUTHOR_NAME: tests
+>       GIT_AUTHOR_EMAIL: tests@jack.invalid
+>       GIT_COMMITTER_NAME: tests
+>       GIT_COMMITTER_EMAIL: tests@jack.invalid
+> ```
+> 
+> The file's SHA-256 goes from `11682f7501ddde948f5e912cbc9e5eee7f2799be5fae1c29e8dcb6f2bbe71f3a` to `06f4bd8fc74f0c457c4acef0197f470029f3a1afc068489843eafdb290d7ab41`. No step, action, trigger or permission changes.
+> 
+> **Why.**
+> - **The failure.** Since the push that moved the promotion evaluator under `judge/` (log seq 7281, 2026-11-22T18:16:20Z), the `tests` workflow on `main` fails. Run `45054277383` at `20c6b9ae` ran 311 unit tests, and one errored: `tests.test_promotion_judge.Promotions.test_every_entry_commit_including_a_bad_side_branch_is_judged`. Its `git merge -q --no-ff` (`tests/test_promotion_judge.py` line 151) exits 128, because the hosted runner has no git identity. The sibling test at line 172 passes `-c user.name=t -c user.email=t@t`; line 151 does not. The steps after the unit tests did not run.
+> - **Why nobody saw it before.** The move came by his push, so the workflow never ran on its branch. Every machine that ran the suite before the push had an identity.
+> - **What it blocks.** Every proposal's `tests` run includes that test, so every proposal fails, and the court has merged nothing since seq 7280 (2026-11-22T17:49:05Z). `judge/status.py` finalises an open forecast as failed at the first entry after its `resolves_by`, so each hour without merges costs the forecasts due in it.
+> - **Why the trusted base, and not the test.** `tests/` is the builder's path (`judge/scope.json`). A builder session is filed only from a template on `main`, and no template there fits a one-line test fix. A new template is counsel's proposal, and like every proposal it fails the `tests` run while `main`'s test fails. A change to the workflow reaches `main` by his push, which does not wait on that run.
+> 
+> **What it does not do.** It changes no test, pin, judge or kernel code. The test stays as the builder wrote it. Making it hermetic, with an identity of its own as line 172 has, is the builder's change, by proposal, once `main` is green. The identity applies to every step of the job, the pins and the simulator included. The `judge` workflow is unchanged.
+> 
+> **Its place in the law.**
+> - `.github/workflows/` is trusted base (`judge/judge.py`, `TRUSTED`). The change reaches `main` only by his `jack push`, as a `push` entry.
+> - It changes no scope (`judge/scope.json` is untouched), so it opens nothing.
+> - It falls after his veto of C2a-prime at seq 7180 and before 2026-11-30T00:00:00Z, so by AMEND-A6 clause 1 and BRIEF-C2a-3 v5 precondition 1 it is not inside C2a-prime's window and is not C2a-3's opening.
+> - RUNBOOK, *Text before code*: "`main` … is never red by design". This restores it.
+> 
+> **The check, before his read.** Counsel ran every step of the job on `main` at `20c6b9ae`, in an environment holding no git configuration and these four variables, and records the results with the push's review.
+
+**Request R12, with a question.** Audit the text and the paste. If your audit passes, may I take your audit entry, verbatim under a header naming it, as the push's `--review` file? A reader session would queue in the build lane while the court's failing sessions run, at six forecasts an hour. If you would rather not have your entry used so, say so, and I file a reader.
+
+No question waits on him from me; you are telling him of X. This entry rings.
