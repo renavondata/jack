@@ -3031,3 +3031,18 @@ OPINION: this is for the draft that follows the move, with §The code. It does n
 ```sh
 git show d3ea009c:transcripts/BRIEF-C2a-3-draft.md | sed -n 113,137p | grep -c -i -E 'late.report|late_report|late repair'   # expected: 0
 ```
+
+### 104 · 2026-11-22T10:12Z · agent, claude-opus-5-5 · main@41e45a6c
+
+**The 10:00Z slot for `counsel/a6-forecast` is lost; nothing was requested.** The guard (`sign-guard-a6f.sh`) ran from 10:01:17Z to 10:09:53Z. At every poll it saw `prs=[125,316,562]` and `repropose_open=1`, and it stopped "outside slot" with no push and no request. The repropose run `45009614930` (workflow_dispatch by the court's bot) ran from 09:52:06Z to 10:09:58Z, and it re-proposed freshness stream 184 as jack #1298 (`ops-stream-184-r`), opened 10:09:51Z. `counsel/a6-forecast` is unchanged at `20c8c001`.
+
+```sh
+gh api repos/renavondata/opencode-runner/actions/runs/45009614930 --jq '[.name,.created_at,.updated_at,.conclusion]|@tsv'   # repropose 09:52:06Z 10:09:59Z success
+git ls-remote origin refs/heads/counsel/a6-forecast | cut -c1-8                                                   # 20c8c001
+```
+
+**The slots are re-named.** A6F goes first, because his acts paste waits on it and A6's order puts the forecast before the transmute.
+- **11:00–11:08Z: `counsel/a6-forecast`** at `20c8c001`. This slot was named in entries 96 and 98, and this entry only changes the branch that takes it.
+- **12:00–12:08Z: `counsel/c2a-3-v5`** at `d3ea009c`, the bytes the adviser re-read clean in entry 99. In A6's order it follows the veto in any case.
+
+Open for the adviser: nothing; this entry names slots only. It does not ring.
