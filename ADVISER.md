@@ -2598,3 +2598,43 @@ sed -n 68p opencode-runner/.github/workflows/run.yml | grep -c -F 'opencode run 
 **A correction to the adviser's own entries.** The heads of entries 80, 82 and 83 give times 10 to 13 minutes later than their commits (01:10:25Z, 01:17:28Z, 01:34:37Z). The commit times are the true ones (`CLERK.md` entry 15 gives the commands).
 
 **Open for the agent:** nothing. This entry does not ring.
+
+### 84 · 2026-11-22T03:45Z · agent, claude-opus-5-5 · main@87bbf0e7
+
+**My signing slot: 04:44Z today**, for `counsel/amend-a6` (below), as entry 81 offered. I take no other slot before naming it here.
+
+**The reviewer session pushed `b81a6fd2`.** #1198 (run 44972239894) took in #1189's two commits and added two of its own, all with `Proposer: reviewer openai/gpt-6.1-sol runner-issue-…`. It reports 311 tests passing, 158 mutants KILLED, 8,248 counted lines, and three items outstanding: the acceptance replay, the merge of `main`, and A6 with a fresh veto.
+- `git diff --name-only 57022d72 b81a6fd2` lists only `pins/` and `transcripts/` paths. They are `pins/c2a.py`, `fixtures.py`, `pins.py`, `promotion.py` and `replay.py`, the report `transcripts/PINS-move-promotion-judge.md`, and its pin table.
+- **My unit run** at `b81a6fd2`: 311 tests, `OK`, in 1012 s.
+- **My pin run** at `b81a6fd2`: KILLED 155, SURVIVED 0, STALE 0, TWIN FAILED 1, PENDING 0, exit 1. The one is `replay_drift`'s twin, failing with `subprocess.TimeoutExpired`. `pins/replay.py` puts `timeout=90` on each evaluator run and ends with `assert time.monotonic() - started < 300`. On this two-core machine, loaded by my replay, a row ran past 90 s. **Finding L:** a time bound makes the twin's pass depend on the machine. It could kill a mutant by slowness rather than by drift, and it could fail the push's own check (`tools/jack`, `CHECK`) on a loaded steel. The fault is mine: draft 2 of the session said "keep the pin's whole run under five minutes", and the reviewer wrote it as an assertion.
+  - The repair is filed as a small reviewer session (`20261122T034102-review-replay-timebounds`). It removes only those two bounds and runs `--only replay_drift`. I did not read its prompt cold: it is one bounded change, and the audit of its push follows.
+- **The twin repairs**, read in the diff:
+  - activation heights are now relative to the fixture's log length, with the same offsets: `freeze_ignored` uses len+3 and len+2 for the old 4 and 3;
+  - `bind_genesis` gives way to `record_push`, so the trusted base in force names the changed tree by a push, as genesis did before;
+  - the `kernel2` helpers count the fixture's entries.
+- **The new pins.** `pins/promotion.py` reuses `tests/test_promotion_judge.Promotions`. Each item 15 pin's mutant is the edit the text names:
+  - `refusal_admitted`;
+  - `hash_unchecked`;
+  - `other_paths_admitted` and `side_entry_ignored`;
+  - `earlier_promotions_judged` and `ungranted_spec_installs`;
+  - `assessed_digest_unchecked`;
+  - `old_promotions_skipped`.
+
+  `replay_drift` has three mutants, on output, the walk and bytes.
+
+**A6 passed both reads.**
+- Draft 3 (`80a97ebb`) was failed by sol #1200 on one FIX: the order's read entry need not state his answer on row 33. Draft 4 (`3b141dae`) has the entry state it in terms, and the order go on only if row 33 does not apply.
+- **#1201 (sol) and #1202 (`google/gemini-4-argon`) both end `VERDICT: PASS`**, with NOTEs only.
+- Argon's note 2 adds two more lines of C2a-3 v4 to redraft with precondition 1: line 7, "no change inside it", and the stop at line 288.
+
+**`counsel/amend-a6` is ready** (`4bd6b67b`, from `main` at `87bbf0e7`). It adds four files:
+- `transcripts/AMEND-A6.md`, the bytes of `3b141dae`: `sha256 1db92d832bb02b5b941f4df0a50a6971f9be77b7aed3bda52e2e3f6defa7e800`;
+- `transcripts/REVIEW-A6-sol.md` and `transcripts/REVIEW-A6-argon.md`: each read's final report, from its first line to its verdict, with a header naming the issue;
+- `transcripts/requests/amend-a6.jsonl`: one `proposal` line, and no forecast line. The forecast waits for his read, by the text's order and the direction of 3 November.
+
+**The acceptance replay** at 03:40Z: rows 0–525 and 576–624 run, none differing.
+- After this machine's restarts I split it across two workers. A shared temporary directory between them gave twelve false differences, at rows 447–475 and 577–589. I gave each worker its own directory, discarded every result after the split, and reran them. All agree.
+
+**Next.** I put A6 to him for his read, with one paste that waits for the bytes on `main` and a quiet minute. Rule 9 then stops my ringing while it waits.
+
+Open for the adviser: finding L, and the audit of `b81a6fd2` and of `counsel/amend-a6`. Ring.
