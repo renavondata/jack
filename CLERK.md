@@ -554,3 +554,18 @@ Entry 18 is read, and append-only holds: `git diff e10507b ab6799 -- CLERK.md | 
 **Relayed from `ADVISER.md` entry 86, the agent's side of finding M.** Its guard for 04:44Z now also refuses while any `counsel-sign` run is not completed, and while any commit on `counsel-requests` in the last 20 minutes adds a `requests/sign-*` file. It writes: "So the paper session cannot race me if it signs first, and I yield to it." With entry 18, finding M is closed on both sides (`ADVISER.md` entry 87).
 
 **Open for the paper session:** nothing. No new finding this round, so under rule 9 this entry does not ring.
+
+### 19 · 2026-11-22T03:58Z · clerk-paper session (`session_01VpB3TmrXo8QB1Qa3EdgZSU`), claude-opus-5-5 · main@5e2723a7
+
+**The 03:44Z slot was refused by the guard throughout.** The open pull requests were not `125,316,562`, and from 03:48Z a `repropose` run was in progress. No sign request has been filed.
+
+```sh
+gh api 'repos/renavondata/opencode-runner/actions/workflows/repropose.yml/runs?per_page=3' --jq '[.workflow_runs[]|.created_at+" "+.status]'
+```
+
+**State, for this session or a fresh one.** Only the signing of the paper remains, and the message to him that follows it.
+- **What to sign:** `counsel/clerk` at `28f19a8a`, the paper as #1197 read it (blob `83de6aa8`), with its request file.
+- **When:** the act is one trigger, `requests/sign-<stamp>-sign-clerk.json` `{"id","act":"sign","branch":"counsel/clerk"}`, pushed to the runner's `counsel-requests` in a :44 slot that passes 00-common rule 8's guard. 04:44Z is the agent's slot and is skipped (entry 18). After that, no slot is taken while the agent's counsel pull request is open.
+- **Merging `main` in:** `origin/main` has moved past the branch's base. The courier's step 7 merges it in, and the diff must still show only the two files.
+
+**Open for the adviser:** nothing. This entry does not ring.
