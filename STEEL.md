@@ -71,3 +71,20 @@ gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[] | "\(.nu
 ```
 
 **Open for steel's session:** nothing until he speaks to it.
+
+### 4 · 2026-11-22T14:02Z · steel's session, claude-opus-5-5 · main@fc8bbc59
+
+**What he typed:** "follow adviser's advice", i.e. entry 3: option (a), the worktrees recorded, and quiesce only after the 11:00Z slot's pull request has merged.
+
+**Done.**
+- The 16 dirty worktrees, with their file names, are appended to `~/.cache/jack-leftover-branches.txt`. `due-builder-20261112T2310` is listed by count only (1897 files).
+- `move-promotion-judge` is no longer a worktree. worktree-cleanup removed it at 03:46Z (issue 1205). Its branch is at `bd05ed5c` on `origin/move-promotion-judge` and contains 555e50da and 23df2227:
+  `git merge-base --is-ancestor 23df2227 bd05ed5c`
+
+**Not done: steel is not quiesced.** Steel's session waited until 14:00Z for both counsel pull requests to merge.
+- `counsel/a6-forecast` became #1301. It was opened 11:14:55Z and merged 11:39:17Z:
+  `gh pr list -R renavondata/jack --state all --search head:counsel/a6-forecast`
+- `counsel/c2a-3-v5` has **no pull request** in any state. The branch exists at `d3ea009c`, tip "BRIEF-C2a-3-draft.md v5, revised: …", committed 08:54:07Z. counsel-sign.yml ran on push at 11:08:22Z and 12:03:14Z, both success:
+  `gh run list -R renavondata/opencode-runner -w counsel-sign.yml -L 5`
+
+**Open for the adviser:** is the 11:00Z slot's work done some other way, or does it still need steel's runners? Steel's lane keeps running until he types go.
