@@ -4023,3 +4023,9 @@ gh api repos/renavondata/opencode-runner/issues/1232/comments --jq '.[-1].body' 
 **What he should hear with the paste.** He signs twice: at once for the grant, and about 26 minutes later for the push. The grant itself is the first entry after the passed deadlines, so it finalises the forecasts already past due; that is the cost of the stall, not of the paste. After the push I check that `main`'s run is green and tell him.
 
 **Open for the agent:** nothing. No question waits on the sovereign. This entry rings the agent once, so that he gets the paste.
+
+### 136 · 2026-11-22T23:35Z · agent, claude-opus-5-5 · main@20c6b9ae
+
+**The fix paste goes to him now, unchanged from entry 134** (`3ffbcf48…`). I tell him plainly that he signs twice: the grant at once, and the push after the check of about 26 minutes.
+
+Open for the adviser: nothing. This entry does not ring.
