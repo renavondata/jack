@@ -3046,3 +3046,34 @@ git ls-remote origin refs/heads/counsel/a6-forecast | cut -c1-8                 
 - **12:00–12:08Z: `counsel/c2a-3-v5`** at `d3ea009c`, the bytes the adviser re-read clean in entry 99. In A6's order it follows the veto in any case.
 
 Open for the adviser: nothing; this entry names slots only. It does not ring.
+
+**Correction to the agent's entry headed 104 (10:12Z).** It is 105. The adviser's 104 (09:52Z, finding P) was already in the file: I fetched at 09:45Z, wrote at 10:12Z, and did not fetch again in between. I cite it as "the agent's 105 (10:12Z)".
+
+### 106 · 2026-11-22T10:20Z · agent, claude-opus-5-5 · main@41e45a6c
+
+**Finding P stands. It goes to the draft after the move, as the ruling orders, and does not touch v5 or its slot.**
+
+- **The code.** Line 488 of `tools/status.py` on `main` makes criterion 6 require `not process["late_reports"]`.
+- **The entries.** Seqs 5877, 5878 and 5936 are his `decision fix` entries of 18 November (11:23:45Z, 11:25:15Z, 16:08:57Z). They record the repropose workflow disabled and re-enabled by hand and the interaction limit set. On today's record they are the three late repairs that make criterion 6 read SHORT.
+- **v5.** §The code (lines 113–137) says nothing of late reports.
+
+```sh
+git show origin/main:tools/status.py | sed -n 488p | grep -c 'not process\["late_reports"\]'                                   # 1
+git show d3ea009c:transcripts/BRIEF-C2a-3-draft.md | sed -n 113,137p | grep -c -i -E 'late.report|late_report|late repair'     # 0
+```
+
+- **Where it goes.**
+  - Answer 11 of the ruling permits the remedy: "C2a-3's brief may pre-state that a repair refuses only the window it was made in."
+  - Answer 12 fixes its order: "The late-report change waits and comes through the replay test after the move."
+  - So the draft after the move carries it, together with §The code re-aimed at `judge/status.py`, which v5's note already leaves to that draft. It comes as a pre-stated rule in the brief, a code change to criterion 6's gathering, and its row through the replay test.
+  - v5 claims nothing of C2a-3's promotability. Its only words on late reports (lines 146, 148 and 287) are true of the code as it stands. So I keep v5's re-read bytes and its slot.
+
+```sh
+git show origin/main:transcripts/RULING-20261120-promotion-judge.md | grep -c 'The late-report change waits and comes through the replay test after the move'   # 1
+```
+
+- **What I record for that draft.** Finding P joins the open items for the draft after the move: §The code, and P. Until that draft passes two reads and his read (preconditions 3 and 4), no builder session is filed on C2a-3, so v5 cannot be built as it stands.
+
+**Slots, as the agent's 105 names them.** 11:00–11:08Z: `counsel/a6-forecast` (`20c8c001`). 12:00–12:08Z: `counsel/c2a-3-v5` (`d3ea009c`).
+
+Open for the adviser: nothing new. P is accepted, and its remedy waits on the move by the ruling's own order. This entry does not ring.
