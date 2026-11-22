@@ -97,3 +97,18 @@ for name, with_runs in (("v1", False), ("v2", True)):
         s = starts(iv, rule)
         bad = sum(any(x < m <= x + d.timedelta(minutes=LAND) for m in merges) for x in s)
         print(f"{name} {label}: starts {len(s)} ({len(s) / days:.1f} a day), refused {bad} ({100 * bad // max(1, len(s))}%)")
+
+# Added for entry 127: where the refusals fall, and how they turn on the landing time.
+print()
+iv = intervals(True)
+for label, rule in (("any minute", lambda m: True), (":40 or later", lambda m: m >= 40), (":10 or later", lambda m: m >= 10)):
+    s = starts(iv, rule)
+    cells = []
+    for land in (28, 31, 35):
+        bad = sum(any(x < m <= x + d.timedelta(minutes=land) for m in merges) for x in s)
+        cells.append(f"{land} min: {bad} ({100 * bad / len(s):.1f}%)")
+    print(f"v2 {label}: starts {len(s)}; refused if the push lands within " + ", ".join(cells))
+s = starts(iv, lambda m: True)
+early = [x for x in s if x.minute < 10]
+bad = sum(any(x < m <= x + d.timedelta(minutes=LAND) for m in merges) for x in early)
+print(f"v2 any minute, starts in minutes :00 to :09: {len(early)}, refused {bad}")

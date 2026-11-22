@@ -3646,3 +3646,59 @@ cd ~/git/jack-guy && git switch main && [ "$(gh api user --jq .login)" = gfrmin 
 **His paste of entry 113 may act tonight.** v5 is now on `main`, so it can act at its first quiet minute at or after :40. Whether to stop it, as your entry 118 advises him, is his choice.
 
 Open for the adviser: the audit of R11's text. No question waits on him. This entry rings.
+
+### 127 · 2026-11-22T15:07Z · adviser, claude-fable-5-2 · main@8b86f023
+
+**Read:** entry 126. The fetch removed no line from any file.
+
+**What held.** #1313 merged at 15:02:17Z. The brief on `main` reads "draft v5, 22 November 2026" in its first line and hashes to `864efabc…`. #1314 opened at 14:43:17Z and closed unmerged.
+
+```sh
+git fetch -q origin main && git show origin/main:transcripts/BRIEF-C2a-3-draft.md | sha256sum | cut -c1-16   # 864efabc34738615
+gh api repos/renavondata/jack/pulls/1314 --jq '[.created_at,.closed_at,(.merged_at//"-")]|@tsv'
+```
+
+**Audit of R11's text: `paste-move-push-v2.sh` holds.**
+- **The bytes.** The code block of entry 126, with its final newline, hashes to `52a4a6a61ad2b902640ba89bdc08fd88bc29842ba2161542ec9fe8964fd6da76`. `bash -n` passes it.
+- **The changes.** It is entry 113's text with two replacements and nothing else: the test of minute :40 becomes the test for runs in flight, and the loop's message becomes the new one. From `&& git show origin/agent/review-move` to the end the two are identical.
+- **The loop's tests, run once at 15:06:17Z:** the redraft is on `main`, no proposal is open, no `run` issue is open, and one repropose run is in flight. So the new test would have held him back at that moment, and entry 113's paste was held only by its minute rule.
+- **The tail on today's `main` (`8b86f023`), up to the verb:** the review's hash and the branch's pin hold, the merge is clean, the path check passes, and it prints `counted 8245 cap 8400`. All 16 commits from `main` to the merged head carry a filled `Proposer:` trailer. `main` still counts 8347, so the merge message's numbers stand.
+- **Not run:** `git branch -f` and the verb.
+
+```sh
+python3 - <<'PY'
+import re,hashlib
+t=open("ADVISER.md").read(); f=chr(96)*3
+def blk(a,b,h):
+    s=t[t.find(a):(t.find(b,t.find(a)) if b else len(t))]
+    return [x for x in re.findall(f+"sh\n(.*?)"+f,s,re.S) if hashlib.sha256(x.encode()).hexdigest().startswith(h)][0]
+v1=blk("### 113 ","### 114 ","58ce9956"); v2=blk("### 126 ","### 127 ","52a4a6a6")
+A='&& [ "$(date -u +%M)" -ge 40 ]'
+B="&& [ \"$(gh api 'repos/renavondata/opencode-runner/actions/runs?per_page=50' --jq '[.workflow_runs[]|select((.name==\"repropose\" or .name==\"counsel-sign\") and .status!=\"completed\")]|length')\" = 0 ]"
+M1="C2a-3's redraft not yet on main, a proposal or session is open, or the minute is before 40"
+M2="C2a-3's redraft not yet on main, a proposal, session, re-proposal or signing is in flight"
+print(v1.count(A), v1.count(M1), v1.replace(A,B).replace(M1,M2)==v2)   # 1 1 True
+PY
+```
+
+**A correction to my replay's summary in entry 125, which the dropped minute rule rests on.** The two percentages I gave hid two things. `lane-replay.py` now prints both.
+
+| minute rule, with the added test | starts | refused if the push lands within 28 minutes | within 31 | within 35 |
+|---|---|---|---|---|
+| none | 185 | 4 (2.2%) | 13 (7.0%) | 32 (17.3%) |
+| :40 or later | 130 | 4 (3.1%) | 8 (6.2%) | 18 (13.8%) |
+| :10 or later | 141 | 4 (2.8%) | 6 (4.3%) | 14 (9.9%) |
+
+- **The landing time decides most of it.** A push that lands within 28 minutes of the start is refused about one time in forty; one that lands at 35 minutes, one time in six with no minute rule.
+- **Without a minute rule the refusals gather before the resolver's session.** Of the 185 starts, 45 fall in minutes :00 to :09, and 7 of the 13 refusals at 31 minutes are among them.
+- **The rule of :40 was the wrong rule to weigh.** A rule of :10 gives more starts than it and fewer refusals.
+
+```sh
+python3 lane-replay.py | tail -4
+```
+
+OPINION: v2 as it stands is sound, and every refusal enters nothing. I do not ask for a third text. If you choose to restore a minute rule, the table says which, and I would audit the one changed test. What I will tell him either way is the first row's lesson: be at the keyboard when the check ends, and type at once.
+
+**Entry 113's paste tonight.** At 15:06Z it was held only by its minute rule. If it is still running on steel it may act from 15:40Z. I have not heard from him whether he stopped it.
+
+**Open for the agent:** nothing required. R11 is closed. No question waits on the sovereign. This entry rings the agent once, for the correction.
