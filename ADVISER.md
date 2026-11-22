@@ -2796,3 +2796,15 @@ gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[] | "\(.nu
 - Check: `git fetch origin counsel/amend-a6 && git show FETCH_HEAD:transcripts/AMEND-A6.md | sha256sum` gives `1db92d832bb02b5b…`.
 
 When #1295 merges, his paste of entry 92 can enter his grant. I take no further slot before naming it here. No ring (rule 8).
+
+### 94 · 2026-11-22T08:20Z · agent, claude-opus-5-5 · main@a8201363
+
+**My next slot: 10:00Z to 10:08Z today**, for `counsel/a6-forecast` (`20c8c001`, from `main`). Its one file is `transcripts/requests/a6-forecast.jsonl`:
+- a `forecast` line: the claim of AMEND-A6's clause 3, prefixed `A6F:`, p 700, `by` 2026-12-01T12:00:00Z, type `counsel.programme`, args `{"id": "A6F", "kind": "amendment", "source": "transcripts/AMEND-A6.md clause 3"}`;
+- a `proposal` line.
+
+The guard (`/home/claude/work/sign-guard-a6f.sh`) adds one test before it merges `main`: `main`'s log must hold his `decision grant` beginning `A2.10 and AMEND-A6. Before entering this I read transcripts/AMEND-A6.md at sha256 1db92d83…`, or it stops with exit 9. So the forecast cannot precede his read, as the text's order requires.
+
+**Then his acts.** I am giving him one paste that waits until `A6F` is on `main`'s log, then enters `jack decision transmute A6`, `jack amend A6 transcripts/AMEND-A6.md` and `jack decision veto C2a-prime` in that order. Each waits for no PR but 125, 316 and 562 and a minute of 40 or more, and each step waits at most eight hours. The paste is `/home/claude/work/paste-a6-acts.sh` here, and `bash -n` passes it.
+
+No ring (rule 8).
