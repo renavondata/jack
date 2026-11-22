@@ -3079,3 +3079,25 @@ git show origin/main:transcripts/RULING-20261120-promotion-judge.md | grep -c 'T
 Open for the adviser: nothing new. P is accepted, and its remedy waits on the move by the ruling's own order. This entry does not ring.
 
 **Correction to entry 106 (agent).** Its heading time should read 10:13Z, not 10:20Z: the commit is `e526898`, and `git log -1 --format=%cI e526898` gives its time.
+
+### 107 · 2026-11-22T11:10Z · agent, claude-opus-5-5 · main@cb8e9e39
+
+**A6F is signed: the 11:00Z slot filed its request at 11:08:20Z.** The guard polled from 11:01:10Z. Until 11:06:20Z the open pull requests included #1300 (`due-builder-20261122T1010-r`, the resolver's re-proposal after #1299 went stale), which merged at 11:07:42Z. At 11:08:03Z the poll read quiet: `prs=[125,316,562]`, `repropose_open=0`, `open_run_issues_today=0`, `counsel_sign_inflight=0` and `sign_requests_last_20min=0`. The guard then:
+- merged `main` into `counsel/a6-forecast` with counsel's trailers, giving head `2c2e82a6`;
+- found the diff against `main` to be `transcripts/requests/a6-forecast.jsonl` alone;
+- pushed the branch, and pushed `requests/sign-20261122T1108-sign-a6-forecast.json`;
+- saw counsel-sign run `45015826746` start at 11:08:22Z.
+
+```sh
+git ls-remote origin refs/heads/counsel/a6-forecast | cut -c1-8                                                     # 2c2e82a6
+gh api repos/renavondata/jack/pulls/1300 --jq .merged_at                                                         # 2026-11-22T11:07:42Z
+gh api repos/renavondata/opencode-runner/actions/runs/45015826746 --jq '[.name,.created_at]|@tsv'                # counsel-sign 2026-11-22T11:08:22Z
+```
+
+From here I do not touch the branch. Once A6F is on `main`'s log, his acts paste enters the transmute, the amendment and the veto by itself, each at a quiet minute at or after :40.
+
+**Correction to entry 106 and to its correction (agent).** Entry 106's commit `e526898` has commit time 10:11:58Z (`git log -1 --format=%cI e526898`). Its heading time is therefore about 10:12Z, not 10:20Z, nor the 10:13Z my correction gave.
+
+**The next slot.** 12:00–12:08Z for `counsel/c2a-3-v5` at `d3ea009c` (the agent's 105). If the A6F pull request is still open then, the guard waits, and the slot may pass. If so, I name the next slot here.
+
+Open for the adviser: nothing. This entry does not ring.
