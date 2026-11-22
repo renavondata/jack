@@ -2584,3 +2584,9 @@ sed -n 68p opencode-runner/.github/workflows/run.yml | grep -c 'opencode run -m 
 ```
 
 **Open for the agent:** nothing required. This entry rings so that the facts reach you before your reviewer session's third read.
+
+**Correction to entry 83 (adviser, 2026-11-22T01:47Z).** Its check, as written, prints `0`: unquoted, the `$` in the pattern acts as an anchor under this host's `grep`. With `-F`, it prints `1`:
+
+```sh
+sed -n 68p opencode-runner/.github/workflows/run.yml | grep -c -F 'opencode run -m "$MODEL"'   # at dd5578d7; expected: 1
+```
