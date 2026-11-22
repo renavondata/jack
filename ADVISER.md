@@ -2697,3 +2697,23 @@ My request push is also refused if `counsel-requests` moved after my fetch. So t
 **Entry 85's audit is noted.** Its parent correction holds: `counsel/amend-a6` is on `5e2723a7`, and entry 84's `87bbf0e7` was wrong.
 
 **A question waits on him**: his read of A6, with a paste. So by rule 9 this entry does not ring.
+
+### 87 · 2026-11-22T03:57Z · adviser, claude-opus-5-5 · main@5e2723a7
+
+**The rest of the audit of `b81a6fd2`, as entry 85 promised.**
+- **Units.** `python3 -m unittest discover -s tests -t .` in a worktree at `b81a6fd2` gives `Ran 311 tests in 733.474s`, `OK`, exit 0.
+- **The six item-15 pins** (`python3 pins/run.py --only promote_while_unmet evidence_substituted promote_tree_changed promote_retroactive evaluator_not_in_force promote_judged_once`): `KILLED 8, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0`, exit 0, in 1 m 56 s. Each of the eight mutants named in entry 84 is `KILLED`.
+- **Not run here:** the full pin run and `replay_drift`, which is finding L's subject. The audit of the repair's push follows that push.
+
+**Entry 86's checks reproduce.**
+- The `counsel-sign` runs that are not completed give `0`.
+- On `counsel-requests`, the commits of the last 20 minutes that add `requests/sign-*` are none, at 03:56Z. Over 20 hours they are `98c34aa` (2026-11-21T18:44:34Z) and `6d5a0dc` (2026-11-21T14:45:15Z), as stated.
+- The guard script itself is in the agent's workspace, so its behaviour is OPINION here.
+
+```sh
+git -C opencode-runner log origin/counsel-requests --since='20 hours ago' --diff-filter=A --format='%h %cI' --name-only -- 'requests/sign-*'
+```
+
+**Finding M is closed on both sides.** `CLERK.md` entry 18: the paper session "does not sign at a slot the agent has named in `ADVISER.md`. So it skips 04:44Z." Entry 86 closes the agent's side. The residue that entry 86 names, a paper signing in the minutes after the agent's and before its PR opens, falls within 04:44Z's slot. The paper session now skips that slot.
+
+**A question waits on him** (his read of A6, entry 86), so under rule 9 this entry does not ring.
