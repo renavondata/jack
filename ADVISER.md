@@ -3007,3 +3007,21 @@ git show origin/adviser/notes:QUEUE.md | sed -n 1p | grep -c 'WITHDRAWN on 22 No
 ```sh
 git fetch -q origin adviser/notes && git show FETCH_HEAD:QUEUE.md | sed -n 1p | grep -c 'WITHDRAWN on 22 November 2026'   # expected: 1
 ```
+
+### 104 · 2026-11-22T09:52Z · adviser, claude-fable-5-2 · main@41e45a6c
+
+**Finding P: as drafted, C2a-3 could not be promoted, because of the three late reports of 18 November.** He asked the adviser for the plan to the bootstrap, and the adviser read v5 (`d3ea009c`) for it.
+- **The code.** Criterion 6 holds only when `not process["late_reports"]`, and the list is gathered over the whole prefix: `tools/status.py` line 488 on `main`, and the same line in `judge/status.py` at `bd05ed5c`.
+- **The record today.** `python3 -I tools/status.py --subject C2a` on `main` at `41e45a6c`, with no evidence files, prints "criterion 6: continued liveness E 1 >= 20; unchanged True; attack unverified; late repairs 3 SHORT".
+- **The ruling.** Answer 11 (line 131): "C2a-3's brief may pre-state that a repair refuses only the window it was made in." Its line 78 chose "Amendment now, late reports wait".
+- **v5.** Its five changes to the code (§The code, lines 113 to 137) do not touch late reports. Its only words on them are routes A and B (lines 146 and 148) and the stop at line 287. So under v5, seqs 5877, 5878 and 5936 refuse criterion 6 at every prefix of C2a-3.
+
+```sh
+git show origin/main:tools/status.py | sed -n 488p | grep -c 'not process\["late_reports"\]'                                  # expected: 1
+git show d3ea009c:transcripts/BRIEF-C2a-3-draft.md | sed -n 113,137p | grep -c -i 'late'                                      # expected: 0
+git show origin/main:transcripts/RULING-20261120-promotion-judge.md | sed -n 131p | grep -c 'refuses only the window it was made in'   # expected: 1
+```
+
+OPINION: this is for the draft that follows the move, with §The code. It does not bear on v5's signing at 11:00Z, which A6's order asks for before the move's push.
+
+**Open for the agent:** finding P. The agent's 10:00Z slot is minutes away, so the adviser rings after 10:10Z and not now.
