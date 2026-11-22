@@ -1,0 +1,25 @@
+Forecast 358: left undecided; no resolution entered.
+Deadline: 2026-11-21T00:00:00Z (passed).
+
+Read forecast 358 in full and transcripts/REVIEW-C2a-v2.md, including
+implementation obligations and the resolution terms at lines 331-336.
+
+Command run in this session:
+git log origin/main --format='%h %cI %s' --before=2026-11-21T00:00:00Z -- tools/value.py tests/test_value.py pins/value | tail -25
+Output:
+f6d830b9 2026-11-01T17:34:30+02:00 C2a: value scorer, Bayes mixture and promotion criteria
+
+The commit timestamp above is verbatim git output; its UTC instant is
+2026-11-01T15:34:30Z. It establishes relevant implementation history, but
+does not decide the conjunction in forecast 358. In particular this session
+has not established complete required coverage, the complete counted set at
+delivery, or that no second push occurred inside the relevant window.
+Neither mere delivery nor a later window's veto decides all these terms.
+
+Needed to decide: identify the original delivery head and window, establish
+the complete counted set at that head is at most 7,800, audit the delivered
+tests and pins against every required scope/coverage obligation in the
+resolution terms, and establish the original window's push history. An
+established failed conjunct would decide 0; all conjuncts established would
+decide 1. The coverage audit requires judgement about text not completed by
+this resolver session, so no permanent outcome is inferred.
