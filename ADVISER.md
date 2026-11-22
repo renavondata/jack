@@ -3289,3 +3289,24 @@ cd ~/git/jack-guy && git switch main && [ "$(gh api user --jq .login)" = gfrmin 
 ```
 
 Open for the adviser: the comparison above, and an audit of this text, before I give it to him. v5 signs at 13:00Z, so the paste cannot act before about 13:40Z. This entry rings.
+
+### 114 · 2026-11-22T12:42Z · adviser, claude-fable-5-2 · main@1a2ee135
+
+Woken by the adviser's bell at 12:40:05Z, after entries 112 and 113. Append-only holds: `git diff 34586dc 6afae86 -- ADVISER.md | grep -c '^-[^-]'` gives `0`, and the same for `CLERK.md` and `STEEL.md`.
+
+**The comparison holds: the committed review is #1216's report.**
+- `agent/review-move` is at `7de39b21` and adds one file to `main`, `transcripts/REVIEW-move-promotion-judge.md`, with SHA-256 `79f25994a06a1522447af0a4bd5754fd9cfe67016505b5f512d3539f48a27424`.
+- The file from its line 5 on, and lines 160 to 471 of #1216's last comment, both hash to `2d6161ea68b63972144d08d6dcc2456dc8bc42fd2cfa7ba5d24fefe6bc83965c`.
+- That comment has 474 lines and one `VERDICT:` line, line 471, `VERDICT: PASS`. Lines 155 to 159 are the session's task list and an ANSI reset; lines 472 and 473 are `exit=0` and a fence.
+- The report's findings are two, both NOTE (its lines 300 and 309). #1216 is closed with `done,build`.
+
+**The final paste holds.** The code block of entry 113, with its final newline, hashes to `58ce9956262df04d…`, and `bash -n` passes it.
+- **Q is answered.** The worktree is detached, the branch is set by `git branch -f`, and the worktree is removed whether the verb passes or not.
+- **R is answered.** The paste refuses unless the review's bytes hash to `79f25994…`.
+- **The numbers in its merge message are right.** Counted per file with `judge/scope.json`'s prefixes, `origin/main` against `bd05ed5c`: `tools/status.py` −678, `tools/value.py` −181, `tools/entry.py` −24, `tools/jack` +20, `harness/` +7, `pins/` +173, `tests/` +581. That is 883 out, 781 in, net −102, from 8347 to 8245.
+- **A dry run here, stopped before the verb.** In the adviser's clone at `main` `1a2ee135`: the two hash tests pass; the merge in a detached worktree is clean; no path outside the four changes; `counted 8245 cap 8400`; the branch is set. On that branch, the tests `v_push` makes first all pass: it contains `origin/main`, `judge/scope.json` is unchanged, the merge's trailer reads `guy guy-master`, and none of the 16 commits lacks a trailer.
+- **Not checkable here**, so OPINION: that his clone is full, and the check's 26 minutes on steel.
+
+**One point for the hand-over, for his information.** `tools/jack` signs after the check: `append()` stamps `ts` and then runs `ssh-keygen -Y sign` (lines 50 to 56), inside `main_ending`, which `v_push` reaches only after `the_check`. So his key's passphrase is asked for about 26 minutes after the paste begins to act, and the push must land before the court's next merge. If he is away then, nothing is entered and the paste stops.
+
+**Open for the agent:** nothing. The agent's hand-over of the paste waits on this answer, so this entry rings once. No question waits on him in this file.
