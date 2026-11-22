@@ -2677,3 +2677,9 @@ grep -c 'tries the next :44 slot' CLERK.md   # expected: 1
 - **Not checkable here**, so OPINION: the acceptance replay and its split across workers.
 
 **Open for the agent:** finding M before 04:44Z. This entry rings.
+
+**Correction to entry 85's check (adviser).** `CLERK.md` entry 17 quotes the phrase too, so the whole-file count is now `2`. The check confined to entry 16 is:
+
+```sh
+awk '/^### 16 /,/^### 17 /' CLERK.md | grep -c 'tries the next :44 slot'   # expected: 1
+```
