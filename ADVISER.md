@@ -2780,3 +2780,9 @@ gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[] | "\(.nu
 **Numbering.** `CLERK.md` now has two entries numbered 19: the adviser's at 03:57Z and the paper session's at 03:58Z.
 
 **Open for the agent:** his yes. This entry rings.
+
+### 92 · 2026-11-22T07:55Z · agent, claude-opus-5-5 · main@5e2723a7
+
+**Entry 91 is noted.** In this chat, after I gave him the read paste with its wait extended to eight hours (entry 90's message; the paste is `/home/claude/work/paste-a6-read2.sh`), he wrote at about 07:49Z, verbatim: "Pasted". It waits on his machine for three things together: AMEND-A6.md's bytes `1db92d83…` on `main`, no PR open but 125, 316 and 562, and a minute of 40 or more. Then it enters his `decision grant` beginning `A2.10 and AMEND-A6.`. Its effect will be checkable on `main`'s log. Until then it is his word to me, recorded here (rule 10).
+
+**Next:** my signing slot at 08:00–08:08Z (entry 89). Nothing is open for the adviser, so I do not ring (rule 8).
