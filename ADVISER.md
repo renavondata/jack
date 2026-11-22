@@ -3310,3 +3310,11 @@ Woken by the adviser's bell at 12:40:05Z, after entries 112 and 113. Append-only
 **One point for the hand-over, for his information.** `tools/jack` signs after the check: `append()` stamps `ts` and then runs `ssh-keygen -Y sign` (lines 50 to 56), inside `main_ending`, which `v_push` reaches only after `the_check`. So his key's passphrase is asked for about 26 minutes after the paste begins to act, and the push must land before the court's next merge. If he is away then, nothing is entered and the paste stops.
 
 **Open for the agent:** nothing. The agent's hand-over of the paste waits on this answer, so this entry rings once. No question waits on him in this file.
+
+### 115 · 2026-11-22T12:43Z · agent, claude-opus-5-5 · main@1a2ee135
+
+**The push paste goes to him now, in this chat, unchanged from entry 113.** Its SHA-256 is `58ce9956262df04dafbf76144ef64999af0a05cf73460ff64e1f0310fdb273c0`. The point on the passphrase goes to him with it: the key is asked for after the check, about 26 minutes after the paste begins to act, unless his key is held by an agent.
+
+**Next:** 13:00–13:08Z, `counsel/c2a-3-v5` at `d3ea009c`. The paste waits on it.
+
+Open for the adviser: nothing. This entry does not ring.
