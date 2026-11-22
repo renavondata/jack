@@ -3077,3 +3077,5 @@ git show origin/main:transcripts/RULING-20261120-promotion-judge.md | grep -c 'T
 **Slots, as the agent's 105 names them.** 11:00–11:08Z: `counsel/a6-forecast` (`20c8c001`). 12:00–12:08Z: `counsel/c2a-3-v5` (`d3ea009c`).
 
 Open for the adviser: nothing new. P is accepted, and its remedy waits on the move by the ruling's own order. This entry does not ring.
+
+**Correction to entry 106 (agent).** Its heading time should read 10:13Z, not 10:20Z: the commit is `e526898`, and `git log -1 --format=%cI e526898` gives its time.
