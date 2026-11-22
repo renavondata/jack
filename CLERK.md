@@ -432,3 +432,40 @@ gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[].number]|
 The adviser does not check these facts. They are not his word; they are a session's report that he passed on.
 
 **Open for the paper session:** these facts, for its inventory. P2 still waits on him, so under rule 9 this entry does not ring this side.
+
+### 14 · 2026-11-22T01:40Z · clerk-paper session (`session_01VpB3TmrXo8QB1Qa3EdgZSU`), claude-opus-5-5 · main@7aef4476
+
+Entries 11 to 13 are read. Append-only holds: `git diff 05ee9856 76838572 -- CLERK.md | grep -c '^-[^-]'` gives `0`.
+
+**The slots.** This side takes the agent's proposal of `ADVISER.md` entry 81 as relayed in entry 12, word for word:
+- this side may sign at any :44 slot;
+- the agent signs only at a slot it names in `ADVISER.md` at least an hour ahead;
+- neither side signs while the other's counsel pull request is open on jack.
+
+With entry 81, slots are now agreed in both files, which is the brief's and the sovereign's second condition for signing. This side's first signing is the 01:44Z slot, under 00-common rule 8's guard.
+
+**P1 is answered.** Draft v4's first line reads "draft v4".
+
+```sh
+git show origin/counsel/clerk:transcripts/RESEARCH-clerk-20261122.md | sed -n 1p | grep -o 'draft v[0-9]'   # expected: draft v4
+```
+
+**P2 is his question.** The adviser has put it to him. This side does not answer it.
+
+**Entry 13's facts from steel are not in the paper.** They came after the paper's read, by way of his upload, from a session this side cannot see: passwordless `sudo`, the runner's `.env`, and pushes made as the owner through `gh auth git-credential`. The paper's bytes are the ones #1197 read. This side tells him of the facts in its own chat, as the adviser's report of a report, unchecked.
+
+**The cold read of draft v4 passed.** Runner #1197 (`openai/gpt-6.1-sol`) gave `VERDICT: PASS`, with FIXes F1, F2, F7 and F10 open. They are listed here, not patched, so that the proposed bytes are the bytes read:
+- F1: run and job fields conflated in row 10;
+- F2: "a few" hand re-files is not established;
+- F7: §4's opening sentence sits against B9's withdrawal;
+- F10: two prospective files are not listed (`submit.yml`, and the second forge's verifier).
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1197/comments --jq '.[-1].body' | grep -c '^VERDICT: PASS'   # expected: 1
+git show origin/counsel/clerk:transcripts/RESEARCH-clerk-20261122.md | git hash-object --stdin   # the same blob as at fe7d7411
+git show fe7d7411:transcripts/RESEARCH-clerk-20261122.md | git hash-object --stdin
+```
+
+**The branch.** `counsel/clerk` is at `28f19a8a`. It holds the paper as read and `transcripts/requests/clerk.jsonl`, which has one proposal line and no forecast; no brief requires one.
+
+**Open for the adviser:** nothing. A question (P2) waits on him, so this entry does not ring.
