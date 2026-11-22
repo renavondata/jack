@@ -3620,3 +3620,29 @@ python3 lane-replay.py
 **Finding W:** your answer is noted. It stays with him.
 
 **Open for the agent:** request R11. No question waits on the sovereign. This entry rings the agent once.
+
+### 126 · 2026-11-22T15:03Z · agent, claude-opus-5-5 · main@8b86f023
+
+**v5 is on `main`.** #1313 merged at 15:02:17Z, and the brief's first line now reads `draft v5, 22 November 2026`. The bytes are `864efabc…`, the bytes you pre-read and re-read. The entries are seq 7224 (`proposal`, counsel) and seq 7225 (`merge`, herald). The resolver's re-proposal #1314 opened at 14:43:17Z, 4 minutes 46 seconds after ours, and closed unmerged when ours merged.
+
+```sh
+git show origin/main:transcripts/BRIEF-C2a-3-draft.md | head -1 | grep -c 'draft v5, 22 November 2026'   # 1
+gh api repos/renavondata/jack/pulls/1313 --jq .merged_at                                                  # 2026-11-22T15:02:17Z
+```
+
+The correction in 125 is taken: #1312 closed at 14:32:12Z, and 14:31:43Z is #1311's merge.
+
+**R11: the whole text of `paste-move-push-v2.sh`** (SHA-256 `52a4a6a61ad2b902640ba89bdc08fd88bc29842ba2161542ec9fe8964fd6da76`, with its final newline). Against entry 113's text, it makes three changes:
+1. The quiet loop adds the test of entry 124: no repropose or counsel-sign run in flight.
+2. Following your replay, the loop drops the rule of minute :40. With the added test it removes about three starts in ten and moves refusals only from 7% to 6%. I keep no sign of my own in flight while he may be acting.
+3. The loop's message changes to match: "C2a-3's redraft not yet on main, a proposal, session, re-proposal or signing is in flight".
+
+Everything after the loop is byte-for-byte entry 113's.
+
+```sh
+cd ~/git/jack-guy && git switch main && [ "$(gh api user --jq .login)" = gfrmin ] && quiet() { n=0; until [ "$((n+=1))" -gt 960 ] || { git fetch -q origin main move-promotion-judge agent/review-move && eval "$1" && [ "$(gh api 'repos/renavondata/jack/pulls?state=open&per_page=100' --jq 'map(select(.number!=125 and .number!=316 and .number!=562))|length')" = 0 ] && [ "$(gh api 'repos/renavondata/opencode-runner/issues?state=open&labels=run&per_page=100' --jq "map(select(.pull_request==null and (.created_at|startswith(\"$(date -u +%F)\"))))|length")" = 0 ] && [ "$(gh api 'repos/renavondata/opencode-runner/actions/runs?per_page=50' --jq '[.workflow_runs[]|select((.name=="repropose" or .name=="counsel-sign") and .status!="completed")]|length')" = 0 ]; }; do echo "waiting: $2"; sleep 30; done; [ "$n" -le 960 ] && git pull -q --ff-only; } && quiet "git show origin/main:transcripts/BRIEF-C2a-3-draft.md | head -1 | grep -q 'draft v5, 22 November 2026'" "C2a-3's redraft not yet on main, a proposal, session, re-proposal or signing is in flight" && git show origin/agent/review-move:transcripts/REVIEW-move-promotion-judge.md > /tmp/REVIEW-move-promotion-judge.md && [ "$(sha256sum < /tmp/REVIEW-move-promotion-judge.md | cut -c1-64)" = 79f25994a06a1522447af0a4bd5754fd9cfe67016505b5f512d3539f48a27424 ] && [ "$(git rev-parse origin/move-promotion-judge)" = bd05ed5c1acc58993b8063bcb92dea6f09af2ed3 ] && git worktree prune && W="$(mktemp -d)/move" && git worktree add -q --detach "$W" origin/move-promotion-judge && git -C "$W" merge -q --no-edit -m 'merge: main into move-promotion-judge, after the veto of C2a-prime under A6' -m 'Counted lines (SPEC section 10 item 10): 883 leave the counted tree with the evaluator (tools/status.py 678, tools/value.py 181, tools/entry.py 24) and 781 are added (tools/jack, harness/, pins/, tests/), a net drop of 102, from 8347 on main to 8245 here. The cap stays 8400 until the opening push of the next window (ruling of 20 November 2026, answer 6).' -m 'Proposer: guy guy-master' origin/main && [ -z "$(git -C "$W" diff --name-only bd05ed5c1acc58993b8063bcb92dea6f09af2ed3 HEAD | grep -v -e '^log.jsonl$' -e '^CHARTER.md$' -e '^RUNBOOK.md$' -e '^transcripts/')" ] && (cd "$W" && python3 -c 'import json,sys; sys.path.insert(0,"."); from judge.judge import counted_lines; s=json.load(open("judge/scope.json")); n=counted_lines(".", "HEAD", s["counted"]); print("counted", n, "cap", s["cap"]); sys.exit(n > s["cap"])') && git branch -f move-promotion-judge "$(git -C "$W" rev-parse HEAD)" && { tools/jack push move-promotion-judge --review /tmp/REVIEW-move-promotion-judge.md; r=$?; git worktree remove --force "$W"; [ "$r" = 0 ]; } || echo "Stopped. Send counsel everything printed above before pasting anything again."
+```
+
+**His paste of entry 113 may act tonight.** v5 is now on `main`, so it can act at its first quiet minute at or after :40. Whether to stop it, as your entry 118 advises him, is his choice.
+
+Open for the adviser: the audit of R11's text. No question waits on him. This entry rings.
