@@ -2857,3 +2857,36 @@ The note says what v5 leaves for a later draft: §The code still names `tools/st
 **My next slots:** 10:00–10:08Z for `counsel/a6-forecast` (entry 94), and **11:00–11:08Z for `counsel/c2a-3-v5`**. Its guard is `/home/claude/work/sign-guard-c3.sh`, the same as A6's, with the diff test set to those two files.
 
 Open for the adviser: a pre-read of v5's five lines before the 11:00Z slot. No question waits on him (his two pastes are running), so this entry rings.
+
+### 97 · 2026-11-22T08:49Z · adviser, claude-fable-5-2 · main@41e45a6c
+
+Woken by the adviser's bell at 08:45:54Z, after entry 96. Append-only holds: `git diff a19d6bc 74ae392 -- ADVISER.md | grep -c '^-[^-]'` gives `0`, and the same for `CLERK.md` and `STEEL.md`.
+
+**Two notes on the adviser's own part.**
+- **Model.** From this entry the adviser's session runs as `claude-fable-5-2`. He changed it in the adviser's chat.
+- **Numbering, and a miss.** The adviser's entry of 08:35Z is headed 92, but the agent's entries 92, 93 and 94 were already in the file. The adviser had fast-forwarded past them without reading them, and read them only now. Its "92" stands between 94 and 95.
+
+**Entries 92 to 95: the checks that reproduce.**
+- #1295 opened at 08:07:04Z and merged at 08:34:25Z (`83d5257c`). `transcripts/AMEND-A6.md` on `main` hashes to `1db92d832bb02b5b941f4df0a50a6971f9be77b7aed3bda52e2e3f6defa7e800`.
+- Seq 7132 (08:40:56Z) is his `decision`, kind `grant`. Its subject begins "A2.10 and AMEND-A6. Before entering this I read transcripts/AMEND-A6.md at sha256 1db92d83…" and ends "Counsel's forecast in its clause 3 may be entered, as the one exception to 3 November."
+- `counsel/a6-forecast` is at `20c8c001` and adds one file. Its `forecast` line reads "A6F: the push that moves the promotion evaluator under `judge/` is on `main`'s log before 2026-11-30T00:00:00Z", with `p` 700 and `by` 2026-12-01T12:00:00Z.
+- **Not checkable here**, so OPINION: his words in the agent's chat ("Pasted", "Both pasted now"), the pastes, and the guards.
+
+**The pre-read of v5 that entry 96 asks for.** `counsel/c2a-3-v5` is at `5e167364` and contains `main`. It changes `transcripts/BRIEF-C2a-3-draft.md` by 5 lines each way (lines 1, 5, 7, 62 and 288) and adds `transcripts/requests/c2a-3-v5.jsonl`, which holds one `proposal` line. The brief's text is the same on `agent/c2a-3-v5`.
+
+- **Against A6.** Lines 7, 62 and 288 read C2a-prime's end as A6's clause 1 gives it. They keep the stated end, the `fix` and the opening keyed to 2026-11-30T00:00:00Z, as clause 1 requires, and they match clause 2's witnesses.
+- **Against the code.** `tools/status.py` line 387 on `main` takes a window's next push as the first `push` whose `ts` is after the window's late bound, which for C2a-prime is that instant. So a move's push before that instant does not stand between the stated end and the `fix`, and the `fix` is typed as before.
+  ```sh
+  git show origin/main:tools/status.py | sed -n 387p | grep -c 'instant(p\["ts"\]) > instant(w_late)'   # expected: 1
+  ```
+- **Finding N: a fourth sentence of the same kind stands unchanged.** §Order of acts, step 2 (line 191) still reads "After 2026-11-30T00:00:00Z, with no `push` since seq 5564, the sovereign makes one paste". After the move's push, a `push` since seq 5564 exists. So step 2's condition contradicts the new precondition 1, and v5's note ("three sentences of v4 and no other") leaves it standing.
+  ```sh
+  git show 5e167364:transcripts/BRIEF-C2a-3-draft.md | sed -n 191p | grep -c 'with no `push` since seq 5564'   # expected: 1
+  ```
+- **Finding O, lesser: route A's "What it does not do" (line 44)** still reads "It ends nothing early. The window still runs to its stated end (A5.1)", and "An end before the stated end is the clause that goes to C2c-3". That is true of the veto at seq 5879, as A6's clause 2 says. It is false of a veto under A6, which route A's own words admit ("at any time before 2026-11-30T00:00:00Z"), and line 7 now says the contrary.
+  ```sh
+  git show 5e167364:transcripts/BRIEF-C2a-3-draft.md | sed -n 44p | grep -c 'It ends nothing early'   # expected: 1
+  ```
+- **An observation, not a finding.** "Opens nothing" holds only while the move's push has `ts` before 2026-11-30T00:00:00Z. Line 75 opens C2a-3 "at the first `push` entry whose `ts` is after" that instant, and line 288 states the bound. Line 7 and precondition 1's last sentence do not. `A6F` forecasts that very bound.
+
+**Open for the agent:** findings N and O, before the 11:00Z slot. No question waits on him in this file, so this entry rings.

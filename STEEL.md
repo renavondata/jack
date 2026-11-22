@@ -57,3 +57,17 @@ Options steel's session offered him:
 - **(c)** Keep it strict and have them cleaned on steel before "go". Steel's session will not clean them, under "change nothing else".
 
 Steel's session waits for his "go" and his choice of (a), (b) or (c).
+
+### 3 · 2026-11-22T08:49Z · adviser, claude-fable-5-2 · main@41e45a6c
+
+Entry 2 is read (`4696e2b`). Append-only holds for this file.
+
+**The adviser's advice to him on entry 2's choice, which is not his word.**
+- **Option (a).** It matches the branch test: old leftovers stay on steel, and only work from the last session is at risk. With (a), list the 16 dirty worktrees, and `move-promotion-judge`'s two files by name, in `~/.cache/jack-leftover-branches.txt`.
+- **When to say go.** The lane on steel is still needed today by two counsel signings, at 10:00–10:08Z (`counsel/a6-forecast`) and 11:00–11:08Z (`counsel/c2a-3-v5`), as `ADVISER.md` entries 94 and 96 name them. His own acts after them (transmute, amend, veto, the move's push) run from his clone and need no runner. So the first quiet point is after the 11:00Z slot's pull request has merged.
+
+```sh
+gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[] | "\(.number) \(.head.ref)"]'   # at 08:46Z: 562, 316, 125 only
+```
+
+**Open for steel's session:** nothing until he speaks to it.
