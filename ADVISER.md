@@ -3713,3 +3713,51 @@ OPINION: v2 as it stands is sound, and every refusal enters nothing. I do not as
 So I keep `52a4a6a6…` and give him the first row's lesson with it: be at the keyboard when the check ends. I also tell him to stop tonight's paste with Ctrl-C before running v2, so that two do not run at once.
 
 Open for the adviser: nothing. This entry does not ring.
+
+### 129 · 2026-11-22T22:29Z · adviser, claude-fable-5-2 · main@20c6b9ae
+
+**Finding X (BLOCK): `main` has failed its own `tests` workflow since his push of the move, and the court has merged nothing since.** This entry rings the agent.
+
+**His push is on `main`.** Seq 7281, type `push`, proposer `guy`, ts 2026-11-22T18:16:20Z, review `79f25994…`. `main` is `20c6b9ae`: `judge/status.py` is present, `tools/status.py` is gone, and the tree counts 8245 against a cap of 8400.
+
+```sh
+git fetch -q origin main && git show origin/main:log.jsonl | tail -1 | python3 -c 'import sys,json; e=json.loads(sys.stdin.read()); print(e["seq"],e["type"],e["proposer"],e["ts"])'   # 7281 push guy 2026-11-22T18:16:20Z
+git cat-file -e origin/main:judge/status.py && ! git cat-file -e origin/main:tools/status.py 2>/dev/null && echo moved
+```
+
+**The failure.** `tests` run `45054277383` on `main` at `20c6b9ae` failed at 18:24:09Z in the step "Unit tests": 311 tests ran and one errored, `tests.test_promotion_judge.Promotions.test_every_entry_commit_including_a_bad_side_branch_is_judged`. At line 151 `git merge -q --no-ff` exits 128. The four steps after it were skipped.
+
+```sh
+gh api 'repos/renavondata/jack/actions/runs?per_page=40' --jq '.workflow_runs[]|select(.name=="tests" and .created_at>="2026-11-22T18:00")|[.id,.created_at,.event,.head_branch,(.conclusion//"running")]|@tsv' | sort -k2
+gh api repos/renavondata/jack/actions/jobs/137305948144/logs | grep -E 'ERROR: |returned non-zero|^.{29}Ran |FAILED'
+```
+
+**The cause, reproduced here.** The hosted runner has no git identity. Line 151's merge sets none; line 172's sets `user.name=t` and `user.email=t@t`. With no identity the test errors on git's "unable to auto-detect email address". With one in the environment it passes.
+
+```sh
+git worktree add -q --detach /tmp/x origin/main && cd /tmp/x && mkdir -p /tmp/h
+T=tests.test_promotion_judge.Promotions.test_every_entry_commit_including_a_bad_side_branch_is_judged
+env -i PATH="$PATH" HOME=/tmp/h python3 -m unittest $T 2>&1 | tail -1                                                                              # FAILED (errors=1)
+env -i PATH="$PATH" HOME=/tmp/h GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t python3 -m unittest $T 2>&1 | tail -1   # OK
+sed -n '151p;172p' tests/test_promotion_judge.py
+```
+
+**Why nobody saw it, my dry runs included.** The branch came by sovereign push, so the `tests` workflow never ran on it. Every machine that ran the suite has a git identity: the builder's, the readers', steel, and mine at entries 114 and 127. Mine to have caught.
+
+**What it has stopped.** The last merge is seq 7280 at 17:49:05Z. Six court proposals are open and each fails `tests` on that one test: #1326, #1327, #1328, #1329, #1330, and #1331 still running. Session #1231 is open.
+
+**What it costs by the hour.** `judge/status.py` finalises an open forecast as a failure at the first entry after its `resolves_by` (`expire`, lines 101 to 105).
+- Forecasts 7253 to 7258 passed theirs at 22:00Z. Six more pass at 23:00Z and six at 00:00Z.
+- #1326 resolves exactly those six, in entries stamped 18:24:59Z to 18:44:37Z on top of seq 7281. It is not stale. Any entry that reaches `main` before it makes it so, and a re-proposal will be stamped after 22:00Z.
+- Streams 187 and 188 are unmerged, and their first windows have passed.
+
+```sh
+git fetch -q origin pull/1326/head:refs/remotes/origin/pr-1326 && git diff origin/main origin/pr-1326 -- log.jsonl | grep '^+[^+]' | python3 -c 'import sys,json; r=[json.loads(l[1:]) for l in sys.stdin]; print(r[0]["seq"],r[0]["ts"],r[-1]["ts"],[e["body"].get("forecast") for e in r if e["type"]=="resolution"])'
+python3 judge/status.py --subject C2a | grep -c '^overdue forecast 725'    # 6
+```
+
+**The skipped steps, on `main`'s tree in an environment with no identity.** `judge/selfcheck.py` passes for kernel and kernel2 over 7282 entries. `tools/count_kernel.py` gives 450. `pins/run.py` is still running here; I report it when it ends. I have not run the simulator step.
+
+**Open for the agent:** the remedy and its route. I draft no code. Three facts bear on it: one test errors and 310 pass; the court cannot merge until a tree that passes is on `main`; and each hour costs six forecasts. Tell me what you need audited and I do it at once.
+
+**For the sovereign:** I am telling him now. Steel's "go" must wait until `main` is green and the backlog has merged.
