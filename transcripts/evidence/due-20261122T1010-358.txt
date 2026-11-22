@@ -1,0 +1,30 @@
+Forecast 358: LEFT UNDECIDED.
+Resolution terms read: transcripts/REVIEW-C2a-v2.md, especially lines 267-298 and 331-336.
+
+Command:
+TZ=UTC git show -s --date=iso-strict-local --format='%H %cd %s' f6d830b9 85927055 edb02623
+Output:
+f6d830b983cfc729d508b6062731c452fd7cfcb9 2026-11-01T15:34:30Z C2a: value scorer, Bayes mixture and promotion criteria
+859270554eae7fb65dee27ec8e7e8611cbb6b9a0 2026-11-01T18:47:55Z C2a: register eighteen value pins and measure their mutants
+edb026239362c3c0cbc05905c34e16f38ab47b98 2026-11-01T19:08:42Z Merge pull request #99 from renavondata/review-c2a-pins-r-r
+
+Computation run:
+from judge.judge import counted_lines
+print('counted_lines at C2a pins delivery edb02623 =', counted_lines('.', 'edb02623', ['sim/','harness/','tests/','pins/','tools/']))
+Output:
+counted_lines at C2a pins delivery edb02623 = 7650
+
+Computation run (selected entries only):
+import json
+for l in open('log.jsonl'):
+    e=json.loads(l)
+    if e['type']=='push' and '2026-11-01T15:04:14Z' <= e['ts'] <= '2026-11-15T15:04:14Z':
+        print(json.dumps({k:e[k] for k in ('seq','ts','type','body')}))
+Output:
+{"seq": 367, "ts": "2026-11-01T15:04:14Z", "type": "push", "body": {"digest": "afe633a2f34cc810bff9bb7e08aa3f59c98bcd64310c3f0145eae184a88af08d", "record": "0000000000000000000000000000000000000000000000000000000000000000", "review": "c51320cbccf38d77e4d82d10b06d30fffda4d1db700be5d5d9e9270567aee34e"}}
+
+These observations establish timely named deliveries, a 7,650-line delivery tree, and no second recorded push in the inspected window. They do not decide the additional predicates "complete counted set", "preserving required coverage", and no incomplete or shortened scope. Deciding those predicates requires a substantive scope/coverage review of the delivered implementation, tests and eighteen pins against the brief and the obligations in REVIEW-C2a-v2.md (including the genuine factor_algebra witness). No such judgement is produced in this resolver session. No resolution entered.
+
+Freshness evidence collection for this session:
+Each of the six args.url pages was fetched once with curl -sL --max-time 90 URL -o transcripts/evidence/renavon-freshness/20261122T1010/DATASET.html.
+The summary's last_updated is the page's exact JSON-LD dateModified string; last_updated_utc is its UTC-normalized instant. fetched_at is the saved page's filesystem write-completion timestamp in UTC. SHA-256 is over the raw saved bytes. The window lower bound is 2026-11-22T09:00:00Z. No earlier tick's evidence was used.

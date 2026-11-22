@@ -1,0 +1,46 @@
+Forecast 358: LEFT UNDECIDED.
+Deadline: 2026-11-21T00:00:00Z (passed).
+Read the complete forecast entry and transcripts/REVIEW-C2a-v2.md.
+
+Commands and observed output produced in this session:
+
+$ git show --stat f6d830b9
+commit f6d830b983cfc729d508b6062731c452fd7cfcb9
+    C2a: value scorer, Bayes mixture and promotion criteria
+    Proposer: builder builder-2
+ sim/gen.py          |  23 ++++-
+ tests/test_sim.py   |   4 +-
+ tests/test_value.py | 285 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/entry.py      |  23 ++++-
+ tools/jack          |   2 +-
+ tools/status.py     |  98 ++++++++++++++++--
+ tools/value.py      | 181 +++++++++++++++++++++++++++++++++
+ 7 files changed, 598 insertions(+), 18 deletions(-)
+
+$ from judge.judge import counted_lines
+$ counted_lines('.', '<commit>', ['sim/', 'harness/', 'tests/', 'pins/', 'tools/'])
+f6d830b983cfc729d508b6062731c452fd7cfcb9 7462
+859270554eae7fb65dee27ec8e7e8611cbb6b9a0 7650
+
+$ git log origin/main --format=%H --before=2026-11-21T00:00:00Z -1
+f1d02b81b68cbb9386a6f1b9f0bbf07bf2e0d4e8
+
+$ counted_lines('.', 'f1d02b81b68cbb9386a6f1b9f0bbf07bf2e0d4e8', ['sim/', 'harness/', 'tests/', 'pins/', 'tools/'])
+8347
+
+Interpretation: the early implementation and eighteen-pin commit fit under
+7,800. The later deadline snapshot exceeding 7,800 does not refute delivery
+of a complete earlier implementation. Neither the presence of the files nor
+the numerical count establishes the claim's "complete" and "preserving
+required coverage" obligations in REVIEW-C2a-v2.md. Deciding those terms
+requires a substantive obligation-by-obligation review of the delivered
+implementation, tests and pins against that text, with supporting historical
+test/pin evidence and the original window's push history. This session has
+not established that conjunction or a specific failure of it. Enter no
+permanent resolution from a count alone.
+
+Freshness parsing note for this session: the fetched public pages print a
+human-readable "Last refreshed" date/relative age and an exact ISO instant
+in their embedded Dataset JSON-LD dateModified field. The manifest records
+that exact field verbatim as last_updated, normalized to Z as
+last_updated_utc. Outcomes use only the literal lower-bound page predicate.

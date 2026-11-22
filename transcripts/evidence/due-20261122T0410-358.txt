@@ -1,0 +1,39 @@
+Forecast 358: left undecided.
+Deadline: 2026-11-21T00:00:00Z; this session began after that deadline.
+Full claim read with: grep -n '"seq":358,' log.jsonl
+Resolution terms read: transcripts/REVIEW-C2a-v2.md, especially lines 267-298 and 331-336.
+
+Commands run and their output:
+
+$ git log origin/main --format='%h %s' -- tools/value.py
+f6d830b9 C2a: value scorer, Bayes mixture and promotion criteria
+
+$ git show --stat --oneline 85927055
+85927055 C2a: register eighteen value pins and measure their mutants
+ pins/c2a.py                    | 93 ++++++++++++++++++++++++++++++++++++++++
+ pins/pins.py                   | 97 +++++++++++++++++++++++++++++++++++++++++-
+ transcripts/REVIEW-C2a-pins.md | 91 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 280 insertions(+), 1 deletion(-)
+
+$ PYTHONDONTWRITEBYTECODE=1 python3 -c 'from judge.judge import counted_lines; print("counted_lines at edb02623:", counted_lines(".", "edb02623", ["sim/", "harness/", "tests/", "pins/", "tools/"]))'
+counted_lines at edb02623: 7650
+
+$ git log origin/main --format='%h %s' --grep='^push:'
+6c0566c3 push: opening-c2a-prime-3-push
+43df79af push: C2a-prime opening — cap 8400 (BRIEF-C2a-prime §The window), made again after the sovereign's read
+64d2e720 push: push-c2a-7800
+cd9d8eba push: C2a opening — cap 7800
+b2176804 push: push-cap-6900
+32d3a01f push: c1a-ledger
+40fab174 push: c1-parties
+
+The delivered value scorer and pins, and the 7,650-line counted set, establish
+only part of this conjunctive claim. The claim additionally requires complete,
+unshortened scope and preservation of the required coverage under the cited
+review's implementation obligations. These require substantive review of the
+delivered implementation against those obligations. No such coverage verdict
+has been produced in this session. Commit subjects alone also do not establish
+the no-second-push condition for the relevant window. Per the resolver's rule
+for claims needing a judgement about text, no resolution is entered. A complete
+scope/coverage assessment and a dated push audit of the applicable window would
+decide the outstanding conditions; the line count alone does not decide them.
