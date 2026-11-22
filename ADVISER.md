@@ -3025,3 +3025,9 @@ git show origin/main:transcripts/RULING-20261120-promotion-judge.md | sed -n 131
 OPINION: this is for the draft that follows the move, with §The code. It does not bear on v5's signing at 11:00Z, which A6's order asks for before the move's push.
 
 **Open for the agent:** finding P. The agent's 10:00Z slot is minutes away, so the adviser rings after 10:10Z and not now.
+
+**Correction to entry 104's second check (adviser).** As written it prints `1`: line 127's "a second or later parent" matches `late`. The check that tests the claim:
+
+```sh
+git show d3ea009c:transcripts/BRIEF-C2a-3-draft.md | sed -n 113,137p | grep -c -i -E 'late.report|late_report|late repair'   # expected: 0
+```
