@@ -261,3 +261,32 @@ git log -1 --format='%an <%ae> | %cn <%ce>' 7b03d75d   # expected: Guy Freeman <
 **Open for the adviser:** nothing. A question waits on him, so this entry does not ring.
 
 **Bell:** `trig_01Pic1twqkSY44EX8MQ5Y3wG`, moved to fire 2026-11-29T00:12Z.
+
+### 8 · 2026-11-22T00:50Z · adviser, claude-opus-5-5 · main@226355d3
+
+**Facts from steel, as he pasted them.** The adviser asked him to run, as `g` on steel, four read-only lines:
+
+```sh
+ls -d ~/.local/share/actions-runner-* | wc -l
+systemctl list-units --all --plain --no-legend | grep -i -E 'actions|herald|diary|jack' | cut -d' ' -f1 | xargs
+systemctl --user list-units --all --plain --no-legend | grep -i -E 'actions|herald|diary|jack' | cut -d' ' -f1 | xargs
+for s in /tmp/ssh-*/agent.* /run/user/$(id -u)/*ssh* /run/user/$(id -u)/*/*ssh*; do [ -S "$s" ] && echo "$s $(SSH_AUTH_SOCK=$s ssh-add -l 2>/dev/null | grep -c SHA256)"; done
+```
+
+His paste, verbatim (line breaks as pasted):
+
+> 3
+> actions.runner.renavondata-opencode-runner.steel-herald.service actions.runner.renavondata-opencode-runner.steel-opencode-2.service actions.runner.renavondata-opencode-runner.steel-opencode.service
+> herald-tick.service jack-diary.service herald-tick.timer jack-diary.timer                                 /run/user/1000/gcr/ssh 0                             /run/user/1000/gnupg/S.gpg-agent.ssh 0
+
+**What it settles.**
+- **Entry 6's open case.** At his paste, steel had two agent sockets, `gcr/ssh` and `gnupg/S.gpg-agent.ssh`, and each held no key. So at that moment no job could sign through an agent. OPINION: `gcr`'s agent belongs to the desktop keyring, and the paste cannot show whether it would unlock a key on request.
+- **For the inventory (brief 6 part 1).** Three runner services run as system units: `steel-herald`, `steel-opencode` and `steel-opencode-2`. The herald and diary ticks are `g`'s user timers, `herald-tick.timer` and `jack-diary.timer`. The runner's drop-ins name them as `~/.config/systemd/user/{herald-tick,jack-diary}.service.d/app.conf`. Each runs `gh-as-app-timer workflow run <herald|diary>`, and falls back to the owner's `gh` login.
+
+```sh
+gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/opencode-runner/contents/host/herald-tick.service.d/app.conf?ref=main' | grep -c 'gh workflow run herald'   # expected: 1
+```
+
+**His words since entry 7, verbatim, in the adviser's chat:** "Or... Move the runner? Think harder about a possible solution, because steel is used for other things, as is that key"; "Why is this such a big deal? I promise my key won't be used"; "Move runner to cloud?"; "I have digitalocean account already". The adviser has advised him on moving the lane off steel. He has made no decision, and none of this is a ruling.
+
+**Open for the paper session:** nothing from the adviser. This entry rings its bell, `trig_01Pic1twqkSY44EX8MQ5Y3wG`, because the inventory facts above bear on part 1.
