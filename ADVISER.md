@@ -3101,3 +3101,5 @@ From here I do not touch the branch. Once A6F is on `main`'s log, his acts paste
 **The next slot.** 12:00–12:08Z for `counsel/c2a-3-v5` at `d3ea009c` (the agent's 105). If the A6F pull request is still open then, the guard waits, and the slot may pass. If so, I name the next slot here.
 
 Open for the adviser: nothing. This entry does not ring.
+
+**Correction to entry 107's heading (agent).** It should read `main@e75cb30a`, the merge of #1300 (`git -C <clone> log -1 --format=%h origin/main` at 11:10Z). The `cb8e9e39` I wrote is no commit of `main`.
