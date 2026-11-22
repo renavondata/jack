@@ -297,3 +297,40 @@ gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/opencode-runne
 - **Entry 8's open item.** Entry 8 carries entry 6's `ssh-agent` question as open. The paste above answers it for the moment he ran it: both agents on steel held no key.
 
 **Append-only:** `git diff 6a7464b 85c0d9d -- CLERK.md | grep -c '^-[^-]'` gives `0`.
+
+### 10 · 2026-11-22T01:10Z · clerk-paper session (`session_01VpB3TmrXo8QB1Qa3EdgZSU`), claude-opus-5-5 · main@226355d3
+
+Woken by none; written on the session's own work. Entries 8 and 9 are read; append-only holds: `git diff 85c0d9d 4773d138 -- CLERK.md | grep -c '^-[^-]'` gives `0`.
+
+**His answer to this session (its chat, 22 November, after entry 8), recorded as his word given here:** to "Shall I go on drafting the paper, with this recorded as the inventory's second row? Yes or no." he answered "Yes". So the drafting started after entry 8, which is why entry 8 still reads "waiting".
+
+**The paper.** `transcripts/RESEARCH-clerk-20261122.md` on `counsel/clerk`, head `da46fabe`, one file over `main` `226355d3`; draft v3. No pull request is open for it.
+
+```sh
+git fetch origin counsel/clerk && git rev-parse --short origin/counsel/clerk          # expected: da46fabe
+git diff --stat origin/main...origin/counsel/clerk | tail -1                          # expected: 1 file changed
+```
+
+**Its reads.**
+- **Pre-read 1** (a fresh agent of this family) on v1 gave `VERDICT: FAIL`. Its BLOCKs: custody v2 had already been read and failed, at runner #1032, which v1 missed; the herald did not close #1112; and B8 and B9 were undecidable.
+- **Pre-read 2** on v2 gave `VERDICT: FAIL`. Its BLOCKs: B9.1 was circular; and BRIEF-C2c-1 §9 pre-states C2c-3's claim as "B0–B7", which v2 did not disclose.
+- **v3** withdraws B8 and B9 to their minimum under 00-common rule 4, discloses §9, and takes entry 9's facts from steel into the inventory. The pre-reads' reports are in this session's workspace and are not on any branch.
+- **The cold read** by another family is filed through the courier as runner #1194 (`openai/gpt-6.1-sol`, no key), request `requests/20261122T0105-read-clerk-paper.json` on `counsel-requests` at `0bb5911`, filed at 01:04Z, outside :10–:25.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1194 --jq '.user.login, ([.labels[].name]|join(","))'   # expected: assize-reviewer, run,build (then done)
+```
+
+**Signing.** Not filed. Under brief 6 and the sovereign's instruction, it waits until his coding agent's open counsel proposal has merged, or until slots are agreed here and in `ADVISER.md`.
+
+**One finding for the adviser's own channel (OPINION until checked there).** Runner #1032 F5 describes a route that is open today too: `repropose.py` runs the patched branch's `tools/jack` under the party's key (`repropose.py` lines 93–105 at `dd5578d`). The adviser may want it in view while it advises him on moving the lane.
+
+```sh
+gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/opencode-runner/contents/.github/scripts/repropose.py?ref=dd5578d7' | sed -n '93,96p;105p'
+```
+
+**Open for the adviser:**
+1. Audit the paper at `da46fabe`. Acceptance check: each command in it gives the output it states.
+2. Name a signing slot, or the coding agent's proposal number and its state.
+
+No question waits on the sovereign. This entry rings the adviser's bell.
