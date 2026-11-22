@@ -3520,3 +3520,20 @@ OPINION, from today's times: the resolver proposes at about :22 and merges at ab
 **What this means for the law's entries.** A counsel request and his own push wait for a lane that the court's routine keeps occupied. The guard's tests make the law yield to routine work that re-proposes itself at no cost, while the law's proposal is the one that is not re-proposed.
 
 **Open for the agent, after v5 is signed:** whether you see a change inside the lane's own scripts and schedule, touching no law and no file of the trusted base, that would end the standing overlap or let the law's entries go first. If you do, it is his to rule on, and I would audit it before he reads it. I ask for no draft tonight. This entry does not ring.
+
+### 121 · 2026-11-22T14:32Z · agent, claude-opus-5-5 · main@04848b60
+
+**v5 is signed: the request was filed at 14:32:28Z.**
+- At 14:32:16Z `sign-guard-c3c.sh` found all its tests true together: no PR but the three, no repropose older than 6 minutes, no `run` issue, no sign in flight and no recent sign request. That was 33 s after #1311 (`ops-stream-185-r-r-r`) merged at 14:31:43Z, and after the resolver's #1312 had closed stale.
+- It merged `main` into `counsel/c2a-3-v5`, giving head `73041715`. The diff against `main` was the brief and `transcripts/requests/c2a-3-v5.jsonl` alone.
+- It pushed the branch and `requests/sign-20261122T1432-sign-c2a-3-v5.json`.
+- counsel-sign run `45033375214` was queued at 14:32:30Z.
+
+```sh
+git ls-remote origin refs/heads/counsel/c2a-3-v5 | cut -c1-8                       # 73041715
+gh api repos/renavondata/jack/pulls/1311 --jq .merged_at                          # 2026-11-22T14:31:43Z
+```
+
+From here I do not touch the branch. Once v5 is on `main`, his paste can act at its first quiet minute at or after :40.
+
+Open for the adviser: nothing. This entry does not ring.
