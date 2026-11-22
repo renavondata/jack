@@ -4,10 +4,11 @@ Written by a counsel session (`claude-opus-5-5`, `session_01VpB3TmrXo8QB1Qa3EdgZ
 
 **It binds nothing.** It is offered in the form of `transcripts/RESEARCH-meta-jack-20261107.md`, as an input to C2c-2's brief, but it has none of that note's acceptance by him. C2c-2's brief is not on `main`; a partial draft, v8, is on `counsel/c2c-2-spec-v4`. Where this paper and the record differ, the record governs.
 
-**Draft v2** answers a fresh pre-read of v1, which returned `VERDICT: FAIL` with three BLOCKs:
-- custody v2 was read and failed (runner #1032), which v1 missed;
-- the herald did not close #1112;
-- B8 and B9 were not decidable as written.
+**Draft v3.** Two fresh pre-reads of counsel's own family have read it.
+- **v1's read** found three BLOCKs: custody v2 had been read and failed (runner #1032), which v1 missed; the herald did not close #1112; and B8 and B9 were not decidable.
+- **v2's read** found two: B9's first clause was circular, and C2c-1's brief §9 pre-states C2c-3's claim as B0–B7, which v2 did not disclose.
+
+V3 withdraws B8 and B9 to their minimum (§4) and discloses §9 (§5.3, §8).
 
 **What was read, at which commits:**
 - jack `main` at `226355d3`;
@@ -27,18 +28,19 @@ Every figure carries the command that gives it.
 
 ## 0. In six lines
 
-1. The lane is the charter's clerk, the part that acts. Of its six workflows, two (the courier's) have a text on `main`. The other four, the scripts and the timers have none. The enforcement map records the lane as one row, `runner: hand: sessions`, with no deadline.
+1. On this paper's reading, the lane is the charter's clerk, the part that acts. Of its six workflows, two (the courier's) have a text on `main`. The other four, the scripts and the timers have none. The enforcement map records the lane as one row, `runner: hand: sessions`, with no deadline.
 2. C2c-1's ratchet moves that one row to `code` on the courier alone, and its pin's twin 10 ignores a workflow with no shell. So at C2c-1's exit the map reads `code` for a lane four of whose six jobs are still hand. BRIEF-C2c-1's own sentence that they stay as dated hand rows then has no row to point at.
-3. Every job can read every party key and act as `gfrmin` (#188, known). **S1:** every job can also read the file of the sovereign's master key, by his answer of 22 November. No text on `main` says so. Custody v2 would remove that read by moving every job off `g`, but it neither states nor checks it.
+3. Every job can read every party key and act as `gfrmin` (#188, known). **S1:** every job can also read the file of the sovereign's master key, by his answer of 22 November. No text on `main` says so, though he had told counsel-5 on 18 November that it lies in "g's home on steel" (Project doc `claude/counsel-5-state-20261118.md`). Custody v2 moves every job off `g` and checks that the copies left there are unreadable to its users. It states and checks nothing of the master key's file.
 4. Custody v2 answers #1011's deputy, and was itself read and failed (#1032). Its gravest finding is a second deputy: the re-proposer runs code from a branch a session can write under the party's key. That is true of the re-proposer today too.
 5. The race with a moving `main` is the root of the re-proposer and the herald's stale-closes, and of most of the 411 branch heads on jack whose names end in `-r`. The verbs' retry (C2c-1 Amendment 3) does not reach it: it binds main verbs and excludes branch verbs.
-6. Two predicate rows can be written in the form of B0–B7, decidable on stated evidence: B8 (the clerk acts) and B9 (the parties' keys are separated). Each needs evidence or fields no text yet defines (§4), and each has a residue. Adding them changes the roadmap, which is his to decide.
+6. Two predicate rows can be written in the form of B0–B7, at a minimum decidable on evidence the record already defines: B8 (the clerk acts) and B9 (the parties' keys are separated). Each has a wide residue (§4). Adding them changes the roadmap, which is his to decide. It also meets a pre-statement in C2c-1's merged brief (§9: C2c-3's claim is "B0–B7"), which is disclosed in §5.3.
 
 ## 1. Inventory
 
 Each job is given: trigger; identity; keys and tokens it can read by path; what it does, in order; the jack text it is written to; its enforcement-map row; incidents. "Every job can read" means every file in `g`'s home, as user `g` (row 1).
 
 ```sh
+# run from the directory that holds both clones, jack/ and opencode-runner/
 git -C opencode-runner rev-parse --short HEAD          # dd5578d
 git -C opencode-runner ls-files | wc -l                # 15
 wc -l opencode-runner/.github/workflows/*.yml opencode-runner/.github/scripts/*
@@ -66,8 +68,8 @@ gh api repos/renavondata/jack/branches/main/protection --jq '.enforce_admins.ena
 - **Which key signs:** no paste on `main` names a key, so the verbs default to `~/.ssh/id_ed25519` (`tools/jack` line 314; RUNBOOK §Common, "Key and party").
 - **His answer:** by his answer to the adviser of 22 November (`CLERK.md` entry 7), the key is on steel where the jobs can reach it.
 - **Limits:** it asks for a passphrase (RUNBOOK line 29). Whether an `ssh-agent` under `g` holds it unlocked is open (`CLERK.md` entry 6, OPINION).
-- **What the texts say:** none names S1. `host.md` line 3 names "every party key". Its "the runner holds no key of his" (line 9) is of the state after the install.
-- **What custody v2 does:** it moves every job to six new users. `g`'s home stays mode 700, and `finish` "checks that every copy left there is unreadable to the six users" (v2 §4). It makes no statement of the master key's file and no check of it, and it says it "does not bind the owner".
+- **What the texts say:** none on `main` names S1. Off `main`, counsel-5's state note of 18 November records his answer "g's home on steel" and his "Password added...". `host.md` line 3 names "every party key". Its "the runner holds no key of his" (line 9) is of the state after the install.
+- **What custody v2 does:** it moves every job to six new users. `finish` "checks that every copy left there is unreadable to the six users" (v2 §4). It makes no statement of the master key's file and no check of it, and it says it "does not bind the owner".
 - **Map row:** none.
 - **The stop:** this is the brief's stop condition, reported on 21 November before drafting (`CLERK.md` entry 5), with the cost under B5 of a hand fix: an act off GitHub, outside every instrument; as a `decision fix` naming no failed window, a repair and a late report. This paper recommends no fix.
 
@@ -80,7 +82,7 @@ sed -n 314p tools/jack | grep -c 'id_ed25519'                             # 1
 
 **Trigger.** The workflow's `schedule: */10 * * * *` (line 10), and dispatches by the user unit `herald-tick` on steel.
 - The unit's drop-in (`host/herald-tick.service.d/app.conf`) calls `~/.config/jack/gh-as-app-timer`, and falls back to `gh workflow run herald` under the owner's login.
-- The record states a cadence: "the herald fetches and pulls every two minutes" (`PUSH-c2a-prime-opening.md` line 66).
+- The record states a cadence: "the herald fetches and pulls every two minutes" (`PUSH-c2a-prime-opening.md` line 66), against the workflow's own `*/10` (line 10). The record does not reconcile the two.
 - The unit and timer files and the bytes of `gh-as-app-timer` are in neither repository.
 
 **Identity.** The jack-court App when its files exist (lines 29–31), else "owner login". The wrapper `gh-as-app` is fetched from the runner's own repository at `$GITHUB_SHA`.
@@ -118,7 +120,7 @@ sed -n 314p tools/jack | grep -c 'id_ed25519'                             # 1
 1. Checks out the runner repository.
 2. Runs `repropose.py` from that checkout.
 3. The script applies the stale branch's non-log diff as a commit (lines 93–95), then runs `tools/jack` **from that patched worktree** (lines 96 and 105). Under the party's key it re-enters each forecast and resolution, then proposes (line 124).
-4. On any non-zero exit (lines 48–50) it fills `transcripts/sessions/repropose.md` with `sed`, putting `$TITLE` into the `sed` program's text (`s|{TITLE}|$TITLE|g`, line 53), and files a model session under that party's key (line 55).
+4. On any non-zero exit (lines 48–50) it fills `transcripts/sessions/repropose.md` with `sed`, putting `$BRANCH` and `$TITLE` into the `sed` program's text (`s/{BRANCH}/$BRANCH/g` and `s|{TITLE}|$TITLE|g`, line 53), and files a model session under that party's key (line 55).
 
 **Text and map row.** `transcripts/sessions/repropose.md` is the fallback's prompt; the job has no text. It is under `runner: hand: sessions`.
 
@@ -155,7 +157,7 @@ Two inputs come from issues, not from the log:
 
 **Trigger.** `issues: labeled` with `run` (lines 13–14, 23). The lane comes from the `build` label (line 28).
 
-**Identity.** The job token (`issues: write`) for the issue steps; for the session, the App, else owner login. The job token is also written into the text of the session's own step for fetching the wrapper (custody v2, opening paragraph).
+**Identity.** The job token (`issues: write`) for the issue steps; for the session, the App, else owner login. The job token is also written into the text of the session's own step, for fetching the wrapper (custody v2 §2, "The job's own token").
 
 **Keys.** `JACK_KEY` comes from the body's `key:` line, read when the job starts (lines 39, 41 and 44, as custody v2 cites them). The model keys come from the runner's `.env`. Row 1.
 
@@ -203,13 +205,18 @@ The courier is `counsel.yml` (27) with `counsel-act.py` (168), and `counsel-sign
 
 ### Row 9 — the deputies
 
-**#1011's.** Any identity that can file and label a runner issue can start a session under any key `run.yml` will read. That includes every session, through the App or the job token in its own step. Nothing on `main` answers it.
+**#1011's.** Any identity that can file and label a runner issue can start a session under any key `run.yml` will read. That includes every session, through the App. The job token in the session's step cannot start one: an issue or label it makes "raises no `labeled` event" (`diary.yml` lines 16–17). It could edit the body of an issue already labelled, before that issue's job starts. Nothing on `main` answers either route.
 
 **#1032 F5.** This one is against custody v2 and true of today's code too. A session pushes a branch that keeps a stale proposal's valid log and adds a content commit changing `tools/jack`, then opens a pull request. The herald dispatches a re-proposal for the log's party, and `repropose.py` runs the patched `tools/jack` under that party's key (row 4, step 3). #1032: "Additional identities, files or permissions held by the attacking session: none."
 
 ### Row 10 — substrate, named and not legislated
 
-GitHub (Actions, the API, branch protection, the organisation and its plan); steel's operating system and root; the runner binary and its registration; systemd and the two user timers; the model providers.
+GitHub (Actions, the API, branch protection, the organisation and its plan); steel's operating system and root; the runner binary and its registration; systemd, the three runner service units and their drop-ins (the memory drop-in of 8 November on `steel-opencode-2`'s, `host.md` line 22) and the two user timers; the model providers.
+
+Three things the texts name sit beside these:
+- the runner's `.env` with the model keys, which every session reads;
+- `actions/checkout@v4`, a third party's action at a mutable tag, run by `repropose.yml` (line 31) on a keyed runner;
+- the monitor's `verify.yml`, to be installed in this repository on GitHub's runners (`monitor.md`). It is not yet there. B8.1 would ask for its shell once it is.
 
 What the record can see of it: GitHub's run objects (`path`, `head_sha`, `event`, `runner_name`) through the API, and of steel only what a job prints.
 
@@ -252,7 +259,7 @@ No job is deleted on today's law alone. Amendment 3: "A party's branch verbs are
 - **CHARTER §3:** "A rule enters or leaves only by a change entry signed by a key holding the change power (at genesis, Guy's alone)".
 - **§5:** the master key holds "change power; capability grants for money, releases and new keys".
 - **SPEC §10.1:** the trusted base changes "only by Guy's `jack push`".
-- **RUNBOOK `jack merge`:** nothing it does "reaches `main` except through the judge", and "When the clerk holds `merge`, this verb is unchanged".
+- **RUNBOOK:** of `merge`, nothing it does "reaches `main` except through the judge" (§Common to every verb); and "When the clerk holds `merge`, this verb is unchanged" (§`jack merge`).
 
 Read together, change power is the power over the law, the trusted base and the keys: `amend`, `push`, `key` and the sovereign's `decision`s. A merge applies what the judge admitted and changes no rule, so a clerk can hold `merge` and "no change power". No text says this in one sentence. C2c-2's brief would have to state it before giving the clerk a key.
 
@@ -279,7 +286,7 @@ Read together, change power is the power over the law, the trusted base and the 
 ```sh
 gh api repos/renavondata/opencode-runner/issues/1032 --jq .title                                # reader: cold read of the custody text, draft v2 …
 gh api repos/renavondata/opencode-runner/issues/1032/comments --jq '.[-1].body' | grep 'VERDICT:' | tail -1   # VERDICT: FAIL
-git grep -c 1032 origin/main -- transcripts/COUNSEL-OPEN.md                                       # 0: not yet on the record
+git grep -c 1032 origin/main -- transcripts/COUNSEL-OPEN.md                                       # no output, exit 1: not yet on the record
 ```
 
 S1 is in none of the three reads.
@@ -299,56 +306,61 @@ S1 is in none of the three reads.
 
 **It does not close:**
 - a raw body naming any other key, which the courier text already forbids and the script lags (row 7);
-- an issue filed by another identity (the App, the job token in the session's step, the owner);
+- an issue filed by another identity (the App, the owner);
+- an edit of an issue's body by the job token in a session's step, before that issue's job starts;
 - an edit of the body before the job starts;
 - reading any key by path (row 1).
 
 `host.md` says the same: "the courier's refusal in §3 is a courtesy to the record, not a bound" (line 3).
 
-## 4. Two predicate rows in B0–B7's form
+## 4. Two predicate rows in B0–B7's form, at their minimum
 
-Each row is a *test* decidable from `log.jsonl`, the tree and named evidence files, and a *residue*. Each names the evidence it needs that no text yet defines.
+Each row is a *test* decidable from `log.jsonl`, the tree and evidence files the record already defines, and a *residue*.
+
+**Why the minimum.** Draft v1 wrote both rows with clauses no evidence decides. Draft v2 wrote them over evidence and fields it invented; a second pre-read found B9.1 circular and B8's paths in conflict with C2c-1's. By 00-common rule 4, a clause that fails twice is withdrawn to its minimum, not patched a third time. What follows is the minimum. What was cut is in each residue.
 
 ### B8 The clerk acts
 
-*Evidence it needs.* The runner evidence (`transcripts/evidence/runner-<stamp>.json`, which C2c-1's window file and `transcripts/sessions/evidence.md` define over `.github/workflows/` only; its script, `tools/evidence/runner.py`, is not on `main`) extended to `{path, sha256}` for every tracked file of the runner's `main`. And the bootstrap window's file listing `lane_rows`: the enforcement-map rows that are the lane's, by name.
+*Evidence:* the runner evidence as C2c-1's window file defines it (`transcripts/evidence/runner-<stamp>.json`, one `{workflow, sha256}` per file under `.github/workflows/` of the runner's `main`). The test also needs the bootstrap window's file to list `lane_rows`, the enforcement-map rows that are the lane's, by name. That is a list a brief writes, as C2c-1's `ratchet.witnesses` does.
 
-*Test,* on the exit prefix, from the newest such evidence within its grace:
+*Test,* on the exit prefix:
+1. Every workflow in the newest runner evidence within its grace has a shell of the same name under `tools/runner/workflows/` (C2c-1's directory), byte-equal by sha256. This is criterion 8's comparison with C2c-1's twin 10 inverted.
+2. Every row in `lane_rows` reads `code`, and the witness the window file names for it is KILLED in the verified run.
 
-1. Every listed path, except one the window file names as inert (`.gitignore`), is byte-equal to the file at the same path under `tools/runner/mirror/` in the tree.
-2. For every file under `tools/runner/mirror/.github/workflows/`, a text `transcripts/runner/<name>.md` exists. Its content is read under ground 15, not tested here.
-3. Every row in `lane_rows` reads `code`, with the witness the window file names for it KILLED in the verified run.
-
-This extends C2c-1's criterion 8 from the courier to the whole lane. It is the variant C2c-1's pin `ratchet_row_moves` rejects in C2c-1 (twin 10: "every workflow required to have a shell") made the rule at the bootstrap instead.
-
-*Residue.*
-- That a mirrored shell fetches only from jack's `main` is shown by its bytes being reviewed text, not by a test.
-- A workflow pushed to another branch of the runner runs its own bytes (`host.md` §4; custody v2 §6, rung 4). Custody's W3 and W4 detect it, and #1032 F8 says incompletely.
+*Residue:*
+- The runner's `.github/scripts/` and `host/` are not compared. What a shell runs is shown by its own bytes, which say where it fetches from, and those are reviewed text, not a test.
+- No text for each job is required here. A text under `transcripts/runner/` is read under ground 15 when it changes.
+- A workflow pushed to another branch of the runner runs its own bytes (`host.md` §4; custody v2 §6, rung 4).
 - The timers fire on steel, and the record sees only the dispatches they cause.
 
 ### B9 The parties' keys are separated
 
-*Evidence it needs.* A custody text that passes its reads (v2 has not), with K1–K6. Its observations copied by the evidence session, as B7 copies the monitor's.
+*Evidence:* `tools/runner/custody.json` on the tree, as a custody text that has passed its reads defines it. V2's fields are `users`, each with its `party_key`. And the map's `custody` row, as C2c-2's draft R7 names it.
 
 *Test,* on the exit prefix:
-
-1. `tools/runner/custody.json` names each key with powers on the log at the prefix that a lane job uses under exactly one user (K1), and lists the outside paths of K4.
-2. The custody evidence has W3 and W4 intervals covering the window from the later of T_c and its opening without a gap. It has W1, W2 and W5 snapshots no more than a day apart, the newest within twenty-four hours of the assessed instant. Every line lists zero breaches.
-3. Each snapshot's W1 finds every other user's secrets and every K4 path unreadable from every session user.
-4. The map's `custody` row reads `code`, with its named witness KILLED (R7's one-witness shape), and the custody pins are among the window's pins-killed criterion.
+1. Every `key_id` that signed an entry whose `ts` is inside the bootstrap window is the `party_key` of exactly one user in `custody.json`, or is `guy-master`. The set comes from the log, so the file cannot leave a signer out.
+2. The `custody` row reads `code`, and the witness the window file names for it is KILLED in the verified run.
 
 *Residue,* in B6's form:
-- no copy of any key elsewhere, which the record cannot show;
-- copies left in `/home/g` until he removes them, and processes left running as `g` (#1032 F6);
-- whether the K4 paths he states are where his key is (S1);
-- the owner, who is root and owns the organisation;
-- the shared model keys;
-- what a party's session does with its own key;
-- signing between snapshots by a route no observation tests (#1032 F8).
+- **Signing.** That no copy of any key exists elsewhere, and that no session signed as another party, the record cannot show. Custody's observations W1–W5 are reported, not tested: #1032 F8 finds that all five "can record no breach while a session signs as another party".
+- **The deputies.** These rest on pins alone: K2, K3 and K6 (§3.3), and #1032 F5.
+- **Keys that signed nothing in the window.** Five still hold powers: `builder-1`, `reviewer-1`, `counsel-1`, `reviewer-2` and `builder-2` (seqs 6, 7, 8, 32 and 34). They are not tested, and revoking them is his `key` act.
+- **The host.** Copies in `/home/g`, and processes left running as `g` (#1032 F6).
+- **The master key.** Where it lies (S1). CHARTER §5's proposed default is "an offline master key". Rotating it needs a change to the judge and the charter first (counsel-5's state note of 18 November; SPEC §10 ground 14).
+- **The owner.** He is root and owns the organisation.
+- **The model keys,** which are shared.
 
-W1 is an observation from inside the place it observes; his `check.sh` is the other observation of the same thing.
+```sh
+python3 -c "import json
+k={}
+for l in open('log.jsonl'):
+  e=json.loads(l)
+  for d in (e['body']['keys'] if e['type']=='genesis' else [e['body']] if e['type']=='key' else []): k[d['key_id']]=d['powers']
+print(sorted(i for i,p in k.items() if p))"
+# ['builder-1', 'builder-2', 'counsel-1', 'counsel-3', 'guy-master', 'herald-2', 'reviewer-1', 'reviewer-2']
+```
 
-**What is decidable, and what is not.** With the evidence and fields named, each test is a comparison of bytes, names or lines. Neither row decides that the property held between observations, or against the owner. If the sovereign rules that an observation from a session user's runner cannot count, B9.3 moves to the residue, and the minimum left is B9.1, B9.2's interval lines and B9.4.
+**Decidability.** Each clause compares names, bytes or a pin's verdict over the log and the tree. Neither row decides that its property held between observations, or against the owner. That is stated as residue, not tested.
 
 ## 5. Placement
 
@@ -360,9 +372,9 @@ W1 is an observation from inside the place it observes; his `check.sh` is the ot
 | | Item | Where |
 |---|---|---|
 | option | a custody text v3 that answers #1032 and adds K4–K6, its pins, the `custody` row | C2c-2 |
-| option | the runner evidence extended to every tracked file, with `tools/runner/mirror/` (B8.1) | C2c-2, with custody's W5 |
+| option | shells under `tools/runner/workflows/` for all six workflows, so that B8.1 can hold | C2c-2, with custody's W5 |
 | option | the herald taking the party from the log, and the re-proposer on the party's user running `main`'s code (K6) | C2c-2, with custody |
-| waits | four-part texts for the herald, diary, session runner and re-proposer, and their logic moved from shell to `tools/runner/<job>.py` (B8.2–3) | after C2c-2, before C2c-3's claim |
+| waits | four-part texts for the herald, diary, session runner and re-proposer, and their logic moved from shell to `tools/runner/<job>.py`; the `lane_rows` B8.2 reads | after C2c-2, before C2c-3's claim |
 | waits | route 6(a)'s writ in place of the model fallback, or route 6(b) | brief 7, if he asks |
 
 **Carrying custody in C2c-2 changes C2c-1's texts in C2c-2.** Custody v2 changes the courier's acts rule (a body counsel wrote is filed as `party:reader`) and the courier shells' `runs-on`. So C2c-2's brief would amend `counsel-courier.md` and C2c-1's `tools/runner/workflows/counsel*.yml`, by its own proposals and reads.
@@ -394,11 +406,22 @@ On today's `main`, any move into `tools/runner/` that adds more than 53 counted 
 - C2c-1's file states 14,500 and its brief projects 14,123 at its opening;
 - C2c-2's draft v8 proposes C2c-1's cap plus 2,000.
 
-The scripts alone add 181 counted lines (135 and 46), before any rewrite of the herald or the session runner in Python and before their tests and pins, which are counted and are not estimated here. Whether they fit is the builder's count at the time. A raise is his: "a raise relaxes a control" (BRIEF-C2c-1 §7).
+The scripts alone add 181 counted lines (135, and 46 by `sed -n '51,96p' opencode-runner/.github/workflows/diary.yml | wc -l`), before any rewrite of the herald or the session runner in Python and before their tests and pins, which are counted and are not estimated here. Whether they fit is the builder's count at the time. A raise is his: "a raise relaxes a control" (BRIEF-C2c-1 §7).
 
 ### 5.3 C2c-1
 
-Nothing here changes C2c-1's merged texts. B8 is a row of the bootstrap predicate read at C2c-3's claim, and leaves criterion 8 and twin 10 as they are.
+**What this paper changes:** none of C2c-1's merged texts. B8 is read at C2c-3's claim and leaves criterion 8 and twin 10 as they are.
+
+**What follows if the options are taken up:**
+- Carrying custody in C2c-2 amends `counsel-courier.md` and the courier's shells in C2c-2, by that window's own proposals and reads (§5.1).
+- A "yes" to §8 meets BRIEF-C2c-1 §9, which pre-states C2c-3's promotion forecast as "B0–B7, as `transcripts/RESEARCH-meta-jack-20261107.md` §1 states them once on `main`, hold on the exit prefix".
+  - Either that sentence changes by C2c-1's own procedure, or C2c-3's brief departs from it.
+  - Or B8 and B9 are carried as a second claim of C2c-3's beside B0–B7, leaving §9's sentence, and ledger claims N7 and N8, as written.
+  - Which of these is lawful is not settled here.
+
+```sh
+grep -n 'B0–B7, as' transcripts/BRIEF-C2c-1-draft.md | cut -c1-80   # §9's line
+```
 
 **An inconsistency inside C2c-1's texts**, which this paper finds and does not cure. BRIEF-C2c-1 R7 says the herald, diary, session runner and re-proposer stay "as `hand: sessions` rows the map now dates". But C2c-1's window file names one lane row, `runner`, and moves it to `code`, so at the exit no row is left to date them.
 
@@ -426,11 +449,12 @@ So the commit moves too, and with it the `proposal` entry's `body.commit`.
 - `counsel-sign.py` step 7;
 - the signing guard of 00-common rule 8.
 
-Of jack's 1,341 branch heads, 411 have names ending in one or more `-r`/`-rN`, from 262 stems. Most are re-proposal branches; the count also takes in a few hand re-files and revision names. The longest chain is seventeen deep. The verbs' retry removes none of these: "A party's branch verbs are outside it" (Amendment 3).
+Of jack's 1,341 branch heads, 411 have names ending in one or more `-r`/`-rN`, from 262 stems. The count is by name, so it also takes in a few hand re-files and revision names. The longest chain is seventeen deep. The verbs' retry removes none of these: "A party's branch verbs are outside it" (Amendment 3).
 
 ```sh
 git ls-remote --heads origin | awk '{print $2}' | sed 's|refs/heads/||' > heads
-wc -l < heads; grep -c -E -- '-r[0-9]*$' heads; grep -E -- '-r[0-9]*$' heads | sed -E 's/(-r[0-9]*)+$//' | sort -u | wc -l
+wc -l < heads; grep -c -E -- '-r[0-9]*$' heads; grep -E -- '-r[0-9]*$' heads | sed -E 's/(-r[0-9]*)+$//' | sort -u | wc -l   # 1341, 411, 262
+grep -o -E -- '(-r[0-9]*)+$' heads | awk -F'-r' '{print NF-1}' | sort -n | tail -1                                    # 17
 ```
 
 ### Can every trigger be computed from the record?
@@ -466,7 +490,7 @@ The clerk detects a stale proposal from the logs' bytes (the herald does already
 | Line | Route (a) |
 |---|---|
 | Spends | a custody text v3 and its reads; custody's acts (v2 §5: two Apps, a staging directory, three root runs, one push, two grants, three `fix` entries); the re-proposer's code under the cap (§5.2) |
-| Reversible | yes. Custody v2's two phases keep the old runners until `finish`, and a revert of the paste restores today's lane |
+| Reversible | until `finish`: custody v2's two phases keep the old runners, and a revert of the paste restores today's lane. After `finish`, by a new install |
 | Evidence | §1 rows 3–6 and 9; custody v2 §2–4; #1011; #1032 |
 | If nothing is done | the deputies of row 9 stand, and every stale proposal is re-signed under a key every job can read |
 | Trial form | custody's pins, and the first admitted runs before `finish` |
@@ -519,6 +543,14 @@ After the paper has passed its read, in 00-common rule 3's form: "Add two rows t
 - Without B9, B0–B7 can hold while any session on steel signs as any party, and while every job can read his master key's file (S1).
 - Without B8, the map can read `code` for a lane most of whose jobs are hand (§5.3).
 
-Saying yes binds no text. It asks C2c-2's and C2c-3's briefs to define the evidence §4 names, and it lengthens the road to the bootstrap claim.
+What a yes does:
+- It changes the roadmap, and lengthens the road to the bootstrap claim.
+- It meets BRIEF-C2c-1 §9's pre-statement (§5.3).
+- It asks C2c-2's and C2c-3's briefs for the `lane_rows` list, six shells and a custody text that passes its reads.
 
-**Interest:** as stated at the top. Nothing stands on his silence.
+**Interest**, beyond the top:
+- The bootstrap claim is counsel's exit, and these rows delay it.
+- The counsel principal holds N7 and N8, which are written over B0–B7.
+- Counsel's own reviewer-keyed re-proposals of 8 November (row 46) are conduct B9 would bind.
+
+Nothing stands on his silence.
