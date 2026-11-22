@@ -12,7 +12,7 @@ This branch is a **push branch**: the sovereign applies it to `main` with `jack 
 
 **Where you start.** A builder session has built the move on this branch, ending at `7b03d75d4d3a429be9054d97136721feb605aaad`. Counsel's commit `57022d72e56fcf53015f949e0eae197b0a839a6b`, on `origin/counsel/move-paths`, follows it: it changes the evaluator's paths in `LAW.md`, `README.md` and `transcripts/sessions/due-resolve.md`, and nothing else.
 1. Run `git fetch -q origin main move-promotion-judge counsel/move-paths`.
-2. `git status --porcelain`: if it prints nothing, go on. If it lists only paths under `pins/` or `transcripts/`, an earlier session of this prompt stopped before committing: read `git status` and `git diff`, keep what is sound, and go on. Otherwise stop and report.
+2. `git status --porcelain`: if it prints nothing, go on. If it lists only paths under `pins/`, `transcripts/` or `.review-logs/`, an earlier session of this prompt stopped before committing: read `git status` and `git diff`, keep what is sound, and go on. Otherwise stop and report.
 3. `git merge-base --is-ancestor 7b03d75d4d3a429be9054d97136721feb605aaad origin/move-promotion-judge` must succeed.
 4. Then:
    - if `git rev-parse HEAD` equals `git rev-parse origin/move-promotion-judge`, go on;
@@ -35,7 +35,7 @@ If any check fails, stop and report. Never change `SPEC.md`: the sovereign's gra
 - the full acceptance replay, every row of `spec/vectors/promotion-replay.json` and every first-parent commit after its *T* up to the move's parent, which the paragraph requires and `replay_drift` only samples;
 - merging `main` into this branch, which `tools/jack`'s `v_push` requires and which is done just before the push, because `main` moves every hour.
 
-**If an earlier session of this prompt ran here,** `git log --oneline 57022d72..HEAD` lists its commits. Continue from them, and do not write again a pin that is committed and passes.
+**If an earlier session of this prompt ran here,** `git log --oneline 57022d72..HEAD` lists its commits. Continue from them, and do not write again a pin that is committed and passes. Runner #1189 ran this prompt first. It ended at minute 13, when a command named a path under `/tmp`, so its commits and uncommitted work may be in this worktree.
 
 **The texts you write to** are on this branch:
 - `SPEC.md` §10 item 15 (from `15. **promote_unmet**`), whose last sentences name six pins, from `Pins` `promote_while_unmet` to `promote_judged_once`, each with its passing twin;
@@ -77,7 +77,9 @@ Read them whole first. The sovereign read that text before the build (CHARTER A2
 
 **What you do not do.** Change nothing outside `pins/` and `transcripts/`, except as start step 5 takes counsel's commit in. That rules out `judge/`, `kernel/`, `tools/`, `tests/`, `harness/`, `SPEC.md`, `CHARTER.md`, `RUNBOOK.md`, `LAW.md`, `judge/scope.json` and `spec/vectors/`. Never commit a tree whose counted lines exceed the cap of 8,400. If the pins do not all fit, stop: commit what fits, push, and report the count and what is not written. Do not merge `main`.
 
-**Time and long commands.** The job stops at 180 minutes, and a single command at 15. `python3 pins/run.py --only <names>` runs some pins. Run the full `pins/run.py` and the unit suite each in the background, with `nohup` and output to a file under `/tmp`, and poll the file. By minute 160, commit what you have and push the branch, even if unfinished, and say so.
+**No path outside this worktree.** Never name a path outside this worktree in any command, `/tmp` included: the runner ends the session at the first such command, as it ended #1189. Python's own temporary directories, which the tests and `pins/run.py` make, are not your commands and are fine.
+
+**Time and long commands.** The job stops at 180 minutes, and a single command at 15. `python3 pins/run.py --only <names>` runs some pins. Run the full `pins/run.py` and the unit suite each in the background, with `nohup`, writing to a file in the directory `.review-logs/` at the top of this worktree, and poll that file. Never `git add` `.review-logs/`: add the paths you commit by name, and remove the directory before your last commit. By minute 160, commit what you have and push the branch, even if unfinished, and say so.
 
 **Checks before you push.** Run each and copy its result into your report:
 - (a) `python3 -m unittest discover -s tests -t .`: every test passes, `tests/test_pins.py` and `tests/test_law.py` included;
