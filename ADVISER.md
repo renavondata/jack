@@ -3149,3 +3149,42 @@ git show d3ea009c:transcripts/BRIEF-C2a-3-draft.md | grep -c 'checks neither the
 **The next slot holds:** 12:00–12:08Z for `counsel/c2a-3-v5` at `d3ea009c`. His paste acts only at minute 40 or later, and only with no pull request open but the three, so the two do not meet.
 
 Open for the adviser: nothing. This entry does not ring.
+
+### 110 · 2026-11-22T12:05Z · agent, claude-opus-5-5 · main@47616ffc
+
+**His three acts are on `main`'s log.**
+- seq 7178: `decision`, kind `transmute`, subject `A6`, at 11:40:24Z.
+- seq 7179: `amend`, id `A6`, `activate_at` 7180, at 11:42:15Z.
+- seq 7180: `decision`, kind `veto`, subject `C2a-prime`, at 11:44:05Z.
+
+The veto's `seq` equals A6's `activate_at`, so under A6's clause 1 C2a-prime has ended, as failed, at 7180. He told me in this chat: "Second paste was accepted... Now what?"
+
+```sh
+git show origin/main:log.jsonl | python3 -c 'import sys,json; [print(e["seq"],e["type"],json.dumps(e["body"])[:90],e["ts"]) for e in map(json.loads,sys.stdin) if e["seq"] in (7178,7179,7180)]'
+```
+
+**The 12:00Z slot for `counsel/c2a-3-v5` is lost, and the slot is now 13:00–13:08Z.** The guard polled from 12:00:10Z. The resolver's PR went stale twice after his entries moved `main`: #1302 was re-proposed as #1303, then as #1304 (`due-builder-20261122T1110-r-r`, opened 12:00:44Z), and #1304 held the guard to the slot's end. Nothing was requested, and the branch is still `d3ea009c`.
+
+**The cold read of the move is filed: runner #1216, `google/gemini-4-argon`, no key.** The model is from neither the builder's and reviewer's family (`openai/gpt-6.1-sol`) nor mine. The issue's body is my body `3b6a140f…` plus the courier's request marker. It reads `bd05ed5c` against SPEC §10 item 15 as granted at seq 6851 and against the ruling of 20 November. It asks ten questions, among them every live reader of `tools/status.py` left after the move. That question flags `judge/status.py` lines 436 and 437, which parse `tools/status.py` at the commit assessed, so `c2a_tree_evidence` would fail at a commit after the move. For C2a-3 that is the draft-after-the-move's §The code, with P. When the reader's report comes in, I commit it verbatim, under a header naming the issue, as `transcripts/REVIEW-move-promotion-judge.md` on `agent/review-move`.
+
+**My own trial of the merge and the check, on this machine.**
+- Merging the current `main` into `bd05ed5c` is clean, and changes only `log.jsonl`, `CHARTER.md`, `RUNBOOK.md` and `transcripts/`.
+- On the merged tree, counted lines are 8245 against a cap of 8400.
+- `python3 -m unittest discover -s tests -t .` exits 0 in 637 s.
+- `pins/run.py` and `tools/count_kernel.py` are running, and I report them in my next entry.
+- `SPEC.md` at `bd05ed5c` hashes to `72eeea02a320a56f5be03a1de9bc50a2624b53e0538cdbc529c877b0274aaba2`, the hash his grant at seq 6851 names.
+
+**The paste for his push (`paste-move-push.sh`, SHA-256 `711e2441…`).**
+- **It waits**, up to 8 h, for three things together: v5 on `main` (first line `draft v5, 22 November 2026`), the review file on `agent/review-move`, and no pull request open but #125, #316 and #562.
+- **It then stops, having entered nothing,** if any of these fails:
+  - the review's last line is `VERDICT: PASS`;
+  - `origin/move-promotion-judge` is `bd05ed5c1acc…`;
+  - the merge of `main`, in a fresh worktree with his `Proposer: guy guy-master` trailer (the precedent of `045eff1`), changes only the four paths;
+  - counted lines are at or under the cap.
+- **Only then** does it run `tools/jack push move-promotion-judge --review /tmp/REVIEW-move-promotion-judge.md`. A push refused because `main` moved during the check (about 16 minutes) enters nothing, and he runs the paste again.
+
+```sh
+cd ~/git/jack-guy && git switch main && [ "$(gh api user --jq .login)" = gfrmin ] && quiet() { n=0; until [ "$((n+=1))" -gt 960 ] || { git fetch -q origin main move-promotion-judge agent/review-move 2>/dev/null && eval "$1" && [ "$(gh api 'repos/renavondata/jack/pulls?state=open&per_page=100' --jq 'map(select(.number!=125 and .number!=316 and .number!=562))|length')" = 0 ]; }; do echo "waiting: $2"; sleep 30; done; [ "$n" -le 960 ] && git pull -q --ff-only; } && quiet "git show origin/main:transcripts/BRIEF-C2a-3-draft.md | head -1 | grep -q 'draft v5, 22 November 2026' && git show origin/agent/review-move:transcripts/REVIEW-move-promotion-judge.md > /dev/null 2>&1" "C2a-3's redraft not yet on main, the read not yet in, or a proposal is open" && R="$(git show origin/agent/review-move:transcripts/REVIEW-move-promotion-judge.md | tail -1)" && { [ "$R" = "VERDICT: PASS" ] || { echo "the read did not pass: $R"; false; }; } && [ "$(git rev-parse origin/move-promotion-judge)" = bd05ed5c1acc58993b8063bcb92dea6f09af2ed3 ] && git show origin/agent/review-move:transcripts/REVIEW-move-promotion-judge.md > /tmp/REVIEW-move-promotion-judge.md && git worktree prune && W="$(mktemp -d)/move" && git worktree add -q -B move-promotion-judge "$W" origin/move-promotion-judge && git -C "$W" merge -q --no-edit -m 'merge: main into move-promotion-judge, after the veto of C2a-prime under A6' -m 'Proposer: guy guy-master' origin/main && [ -z "$(git -C "$W" diff --name-only bd05ed5c1acc58993b8063bcb92dea6f09af2ed3 HEAD | grep -v -e '^log.jsonl$' -e '^CHARTER.md$' -e '^RUNBOOK.md$' -e '^transcripts/')" ] && (cd "$W" && python3 -c 'import json,sys; sys.path.insert(0,"."); from judge.judge import counted_lines; s=json.load(open("judge/scope.json")); n=counted_lines(".", "HEAD", s["counted"]); print("counted", n, "cap", s["cap"]); sys.exit(n > s["cap"])') && tools/jack push move-promotion-judge --review /tmp/REVIEW-move-promotion-judge.md && { git worktree remove "$W" || true; } || echo "Stopped. Send counsel everything printed above before pasting anything again."
+```
+
+Open for the adviser: an audit of this paste and of #1216's body before I give him the paste. He waits on neither: the paste cannot act before v5 is on `main`, which is 13:35Z at the earliest. This entry rings.
