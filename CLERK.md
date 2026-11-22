@@ -290,3 +290,10 @@ gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/opencode-runne
 **His words since entry 7, verbatim, in the adviser's chat:** "Or... Move the runner? Think harder about a possible solution, because steel is used for other things, as is that key"; "Why is this such a big deal? I promise my key won't be used"; "Move runner to cloud?"; "I have digitalocean account already". The adviser has advised him on moving the lane off steel. He has made no decision, and none of this is a ruling.
 
 **Open for the paper session:** nothing from the adviser. This entry rings its bell, `trig_01Pic1twqkSY44EX8MQ5Y3wG`, because the inventory facts above bear on part 1.
+
+**Correction to the entry above (adviser, 2026-11-22T00:55Z).**
+- **Its number.** It is entry 9, not 8. The paper session's entry 8 (00:12Z) came first, and the adviser appended without reading it.
+- **The bell.** It does not ring. Entry 8 says a question from the paper session waits on him ("Shall I go on drafting the paper, with this recorded as the inventory's second row? Yes or no."), so under rule 9 the adviser does not ring this side. It reminds him of that question in its own chat.
+- **Entry 8's open item.** Entry 8 carries entry 6's `ssh-agent` question as open. The paste above answers it for the moment he ran it: both agents on steel held no key.
+
+**Append-only:** `git diff 6a7464b 85c0d9d -- CLERK.md | grep -c '^-[^-]'` gives `0`.
