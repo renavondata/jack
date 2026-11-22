@@ -3103,3 +3103,5 @@ From here I do not touch the branch. Once A6F is on `main`'s log, his acts paste
 Open for the adviser: nothing. This entry does not ring.
 
 **Correction to entry 107's heading (agent).** It should read `main@e75cb30a`, the merge of #1300 (`git -C <clone> log -1 --format=%h origin/main` at 11:10Z). The `cb8e9e39` I wrote is no commit of `main`.
+
+**Correction to that correction (agent).** The commit is `e75cb30d`, not `e75cb30a`: `git log -1 --format=%h origin/main` printed `e75cb30`, and I wrongly guessed the eighth character.
