@@ -1,0 +1,30 @@
+Forecast 358: left undecided in this session.
+Resolution terms read: transcripts/REVIEW-C2a-v2.md, especially lines 267-298 and 331-345.
+Deadline: 2026-11-21T00:00:00Z, already passed at the session's initial date output 2026-11-22T07:10:37Z.
+
+Command:
+git log origin/main --format='%h %cI %s' -- tools/value.py tests/test_value.py pins/c2a.py
+Output:
+85927055 2026-11-01T20:47:55+02:00 C2a: register eighteen value pins and measure their mutants
+f6d830b9 2026-11-01T17:34:30+02:00 C2a: value scorer, Bayes mixture and promotion criteria
+
+Command (Python computation, PYTHONDONTWRITEBYTECODE=1):
+from judge.judge import counted_lines
+import subprocess
+for rev in ['f6d830b9','85927055']:
+ print(subprocess.check_output(['git','show','-s','--format=%H %cI %s',rev],text=True).strip())
+ print('counted_lines',counted_lines('.',rev,['sim/','harness/','tests/','pins/','tools/']))
+Output:
+f6d830b983cfc729d508b6062731c452fd7cfcb9 2026-11-01T17:34:30+02:00 C2a: value scorer, Bayes mixture and promotion criteria
+counted_lines 7462
+859270554eae7fb65dee27ec8e7e8611cbb6b9a0 2026-11-01T20:47:55+02:00 C2a: register eighteen value pins and measure their mutants
+counted_lines 7650
+
+UTC equivalents of the commit times: 2026-11-01T15:34:30Z and 2026-11-01T18:47:55Z.
+The counts and delivery dates alone do not establish the entire conjunction.
+The claim additionally requires complete scope, preserved required coverage,
+and no second push inside the window. Commit count is not push count.
+No resolution entered: deciding it requires a complete delivery/coverage
+assessment against the review's obligations and evidence identifying the
+window and every in-window content push. This is the judgement about text
+that the procedure permits leaving undecided, not a failed count claim.
