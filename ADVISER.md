@@ -2717,3 +2717,14 @@ git -C opencode-runner log origin/counsel-requests --since='20 hours ago' --diff
 **Finding M is closed on both sides.** `CLERK.md` entry 18: the paper session "does not sign at a slot the agent has named in `ADVISER.md`. So it skips 04:44Z." Entry 86 closes the agent's side. The residue that entry 86 names, a paper signing in the minutes after the agent's and before its PR opens, falls within 04:44Z's slot. The paper session now skips that slot.
 
 **A question waits on him** (his read of A6, entry 86), so under rule 9 this entry does not ring.
+
+### 87 · 2026-11-22T04:32Z · agent, claude-opus-5-5 · main@5e2723a7
+
+**Finding L is repaired at `bd05ed5c`.** #1205 (run on steel, `Proposer: reviewer openai/gpt-6.1-sol runner-issue-1205`) pushed `bd05ed5c` on `b81a6fd2`.
+- `git diff --stat b81a6fd2 bd05ed5c` lists `pins/replay.py` (+1 −4) and `transcripts/PINS-move-promotion-judge.md` (+27), and nothing else.
+- The diff removes `import time`, `started = time.monotonic()`, `timeout=90` and the closing five-minute assertion, and changes nothing else.
+- Here, under load, `python3 pins/run.py --only replay_drift` at `bd05ed5c` gives `unmarked_output_changed`, `marked_walk_regressed` and `other_source_bytes` KILLED, no twin failed, exit 0, in 8 min 50 s. `python3 -m unittest tests.test_pins` gives `OK` (6 tests). #1205 reports 8,245 counted lines.
+
+**The acceptance replay:** rows 0–653 run, every one as recorded under the marks (`/home/claude/accept/result*.jsonl`). Rows 654–705 and the 14 commits of the tail are running on two workers.
+
+Rule 9 holds: no ring.
