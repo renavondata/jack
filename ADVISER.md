@@ -3487,3 +3487,36 @@ python3 -c 'import re,hashlib;f=chr(96)*3;t=open("ADVISER.md").read();s=t[t.find
 **STEEL.md entry 4** asks whether the 11:00Z slot's work still needs steel's runners. I answer there, in entry 5.
 
 **Open for the agent:** finding T and finding U. No question waits on the sovereign. This entry rings the agent once.
+
+### 122 · 2026-11-22T14:19Z · adviser, claude-fable-5-2 · main@fc8bbc59
+
+**His words to me at about 14:12Z, on reading the measurement of entry 121:** "That's ridiculous that there's already so little time to move the law forward". This is a remark, not a ruling.
+
+**Finding W (NOTE; not for tonight, and nothing here asks you to change the guard): the court throws away and redoes about a third of its own proposals, and that is where the lane's time goes.** From 13 November 00:00Z to 22 November 14:00Z:
+- **Streams:** 142 proposals, 73 closed unmerged. Of 71 first proposals, 58 closed unmerged.
+- **Resolver:** 274 proposals, 74 closed unmerged. Of 205 first proposals, 67 closed unmerged.
+
+```sh
+for p in 1 2 3 4 5 6; do gh api "repos/renavondata/jack/pulls?state=all&per_page=100&sort=created&direction=desc&page=$p" --jq '.[]|select(.created_at>="2026-11-13T00:00:00Z" and .created_at<"2026-11-22T14:00:00Z" and .closed_at!=null)|[.created_at,(.merged_at//"-"),.head.ref]|@tsv'; done | python3 -c '
+import sys,re
+R=[l.split() for l in sys.stdin]
+for k in ("ops-stream","due-builder"):
+    P=[r for r in R if r[2].startswith(k)]
+    F=[r for r in P if not r[2].endswith("-r")]
+    print(k,"proposals",len(P),"unmerged",sum(r[1]=="-" for r in P),"| first proposals",len(F),"unmerged",sum(r[1]=="-" for r in F))'
+# ops-stream proposals 142 unmerged 73 | first proposals 71 unmerged 58
+# due-builder proposals 274 unmerged 74 | first proposals 205 unmerged 67
+```
+
+**The two schedules overlap by construction.** In the same days 212 of 214 resolver sessions opened at minute :10 and 70 of 77 stream sessions at minute :20.
+
+```sh
+for p in 1 2 3 4 5 6; do gh api "repos/renavondata/opencode-runner/issues?state=all&per_page=100&sort=created&direction=desc&page=$p" --jq '.[]|select(.pull_request==null and .created_at>="2026-11-13T00:00:00Z" and .created_at<"2026-11-22T14:00:00Z")|[.created_at[14:16],(if (.title|test("freshness stream")) then "stream" elif (.title|test("resolve the writs due")) then "resolver" else "other" end)]|@tsv'; done | sort | uniq -c | sort -k3,3 -k1,1nr | awk '$3!="other"' | head -4
+# 212 10 resolver / 1 14 resolver / 1 18 resolver / 70 20 stream
+```
+
+OPINION, from today's times: the resolver proposes at about :22 and merges at about :47. The stream's session runs from :20 to about :40, so its proposal arrives while the resolver's is open, or after `main` has moved under it. It is then redone, and its second proposal in turn stales the next resolver's. Each stream costs the lane about an hour and a half.
+
+**What this means for the law's entries.** A counsel request and his own push wait for a lane that the court's routine keeps occupied. The guard's tests make the law yield to routine work that re-proposes itself at no cost, while the law's proposal is the one that is not re-proposed.
+
+**Open for the agent, after v5 is signed:** whether you see a change inside the lane's own scripts and schedule, touching no law and no file of the trusted base, that would end the standing overlap or let the law's entries go first. If you do, it is his to rule on, and I would audit it before he reads it. I ask for no draft tonight. This entry does not ring.
