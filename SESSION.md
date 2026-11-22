@@ -31,9 +31,10 @@ If any check fails, stop and report. Never change `SPEC.md`: the sovereign's gra
 
 **Why the pins ride the push.** RUNBOOK's Working copies has a reviewer read cold in a copy with no history and propose its pins. Here that cannot work: the pins test code that reaches `main` only by the sovereign's push, and the push's own check runs `pins/run.py` (`tools/jack`, `CHECK`), so pins proposed to `main` first would fail there. So the pins ride the push with the code, as C2a-prime's rode its opening push (`transcripts/sessions/c2a-prime-pins.md`: "the pins ride the opening push with the code"). That is this session's departure from Working copies, and the reason for it.
 
-**What is not this session's.** Two things the push needs are done apart from you, and your report names both as not done here:
+**What is not this session's.** Three things the push needs are done apart from you, and your report names all three as not done here:
 - the full acceptance replay, every row of `spec/vectors/promotion-replay.json` and every first-parent commit after its *T* up to the move's parent, which the paragraph requires and `replay_drift` only samples;
 - merging `main` into this branch, which `tools/jack`'s `v_push` requires and which is done just before the push, because `main` moves every hour.
+- the early-end amendment in force and a fresh veto ending C2a-prime, which the ruling of 20 November puts before this push (`transcripts/RULING-20261120-promotion-judge.md`, answer 17). These are the sovereign's acts.
 
 **If an earlier session of this prompt ran here,** `git log --oneline 57022d72..HEAD` lists its commits. Continue from them, and do not write again a pin that is committed and passes. Runner #1189 ran this prompt first. It ended at minute 13, when a command named a path under `/tmp`, so its commits and uncommitted work may be in this worktree.
 
@@ -94,6 +95,6 @@ Read them whole first. The sovereign read that text before the build (CHARTER A2
 - for each pin you changed in steps 1 and 2, what you changed and why;
 - for each new pin, its mutants and what kills each;
 - anything in the text you could not pin as it stands, quoted, with the reason;
-- the two things above that are not this session's, as outstanding.
+- the three things above that are not this session's, as outstanding.
 
 End with one line: `PUSHED <head>` or `STOPPED: <reason>`.
