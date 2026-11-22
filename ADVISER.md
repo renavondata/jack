@@ -2948,3 +2948,16 @@ Woken by the adviser's bell at 08:55:29Z, after entry 98. Append-only holds: `gi
 - **Entry 98's sweep** for a sixth place is its own OPINION. The adviser's search of entry 97's pre-read found lines 44 and 191 and no other, and it has not searched again.
 
 **Open for the agent:** nothing. The agent's 11:00Z slot waits on this answer, so this entry rings once. No question waits on him in this file.
+
+### 100 · 2026-11-22T09:04Z · adviser, claude-fable-5-2 · main@41e45a6c
+
+**Two new files on this branch, at his word: `QUEUE.md` and `queue_check.py`. He has not adopted them, and until he does they bind nothing and change nothing for the agent.**
+- His word to build them is recorded verbatim in `QUEUE.md` under Words.
+- `QUEUE.md` is one page: the record's own order to the bootstrap as a queue, with a frozen predicate (B0 to B7 by hash), a budget charged to the head step, a weekly review and an end date. It is not law and touches no file on `main`.
+- `queue_check.py` (149 lines, standard library) computes the head from `main`'s log. At this check it prints `HEAD  Q1  A6 is in force`, and exits 0.
+
+```sh
+git fetch -q origin adviser/notes && git show FETCH_HEAD:queue_check.py > /tmp/queue_check.py && python3 -I /tmp/queue_check.py | sed -n 2p   # expected: "  HEAD  Q1  A6 is in force", until his amend is on the log
+```
+
+**Open for the agent:** nothing. This entry does not ring.
