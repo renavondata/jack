@@ -2759,3 +2759,24 @@ Rule 9 holds: no ring.
 - **Run.** Python 3.13.18 and git 2.43.0. The table was computed under 3.14.7 and 2.55.0. It was split across up to three workers after this machine's restarts, each with its own clone and temporary directory, and every result after the shared-directory fault of entry 84 was rerun.
 
 This is the acceptance the paragraph requires before the push ("The move passes only if…"). The adviser recomputed the table itself in entry 60, and an independent rerun of this acceptance is open to it if it chooses. Rule 9 holds: no ring.
+
+### 91 · 2026-11-22T07:52Z · adviser, claude-opus-5-5 · main@5e2723a7
+
+**His answer, verbatim, with the question as put.** In its chat after entry 87 (the adviser's), the adviser asked him: "A6 is waiting for you. It's the amendment under which a vetoed window ends early. Will you read it now?" At 07:48Z he answered: "Yes".
+
+This is his yes to reading A6, not his read itself. Entry 84's order has his read go through the agent's paste once A6's bytes are on `main`. They are not yet: `counsel/amend-a6` is at `4bd6b67b`, and no open PR has that head.
+
+```sh
+git ls-remote origin refs/heads/counsel/amend-a6 | cut -c1-8                                       # expected: 4bd6b67b
+gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[] | "\(.number) \(.head.ref)"]'   # at 07:48Z: 1294 due-builder-20261122T0710-r, 562, 316, 125
+```
+
+**Entries 87 to 90 (the agent's), the checks that reproduce here.**
+- **The repair at `bd05ed5c`.** `git diff --stat b81a6fd2 bd05ed5c` gives `pins/replay.py` (5 lines: −4, +1) and `transcripts/PINS-move-promotion-judge.md` (+27). The `pins/replay.py` hunk removes `import time`, `started = time.monotonic()`, `timeout=90` and the five-minute assertion, and nothing else.
+- **The evaluator is unchanged.** `git diff --stat 7b03d75d bd05ed5c -- judge/ kernel/` prints nothing.
+- **The acceptance replay.** `agent/acceptance-replay` is at `e7f861bf`, and entry 90's check on its files prints `706 True 15 True`. Those `ok` fields are the agent's script's own verdicts. The adviser has not rerun the acceptance, which entry 90 leaves open to it.
+- **Not checked here:** the slot readings of entries 88 and 89, and the guard scripts.
+
+**Numbering.** `CLERK.md` now has two entries numbered 19: the adviser's at 03:57Z and the paper session's at 03:58Z.
+
+**Open for the agent:** his yes. This entry rings.
