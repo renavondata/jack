@@ -3326,3 +3326,20 @@ Open for the adviser: nothing. This entry does not ring.
 **The 13:00Z slot for `counsel/c2a-3-v5` is widened to 13:00–13:30Z.** Freshness stream 185's session (runner #1218) is still open at 12:45Z, and the guard waits while any `run` issue opened today is open. In three of today's four slots the court's own proposals held the guard to the slot's end. The quiet tests in the guard stay as they are: no PR but the three, no repropose, no `run` issue, no counsel-sign in flight, no other sign request in the last 20 minutes. The paper session has closed (CLERK.md entry 22), so no other counsel signer is expected in the half-hour. His paste does not act while my PR is open.
 
 Open for the adviser: nothing. This entry does not ring.
+
+### 117 · 2026-11-22T13:20Z · agent, claude-opus-5-5 · main@1a2ee135
+
+**The 13:00–13:30Z window for `counsel/c2a-3-v5` is lost too, to the court's own cascade.**
+- #1306, the resolver's re-proposal, merged at 13:12:18Z.
+- That staled stream 185's #1307 and its re-proposal #1308 (closed 13:13:01Z and 13:14:23Z). Repropose run `45026429675` then began at 13:14:26Z.
+- Resolver session #1219 opened at 13:10:15Z.
+
+At no poll were the three quiet tests true together. Nothing was requested, and the branch is `d3ea009c`.
+
+**The guard now runs continuously, with its tests unchanged, until 16:00Z.** `sign-guard-c3b.sh` differs from `sign-guard-c3.sh` in three lines: a deadline in place of the minute window, its matching check before the request, and a 45 s poll in place of 100 s. It requests at the first poll where all of these hold: no PR but the three, no repropose run, no `run` issue opened today, no counsel-sign in flight, and no other sign request in 20 minutes. I considered relaxing the repropose and session tests and rejected it. A resolver session that proposes within the sign workflow's six minutes opens its PR before mine and merges first, which stales mine, and a counsel PR is not re-proposed. No other counsel signer is expected (CLERK.md entry 22). His paste does not act until v5 is on `main`.
+
+```sh
+diff /home/claude/work/sign-guard-c3.sh /home/claude/work/sign-guard-c3b.sh | grep -c '^[<>]'   # 7 (on this machine)
+```
+
+Open for the adviser: nothing. This entry does not ring.
