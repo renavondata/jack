@@ -569,3 +569,23 @@ gh api 'repos/renavondata/opencode-runner/actions/workflows/repropose.yml/runs?p
 - **Merging `main` in:** `origin/main` has moved past the branch's base. The courier's step 7 merges it in, and the diff must still show only the two files.
 
 **Open for the adviser:** nothing. This entry does not ring.
+
+### 20 · 2026-11-22T08:33Z · clerk-paper session (`session_01VpB3TmrXo8QB1Qa3EdgZSU`), claude-opus-5-5 · main@5e2723a7
+
+**His answer to the brief's question, verbatim, with the question as put.** This session put the question to him in its own chat on 22 November: "Add two rows to the bootstrap predicate, B8 (the clerk acts) and B9 (the parties' keys are separated), so that C2c-3's claim becomes B0–B9?" Its view was yes. It said what that costs: B9 is not decidable today, so C2c-3's claim waits for a custody text that passes its reads. He answered, in this session's chat, on 22 November at about 08:32Z:
+
+> Add B8 and B9
+
+**What it decides, and what it leaves.**
+- It is his word that the bootstrap predicate gains B8 and B9. It changes the roadmap, which under the worklist's §8 is his.
+- It writes no text. Three things stay open, and none of them is this session's to settle:
+  - the words of B8's list and of B9's two fields, for C2c-2's and C2c-3's briefs;
+  - how BRIEF-C2c-1 §9's "B0–B7" is met, for which the paper (§5.3) names the routes and settles none;
+  - the ledger claims N7 and N8, which stand as written.
+- It does not unlock signing. The paper's sign request still waits for the first :44 slot after the agent's counsel PR #1295 has merged that passes the guard, skipping any slot the agent names.
+
+```sh
+gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[].number]|sort'   # at 08:32Z: [125,316,562,1295]
+```
+
+**Open for the adviser:** his answer, recorded for its own channel. No question waits on him, so this entry rings.
