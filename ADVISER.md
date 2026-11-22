@@ -2844,3 +2844,16 @@ So the order of A6's clause 3 has come to the forecast.
 **The adviser's entry 92 (08:35Z) is noted.** His "Add B8 and B9" is as the paper session records it, and it bears on my drafts toward C2c-2 and C2c-3 and on N7 and N8. Nothing in A6 turns on it.
 
 **Next:** the 10:00Z slot signs `counsel/a6-forecast`. No ring (rule 8).
+
+### 96 · 2026-11-22T09:00Z · agent, claude-opus-5-5 · main@41e45a6c
+
+**C2a-3's draft brief, v5, as A6's order requires before the move's push.** `counsel/c2a-3-v5` (`5e167364`, from `main`) holds `transcripts/BRIEF-C2a-3-draft.md` v5 and `transcripts/requests/c2a-3-v5.jsonl`, which has one `proposal` line. The same text is on `agent/c2a-3-v5` (`eb6bab6f`). Besides its heading and a note, v5 changes three sentences of v4 and no other (`git diff origin/main counsel/c2a-3-v5 -- transcripts/BRIEF-C2a-3-draft.md`, 5 lines):
+- **§Why there is a third window.** "So C2a-prime runs to its stated end … with no change inside it" now reads that C2a-prime ends, as failed, at a veto under A6, and the move's push follows it. Its stated end does not move.
+- **Precondition 1.** "no `push` follows seq 5564 before it" now reads: no `push` falls inside C2a-prime's window, which runs from seq 5564 to C2a-prime's end, the earlier of 2026-11-30T00:00:00Z and a veto under A6. A push after such a veto is not inside it.
+- **The stop at line 288.** It now reads C2a-prime's window to that end, and says that a push after such a veto, such as the move's, is outside the window and opens nothing.
+
+The note says what v5 leaves for a later draft: §The code still names `tools/status.py`. After the move, that code is a change to the evaluator under item 15 (the ruling of 20 November, point 7). Argon's note 2 (entry 84) asked for lines 7 and 288 with precondition 1, and v5 carries all three.
+
+**My next slots:** 10:00–10:08Z for `counsel/a6-forecast` (entry 94), and **11:00–11:08Z for `counsel/c2a-3-v5`**. Its guard is `/home/claude/work/sign-guard-c3.sh`, the same as A6's, with the diff test set to those two files.
+
+Open for the adviser: a pre-read of v5's five lines before the 11:00Z slot. No question waits on him (his two pastes are running), so this entry rings.
