@@ -1,0 +1,35 @@
+$ git show --stat f6d830b9
+commit f6d830b983cfc729d508b6062731c452fd7cfcb9
+Author: Guy Freeman <guy@publicdatamarket.com>
+Date:   Sun Nov 1 17:34:30 2026 +0200
+
+    C2a: value scorer, Bayes mixture and promotion criteria
+    
+    Proposer: builder builder-2
+
+ sim/gen.py          |  23 ++++-
+ tests/test_sim.py   |   4 +-
+ tests/test_value.py | 285 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/entry.py      |  23 ++++-
+ tools/jack          |   2 +-
+ tools/status.py     |  98 ++++++++++++++++--
+ tools/value.py      | 181 +++++++++++++++++++++++++++++++++
+ 7 files changed, 598 insertions(+), 18 deletions(-)
+
+
+$ git log origin/main --before=2026-11-21T00:00:00Z --format=%h %cI %s -- tools/value.py tests/test_value.py
+f6d830b9 2026-11-01T17:34:30+02:00 C2a: value scorer, Bayes mixture and promotion criteria
+
+
+$ grep -n "type":"push" log.jsonl
+3:{"body":{"digest":"f77c28e59d559cd87c54b533911cc78ea7193b5e97f925555d33a09f9ac31da7","review":"e82946b684fa388469b8d4441289fb83a1d0a2f612c3fc3107ec482959175b94"},"parent":"61561651c0574fbb16e4d0908865b9983f6eb768193b8ba1ccfbc60edfff953c","proposer":"guy","seq":2,"sig":"U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAg8PB6+vR1VWRwcxtmGrWMBS2LtEhofSBX5zUqoRKDSEkAAAAKY29yZS1lbnRyeQAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQyNTUxOQAAAECDYSrwJzb9cfS4pEt5NzpXNoyOduUJuvHR8//K5cRZNGnIgMQ6nTV5Vztrhus9BtchKFAiHKyFvTF4uzrT02QK","ts":"2026-10-18T14:42:38Z","type":"push"}
+6:{"body":{"digest":"1db66ff08fdaca4bed5bebe2d5060ca09caf14c5755fcebb65952aa7f67337ba","review":"0000000000000000000000000000000000000000000000000000000000000000"},"parent":"92ab785ab096b9c2a3cb415e2ba6b90412910f7b57f0650de5cdc958243d3c60","proposer":"guy","seq":5,"sig":"U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAg8PB6+vR1VWRwcxtmGrWMBS2LtEhofSBX5zUqoRKDSEkAAAAKY29yZS1lbnRyeQAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQyNTUxOQAAAEDF2Rbst+n57QSbF10iJCuX/uFe4DeVaxz4RMkZ+DEC2hlKLStjTGROgF03PxF3O3BTNcsaex1WkXb9IjQ4T/AC","ts":"2026-10-19T04:36:23Z","type":"push"}
+10:{"body":{"digest":"bf9a798dd8b4ced53d6dcf8ddf0026d2a6565e13a391f5af590aea249ba91cf7","review":"0000000000000000000000000000000000000000000000000000000000000000"},"parent":"cb8a4e91d9721018102a5160a82fea548d5013e0ffeb96e03b2e8393bd8d20cb","proposer":"guy","seq":9,"sig":"U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAg8PB6+vR1VWRwcxtmGrWMBS2LtEhofSBX5zUqoRKDSEkAAAAKY29yZS1lbnRyeQAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQyNTUxOQAAAEDKACDkBOkOw7wzSy64/zf4mr4XXSiQEyVAx4/z3LnSWL3xOzGXnuMxTZ3UXT41YnYGxD0ZGACbnX0+wLejtNIK","ts":"2026-10-19T06:00:46Z","type":"push"}
+13:{"body":{"digest":"ba8f9a7708d0e18773412c06f6cec5ba75b37514dff5edd4ac7cfc316ccf0a82","record":"0000000000000000000000000000000000000000000000000000000000000000","review":"3d3e8ea8876aae3ee76bddd72581127dea54cf09bc7b77e5691eeb13d829cae2"},"parent":"bb9c445aa2cc2d34c0e543b6f59fbca94168b4dbc4b9c06a59f5d04e8f383f18","proposer":"guy","seq":12,"sig":"U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAg8PB6+vR1VWRwcxtmGrWMBS2LtEhofSBX5zUqoRKDSEkAAAAKY29yZS1lbnRyeQAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQyNTUxOQAAAED8/q6InHOQqamBslAB2zvV7a6mrmNCGvnYV0rDyscoK88GKtd0QR6s4tPI5Zi6jvq12OvHokzM6nnhpeq1V/0P","ts":"2026-10-20T02:06:48Z","type":"push"}
+30:{"body":{"digest":"606e6562f9b1d1840b0bf56b219b21bc18875b66266b4f16c384cc8d5a7366df","record":"69a2b165233195360c35b8b9f7fbec6b1df325458aa9422ec856afa54f120542","review":"0c0339eec05e9da68cf94494b8d418ab29ec3ac4ba6b4ae394f138719ae6ac2f"},"parent":"c7ca6ef797ed11a82f43937af26366b67805a110d23d53fd9a00c3cfae68c60d","proposer":"guy","seq":29,"sig":"U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAg8PB6+vR1VWRwcxtmGrWMBS2LtEhofSBX5zUqoRKDSEkAAAAKY29yZS1lbnRyeQAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQyNTUxOQAAAECAm5x4dmkSC868ZRLe67knIbGBCig/h5wrGnR5z4t2O+E6H2m/IquouC2n8pZQLN1O+BE9cCY4y1ztbnyQXTYN","ts":"2026-10-25T16:16:20Z","type":"push"}
+198:{"body":{"digest":"30976b3b4525dd5ab50369c7bd53930bb39bb552f0ca15f66d17e0566fe10000","record":"0000000000000000000000000000000000000000000000000000000000000000","review":"b04f011f777fb056a903fb434a2a50f4c950e1e03758208fd4c7b8a2f1742954"},"parent":"34c9cacbf4a4648891680921b7ec3345a59c1cfea5d091e85b1ed792fef2716a","proposer":"guy","seq":197,"sig":"U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAg8PB6+vR1VWRwcxtmGrWMBS2LtEhofSBX5zUqoRKDSEkAAAAKY29yZS1lbnRyeQAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQyNTUxOQAAAEAU5CtdcKpHCeZhu9EMi8jsIN2lTwU++0jUTbeV3TxMcmV/tyl3ForG0wYNU3f8yarKIkxy2s6SqA+8zolW9jQP","ts":"2026-10-31T13:04:49Z","type":"push"}
+368:{"body":{"digest":"afe633a2f34cc810bff9bb7e08aa3f59c98bcd64310c3f0145eae184a88af08d","record":"0000000000000000000000000000000000000000000000000000000000000000","review":"c51320cbccf38d77e4d82d10b06d30fffda4d1db700be5d5d9e9270567aee34e"},"parent":"359d57aad07bb9baabfd8699cc8a11b2ea4a33df2d86cd689296d062731e1f3b","proposer":"guy","seq":367,"sig":"U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAg8PB6+vR1VWRwcxtmGrWMBS2LtEhofSBX5zUqoRKDSEkAAAAKY29yZS1lbnRyeQAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQyNTUxOQAAAEC/qfKEtgK2f40A81Tif7hh+zoyz/mjIEEMyIe2ICqA9GqBG1A2KgH6jGNYJal/FUrJk/56u7Hh9qcaFbjHSBAD","ts":"2026-11-01T15:04:14Z","type":"push"}
+5565:{"body":{"digest":"578fe97874b0a344ba9aef374de54054138a82baab5e8857b6849c203a1ac0b3","record":"0000000000000000000000000000000000000000000000000000000000000000","review":"4b2152be0ee15b57edfa73b02817a861355a22e159c56b4b343c237ca9efc940"},"parent":"2bfcf4b71c87bad7ca0da344c7480060b9bb874940905e5820050b6817b7366b","proposer":"guy","seq":5564,"sig":"U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAg8PB6+vR1VWRwcxtmGrWMBS2LtEhofSBX5zUqoRKDSEkAAAAKY29yZS1lbnRyeQAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQyNTUxOQAAAEDyGuHv6bySVEYX05jmh5qlCBzPyceqMrKQGSElb3qB1zlXmliV3FMCjIBi1RmfaENHNVFUsVgcueDFjP53gD4B","ts":"2026-11-17T12:50:50Z","type":"push"}
+
+
+Decision: left undecided. Presence and history of implementation files do not certify the complete required scope and preservation of required coverage under REVIEW-C2a-v2.md. A term-by-term delivery/coverage audit of the delivered proposal head, including its required pins and CI evidence, plus counted-set and in-window push checks, is needed to decide the full conjunction. No resolution entered.
