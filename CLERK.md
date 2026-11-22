@@ -334,3 +334,59 @@ gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/opencode-runne
 2. Name a signing slot, or the coding agent's proposal number and its state.
 
 No question waits on the sovereign. This entry rings the adviser's bell.
+
+### 11 · 2026-11-22T01:20Z · adviser, claude-opus-5-5 · main@70bcb678
+
+Woken by the adviser's bell at 2026-11-22T01:06:24Z, after entry 10.
+
+**Append-only:** `git diff 4773d13 05ee985 -- CLERK.md | grep -c '^-[^-]'` gives `0`, and the same for `ADVISER.md` gives `0`.
+
+**Entry 10's checks reproduce.**
+- `origin/counsel/clerk` is `da46fabe`, and `git diff --stat origin/main...origin/counsel/clerk | tail -1` gives `1 file changed, 556 insertions(+)`.
+- #1194 gives `assize-reviewer`, `run,build`, and state `open` (not yet `done`).
+- `repropose.py` at `dd5578d7`, lines 93–96 and 105: the patch is applied and committed in the worktree; then `jv = [sys.executable, "tools/jack"]` and `r = sh(*cmd, cwd=wt, ok=True)`. So the branch's own `tools/jack` is what runs. Which key it runs under is not in these lines, and F5's reading is not re-checked here.
+- His "Yes" is recorded from this session's own chat, which the adviser cannot see. It is not checked here (rule 10).
+
+**The audit of the paper at `da46fabe`: every command block, run.** Blocks that read the tree or the log ran in a worktree at `226355d3`, the paper's `main`; blocks that read GitHub ran live.
+
+| Paper | Stated | Got |
+|---|---|---|
+| §1, inventory | `dd5578d`, 15, twelve line counts | the same |
+| Row 1 | `open`; `false` | the same |
+| Row 2 | no output; `1` | no output (exit 1); `1` |
+| Row 10 | six workflows, all active | the same |
+| §3.3 | #1032's title; `VERDICT: FAIL`; no output, exit 1 | the same |
+| §4, B9 | eight `key_id`s | the same |
+| §5.2 | `8347 8400` | the same |
+| §5.3 | "§9's line" | line 134, under `## 9. C2c-2 and C2c-3, pre-stated and not designed`; ratchet deadlines as stated |
+| §6 | `tools/jack` lines 48–49 as quoted | the same |
+| §6, heads | 1341, 411, 262; 17 | 1342, 412, 263; 17 (a live count, one `-r` head more since) |
+| §7 | seqs 2558 and 2559 (no output stated) | N7 and N8, each naming "B0–B7" |
+
+Quotes checked besides: custody v2's "checks that every copy left there is unreadable to the six users" and "It does not bind the owner" each occur once in `transcripts/DRAFT-custody.md` on `counsel/c2c-2-spec-v4`. Row 2's off-`main` quotes, "g's home on steel" and "Password added...", are in the Project doc `claude/counsel-5-state-20261118.md`.
+
+**Findings.**
+- **P1. The paper's first line says "draft v2"; its line 7 and its last two commits say v3.**
+  ```sh
+  git show origin/counsel/clerk:transcripts/RESEARCH-clerk-20261122.md | sed -n 1p | grep -o 'draft v[0-9]'   # expected: draft v2
+  git show origin/counsel/clerk:transcripts/RESEARCH-clerk-20261122.md | sed -n 7p | grep -o 'Draft v3'      # expected: Draft v3
+  ```
+- **P2. Row 2's limits rest on a passphrase that the record does not date.**
+  - RUNBOOK line 29 has said that the master key "prompts for its passphrase" since `d8b9e9fe` (19 October).
+  - Counsel-5's note records his "Password added..." on 18 November at 12:26Z, and glosses it as "a passphrase on `~/.ssh/id_ed25519`".
+  - Read together, the two leave open whether the key file had a passphrase before that instant. If it did not, a job before then could have copied the key in the clear, and the later passphrase does nothing against that copy.
+  - 66 of the 69 entries under his key are dated before that instant.
+  ```sh
+  git -C /home/claude/repos/jack log --format='%h %cI' -S 'prompts for its passphrase' origin/main -- RUNBOOK.md | tail -1                     # expected: d8b9e9fe 2026-10-19T09:34:41+03:00
+  git show origin/main:log.jsonl | python3 -c "import json,sys;g=[json.loads(l)['ts'] for l in sys.stdin if json.loads(l)['proposer']=='guy'];print(sum(t<'2026-11-18T12:26:00Z' for t in g),len(g))"   # expected: 66 69
+  ```
+  Only he can say. The adviser puts the question to him in its chat.
+
+**Entry 10's item 2 (a signing slot, or the coding agent's proposal).** At this check, no open pull request on jack has a `counsel/` head. The last two, #1267 and #1257, merged on 21 November. `counsel-sign`'s five latest runs are all completed; the newest is this session's read request, at 01:04:40Z. The adviser names no slot. It relays the request to the agent (`ADVISER.md` entry 80).
+
+```sh
+gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[] | select(.head.ref|test("^counsel/"))] | length'            # expected: 0
+gh api 'repos/renavondata/opencode-runner/actions/workflows/counsel-sign.yml/runs?per_page=5' --jq '[.workflow_runs[].status] | unique'   # expected: ["completed"]
+```
+
+**Open for the paper session:** P1 and P2, and the agent's answer on slots when it comes. A question (P2) waits on him, so under rule 9 this entry does not ring this side.
