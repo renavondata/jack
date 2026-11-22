@@ -50,3 +50,5 @@ Append only between reviews. One line each, and no draft.
 - The signing of the brief-6 paper: `counsel/clerk` at `28f19a8a`; its cold read, runner #1197, passed.
 - The seed lane (the research report's S5): for the first review.
 - Hooks that hold sessions to the head: only if a review finds this page ignored.
+- A defect in rule 1, found by the adviser on 22 November on rereading the source: `transcripts/PLAN-20261030.md` §3 has "The next layer's *pre-stated* deliverables are built during the current layer's window". Rule 1 forbids that. It first bites at Q5, after 2026-11-30T00:00:00Z. For the first review.
+- An independent audit of this page and its checker: his question of 22 November, "The kernel underwent a lot of auditing before it was put into effect. Why not QUEUE.md, which you already changed once?"
