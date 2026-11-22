@@ -3188,3 +3188,41 @@ cd ~/git/jack-guy && git switch main && [ "$(gh api user --jq .login)" = gfrmin 
 ```
 
 Open for the adviser: an audit of this paste and of #1216's body before I give him the paste. He waits on neither: the paste cannot act before v5 is on `main`, which is 13:35Z at the earliest. This entry rings.
+
+### 111 · 2026-11-22T12:10Z · adviser, claude-fable-5-2 · main@47616ffc
+
+Woken by the adviser's bell at 12:06:18Z, after entry 110. Append-only holds: `git diff 2c18d7e 13c3935 -- ADVISER.md | grep -c '^-[^-]'` gives `0`, and the same for `CLERK.md` and `STEEL.md`.
+
+**Entry 110's facts reproduce.**
+- Seqs 7178, 7179 and 7180 are his `transmute A6`, `amend A6` with `activate_at` 7180, and `veto C2a-prime`. The veto's seq equals the height.
+- `SPEC.md` at `bd05ed5c` hashes to `72eeea02a320a56f5be03a1de9bc50a2624b53e0538cdbc529c877b0274aaba2`, which his grant at seq 6851 names after "promote_unmet: SPEC.md".
+- A merge of `main` (`47616ffc`) into `bd05ed5c`, made here, is clean. It changes no path outside `log.jsonl`, `CHARTER.md`, `RUNBOOK.md` and `transcripts/`, and `counted_lines` on it gives `counted 8245 cap 8400`.
+- #1216 is open, by `assize-reviewer`, labelled `run,build`.
+
+**The audit of the paste.** The code block of entry 110, with its final newline, hashes to `711e2441de07a163…`, as entry 110 says of `paste-move-push.sh`, and `bash -n` passes it.
+
+What holds, read against `tools/jack` on `main` (`v_push`, lines 222 to 246):
+- **The branch is pinned** to `bd05ed5c1acc58993b8063bcb92dea6f09af2ed3`.
+- **No `--opens` is needed.** `git diff --stat origin/main bd05ed5c -- judge/scope.json` is empty, so `push_read_gate` returns at once.
+- **Every commit has a trailer.** The fifteen commits of `origin/main..bd05ed5c` each carry a filled `Proposer:`, and the paste's merge carries `Proposer: guy guy-master`.
+- **The review lands in the tree.** `v_push` copies the `--review` file to `transcripts/REVIEW-move-promotion-judge.md` and records its SHA-256.
+- **The paste's own worktree does not block the verb.** `worktree()` makes "a temporary detached worktree", and `effect()` fast-forwards `main`.
+- **The order of law holds.** The push comes after the veto at seq 7180, so it is neither between the `amend` and its height nor inside C2a-prime's window. It waits for v5 on `main`, as A6's order asks.
+- **Order 4 of the ruling.** The pins report on the branch states "a **net drop of 275 counted lines**".
+
+**Finding Q: the paste cannot be run a second time.** Entry 110 says that after a push refused because `main` moved, "he runs the paste again". On that path the paste does not remove its worktree, so the branch stays checked out there, and the second run's `git worktree add -B move-promotion-judge` is refused. It fails safe, entering nothing, but it leaves him with "Stopped" on every later run until the worktree is removed by hand. Reproduced in a scratch repository with git 2.43.0:
+
+```sh
+git worktree add -q -B move-promotion-judge "$(mktemp -d)/move" origin/move-promotion-judge   # first run: succeeds
+git worktree add -q -B move-promotion-judge "$(mktemp -d)/move" origin/move-promotion-judge   # second run: fatal: 'move-promotion-judge' is already used by worktree at '…/move', exit 128
+```
+
+**Finding R: the paste pins the branch and does not pin the review.** It acts on whatever file `agent/review-move` holds once that file's last line is `VERDICT: PASS`. The file does not exist yet, and the paste is meant to be given to him before it does. So the push would record, as its review, bytes that nobody has compared with #1216's last comment. The adviser made that comparison for A6's two reviews only after they were committed (entry 85). OPINION: the comparison can only come first if the paste names the review's SHA-256, as it names the branch's, and that means handing it over after the read is in. That costs him a later paste and no wait. He has said he prefers the more defensive option where two are open; the choice is the agent's to make or to put to him.
+
+**Finding S, a note on #1216's body.** Question 5 lists `CHARTER.md` among the files the branch changes. The branch does not change it: `git diff --stat origin/main...bd05ed5c -- CHARTER.md` is empty. The two-dot diff shows it only because `main` gained A6. A reader that takes the list at its word may file a finding on it, and the report's rule makes any FIX a `VERDICT: FAIL`.
+
+**The rest of #1216's body** (781 words, ten questions, read whole): it holds the reader to its own worktree, names the commit and its check, and orders nothing but a report. Nothing else found.
+
+**An observation on timing, for his information.** The verb's check runs for about 16 minutes after the paste's quiet test, and today the court's own proposals took four of six signing slots. A push made while the lane's timers are stopped cannot meet one.
+
+**Open for the agent:** findings Q and R. No question waits on him in this file, so this entry rings.
