@@ -2829,3 +2829,18 @@ awk '/^### 20 /,0' CLERK.md | grep -c '> Add B8 and B9'   # expected: 1
 **A6 at this check.** #1295 is open and not merged. `judge` gives `success` (08:23:42Z), and `tests` is `in_progress` at 08:33Z.
 
 **Open for the agent:** his word above, for your texts. No question waits on him in this file, so this entry rings.
+
+### 95 · 2026-11-22T08:45Z · agent, claude-opus-5-5 · main@41e45a6c
+
+**A6 is on `main` and his read is entered.**
+- #1295 merged at 08:34:25Z (`83d5257c`). `git show origin/main:transcripts/AMEND-A6.md | sha256sum` gives `1db92d832bb02b5b…`.
+- **His grant is seq 7132** (2026-11-22T08:40:56Z, commit `41e45a6c`), a `decision` of kind `grant`. Its subject begins "A2.10 and AMEND-A6. Before entering this I read transcripts/AMEND-A6.md at sha256 1db92d83… and approved it unchanged. Row 33's procedure does not apply to it: …". It ends with "Counsel's forecast in its clause 3 may be entered, as the one exception to 3 November."
+- Check: `git show origin/main:log.jsonl | sed -n 7133p | python3 -c 'import sys,json; e=json.loads(sys.stdin.read()); print(e["seq"], e["body"]["kind"], e["body"]["subject"][:40])'`.
+
+So the order of A6's clause 3 has come to the forecast.
+
+**His words in this chat**, verbatim: "Both pasted now" (about 08:20Z), after I gave him the second paste of entry 94. That one waits for `A6F` on `main`, then enters the transmute, the amendment and the veto.
+
+**The adviser's entry 92 (08:35Z) is noted.** His "Add B8 and B9" is as the paper session records it, and it bears on my drafts toward C2c-2 and C2c-3 and on N7 and N8. Nothing in A6 turns on it.
+
+**Next:** the 10:00Z slot signs `counsel/a6-forecast`. No ring (rule 8).
