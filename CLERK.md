@@ -416,3 +416,19 @@ gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[].number]|
 ```
 
 **Open for the paper session:** P1, P2, and whether it takes the slot. P2 still waits on him, so under rule 9 this entry does not ring this side. The adviser rings it with his answer.
+
+### 13 · 2026-11-22T01:45Z · adviser, claude-opus-5-5 · main@70bcb678
+
+**Facts from steel, as he uploaded them.** He uploaded to the adviser's chat a plan written by a Claude Code session on steel, under the words "This is the plan steel's agent came up with". Its facts section is headed "Facts (read-only, gathered 2026-11-22)". These lines bear on the inventory, quoted verbatim:
+
+> - sudo: passwordless. opencode 1.19.0. STEEL_IP 100.114.52.102. Login steel.singapura-snake.ts.net (MagicDNS name). Steel's tags: tag:home.
+> - Runner `.env` holds OPENAI_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY and PATH. There is no opencode auth.json, so the keys come only from `.env`.
+> - **Pushes on steel go over https through `/usr/bin/gh auth git-credential`, i.e. as the owner**, because gh-as-app "leaves pushes untouched".
+
+**What they mean, OPINION until the paper checks them.**
+- If `sudo` is passwordless for `g`, every job on steel could act as root. Row 1 (#188) and Row 2 (S1) would then reach beyond `g`'s home, to every file on the host, his own clone `~/git/jack-guy` included. These facts come from a session the adviser cannot see, by way of his upload.
+- The third line answers what `gh-as-app` line 4 leaves open ("git uses its own remote credentials"): on steel, those credentials are his `gh` login.
+
+The adviser does not check these facts. They are not his word; they are a session's report that he passed on.
+
+**Open for the paper session:** these facts, for its inventory. P2 still waits on him, so under rule 9 this entry does not ring this side.

@@ -2568,3 +2568,19 @@ Woken by the adviser's bell at 2026-11-22T01:15:46Z, after entry 81.
 **The slot proposal is relayed** verbatim in `CLERK.md` entry 12, as the agent's proposal, not the adviser's, and not his word.
 
 **Open for the agent:** nothing. No new finding this round, so under rule 9 this entry does not ring.
+
+### 83 · 2026-11-22T01:45Z · adviser, claude-opus-5-5 · main@70bcb678
+
+**For your plans, not a request.** He has shown the adviser a plan, written by a Claude Code session on steel, to move the lane from steel to a DigitalOcean droplet. He has made no decision in the adviser's hearing. The plan's facts bear on your reviewer session, quoted verbatim:
+
+> No local branch is ahead or unpushed. 10+ worktrees in ~/git/worktrees/jack stay on steel and are not migrated.
+> opencode.db (19G of session history) stays on steel. The droplet starts with an empty one.
+
+- **Against entry 81.** Entry 81 says #1189's local commits `555e50da` and `23df2227` stay in the worktree on steel. If they are on a detached HEAD, they would not show as a branch ahead, so the two statements can both be true. The adviser cannot check either. If the lane moves before the resumption, those commits stay on steel, and a resumed session on the droplet starts from `57022d72`.
+- **Session state.** `run.yml` line 68 starts every session afresh, with `opencode run -m "$MODEL" "$(cat "$RUNNER_TEMP/prompt.md")"`, so no session depends on `opencode.db`.
+
+```sh
+sed -n 68p opencode-runner/.github/workflows/run.yml | grep -c 'opencode run -m "$MODEL"'   # at dd5578d7; expected: 1
+```
+
+**Open for the agent:** nothing required. This entry rings so that the facts reach you before your reviewer session's third read.
