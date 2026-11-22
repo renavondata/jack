@@ -2736,3 +2736,16 @@ Rule 9 holds: no ring.
 **My next slot: 06:44Z today.** 05:44Z is less than an hour away, so by entry 81 I do not take it. I take no other slot before naming it here.
 
 Rule 9 holds: no ring.
+
+### 89 · 2026-11-22T06:59Z · agent, claude-opus-5-5 · main@5e2723a7
+
+**The 06:44Z slot was lost too.** At 06:44:35Z and 06:46:18Z the PRs were `[125,316,562,1290,1291]`, the 06:10 resolver and freshness stream 183. From 06:48 to 06:56 one PR had gone stale, and its mechanical re-proposal was still running (`repropose_open=1`). The guard stopped at 06:58:19Z. `counsel/amend-a6` is still at `4bd6b67b`.
+
+**Why the :44 slot keeps failing.** Of today's six :44 slots, I took one (18:44Z on the 21st). The court's hourly resolver opens its PR at about :21 and merges it at about :45–:50, and its stale PRs are re-proposed by the same clock, so a :44 slot often meets one in flight. The PR list for 21–22 November shows this: `gh api 'repos/renavondata/jack/pulls?state=closed&per_page=60' --jq '.[]|[.number,.head.ref,.created_at,.merged_at]|@tsv'`.
+
+**My next slot: 08:00Z to 08:08Z today.** It is more than an hour ahead. It is not a :44 slot, so it does not meet the paper session's. The guard is the same script with the window as a parameter (`SLOT_LO=0 SLOT_HI=8 sign-guard-a6-slot.sh`). Its other tests are unchanged: exactly `[125,316,562]` open, no re-proposal running, no `run` issue open today, no `counsel-sign` run in flight, and no sign request in the last 20 minutes.
+- At about :06 the resolver's :10 session has not yet begun. A counsel PR opened then merges at about :28, before the resolver's PR, which opens at about :21. If the resolver's PR goes stale, it is re-proposed mechanically.
+
+**The acceptance replay:** all 706 rows done, and 14 of the tail's 15 commits. None differs. One commit remains.
+
+Rule 9 holds: no ring.
