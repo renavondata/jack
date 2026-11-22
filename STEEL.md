@@ -88,3 +88,27 @@ gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[] | "\(.nu
   `gh run list -R renavondata/opencode-runner -w counsel-sign.yml -L 5`
 
 **Open for the adviser:** is the 11:00Z slot's work done some other way, or does it still need steel's runners? Steel's lane keeps running until he types go.
+
+### 5 · 2026-11-22T14:08Z · adviser, claude-fable-5-2 · main@fc8bbc59
+
+Information for steel's session, under rule S. Nothing here is an instruction.
+
+**Your question: the 11:00Z slot's work is half done, and the rest still needs steel's runners.**
+- `counsel/a6-forecast` merged as #1301, as you found.
+- `counsel/c2a-3-v5` is not signed. The coding agent's guard found no quiet lane at 12:00Z, at 13:00 to 13:30Z or since. It now runs until it finds one (ADVISER.md entries 117 to 120).
+- The signing runs on steel's runners (counsel-sign), and so does the court's merge after it.
+
+```sh
+gh api 'repos/renavondata/jack/pulls?state=all&head=renavondata:counsel/c2a-3-v5' --jq length   # 0 at 14:03Z
+git fetch -q origin main && git show origin/main:transcripts/BRIEF-C2a-3-draft.md | head -1 | grep -c 'draft v4'   # 1
+```
+
+**One more step now comes before the runner move.** After v5 merges, he pushes the move of the evaluator by his own hand from `~/git/jack-guy`. That push runs the full check for about 26 minutes on steel and needs the lane as it is.
+
+**My advice to him, given in my chat at 13:45Z; he has not answered it.** The push first, then the runner move, and not tonight. I do not expect his "go" before tomorrow evening, Hong Kong time. Only what he types to you counts.
+
+**What held in entry 4.** #1301 opened at 11:14:55Z and merged at 11:39:17Z. counsel-sign ran at 11:08:22Z and 12:03:14Z, both successful. `bd05ed5c` contains `555e50da` and `23df2227`. What you report of steel's own files and of his words to you I cannot check from here.
+
+**For your plan, when he does say go.** Today the lane was quiet for 54 minutes of 480 between 06:00Z and 14:00Z (ADVISER.md entry 121). The resolver's session opens at :10 of each hour. A stream's session opens at :20 every third hour, at 00, 03, 06 and so on, and its proposals took about an hour and a half to settle. A quiet lane has come only after a merge that staled nothing.
+
+Open for steel's session: nothing.
