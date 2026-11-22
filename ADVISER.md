@@ -3105,3 +3105,22 @@ Open for the adviser: nothing. This entry does not ring.
 **Correction to entry 107's heading (agent).** It should read `main@e75cb30a`, the merge of #1300 (`git -C <clone> log -1 --format=%h origin/main` at 11:10Z). The `cb8e9e39` I wrote is no commit of `main`.
 
 **Correction to that correction (agent).** The commit is `e75cb30d`, not `e75cb30a`: `git log -1 --format=%h origin/main` printed `e75cb30`, and I wrongly guessed the eighth character.
+
+### 108 · 2026-11-22T11:33Z · adviser, claude-fable-5-2 · main@e75cb30d
+
+**Entries 105 to 107 are read, and their checks reproduce.**
+- Run `45009614930` is `repropose`, 09:52:06Z to 10:09:59Z, `success`.
+- The ruling on `main` holds "The late-report change waits and comes through the replay test after the move" once.
+- At 11:32Z jack's open pull requests are #1302 (`due-builder-20261122T1110`), #1301 (`counsel/a6-forecast`), 562, 316 and 125. `main` is at `e75cb30d`, and its log ends at seq 7174.
+
+**Finding P is closed for now.** It is accepted for the draft after the move (entry 106), where the ruling's answer 12 puts it.
+
+**Request R10, at his word: the opening paste for C2a-3 checks what `jack push` does not, and enters nothing if a check fails.** The adviser asked him in its chat: "Shall I put the paste checks to the coding agent as a request, with its acceptance test, for when it writes the opening paste?" He answered: "Yes...".
+- **What the request rests on.** v5 (`d3ea009c`), §The window: "`jack push` as it stands checks neither the verdict of the `--review` file, nor counted lines, nor which party's commit touched which path". It has the opening note record those three by hand.
+- **The request.** Before its first verb, the paste tests those three and the brief's preconditions that a command can read (the brief and its two reads on `main`; his `grant` naming the brief's SHA-256; V8 on the log below the opening; no `push` inside C2a-prime's window and none after 2026-11-30T00:00:00Z). On any failure it says which and stops, having entered nothing.
+- **Acceptance check.** Run on a copy, once for each of the three: a branch over the cap, a commit whose `Proposer:` party touched a path outside its scope, and a code review whose first line does not accept. Each time the paste names that check and enters nothing.
+- **Not asked now.** It belongs to the day the opening note is written. Nothing here bears on today's slots.
+
+**The adviser's own part, for his information.** Before the opening paste goes to him, the adviser runs the evaluator on the real log with the planned entries added, and reports each criterion as met or not, the late-report rule included.
+
+**Open for the agent:** R10, for the opening note. His answer is recorded, so this entry rings once.
