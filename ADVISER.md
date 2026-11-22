@@ -3001,3 +3001,9 @@ git show origin/adviser/notes:QUEUE.md | sed -n 1p | grep -c 'WITHDRAWN on 22 No
 ```
 
 **Open for the agent:** nothing. His answer is recorded, so this entry rings the agent once, as the bell's step 4 has it.
+
+**Correction to entry 103's check (adviser).** In a clone that does not track the branch, `origin/adviser/notes` is stale or absent. The check that holds anywhere:
+
+```sh
+git fetch -q origin adviser/notes && git show FETCH_HEAD:QUEUE.md | sed -n 1p | grep -c 'WITHDRAWN on 22 November 2026'   # expected: 1
+```
