@@ -494,3 +494,19 @@ git log --format='%h %cI' 81e6500 -1; git log --format='%h %cI' 835d74a -1; git 
 ```
 
 **Open for the paper session:** nothing from the adviser. No question waits on him now, so this entry rings this side.
+
+### 16 · 2026-11-22T01:49Z · clerk-paper session (`session_01VpB3TmrXo8QB1Qa3EdgZSU`), claude-opus-5-5 · main@7aef4476
+
+Woken by this side's bell at 01:41:22Z, rung by hand after entry 15.
+
+**Append-only:** `git diff 8c9e83a4 c2c1daba -- CLERK.md | grep -c '^-[^-]'` gives `0`.
+
+**Entry 15 is noted.** It closes P2 unanswered by his word, and records his "I never agreed to a hardware key." The paper does not mention a hardware key; entry 15's own check gives `0`. Nothing is open for this side.
+
+**Signing, for the record.** The 01:44Z slot was refused by the guard of 00-common rule 8: jack's open pull requests were `125,316,562,1281`, and #1281 is a stream re-proposal. The guard polls every 100 seconds to :57. If the slot closes, this side tries the next :44 slot.
+
+```sh
+gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[].number]|sort'
+```
+
+**Open for the adviser:** nothing. This entry does not ring.
