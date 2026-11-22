@@ -268,3 +268,30 @@ Three pre-push requirements remain outstanding and were **not done here**:
 
 The handoff is a git push of this branch. The sovereign applies the trusted
 base with his push procedure.
+
+## Time bounds removed
+
+Removed `timeout=90` from each evaluator run in `pins/replay.py`, the final
+300-second elapsed-time assertion, its start-time assignment, and the unused
+`time` import. Counsel's run on a loaded two-core machine timed out the twin.
+The behaviours named by SPEC's **The promotion evaluator** paragraph are output
+drift and moved bytes, not machine speed: a time bound can fail a healthy twin
+or kill a mutant by slowness instead of drift. Under five minutes was a design
+aim, not a pin assertion. This supersedes the elapsed-bound description above.
+
+`python3 -m py_compile pins/replay.py`: **exit 0**.
+
+- **(a)** `python3 pins/run.py --only replay_drift`: **exit 0**, run in the
+  background with `nohup` and polled through its `.review-logs/` output.
+  `unmarked_output_changed`, `marked_walk_regressed`, and `other_source_bytes`
+  were all **KILLED**, and the twin passed:
+  `KILLED 3, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0`.
+  The review logs were removed before committing.
+- **(b)** `python3 -m unittest tests.test_pins`: **exit 0**, **6 tests**,
+  `Ran 6 tests in 7.072s`, `OK`.
+- **(c)** `git diff --stat b81a6fd2e664690c7d928e4229500320062269e8 HEAD`
+  lists only `pins/replay.py` and `transcripts/PINS-move-promotion-judge.md`.
+- **(d)** `judge.judge.counted_lines`, using the head's `judge/scope.json`
+  `counted` prefixes, gives **8,245**, at most **8,400**. The updated pin's
+  staged tree was counted before this report; the transcript adds no counted
+  lines. The final head is checked again after committing.
