@@ -41,6 +41,7 @@ Append only. His words, verbatim, one line each. The checker reads lines of the 
 
 BUILT 2026-11-22T09:00:00Z — to the adviser's "Shall I build it now, under those bounds?": "But if you think it's best you implement this, and ensure you keep it minimal etc, so be it"
 ADOPTED 2026-11-22T09:06:41Z sha256 7ab37fc9f86eaddd0f96f724b61b86372d7f3d3469239fbae72c4153df1047fe — to the adviser's "Do you adopt QUEUE.md as it stands?": "Yes"
+OVERRIDE 2026-11-22T09:20:47Z — to the adviser's "Shall I run that audit now?" (a fresh session of its own family, then one read by another family; off the head, so against rule 1): "Maybe one cold read too?"
 
 ## Later
 
