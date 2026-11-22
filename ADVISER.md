@@ -3251,3 +3251,41 @@ My first pins run (entry 110's "running") was in a shallow clone. There `replay_
 **The quiet test is tightened for that length.** The paste now also waits until the UTC minute is at or after 40 and no `run` issue opened today on `renavondata/opencode-runner` is open. The court's next proposal then comes from the resolver at :10 of the next hour, and its earliest merge is about :35. That is the same quiet my sign guards use.
 
 Open for the adviser: nothing new until the read is in. Then I ask for the comparison of the committed review with #1216's last comment, and for an audit of the paste's final text. This entry does not ring.
+
+### 113 · 2026-11-22T12:39Z · agent, claude-opus-5-5 · main@1a2ee135
+
+**The cold read of the move passes: runner #1216 (`google/gemini-4-argon`) gives `VERDICT: PASS`, with two NOTEs and no BLOCK or FIX.**
+- NOTE 1: `judge/judge.py:218` leaves the `.` in `SPEC.md` unescaped in the grant regex. This is harmless, because grants are genesis-signed.
+- NOTE 2: `tests/promotion_replay_spot.py` (65 counted lines) is run by neither `unittest` nor the pins.
+
+On S: its question 5 answer reads "`CHARTER.md`: unchanged on the branch (`git diff origin/main...bd05ed5c -- CHARTER.md` is empty …)", so the slip cost nothing. On question 7 it found the stale `tools/status.py` paths at `judge/status.py` 436–437 harmless for promotion, because C2a and C2a-prime are closed and the ruling's point 4 leaves them to C2a-3's evaluator change. That is the draft-after-the-move's, with P.
+
+**The review file.** `transcripts/REVIEW-move-promotion-judge.md` on `agent/review-move` (`7de39b21`, one commit on `main`) has SHA-256 `79f25994a06a1522447af0a4bd5754fd9cfe67016505b5f512d3539f48a27424`.
+- It is a four-line header: a heading, a blank line, one sentence naming the issue and `bd05ed5c`, and a blank line.
+- Under the header are lines 160 to 471 of #1216's last comment, from "# Cold Read" to "VERDICT: PASS". That excludes the session's tool output before line 160, an ANSI reset at line 159, and the courier's `exit=0` and fence after line 471.
+
+```sh
+git fetch -q origin agent/review-move && git show FETCH_HEAD:transcripts/REVIEW-move-promotion-judge.md | sha256sum                       # 79f25994…27424
+git show FETCH_HEAD:transcripts/REVIEW-move-promotion-judge.md | tail -n +5 | sha256sum                                                    # 2d6161ea…3965c
+gh api repos/renavondata/opencode-runner/issues/1216/comments --jq '.[-1].body' | sed -n '160,471p' | sha256sum                            # 2d6161ea…3965c
+```
+
+**The number the push states (ruling, answer 6 and point 8: "The push states the exact number").** By `counted_lines` per file, `origin/main` against `bd05ed5c`:
+- **883 leave:** `tools/status.py` 678, `tools/value.py` 181 and `tools/entry.py` 24. The ruling's 859 is the first two.
+- **781 are added:** `tools/jack` 20, `harness/` 7, `pins/` 173 and `tests/` 581.
+- **Net drop of 102**, from 8347 to 8245. The cap stays 8400.
+
+The reader's "858 lines left `tools/`, while 756 were added" decomposes the same net differently, and I do not adopt it. The statement goes in the paste's merge commit, which the push carries to `main`. The cap the next opening sets is his number (BRIEF-C2a-3 precondition 5). Lowering 8400 by 883 gives 7517, under 8245; that is my earlier finding A, left for that brief.
+
+**The final paste (`paste-move-push.sh`, SHA-256 `58ce9956…`).** This is entry 112's design, with the review's hash and the merge message filled in:
+- it waits for v5 on `main`, minute 40 or later, no PR but the three, and no `run` issue opened today;
+- it pins the review and the branch by hash;
+- it merges in a detached worktree, then runs `git branch -f`;
+- it checks the four paths and the cap, then pushes;
+- it removes its worktree either way.
+
+```sh
+cd ~/git/jack-guy && git switch main && [ "$(gh api user --jq .login)" = gfrmin ] && quiet() { n=0; until [ "$((n+=1))" -gt 960 ] || { git fetch -q origin main move-promotion-judge agent/review-move && eval "$1" && [ "$(gh api 'repos/renavondata/jack/pulls?state=open&per_page=100' --jq 'map(select(.number!=125 and .number!=316 and .number!=562))|length')" = 0 ] && [ "$(gh api 'repos/renavondata/opencode-runner/issues?state=open&labels=run&per_page=100' --jq "map(select(.pull_request==null and (.created_at|startswith(\"$(date -u +%F)\"))))|length")" = 0 ] && [ "$(date -u +%M)" -ge 40 ]; }; do echo "waiting: $2"; sleep 30; done; [ "$n" -le 960 ] && git pull -q --ff-only; } && quiet "git show origin/main:transcripts/BRIEF-C2a-3-draft.md | head -1 | grep -q 'draft v5, 22 November 2026'" "C2a-3's redraft not yet on main, a proposal or session is open, or the minute is before 40" && git show origin/agent/review-move:transcripts/REVIEW-move-promotion-judge.md > /tmp/REVIEW-move-promotion-judge.md && [ "$(sha256sum < /tmp/REVIEW-move-promotion-judge.md | cut -c1-64)" = 79f25994a06a1522447af0a4bd5754fd9cfe67016505b5f512d3539f48a27424 ] && [ "$(git rev-parse origin/move-promotion-judge)" = bd05ed5c1acc58993b8063bcb92dea6f09af2ed3 ] && git worktree prune && W="$(mktemp -d)/move" && git worktree add -q --detach "$W" origin/move-promotion-judge && git -C "$W" merge -q --no-edit -m 'merge: main into move-promotion-judge, after the veto of C2a-prime under A6' -m 'Counted lines (SPEC section 10 item 10): 883 leave the counted tree with the evaluator (tools/status.py 678, tools/value.py 181, tools/entry.py 24) and 781 are added (tools/jack, harness/, pins/, tests/), a net drop of 102, from 8347 on main to 8245 here. The cap stays 8400 until the opening push of the next window (ruling of 20 November 2026, answer 6).' -m 'Proposer: guy guy-master' origin/main && [ -z "$(git -C "$W" diff --name-only bd05ed5c1acc58993b8063bcb92dea6f09af2ed3 HEAD | grep -v -e '^log.jsonl$' -e '^CHARTER.md$' -e '^RUNBOOK.md$' -e '^transcripts/')" ] && (cd "$W" && python3 -c 'import json,sys; sys.path.insert(0,"."); from judge.judge import counted_lines; s=json.load(open("judge/scope.json")); n=counted_lines(".", "HEAD", s["counted"]); print("counted", n, "cap", s["cap"]); sys.exit(n > s["cap"])') && git branch -f move-promotion-judge "$(git -C "$W" rev-parse HEAD)" && { tools/jack push move-promotion-judge --review /tmp/REVIEW-move-promotion-judge.md; r=$?; git worktree remove --force "$W"; [ "$r" = 0 ]; } || echo "Stopped. Send counsel everything printed above before pasting anything again."
+```
+
+Open for the adviser: the comparison above, and an audit of this text, before I give it to him. v5 signs at 13:00Z, so the paste cannot act before about 13:40Z. This entry rings.
