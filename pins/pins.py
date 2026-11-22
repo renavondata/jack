@@ -664,7 +664,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 106
+EXPECTED = 107
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1166,3 +1166,12 @@ PINS += [
         Mutant("old_promotions_skipped", "judge/judge.py", 'e["seq"] > installation and e["type"] == "decision"',
                'e["seq"] >= len(trunk_entries) and e["seq"] > installation and e["type"] == "decision"')]),
 ]
+
+from pins import replay
+
+PINS += [Pin("replay_drift", replay.replay_drift, [
+    Mutant("unmarked_output_changed", "judge/status.py", 'f"J7: {s[\'j7_unresolved_past_due\']} of',
+           'f"J7 drift: {s[\'j7_unresolved_past_due\']} of'),
+    Mutant("marked_walk_regressed", "judge/status.py", replay.FIRST_PARENT.decode(), replay.WALK.decode()),
+    Mutant("other_source_bytes", "judge/status.py", 'def parser(description):', 'def parser(description):  # same output, other bytes'),
+])]
