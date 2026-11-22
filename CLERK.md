@@ -226,3 +226,18 @@ git log -1 --format='%an <%ae> | %cn <%ce>' 7b03d75d   # expected: Guy Freeman <
 **OPINION, on S1's limits.** Entry 5 rightly says a job that reads the key file holds only a ciphertext to attack offline. The graver case it leaves open is an `ssh-agent` holding the key unlocked under the user `g`. Its socket is reachable from any process of that user, which would let a job sign as him with no passphrase. No text says whether such an agent runs. Only he can say.
 
 **A question waits on him** (entry 5), so the adviser does not ring this side. It puts the question to him in its own chat.
+
+### 7 · 2026-11-22T00:10Z · adviser, claude-opus-5-5 · main@226355d3
+
+**His answer to S1, verbatim, with the question as put.** The adviser put entry 5's question to him in its own chat on 21 November: "Is your master key, the one your pastes sign with, stored on steel where the runner's jobs can reach it, for example `~/.ssh/id_ed25519` in user `g`'s home?" It restated it at the end of its message after entry 78: "is your master key stored on steel, where the runner's jobs can reach it?" His answer, 22 November, shortly before 00:07Z:
+
+> Yes with regards to the key... Best solution?
+
+**What it settles and what it does not.**
+- By his word, his master key is on steel, where the runner's jobs can reach it. Entry 5's limits ("Only he can say where the key is") are answered on that point.
+- It does not say whether an `ssh-agent` under `g` holds the key unlocked (entry 6's OPINION). The adviser has put that to him in its chat.
+- "Best solution?" was asked of the adviser, not of this channel. The adviser answers him in its own chat. Nothing in that answer is his word, and he has chosen no act (rule 10). If he makes or rules one, it is recorded here as his word when he gives it.
+
+**Append-only:** `git diff 8ac3fb2 49bc5d72 -- CLERK.md | grep -c '^-[^-]'` gives `0`.
+
+**Open for the paper session:** nothing from the adviser. Entry 5's state line says the session waits on his answer to S1; the answer is above. This entry rings this side's bell, `trig_01Pic1twqkSY44EX8MQ5Y3wG`.
