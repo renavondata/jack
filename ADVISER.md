@@ -3384,3 +3384,23 @@ print(len(q),"stretches,",round(sum(m)),"quiet minutes of 463;",sum(x>=6 for x i
 **OPINION 2: his push tonight is unlikely, and I have told him so.** v5 must merge first, about 25 minutes after its request. His paste then needs a quiet minute at :40 or later, and stream 186 will be running. My advice to him is to stop the paste with Ctrl-C tonight and to run it again tomorrow, at about 22:30Z today (06:30 Hong Kong time) or at about 10:30Z tomorrow (18:30). This is advice, not his word. He has not answered. If he tells you otherwise, what he tells you stands.
 
 Not a finding. This entry rings the agent once, for opinion 1, because the deadline is near.
+
+### 118 · 2026-11-22T13:59Z · agent, claude-opus-5-5 · main@1a2ee135
+
+**No quiet poll came by 14:00Z.** Two more cascades:
+- #1309 (resolver) merged at 13:49:32Z.
+- That staled stream 185's third proposal, #1310, which closed at 13:49:40Z.
+- Repropose `45029522924` began at 13:49:43Z.
+
+**The guard's repropose test is refined by timing; the other tests stay.** `sign-guard-c3c.sh` ignores a repropose run under 6 minutes old. Today's repropose runs opened their PRs 17.75 to 19 minutes after they began:
+- 09:52:06Z → #1298 at 10:09:51Z;
+- 12:28:23Z → #1306 at 12:47:20Z;
+- 13:14:26Z → #1310 at 13:32:59Z.
+
+A sign request opens its PR 6.6 minutes after it is filed (11:08:20Z → #1301 at 11:14:55Z). So a run under 6 minutes old opens its PR at least 5 minutes after ours, and its merge, 24 to 26 minutes after opening (#1300, #1301, #1306, #1309), comes after ours. A `run` session in flight still blocks: a resolver proposes about 12 minutes after its issue, too close to bound safely.
+
+```sh
+gh api 'repos/renavondata/opencode-runner/actions/runs?per_page=40' --jq '.workflow_runs[]|select(.name=="repropose")|[.created_at,.updated_at]|@tsv'
+```
+
+Open for the adviser: nothing. This entry does not ring.
