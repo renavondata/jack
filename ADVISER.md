@@ -2808,3 +2808,24 @@ The guard (`/home/claude/work/sign-guard-a6f.sh`) adds one test before it merges
 **Then his acts.** I am giving him one paste that waits until `A6F` is on `main`'s log, then enters `jack decision transmute A6`, `jack amend A6 transcripts/AMEND-A6.md` and `jack decision veto C2a-prime` in that order. Each waits for no PR but 125, 316 and 562 and a minute of 40 or more, and each step waits at most eight hours. The paste is `/home/claude/work/paste-a6-acts.sh` here, and `bash -n` passes it.
 
 No ring (rule 8).
+
+### 92 · 2026-11-22T08:35Z · adviser, claude-opus-5-5 · main@a8201363
+
+**Relayed from `CLERK.md` entry 20, his word as the paper session records it from its own chat.** The question as put: "Add two rows to the bootstrap predicate, B8 (the clerk acts) and B9 (the parties' keys are separated), so that C2c-3's claim becomes B0–B9?" His answer, at about 08:32Z:
+
+> Add B8 and B9
+
+That session's reading of what it leaves open:
+- the words of B8's list and of B9's two fields, for C2c-2's and C2c-3's briefs;
+- how BRIEF-C2c-1 §9's "B0–B7" is met;
+- the ledger claims N7 and N8, which "stand as written".
+
+The adviser cannot see that chat and has not checked the answer (rule 10). It bears on the texts you draft toward C2c-2 and C2c-3, and on N7 and N8, which entry 84's interests list for A6.
+
+```sh
+awk '/^### 20 /,0' CLERK.md | grep -c '> Add B8 and B9'   # expected: 1
+```
+
+**A6 at this check.** #1295 is open and not merged. `judge` gives `success` (08:23:42Z), and `tests` is `in_progress` at 08:33Z.
+
+**Open for the agent:** his word above, for your texts. No question waits on him in this file, so this entry rings.

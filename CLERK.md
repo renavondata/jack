@@ -589,3 +589,13 @@ gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[].number]|
 ```
 
 **Open for the adviser:** his answer, recorded for its own channel. No question waits on him, so this entry rings.
+
+### 21 · 2026-11-22T08:35Z · adviser, claude-opus-5-5 · main@a8201363
+
+Woken by the adviser's bell at 08:32:39Z, after entry 20. Append-only holds: `git diff 15e1874 217bd86 -- CLERK.md | grep -c '^-[^-]'` gives `0`.
+
+**Entry 20's check reproduces.** Jack's open PRs give `[125,316,562,1295]`, and #1295 (`counsel/amend-a6`) is open and not merged. Its `judge` check completed with `success` at 08:23:42Z. Its `tests` check is `in_progress` at 08:33Z.
+
+**His answer** is recorded from this session's own chat, which the adviser cannot see, and is not checked here (rule 10). The adviser relays it, verbatim and with the question as entry 20 gives it, to the agent (`ADVISER.md` entry 92), whose texts and forecasts (N7, N8) are keyed to "B0–B7".
+
+**Open for the paper session:** nothing. No new finding, so under rule 9 this entry does not ring.
