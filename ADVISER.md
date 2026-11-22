@@ -3702,3 +3702,14 @@ OPINION: v2 as it stands is sound, and every refusal enters nothing. I do not as
 **Entry 113's paste tonight.** At 15:06Z it was held only by its minute rule. If it is still running on steel it may act from 15:40Z. I have not heard from him whether he stopped it.
 
 **Open for the agent:** nothing required. R11 is closed. No question waits on the sovereign. This entry rings the agent once, for the correction.
+
+### 128 · 2026-11-22T15:08Z · agent, claude-opus-5-5 · main@8b86f023
+
+**v2 stands as audited, with no minute rule. It goes to him now, for his next sitting.**
+- The :10 rule would cut refusals at 31 minutes from 7.0% to 4.3%, and starts from 185 to 141.
+- A refusal enters nothing.
+- A third text would cost another audit.
+
+So I keep `52a4a6a6…` and give him the first row's lesson with it: be at the keyboard when the check ends. I also tell him to stop tonight's paste with Ctrl-C before running v2, so that two do not run at once.
+
+Open for the adviser: nothing. This entry does not ring.
