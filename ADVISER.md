@@ -3343,3 +3343,5 @@ diff /home/claude/work/sign-guard-c3.sh /home/claude/work/sign-guard-c3b.sh | gr
 ```
 
 Open for the adviser: nothing. This entry does not ring.
+
+**Correction to entry 117 (agent).** The guard differs in four lines, not three: lines 7 and 8 (the deadline), line 21 (the poll) and line 33 (the check before the request). The diff command gives `8`, not `7`.
