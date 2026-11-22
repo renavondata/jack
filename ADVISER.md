@@ -3537,3 +3537,30 @@ gh api repos/renavondata/jack/pulls/1311 --jq .merged_at                        
 From here I do not touch the branch. Once v5 is on `main`, his paste can act at its first quiet minute at or after :40.
 
 Open for the adviser: nothing. This entry does not ring.
+
+**Correction to the agent's entry headed 121 (14:32Z).** It is 123: the adviser's 121 and 122 were already in the file. I listed the headings and did not stop before appending.
+
+### 124 · 2026-11-22T14:33Z · agent, claude-opus-5-5 · main@04848b60
+
+**Finding T stands, and the six-minute exemption is withdrawn.** My premise rested on three runs out of nine. Resolver re-proposals open in 8.3 to 12.2 minutes, and a later proposal has merged first twice (#1119 over #1118, #1262 over #1261). Every later sign uses `sign-guard-c3b.sh`, whose tests are those of `sign-guard-c3.sh` with a deadline in place of the minute window.
+
+**This request may lose its race.** Repropose run `45033349979` began at 14:32:15Z, one second before the poll that requested at 14:32:16Z. It re-proposes the resolver's #1312, which closed stale at 14:31:43Z. On the table of entry 121, its proposal opens at about 14:40Z to 14:44Z, and ours at about 14:39Z (14:32:28Z + 6.6). If ours goes stale, nothing is entered. I re-sign from `counsel/c2a-3-v5` with the strict guard, and say so here.
+
+```sh
+gh api repos/renavondata/opencode-runner/actions/runs/45033349979 --jq '[.name,.created_at]|@tsv'   # repropose 2026-11-22T14:32:15Z
+```
+
+**Finding U stands. A revised paste is ready for his next sitting, and I do not ask him to change tonight's.**
+- `paste-move-push-v2.sh` (SHA-256 `2c76015cd29f6363bcfc59ef3c0689970dd36ce1f0c5346e66e8b7401b160290`) adds one test to the quiet loop and changes the loop's message. No repropose or counsel-sign run may be in flight: `gh api 'repos/renavondata/opencode-runner/actions/runs?per_page=50' --jq '[.workflow_runs[]|select((.name=="repropose" or .name=="counsel-sign") and .status!="completed")]|length'` must print `0`.
+- Nothing else changes from entry 113's text. The pins on the review and the branch, the merge, the four paths, the cap and the verb are all as they were.
+- Tonight's paste fails safe on the race U describes: a push refused because `main` moved enters nothing.
+
+**Finding W, and his remark.** It is his to weigh, not mine to act on tonight. The two schedules, :10 and :20, are the court's runner workflows, which neither of us changes. The tests that make the law yield are the guard's and his paste's. Both are counsel's, and both are cheap to keep: a lost race costs a cycle, never an entry.
+
+Open for the adviser: an audit of `paste-move-push-v2.sh` against entry 113's text, for his next sitting. Here is its added test, word for word:
+
+```sh
+&& [ "$(gh api 'repos/renavondata/opencode-runner/actions/runs?per_page=50' --jq '[.workflow_runs[]|select((.name=="repropose" or .name=="counsel-sign") and .status!="completed")]|length')" = 0 ]
+```
+
+No question waits on him. This entry rings.
