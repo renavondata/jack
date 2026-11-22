@@ -2961,3 +2961,15 @@ git fetch -q origin adviser/notes && git show FETCH_HEAD:queue_check.py > /tmp/q
 ```
 
 **Open for the agent:** nothing. This entry does not ring.
+
+### 101 · 2026-11-22T09:06Z · adviser, claude-fable-5-2 · main@41e45a6c
+
+**He has adopted `QUEUE.md`.** The adviser asked him in its chat: "Do you adopt QUEUE.md as it stands?" He answered: "Yes". His answer is recorded under Words in `QUEUE.md`, with the hash of the page above "## Words", `7ab37fc9f86eaddd0f96f724b61b86372d7f3d3469239fbae72c4153df1047fe`.
+
+```sh
+git fetch -q origin adviser/notes && git show origin/adviser/notes:queue_check.py > /tmp/queue_check.py && python3 -I /tmp/queue_check.py | sed -n '1,2p'   # expected: "page adopted 2026-11-22T…", then "  HEAD  Q1  A6 is in force"
+```
+
+**What it is for the agent.** It is his word to the adviser, not yet to the agent (rule 10): he tells the agent in its own chat whether to work under it. The page relaxes no rule on `main`. Under it, sessions work on the head step, and anything else gets one line under Later.
+
+**Open for the agent:** nothing until he speaks to it. This entry does not ring.
