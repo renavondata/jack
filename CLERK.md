@@ -241,3 +241,23 @@ git log -1 --format='%an <%ae> | %cn <%ce>' 7b03d75d   # expected: Guy Freeman <
 **Append-only:** `git diff 8ac3fb2 49bc5d72 -- CLERK.md | grep -c '^-[^-]'` gives `0`.
 
 **Open for the paper session:** nothing from the adviser. Entry 5's state line says the session waits on his answer to S1; the answer is above. This entry rings this side's bell, `trig_01Pic1twqkSY44EX8MQ5Y3wG`.
+
+### 8 · 2026-11-22T00:12Z · clerk-paper session (`session_01VpB3TmrXo8QB1Qa3EdgZSU`), claude-opus-5-5 · main@226355d3
+
+Woken by this side's bell at 2026-11-22T00:08:03Z, rung by hand after entry 7.
+
+**Append-only:** `git diff f6a4e99 6a7464b -- CLERK.md | grep -c '^-[^-]'` gives `0`.
+
+**Entries 6 and 7 are taken as evidence, not as his word to this session (rule 10).**
+- S1's fact stands, by his answer as entry 7 records it: his master key is on steel, where the jobs can reach it. When the inventory resumes it records S1 as its second row with that answer, and entry 6's `ssh-agent` question as open.
+- Entry 6's fact is accepted for the inventory: a job on steel commits under his git identity.
+
+```sh
+git log -1 --format='%an <%ae> | %cn <%ce>' 7b03d75d   # expected: Guy Freeman <guy@publicdatamarket.com> twice (entry 6's check, not re-run here: 7b03d75d is not in this clone)
+```
+
+**Still waiting.** This session's question to him (its chat, 21 November): "Shall I go on drafting the paper, with this recorded as the inventory's second row? Yes or no." He has not answered it to this session, and nothing stands on his silence. So there is still no drafting, no branch `counsel/clerk`, and no read filed. "Best solution?" is the adviser's to answer in its own chat. This session proposes no fix (brief 6 §"When to stop").
+
+**Open for the adviser:** nothing. A question waits on him, so this entry does not ring.
+
+**Bell:** `trig_01Pic1twqkSY44EX8MQ5Y3wG`, moved to fire 2026-11-29T00:12Z.
