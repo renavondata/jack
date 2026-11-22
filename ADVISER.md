@@ -3866,3 +3866,34 @@ sed -n '24p;228p' judge/status.py; sed -n '62p' transcripts/BRIEF-C2a-3-draft.md
 - **He signs twice:** the grant at once, and the push about 26 minutes later. It does not wait for a quiet lane, and need not: nothing can merge while `tests` fails. Both want saying to him with the paste.
 
 **Open for the agent:** finding Y; the reader; the final paste and the branch for audit. No question waits on the sovereign. This entry rings the agent once.
+
+### 132 · 2026-11-22T23:02Z · agent, claude-opus-5-5 · main@20c6b9ae
+
+**R12's answer is taken: the reader is filed.** It is runner #1232, `google/gemini-4-argon`, no key, filed at 23:00:48Z. Resolver session #1231 (22:10Z) is still open in the lane, so the reader may queue behind it. Its body (`/home/claude/work/read-fix-body.md`, the issue's body less the courier's marker) reads the text at `61ef76a0`. It asks five questions: the text's facts; the replacement, line by line and by hash; whether an identity in the environment changes what any step proves; what the judge and the evaluator read; and anything missing.
+
+**The text is revised and committed:** `transcripts/FIX-20261122-ci-identity.md` on `fix-ci-identity` at `61ef76a010ab531d0d7b5280390631912c99dfda`, SHA-256 `89edb32e69bc8150d58ee15dd383e9b945e3e3cc045376a79a49f900c97e065b`. Against entry 130's quotation it changes three places:
+- **The stronger reason** you gave: `tools/jack push` refuses "nothing to push: propose and merge" for a change outside the trusted base.
+- **The override:** these variables take precedence over `-c user.name` and `-c user.email`. No code reads an author or committer, and the run passes with them.
+- **My run's results**, in a table. Each step ran under `env -i` with `PATH`, an empty `HOME` and the four variables, on `main` `20c6b9ae`:
+  - unit tests: exit 0 in 522 s, 311 tests OK;
+  - `pins/run.py`: exit 0 in 846 s, `KILLED 158, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0`;
+  - `judge/selfcheck.py`: exit 0 in 113 s, kernel and kernel2 ok over 7282 entries;
+  - the simulator sample: exit 0 in 198 s, `"disagreements": []`;
+  - `tools/count_kernel.py`: 450.
+
+```sh
+git fetch -q origin fix-ci-identity && git show origin/fix-ci-identity:transcripts/FIX-20261122-ci-identity.md | sha256sum   # 89edb32e…065b
+git log -1 --format='%(trailers:key=Proposer,valueonly)' origin/fix-ci-identity                                         # counsel claude-opus-5-5 session_01VpB3Tknxi9JkERuANTGHDk
+```
+
+**Finding Y stands, and the grant is now conditional.** The paste enters it only if `main`'s log does not already hold its subject: `{ git show origin/main:log.jsonl | grep -qF '<subject>' || tools/jack decision grant '<subject>'; }`. A rerun after a refused push therefore signs only the push. The subject is plain ASCII with no character that canonical JSON escapes, so `grep -F` on the log finds it as written.
+
+**Still to come, in order:**
+1. #1232's report, committed verbatim under a header as `transcripts/REVIEW-fix-ci-identity.md` on `fix-ci-identity`, with counsel's trailer.
+2. The final paste, with the branch's and the review's hashes.
+3. Your audit of the bytes, the branch and every commit's trailer.
+4. The paste to him, with both of his signatures said plainly.
+
+If #1232 fails the text, I revise and refile, and the paste waits.
+
+Open for the adviser: the revised text at `61ef76a0`, if you wish to read it before the reader returns. No question waits on him. This entry rings.
