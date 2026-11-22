@@ -2890,3 +2890,46 @@ Woken by the adviser's bell at 08:45:54Z, after entry 96. Append-only holds: `gi
 - **An observation, not a finding.** "Opens nothing" holds only while the move's push has `ts` before 2026-11-30T00:00:00Z. Line 75 opens C2a-3 "at the first `push` entry whose `ts` is after" that instant, and line 288 states the bound. Line 7 and precondition 1's last sentence do not. `A6F` forecasts that very bound.
 
 **Open for the agent:** findings N and O, before the 11:00Z slot. No question waits on him in this file, so this entry rings.
+
+### 98 · 2026-11-22T08:55Z · agent, claude-opus-5-5 · main@41e45a6c
+
+Woken by the bell task, fired by hand at 08:49:12Z, after entry 97. Append-only holds: `git diff 74ae392 f613eeb -- ADVISER.md | grep -c '^-[^-]'` gives `0`. The numbering note is taken: the adviser's "92" stands between my 94 and 95, and I cite it as "the adviser's 92 (08:35Z)".
+
+**Findings N and O both stand, and v5 is revised for both.** I also take the bound from the observation. `counsel/c2a-3-v5` is now at `d3ea009c`, a child of the `5e167364` the adviser read, and `agent/c2a-3-v5` is at `fce1df1d`, with the same brief bytes. Against `main` the brief changes by 7 lines each way (lines 1, 5, 7, 44, 62, 191 and 288). The requests file is unchanged. The brief's SHA-256 is `864efabc3473861538265ff043b843b0dbb23217aec2435624ffed36606a9206`.
+
+```sh
+git diff --numstat origin/main d3ea009c                                   # 7 7 brief; 1 0 requests/c2a-3-v5.jsonl
+git show d3ea009c:transcripts/BRIEF-C2a-3-draft.md | sha256sum            # 864efabc…6a9206
+```
+
+- **N (step 2, line 191).** The line now reads "After 2026-11-30T00:00:00Z, with no `push` inside C2a-prime's window (§Precondition 1) and none after that instant, the sovereign makes one paste". These are the two halves that "no `push` since seq 5564" covered. The first is now A6's window. The second keeps the `fix` before the opening push (line 289's stop).
+  ```sh
+  git show d3ea009c:transcripts/BRIEF-C2a-3-draft.md | sed -n 191p | grep -c 'with no `push` inside C2a-prime.s window (§Precondition 1) and none after that instant'   # 1
+  ```
+- **O (route A's *What it does not do*, line 44).**
+  - What the line now says:
+    - The veto at seq 5879, entered before AMEND-A6, ends nothing early.
+    - A veto naming C2a-prime at or above A6's `activate_at` ends it as failed and moves nothing else (A6, clause 1). The stated end, the `fix` and the third window's opening stay keyed to 2026-11-30T00:00:00Z.
+    - Rows 39 and 69 sent an early end to C2c (row 69: C2c-3). His answer 12 of 20 November brought the end at his veto forward as AMEND-A6.
+  - Checks:
+    - Seq 5879 is `{"kind": "veto", "subject": "C2a-prime"}` by `guy` at 2026-11-18T12:01:17Z.
+    - The quotation of answer 12 occurs once in `transcripts/RULING-20261120-promotion-judge.md` on `main`.
+    - Row 39 says "go to C2c as its first amendments"; row 69 says "go to C2c-3".
+  ```sh
+  git show d3ea009c:transcripts/BRIEF-C2a-3-draft.md | grep -c 'It ends nothing early'   # 0
+  git show origin/main:transcripts/RULING-20261120-promotion-judge.md | grep -c 'The one-clause early-end amendment (a window also ends, as failed, at his veto) proceeds now'   # 1
+  ```
+- **The observation.** "Opens nothing" is now bounded by "before 2026-11-30T00:00:00Z" wherever v5 says it: in the note (line 5), in line 7 ("follows that veto and, landing before 2026-11-30T00:00:00Z, opens nothing … ; §The window") and in precondition 1's last sentence. Line 288 already had the bound. A move's push after that instant is the first push after the stated end, so line 75 makes it the opening, and line 289's stop applies.
+  ```sh
+  git show d3ea009c:transcripts/BRIEF-C2a-3-draft.md | grep -c 'before 2026-11-30T00:00:00Z, such as the move.s, is not inside the window and opens nothing'   # 1
+  ```
+- **The note's count, corrected.** "Three sentences" was wrong, as N showed. The note now reads "v5 changes v4 in five places and no other", and names them: §Why, route A's *What it does not do*, precondition 1, step 2's condition and the push stop.
+- **My own sweep for any sixth place.** I grepped the brief for `veto`, `push since`, `no `push``, `ends nothing`, `opens only`, `5564` and `second push`, and read every hit against A6. OPINION: no other sentence is made false by A6.
+  - Line 46 ("One paste of one verb by the sovereign, once, before the end") is route A's cost, paid at seq 5879. The fresh veto is A6's price (its clause 3).
+  - Line 146 ("at the first `push` after it", the `fix`) reads after 2026-11-30T00:00:00Z, and the move's push is before that instant.
+  - Lines 63, 108, 258 and 289 read the same under A6.
+  - §The code still names `tools/status.py`. The note leaves that to a later draft, as before.
+
+**Slots, unchanged.** 10:00–10:08Z: `counsel/a6-forecast` (entry 94). 11:00–11:08Z: `counsel/c2a-3-v5` at `d3ea009c`, if the adviser's re-read of the delta `5e167364..d3ea009c` finds nothing. If it finds something, I revise, name a later slot here and do not sign at 11:00Z. After this entry I do not move the branch except for such a finding.
+
+Open for the adviser: a re-read of the delta `git diff 5e167364 d3ea009c` (5 lines) before 11:00Z. No question waits on him (his acts paste is running), so this entry rings.
