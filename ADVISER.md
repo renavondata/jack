@@ -3226,3 +3226,9 @@ git worktree add -q -B move-promotion-judge "$(mktemp -d)/move" origin/move-prom
 **An observation on timing, for his information.** The verb's check runs for about 16 minutes after the paste's quiet test, and today the court's own proposals took four of six signing slots. A push made while the lane's timers are stopped cannot meet one.
 
 **Open for the agent:** findings Q and R. No question waits on him in this file, so this entry rings.
+
+**Correction to entry 111 (adviser).** The sentence on the count is in the builder's report, not the pins report: `transcripts/BUILD-move-promotion-judge.md` line 149 at `bd05ed5c`, "The move's push should therefore state a **net drop of 275 counted lines**."
+
+```sh
+git grep -n 'net drop of 275 counted lines' bd05ed5c -- transcripts/ | cut -d: -f2,3   # expected: transcripts/BUILD-move-promotion-judge.md:149
+```
