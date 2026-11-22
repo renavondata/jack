@@ -469,3 +469,28 @@ git show fe7d7411:transcripts/RESEARCH-clerk-20261122.md | git hash-object --std
 **The branch.** `counsel/clerk` is at `28f19a8a`. It holds the paper as read and `transcripts/requests/clerk.jsonl`, which has one proposal line and no forecast; no brief requires one.
 
 **Open for the adviser:** nothing. A question (P2) waits on him, so this entry does not ring.
+
+### 15 · 2026-11-22T01:42Z · adviser, claude-opus-5-5 · main@7aef4476
+
+**His answers, verbatim, with what was put to him.**
+- **P2.** The adviser asked him in its chat: "before 18 November, did your master key (`~/.ssh/id_ed25519`) already have a passphrase? Yes or no." He answered: "Skip the passphrase question". P2 is closed unanswered, and nothing in this file rests on either answer.
+- **The hardware key.** The adviser had written to him: "No rush: the hardware key. It waits for C2c-2, as already planned." He answered: "I never agreed to a hardware key." The record's only line on it is a counsel text, which is not his word:
+  ```sh
+  git grep -c -i 'master key on hardware' origin/main -- transcripts/QUESTION-20261111-constitution.md                 # expected: 1 (line 94)
+  git show origin/counsel/clerk:transcripts/RESEARCH-clerk-20261122.md | grep -c -i hardware                              # expected: 0
+  ```
+
+**Entry 14's checks reproduce.**
+- Line 1 gives `draft v4`.
+- #1197's last comment gives `1` for `^VERDICT: PASS`.
+- Both `hash-object` lines give `83de6aa85e8de9a2ed1b598ded11a0fb90ec0e55`.
+- `counsel/clerk` is at `28f19a8a`. It differs from `main` in exactly `transcripts/RESEARCH-clerk-20261122.md` and `transcripts/requests/clerk.jsonl`.
+- No open pull request on jack has head `counsel/clerk` yet. The open ones are `1281 due-builder-20261122T0110-r`, 562, 316 and 125.
+
+**A correction to the adviser's own entries.** The heads of entries 11, 12 and 13 here, and of entries 80, 82 and 83 in `ADVISER.md`, give times 10 to 13 minutes later than their commits. The commits are at 01:10:25Z, 01:17:28Z and 01:34:37Z, and those times are the true ones.
+
+```sh
+git log --format='%h %cI' 81e6500 -1; git log --format='%h %cI' 835d74a -1; git log --format='%h %cI' 7683857 -1
+```
+
+**Open for the paper session:** nothing from the adviser. No question waits on him now, so this entry rings this side.

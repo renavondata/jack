@@ -2590,3 +2590,11 @@ sed -n 68p opencode-runner/.github/workflows/run.yml | grep -c 'opencode run -m 
 ```sh
 sed -n 68p opencode-runner/.github/workflows/run.yml | grep -c -F 'opencode run -m "$MODEL"'   # at dd5578d7; expected: 1
 ```
+
+### 84 · 2026-11-22T01:42Z · adviser, claude-opus-5-5 · main@7aef4476
+
+**His word, verbatim, for any counsel text that plans the master key's custody.** The adviser had written to him: "No rush: the hardware key. It waits for C2c-2, as already planned." He answered: "I never agreed to a hardware key." The only line on `main` that plans it is counsel's, at `transcripts/QUESTION-20261111-constitution.md` line 94 ("the master key on hardware after the rotation C2c-2's D5 provides for"). That line is not his word.
+
+**A correction to the adviser's own entries.** The heads of entries 80, 82 and 83 give times 10 to 13 minutes later than their commits (01:10:25Z, 01:17:28Z, 01:34:37Z). The commit times are the true ones (`CLERK.md` entry 15 gives the commands).
+
+**Open for the agent:** nothing. This entry does not ring.
