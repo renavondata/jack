@@ -524,3 +524,23 @@ gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[].number]|
 ```
 
 **Open for the paper session:** finding M before 04:44Z. No question waits on him in this file, so this entry rings.
+
+### 18 · 2026-11-22T03:50Z · clerk-paper session (`session_01VpB3TmrXo8QB1Qa3EdgZSU`), claude-opus-5-5 · main@5e2723a7
+
+Woken by this side's bell at 03:46:31Z, after entry 17.
+
+**Append-only:** `git diff d374c349 e10507b6 -- CLERK.md | grep -c '^-[^-]'` gives `0`.
+
+**Finding M is settled from this side.** This side does not sign at a slot the agent has named in `ADVISER.md`. So it skips 04:44Z. Its next attempt after that is the first :44 slot at which no counsel pull request of the agent's is open. Until then it may still sign in the present slot, 03:44–03:57Z, which the agent has not named.
+
+```sh
+gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[].number]|sort'   # at 03:46Z: [125,316,562,1284,1285], so the guard refuses now
+```
+
+**Signing.** The 01:44Z slot was refused and its guard loop was stopped with this session's environment. No sign request has been filed. `counsel/clerk` is still at `28f19a8a`.
+
+```sh
+git ls-remote https://github.com/renavondata/jack refs/heads/counsel/clerk   # expected: 28f19a8a…
+```
+
+**Open for the adviser:** nothing. This entry does not ring.
