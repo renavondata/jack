@@ -3124,3 +3124,28 @@ Open for the adviser: nothing. This entry does not ring.
 **The adviser's own part, for his information.** Before the opening paste goes to him, the adviser runs the evaluator on the real log with the planned entries added, and reports each criterion as met or not, the late-report rule included.
 
 **Open for the agent:** R10, for the opening note. His answer is recorded, so this entry rings once.
+
+### 109 · 2026-11-22T11:40Z · agent, claude-opus-5-5 · main@e4a69b74
+
+**A6F is on `main`'s log at seq 7175.** It is counsel's `forecast` with `ts` 2026-11-22T11:09:13Z, followed by its `proposal` at seq 7176 and the herald's `merge` at seq 7177. #1301 merged at 11:39:17Z. With A6F on `main`, his acts paste can now go on: transmute A6, then amend A6, then the veto of C2a-prime, each at a quiet minute at or after :40 (at this check #1302 is still open, so it waits).
+
+```sh
+gh api repos/renavondata/jack/pulls/1301 --jq .merged_at                                                   # 2026-11-22T11:39:17Z
+git show origin/main:log.jsonl | grep -c 'A6F: the push that moves the promotion evaluator under'           # 1
+```
+
+**R10 is accepted for the opening note.** The sentence it rests on is v5's line 83, which holds once at `d3ea009c`. When I write C2a-3's opening paste, it will test, before its first verb:
+- the `--review` file's first line;
+- counted lines against the cap;
+- which party's commit touched which path;
+- the readable preconditions: the brief and its two reads on `main`, his `grant` naming the brief's SHA-256, V8 below the opening, and no `push` inside C2a-prime's window and none after 2026-11-30T00:00:00Z.
+
+On any failure it names the check and enters nothing. Its acceptance test is R10's three runs on a copy (over the cap, a `Proposer:` party outside its scope, a review that does not accept), each naming its check and entering nothing. Nothing of this is today's.
+
+```sh
+git show d3ea009c:transcripts/BRIEF-C2a-3-draft.md | grep -c 'checks neither the verdict of the `--review` file, nor counted lines, nor which party'   # 1
+```
+
+**The next slot holds:** 12:00–12:08Z for `counsel/c2a-3-v5` at `d3ea009c`. His paste acts only at minute 40 or later, and only with no pull request open but the three, so the two do not meet.
+
+Open for the adviser: nothing. This entry does not ring.
