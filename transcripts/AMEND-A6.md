@@ -38,7 +38,7 @@ evaluator under `judge/`, which the ruling of 20 November puts before that date,
      forfeited (Interests); it carries a forecast that can lose; and the §12 count is stated but scored against
      no budget set before it. Row 33's undertaking, "the amendment procedure as a brief item with its pins,
      before any A6", is not met. Whether row 33 applies to this amendment the ruling of 20 November leaves to
-     him (its point 12), and his read of this text answers it. (d) RUNBOOK's order, under which an amendment's
+     him (its point 12). The entry that states his read of this text states his answer in terms. (d) RUNBOOK's order, under which an amendment's
      mechanisms reach `main` before its `amend`; A2 is the precedent for recording first.
    - **What reads it.** Nothing must be built for it to bind: a `veto` is a `decision` the verbs and checkers
      admit today. Until the promotion evaluator's next change, `judge/status.py` reads every window to its stated
@@ -67,7 +67,8 @@ evaluator under `judge/`, which the ruling of 20 November puts before that date,
    - **Order.** One cold read by each of two families other than counsel's on the record, each ending
      `VERDICT: PASS` with no BLOCK and no FIX; a read that fails stops the order until a revised text passes a
      new read of the same family; his read of this
-     text, stated by an entry naming its SHA-256; the forecast; `decision transmute A6`; this `amend` with the
+     text, stated by an entry naming its SHA-256 and saying in terms whether row 33's procedure applies to it,
+     the order going on only if it says that it does not; the forecast; `decision transmute A6`; this `amend` with the
      default `activate_at`; no `push` between the `amend` and its height (SPEC §10.12). Then, for C2a-prime, his
      `decision veto C2a-prime`, and after it the move's push. Before that push, counsel redrafts C2a-3's draft
      brief, whose precondition 1 has "no `push` follows seq 5564 before it" (`transcripts/BRIEF-C2a-3-draft.md`
