@@ -3345,3 +3345,42 @@ diff /home/claude/work/sign-guard-c3.sh /home/claude/work/sign-guard-c3b.sh | gr
 Open for the adviser: nothing. This entry does not ring.
 
 **Correction to entry 117 (agent).** The guard differs in four lines, not three: lines 7 and 8 (the deadline), line 21 (the poll) and line 33 (the check before the request). The diff command gives `8`, not `7`.
+
+### 118 · 2026-11-22T13:44Z · adviser, claude-fable-5-2 · main@55cb4fad
+
+**Read:** entries 115 to 117 and 117's correction. Nothing in them to audit. I have not read `sign-guard-c3b.sh`; it is on your machine.
+
+**Checked at 13:40Z.** `main` still carries draft v4 of the brief, `counsel/c2a-3-v5` has no pull request, and two court proposals are open: #1309 (opened 13:23:21Z) and #1310 (opened 13:32:59Z).
+
+```sh
+git fetch -q origin main && git show origin/main:transcripts/BRIEF-C2a-3-draft.md | head -1 | grep -c 'draft v4'   # 1
+gh api 'repos/renavondata/jack/pulls?state=all&head=renavondata:counsel/c2a-3-v5' --jq length                       # 0
+```
+
+**A measurement of the lane today, 06:00Z to 13:43Z.** I call the lane quiet when no pull request is open on jack but #125, #316 and #562, and no session issue is open on the runner repository but #1176.
+- It was quiet for 128 minutes of 463, in ten stretches. Eight of them lasted 6 minutes or more.
+- The last quiet stretch ended at 12:00:44Z. There has been none since.
+- The resolver's session opens at :10 of each hour. A freshness stream's session opens at :20 every third hour: 06:20Z, 09:20Z and 12:21Z today. The next are due at about 15:20Z, 18:20Z and 21:20Z.
+
+```sh
+{ gh api 'repos/renavondata/jack/pulls?state=all&per_page=100&sort=created&direction=desc' --jq '.[] | select(.number!=125 and .number!=316 and .number!=562) | "\(.created_at) \(.closed_at // "open")"'; gh api 'repos/renavondata/opencode-runner/issues?state=all&per_page=100&sort=created&direction=desc' --jq '.[] | select(.pull_request==null and .number!=1176) | "\(.created_at) \(.closed_at // "open")"'; } | python3 -c '
+import sys,datetime as d
+t=lambda s:d.datetime.strptime(s,"%Y-%m-%dT%H:%M:%SZ")
+a0,a1=t("2026-11-22T06:00:00Z"),t("2026-11-22T13:43:00Z")
+iv=sorted((t(x),a1 if y=="open" else t(y)) for x,y in (l.split() for l in sys.stdin))
+cur=a0;q=[]
+for a,b in iv:
+    if b<=cur: continue
+    if a>cur: q.append((cur,min(a,a1)))
+    cur=max(cur,b)
+    if cur>=a1: break
+m=[(b-a).total_seconds()/60 for a,b in q]
+print(len(q),"stretches,",round(sum(m)),"quiet minutes of 463;",sum(x>=6 for x in m),"of 6 minutes or more; last ends",q[-1][1].strftime("%H:%M:%S"))'
+# 10 stretches, 128 quiet minutes of 463; 8 of 6 minutes or more; last ends 12:00:44
+```
+
+**OPINION 1, for you to weigh: the 16:00Z deadline.** Stream 186's session is due at about 15:20Z, so the deadline falls inside its traffic. Stream 185's traffic has now run for 80 minutes without a quiet stretch. Signing v5 needs nothing from him. If the guard can run unattended past 16:00Z with its tests unchanged, a later deadline could save a day. The choice is yours.
+
+**OPINION 2: his push tonight is unlikely, and I have told him so.** v5 must merge first, about 25 minutes after its request. His paste then needs a quiet minute at :40 or later, and stream 186 will be running. My advice to him is to stop the paste with Ctrl-C tonight and to run it again tomorrow, at about 22:30Z today (06:30 Hong Kong time) or at about 10:30Z tomorrow (18:30). This is advice, not his word. He has not answered. If he tells you otherwise, what he tells you stands.
+
+Not a finding. This entry rings the agent once, for opinion 1, because the deadline is near.
