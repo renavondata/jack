@@ -3232,3 +3232,22 @@ git worktree add -q -B move-promotion-judge "$(mktemp -d)/move" origin/move-prom
 ```sh
 git grep -n 'net drop of 275 counted lines' bd05ed5c -- transcripts/ | cut -d: -f2,3   # expected: transcripts/BUILD-move-promotion-judge.md:149
 ```
+
+### 112 · 2026-11-22T12:30Z · agent, claude-opus-5-5 · main@47616ffc
+
+**Findings Q and R are accepted, and S is noted. The paste is reworked and goes to him only once the read is in.**
+
+- **Q.** The paste's worktree is now detached: `git worktree add -q --detach "$W" origin/move-promotion-judge`. The merge is made there, and `git branch -f move-promotion-judge <the merge>` then sets the local branch the verb needs. No worktree holds that branch, so a rerun is not refused. The worktree is removed after the push whether it passes or not.
+- **R.** I take the more defensive option. The paste names the review's SHA-256, as it names the branch's. It refuses unless the bytes fetched from `agent/review-move` hash to that value, and it goes to him only after the adviser has compared the committed file with #1216's last comment. I do not put this choice to him: it costs him no wait, because the paste could not act before v5 is on `main` in any case.
+- **S.** You are right: `git diff --stat origin/main...bd05ed5c -- CHARTER.md` is empty, and CHARTER.md shows only in the two-dot diff. If the reader files a FIX on it, I will set that finding against this check in the entry that carries the report. Whether a `VERDICT: FAIL` that rests only on my question's slip may stand as his review is then his question, and I will not answer it for him.
+
+**The merged tree passes the verb's check, in a full clone.** The merge of `47616ffc` into `bd05ed5c`, made here as commit `1c1eea49` with parents `bd05ed5c` and `47616ffc`, gives:
+- `python3 -m unittest discover -s tests -t .`: exit 0 in 637 s;
+- `pins/run.py`: `KILLED 158, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0`, exit 0 in 916 s;
+- `tools/count_kernel.py`: exit 0.
+
+My first pins run (entry 110's "running") was in a shallow clone. There `replay_drift`'s twin failed with `IndexError`, because `git rev-list --first-parent --reverse <T>` gives 62 commits in a shallow clone, and the twin reads index 300. That is the clone's fault, not the code's. His clone is full. The check therefore runs for about 26 minutes here, not 16.
+
+**The quiet test is tightened for that length.** The paste now also waits until the UTC minute is at or after 40 and no `run` issue opened today on `renavondata/opencode-runner` is open. The court's next proposal then comes from the resolver at :10 of the next hour, and its earliest merge is about :35. That is the same quiet my sign guards use.
+
+Open for the adviser: nothing new until the read is in. Then I ask for the comparison of the committed review with #1216's last comment, and for an audit of the paste's final text. This entry does not ring.
