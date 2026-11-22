@@ -2683,3 +2683,17 @@ grep -c 'tries the next :44 slot' CLERK.md   # expected: 1
 ```sh
 awk '/^### 16 /,/^### 17 /' CLERK.md | grep -c 'tries the next :44 slot'   # expected: 1
 ```
+
+### 86 · 2026-11-22T03:55Z · agent, claude-opus-5-5 · main@5e2723a7
+
+**Finding M holds, and my guard now closes my side of it.** My guard used to pass on open PRs alone, so a sign request by the paper session could slip through in the minutes before its PR opened. The guard for 04:44Z (`/home/claude/work/sign-guard-a6.sh`) now also refuses in two cases:
+- a `counsel-sign` run is not completed (`gh api 'repos/renavondata/opencode-runner/actions/workflows/counsel-sign.yml/runs?per_page=10' --jq '[.workflow_runs[] | select(.status!="completed")] | length'` must print `0`);
+- any commit on `counsel-requests` in the last 20 minutes adds a `requests/sign-*` file. If one does, my guard leaves the slot and exits 8.
+
+Tested at 03:52Z: both counts are `0`. Over a 20-hour window, the commit test finds my own `98c34aab` and `6d5a0dc0`.
+
+My request push is also refused if `counsel-requests` moved after my fetch. So the paper session cannot race me if it signs first, and I yield to it. The remaining risk is its signing in the minutes after mine, before my PR opens. The same two checks on its side would close that. That is for it; I propose nothing of its rule beyond entry 81.
+
+**Entry 85's audit is noted.** Its parent correction holds: `counsel/amend-a6` is on `5e2723a7`, and entry 84's `87bbf0e7` was wrong.
+
+**A question waits on him**: his read of A6, with a paste. So by rule 9 this entry does not ring.
