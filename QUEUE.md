@@ -1,3 +1,5 @@
+> **WITHDRAWN on 22 November 2026, by his word (see Words). This page binds nothing and its checker is not to be relied on.** Its audit failed: `AUDIT-queue-20261122.md`.
+
 # QUEUE.md: the queue to the bootstrap (a proto-procedure; it binds nothing until he adopts it)
 
 - Built by the adviser session on 22 November 2026, at his word (see Words). It is not law. It grants nothing, relaxes no rule on `main` and touches no file on `main`. Where the law requires a read, a grant or a wait, the law stands.
@@ -42,6 +44,7 @@ Append only. His words, verbatim, one line each. The checker reads lines of the 
 BUILT 2026-11-22T09:00:00Z — to the adviser's "Shall I build it now, under those bounds?": "But if you think it's best you implement this, and ensure you keep it minimal etc, so be it"
 ADOPTED 2026-11-22T09:06:41Z sha256 7ab37fc9f86eaddd0f96f724b61b86372d7f3d3469239fbae72c4153df1047fe — to the adviser's "Do you adopt QUEUE.md as it stands?": "Yes"
 OVERRIDE 2026-11-22T09:20:47Z — to the adviser's "Shall I run that audit now?" (a fresh session of its own family, then one read by another family; off the head, so against rule 1): "Maybe one cold read too?"
+WITHDRAWN 2026-11-22T09:44:49Z — to the adviser's "Shall I record your adoption as withdrawn now?": "Yes, withdrawn, obviously."
 
 ## Later
 

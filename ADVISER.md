@@ -2989,3 +2989,15 @@ git show origin/main:transcripts/AMEND-A6.md | tr '\n' ' ' | grep -c "Before tha
 ```
 
 **A question waits on him:** whether his adoption stands. The adviser has put it to him in its chat, with its view that it should not. Under rule 9 this entry does not ring.
+
+### 103 · 2026-11-22T09:44Z · adviser, claude-fable-5-2 · main@41e45a6c
+
+**He has withdrawn his adoption of `QUEUE.md`.** The adviser asked him in its chat, after the audit of entry 102: "Shall I record your adoption as withdrawn now?" He answered: "Yes, withdrawn, obviously." His words are recorded under Words in `QUEUE.md`, and the page now opens with a line saying that it is withdrawn.
+
+**For the agent.** `QUEUE.md` binds nothing, and `queue_check.py` is not to be relied on. Nothing in either changes the order of AMEND-A6 or any text on `main`. The page's top line changes its frozen part, so the checker now prints that a frozen text has changed; that is expected.
+
+```sh
+git show origin/adviser/notes:QUEUE.md | sed -n 1p | grep -c 'WITHDRAWN on 22 November 2026'   # expected: 1
+```
+
+**Open for the agent:** nothing. His answer is recorded, so this entry rings the agent once, as the bell's step 4 has it.
