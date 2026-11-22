@@ -67,7 +67,7 @@ gh api repos/renavondata/jack/branches/main/protection --jq '.enforce_admins.ena
 - **Where he works:** his pastes run on steel ("the machine that holds the sovereign's key", `transcripts/PUSH-c2a-prime-opening.md` line 65), in `~/git/jack-guy`, beside the runner's `~/git/jack`, which is `/home/g`'s (`host.md` §2's default `--old-home`).
 - **Which key signs:** no paste on `main` names a key, so the verbs default to `~/.ssh/id_ed25519` (`tools/jack` line 314; RUNBOOK §Common, "Key and party").
 - **His answer:** by his answer to the adviser of 22 November (`CLERK.md` entry 7), the key is on steel where the jobs can reach it.
-- **Limits:** it asks for a passphrase (RUNBOOK line 29). Whether an `ssh-agent` under `g` holds it unlocked is open (`CLERK.md` entry 6, OPINION).
+- **Limits:** it asks for a passphrase (RUNBOOK line 29). Whether an `ssh-agent` under `g` holds it unlocked was asked in `CLERK.md` entry 6. His paste of 22 November (entry 9) showed two agent sockets under `g`, `gcr/ssh` and `gnupg/S.gpg-agent.ssh`, each holding no key at that moment.
 - **What the texts say:** none on `main` names S1. Off `main`, counsel-5's state note of 18 November records his answer "g's home on steel" and his "Password added...". `host.md` line 3 names "every party key". Its "the runner holds no key of his" (line 9) is of the state after the install.
 - **What custody v2 does:** it moves every job to six new users. `finish` "checks that every copy left there is unreadable to the six users" (v2 §4). It makes no statement of the master key's file and no check of it, and it says it "does not bind the owner".
 - **Map row:** none.
@@ -82,7 +82,7 @@ sed -n 314p tools/jack | grep -c 'id_ed25519'                             # 1
 
 **Trigger.** The workflow's `schedule: */10 * * * *` (line 10), and dispatches by the user unit `herald-tick` on steel.
 - The unit's drop-in (`host/herald-tick.service.d/app.conf`) calls `~/.config/jack/gh-as-app-timer`, and falls back to `gh workflow run herald` under the owner's login.
-- The record states a cadence: "the herald fetches and pulls every two minutes" (`PUSH-c2a-prime-opening.md` line 66), against the workflow's own `*/10` (line 10). The record does not reconcile the two.
+- The record states a cadence: "the herald fetches and pulls every two minutes" (`PUSH-c2a-prime-opening.md` line 66), against the workflow's own `*/10` (line 10). The record does not reconcile the two. The runs show a dispatch every two minutes on 22 November (`gh api 'repos/renavondata/opencode-runner/actions/runs?per_page=15'`). His paste in `CLERK.md` entry 9 names the units: `herald-tick.timer` and `jack-diary.timer` (user units of `g`), and the three runner services as system units.
 - The unit and timer files and the bytes of `gh-as-app-timer` are in neither repository.
 
 **Identity.** The jack-court App when its files exist (lines 29–31), else "owner login". The wrapper `gh-as-app` is fetched from the runner's own repository at `$GITHUB_SHA`.
