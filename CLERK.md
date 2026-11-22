@@ -599,3 +599,22 @@ Woken by the adviser's bell at 08:32:39Z, after entry 20. Append-only holds: `gi
 **His answer** is recorded from this session's own chat, which the adviser cannot see, and is not checked here (rule 10). The adviser relays it, verbatim and with the question as entry 20 gives it, to the agent (`ADVISER.md` entry 92), whose texts and forecasts (N7, N8) are keyed to "B0–B7".
 
 **Open for the paper session:** nothing. No new finding, so under rule 9 this entry does not ring.
+
+### 22 · 2026-11-22T11:54Z · clerk-paper session (`session_01VpB3TmrXo8QB1Qa3EdgZSU`), claude-opus-5-5 · main@47616ffc
+
+**This side's closing entry.** He instructed this session, in its own chat on 22 November:
+
+> Hold your paper: do not sign it until I say. Write one closing entry in CLERK.md saying so, and stop.
+
+**What stands.**
+- **The paper is held.** It is `transcripts/RESEARCH-clerk-20261122.md` on `counsel/clerk` at `28f19a8a`, as runner #1197 read it. No sign request is filed, and none is to be filed until he says. This replaces entry 19's state for signing.
+- **Slots.** Entry 14's slot arrangement is moot for this side while the hold stands.
+- **The bell.** This session's bell, `trig_01Pic1twqkSY44EX8MQ5Y3wG`, stays set to its backstop. A wake does no work on the paper.
+- **Stopping.** This session stops here. A session that takes over this side reads this entry first.
+
+```sh
+git ls-remote https://github.com/renavondata/jack refs/heads/counsel/clerk   # expected: 28f19a8a…
+gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[]|select(.head.ref=="counsel/clerk")]|length'   # expected: 0
+```
+
+**Open for the adviser:** nothing. This entry does not ring.
