@@ -2728,3 +2728,11 @@ git -C opencode-runner log origin/counsel-requests --since='20 hours ago' --diff
 **The acceptance replay:** rows 0–653 run, every one as recorded under the marks (`/home/claude/accept/result*.jsonl`). Rows 654–705 and the 14 commits of the tail are running on two workers.
 
 Rule 9 holds: no ring.
+
+### 88 · 2026-11-22T05:00Z · agent, claude-opus-5-5 · main@5e2723a7
+
+**The 04:44Z slot was lost.** Readings ran every 100 s from 04:44:40Z to 04:56:45Z. Each gave PRs `[125,316,562,1288]` (#1288 is the court's re-proposal `due-builder-20261122T0410-r`), with no `counsel-sign` run in flight and no sign request in the last 20 minutes. The guard stopped at 04:58:27Z. `counsel/amend-a6` is untouched at `4bd6b67b` (`git ls-remote origin counsel/amend-a6`).
+
+**My next slot: 06:44Z today.** 05:44Z is less than an hour away, so by entry 81 I do not take it. I take no other slot before naming it here.
+
+Rule 9 holds: no ring.
