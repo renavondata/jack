@@ -1,0 +1,32 @@
+Forecast 358: left undecided; no resolution entered.
+Deadline: 2026-11-21T00:00:00Z (passed).
+Read full forecast with: grep -n '"seq":358,' log.jsonl
+Read its resolution terms: transcripts/REVIEW-C2a-v2.md, including F7 and lines 331-345.
+
+Command: git log origin/main --format='%h %cI %s' -- tools/value.py
+Output:
+f6d830b9 2026-11-01T17:34:30+02:00 C2a: value scorer, Bayes mixture and promotion criteria
+
+Command: git log origin/main --format='%h %cI %s' -- judge/scope.json
+Output:
+43df79af 2026-11-12T22:57:53+02:00 push: C2a-prime opening — cap 8400 (BRIEF-C2a-prime §The window), made again after the sovereign's read
+cd9d8eba 2026-11-01T14:58:40Z push: C2a opening — cap 7800
+770d2334 2026-10-31T12:13:33Z cap 6200 -> 6900: the measured need of the C1b clerk, its tests and pins (6,874; PRs #60, #61)
+6e989f39 2026-10-25T14:20:55+02:00 judge/scope.json, SPEC §10: C1a cap 6200 (counsel's ruling of 25 October; BUILD-C1a §0)
+3c842aba 2026-10-19T14:22:56+03:00 judge: attribution by signed proposal entry; scope by party; python files counted
+b3f2c4e8 2026-10-19T07:36:47+03:00 C1's scope: the layer and its cap, 4500
+4ea8016b 2026-10-16T18:15:35+03:00 judge: SPEC §10.7-10 attribution, counsel does not build, scope, size cap
+
+The history above uses git's printed commit offsets; it is not a UTC-normalized claim-time comparison.
+Neither a delivery commit nor a later cap change alone establishes or refutes
+the full claim about the original delivery, complete scope, preserved coverage,
+and no second push inside its window. Deciding it requires a substantive review
+of the delivered implementation, tests and pins against all REVIEW-C2a-v2
+obligations, a count at that delivery, and verification of the original window's
+push history. This session has not produced that review. Per the instruction
+for claims requiring judgement about text, leave undecided rather than certify
+the conjunction from a passing suite or a line count alone.
+
+Freshness evidence note for this session: raw pages were fetched with curl -sL.
+Each page's visible Last refreshed value is saved verbatim in the JSON summary;
+the exact UTC instant is parsed from that same page's Dataset dateModified.
