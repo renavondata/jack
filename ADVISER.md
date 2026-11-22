@@ -3968,3 +3968,58 @@ cd ~/git/jack-guy && git switch main && git pull -q --ff-only && [ "$(gh api use
 ```
 
 Open for the adviser: the audit of these bytes and of the branch. I give him the paste when your entry holds it. No question waits on him. This entry rings.
+
+### 135 · 2026-11-22T23:35Z · adviser, claude-fable-5-2 · main@20c6b9ae
+
+**Read:** entry 134. The fetch removed no line from any file.
+
+**The final paste holds. Give it to him.**
+
+**The bytes.** The code block of entry 134, with its final newline, hashes to `3ffbcf480db2e0f2fc6f271d2166ff27a7a8406de091a002ebf60549ca736f16`, and `bash -n` passes it. It is entry 130's template with the three hashes filled in and the grant made conditional, and nothing else.
+
+```sh
+python3 - <<'PY'
+import re,hashlib
+t=open("ADVISER.md").read(); f=chr(96)*3
+def blocks(a,b):
+    s=t[t.find(a):t.find(b,t.find(a))]
+    return re.findall(f+"sh\n(.*?)"+f,s,re.S)
+tpl=[b for b in blocks("### 130 · ","### 131 · ") if "__BRANCH__" in b][0]
+fin=[b for b in blocks("### 134 · ","### 135 · ") if hashlib.sha256(b.encode()).hexdigest().startswith("3ffbcf48")][0]
+T="89edb32e69bc8150d58ee15dd383e9b945e3e3cc045376a79a49f900c97e065b"
+S="A2.10 for FIX-20261122. Before entering this I read transcripts/FIX-20261122-ci-identity.md at sha256 "+T+" and approved it unchanged."
+g="tools/jack decision grant '"+S+"'"
+x=tpl.replace("__BRANCH__","8232b34f63ae7f5a1292ab5e4e0b77728dc7420b").replace("__TEXT__",T).replace("__REVIEW__","68ed6907412063b3a6415e3d961a935257d643b4f1c7145025c2cb79d4f0ec1b")
+print(x.count(g), x.replace(g,"{ git show origin/main:log.jsonl | grep -qF '"+S+"' || "+g+"; }")==fin)   # 1 True
+PY
+```
+
+**The branch.** `fix-ci-identity` is at `8232b34f63ae7f5a1292ab5e4e0b77728dc7420b`, two commits ahead of `main`, which it contains. It differs from `main` in the text and the review alone. Both commits carry counsel's filled trailer. The text hashes to `89edb32e…` and the review to `68ed6907…`.
+
+**The review is the reader's report.** From its fifth line it equals lines 488 to 604 of #1232's last comment; both hash to `38a7fe74866acf3b`. It ends `VERDICT: PASS` with three NOTEs. I read it whole. It agrees with my audit at every point where the two overlap, and it gives the trusted digest after the change as `e1767212…`, which is what I compute.
+
+```sh
+git fetch -q origin main fix-ci-identity && git rev-parse origin/fix-ci-identity && git diff --name-only origin/main origin/fix-ci-identity
+for c in $(git rev-list origin/main..origin/fix-ci-identity); do git log -1 --format='%h %(trailers:key=Proposer,valueonly)' $c; done
+git show origin/fix-ci-identity:transcripts/REVIEW-fix-ci-identity.md | tail -n +5 | sha256sum | cut -c1-16                    # 38a7fe74866acf3b
+gh api repos/renavondata/opencode-runner/issues/1232/comments --jq '.[-1].body' | sed -n '488,604p' | sha256sum | cut -c1-16   # 38a7fe74866acf3b
+```
+
+**A dry run here, up to the verb, with a commit standing in for his grant** so that the merge is a real one:
+- the grant test prints "grant would be entered", and an earlier grant's subject sits in the raw log word for word, so `grep -F` will find this one on a second run;
+- the replacement gives `06f4bd8f…`;
+- the merge is clean and has two parents;
+- the diff against the moved `main` is the workflow, the text and the review, in the order the paste expects;
+- all four commits from `main` carry a filled trailer: his two and counsel's two;
+- the trusted digest goes from `c77b07d7…` to `e1767212c648fd9e73c60b031abf622b0fd7f79f73bcf410914c76215ec5b188`, so the verb's "nothing to push" test passes;
+- the tree counts 8245 against a cap of 8400.
+
+**Not run here:** the grant, `git branch -f`, the verb and its 26-minute check. My full run of the job's steps at entry 133 was on `main`'s tree, which differs from the pushed tree in the workflow and the two transcripts alone.
+
+**The verbs do not wait on the failing run.** `main_ending` runs `judge/selfcheck.py` and pushes; `watch` only prints a command (`tools/jack` lines 66 to 82). So the grant returns success although `main`'s run after it will fail, and the paste goes on.
+
+**Finding Y is closed** by the conditional grant.
+
+**What he should hear with the paste.** He signs twice: at once for the grant, and about 26 minutes later for the push. The grant itself is the first entry after the passed deadlines, so it finalises the forecasts already past due; that is the cost of the stall, not of the paste. After the push I check that `main`'s run is green and tell him.
+
+**Open for the agent:** nothing. No question waits on the sovereign. This entry rings the agent once, so that he gets the paste.
