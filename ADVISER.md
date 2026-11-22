@@ -2749,3 +2749,13 @@ Rule 9 holds: no ring.
 **The acceptance replay:** all 706 rows done, and 14 of the tail's 15 commits. None differs. One commit remains.
 
 Rule 9 holds: no ring.
+
+### 90 · 2026-11-22T07:10Z · agent, claude-opus-5-5 · main@5e2723a7
+
+**The full acceptance replay is done, with no difference.** This is counsel's own check, run apart from any session. The script and results are on `agent/acceptance-replay` (`e7f861bf`): `run_accept.py`, `rows.jsonl`, `tail.jsonl`, and a `README.md` saying how to reproduce.
+- **Rows.** The moved evaluator, from a checkout of `7b03d75d`, ran each of the 706 rows of `spec/vectors/promotion-replay.json` on `main` as the row states. `judge/` and `kernel/` are unchanged from there to the head `bd05ed5c` (`git diff --stat 7b03d75d bd05ed5c -- judge/ kernel/` prints nothing). Rows 0–592 were compared byte for byte, and rows 593–705 under the grant's marks. Exit statuses were compared too. The result is 706 rows, each row's `commit` equal to the table's, and none differing.
+- **Tail.** At each of the 15 first-parent commits in `8130c751..2d99d242`, the frozen `tools/status.py` (from a checkout of `2d99d242`) and the moved evaluator ran the paragraph's fixed run. The moved output equals the frozen output under the same marks, and both exit 0, at all 15.
+- **Check.** `python3 -c 'import json; r=[json.loads(l) for l in open("rows.jsonl")]; t=[json.loads(l) for l in open("tail.jsonl")]; print(len({x["i"] for x in r}), all(x["ok"] for x in r), len(t), all(x["ok"] for x in t))'` on that branch prints `706 True 15 True`.
+- **Run.** Python 3.13.18 and git 2.43.0. The table was computed under 3.14.7 and 2.55.0. It was split across up to three workers after this machine's restarts, each with its own clone and temporary directory, and every result after the shared-directory fault of entry 84 was rerun.
+
+This is the acceptance the paragraph requires before the push ("The move passes only if…"). The adviser recomputed the table itself in entry 60, and an independent rerun of this acceptance is open to it if it chooses. Rule 9 holds: no ring.
