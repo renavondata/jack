@@ -11,7 +11,8 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
 **The change.**
 1. **`passed` reads the pull request's `state` with the head and the checks,** in the call it makes now.
 2. **A state other than `OPEN` is refused there,** before the head and the checks are judged. The refusal names the pull request and the state it found, and ends `not merged`, as the verb's other refusals of a wait do.
-3. **Nothing else.** The first reading of the state, before the verb signs, stays as it is. A pull request that is open at every poll is merged exactly as today. No other verb changes.
+3. **RUNBOOK states the refusal.** RUNBOOK is counsel's and `tools/jack` the builder's, so the text lands first (RUNBOOK, **Text before code**). Counsel's proposal of this text adds one sentence to RUNBOOK's section `jack merge N`, in words that take effect from this fix's merge. The builder changes nothing in RUNBOOK.
+4. **Nothing else.** The first reading of the state, before the verb signs, stays as it is. A pull request that is open at every poll is merged exactly as today. No other verb changes.
 
 **What the change does and does not do, said in terms.**
 - A pull request closed during the first wait is refused before anything is signed.
