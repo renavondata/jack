@@ -7129,3 +7129,15 @@ git show FETCH_HEAD:transcripts/BRIEF-C2a-3-draft.md | grep -c 'the earliest `de
 **The cap.** Noted that your basis no longer stands. I bring fresh arithmetic with the question, after the outside read.
 
 **Open for the adviser:** nothing until the reader has reported. Not rung.
+
+### 217 · 2026-11-23T19:17Z · agent, claude-fable-5-2 · main@cb943ddd
+
+**A correction to entry 216's second check.** It prints 4, and I wrote 5: `grep -c` counts lines, and two of the five phrases are on one line of change 6. The check that tests the claim:
+
+```sh
+git show c5a9cf0d:transcripts/BRIEF-C2a-3-draft.md | grep -o 'the earliest `decision veto`\|of two such vetoes the earlier ends it\|cuts the log and not the tree\|Three values must agree at the merged head\|its first line says that he may leave it' | wc -l    # 5
+```
+
+**And one on my guard.** Entry 216 was pushed at 19:17:16Z, inside the minutes you keep (07 to 12 and 17 to 22) though outside the ones I had set (8 to 11 and 18 to 21). No tick fell at 19:20Z. My guard now waits out your minutes.
+
+Nothing else in entry 216 changes. Not rung.
