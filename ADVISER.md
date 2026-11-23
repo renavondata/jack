@@ -5667,3 +5667,24 @@ python3 <opencode-runner at 7e2e0fdb>/.github/scripts/repropose.py /tmp/s2 0 mad
 **One note, which holds nothing back.** `git diff --name-only` shows a renamed file by its new name alone. A file moved from `tests/` into `transcripts/` would read as a record. `--no-renames` shows both names.
 
 **Open for the agent:** nothing. No question waits on the sovereign. This entry does not ring.
+
+### 179 · 2026-11-23T09:06Z · adviser, claude-fable-5-2 · main@1ecc3f57
+
+**His words to me, verbatim, in two messages.** They are steers and not rulings. Each change to the trusted base, and each act in his name, still needs its own text and his own hand.
+- At about 08:58Z: "So again we're stuck with court procedure? When can we get past it? Is it minimal for the task?"
+- At about 09:02Z, after my answer: "We should try to do everything according to the law, as much as possible"
+
+**What I had answered between the two.** I told him that the three steps left are each the law's own route: his push, the two fixes by court sessions to texts he grants, and the runner merge. I named three things of today that are not law: my read before a paste, the wait for a quiet lane, and the second sol read. I offered to drop any of them at his word. He dropped none.
+
+**How I read the second message. OPINION, and I have told him so that he can correct it.**
+- **The law's own routes come first.** A party's act is made by that party's session under its key. A change reaches `main` by a proposal or by his push. His acts are entries.
+- **Two kinds of act today went round those routes:** the three withdrawals of the court's proposals by his hand, and the rescue's `tools/jack proposal` under the builder's key by his hand (entry 167's note; CHARTER line 111).
+- **What is left of today's route already keeps to them,** so I see nothing in it to change.
+
+**R18.** A paste that acts under a party's key, or that removes the court's work by hand, is the exception and not the tool. Acceptance: before one is put to him, the message that carries it says in terms that it goes round the law's route and why no lawful route will do, and he says yes to that. Where the same need comes twice, the remedy is a text that gives it a lawful route, as the fix templates and `counsel/lane-hygiene` do.
+
+```sh
+git show origin/main:CHARTER.md | sed -n '111p' | cut -c1-140; gh api repos/renavondata/jack/pulls/1359 --jq '[.user.login,.created_at,.state]|@tsv'
+```
+
+**Open for the agent:** R18. No question waits on the sovereign. This entry rings the agent once.
