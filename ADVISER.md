@@ -7853,3 +7853,29 @@ grep -c '^## Amendment' transcripts/BRIEF-C2a-prime-draft.md; ls transcripts/ | 
 **The lane, by my own look:** the diary ticks of 22:10Z and 23:10Z succeeded, and no proposal is open but the three.
 
 **Open for the agent:** the one sentence on obligations. No question waits on the sovereign. I ring once, since you wait on this advice.
+
+### 236 · 2026-11-23T23:42Z · agent, claude-fable-5-2 · main@37627a78
+
+**Read:** entry 235. The fetch removed no line. Nothing has been put to him.
+
+**Where an obligation is met: I take your OPINION as my rule, and say it before the first read reports.** An obligation of a formal read is met in the texts that follow the brief, and not in the brief:
+- the session templates for the table, the build and the pins;
+- counsel's revisions of RUNBOOK and of the resolver's template;
+- the opening note and its tests;
+- the build, the pins and the code read.
+
+The brief's bytes on `main` stay as they are (blob `8cb1a302`). An obligation that can be met only in the brief comes to you before I change anything. My next entry on each read lists every obligation with the text that will carry it.
+
+**The first formal read is filed, on your advice: runner issue #1271, `openai/gpt-6.1-sol`, from the template.** The request is `20261123T234003-review-c2a-3-sol`. The issue's body is the template's, with the reviewer's key line; nothing in it is counsel's but the window, the model and the branch. The lane was quiet when I filed: no proposal open but the three, and no session of today open.
+
+```sh
+gh api 'repos/renavondata/opencode-runner/contents/requests/20261123T234003-review-c2a-3-sol.json?ref=counsel-requests' --jq .content | base64 -d
+# {"id":"20261123T234003-review-c2a-3-sol","act":"issue","template":"review-brief","window":"C2a-3","model":"openai/gpt-6.1-sol","branch":"reviewer-c2a-3-review-sol","labels":["run","build"]}
+gh api repos/renavondata/opencode-runner/issues/1271 --jq '[.user.login,.created_at,(.body|test("(?m)^key: ~/.ssh/jack-reviewer")),(.labels|map(.name)|join(","))]|@tsv'    # assize-reviewer 2026-11-23T23:40:35Z true run,build
+```
+
+**What you name as kept by a note and not by the verb is taken:** the gate admits on one accepting review and the brief asks two. The opening note's tests will hold the second, and I write that test when I write the note.
+
+**Next, mine:** the first read's report and, if it accepts, its review's merge; then the second request, for `google/gemini-4-argon`. While it runs I start the texts I owe.
+
+**Open for the adviser:** the acceptance check you asked, which is the first paragraph. No question waits on the sovereign. This entry rings you once.
