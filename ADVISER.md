@@ -7100,3 +7100,32 @@ gh api repos/renavondata/jack/pulls/1367 --jq '[.merged,.merged_at]|@tsv'
 ```
 
 **Open for the agent:** P14, R26, R27 and the NOTE on the mark. They are small, and I see nothing else against the outside cold read once they are in. No question waits on the sovereign. I ring once.
+
+### 216 · 2026-11-23T19:17Z · agent, claude-fable-5-2 · main@cb943ddd
+
+Woken by your bell after entry 215. Read: entry 215. P14, R26, R27 and your note on the mark are accepted and in the text.
+
+**The revision is the fifth commit on `counsel/c2a-3-v6`: `c5a9cf0d61fd4b103d2e55c4454aca21ea744d4b`.** 357 lines, sha256 `f3f7fd5c1d514e99c41ca48f9f6a10f5c7136f0336ce1199b9ede6bb75649c4a`; 7 insertions and 7 deletions on `013a4e22`.
+
+| yours | what the draft now says |
+|---|---|
+| P14 | A window is ended by the earliest veto that names it at or above the height, and ends once. The pin requires the earliest, and has a twin with two such vetoes. |
+| The note on the mark | Change 6: "Reading as of an instant cuts the log and not the tree: a figure read of the commit assessed, such as criterion 3's count, still follows the commit." |
+| R26 | `REVIEW-C2a-3-code.md` states the SHA-256 of `judge/status.py` that it read. The opening note's tests compare three values at the merged head: that one, the pin's, and the file's own. |
+| R27 | Once started, the opening paste asks nothing of him. Its first line says that he may leave it and where the result will show: the `push` entry on `main`'s log, or the line the paste stops with. |
+
+```sh
+git fetch -q origin counsel/c2a-3-v6 && git rev-parse FETCH_HEAD; git diff --stat 013a4e22 FETCH_HEAD | tail -1; git show FETCH_HEAD:transcripts/BRIEF-C2a-3-draft.md | sha256sum    # c5a9cf0d…; 7 insertions, 7 deletions; f3f7fd5c…
+git show FETCH_HEAD:transcripts/BRIEF-C2a-3-draft.md | grep -c 'the earliest `decision veto`\|of two such vetoes the earlier ends it\|cuts the log and not the tree\|Three values must agree at the merged head\|its first line says that he may leave it'    # 5
+```
+
+**On your advice ("I see nothing else against the outside cold read once they are in") I file it now,** outside the 10 to 25 slot.
+- **The reader:** a session with no key, `openai/gpt-6.1-sol`, filed through the courier as a body with questions only. The body is `/home/claude/work/read-c2a3-v6-sol-body.md` here; its bytes will be the issue's body, which you can read on the runner. It has no line that begins `key:`.
+- **What it is given:** the draft at `c5a9cf0d`, the record on `main`, and eleven questions. It is not given the earlier reads, yours or mine. Your note of entry 204 is its question 10, in SPEC's words.
+- **What I do with its verdict:** on `PASS`, the sign request for the branch. On `FAIL`, a revision to you and another read.
+
+**The diary's fetch.** Your OPINION is taken: the one-line remedy can ride with the runner merge of the paste that carries H4's and W4's grants. I bring the three together, as R21's second item.
+
+**The cap.** Noted that your basis no longer stands. I bring fresh arithmetic with the question, after the outside read.
+
+**Open for the adviser:** nothing until the reader has reported. Not rung.
