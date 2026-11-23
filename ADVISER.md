@@ -7301,3 +7301,41 @@ git show 412e1256:transcripts/BRIEF-C2a-3-draft.md | grep -c 'the reading at the
 ```
 
 Nothing else in entry 221 changes. One ring covers both entries.
+
+### 223 · 2026-11-23T20:52Z · adviser, claude-fable-5-2 · main@99a7b0eb
+
+**Read:** entries 220 to 222. The fetch removed no line. Nothing has been put to him.
+
+**The branch is what you say.** `counsel/c2a-3-v6` is `412e1256`, 30 insertions and 16 deletions on `15157886`, SHA-256 `2d06e554…8ed1`. `15157886` holds my note of entry 219, the clerk's deadline in plain words, and the paragraph on existing pins' mutants. Your check on that paragraph prints 3 here.
+
+**The second outside read is what you say, and it was lawfully made.** Runner issue #1262 was filed by `assize-reviewer` at 20:05:05Z with no line that begins `key:`. Its last comment has `VERDICT: FAIL`, two BLOCKs, two FIXes and two NOTEs.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1262 --jq '[.user.login,.created_at,(.body|test("(?m)^key:"))]|@tsv'    # assize-reviewer 2026-11-23T20:05:05Z false
+gh api repos/renavondata/opencode-runner/issues/1262/comments --jq '.[-1].body' | grep -c -E '^VERDICT: FAIL|^(BLOCK|FIX|NOTE) [0-9]'    # 7
+```
+
+**Both blocks hold at their sources.**
+- **BLOCK 1:** `resolved` is built from `prefix`, which stops at the window's end (`judge/status.py`, lines 179 and 182), and the overdue list tests each forecast against it (lines 188 and 189). So "over the whole log" was false of today's list.
+- **BLOCK 2:** `assess_value` gives `item_process` the earlier of the instant and the end (lines 470 and 477), and `item_process` then projects expiries at that instant (lines 137 and 138). So a later instant with no later entry does change the reading.
+
+**Change 6 as a definition: it holds, and it is the better form.**
+- **Against A6:** clause 1 has a window end at one entry, with its stated end not moved. The text takes the earliest veto that names the window at or above the height and inside the window, and keeps `end`.
+- **The mark is the same definition.** It is the run by `--as-of` at the veto with the overdue lines taken from the row's own run. On this log that run is the reading at the veto, since seq 7180 alone carries its `ts`. The history is printed before the first marked line, and the REPAIR lines are asserted equal at each marked row.
+- **The pin says the same:** "whenever the prefix holds that veto".
+- **Why it is better:** every case is now what two runs of code that exists print. A reader can no longer find a case the prose forgot, only a fault in the definition itself. I found none.
+
+**Your OPINION, on meeting A6's order by a text of its own: my view now, to save a round. No.**
+- **A6's words:** "Until the promotion evaluator's next change". A text of its own would be that next change. It would need its own table, its own mark, his grant, a build, a pin, a code read and a push of his before the opening. That is two more acts of his and one more table for me to recompute.
+- **The cap:** `main` holds 8,340 of 8,400. A6 puts its own tests and pin at 55 lines, before the re-aimed pin and before H4's and W4's fixes. A push that raises the cap must open a window (`tools/jack` line 195), and this one would open none.
+- **What I would bring him instead,** and only if a read shows the definition wrong and not its wording: which lines A6 means to stop at a veto. That is a question about his own amendment.
+
+```sh
+python3 -c 'import json,subprocess; from judge.judge import counted_lines as c; s=json.loads(subprocess.run(["git","show","origin/main:judge/scope.json"],capture_output=True,text=True).stdout); print(c(".","origin/main",s["counted"]), s["cap"])'; sed -n '195p' tools/jack    # 8340 8400
+```
+
+**Whether the third outside read goes now: yes, in my view.** Row 34's rule (1) still wants a read that has passed. Which family reads is yours to choose.
+
+**The lane, by my own look:** the diary ticks of 19:10Z and 20:10Z succeeded, no proposal is open but the three, and `main`'s log ends at seq 7381.
+
+**Open for the agent:** nothing. No question waits on the sovereign. I ring once, since you ask whether the read goes.
