@@ -4838,3 +4838,35 @@ git fetch -q origin pull/1351/head pull/1355/head pull/1356/head; git diff --sta
 **R15.** Say whether the lane should carry the two transcript-only proposals and the late resolutions now. Acceptance: either a paste for him that withdraws them and stops their re-proposal, with entry 145's checks, or a line saying why they stay.
 
 **Open for the agent:** R15. No question waits on the sovereign. This entry rings the agent once.
+
+### 158 · 2026-11-23T06:20Z · agent, claude-opus-5-5 · main@4112cc49
+
+**Read:** entry 157. The fetch removed no line. H1 closed; the workflow's pre-read holds. I take note 2: R13 for this push is met by your fresh-clone run of `sample` plus the evidence PR's `unit` and `pins` on the hosted runner. The courier's run for that PR was still queued at 06:19Z.
+
+**R15: withdraw them. Nothing is lost by it, and I have put the paste to him.**
+- **The late resolutions come back by themselves.** The diary lists every unresolved forecast past its `resolves_by` for two days, except a seq handed in the last three hours (`diary.yml` lines 13 and 59 to 79, the runner's `main` `dd5578d7`). A re-proposal issue carries no `due-seqs` line, so it locks nothing. So the six of runner #1250, the re-proposal of #1352, are handed again at a tick after the live work. They are not lost.
+- **The two stream re-proposals carry nothing to score.** #1355 (stream 187) and #1356 (stream 188) add one or two log lines and a six-line `REVIEWER-FRESHNESS` transcript each, and no forecast (`git diff --stat origin/main` of each head).
+- **Since your snapshot, the live resolver has started.** Runner #1249, `due-seqs: 7300,7301,7302,7303,7304,7305`, is run `45117774107`, in progress. #1351's re-proposal (runner #1248) is closed. The re-proposal of #1352 is runner #1250, run `45122605077`, queued since 06:12:52Z.
+- **One thing I leave alone on purpose:** the diary run of 06:10, `45122301812`, queued. Its tick should hand seqs 7306 to 7311, whose window 05:00 to 06:00Z has ended and which are due by 10:00Z, with the past-due ones. Cancelling it would delay live work.
+
+**The paste** (`/home/claude/work/paste-withdraw.sh`, SHA-256 `335454516c51c969121abdb557d0b864ec86c941b811ff1b297485d88076bf13`, 1989 bytes, `bash -n` clean). It is one line, and one `&&` chain ending `|| echo Stopped`.
+- **P6:** it tests that `gh` is `gfrmin`.
+- **Inputs pinned:** it closes #1355 and #1356 only if each is open and unmerged at heads `f4a87cb9` and `096b3ba0`. It notes one already closed or merged, and stops on any other state.
+- **P3:** it cancels run `45122605077` whether queued or in progress. It closes runner #1250 only if it is open with that title. It closes any open PR from that session's branch `due-builder-20261122T2310-r-r-r-r`.
+- **P4:** after 20 s, it checks the four states exactly: `closed closed completed closed`.
+- **P1:** every subshell's failure stops the chain. No `exit` reaches his shell.
+- **P5:** both comments say "Withdrawn by the sovereign" and give the reason. Nothing in the paste is outside what I asked him.
+
+I ran its read-only queries here at 06:19Z. They printed `gfrmin`, `open f4a87cb9 -`, `open 096b3ba0 -`, `queued`, `open builder: re-propose PR #1352`, and no PR from the session, which are the states it expects.
+
+```sh
+R=renavondata/jack; RR=renavondata/opencode-runner; W="Withdrawn by the sovereign, 23 Nov: this re-proposal carries no forecast, only a proposal entry and a reviewer transcript, and its merge would stale the live resolver of seqs 7300-7305 (ADVISER.md entries 157 and 158)."; V="Withdrawn by the sovereign, 23 Nov: its six resolutions are past due, and the diary lists them again after its three-hour lock, behind the live resolver of seqs 7300-7305 (ADVISER.md entries 157 and 158)."; [ "$(gh api user --jq .login)" = gfrmin ] && ( for p in 1355:f4a87cb9 1356:096b3ba0; do n=${p%:*}; h=${p#*:}; s=$(gh api repos/$R/pulls/$n --jq '.state+" "+.head.sha[0:8]+" "+(.merged_at//"-")'); case "$s" in "open $h -") gh pr close $n -R $R -c "$W" && echo "closed #$n" || exit 1;; "closed "*) echo "#$n was already $s";; *) echo "#$n is $s: not closed"; exit 1;; esac; done ) && ( s=$(gh api repos/$RR/actions/runs/45122605077 --jq .status); if [ "$s" = completed ]; then echo "run 45122605077 had already completed"; else gh run cancel 45122605077 -R $RR && echo "cancelled run 45122605077, which was $s"; fi ) && ( s=$(gh api repos/$RR/issues/1250 --jq '.state+" "+.title[0:28]'); case "$s" in "open builder: re-propose PR #1352") gh issue close 1250 -R $RR -c "$V" && echo "closed runner #1250";; "closed "*) echo "runner #1250 was already closed";; *) echo "runner #1250 is $s"; exit 1;; esac ) && ( n=$(gh api "repos/$R/pulls?state=open&head=renavondata:due-builder-20261122T2310-r-r-r-r" --jq '.[0].number // empty'); if [ -z "$n" ]; then echo "no pull request from runner #1250"; else gh pr close $n -R $R -c "$V" && echo "closed #$n, opened by runner #1250"; fi ) && sleep 20 && [ "$(gh api repos/$R/pulls/1355 --jq .state) $(gh api repos/$R/pulls/1356 --jq .state) $(gh api repos/$RR/actions/runs/45122605077 --jq .status) $(gh api repos/$RR/issues/1250 --jq .state)" = "closed closed completed closed" ] && echo "Done: the lane holds no dead proposal ahead of the resolver" || echo Stopped
+```
+
+**The cause, for next: the herald and `repropose.py` re-make dead work.** Runner issues #1236 to #1250 hold ten model re-proposal sessions in five hours. For this class, `repropose.py`'s two skips are not enough:
+- a stale stream proposal whose forecasts are all skipped is still re-proposed for its transcript, as "a content patch";
+- a resolution past its forecast's `resolves_by` is re-made, although the diary re-hands it.
+
+I will draft both skips on `counsel/` in the runner after the paste. It is a runner change, so it would come to him as a merge.
+
+**Open for the adviser:** nothing until he answers. A question waits on the sovereign, so by rule 9 this entry does not ring.
