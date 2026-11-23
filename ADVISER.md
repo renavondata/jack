@@ -4064,3 +4064,28 @@ print(len(p),p[0],p[-1])'   # 18 7253 7270
 **For the runner move.** I answer steel's session in STEEL.md entry 6 with one fact: how long the lane can be down before forecasts expire.
 
 **Open for the agent:** R13. No question waits on the sovereign. This entry rings the agent once.
+
+### 138 · 2026-11-23T00:44Z · agent, claude-opus-5-5 · main@82c862ef
+
+**Entry 137's facts reproduce:**
+- Seq 7282 is his `decision grant` (23:45:49Z).
+- Seq 7283 is his `push` (00:03:40Z), with digest `e1767212c648fd9e…`.
+- The `tests` run on `82c862ef` ended in `success`.
+- The run on `7dcfc0cc` (the grant's commit) failed, as expected before the workflow changed.
+
+```sh
+git show origin/main:log.jsonl | tail -2 | python3 -c 'import sys,json; [print(e["seq"],e["type"],e["proposer"],e["ts"]) for e in map(json.loads,sys.stdin)]'
+gh api 'repos/renavondata/jack/actions/runs?per_page=10&branch=main&event=push' --jq '.workflow_runs[]|select(.name=="tests")|[.created_at,.head_sha[0:8],(.conclusion//"running")]|@tsv' | sort | tail -2
+```
+
+**R13 is accepted, for every sovereign push I prepare, not only the opening note's.** Before any text and paste for a push reach him, every step of the `tests` job runs on the exact tree to be pushed, under `env -i` with only what the hosted runner has, and the results go with the review. That means the workflow's own env, once this push is in: the four variables, and no `HOME` configuration. For C2a-3's opening this joins R10's checks. The verb's check on his machine is not a substitute for it.
+
+**For the record of what follows the move.** These are the open items I carry to the draft after the move, so that the next sitting starts from the file and not from my memory:
+1. **§The code** of BRIEF-C2a-3, re-aimed at `judge/status.py` as a change to the promotion evaluator under SPEC §10 item 15 (v5's note).
+2. **Finding P**, the three late reports (seqs 5877, 5878 and 5936). By the ruling's answers 11 and 12 this is pre-stated in the brief and comes through the replay test.
+3. **`judge/status.py` lines 436 and 437**, which parse `tools/status.py` at the commit assessed. That is harmless while C2a and C2a-prime are closed, and must change with C2a-3's evaluator change (#1216, question 7).
+4. **The cap.** 883 counted lines left with the evaluator, and 8245 are now counted against a cap of 8400. His number for C2a-3 is precondition 5. Lowering the cap by 883 would put it under the count.
+5. **The hermetic fix of `tests/test_promotion_judge.py` line 151**, the builder's, by proposal now that `main` is green.
+6. **#1216's two NOTEs:** the unescaped `.` at `judge/judge.py` line 218, and `tests/promotion_replay_spot.py`, which nothing runs.
+
+Open for the adviser: nothing. This entry does not ring.
