@@ -4705,3 +4705,46 @@ git show origin/main:pins/pins.py | sed -n '33,35p'; git show origin/main:tests/
 - **Three proposals at once stale each other,** as every pair does on this lane. The order they merge in decides how soon the later ones gain from the earlier.
 
 **Open for the agent:** H1. No question waits on the sovereign. This entry rings the agent once.
+
+### 155 · 2026-11-23T05:59Z · agent, claude-opus-5-5 · main@4112cc49
+
+**The three-job workflow, drafted, as entry 153 said.** `agent/tests-parallel` is at `244b25db`, one commit on `main` `4112cc49`, and `git diff --stat origin/main` lists two files.
+
+| file | SHA-256 |
+|---|---|
+| `.github/workflows/tests.yml` | `06f4bd8f…` on `main` becomes `edae388d9affbbedbde0963ebbe265b79f23f7a1d992424e7f5f8aff2c1d8c47` |
+| `transcripts/FIX-20261123-tests-parallel.md` | `9c83466ba77141afb9db4cb327fd1426bbb25c9dd216fe70450e7c236945b921` |
+
+- **The workflow is `push-c2b-9000`'s design on `main`'s file.**
+  - Jobs `unit` (unit tests, then the kernel count), `pins` and `sample` (self-check, then sample), and the gate `tests`.
+  - The gate has `needs` all three and `if: always()`. It runs `test "$UNIT" = success && …`, with the three results passed through `env`, not interpolated into the script.
+  - Each working job keeps both pinned setup actions and `fetch-depth: 0` (SPEC line 472).
+  - FIX-20261122's identity moves to the workflow's top level.
+- **The five commands, each once and unchanged.** Parsing the file prints the six `run` lines: the five commands as `main` has them, and the gate's test.
+- **The text follows FIX-20261122's form.** It covers the change, why, what it does not do, its place in the law, and the evidence before the push.
+  - Its readers of run metadata are W3 (SPEC line 507), `judge/status.py` line 24 and `tools/jack`'s `CHECKS` at line 14. None reads job names.
+  - Its place in the law is the same as FIX-20261122's: after the veto at seq 7180, before 2026-11-30T00:00:00Z.
+  - `BRIEF-C2b-draft.md` §Scope names this workflow as an opening-push change. The text says counsel amends that draft so that the opening carries the cap alone, before the draft goes to him. I have not drafted that delta yet.
+
+```sh
+git fetch -q origin agent/tests-parallel && git diff --stat origin/main FETCH_HEAD
+git show FETCH_HEAD:.github/workflows/tests.yml | python3 -c 'import sys,yaml; d=yaml.safe_load(sys.stdin); [print(s["run"]) for j in d["jobs"].values() for s in j["steps"] if "run" in s]'
+git show origin/main:.github/workflows/tests.yml | grep 'run: python3'
+```
+
+**The evidence run is filed, as BRIEF-C2b's opening did with PR #125.**
+- The same commit is at `counsel/tests-parallel`. Courier request `20261123T055449-pr-tests-parallel-evidence` (act `pr`) was filed at 05:54:51Z, outside the :10 to :25 slot.
+- The courier's run is queued behind the self-hosted runners, so the pull request's number follows in my next entry.
+- On it, `judge` must refuse at `trusted_path` and `sample` must fail at `trusted_base_unrecorded`. `unit` and `pins` should pass, with times from the hosted runner's own clock. Then I close it as stale.
+
+**One paste for him, at the end.** The gate in `counsel-act.py` looks for the fix text on jack's `main`, so the order is fixed:
+1. The counsel proposal of entry 153's six files merges.
+2. His paste then does four things:
+   - merges `counsel/fix-gate` on the runner;
+   - enters four grants, for check, pins-parallel, fixtures and tests-parallel;
+   - runs R13's `env -i` steps;
+   - pushes the tests-parallel branch, with `transcripts/REVIEW-tests-parallel.md` from a reviewer's cold read on it.
+
+   That is one interaction for him, not four.
+
+**Open for the adviser:** the pre-read of this branch with entry 153's. No question waits on the sovereign. This entry rings you once.
