@@ -4870,3 +4870,41 @@ R=renavondata/jack; RR=renavondata/opencode-runner; W="Withdrawn by the sovereig
 I will draft both skips on `counsel/` in the runner after the paste. It is a runner change, so it would come to him as a merge.
 
 **Open for the adviser:** nothing until he answers. A question waits on the sovereign, so by rule 9 this entry does not ring.
+
+### 159 · 2026-11-23T06:26Z · agent, claude-opus-5-5 · main@4112cc49
+
+**His word to me at about 06:23Z, on entry 158's paste: "Pasted".** I recorded it verbatim. GitHub shows that the paste did what entry 158 says:
+- #1355 was closed at 06:23:58Z and #1356 at 06:24:01Z, neither merged;
+- run `45122605077` was `completed`, `cancelled`, at 06:24:05Z;
+- runner #1250 was closed at 06:24:07Z by `gfrmin`;
+- no pull request came from its branch. The open pull requests on jack are #562, #316 and #125, all old.
+
+```sh
+R=renavondata/jack; RR=renavondata/opencode-runner; for n in 1355 1356; do gh api repos/$R/pulls/$n --jq '[.number,.state,(.merged_at//"-"),.closed_at]|@tsv'; done
+gh api repos/$RR/actions/runs/45122605077 --jq '[.status,.conclusion]|@tsv'; gh api repos/$RR/issues/1250 --jq '[.state,.closed_by.login]|@tsv'
+```
+
+**The rest of W2, which entry 158 missed: two more re-proposals of dead work are on the runners.**
+- **The herald closed #1353 and #1354 as stale** at 05:18:31Z and 05:26:25Z and dispatched `repropose` for each. Run `45116951385` (#1353's) has been in its "Re-make the entries on main and propose" step on `steel-opencode` since 06:12:52Z. Run `45117784566` (#1354's) is queued.
+- **Their resolutions are already on `main`.** `due-builder-20261122T1910` resolved seqs 7259 to 7264, which `main` holds resolved at seqs 7292 to 7297. `due-builder-20261123T0010` resolved 7253 to 7258, which `main` holds at 7284 to 7289. Both by other sessions.
+- **So all that is left after each one's common prefix with `main` is a `proposal` entry, with 8 or 10 evidence files** (24260 and 27618 lines of HTML). None is on `main`, and no entry on `main` cites them: `grep -c 'renavon-freshness[-/]20261122T1910'` and `…20261123T0010` on `main`'s log each print 0.
+- **The cost.** That is the same content-patch rule as the stream transcripts. Each run holds a self-hosted runner through a 26-minute check, while the diary run of 06:10, which should hand the live seqs 7306 to 7311, is queued. Then each merge stales the live resolver.
+
+```sh
+for b in due-builder-20261122T1910 due-builder-20261123T0010; do git fetch -q origin $b; done   # then the common-prefix walk of repropose.py over each, against main's resolutions
+for n in 1353 1354; do git fetch -q origin pull/$n/head; git diff --stat $(git merge-base origin/main FETCH_HEAD) FETCH_HEAD | tail -1; done
+```
+
+**A second paste,** put to him now. It is `/home/claude/work/paste-withdraw2.sh`, SHA-256 `a50a22dd6803079684521b627855541d5db00eeca1d7f2e13531f6d616e01a18`, 1378 bytes, `bash -n` clean, in the same form as the first.
+- **P6:** it tests `gfrmin`.
+- **P3:** it cancels both runs, in progress or queued, and closes any open PR from the branches they would push, `due-builder-20261122T1910-r-r-r-r` and `due-builder-20261123T0010-r-r`.
+- **P4:** it checks exactly `completed completed 0 0`.
+- **P1:** every subshell's failure stops the chain.
+
+At 06:25Z its queries printed `in_progress`, `queued`, `0` and `0`.
+
+```sh
+R=renavondata/jack; RR=renavondata/opencode-runner; V="Withdrawn by the sovereign, 23 Nov: its six resolutions are already on main (seqs 7284-7297, by other sessions), so this re-proposal carries only a proposal entry and evidence no entry cites, and it would hold a runner and stale the live resolver (ADVISER.md entry 159)."; [ "$(gh api user --jq .login)" = gfrmin ] && ( for id in 45116951385 45117784566; do s=$(gh api repos/$RR/actions/runs/$id --jq .status); if [ "$s" = completed ]; then echo "run $id had already completed"; else gh run cancel $id -R $RR && echo "cancelled run $id, which was $s" || exit 1; fi; done ) && ( for b in due-builder-20261122T1910-r-r-r-r due-builder-20261123T0010-r-r; do n=$(gh api "repos/$R/pulls?state=open&head=renavondata:$b" --jq '.[0].number // empty'); if [ -z "$n" ]; then echo "no pull request from $b"; else gh pr close $n -R $R -c "$V" && echo "closed #$n ($b)" || exit 1; fi; done ) && sleep 20 && [ "$(gh api repos/$RR/actions/runs/45116951385 --jq .status) $(gh api repos/$RR/actions/runs/45117784566 --jq .status) $(gh api "repos/$R/pulls?state=open&head=renavondata:due-builder-20261122T1910-r-r-r-r" --jq length) $(gh api "repos/$R/pulls?state=open&head=renavondata:due-builder-20261123T0010-r-r" --jq length)" = "completed completed 0 0" ] && echo "Done: the two evidence-only re-proposals are withdrawn" || echo Stopped
+```
+
+**Open for the adviser:** nothing until he answers. A question waits on him, so this entry does not ring.
