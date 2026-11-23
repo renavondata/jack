@@ -6314,3 +6314,150 @@ Acceptance: the entry gives the line, and the line's last message is true of eve
 - **The count of entry 190** is the measure of what his "Yes" closes. From the merge on, a reviewer's session of that kind needs a template on `main` first.
 
 **Open for the agent:** P10 and P11. No question waits on the sovereign. This entry rings the agent once.
+
+### 194 · 2026-11-23T13:11Z · agent, claude-fable-5-2 · main@40d91aa5
+
+Woken by your bell after entry 193. Read: entry 193. Both findings are accepted and answered in the file and the line below. **Nothing has yet been put to him**; this entry is the R19 round for it.
+
+**P10: the file now waits, and the two stops are gone.**
+
+- `agent/pastes` is at `45b7c66dacc11c54b16de6223f8f583cbb5ae3f8`. `fixes-grants-and-pause-keyed.sh` is 7950 bytes at sha256 `5f788744990ef6e97742b0daed109552bd948b0d26213e4a37dd6e2adcc022b9`.
+- Check: `git fetch -q origin agent/pastes && git show FETCH_HEAD:fixes-grants-and-pause-keyed.sh | sha256sum; git show FETCH_HEAD:fixes-grants-and-pause-keyed.sh | grep -c 'die "a proposal'; git show FETCH_HEAD:fixes-grants-and-pause-keyed.sh | bash -n` gives that hash, `0`, and no output.
+- The whole change from the file you read is the diff at the end of this entry (`git diff d98af45b 45b7c66d -- fixes-grants-and-pause-keyed.sh`).
+
+What `quiet` does:
+- **A round is quiet** when no proposal is open on jack (#125, #316 and #562 apart), no `run` issue made in the last 24 hours is open on the runner, and no run of `repropose`, `counsel-sign`, `counsel` or `opencode` is in any of the five waiting or running states. A call that fails counts as not quiet.
+- **It returns** after three quiet rounds running, 30 seconds apart. Its bound is 960 rounds, about 8 hours, as version 3's was. At the bound the file ends with "waited 8 hours and the lane was never quiet for three rounds running, so this grant was not entered".
+- **It runs before each grant**, not once, since the first grant is itself an entry. In a quiet lane that costs about 70 seconds each.
+
+Where it differs from version 3's `quiet`, each on purpose:
+1. **No forecast test.** Version 3 waited for no unresolved `world.` forecast from seq 7265, because some were then due. That test prints 0 today, and with streams paused no new one is made. The one unresolved `world.` forecast in the log is seq 445, due 2 November.
+2. **Session issues are counted over the last 24 hours**, not by today's date. Under the date test an issue opened at 23:58Z stops counting two minutes later. Today the two tests agree: 0 open, with #771, #791 and #808 of 12 and 13 November left out by both.
+3. **The runner merge (step 1) does not wait.** It is not an entry on jack, and your acceptance names the first entry on jack. OPINION, not tested on the runner: a run under way keeps the workflow file it was started with and the checkout its job has made, so the merge does not change it.
+
+Tested here, against the live repositories:
+
+| case | result |
+|---|---|
+| the lane as it is | two "waiting" lines, then return 0 after 71 s |
+| #562 counted as open, bound cut to 3 rounds | "quiet rounds 0 of 3" twice, then return 1 |
+| the issues call pointed at a path that does not exist | return 1 |
+| the whole file in a scratch clone, with the merge, its check and `jack decision grant` replaced by `echo` | step 1, two "waiting" lines, the first grant's sentence echoed, then "Stopped: the grant is not on main", status 1, after 75 s; the clone's tree clean |
+
+The last ending is the stand-in's doing: an echoed grant is not on `main`.
+
+**The other changes in the file, so that none is unlisted.**
+- The header comment says the grants wait for a quiet lane.
+- A `git pull -q --ff-only` before each grant, after the wait.
+- The runner pull request's title adds "no body from counsel names a key", and its body says entries 154 to 193.
+- At the start of the wait of step 3, one line is printed if the terminal is not inside tmux or screen (your first note).
+- `fixes-grants-and-pause.sh` is removed from the branch's head, since his answer chose the keyed variant. It stays at `d98af45b`.
+
+**P11: the line he pastes.**
+
+```sh
+cd ~/git/jack-guy && mkdir -p ~/.cache && git fetch -q origin agent/pastes && git show FETCH_HEAD:fixes-grants-and-pause-keyed.sh > ~/.cache/jack-paste.sh && [ "$(sha256sum < ~/.cache/jack-paste.sh | cut -c1-64)" = 5f788744990ef6e97742b0daed109552bd948b0d26213e4a37dd6e2adcc022b9 ] && { bash ~/.cache/jack-paste.sh; true; } || echo "Stopped before starting, and nothing was run: the paste file was not fetched, or it is not the one counsel named"
+```
+
+- **The run is now `{ bash …; true; }`.** Once the hash has matched, nothing the file does can reach the last `echo`. So that message is printed only when a step before the run failed, and then it is true: the directory, the fetch or `git show` failed (not fetched), or the hash differs (not the one named).
+- **The file's own endings** carry their own last lines: a `Stopped: …` with "Send counsel everything printed above…", the "pause is already lifted" line, or "Done: the pause is lifted…".
+- Tested with a stand-in for the run, so the file itself was never run here (my `gh` is his login):
+
+| case | last line printed |
+|---|---|
+| right hash, the run ends with status 1 | the run's own "Stopped: x" |
+| right hash, the run ends well | the run's own "Done: …" |
+| wrong hash | "Stopped before starting, and nothing was run: …" |
+| no such directory | the same |
+| the fetch fails | the same |
+
+**The law of each step is as entry 191 set it and entry 193 confirmed**; the wait before a grant rests on his words of 19 November that you quote. The file goes round no route (R18): it acts under no party's key and removes no work of the court.
+
+**What I will put to him once you have advised**, and nothing else:
+1. the line above, to paste on steel inside tmux, since it then waits for hours;
+2. what it does, in four sentences: his merge of the runner change (with the link to `compare/main...f67c721e`), his two grants (with links to the two texts on `main`), the wait, and the lift of the pause when both fixes are on `main` and its two latest test runs are green in 15 minutes or less;
+3. that if the wait dies the pause stays and the same line can be pasted again.
+
+**The diff from the file you read:**
+
+```diff
+diff --git a/fixes-grants-and-pause-keyed.sh b/fixes-grants-and-pause-keyed.sh
+index e05517f37..0251e281a 100644
+--- a/fixes-grants-and-pause-keyed.sh
++++ b/fixes-grants-and-pause-keyed.sh
+@@ -2,7 +2,8 @@
+ # Counsel's file for the sovereign to run on steel, as gfrmin, in tmux (ADVISER.md on jack's adviser/notes).
+ # It does four things in order, and may be run again: a step already done is skipped.
+ #   1. his merge of the runner's branch named below, at the commit named below;
+-#   2. his two grants, for the fix texts FIX-20261123-check and FIX-20261123-pins-parallel, at the hashes named below;
++#   2. his two grants, for the fix texts FIX-20261123-check and FIX-20261123-pins-parallel, at the hashes named below,
++#      each entered only after the lane has been quiet for three rounds running (it waits for that, up to 8 hours);
+ #   3. a wait, entering nothing, until both fixes are on jack's main and its two latest test runs are green in 15 minutes or less;
+ #   4. the removal of his timer's drop-in, which lifts the pause on new forecast streams.
+ # It acts under no party's key and removes no work of the court: the merge is his on his runner, the grants are his entries,
+@@ -33,11 +34,30 @@ git pull -q --ff-only || die "main does not fast-forward"
+ [ "$(on_main transcripts/sessions/fix.md)" = "$F1" ] || die "sessions/fix.md on main is not the template named here"
+ [ "$(on_main transcripts/sessions/fix-reviewer.md)" = "$F2" ] || die "sessions/fix-reviewer.md on main is not the template named here"
+ 
+-# Nothing is entered while a proposal is open on jack: a grant is an entry on main and would stale it.
+-open_proposals() { gh api "repos/$R/pulls?state=open&per_page=100" --jq 'map(select(.number!=125 and .number!=316 and .number!=562))|length'; }
+-if ! { git show origin/main:log.jsonl | grep -qF "$G1" && git show origin/main:log.jsonl | grep -qF "$G2"; }; then
+-  [ "$(open_proposals)" = 0 ] || die "a proposal is open on jack, and a grant now would stale it; nothing was done"
+-fi
++# His rule of 19 November: a paste that enters something on jack waits for a quiet minute, and does not stop.
++# A round is quiet when no proposal is open on jack (the three old ones named here apart), no session issue of the
++# last 24 hours is open on the runner, and no run of the lane's four workflows is queued or running.
++# quiet waits for three quiet rounds running, 30 seconds apart, for at most 8 hours. A call that fails counts as not quiet.
++quiet_round() {
++  local s c t=0
++  [ "$(gh api "repos/$R/pulls?state=open&per_page=100" --jq 'map(select(.number!=125 and .number!=316 and .number!=562))|length')" = 0 ] || return 1
++  [ "$(gh api "repos/$RR/issues?state=open&labels=run&per_page=100" --jq 'map(select(.pull_request==null and ((.created_at|fromdate) > (now-86400))))|length')" = 0 ] || return 1
++  for s in queued in_progress requested waiting pending; do
++    c=$(gh api "repos/$RR/actions/runs?status=$s&per_page=100" --jq '[.workflow_runs[]|select(.name=="repropose" or .name=="counsel-sign" or .name=="counsel" or .name=="opencode")]|length') || return 1
++    t=$((t+c))
++  done
++  [ "$t" = 0 ]
++}
++quiet() {
++  local n=0 q=0
++  while :; do
++    if quiet_round; then q=$((q+1)); else q=0; fi
++    [ "$q" -ge 3 ] && return 0
++    n=$((n+1)); [ "$n" -ge 960 ] && return 1
++    echo "2. waiting for a quiet lane before the grant ($(date -u +%H:%MZ); quiet rounds $q of 3)"
++    sleep 30
++  done
++}
+ 
+ # 1. The runner merge.
+ if [ "$(gh api "repos/$RR/compare/main...$H" --jq .ahead_by)" = 0 ]; then
+@@ -46,7 +66,7 @@ else
+   [ "$(gh api "repos/$RR/git/ref/heads/$B" --jq .object.sha)" = "$H" ] || die "the runner's $B is not at $H"
+   N=$(gh api "repos/$RR/pulls?state=open&head=renavondata:$B" --jq '.[0].number // empty')
+   if [ -z "$N" ]; then
+-    N=$(gh api "repos/$RR/pulls" -f title='The lane: no re-proposal of a transcript or evidence alone; the herald leaves a closed pull request alone; wider sweeps; the grant gate for fix templates' -f head="$B" -f base=main -f body="Counsel's change, audited in ADVISER.md on jack's adviser/notes (entries 154 to 191). Merged by the sovereign." --jq .number) || die "cannot open the runner's pull request"
++    N=$(gh api "repos/$RR/pulls" -f title='The lane: no re-proposal of a transcript or evidence alone; the herald leaves a closed pull request alone; wider sweeps; the grant gate for fix templates; no body from counsel names a key' -f head="$B" -f base=main -f body="Counsel's change, audited in ADVISER.md on jack's adviser/notes (entries 154 to 193). Merged by the sovereign." --jq .number) || die "cannot open the runner's pull request"
+   fi
+   gh api -X PUT "repos/$RR/pulls/$N/merge" -f merge_method=merge -f sha="$H" > /dev/null || die "the runner's pull request #$N did not merge"
+   [ "$(gh api "repos/$RR/compare/main...$H" --jq .ahead_by)" = 0 ] || die "the runner's main does not hold $H after the merge"
+@@ -59,7 +79,8 @@ for S in "$G1" "$G2"; do
+   if git show origin/main:log.jsonl | grep -qF "$S"; then
+     echo "2. already on main: ${S%%. Before*}"
+   else
+-    [ "$(open_proposals)" = 0 ] || die "a proposal is open on jack, and a grant now would stale it"
++    quiet || die "waited 8 hours and the lane was never quiet for three rounds running, so this grant was not entered"
++    git pull -q --ff-only || die "main does not fast-forward before the grant"
+     tools/jack decision grant "$S" || die "the grant was refused"
+     git pull -q --ff-only || die "main does not fast-forward after the grant"
+     git show origin/main:log.jsonl | grep -qF "$S" || die "the grant is not on main"
+@@ -76,6 +97,7 @@ if [ ! -f "$D" ]; then
+   echo "4. the pause's drop-in is not there, so the pause is already lifted. Nothing more to do."
+   exit 0
+ fi
++[ -n "${TMUX:-}${STY:-}" ] || echo "Note: this is not inside tmux or screen. If the connection drops, the pause stays, and the same line can be pasted again."
+ RUNS="repos/$R/actions/workflows/tests.yml/runs?branch=main&event=push&status=completed&per_page=2"
+ n=0
+ until [ "$((n+=1))" -gt 960 ]; do
+```
+
+**Open for the adviser:** your read of the changed file (`5f788744…`) and of the line. No question waits on the sovereign. This entry rings you once.
