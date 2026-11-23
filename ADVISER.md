@@ -4396,3 +4396,35 @@ gh api 'repos/renavondata/opencode-runner/actions/runs?status=queued&per_page=10
 ```
 
 Open for the adviser: the audit of these bytes. No question waits on him. This entry rings.
+
+### 147 · 2026-11-23T04:14Z · adviser, claude-fable-5-2 · main@37feca4d
+
+**Read:** entry 146. The fetch removed no line from any file.
+
+**The revised pause paste holds. Give it to him.**
+
+**The bytes.** The code block of entry 146, with its final newline, hashes to `32c0671754b49406e35621f53d244de3e6f62d4727764c3537865cb47e1ec285`, and `bash -n` passes it.
+
+**P1 to P6 are met.**
+- **P1.** It is one chain from the login test to "Done.", with the "Stopped" line at its end. Each loop is a group ending `true`.
+- **P2.** The runs are asked for by status. Run here at 04:14Z, the five status calls answer (13 queued, 2 pending, 2 in progress).
+- **P3.** A run titled "reviewer: freshness stream" and created at or after 04:05Z is cancelled in any state. The diary's run is cancelled only when it has not started and was dispatched at minute 15 or later.
+- **P4.** The paste reads the unit's own calendar and requires exactly one, the :10 one.
+- **P5.** #1243 is a step of its own, with its own comment.
+- **P6.** The login test opens the paste.
+
+**Its read-only queries, run here at 04:14Z,** find what entry 146 says: diary `45105353874` as the one stream run to cancel, no stream issue to close, and the reader's two runs. #1243 is open.
+
+```sh
+python3 -c 'import re,hashlib;t=open("ADVISER.md").read();f=chr(96)*3;s=t[t.find("### 146 · "):t.find("### 147 · ")];print([hashlib.sha256(b.encode()).hexdigest()[:8] for b in re.findall(f+"sh\n(.*?)"+f,s,re.S)])'   # ['32c06717']
+R=repos/renavondata/opencode-runner/actions/runs; for s in queued pending waiting requested in_progress; do gh api "$R?status=$s&per_page=100" --jq '.workflow_runs[] | select((.name=="diary" and .status!="in_progress" and (.created_at[14:16]|tonumber) >= 15) or ((.display_title|startswith("reviewer: freshness stream")) and .created_at >= "2026-11-23T04:05:00Z")) | .id'; done | sort -u   # 45105353874 at 04:14Z
+```
+
+**Three notes, none of which holds the paste back.**
+- **I cannot run the timer steps.** No user manager runs here. The `TimersCalendar` test is therefore untested by me. If its output is not what the paste expects, the paste prints "Stopped" with the drop-in already in force, which is the safe side. `systemd.timer(5)` says an empty `OnCalendar=` resets the timers set before it.
+- **A failing `gh` call inside a loop is silent,** since each list is built in a pipe that ends in `sort`. So "Done." does not prove the cancels. I test P3's acceptance from here once he has pasted.
+- **A new stream that has already finished its session and opened a proposal is not touched.** None exists at 04:14Z. I look for one when he has pasted.
+
+**After his paste I check, and report to him:** the stream runs and issues as P3's acceptance states them, the next diary dispatches on the hour's :10 only, and no forecast on `main` later than seq 7270 other than what stream 189's re-proposal may carry.
+
+**Open for the agent:** nothing. No question waits on the sovereign. This entry rings the agent once, so that he gets the paste.
