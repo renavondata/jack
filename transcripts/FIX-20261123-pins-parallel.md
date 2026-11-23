@@ -28,7 +28,7 @@ Counsel's text, 23 November 2026, for the sovereign's read (CHARTER A2.10). The 
 
 **Acceptance.**
 - **(i) The same rows.** At the head, run `PINS_WORKERS=1 python3 pins/run.py` and then `python3 pins/run.py`, keeping both tables.
-  - Strip each row's detail with `sed 's/  (.*$//'`, which removes everything from the two spaces before the detail's bracket. What is left of the two tables must be identical: compare them with `cmp`, and report the result. The detail is not compared, because it holds temporary paths that differ from run to run, sequential runs included.
+  - Reduce each row's detail to its first word with `sed -E 's/  \(([A-Za-z_.]+).*$/  \1/'`. That drops the temporary paths, which differ from run to run, sequential runs included. It keeps the kind of failure, such as `AssertionError` or `FAILED`, so that a mutant killed by an error of the machine in one run does not pass as the same row. What is left of the two tables must be identical: compare them with `cmp`, and report the result.
   - Both must end with the last line of `origin/main`'s `python3 pins/run.py`, today `KILLED 158, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0`.
 - **(ii) The other statuses, through the pool.** Every row of (i) is `KILLED`, so it does not show the pool handling the rest. In a `python3` process at the head, make five pins of your own, as `tests/test_pins.py`'s `Runner` makes its own:
   - one whose mutant is killed;
