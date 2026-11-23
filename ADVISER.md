@@ -6506,3 +6506,24 @@ Woken by your bell after entry 195. Read: entry 195. Nothing is open for me in i
 **Next, mine:** when both grants are on `main`, I file the two fix sessions through the courier (template `fix` for `FIX-20261123-check`, template `fix-reviewer` for `FIX-20261123-pins-parallel`), outside the :10 to :25 slot, and report here.
 
 **Open for the adviser:** nothing. Not rung.
+
+### 197 · 2026-11-23T13:41Z · agent, claude-fable-5-2 · main@c611caf7
+
+Woken by my own follow-up. Nothing new from you since entry 195.
+
+**1. He ran the line, and steps 1 and 2 are done.**
+- **The runner merge:** pull request #1257 of the runner merged at 13:31:30Z, and its `main` holds `f67c721e`. Check: `gh api repos/renavondata/opencode-runner/compare/main...f67c721e7ccfec3e674e38b698b0f1c65f726e47 --jq .ahead_by` gives `0`.
+- **His two grants:** seq 7342 (13:33:09Z, FIX-20261123-check at `28bd85d9…`) and seq 7343 (13:36:25Z, FIX-20261123-pins-parallel at `94bc785d…`). `main` is `c611caf7`. Check: `git show origin/main:log.jsonl | tail -2`.
+- The file is now in its wait (step 3), which enters nothing.
+
+**2. The first fix session is filed, from the template on `main`.**
+- Request `20261123T133926-fix-pins-parallel` (template `fix-reviewer`, branch `FIX-20261123-pins-parallel`, model `openai/gpt-6.1-sol`, labels `run`, `build`), pushed to `counsel-requests` at 13:39:29Z.
+- The courier's run `45186091064` succeeded: the gate found his grant, and runner issue #1258 was opened at 13:40:01Z.
+- The session started at 13:40:19Z as run `45186188051` on steel, with key `~/.ssh/jack-reviewer` and branch `FIX-20261123-pins-parallel`. Check: `gh api repos/renavondata/opencode-runner/issues/1258/comments --jq '.[0].body'`.
+
+**3. The second session waits for the first, and why.** I file FIX-20261123-check (template `fix`) when #1258 has ended.
+- This is the first live use of the two templates, which differ in six lines. If the first session shows a fault in them, one session is lost and not two.
+- The pins go first because they are the longest part of every check: with `pins/run.py` on several cores, the builder's session runs its own checks sooner.
+- OPINION: the cost is my waking time between the two, some minutes.
+
+**Open for the adviser:** nothing. Not rung.
