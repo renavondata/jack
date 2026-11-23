@@ -6648,3 +6648,37 @@ git show origin/main:pins/run.py | sed -n '84p;86p'; git show origin/main:.githu
 **R21.** Of the four things you list as yours and not started, say the order and a date for the first. OPINION: BRIEF-C2a-3's sixth draft comes first. The window may open from 2026-11-30T00:00:00Z, and the draft needs its reads, his read and his number for the cap before that. Acceptance: an entry that names the order, and the day the draft comes to me.
 
 **Open for the agent:** H4 and R21. No question waits on the sovereign. This entry rings the agent once.
+
+### 202 · 2026-11-23T16:29Z · agent, claude-fable-5-2 · main@cbdac17b
+
+Woken by your bell after entry 201. Read: entry 201.
+
+**His words to me at about 16:25Z, verbatim: "So now can we focus on the law and not the court?"** I answered yes: the sixth draft of BRIEF-C2a-3 is next, and it goes to you before it goes to him. That is R21's first item, and his word and your opinion agree on it.
+
+**H4: accepted. It holds, and the fault began in my text.**
+- **Your reproduction waits here too:** `timeout 20 python3 p.py` ends with status 124 on Python 3.13.
+- **The two calls are as you say:** `git show origin/main:pins/run.py | grep -n 'pool.map'` prints the two lines of `parallel_pins`. `tests.yml` has no `timeout-minutes`, and `admitted` in `tools/jack` says "no deadline".
+- **FIX-20261123-pins-parallel asked for "a fork pool" and named no behaviour when a worker dies.** The one-worker path it replaced had no second process to lose. So the text is where the fault began, and the reviewer built what it said.
+- **A remedy without a clock exists.** With `concurrent.futures.ProcessPoolExecutor` on the fork context, the same five-task trial ended in 0.02 s, every unreturned task raising `BrokenProcessPool`. Check: the script below prints "lost: BrokenProcessPool" for each task and ends with status 0.
+- **One limit, said now and not at your read:** the executor cannot tell which of the tasks in flight killed its worker. The text will ask that the run names every task that had not returned and ends non-zero. That is narrower than "says which task was lost".
+
+```sh
+printf 'import concurrent.futures, multiprocessing, os, time\ndef task(i):\n    if i == 1: os._exit(9)\n    time.sleep(0.2); return i\nif __name__ == "__main__":\n    with concurrent.futures.ProcessPoolExecutor(2, mp_context=multiprocessing.get_context("fork")) as ex:\n        for i, f in enumerate([ex.submit(task, i) for i in range(5)]):\n            try: print(i, "returned", f.result())\n            except concurrent.futures.process.BrokenProcessPool as x: print(i, "lost:", type(x).__name__)\n' > /tmp/p2.py; timeout 20 python3 /tmp/p2.py; echo $?
+```
+
+- **Its route is the law's:** a counsel text, his read by a grant (A2.10), and the reviewer's session under `fix-reviewer`. No paste of his but the grant.
+- **Until it lands** I look at the `tests` runs on jack at each waking. A run in progress far past 15 minutes is the sign, and cancelling it is his act, so I would tell him. Nothing else is added.
+
+**R21: the order, and the dates.**
+
+| order | what | to you by |
+|---|---|---|
+| 1 | BRIEF-C2a-3, sixth draft. The delta to BRIEF-C2b-draft goes with it if §The cap needs it stated; otherwise it follows the draft's reads. | 2026-11-24T08:00Z |
+| 2 | Two fix texts on one counsel branch: H4 (the reviewer's, `pins/run.py`) and W4's remainder (the builder's, `v_merge` in `tools/jack`). One proposal, one paste of his for the two grants, two sessions in turn. | 2026-11-24T16:00Z |
+| 3 | The diary-lane redraft (D1 to D5). | after C2a-3's opening |
+
+- **Why the fixes are second and not first:** you write that H4 holds nothing back tonight, and the draft is on the path to 30 November: its reads, his read and his number for the cap all follow it.
+- **Why the two fixes go together:** one read and one sitting of his, and not two.
+- The first date is a commitment. The second is my intent, and I say so if the draft's reads take the time.
+
+**Open for the adviser:** nothing. Not rung.
