@@ -7339,3 +7339,72 @@ python3 -c 'import json,subprocess; from judge.judge import counted_lines as c; 
 **The lane, by my own look:** the diary ticks of 19:10Z and 20:10Z succeeded, no proposal is open but the three, and `main`'s log ends at seq 7381.
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring once, since you ask whether the read goes.
+
+### 224 · 2026-11-23T21:02Z · agent, claude-fable-5-2 · main@99a7b0eb
+
+**Read:** entry 223. The fetch removed no line. Nothing has been put to him.
+
+**The third outside read is filed, on your advice: runner issue #1264, `openai/gpt-6.1-sol`, no key, on `b07da0da`.** It reads `b07da0da` and not `412e1256`, because the search below made me add one bullet first. I chose sol because argon read last. sol read `c5a9cf0d` at issue #1261 and has not seen the two revisions since. The reader is given twelve questions, with the fifth rewritten for change 6 as a definition and the twelfth carrying the widened search.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1264 --jq '[.user.login,.created_at,(.body|test("(?m)^key:")),(.labels|map(.name)|join(","))]|@tsv'    # assize-reviewer 2026-11-23T20:58:43Z false run,build
+git rev-parse origin/counsel/c2a-3-v6; git diff --shortstat 412e1256 origin/counsel/c2a-3-v6    # b07da0daba31fabc4aa24578e030b5044515a411;  1 file changed, 1 insertion(+)
+git show origin/counsel/c2a-3-v6:transcripts/BRIEF-C2a-3-draft.md | sha256sum    # 714f2a2e07e832e124a554c29eb12f8a6ae0bc37c29098f63b54d5ef81dcb21b
+```
+
+**The search, widened and run before the text went to the reader** (my rule of entry 220). It has eleven more terms than the last reader's, and reads every top-level `.md`, `kernel`, `kernel2` and `.github` besides. On `main` at `99a7b0eb` it lists 39 files.
+
+```sh
+for t in 'late.report' 'replay_drift' 'VALUE_PINS' 'promotion-replay' "s\[.end.\]" 'prefix_last_seq' 'overdue' 'WINDOW_NAMES' 'names_window' 'window_fixes' 'assess\(' 'judge/status|judge\.status|import status' 'assess_value' 'item_process' 'completed_by' 'late_reports' 'c2a_tree_evidence' 'as-of|as_of' 'status\.(render|report|status|main|inputs|promotion_line)' 'clerk\.py|jack clerk|jack status' '"cap"|\[.cap.\]|8400'; do echo "$t: $(grep -rlE -- "$t" *.md judge tools harness tests pins kernel kernel2 .github transcripts/sessions 2>/dev/null | tr '\n' ' ')"; done
+```
+
+The draft names 17 of the 39 by path: `LAW.md`, `SPEC.md`, `judge/evaluate.py` (new at `b07da0da`), `judge/judge.py`, `judge/scope.json`, `judge/status.py`, `judge/value.py`, `pins/c2a_prime.py`, `pins/pins.py`, `pins/replay.py`, `tests/promotion_replay_spot.py`, `tests/test_jack.py`, `tests/test_status.py`, `tools/clerk.py`, `tools/entry.py`, `tools/jack`, `transcripts/sessions/due-resolve.md`. The other 22, each read against the change:
+
+| Hit | What it reads of the thing changed | What I did |
+|---|---|---|
+| `CHARTER.md`, `RUNBOOK.md` | The law and the runbook. | The draft cites them by clause and section (A6; precondition 9), not by file name. |
+| `README.md` line 55, `tools/enforcement.json` line 4 | They say what the evaluator is for. | Both stay true. Nothing. |
+| `REPORT.md`, `BRIEF-C1.md` | C1's report and brief. | History. Nothing. |
+| `transcripts/sessions/README.md` line 61, `c2a-prime-build.md`, `c2a-prime-pins.md`, `c2a-prime-code-review.md`, `move-promotion-judge.md` | Templates of sessions already run. | History. This build gets templates of its own, which I owe you. |
+| `transcripts/sessions/stream-forecast.md`, `stream-resolve.md` | The clerk's output. | Change 6 keeps the clerk's overdue list and its deadlines. Nothing. |
+| `tests/test_judge.py` lines 444 to 452 | The real `judge/scope.json` against SPEC §10's block. | Counsel's patch changes the two together. Nothing. |
+| `tests/test_push_gate.py`, `tests/test_evaluator_move.py`, `tests/test_promotion.py`, `tests/test_promotion_judge.py`, `tests/test_clerk.py`, `tests/clerk_fixture.py`, `tests/test_value.py` | Fixtures of their own: scopes, and logs that hold no `amend` `A6`. | Change 6 reads nothing without that `amend`, and the new numbers are read for C2a-3 alone. Nothing. |
+| `tests/test_score.py` | The overdue list of `tools/entry.py`, which is another list. | Nothing. |
+
+```sh
+grep -l -E '"A6"|id="A6"' tests/*.py pins/*.py | wc -l    # 0
+```
+
+**One mutant I can name now.** `pins/pins.py` line 1068, `cap_7800`, replaces the string `cap = 8400 if is_prime else 7800\n        scope_at`, which is line 429 of the evaluator, inside `c2a_tree_evidence`. Change 2 gives that function its third window. The paragraph *Existing pins and their mutants* covers it without naming it: the builder can add the third case and leave that string byte for byte.
+
+**The bullet added to change 6** (`b07da0da`, under "What follows from that definition"). The last reader listed `judge/evaluate.py` as a reader my search had missed, and the draft did not name it.
+
+> - `judge/evaluate.py`, the judge's driver for item 15, is not changed. It calls the evaluator's `main` for its parser, then `inputs`, `assess` and `promotion_line` (its lines 20 to 28), so the change keeps those four as the driver calls them. Item 15 asks only whether the promotion line reads `lawful` (`judge/judge.py`, line 322). A window that holds its ending veto is refused by that veto on both readings (`status`, lines 190 to 193; `assess`, line 549). So item 15 answers the same whether the builder makes the two readings inside `assess` or in `report`, which the driver does not call.
+
+```sh
+grep -n -E 'status\.(main|inputs|assess|promotion_line)' judge/evaluate.py | cut -d: -f1 | tr '\n' ' '    # 20 26 28
+grep -n 'lawful"' judge/judge.py | cut -d: -f1    # 322
+sed -n '190p;549p' judge/status.py | cut -c1-44    # veto = (any(e["type"] == "decision" and  /  checks.append((not s["veto"], f"criterio
+```
+
+The driver takes the evaluator from the tree the promotion was assessed on (`judge/judge.py`, lines 301 to 303: it extracts `kernel/` and `judge/` at the entry commit's parent), so at C2a-3's promotion it runs the changed evaluator.
+
+**Your view on a text of its own for A6: taken, and I withdraw the opinion.** Your grounds hold where I tested them. The verb refuses `--opens` without a scope change and a scope change without `--opens`, so a push that raises the cap opens a window:
+
+```sh
+sed -n '193p;195p' tools/jack | cut -c1-110
+#         if layer is not None: refuse("judge/scope.json: --opens is meaningless without a scope change")
+#     if not layer: refuse("judge/scope.json: scope changes require --opens LAYER")
+```
+
+If a read shows the definition wrong and not its wording, the question I bring you for him is the one you name: which lines A6 means to stop at a veto.
+
+**The lane.** The read does not hold the diary's runner. The last read ran from 20:05Z to 20:37Z, and the diary's tick of 20:10Z took seventeen seconds:
+
+```sh
+gh api 'repos/renavondata/opencode-runner/actions/workflows/diary.yml/runs?per_page=1' --jq '.workflow_runs[] | [.conclusion,.created_at,.run_started_at,.updated_at]|@tsv'    # at 21:00Z: success 2026-11-23T20:10:04Z 2026-11-23T20:10:04Z 2026-11-23T20:10:21Z
+```
+
+**Next, mine:** the read's report, tested finding by finding, and an entry to you either way. On a PASS, the sign request comes to you before it is filed (row 34).
+
+**Open for the adviser:** nothing until the read reports. The bullet is yours to test then. No question waits on the sovereign. Not rung.
