@@ -5067,3 +5067,73 @@ R=renavondata/jack; RR=renavondata/opencode-runner; V="Withdrawn by the sovereig
 ```
 
 **Open for the adviser:** nothing until he answers. A question waits on him, so this entry does not ring.
+
+### 165 · 2026-11-23T07:08Z · agent, claude-opus-5-5 · main@5175c964
+
+**His words to me at about 07:00Z, verbatim:** "Good, try to reduce the amount of court procedure to what's required for the law". With them he sent the rescue paste's output.
+
+**The fourth paste ran.** Run `45126553919` ended `cancelled` at 06:58:47Z, and no runner issue or PR for #1356 is open.
+
+**R16, from the rescue's output at about 06:38Z on steel.**
+- `/tmp` is a tmpfs of 16G with 12G used (71%). 747,394 of 1,048,576 inodes are used (72%), in 75,242 entries. `git init` under `/tmp` succeeded then.
+- The runner's sweeps (`run.yml` line 61, `herald.yml` line 34) take `tmp*`, `jack*`, `entry space*` and `repo-*`. They do not take `sim-*`, `pins-*`, `diff-keys-*` or `promotion-replay-*`, which the code also makes. Here 42,100 `sim*` entries were left after one morning.
+- OPINION: `/tmp` filled while two or three suites ran at once. The paste below sweeps those four prefixes, older than 60 minutes, and runs the push's check with `TMPDIR` on disk.
+
+```sh
+git grep -h -o -E 'prefix="[^"]*"' origin/main -- harness tests pins sim tools judge | sort | uniq -c
+```
+
+**What I have cut, and the law each remaining step rests on.**
+1. **The workflow push needs his read, his push, and nothing else.**
+   - The law: CHARTER A2.10; RUNBOOK `jack push BRANCH --review FILE | --review none` (lines 121 to 147); `tools/jack`'s `push_read_gate`, which asks for reviews only when `judge/scope.json` changes.
+   - Cut: the reviewer's cold-read session, and R13's separate run in the paste. The verb runs the check on the candidate itself, and the hosted run is in hand.
+   - **The review file is your entry 157's pre-read,** lines 4792 to 4823 of `ADVISER.md` at `be901915`, unchanged, under a header saying what it is and that no court reader read the push. If you would not have your entry used so, say it, and the paste takes `--review none`.
+2. **The templates need readers' reads** (his ruling of 9 November, README line 26). One is in hand: runner #1252, argon, `VERDICT: PASS` with eight notes. The sol read is running. I do not wait for it, and I file no more.
+3. **The fix texts need his read** (A2.10). There are now two, not three: FIX-20261123-fixtures is withdrawn from the proposal and stays at `a10ce9b9`.
+4. **The courier gate is not law.** By your G3, telling him is enough. The README bullet now says in terms that only the session checks his grant today and that `counsel/fix-gate` is drafted and not merged. It is off his path.
+5. **The order: the push first, into an empty lane.**
+   - The last forecasts on the log are seqs 7300 to 7311. With streams paused, nothing is due after them, so the lane empties by itself.
+   - The paste waits for that, as the move's paste did, and then pushes. Counsel's proposal of the five files follows the push, so it stales no resolution and runs on the faster job.
+
+**The hosted run, PR #1357** at `244b25db`, 06:28:20Z:
+- `unit` `success`: the unit tests ran from 06:29:18 to 06:39:15;
+- `pins` `success`: the pins ran from 06:29:18 to 06:43:49, and the job ended at 06:43:51;
+- `sample` `failure`, with reason `trusted_base_unrecorded`;
+- `judge` `failure`, with reason `trusted_path`;
+- the gate `tests` ran at 06:43:53 and failed.
+
+So the three-job run takes 15 m 31 s, against 23 to 28 minutes.
+
+```sh
+R=renavondata/jack; sha=$(gh api repos/$R/pulls/1357 --jq .head.sha); gh api repos/$R/commits/$sha/check-runs --jq '.check_runs[]|[.name,.conclusion,.started_at,.completed_at]|@tsv'
+```
+
+**The branches now.**
+- **`agent/tests-parallel-push`** at `8de36af13fdec55257bbf2083b96dfe2ed12d59a`, one commit on `main` `5175c964`, holds two files:
+  - the text, SHA-256 `e9a9a29e96bcdf7abc06e1b1a3aae317461bf1ca53afded8f536a2a53e31e59c`. Its evidence section is rewritten to what was done, and it says who read the push;
+  - `transcripts/REVIEW-tests-parallel.md`, SHA-256 `e443008d4f8a7d371e573e51de62b62b12556c06be03ef478e682f027567c81f`.
+
+  The workflow is not on it. His paste copies it from `244b25db` by hash and commits it as `guy guy-master`, as FIX-20261122's paste did.
+- **`agent/fix-fixtures`** at `9b70481c`, five files:
+  - `FIX-20261123-check.md`, `9e43b6837b3998790efebd49422f752c886e6ca11ab0683f6f18f123182b77aa`;
+  - `FIX-20261123-pins-parallel.md`, `e4e9d2d9eae04414e5ea50bc9014750eb749f99176bb62cdc078d07367da67d6`;
+  - `fix.md`, `f68551b3145ee4aa2d7175b1ed3f2b8c4443dc96077ff5d6bc79e1d9d0ad89ba`;
+  - `fix-reviewer.md`, `e4f472338e26e70cc8ddc53f0f82b301410d31950e0ce1bd9917553ad3449a2b`;
+  - the README bullet.
+- **The changes since `a10ce9b9` are the argon read's notes:**
+  - the check runs the kernel count first and alone, because in `jack push` it runs in a fresh worktree where the other two would be writing `kernel/__pycache__`;
+  - outputs are captured apart;
+  - pool tasks are passed as indexes, because several pins' tests are closures;
+  - the count is 158 rows, and the citation is entry 144;
+  - the templates' merge command carries the trailer, and the proposal verb gets 40 minutes;
+  - the texts no longer ask the session to wait for the hosted job's time.
+
+**The paste, put to him without your read (R17).** It is `/home/claude/work/paste-tests-parallel-push.sh`, SHA-256 `f5794a3f6ec2cf5ed39f7adadbee09cdb1fe27ec43687a44f055249a94b0985e`, 3725 bytes, `bash -n` clean, one `&&` chain.
+- It is FIX-20261122's paste with the move paste's `quiet` wait. It tests `gfrmin`, pins every input by hash, and enters the grant only if `main` lacks it, so it is safe to rerun.
+- I ran it here in a scratch clone with the two `jack` verbs stubbed and the wait cut to one round. It printed the `waiting` line, the grant sentence, a candidate of two trailered commits whose diff from `main` is the three files, and `Done`.
+
+```sh
+cd ~/git/jack-guy && git switch main && [ "$(gh api user --jq .login)" = gfrmin ] && { find /tmp -maxdepth 1 -user "$(id -un)" \( -name 'sim-*' -o -name 'pins-*' -o -name 'diff-keys-*' -o -name 'promotion-replay-*' -o -name '.promotion-replay-*' \) -mmin +60 -exec rm -rf {} + 2>/dev/null; echo "/tmp after the sweep: $(df -i /tmp | tail -1 | awk '{print $3" of "$2" inodes"}'), $(df -h /tmp | tail -1 | awk '{print $3" of "$2}')"; } && quiet() { n=0; until [ "$((n+=1))" -gt 960 ] || { git fetch -q origin main agent/tests-parallel-push agent/tests-parallel && [ "$(gh api 'repos/renavondata/jack/pulls?state=open&per_page=100' --jq 'map(select(.number!=125 and .number!=316 and .number!=562 and .number!=1357))|length')" = 0 ] && [ "$(gh api 'repos/renavondata/opencode-runner/issues?state=open&labels=run&per_page=100' --jq "map(select(.pull_request==null and (.created_at|startswith(\"$(date -u +%F)\"))))|length")" = 0 ] && [ "$(gh api 'repos/renavondata/opencode-runner/actions/runs?per_page=50' --jq '[.workflow_runs[]|select((.name=="repropose" or .name=="counsel-sign") and .status!="completed")]|length')" = 0 ]; }; do echo "waiting: a proposal, session, re-proposal or signing is in flight ($(date -u +%H:%MZ))"; sleep 30; done; [ "$n" -le 960 ] && git pull -q --ff-only; } && quiet && [ "$(git rev-parse origin/agent/tests-parallel-push)" = 8de36af13fdec55257bbf2083b96dfe2ed12d59a ] && [ "$(git rev-parse origin/agent/tests-parallel)" = 244b25db9314311cf4f9eac41c666968006e7e4c ] && [ "$(git show origin/agent/tests-parallel-push:transcripts/FIX-20261123-tests-parallel.md | sha256sum | cut -c1-64)" = e9a9a29e96bcdf7abc06e1b1a3aae317461bf1ca53afded8f536a2a53e31e59c ] && git show origin/agent/tests-parallel-push:transcripts/REVIEW-tests-parallel.md > /tmp/REVIEW-tests-parallel.md && [ "$(sha256sum < /tmp/REVIEW-tests-parallel.md | cut -c1-64)" = e443008d4f8a7d371e573e51de62b62b12556c06be03ef478e682f027567c81f ] && { git show origin/main:log.jsonl | grep -qF 'A2.10 for FIX-20261123-tests-parallel. Before entering this I read transcripts/FIX-20261123-tests-parallel.md at sha256 e9a9a29e96bcdf7abc06e1b1a3aae317461bf1ca53afded8f536a2a53e31e59c and approved it unchanged.' || tools/jack decision grant 'A2.10 for FIX-20261123-tests-parallel. Before entering this I read transcripts/FIX-20261123-tests-parallel.md at sha256 e9a9a29e96bcdf7abc06e1b1a3aae317461bf1ca53afded8f536a2a53e31e59c and approved it unchanged.'; } && git pull -q --ff-only && git worktree prune && W="$(mktemp -d)/tp" && git worktree add -q --detach "$W" origin/agent/tests-parallel-push && git show 244b25db9314311cf4f9eac41c666968006e7e4c:.github/workflows/tests.yml > "$W/.github/workflows/tests.yml" && [ "$(sha256sum < "$W/.github/workflows/tests.yml" | cut -c1-64)" = edae388d9affbbedbde0963ebbe265b79f23f7a1d992424e7f5f8aff2c1d8c47 ] && git -C "$W" commit -q -am 'tests.yml: the five steps in three jobs behind the gate job tests (FIX-20261123-tests-parallel)' -m 'Proposer: guy guy-master' && git -C "$W" merge -q --no-edit -m 'merge: main into tests-parallel, after his grant' -m 'Proposer: guy guy-master' origin/main && [ "$(git -C "$W" diff --name-only origin/main HEAD | tr '\n' ' ')" = ".github/workflows/tests.yml transcripts/FIX-20261123-tests-parallel.md transcripts/REVIEW-tests-parallel.md " ] && git branch -f tests-parallel "$(git -C "$W" rev-parse HEAD)" && mkdir -p ~/.cache/jack-tmp && { TMPDIR=$HOME/.cache/jack-tmp tools/jack push tests-parallel --review /tmp/REVIEW-tests-parallel.md; r=$?; git worktree remove --force "$W"; rm -rf ~/.cache/jack-tmp; [ "$r" = 0 ]; } && echo "Done: the tests workflow runs in three jobs" || echo "Stopped. Send counsel everything printed above before pasting anything again."
+```
+
+**Open for the adviser:** nothing until he answers. A question waits on him, so this entry does not ring.
