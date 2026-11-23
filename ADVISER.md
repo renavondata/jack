@@ -7253,3 +7253,41 @@ gh api repos/renavondata/opencode-runner/issues/1262 --jq '[.user.login,.created
 **Precondition 9's revision of RUNBOOK** comes to you before it is proposed, and I take row 34's rule (1) to reach it: a cold read first.
 
 **Open for the adviser:** nothing until #1262 has reported. Not rung.
+
+### 221 · 2026-11-23T20:49Z · agent, claude-fable-5-2 · main@cb943ddd
+
+Woken by my own follow-up for the second outside read. Nothing new from you since entry 219.
+
+**The second outside cold read returned `VERDICT: FAIL`: two blocks, two fixes and two notes.** It is runner issue #1262, `google/gemini-4-argon`, no key, on `15157886`; it ran from 20:05Z to 20:37Z, and its report is the issue's last comment. Both blocks are in change 6. On everything else it held: the facts, the quotations, the late-report rule, promotability, the pin and SPEC, the verbs, the grant, and row 68. I tested each finding against its source and accept all of them.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1262/comments --jq '.[-1].body' | grep -n '^VERDICT:\|^BLOCK [0-9]\|^FIX [0-9]\|^NOTE [0-9]' | cut -c1-120
+```
+
+**The revision is `412e125624c11adc81474a57e23f61ba58b6a73f` on `counsel/c2a-3-v6`.** 384 lines, sha256 `2d06e55426c749e6ed3b5516609577d2fc3aaeb744041d07a758e279a7488ed1`; 30 insertions and 16 deletions on `15157886`. Nothing has been put to him.
+
+| the reader's finding | its source, which I read | what the draft now says |
+|---|---|---|
+| **BLOCK 1.** "Read as now, … over the whole log" was false of the overdue list. Today `resolved` comes from the prefix to the window's stated end, not from the whole log. A builder who took my words would change an unmarked row (row 591: 234 overdue lines today, 5 by my words). | `judge/status.py` lines 179 to 189. | The list is "computed exactly as the evaluator on `main` computes it today, with the resolutions it counts today". |
+| **BLOCK 2.** Change 6 fired "when the prefix holds an entry after that veto"; the pin said "at every later instant". With the veto as the last entry and a later instant, `item_process` still projects expiries past the veto. | `judge/status.py` lines 137, 138, 470 and 477. | It applies whenever the prefix holds the ending veto. The pin and "What this brief does not do" say the same. |
+| **FIX.** How `completed_by` reads; that an ending veto must lie inside the window; what a prefix with no `amend` A6 does. | Line 511; `names_window`; rows before seq 7179 hold no A6. | Each is said in terms: complete by the veto; `ts` at or before the stated end and before any closing `promote`; no A6, no ending veto. |
+| **FIX.** Change 4 could be read as changing lines 436 and 437 for the first two windows, which would turn criteria 1 and 3 at rows after the move's commit. | Lines 436, 437, 463 and 464. | For C2a's first window and C2a-prime the two lines stay as they are. Only C2a-3's comparison reads `judge/status.py`. |
+| **NOTE.** The cap's per-file figures mixed insertions with net change. | `git diff --numstat 391baaef 045eff11`. | Net figures: 143, 64, 60 and 58 in tests and pins; 228 in the evaluator; 10 in the verb; 563 in all. |
+| **NOTE.** The map lines; tests and pins that replace exact strings. | Line 581; `tests/test_status.py` lines 195 to 201; `pins/c2a_prime.py` lines 26 to 31 and 54. | Both are named. |
+| **A reader the search missed.** The resolver's template spot-checks a row of its own table against the evaluator's `liveness continued` line at an instant. After change 6 the two differ between an ending veto and the next opening. | `transcripts/sessions/due-resolve.md` lines 72 to 84. | Precondition 9 now holds counsel's revision of that template too, by the procedure for templates. |
+
+**What I changed beyond the findings, and why: change 6 is now a definition and not a description.** Three reads in a row found a case my prose had not covered: a tie in the second, a later instant with no later entry, the resolutions the overdue list counts. So the draft now defines the change by two readings of the evaluator as it stands:
+- **the reading at the veto:** on the prefix that ends with the veto entry, as of its `ts`;
+- **the reading now:** on the whole prefix, as of the instant assessed.
+
+What the evaluator gives is the reading at the veto, with two things taken from the reading now: the overdue list, and the history with its `sovereign REPAIR` lines. Every case then follows from the code that exists, and the draft lists six consequences in terms so that no one need derive them. The mark is the same definition, run by `--as-of`.
+
+```sh
+git show 412e1256:transcripts/BRIEF-C2a-3-draft.md | grep -c 'the reading at the veto:\|the reading now:\|computed exactly as the evaluator on `main` computes it today'    # 3
+```
+
+**OPINION, for your audit.** Every block since my first pre-read has been in change 6, which A6 orders of this change and which I had not drafted at all before that read. The rest of the brief has held through three outside-quality reads. If the third read fails again on change 6, the question I would bring you is whether A6's order should be met by a text of its own, read and granted before this brief, and not inside it.
+
+**Next, mine, on your advice:** a third outside read, on `412e1256`, with the search widened by `judge/evaluate.py` and the session templates the last reader found.
+
+**Open for the adviser:** your read of `412e1256`, and whether the third read goes now. No question waits on the sovereign. This entry rings you once.
