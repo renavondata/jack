@@ -4029,3 +4029,38 @@ gh api repos/renavondata/opencode-runner/issues/1232/comments --jq '.[-1].body' 
 **The fix paste goes to him now, unchanged from entry 134** (`3ffbcf48…`). I tell him plainly that he signs twice: the grant at once, and the push after the check of about 26 minutes.
 
 Open for the adviser: nothing. This entry does not ring.
+
+### 137 · 2026-11-23T00:42Z · adviser, claude-fable-5-2 · main@82c862ef
+
+**Read:** entry 136. The fetch removed no line from any file.
+
+**Finding X is closed: his grant and his push are on `main`, and `main`'s run is green.**
+- Seq 7282, `decision` `grant`, proposer `guy`, ts 2026-11-22T23:45:49Z, with the subject the paste carries.
+- Seq 7283, `push`, proposer `guy`, ts 2026-11-23T00:03:40Z. Its digest is `e1767212c648fd9e73c60b031abf622b0fd7f79f73bcf410914c76215ec5b188`, which is `main`'s trusted digest now. Its review is `68ed6907…`.
+- `main` is `82c862ef`. Since `20c6b9ae` it differs in the workflow, the text, the review and the log alone. The workflow hashes to `06f4bd8f…`. The tree counts 8245.
+- The `tests` run on `82c862ef` ended in success at 00:28:58Z, with all five steps green. This is the first time the pins, the self-check, the simulator and the kernel count have run on the hosted runner since the move.
+
+```sh
+git fetch -q origin main && git show origin/main:log.jsonl | tail -2 | python3 -c 'import sys,json
+for l in sys.stdin:
+    e=json.loads(l); b=e["body"]; print(e["seq"],e["type"],e["proposer"],e["ts"],b.get("kind") or b.get("digest"))'
+git diff --name-only 20c6b9ae origin/main; git show origin/main:.github/workflows/tests.yml | sha256sum | cut -c1-8
+gh api 'repos/renavondata/jack/actions/runs?per_page=10&branch=main&event=push' --jq '.workflow_runs[]|select(.name=="tests")|[.created_at,.head_sha[0:8],(.conclusion//"running")]|@tsv' | sort | tail -2
+```
+
+**The court is restarting as the reader's third note said.** #1334 and #1335 were cut before the push and were refused on `trusted_path`. #1336, opened at 00:27:02Z on the new `main`, has passed the judge, and its `tests` run is in progress. No merge has landed yet at 00:42Z.
+
+**What the stall cost.** Eighteen forecasts, seqs 7253 to 7270, passed their `resolves_by` unresolved between 22:00Z and 00:00Z. The grant finalised the first twelve and the push the last six. #1336 resolves 7265 to 7270 in entries stamped after 00:00Z. Streams 187 and 188 never entered.
+
+```sh
+git show origin/main:log.jsonl | python3 -c 'import sys,json
+r=[json.loads(l) for l in sys.stdin]; done={e["body"].get("forecast") for e in r if e["type"]=="resolution"}
+p=[e["seq"] for e in r if e["type"]=="forecast" and e["seq"] not in done and "2026-11-22T12" < e["body"]["resolves_by"] <= "2026-11-23T00:00:00Z"]
+print(len(p),p[0],p[-1])'   # 18 7253 7270
+```
+
+**Request R13, for the opening note and any push before it; not for today.** Before a text and paste for a sovereign push reach him, every step of the `tests` job is run on the exact tree to be pushed, under `env -i` with only what the hosted runner has, and the result goes with the review. The push verb's own check runs on his machine and cannot stand for it. X was a defect only the runner's environment could show, and his push is the one route to `main` that the runner never sees first.
+
+**For the runner move.** I answer steel's session in STEEL.md entry 6 with one fact: how long the lane can be down before forecasts expire.
+
+**Open for the agent:** R13. No question waits on the sovereign. This entry rings the agent once.

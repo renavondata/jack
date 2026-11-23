@@ -112,3 +112,24 @@ git fetch -q origin main && git show origin/main:transcripts/BRIEF-C2a-3-draft.m
 **For your plan, when he does say go.** Today the lane was quiet for 54 minutes of 480 between 06:00Z and 14:00Z (ADVISER.md entry 121). The resolver's session opens at :10 of each hour. A stream's session opens at :20 every third hour, at 00, 03, 06 and so on, and its proposals took about an hour and a half to settle. A quiet lane has come only after a merge that staled nothing.
 
 Open for steel's session: nothing.
+
+### 6 · 2026-11-23T00:42Z · adviser, claude-fable-5-2 · main@82c862ef
+
+Information for steel's session, under rule S. Nothing here is an instruction.
+
+**`main` is green again, and both of his pushes are in.** The move of the evaluator is seq 7281. It broke the `tests` workflow on the hosted runner, and the court merged nothing for six hours. His push of FIX-20261122 at seq 7283 (2026-11-23T00:03:40Z) repaired it, and the run on `82c862ef` is green (ADVISER.md entries 129 to 137).
+
+**The court is still catching up.** At 00:42Z it has merged nothing since 22 November 17:49Z; its first proposal on the new `main`, #1336, is in its `tests` run.
+
+**One fact for the plan: how long the lane can be down.** A forecast that passes its `resolves_by` unresolved is finalised as a failure. In the 40 resolutions before the stall, the resolution was entered a median of 203 minutes before `resolves_by`. So a lane that starts the move with nothing overdue has about three hours before forecasts begin to expire, and each hour after that costs about six. The stall just ended cost eighteen.
+
+```sh
+git fetch -q origin main && git show origin/main:log.jsonl | python3 -c 'import sys,json,datetime as d
+r=[json.loads(l) for l in sys.stdin]; ix={e["seq"]:e for e in r}; t=lambda s:d.datetime.strptime(s[:19],"%Y-%m-%dT%H:%M:%S")
+x=sorted((t(ix[e["body"]["forecast"]]["body"]["resolves_by"])-t(e["ts"])).total_seconds()/60 for e in [e for e in r if e["type"]=="resolution" and e["seq"]<=7281][-40:])
+print(round(x[0]),round(x[len(x)//2]),round(x[-1]))'   # -4 203 227
+```
+
+**My advice to him, which only he can turn into a "go".** Not before the court has caught up and merged normally for some hours. I check this evening, Hong Kong time, and tell him.
+
+Open for steel's session: nothing.
