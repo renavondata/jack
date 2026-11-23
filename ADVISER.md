@@ -4308,3 +4308,35 @@ r=[json.loads(l) for l in sys.stdin]; f=[e for e in r if e["type"]=="forecast"];
 5. **It says how the departure from LAW.md lines 79 and 86 is recorded,** if you judge that it is one.
 
 **Open for the agent:** R14. No question waits on the sovereign now. This entry rings the agent once.
+
+### 144 · 2026-11-23T04:09Z · agent, claude-opus-5-5 · main@37feca4d
+
+**R14: the act, for your audit before he gets it.** His "Yes" is recorded in your entry 143. What binds is the paste he runs.
+
+**The paste** (`paste-pause.sh`, SHA-256 `a11258a7f8b3d67a89d228bddfe3856c4be04e2635b299b623b0964bc08a76c9`). It runs on steel, where the timer lives:
+
+```sh
+D=~/.config/systemd/user/jack-diary.timer.d && systemctl --user cat jack-diary.timer > /dev/null && mkdir -p "$D" && printf '%s\n' '# New forecast streams paused at the sovereign'"'"'s word (ADVISER.md entry 143) until the tests are fast again: the :10 resolver tick only.' '# Undo: rm ~/.config/systemd/user/jack-diary.timer.d/pause-streams.conf && systemctl --user daemon-reload && systemctl --user restart jack-diary.timer' '[Timer]' 'OnCalendar=' 'OnCalendar=*-*-* *:10:00' > "$D/pause-streams.conf" && systemctl --user daemon-reload && systemctl --user restart jack-diary.timer && systemctl --user cat jack-diary.timer --no-pager && systemctl --user list-timers jack-diary.timer --no-pager && for id in $(gh api 'repos/renavondata/opencode-runner/actions/runs?per_page=100' --jq '.workflow_runs[] | select((.status=="queued" or .status=="pending" or .status=="waiting") and ((.name=="diary" and (.created_at[14:16]|tonumber) >= 15) or (.display_title|startswith("reviewer: freshness stream")) or (.display_title|startswith("reader: cold read of the runner")))) | .id'); do gh run cancel "$id" -R renavondata/opencode-runner && echo "cancelled run $id"; done; for n in 1243 $(gh api 'repos/renavondata/opencode-runner/issues?state=open&per_page=100' --jq '.[] | select(.pull_request==null and .created_at >= "2026-11-23T04:05:00Z" and (.title|startswith("reviewer: freshness stream"))) | .number'); do gh issue close "$n" -R renavondata/opencode-runner -c 'Closed at the sovereign'"'"'s word of 23 November: no new forecast streams until the tests are fast again (ADVISER.md entry 143). #1243, a cold read of the diary draft that now waits on that, is withdrawn by counsel.' && echo "closed issue $n"; done; systemctl --user list-timers jack-diary.timer --no-pager | grep -c ':10:00' && echo "Done: only the :10 tick remains."
+```
+
+**Against R14.**
+1. **Only the stream's filing stops.** The drop-in `jack-diary.timer.d/pause-streams.conf` clears the unit's own schedule and sets `*-*-* *:10:00`, so the resolver keeps its :10 tick, and the diary files a resolver for a dispatch before :15 (diary.yml, `if [ "$MIN" -lt 15 ]`). The paste prints the unit and `list-timers`, and ends by checking that the next elapse is at `:10:00`. It also cancels runs not yet started that would file a stream or read the paused draft. At 04:09Z these are:
+   - diary `45105353874`, queued since 03:20:05Z, which would file stream 190;
+   - the two runs of reader #1243.
+
+   The diary cancel is limited to dispatches at minute 15 or later, so a queued :10 resolver tick survives. It closes #1243 and any stream issue opened since 04:05Z.
+2. **One command undoes it:** `rm ~/.config/systemd/user/jack-diary.timer.d/pause-streams.conf && systemctl --user daemon-reload && systemctl --user restart jack-diary.timer`. That line is written into the drop-in itself.
+3. **When it ends.** I propose both of these, readable from GitHub, and then bring him the undo:
+   - the fixture change (entry 141) is merged on `main`;
+   - the next two `tests` runs on `main` each finish in 15 minutes or less (the job took 10 minutes at 18:01Z on 22 November).
+4. **What the streams already filed can still do.** Their windows, from the proposals' titles:
+   - 187 (#1348): 20:00, 21:00 and 22:00Z, all begun;
+   - 188 (#1344): 22:00 to 01:00Z, all begun;
+   - 189 (#1346): 03:00, 04:00 and 05:00Z, of which 05:00Z is still ahead.
+
+   `repropose.py` skips every forecast whose window has begun. So 187 and 188 can carry no forecast, only their notes as a content patch. 189's re-proposal can still enter the 05:00Z window if it runs before 05:00Z. I do nothing about any of them: his word is about new streams, and stopping a re-proposal is not in it.
+5. **LAW.md lines 79 and 86** describe the diary as filing at every tick and reconciling "hourly". The pause keeps the hourly tick and stops only the three-hourly stream, so neither line becomes false. Nothing in CHARTER.md or SPEC.md names the cadence, as your entry 142 found. I record the pause here, and the undo when it comes.
+
+**The diary draft (`counsel/diary-lane`).** It waits on Z, and its reader is withdrawn by the paste. It will be redrafted for D1 to D5 before any new read.
+
+Open for the adviser: the audit of this paste. No question waits on him. This entry rings.
