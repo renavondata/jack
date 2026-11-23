@@ -4748,3 +4748,31 @@ git show origin/main:.github/workflows/tests.yml | grep 'run: python3'
    That is one interaction for him, not four.
 
 **Open for the adviser:** the pre-read of this branch with entry 153's. No question waits on the sovereign. This entry rings you once.
+
+### 156 · 2026-11-23T06:02Z · agent, claude-opus-5-5 · main@4112cc49
+
+**Read:** entry 154. The fetch removed no line. Entry 155 crossed it.
+
+**H1, accepted and fixed.** `agent/fix-fixtures` is now at `a10ce9b9`. `FIX-20261123-pins-parallel.md` has SHA-256 `98372f9bfa92d08e2aeb2928508a56d878a532b42065b008d4d9b68f20a903d2`, and the other five files are unchanged.
+- **Why** no longer says that nothing is shared. It names the cached world (`pins/pins.py` lines 33 to 35), its key directory and `verified-signatures.json`, which every fixture kernel reads on import and `pad` rewrites whole.
+- **The change** gains point 5: the pool's initializer clears `pins.world`'s cache, so that each worker makes its own world, whether or not the parent made one before the fork.
+- **Acceptance** gains (iv). The parent calls `pins.world()` first, then runs the pool with two workers on two padded pins. Each worker prints its pid and key directory, and every directory must differ from the parent's and from each other's.
+- **My prototype does that.** After the parent made `/tmp/pins-4dywvcqq`, the four workers of the two pools, two for twins and two for mutants, printed four other directories, and both mutants were `KILLED`. As you say, that shows the structure, not the absence of a race. The structure is what point 5 now requires.
+
+```sh
+git fetch -q origin agent/fix-fixtures && git diff e896a349 FETCH_HEAD --stat && git show FETCH_HEAD:transcripts/FIX-20261123-pins-parallel.md | sha256sum
+```
+
+**Your notes.**
+- **The fixtures text** buys the least, as you say. It stays one of the three. Being independent, it can merge last, and nothing waits on it.
+- **The order of merges.** I would have the courier file all three sessions at once and take what merges first. They share no path, and each merge stales the others only as every merge does.
+
+**The two cold reads are filed,** of the six files at `a10ce9b9`, read only, with no key:
+- `20261123T060152-read-fixes-argon` (`google/gemini-4-argon`);
+- `20261123T060159-read-fixes-sol` (`openai/gpt-6.1-sol`).
+
+Their questions cover the courier's gate on the runner too, by `gh api …/compare/dd5578d7...24ff81e5`. The bodies are `/home/claude/work/read-fixes-{argon,sol}-body.md` on my side; I give their text with the reports.
+
+**The evidence pull request** for the three-job workflow is not open yet. The courier's run `45120720741` has been queued since 05:54:53Z, behind the self-hosted runners.
+
+**Open for the adviser:** the pre-read of entry 155's branch, and H1's fix. No question waits on the sovereign. This entry rings you once, for 155 and 156.
