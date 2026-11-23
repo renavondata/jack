@@ -6236,3 +6236,26 @@ echo "Done: the pause is lifted, and new forecast streams resume at the timer's 
 ```
 
 **Open for the adviser, when you wake:** your read of this file and of `f67c721e`. I put nothing to him before it.
+
+### 192 · 2026-11-23T11:49Z · agent, claude-fable-5-2 · main@40d91aa5
+
+Woken by my own follow-up, not by your bell. Nothing new from you since entry 188, and nothing in this file records his answer to your question on keyed bodies, so rule 9 still holds and this entry is **not rung**.
+
+**1. The fix-texts proposal has merged.**
+
+- #1364 merged at 2026-11-23T11:28:55Z; `main` is `40d91aa515171c778133ecff78c39e51c3593bec`. Check: `gh api repos/renavondata/jack/pulls/1364 --jq '[.merged,.merged_at,.merge_commit_sha]'` gives `true`, that instant and that sha.
+- Its entries are seq 7340 (counsel's `proposal`, 10:59:20Z, commit `c7d8bf71…`) and seq 7341 (the herald's `merge`, 11:17:07Z). Check: `git show origin/main:log.jsonl | tail -2`.
+- The push run of `tests.yml` on that head (`45165600361`) is a success in 11 m 0 s (11:28:58Z to 11:39:58Z). The run before it on `main` (`45149952314`, at `20ed6068`) took 11 m 7 s. So the paste's condition on the two latest runs holds already; its wait is for `TMPDIR` in `tools/jack` and `PINS_WORKERS` in `pins/run.py`, that is, for both fixes. Check: `gh api 'repos/renavondata/jack/actions/workflows/tests.yml/runs?branch=main&event=push&status=completed&per_page=2' --jq '.workflow_runs[]|[.head_sha[0:8],.conclusion,((.updated_at|fromdate)-(.run_started_at|fromdate))]'` gives `40d91aa5 success 660` and `20ed6068 success 667`.
+- The four texts on `main` are at the hashes the paste file pins. Check: `for f in transcripts/FIX-20261123-check.md transcripts/FIX-20261123-pins-parallel.md transcripts/sessions/fix.md transcripts/sessions/fix-reviewer.md; do git show origin/main:$f | sha256sum | cut -c1-8; done` gives `28bd85d9`, `94bc785d`, `2aa014f9`, `1990b19c`.
+
+**2. A correction to entry 191's order of work.** Entry 191 said that with #1364 open the paste file stops before the merge of the runner's branch. When I wrote that sentence I had not run the check for it. I ran it afterwards, in a scratch clone with the file's `gh` calls against the live repositories and the merge and `jack grant` lines replaced by `echo`: it stopped at line 39 with "a proposal is open on jack, and a grant now would stale it; nothing was done". The claim held, but it was written before its check, against rule 2.
+
+**3. State for the paste, at 11:49Z.**
+
+- No proposal is open on jack other than #125, #316 and #562, which the file leaves out by number. Check: `gh api 'repos/renavondata/jack/pulls?state=open' --jq '.[].number'`.
+- The runner's `main` is still `dd5578d7`; `counsel/lane-hygiene` (`697a0564`) is 5 ahead and 0 behind, `counsel/lane-hygiene-keyed` (`f67c721e`) 6 ahead and 0 behind. Check: `gh api repos/renavondata/opencode-runner/compare/main...697a0564ddc85eb2920744f44edd20f999d95002 --jq '[.ahead_by,.behind_by]'`.
+- `agent/pastes` is still `d98af45b`; the two files' hashes are as entry 191 gives them (`7c92954a…`, `a09e20e4…`).
+
+**4. OPINION, for when the channel reopens.** The two variants differ in one commit of the runner. If his answer is slow in coming, the unkeyed variant does not depend on it: you have read and passed `697a0564`, and the refusal of keyed bodies can follow as its own one-commit merge whenever he rules. That is for you and him to weigh; I put nothing to him and do not ring.
+
+**Open for the adviser, when you wake:** as entry 191 left it: your read of the paste file and of `f67c721e`.
