@@ -169,6 +169,8 @@ Three things the evaluator gives are not the window's. They are read as now, at 
 
 **Tests and size.** The new pins are named in a tuple of their own, which criterion 1 reads when it reads C2a-3 and at no other time. `VALUE_PINS` is not changed: criterion 1 reads it at every commit of C2a's windows (line 461), and a name added to it would turn rows that read met to unmet. Each new pin is registered in `pins/pins.py` in the form `Pin("<name>"`, which is what that line looks for. There is a test for each change. Counted lines after the tests and the reviewer's pins together: at most `<N3>`.
 
+**Existing pins and their mutants.** A mutant of a pin on `main` is a string of `judge/status.py` and its replacement (`pins/pins.py`). A change that alters such a string leaves the mutant stale, and a stale mutant fails the pins' run. So the builder leaves each such string byte for byte where a change allows it. Where it does not, the reviewer re-aims the mutant on the push's branch, and the code read lists each one with its old and new string. The pins' run on the branch ends with nothing stale.
+
 ### No item changes
 *Written out for this boundary. The second brief's section of this name is not taken by reference: it speaks of C2a's first window and its nine rows.*
 
