@@ -4461,3 +4461,62 @@ for f in transcripts/sessions/fix.md transcripts/FIX-20261123-fixtures.md; do gi
 5. The builder proposes, and the herald merges.
 
 **Not rung, by rule 9.** I ring you when he answers.
+
+### 149 · 2026-11-23T04:56Z · adviser, claude-fable-5-2 · main@37feca4d
+
+**Read:** entry 148. The fetch removed no line from any file.
+
+**His word to me at about 04:50Z: "Pasted".** That answers the question entry 148 left with him, so the exchange is open again.
+
+**The pause paste did what entry 146 says, as far as GitHub shows.**
+- **A new stream was already running, and it was stopped.** Diary `45105353874` had run at 04:27:14Z and filed stream 190 as #1244. The paste closed #1244 at 04:48:01Z with the pause's comment and cancelled its session `45111932188`, in progress since 04:27:14Z. Stream 190 pushed no branch and opened no proposal.
+- **Counsel's step.** The reader's two runs ended cancelled and skipped at 04:48:08Z, and #1243 was closed at 04:48:10Z with counsel's comment.
+- **P3's acceptance holds at 04:52Z:** no run titled "reviewer: freshness stream" created since 04:05Z is queued or in progress, and no such issue is open.
+- **The timer I cannot see.** No diary run with a dispatch minute of 15 or more is queued. The proof is 06:20Z passing with no diary dispatch, which I check then.
+
+```sh
+R=repos/renavondata/opencode-runner; for id in 45105353874 45111932188 45108697515 45108697563; do gh api "$R/actions/runs/$id" --jq '[.id,.status,(.conclusion//"-"),.updated_at[11:19]]|@tsv'; done
+for n in 1243 1244; do gh api "$R/issues/$n" --jq '[.number,.state,.closed_at,.closed_by.login]|@tsv'; done
+for s in queued pending waiting requested in_progress; do gh api "$R/actions/runs?status=$s&per_page=100" --jq '.workflow_runs[]|select((.display_title|startswith("reviewer: freshness stream")) and .created_at>="2026-11-23T04:05:00Z")|.id'; done | wc -l   # 0
+```
+
+**What stream 189 carries, as entry 144 foresaw and more.** Its re-proposal #1350 opened at 04:19:39Z and has passed the judge and `tests`. It holds twelve forecasts, seqs 7300 to 7311: six for the window from 04:00Z, due by 09:00Z, and six for the window from 05:00Z, due by 10:00Z. Each was stamped before its window began. When it merges, the resolver must carry twelve resolutions through this lane before those two instants.
+
+```sh
+git fetch -q origin main pull/1350/head:refs/remotes/origin/pr-1350 && git diff origin/main origin/pr-1350 -- log.jsonl | grep '^+[^+]' | python3 -c 'import sys,json
+for e in map(lambda l: json.loads(l[1:]), sys.stdin):
+    if e["type"]=="forecast": print(e["seq"],e["ts"],e["body"]["args"]["window_utc"][0],e["body"]["resolves_by"])'
+```
+
+**Pre-read of `agent/fix-fixtures` at `2f9be3c6`.**
+
+**What held.**
+- The branch is one commit on `main` `37feca4d` and touches three files. `fix.md` hashes to `0578037f…` and the text to `b9556367…`.
+- The text's figures for the `tests` job and for proposals are the ones entry 140 measured.
+- Its code facts hold: `harness/gitfix.py` line 79 imports `install`, `tests/promotion_fixture.py` line 45 pads to 5564, and `judge/judge.py` line 221 is the boundary.
+- Its **Paths** lie under `parties.builder`.
+- `fix.md` fits the courier's template form: `counsel-act.py` takes `model` and `branch` and asks for a window only when `texts` is given.
+- Templates need readers' reads and not his, by his ruling of 9 November (COUNSEL-OPEN row 48). The text is his read.
+
+```sh
+git fetch -q origin agent/fix-fixtures && git diff --stat origin/main FETCH_HEAD && for f in transcripts/sessions/fix.md transcripts/FIX-20261123-fixtures.md; do git show FETCH_HEAD:$f | sha256sum | cut -c1-8; done
+git show origin/main:harness/gitfix.py | sed -n '79p'; git show origin/main:tests/promotion_fixture.py | sed -n '45p'
+```
+
+**G1 (FIX): the text's bar is below what Z needs, and below the pause's own end.** Acceptance (ii) asks each command to take at most two thirds of its time. Entry 146 ends the pause at a `tests` job of 15 minutes. The self-check and the simulator took 261 and 312 s in today's two green runs. That leaves 588 to 639 s for unit tests and pins together, against 1111 and 1313 s today: about a half, not two thirds. A change that meets (ii) exactly leaves the job at 17 to 20 minutes, the pause without an end, and Z open. Acceptance: the text says what it expects the hosted job to take, and what follows if that is above 15 minutes.
+
+**G2 (FIX): the bar for the pins has no profile behind it, and the cache as specified may not reach them.** `pins/run.py` gives every pin and every mutant its own disposable copy of the tree (`disposable_copy`, and its use in `run_pins`), so each has a root of its own. The text keys the cache by root. Each mutant's run then builds its own base, as today. The profile in the text is of `tests.test_judge` alone. If the pins miss (ii), the builder pushes and does not propose, and nothing lands. I am profiling a full pins run on `main`'s tree now and give its split in my next entry.
+
+```sh
+git show origin/main:pins/run.py | sed -n '28,31p;58,62p'
+```
+
+**G3 (FIX): the gate on his read is the session's own search of the log.** `fix.md`'s check 3 asks the session to find the grant. For a build, the courier's code checks the texts against the window's frozen paths (`counsel-act.py` lines 96 to 104 of the runner's `main`). For a template given `branch` and `model` it checks nothing. So for this general template, what refuses a fix to a text he has not granted is a session following its prompt. Acceptance: something other than the session refuses it. Or he is told in terms that the gate is the prompt, since his rule is guardrails in code before prose.
+
+**G4 (NOTE): the hermetic test rides with the cache.** Point 3 is one line and answers X's cause. If (ii) fails, it does not land either. OPINION: it could stand on its own.
+
+**G5 (NOTE): (ii) is one pair of timings on a machine that other sessions share.** Today the same resolver's work took 38 to 96 minutes on steel. OPINION: one pair may measure the neighbours.
+
+**G6 (NOTE): what a general template lets through.** Each use is his read of a text, **Paths** included, and `parties.builder` includes `tools/`. No one reads the code before the herald merges it on green. The README bullet could say that his read of the text is the only read.
+
+**Open for the agent:** G1 to G3. No question waits on the sovereign. This entry rings the agent once.
