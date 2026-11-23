@@ -6682,3 +6682,56 @@ printf 'import concurrent.futures, multiprocessing, os, time\ndef task(i):\n    
 - The first date is a commitment. The second is my intent, and I say so if the draft's reads take the time.
 
 **Open for the adviser:** nothing. Not rung.
+
+### 203 · 2026-11-23T16:46Z · agent, claude-fable-5-2 · main@cbdac17b
+
+Woken by my own follow-up for R21's first item. Nothing new from you since entry 201.
+
+**The sixth draft of BRIEF-C2a-3 is on `counsel/c2a-3-v6` at `b4fda6deb2f77a25c172abf958ea5cdb86b78cf5`.** One commit of counsel's on `cbdac17b`, one file. The text is 324 lines at sha256 `1a9c4ad5e1ba8b738fb5691e3ccbb60be354b20ddbd5c9fad2e09c8986294345`. It is a draft: nothing is proposed, no read is filed, and **nothing of it has been put to him**.
+
+```sh
+git fetch -q origin counsel/c2a-3-v6 && git rev-parse FETCH_HEAD; git diff --stat origin/main FETCH_HEAD | tail -1; git show FETCH_HEAD:transcripts/BRIEF-C2a-3-draft.md | sha256sum    # b4fda6de…; 1 file, 102 insertions, 90 deletions; 1a9c4ad5…
+```
+
+**What v6 changes in v5, each with its ground.** The draft's own note (its lines 7 to 13) lists the same six.
+
+| # | change | ground |
+|---|---|---|
+| 1 | §The code is a change to the promotion evaluator, `judge/status.py`, accepted by replay against a new table with no line marked, built by the builder on the push's branch and carried by his opening push. | SPEC §10, **The promotion evaluator**: "A later change to the evaluator is accepted the same way, against a table of the evaluator it changes and with the lines his grant for it marks." The ruling's answers 3 and 9, and its drafter's checks 4 and 7. Your open items 1 and 3 (entry at line 4083). |
+| 2 | §The late-report rule: a late report refuses criterion 6 of the window it was entered in, and of no other. `item_process` is unchanged; criterion 6 reads the late reports above the opening. | His answers 11 and 12. Finding P, your open item 2. |
+| 3 | Route B is struck, with v5's change 5, §The exemption and the pin `answered_fix_is_decision`. | His vetoes at seqs 5879 and 7180. v5's own note said his answer "strikes one route before this brief's gate reads". |
+| 4 | §The cap counts from 8,340, says the evaluator's lines are no longer counted, and says why answer 6 cannot be applied as it reads. `<N3>` stays his to state. | Your open item 4. The count below. |
+| 5 | The opening paste waits for a quiet lane and does not stop on a busy one. | His words of 19 November, which you applied in P10. v5's step 2 said "It holds no clock and no loop" and stopped. |
+| 6 | Sentences that named `tools/status.py` or `6ab25cd8` as the evaluator in force now name `judge/status.py` at `cbdac17b`; C2a-prime's end is given as it fell (his veto of seq 7180; "four days and twenty-two hours"). | The log; the file on `main`. |
+
+Your open item 5 is done on `main` by FIX-20261123-check. Item 6 (#1216's two notes) is not in this draft: neither is the window's.
+
+**The facts the new text rests on, and their checks.**
+- **The record:** pushes at seqs 5564, 7281, 7283 and 7339, all before 2026-11-30T00:00:00Z; vetoes at 5879 and 7180; A6's `activate_at` 7180; his `decision fix` entries at 5563, 5877, 5878 and 5936; V5's `resolves_by` 2026-11-30T00:00:00Z.
+- **The evaluator today:** `python3 judge/status.py --subject C2a` on `main` prints "late repairs 3" on criterion 6's line.
+- **The lines cited** in `judge/status.py` at `cbdac17b` (sha256 `0ac73f8e…`): 114, 135, 392, 429, 433, 435, 436, 437 and 488. In `tools/jack`: 193.
+- **The count:** 8,347 before the move (`5b5f71ac`) and 8,245 after it (`20c6b9ae`). 883 left (678, 181 and 24 of `tools/status.py`, `tools/value.py` and `tools/entry.py`) and 781 came (581, 173, 20 and 7 under `tests/`, `pins/`, `tools/` and `harness/`). 8,340 now.
+- **Every quotation** in the new text is in its source, whitespace apart. I ran that for the eleven I added or moved.
+
+```sh
+python3 -c 'import json; es=[json.loads(l) for l in open("log.jsonl")]; print([e["seq"] for e in es if e["type"]=="push" and e["seq"]>=5564], [e["seq"] for e in es if e["type"]=="decision" and e["body"]["kind"] in ("veto","fix")])'    # [5564, 7281, 7283, 7339] [5563, 5877, 5878, 5879, 5936, 7180]
+python3 judge/status.py --subject C2a | grep -c 'late repairs 3'    # 1
+python3 -c 'import sys; sys.path.insert(0,"."); from judge import judge; P=("sim/","harness/","tests/","pins/","tools/"); print([judge.counted_lines(".",s,p) for s,p in (("5b5f71ac70",P),("20c6b9ae1e",P),("5b5f71ac70",("tools/status.py",)),("5b5f71ac70",("tools/value.py",)))])'    # full shas needed: git rev-parse them first; 8347, 8245, 678, 181
+```
+
+**Where I used judgment, so that you audit it and do not find it.**
+1. **"No line is marked."** I claim that all five changes are read only on a prefix that holds C2a-3's opening push, so the changed evaluator prints every existing row as the evaluator on `main` does. Change 3 is the one to test hardest: it adds a name to `WINDOW_NAMES` and a bound to `names_window`.
+2. **A new table.** I read "a table of the evaluator it changes" as a second table, of `judge/status.py` as `main` holds it, and I name it `spec/vectors/promotion-replay-c2a-3.json`. The first table is of the evaluator before the move.
+3. **One grant for two hashes.** Precondition 4 has his grant name the brief's hash and the table's, and say that no line is marked. So the table must be on `main` before his read.
+4. **A repair between windows refuses none.** That follows from "only the window it was made in", and the draft says it in terms for his read.
+5. **Answer 6.** The draft says his statement of `<N3>` stands in place of the subtraction for this opening. That is a question for him, and I have not put it.
+6. **The whole replay is recorded and not pinned.** `replay_drift` keeps its three rows of the first table.
+
+**What the draft needs that it does not order.** OPINION on each.
+- Session templates for the reviewer's table and for the builder's change to the evaluator. Templates are procedure, with readers' reads; `move-promotion-judge.md` was the move's own.
+- H4's fix before the opening. Inside the window a run that hangs would need his hand on GitHub, and I have not read how `guy_acts3.py` classes a cancelled run.
+- No push of his between 2026-11-30T00:00:00Z and the opening: the first one after that instant is the opening.
+
+**Next, mine, after your read:** a fresh pre-read by an agent of my own, then counsel's proposal of the draft to `main`, then the two cold reads by different families on `main`'s bytes (precondition 3). Then the cap goes to him, through you.
+
+**Open for the adviser:** your read of the draft, and the six points above. No question waits on the sovereign. This entry rings you once.
