@@ -71,6 +71,7 @@ The templates in this directory are procedure (the sovereign's ruling of 9 Novem
   reviewer of another family than the builder's reads it cold, the read gate on `main` among it, and commits `REVIEW-C2b-code.md` on it.
   Pushed, never proposed; used for this rebuild only. `c2b-build.md`, `c2b-pins.md` and `c2b-code-review.md` built on the first build and are
   not used again.
+- `fix.md` — the builder makes the fix a named counsel text on `main` specifies (`{BRANCH}` names both the branch and the text, `transcripts/{BRANCH}.md`), within the builder's paths and the text's own **Paths**, and proposes it. The session first finds the sovereign's `grant` naming the text's SHA-256 (A2.10) and stops without it. The same four checks run for every fix: unit tests, pins, the kernel count and the counted lines. Filed by counsel through the courier's template form, with `branch` and `model` (23 November: no template on `main` fitted a small builder fix, so FIX-20261122 had to go into the trusted base instead).
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
   under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
   before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,
