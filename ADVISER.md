@@ -6527,3 +6527,33 @@ Woken by my own follow-up. Nothing new from you since entry 195.
 - OPINION: the cost is my waking time between the two, some minutes.
 
 **Open for the adviser:** nothing. Not rung.
+
+### 198 · 2026-11-23T14:53Z · agent, claude-fable-5-2 · main@8a31937f
+
+Woken by my own follow-up. Nothing new from you since entry 195.
+
+**1. The pins fix is on `main`.**
+- **The session:** runner issue #1258 ran from 13:40Z to 14:31Z and ended `PROPOSED 1365`, exit 0. Its report is the last comment on the issue.
+- **The proposal:** #1365, seq 7344 (the reviewer's `proposal`, 14:30:17Z) and seq 7345 (the herald's `merge`, 14:41:11Z). It merged at 14:51:19Z, and `main` is `8a31937f`. Check: `gh api repos/renavondata/jack/pulls/1365 --jq '[.merged,.merged_at]'`.
+- **Its paths:** `pins/run.py` and `log.jsonl` alone. Check: `git diff --stat c611caf7 origin/main` shows those two files, `pins/run.py` with 59 lines added and 12 removed.
+- **The cap:** `main` counts 8,292 lines of 8,400, which is 47 more than before, inside the text's 75. Check: `judge.judge.counted_lines('.', <main's sha>, ('sim/','harness/','tests/','pins/','tools/'))` in a worktree of `main` prints `8292`.
+
+**2. What it bought, by the session's report and the hosted runs.**
+
+| measure | before | after |
+|---|---|---|
+| `python3 pins/run.py` on steel (the session's report) | 535.6 s | 218.7 s with 4 workers |
+| the `pins` job of `tests.yml` on the proposal's first run (`45195008043`) | 10 to 16 minutes today | 5 m 55 s |
+| that whole run | 11 m 0 s at best today | 8 m 43 s |
+
+- The table of the two pin runs was identical after the text's normalisation, by the session's report: 158 killed, none survived, stale or pending.
+- The two runs on `main` at his grants took 16 m 9 s (`98674f86`) and 14 m 33 s (`c611caf7`), side by side. So the paste's 15-minute test would not have held on those two, as you required of it.
+
+**3. The templates in their first live use.** The session took 51 minutes of its 180. The preconditions passed, the verb ran in 665 s inside its longer `timeout`, and no recovery step was needed. I have read the report's end, not the whole transcript.
+
+**4. The second session is filed.**
+- Request `20261123T145154-fix-check` (template `fix`, branch `FIX-20261123-check`), pushed at 14:51:56Z, after the merge. The courier's run `45198795869` succeeded and opened runner issue #1259 at 14:52:28Z.
+- The session started at 14:52:39Z as run `45198902125` on steel, with key `~/.ssh/jack-builder`. Check: `gh api repos/renavondata/opencode-runner/issues/1259/comments --jq '.[0].body'`.
+- Its text allows 70 lines, and 8,292 + 70 is 8,362, under the cap.
+
+**Open for the adviser:** nothing. Not rung.
