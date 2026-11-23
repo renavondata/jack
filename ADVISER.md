@@ -5029,3 +5029,41 @@ R=renavondata/jack; RR=renavondata/opencode-runner; V="Withdrawn by the sovereig
 ```
 
 **Open for the adviser:** nothing until he answers. A question waits on him, so this entry does not ring.
+
+### 164 · 2026-11-23T06:57Z · agent, claude-opus-5-5 · main@5175c964
+
+**His word at about 06:38Z, on the rescue paste: "Pasted".** I have not seen its output, so the `/tmp` lines that R16 asks for are not yet with me.
+
+**What it did.**
+- Run `45124334509` ended `cancelled`. Runner #1251 was closed at 06:38:44Z by `gfrmin`.
+- The proposal went through. #1359, "due 20261123T0510: 6 resolved (world.renavon)", was opened by `gfrmin` at 06:55:20Z at head `97ee6a9b`. So the check passed with `TMPDIR` on disk.
+- **But it was stale on arrival.** `main` had moved at 06:47:43Z, and the herald closed #1359 as stale at 06:56:26Z. It dispatched a mechanical re-proposal for the builder, run `45127550912`, queued.
+
+**W4 (finding): closing a PR does not stop the herald. It merged one closed PR and re-proposed another.**
+- **#1355 was closed at his word at 06:23:58Z, and merged at 06:47:44Z** by `renavondata-jack-court[bot]`, as `main` `5175c964` shows.
+  - The herald run `45122730868`, in progress since 06:14:03Z, had already signed #1355's merge entry (`f4a87cb9`, "merge: #1355", 06:15:27Z). Its merge verb waits for the checks on that head and then merges it. Nothing in that wait reads the PR's state.
+- **#1356, closed at 06:24:01Z, was then commented "Closed as stale"** by the same run at 06:47:51Z, and `repropose` run `45126553919` was dispatched for it.
+  - The loop works through the list it read at the start (`herald.yml` line 49), and does not read a PR's state again before acting.
+- **Consequences.**
+  - Stream 187's transcript is on `main`.
+  - Stream 188's re-proposal is queued ahead of the rescued resolutions' re-proposal, on the same runners.
+  - The rescue itself was staled by the merge the paste meant to prevent.
+- **The fix, for the runner draft I owe.** The herald should re-read a PR's state before it merges, completes a merge or re-proposes, and skip a closed one. That joins `repropose.py`'s two skips (entry 158) in one `counsel/` draft on the runner, for his merge.
+
+```sh
+R=renavondata/jack; gh api repos/$R/pulls/1355 --jq '[.state,.merged_at,.closed_at,.merged_by.login]|@tsv'; gh api repos/$R/issues/1355/events --jq '.[]|[.event,.actor.login,.created_at]|@tsv'
+gh api "repos/$R/issues/comments?since=2026-11-23T06:40:00Z" --jq '.[]|[(.issue_url|split("/")|last),.user.login,.created_at,.body[0:60]]|@tsv'
+git -C <opencode-runner> show origin/main:.github/workflows/herald.yml | sed -n '49,54p'
+```
+
+**A fourth paste, put to him without your read** (R17: the message says so). It is `/home/claude/work/paste-withdraw4.sh`, SHA-256 `3cc73d690f892d3567c75af80a95d7b2cf1d110908e5fdd01c748ca414ccc58c`, 1417 bytes, `bash -n` clean.
+- **What it withdraws.** It cancels run `45126553919` and closes any open runner issue titled "reviewer: re-propose PR #1356…". By P7, that covers the model session a refused mechanical run would file. It also closes any open jack PR from an `ops-stream-188-` branch.
+- **Closing test:** `completed 0 0`.
+- At 06:56:38Z its queries printed `queued`, `0` and `0`.
+- **What it does not touch:** `45127550912`, the rescue's re-proposal, and runner #1254, the live resolver of 7306 to 7311.
+
+```sh
+R=renavondata/jack; RR=renavondata/opencode-runner; V="Withdrawn by the sovereign, 23 Nov: PR #1356 was closed at his word at 06:24Z; the herald re-proposed it from a list taken before that, and it carries no forecast, only a proposal entry and a reviewer transcript (ADVISER.md entry 164)."; [ "$(gh api user --jq .login)" = gfrmin ] && ( s=$(gh api repos/$RR/actions/runs/45126553919 --jq .status); if [ "$s" = completed ]; then echo "run 45126553919 had already completed"; else gh run cancel 45126553919 -R $RR && echo "cancelled run 45126553919, which was $s"; fi ) && ( for i in $(gh api "repos/$RR/issues?state=open&per_page=50" --jq '.[]|select(.title|startswith("reviewer: re-propose PR #1356"))|.number'); do gh issue close $i -R $RR -c "$V" && echo "closed runner #$i" || exit 1; done ) && ( for n in $(gh api "repos/$R/pulls?state=open&per_page=50" --jq '.[]|select(.head.ref|startswith("ops-stream-188-"))|.number'); do gh pr close $n -R $R -c "$V" && echo "closed #$n" || exit 1; done ) && sleep 20 && [ "$(gh api repos/$RR/actions/runs/45126553919 --jq .status) $(gh api "repos/$RR/issues?state=open&per_page=50" --jq '[.[]|select(.title|startswith("reviewer: re-propose PR #1356"))]|length') $(gh api "repos/$R/pulls?state=open&per_page=50" --jq '[.[]|select(.head.ref|startswith("ops-stream-188-"))]|length')" = "completed 0 0" ] && echo "Done: stream 188's re-proposal is withdrawn" || echo Stopped
+```
+
+**Open for the adviser:** nothing until he answers. A question waits on him, so this entry does not ring.
