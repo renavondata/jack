@@ -411,6 +411,43 @@ class Jack(unittest.TestCase):
         self.commit("pins/FAIL", "")
         self.refused(self.jack("proposal", key=self.w.ann), "the check fails: pins/run.py")
 
+    def test_check_names_the_first_failure_in_its_order(self):
+        script = ("import json, os, sys, tempfile, time\n"
+                  "start = time.monotonic()\n"
+                  "time.sleep(1.1 if name != 'count' else 0)\n"
+                  "tmp = os.environ['TMPDIR']\n"
+                  "open(os.path.join(tempfile.mkdtemp(), 'leftover'), 'w').write('clean me')\n"
+                  "with open(os.path.join(os.environ['CHECK_RECORDS'], name), 'w') as f:\n"
+                  "    json.dump([start, time.monotonic(), tmp], f)\n"
+                  "if name == 'pins' and failed: sys.stdout.write('a' * 2000); sys.stderr.write('b' * 10)\n"
+                  "if failed: sys.exit(1)\n"
+                  "import unittest\nclass Ok(unittest.TestCase):\n    def test_ok(self): pass\n")
+        paths = ("tests/test_ok.py", "pins/run.py", "tools/count_kernel.py")
+        self.branch()
+        for case, failed in enumerate(((1, 1, 0), (0, 1, 1), (0, 0, 1))):
+            with self.subTest(case=case):
+                records = os.path.join(self.tmp.name, f"records-{case}")
+                os.mkdir(records)
+                self.env["CHECK_RECORDS"] = records
+                for name, path, status in zip(("unit", "pins", "count"), paths, failed):
+                    write(os.path.join(self.repo, path), f"name, failed = {name!r}, {status}\n" + script)
+                self.git("add", "--", *paths)
+                self.git("commit", "-q", "-m", "check stand-ins", "-m", TRAILER)
+                r = self.jack("proposal", key=self.w.ann)
+                command = ("-m unittest discover -s tests -t .", "pins/run.py", "tools/count_kernel.py")[case]
+                prefix = f"refused: the check fails: {command}\n"
+                self.refused(r, prefix)
+                self.assertTrue(r.stderr.startswith(prefix), r.stderr)
+                if case == 1:
+                    self.assertEqual(r.stderr, prefix + ("a" * 2000 + "b" * 10)[-1500:] + "\n")
+                unit, pins, count = (json.loads(read(os.path.join(records, name))) for name in ("unit", "pins", "count"))
+                self.assertLess(count[1], min(unit[0], pins[0]))
+                self.assertLess(max(unit[0], pins[0]), min(unit[1], pins[1]))
+                self.assertTrue(all(end - start >= 1 for start, end, _ in (unit, pins)))
+                self.assertEqual({row[2] for row in (unit, pins, count)}, {unit[2]})
+                self.assertNotEqual(unit[2], self.tmp.name)
+                self.assertFalse(os.path.exists(unit[2]))
+
     def test_branch_verb_push_rejected_prints_the_finishing_commands_and_undoes_nothing(self):
         self.branch()
         self.git("push", "-q", "origin", "work")
