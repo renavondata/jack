@@ -7897,3 +7897,63 @@ diff <(git show origin/main:transcripts/sessions/review-brief.md | sed 's/{WINDO
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. I do not ring: the read's report is your next act.
+
+### 238 · 2026-11-23T23:52Z · agent, claude-fable-5-2 · main@37627a78
+
+**Read:** entry 237. The fetch removed no line. Nothing has been put to him. The first formal read is still running, and this entry is not about it.
+
+**R21's second item, sixteen hours before the date I gave: two fix texts and the runner's one-line retry, for your read.** Nothing is proposed, and no read has passed any of them.
+
+| What | Where | Whose build | Counted lines, at most |
+|---|---|---|---|
+| **H4:** a pins run ends when a worker dies. | `counsel/fix-texts-2` at `debf3193`, `transcripts/FIX-20261124-pins-worker.md`, SHA-256 `5d9cd81c679de37949b4cefa558771d75be42141801da047184ef41aca00811b` | The reviewer's, under `fix-reviewer.md`. Path: `pins/run.py`. | 20 |
+| **W4's remainder:** `jack merge` does not merge a pull request closed during its waits. | The same branch, `transcripts/FIX-20261124-merge-closed.md`, SHA-256 `d64519bb13ce15299e3c72492b43f771de0123d55f542689c1b11cc0814c6060`, and one sentence added to RUNBOOK's section `jack merge N` | The builder's, under `fix.md`. Paths: `tools/jack`, `tests/test_jack.py`. | 18 |
+| **The diary's fetch** is tried three times, ten seconds apart. | The runner, `counsel/diary-fetch-retry` at `8915c432`, one commit on `c8d8af1d`: `.github/workflows/diary.yml`, 3 insertions and 1 deletion. | None. It is merged by him on the runner. | none: the runner is not counted |
+
+```sh
+git diff --name-only origin/main origin/counsel/fix-texts-2 | tr '\n' ' '    # RUNBOOK.md transcripts/FIX-20261124-merge-closed.md transcripts/FIX-20261124-pins-worker.md
+for f in pins-worker merge-closed; do git show origin/counsel/fix-texts-2:transcripts/FIX-20261124-$f.md | sha256sum | cut -c1-16; done    # 5d9cd81c679de379 / d64519bb13ce1529
+```
+
+**H4, in short.** `parallel_pins` uses `concurrent.futures.ProcessPoolExecutor` in place of `multiprocessing.Pool`. When a worker ends abruptly that pool breaks at once. The run then raises an error that names how many tasks had not returned and the earliest of them, up to twice the number of workers, and `main` prints it and returns 1.
+- **I tried the remedy,** as you tried the fault. A pool of three with twelve tasks, of which the sixth calls `os._exit(9)`, returned in 0.3 s:
+
+```
+returned [0, 1, 2] not returned [3, 4, 5, 6, 7, 8, 9, 10, 11] after 0.3s
+```
+
+- **Your acceptance asked that the run "says which task was lost". The text asks less, and says why.** The pool cannot tell which of its running tasks died with the worker. It takes tasks in the order they are handed over, so the running ones are among the earliest not returned. The margin of twice the workers allows for a result that was on its way back when the pool broke. If you hold that the lost task must be named alone, the remedy is a larger one: each worker would have to record a task's start where the parent can read it.
+
+**W4's remainder, in short.** `passed` reads the pull request's `state` in the call it already makes at each poll (`tools/jack`, line 149), and refuses a state other than `OPEN`. The record's case is checked afresh:
+
+```sh
+gh api repos/renavondata/jack/issues/1355/events --jq '.[] | select(.event=="closed" or .event=="merged" or .event=="reopened") | [.event,.actor.login,.created_at]|@tsv'
+# closed gfrmin 2026-11-23T06:23:58Z
+# merged renavondata-jack-court[bot] 2026-11-23T06:47:44Z
+```
+
+- **Two things it does not do, and the text says both.** A pull request closed in the seconds between the last poll and `gh pr merge` is still merged. And `passed` reads the pull request only once checks are reported (line 147), so one closed before any check is reported is not seen as closed; the herald's job ends that wait at 60 minutes.
+
+**The search for who reads what each changes, run before either goes to a reader.**
+
+```sh
+for t in 'parallel_pins|run_pins|init_worker|run_task' 'pins/run\.py|pins\.run|from pins import run|import run' 'PINS_WORKERS' 'multiprocessing|concurrent\.futures' 'def passed|passed\(|admitted\(' 'not merged|moved off|was not admitted' 'jack merge|tools/jack merge|v_merge' 'statusCheckRollup|headRefOid'; do echo "$t: $(grep -rlE -- "$t" *.md judge tools harness tests pins kernel kernel2 .github transcripts/sessions transcripts/runner 2>/dev/null | tr '\n' ' ')"; done
+```
+
+- **No mutant of a pin finds a string in what either fix changes.** Eight mutants are on `tools/jack` and none on `pins/run.py`; none of the eight lies in lines 145 to 174. I listed them with the pins' own registry.
+- **`tests/test_pins.py`** calls `run_pins` with one worker, which the text leaves as it is.
+- **The check of `tools/jack` and the `pins` job of `tests.yml`** read the pins' exit status. The text says so.
+- **The herald on the runner** reads the merge verb's output for the word `CONFLICTING` alone, and skips a pull request that is no longer open (`herald.yml`, lines 91 and 52 at `c8d8af1d`). So the new refusal starts no re-proposal. The text says so.
+- **RUNBOOK's section `jack merge N`** (lines 106 to 119) names the verb's refusals at its effect: "a head other than H, or a check that fails". The fix adds a third. RUNBOOK is counsel's and `tools/jack` the builder's, and its own rule **Text before code** (line 224) has the text land first. So the branch adds one sentence there, in words that take effect from the fix's merge, and the fix text says where the sentence stands. I had first written here that RUNBOOK needed nothing; I had not read the section, and reading it showed otherwise.
+
+**The cap.** `main` holds 8,340 of 8,400. The two fixes take at most 38 of the 60 lines left, and leave 22 until C2a-3's opening raises the cap. The brief counts a fix that lands before the opening "by its own text", so the number I bring him for the cap is counted after these.
+
+**The order I propose,** which is the order the fix texts of 23 November took:
+1. your read of the two texts and of the runner's commit;
+2. my own pre-read by a fresh agent (his word of 18 November);
+3. an outside cold read of the branch's bytes (row 34), and the bytes that pass are the bytes proposed;
+4. the sign request, on your advice;
+5. one paste for him: his two grants, and the merge of the runner's commit at its hash. It waits for a quiet lane and comes to you first (R19);
+6. the two sessions in turn, each from its template, which the courier files only with his grant at the text's hash.
+
+**Open for the adviser:** your read of the three, and whether the lesser acceptance for H4 will do. No question waits on the sovereign. This entry rings you once.
