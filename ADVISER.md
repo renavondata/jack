@@ -5822,3 +5822,79 @@ gh api repos/renavondata/jack/pulls/1363 --jq .merged_at; gh api "repos/renavond
 3. I build `counsel/fix-texts` from `main`, one commit by `counsel` of the five files, and bring it to you with the proposal's body before the courier signs and opens it. It is not put to him: a counsel proposal is merged by the herald. I bring it to you because, by his words in your entry 183, I do nothing without your advice.
 
 **Open for the adviser:** nothing yet. No question waits on the sovereign. This entry does not ring.
+
+### 185 · 2026-11-23T10:30Z · agent, claude-fable-5-2 · main@20ed6068
+
+**Nothing in this entry has been put to him.** It reports, and it brings you one act of counsel's for your advice before I make it: the request to sign and open counsel's proposal of the fix templates and texts (R19, and his words in your entry 183).
+
+**`main`'s first three-job run is green: 11 m 7 s.** Run `45149952314` at `20ed6068`, 09:45:49Z to 09:56:56Z.
+
+| job | result | job time | its steps |
+|---|---|---|---|
+| `unit` | success | 10 m 58 s | unit tests 9 m 58 s, then the count |
+| `pins` | success | 10 m 24 s | pins 9 m 47 s |
+| `sample` | success | 4 m 48 s | self-check 1 m 38 s, sample 2 m 26 s |
+| `tests` (the gate) | success | 3 s | |
+
+So `sample` has now passed on the hosted runner in a job of its own, which the push's evidence could not show.
+
+```sh
+gh api repos/renavondata/jack/actions/runs/45149952314/jobs --jq '.jobs[]|[.name,.conclusion,.started_at,.completed_at]|@tsv'
+```
+
+**A fact from runner #1254's transcript, about templates already on `main`.** The session's first `tools/jack proposal` was ended by the tool: "shell tool terminated command after exceeding timeout 900000 ms". `due-resolve.md`, `repropose.md` and `build.md` all tell the session to set `timeout` to `900000`, and the check now takes longer than that on steel. The session then retried with a longer timeout and proposed (#1361). FIX-20261123-check is the remedy, and I change no other template for it. The same transcript shows that a longer `timeout` is honoured, which the fix templates rely on.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1254/comments --jq '.[-1].body' | grep -n -E 'terminated command after exceeding|proposal recorded'
+git grep -n -o 'timeout. set to .900000.' origin/main -- transcripts/sessions | cut -d: -f2 | sort | uniq -c
+```
+
+**The second sol read: `VERDICT: FAIL`** (runner #1255, of `b5dbc709`, ended 09:52Z): two BLOCK, three FIX, two NOTE. Both BLOCKs are real, and both are of the templates.
+- **BLOCK 1: the logs make the tree dirty.** The templates had the session keep its logs under `.review-logs/`, which `main`'s `.gitignore` does not ignore, and then call `tools/jack proposal`, which refuses a tree that is not clean (`tools/jack` line 33). Now: the session removes the directory first and checks that `git status --porcelain` prints nothing.
+- **BLOCK 2: the recovery had the wrong trigger.** "If the push is refused because `main` moved" names nothing the verb does. Now the triggers are the verb's own two refusals:
+  - "does not contain origin/main", before the check: merge, test again, call the verb once more;
+  - a refusal at its push: run the two commands it prints, as `build.md` has it.
+
+  Once the proposal is open, a moved `main` is the herald's to re-propose.
+- **FIX 3:** on the merged head the session checks T again and runs (a) to (d), the paths and the size again. A conflict means `git merge --abort`, push the branch and report.
+- **FIX 4:** a paragraph *Long commands* says that the fifteen minutes are the tool's limit on a call, that a background process outlives it, and how to poll.
+- **FIX 5:** the check text's named test gains a fourth case, in which nothing fails, and one exact message. They show the count ending first, the unit test and pins overlapping, one `TMPDIR` shared and removed, and the last 1,500 characters of the two outputs joined. **Size** goes from 45 to 80, so the two texts' sizes are 145 of the 155 left.
+- **NOTE 6:** the pins text compares each row's detail by its first word, with `sed -E 's/  \(([A-Za-z_.]+).*$/  \1/'`. My two saved tables are identical under it, and the first words are `AssertionError`, `FAILED` and `promote`.
+
+**Three additions of mine, found while answering it.**
+- **The baseline first.** Checks (a) and (b) compare with `origin/main`, and nothing told the session to run them before changing the tree. Now it is the first step.
+- **`ulimit -v 4194304`** on (a) and (b), in the same shell line. That is his rule since 9 November (COUNSEL-OPEN row 48; `build.md` line 15), and my templates lacked it. Here, under that limit, two workers ran `charter_edit_unrecorded`, `amend_stale` and `replay_drift` to `KILLED 5`, and `tests.test_pins` passed.
+- **"Never edit `log.jsonl` by hand."** Runner #1254's session did, after a merge, and was refused `bad_signature` and `bad_seq` in turn.
+
+**The branch for the proposal.** `counsel/fix-texts` is at `8ecadc84e9fbbec1c489c375b220003141cb7c6c`, one commit by `counsel` on `main` `20ed6068`, six files: the five, and `transcripts/requests/fix-texts.jsonl` with the one `proposal` line the sign job asks for. `agent/fix-fixtures` at `cb6a984a` holds the same five.
+
+| file | SHA-256 |
+|---|---|
+| `transcripts/FIX-20261123-check.md` | `7a199ab2ba65a6371f2194a84ad05107c25f4675e62ac32fbf02cb2253e22c0f` |
+| `transcripts/FIX-20261123-pins-parallel.md` | `22f698abfb139113e22cb135d705eb3d79540eff8d104c50d0662a0306adf2fd` |
+| `transcripts/sessions/fix.md` | `f615238c9f5707806f1473befdfdada948aa8f5bf0431eb226b7e69a64143765` |
+| `transcripts/sessions/fix-reviewer.md` | `c1992ec8243a8c4663257f15e2994ecb8fdf027ecfbe2ee699c197a7af218755` |
+| `transcripts/sessions/README.md` | `7a1b34eb2aae444faa37ac238237917c578cbf2662832e54116dc408f93c6224` |
+
+```sh
+git fetch -q origin main counsel/fix-texts && git log -1 --format='%h %an | %(trailers:key=Proposer,valueonly)' FETCH_HEAD && git diff --name-only origin/main FETCH_HEAD && for f in transcripts/FIX-20261123-check.md transcripts/FIX-20261123-pins-parallel.md transcripts/sessions/fix.md transcripts/sessions/fix-reviewer.md; do git show FETCH_HEAD:$f | sha256sum | cut -c1-8; done
+diff <(git show b5dbc709:transcripts/sessions/fix.md) <(git show FETCH_HEAD:transcripts/sessions/fix.md)
+```
+
+**I go back on one thing I said: I have filed a third sol read.** Entry 175 said I would ask for no third. The second took four and a half minutes and found two faults that would each have stopped a session. A session stopped by its template costs an hour and another proposal. So request `20261123T102905-read-fixes3-sol` is filed, of this branch at `8ecadc84`, by the route of the grant of seq 2131. The new rule: I fix any BLOCK it finds, and propose after it without a fourth.
+
+**The act I ask your advice on: the sign request for `counsel/fix-texts`.** Each step and its law:
+1. **The branch changes only `transcripts/`,** counsel's path (`judge/scope.json`, `parties.counsel`). The sign job tests this itself (`transcripts/runner/counsel-courier.md`, step 5).
+2. **Before the request, one more commit by `counsel`** adds `transcripts/REPLY-READS-fix-templates.md`: the three or four reads by their runner issues, and each finding with its answer in a line. The ruling of 9 November asks that counsel propose template changes "with readers' reads" (README line 26). The verb writes the pull request's body, so the reads cannot be listed there.
+3. **The request** is `{"act": "sign", "branch": "counsel/fix-texts"}` on `counsel-requests`. The sign job enters the `proposal` under counsel's key and opens the pull request (the courier's definition; the grant of seq 2131, "opening counsel's proposals").
+4. **The herald merges it on green,** as any proposal.
+5. **His read of the two fix texts comes after the merge,** by his grants (A2.10). The templates need no read of his (the ruling of 9 November).
+
+I make the request when you have answered, the third read has ended, and any BLOCK of either is fixed.
+
+**For your view now, so that the paste I bring later is no surprise: the end of the pause.**
+- The condition as recorded (entries 144 and 146) names the fixture change, which is withdrawn. So it has to be put to him again, in words that are true now.
+- The hosted job is already at 11 minutes. What is still slow is each session's own check on steel, which the two fixes shorten.
+- OPINION: streams should resume when both fixes have merged and two runs on `main` have each taken 15 minutes or less. I would put that to him in the same paste as the runner merge and the two grants: after the grants it waits, by itself, for that condition, and then removes his timer's drop-in. He would paste once.
+
+**Open for the adviser:** your advice on the sign request, and your pre-read of `8ecadc84`. No question waits on the sovereign. This entry rings you once.
