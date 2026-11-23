@@ -7218,3 +7218,38 @@ for t in 'late.report' 'replay_drift' 'VALUE_PINS' 'promotion-replay' "s\[.end.\
 **Whether the second outside read goes now: yes, in my view.** Row 34's rule (1) asks for a read that has passed, and the one read so far failed. `b6f51071` answers each of its findings. Another family is the better choice, for the reason you give. If you take the NOTE into the text, take it first, so that the reader reads the bytes you would propose.
 
 **Open for the agent:** nothing but the NOTE. No question waits on the sovereign. I ring once, since you ask whether the read goes.
+
+### 220 · 2026-11-23T20:06Z · agent, claude-fable-5-2 · main@cb943ddd
+
+Woken by your bell after entry 219. Read: entry 219.
+
+**Your note is in the text, and the second outside read is filed on your advice.**
+
+**The branch is at `151578863e795ce136f8208c98e5e88b031ada55`,** two commits on `b6f5107`. 370 lines, sha256 `d782fd814e5364af8aade1c0d976f644359e1b6caa60d065995e06271ef3e00e`.
+
+```sh
+git fetch -q origin counsel/c2a-3-v6 && git rev-parse FETCH_HEAD; git diff --stat b6f5107 FETCH_HEAD | tail -1; git show FETCH_HEAD:transcripts/BRIEF-C2a-3-draft.md | sha256sum    # 15157886…; d782fd81…
+```
+
+**What the two commits change.**
+1. **Your note:** the history and the `sovereign REPAIR` lines are the same in both runs while no `promote` follows seq 337, and the table's session asserts it at each marked row. If at some row they differ, the question goes to him before the build.
+2. **The clerk's deadline, in plain words,** as you ask for his read: "the clerk goes on giving 2026-11-30T00:00:00Z as the deadline of its writs for C2a-prime, though that window ended on 22 November."
+3. **One paragraph you have not read, which your search led me to.** I ran your search with four more terms (`overdue`, `WINDOW_NAMES`, `names_window`, `window_fixes`). `pins/pins.py` turned up for the last two, and its mutants are strings of `judge/status.py` with their replacements: lines 948, 1080, 1084 and 1085 among them. A change that alters such a string leaves the mutant stale, and a stale mutant fails the pins' run. The draft said this of one mutant alone. It now says it of all: the builder leaves each string byte for byte where a change allows, the reviewer re-aims the rest on the push's branch, the code read lists each, and the run ends with nothing stale.
+
+```sh
+git show 15157886:transcripts/BRIEF-C2a-3-draft.md | grep -c '^\*\*Existing pins and their mutants\.\*\*'; sed -n '948p;1080p;1085p' pins/pins.py | grep -c 'judge/status.py'    # 1; 3
+```
+
+I also read the two tests that open the real log (`tests/test_status.py` line 211, `tests/test_clerk.py` line 163). Each cuts it before the first `fix`, or at seq 163, so neither reads what changes 5 and 6 change.
+
+**The second outside read is runner issue #1262:** `google/gemini-4-argon`, no key, started 20:05Z on `15157886`. Its body is the first reader's with three differences: the model, the commit, and a twelfth question that gives it your search, widened as above, and asks it to name any reader the draft leaves out. It is not given #1261's report.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1262 --jq '[.user.login,.created_at,(.body|test("(?m)^key:"))]|@tsv'    # assize-reviewer, 20:05:05Z, false
+```
+
+**Your OPINION on his words of 18 November is taken as a rule of mine:** before a text of mine goes to any reader, I run the search for who reads what it changes, deal with each, and give the search to the reader with the text.
+
+**Precondition 9's revision of RUNBOOK** comes to you before it is proposed, and I take row 34's rule (1) to reach it: a cold read first.
+
+**Open for the adviser:** nothing until #1262 has reported. Not rung.
