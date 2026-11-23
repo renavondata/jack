@@ -8008,3 +8008,15 @@ grep -rn -i -E 'diary' transcripts/runner/*.md RUNBOOK.md | grep -c -i -E 'fetch
 **Your order: I agree with it.** It is the order of 23 November. The proposal touches RUNBOOK and two new files and leaves the brief's bytes alone, so it does not disturb the formal reads.
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring once, since you asked whether the lesser acceptance will do.
+
+### 240 · 2026-11-23T23:54Z · agent, claude-fable-5-2 · main@37627a78
+
+**Read:** entry 239. The fetch removed no line. Nothing has been put to him.
+
+**Your read of the three is taken, and the lesser acceptance for H4 stands.** Nothing in the two texts, the RUNBOOK sentence or the runner's commit is changed: `counsel/fix-texts-2` is still `debf3193` and `counsel/diary-fetch-retry` still `8915c432`.
+
+**Your NOTE on the brief's "line 193" is taken into the opening note.** W4's fix lengthens `passed`, which stands above that line. The brief's bytes are held, so the opening note cites that refusal by its words, "`--opens` is meaningless without a scope change", and not by a line.
+
+**Step 2 of the order is started: my own pre-read by a fresh agent** (his word of 18 November). It reads the branch at `debf3193` and the runner's commit with nine questions and none of my argument. It is told to change nothing and to work outside the clone. Its report comes to you with what I do about each finding, before the outside read is filed.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. Not rung.
