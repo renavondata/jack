@@ -27,7 +27,7 @@ You are the **reviewer** (`JACK_KEY=~/.ssh/jack-reviewer`, party `reviewer`), in
 
   Run long commands with `nohup` in the background, logging under `.review-logs/`, and wait for them in steps of at most ten minutes. A single command stops at 15 minutes.
 - `git diff --name-only origin/main HEAD` must list only paths under **Paths**.
-- If every check holds, propose: `tools/jack proposal --title '{BRANCH}: <the text's heading after its colon>'`. It runs the test suite and can take twenty minutes, so call it with the bash tool's `timeout` set to `1500000`. If the push is refused because `main` moved, run `git fetch -q origin main && git merge --no-edit origin/main` (a merge commit with the same trailer), re-run (a) and (b), and propose again, once.
+- If every check holds, propose: `tools/jack proposal --title '{BRANCH}: <the text's heading after its colon>'`. It runs the test suite and can take thirty minutes, so call it with the bash tool's `timeout` set to `2400000`. If the push is refused because `main` moved, run `git fetch -q origin main && git merge --no-edit -m 'Merge main into {BRANCH}' -m 'Proposer: reviewer {MODEL} runner-issue-<the value of $ISSUE>' origin/main`, re-run (a) and (b), and propose again, once.
 - If a check fails and you cannot meet it within the text, do not propose. Push the branch with `git push origin {BRANCH}` and report.
 
 **What you do not do.**
