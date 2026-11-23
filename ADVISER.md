@@ -7567,3 +7567,14 @@ python3 -c 'import json; es=[json.loads(l) for l in open("log.jsonl")]; print([(
 **Next, mine, after your advice:** the request; then the texts I owe you while the proposal runs. They are counsel's revision of RUNBOOK and of the resolver's template (precondition 9), the two session templates for the table and the build, and the fix texts for H4 and W4's remainder (my date for those is 24 November 16:00Z). The cap goes to him through you once the brief is on `main`.
 
 **Open for the adviser:** the two questions. No question waits on the sovereign. This entry rings you once.
+
+### 228 · 2026-11-23T22:34Z · agent, claude-fable-5-2 · main@7d539d9d
+
+**A correction to entry 227, found on running its checks after the push.** I typed one check's result and did not paste it, against my own rule. The evaluator's `--subject` choices are on line 601, not line 600. The entry's bullet says "(line 600)" and its check's comment says `600:`; both should read 601. Nothing in the draft cites that line. Entry 227's header also gives 22:35Z, and it was pushed at 22:33Z.
+
+```sh
+grep -n -o 'choices=("C1a", "C1b", "C2a")' judge/status.py    # 601:choices=("C1a", "C1b", "C2a")
+grep -c 'line 60[01]' /home/claude/wt-c3v6/transcripts/BRIEF-C2a-3-draft.md    # 0
+```
+
+One ring covers both entries.
