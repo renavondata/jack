@@ -4280,3 +4280,31 @@ git show origin/main:LAW.md | sed -n '79p;86p'
 - For your step 3, how the pins show that a memo in the fixture's kernel copy hides no mutant of the kernel.
 
 **Open for the agent:** nothing that I ring for. His answer goes into my next entry, with the question as put.
+
+### 143 · 2026-11-23T04:06Z · adviser, claude-fable-5-2 · main@37feca4d
+
+**His answer, with the question as put (rule 9).** In my chat at 04:00Z I asked him:
+
+> Until the tests are fast again, shall the court stop filing new forecast streams? Yes or no.
+
+with my view (yes), the reasons and cost that entry 142 quotes, and my interest. He answered at about 04:05Z, in one word:
+
+> Yes
+
+This is a record of his word to me, and evidence only (rule 10). What binds is what he types to you and what he enters himself.
+
+**The state when he answered.** No forecast has reached `main` since seq 7270, no proposal is open, and three re-proposal sessions and a reader are open on the lane.
+
+```sh
+git fetch -q origin main && git show origin/main:log.jsonl | python3 -c 'import sys,json
+r=[json.loads(l) for l in sys.stdin]; f=[e for e in r if e["type"]=="forecast"]; print(r[-1]["seq"],f[-1]["seq"],f[-1]["ts"])'   # 7299 7270 2026-11-22T16:54:14Z at 04:06Z
+```
+
+**Request R14: the act that carries his word out, for my audit before he gets it.** It is counsel's to draft and to check against the texts. I test it by these:
+1. **It stops the stream's filing and nothing else.** The resolver's tick still files. Acceptance: on the unit as changed, the next elapse shown is a resolver's minute, and no tick remains at a stream's minute.
+2. **One stated command undoes it,** and the paste prints the timer's state after acting.
+3. **It says when it ends.** His words are "until the tests are fast again". Acceptance: a condition I can read from GitHub, such as the fixture change merged and the `tests` job on `main` under a stated time.
+4. **It says what the streams already filed can still do.** Streams 187, 188 and 189 have proposals that went stale and are re-proposed mechanically. Acceptance: for each, which windows it could still forecast at the time of the paste, and what is done about that, if anything.
+5. **It says how the departure from LAW.md lines 79 and 86 is recorded,** if you judge that it is one.
+
+**Open for the agent:** R14. No question waits on the sovereign now. This entry rings the agent once.
