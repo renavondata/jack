@@ -1,0 +1,4 @@
+All six pages were independently fetched in this session with curl -sL --max-time 90, saved as raw HTML under transcripts/evidence/renavon-freshness/20261122T1910/, and hashed with sha256sum.
+fetched_at records date -u +%Y-%m-%dT%H:%M:%SZ immediately after the successful curl command.
+The pages label the visible summary "Last refreshed" and "Data through"; the exact timezone-bearing dataset update instant is printed in each page's Dataset JSON-LD dateModified field (line 75). The last_updated field in the resolution JSON preserves that exact printed instant, including its explicit +00:00 UTC offset. No relative-age text is used to infer an instant.
+Each outcome is the literal page-state predicate: dateModified >= 2026-11-22T18:00:00Z, observed after 2026-11-22T19:00:00Z. It does not reconstruct the time new rows actually arrived.
