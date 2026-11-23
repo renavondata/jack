@@ -6557,3 +6557,33 @@ Woken by my own follow-up. Nothing new from you since entry 195.
 - Its text allows 70 lines, and 8,292 + 70 is 8,362, under the cap.
 
 **Open for the adviser:** nothing. Not rung.
+
+### 199 · 2026-11-23T16:14Z · agent, claude-fable-5-2 · main@cbdac17b
+
+Woken by my own follow-up. Nothing new from you since entry 195.
+
+**1. The check fix is on `main`, so both fixes are.**
+- **The session:** runner issue #1259 ran from 14:52Z to 15:34Z and ended `PROPOSED 1366`, exit 0.
+- **The proposal:** #1366, seq 7346 (the builder's `proposal`, 15:33:00Z) and seq 7347 (the herald's `merge`, 15:47:11Z). It merged at 15:57:15Z, and `main` is `cbdac17b7a2ca8144ebd0affa5e6db9e672b2a3a`. Check: `gh api repos/renavondata/jack/pulls/1366 --jq '[.merged,.merged_at,.merge_commit_sha]'`.
+- **Its paths:** `tools/jack` (15 added, 2 removed), `tests/test_jack.py` (37 added), `tests/test_promotion_judge.py` (one line) and `log.jsonl`. Check: `git diff --stat 8a31937f origin/main`.
+- **The cap:** `main` counts 8,340 of 8,400, which is 48 more, inside the text's 70. Check: `judge.judge.counted_lines` as in entry 198 prints `8340`.
+- **By the session's report,** the unit suite passed with 312 tests, the pins ended with 158 killed and nothing else, and the proposal verb took 455 s. The reviewer's session an hour earlier took 665 s for the same verb. I have read the report's end, not the whole transcript.
+
+**2. The paste's condition for lifting the pause holds since 16:09:37Z.**
+- `TMPDIR` is in `main`'s `tools/jack` and `PINS_WORKERS` in its `pins/run.py`. Check: `git show origin/main:tools/jack | grep -c TMPDIR; git show origin/main:pins/run.py | grep -c PINS_WORKERS` gives `1` and `2`.
+- The two latest completed push runs on `main` are green in 739 s (`cbdac17b`, run `45210987097`) and 564 s (`8a31937f`, run `45198688149`), and the latest is at `main`'s head. Check: the file's two expressions on `$RUNS` print `2` and `main`'s sha.
+- **I cannot see steel.** If his terminal lived, the file removed the drop-in on its next round, at about 16:10Z. The first evidence either of us can read is a `diary` run of the runner at 18:20Z: stream ticks ran at :20 of every third hour until 03:20Z today, and none since. Check: `gh api 'repos/renavondata/opencode-runner/actions/workflows/diary.yml/runs?per_page=100' --jq '.workflow_runs[]|select(.run_started_at|test("T[0-9][0-9]:2[0-9]:"))|.run_started_at' | head -1`.
+
+**3. The hosted test time still varies, with less room than I expected.**
+
+| run on `main` | unit | pins | sample | whole run |
+|---|---|---|---|---|
+| `8a31937f` (pins fix in) | 393 s | 554 s | 388 s | 564 s |
+| `cbdac17b` (both fixes in) | 662 s | 535 s | 266 s | 739 s |
+
+- The `pins` job took 355 s on #1365's first run and about 540 s on these two. OPINION: the hosted runner gives the pool fewer cores than steel's four workers; I have not read the jobs' logs for the worker count.
+- Before the fixes the whole run took 660 to 969 s today. Both runs above are under the file's 900 s, the slower by 161 s.
+
+**4. Finding Z's work, as it stands.** The three-job workflow (seq 7339), the pins on several cores (#1365) and the check side by side (#1366) are on `main`. The runner holds the lane changes and the refusal of keyed bodies (`f67c721e`). Still mine, and not started: the sixth draft of BRIEF-C2a-3, the delta to BRIEF-C2b-draft, `v_merge`'s merge of a closed pull request (W4's remainder), and the diary-lane redraft.
+
+**Open for the adviser:** nothing. Not rung.
