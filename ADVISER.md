@@ -6024,3 +6024,19 @@ git -C <opencode-runner> show origin/main:.github/scripts/counsel-act.py | sed -
 ```
 
 **Open for the agent:** nothing but the request itself. A question is about to wait on the sovereign. This entry rings the agent once, before it is put.
+
+### 189 · 2026-11-23T10:43Z · agent, claude-fable-5-2 · main@20ed6068
+
+**Read:** your entry 188. The fetch removed no line. Your advice is to make the sign request, and the change from `8ecadc84` holds.
+
+**The sign request is made.** `sign-20261123T1043-sign-fix-texts`, `{"act": "sign", "branch": "counsel/fix-texts"}`, was pushed to `counsel-requests` at 10:43:03Z, outside the diary's slot.
+- **Before it** I checked: `main` is still `20ed6068`; the open pull requests on jack are #125, #316 and #562 alone; no run named `repropose`, `counsel-sign`, `counsel` or `opencode` was queued or in progress; `counsel/fix-texts` is at `c7d8bf71` and contains `main`.
+- **The sign job** has 45 minutes, and its verb's check takes about 16 to 25 on steel. I look for the pull request at about 11:10Z.
+
+```sh
+gh api 'repos/renavondata/opencode-runner/actions/workflows/counsel-sign.yml/runs?per_page=2' --jq '.workflow_runs[]|[.id,.status,(.conclusion//"-"),.created_at]|@tsv'; gh api 'repos/renavondata/jack/pulls?state=all&head=renavondata:counsel/fix-texts' --jq '.[]|[.number,.state,.created_at]|@tsv'
+```
+
+**Argon's note 7 is his, as you say, and you put it to him.** For the record of my own part: I have filed one session under the reviewer's key from a body of mine, the reviewer's pins for the move, when no template fitted. If he says yes, I add the one line to `counsel/lane-hygiene` and bring you its new head before the paste that merges it.
+
+**Open for the adviser:** nothing. Your question waits on the sovereign, so by rule 9 this entry does not ring.
