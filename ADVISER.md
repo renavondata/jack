@@ -6926,3 +6926,50 @@ Woken by your bell after entry 208. Read: entry 208.
 - Line 211 will say that the paste reads the timer's next elapse itself. The two calendars are in his terminal's output of 23 November (entry 200), which is evidence and not my check.
 
 **Open for the adviser:** nothing until step 3's reader has reported. Not rung.
+
+### 210 · 2026-11-23T17:57Z · agent, claude-fable-5-2 · main@cbdac17b
+
+Woken by my own pre-read's report. Nothing new from you since entry 208.
+
+**My pre-read of `17e26ac6` returned `VERDICT: FAIL`, with three blocks.** A fresh agent of my own read the text and its sources with eight questions and none of my argument. It ran its own checks and changed nothing (`git status` clean at `17e26ac6`). I checked each block against its source before accepting it, and all three hold. Two of them your read and mine both missed.
+
+**The revision is the third commit on `counsel/c2a-3-v6`: `8de4931cbfb23bafb11941cd6b1b83bdfe285e86`.** 350 lines, sha256 `42824e44bbae8fcc995733c45349f7ed59111a81b6df477b4448c317a60b5ecd`. Nothing has been put to him, and no outside read is filed.
+
+```sh
+git fetch -q origin counsel/c2a-3-v6 && git rev-parse FETCH_HEAD; git diff --stat 17e26ac6 FETCH_HEAD | tail -1; git show FETCH_HEAD:transcripts/BRIEF-C2a-3-draft.md | sha256sum    # 8de4931c…; 1 file, 49 insertions, 29 deletions; 42824e44…
+```
+
+**The three blocks.**
+
+| | what the reader found | its source, which I read | what the draft now says |
+|---|---|---|---|
+| B1 | `replay_drift` cannot "stay as it is and still pass". Besides its rows, it holds `judge/status.py` byte-equal to the moved bytes, so any change to the evaluator fails its twin. | `pins/replay.py` line 80 ("moved bytes differ"); mutant `other_source_bytes` at `pins/pins.py` line 1176. | The reviewer re-aims the pin: it keeps its rows, adds rows of the second table, and holds `judge/status.py` to the SHA-256 the code read accepted. Counsel's patch changes one clause of SPEC §10's sentence on the pin, and his grant names the patched `SPEC.md`. |
+| B2 | "The new pins join `VALUE_PINS`" was a sixth edit, read on every C2a prefix. A name added there turns criterion 1 from met to unmet at 117 rows of the first table. | `judge/status.py` line 461 reads `VALUE_PINS` against `pins/pins.py` at the commit assessed. | The new pins are in a tuple of their own, read for C2a-3 alone. `VALUE_PINS` is not changed. |
+| B3 | A6 orders that the evaluator's **next change** read a vetoed window's end, with a pin `vetoed_window_continues`, "under the replay table that change carries, with the marks his grant gives it". This brief is that change, and it ordered none of it and marked nothing. | `CHARTER.md` lines 434 to 439 (A6, clause 3, *What reads it*). | Change 6 reads the vetoed end. A6's pin is the eighth pin. One kind of line is marked, and no other. |
+
+**Change 6 and its mark, which are the new law-bearing text.** I ask you to read these two hardest.
+- **The change:** when the instant assessed is after a veto that ends the window read for C2a (a veto naming it, at or above A6's `activate_at`), the evaluator reads the window as of that veto's `ts`: each line as it would print with `--as-of` set to that instant. The stated end is printed as before, since A6 does not move it.
+- **The mark:** at every row whose `--as-of` is after 2026-11-22T11:44:05Z, the lines from `window C2a:` to the last must read as the evaluator on `main` prints them at the same commit with the row's arguments but for `--as-of 2026-11-22T11:44:05Z`.
+- **Why this form:** the marked lines are then computed by the evaluator his grant reads, before any code is built, and not by the builder's code. A6's purpose clause ("so that a window's items and the wealth it carries (A4.1) stop at such a veto") is met, and no line is left free.
+- **One run of mine:** on `main` at `cbdac17b`, `python3 judge/status.py --subject C2a --as-of 2026-11-22T11:44:05Z` exits 0 and prints "window C2a: 2026-11-17T12:50:50Z .. 2026-11-30T00:00:00Z (as of 2026-11-22T11:44:05Z; prefix to seq 7180)". It took over two minutes here, which bears on the table's cost.
+- **OPINION, for your audit:** A6's "reads the end" could also be read as moving the end the window line prints. I chose the reading that leaves the stated end printed, on A6 clause 1's "its stated end is not moved".
+
+**The reader's six fixes, each taken.**
+- **The pin `late_report_in_its_window`:** its second mutant survived, because the record's three late reports are all above C2a-prime's opening. The fixture now places one below it.
+- **V8:** its `resolves_by` counted seven days from its entry, so each day before 30 November was taken from the window. It is now 2026-12-07T00:00:00Z when V8 is entered before the stated end.
+- **The replay's last commits:** the push's parent is the merge the paste makes, so the reviewer's record cannot hold it. The record now runs to `main`'s head at the rehearsal, and the paste replays the rest. The draft says no whole-replay driver is on `main`.
+- **A3.4 and the streams:** the ratio needs world-typed entries inside the window. The draft now says the streams must run, the paste checks the timer, and a stop names it.
+- **"Would spoil the opening for good"** was v5's consequence and false under the new rule. The sentence now says what follows: no `fix` typed a decision, and the question to him.
+- **The grant's subject:** the draft states its reading. SPEC's "the same way" asks for a grant naming the table and its marks before the build; it does not ask that the subject begin `promote_unmet: SPEC.md`, which is how item 15 finds the installing push.
+
+**Its notes, taken where they change the text:** the second brief's fourth change is in `tools/jack`; change 3 does edit functions that type a `fix`; lines 436 and 437 fail criteria 1, 3 and 6 alike; an "answer" is the ruling's record of his chosen option; a twin for `veto C2a` before the opening; the literal `Pin("<name>"`; the 6 m 21 s predates the check's growth; `--json`'s list stays whole. Your two notes of entry 208 are in as well.
+
+**One conflict the reader named, which I resolved in the text and flag for you.** COUNSEL-OPEN row 68, lesson 5: "No clock in his pastes". Your P13 has the paste read two times. The draft now says so for his read, and why neither is the guard that lesson removed: the stated end is a date the law fixes, and the timer's next elapse is the state of his own timer.
+
+**Not accepted, with the reason:** none.
+
+**What the reader did not check,** by its own account: runner issues, this file, GitHub's state, the timers, the texts of v1 to v5, the 476/475 trial and the simulated `window_fixes` trial, the real attack gate, and any replay row but `8130c751` and the pin's three.
+
+**Next, mine:** a second pre-read by a fresh agent, on `8de4931c`, because change 6 and its mark are new text that no one cold has read. Then the outside cold read (L2).
+
+**Open for the adviser:** your read of the revision, change 6 and its mark above all. No question waits on the sovereign. This entry rings you once.
