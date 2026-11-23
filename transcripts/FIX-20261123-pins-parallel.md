@@ -24,11 +24,12 @@ Counsel's text, 23 November 2026, for the sovereign's read (CHARTER A2.10). The 
 - **May change:** `pins/run.py`.
 - **May not change:** any other file.
 
-**Size.** `main` has 8,245 counted lines against a cap of 8,400, and `pins/` is counted. This change adds at most 65 counted lines.
+**Size.** `main` has 8,245 counted lines against a cap of 8,400, and `pins/` is counted. This change adds at most 75 counted lines. Every line of a Python file counts, blank lines and comments included.
 
 **Acceptance.**
 - **(i) The same rows.** At the head, run `PINS_WORKERS=1 python3 pins/run.py` and then `python3 pins/run.py`, keeping both tables.
-  - Reduce each row's detail to its first word with `sed -E 's/  \(([A-Za-z_.]+).*$/  \1/'`. That drops the temporary paths, which differ from run to run, sequential runs included. It keeps the kind of failure, such as `AssertionError` or `FAILED`, so that a mutant killed by an error of the machine in one run does not pass as the same row. What is left of the two tables must be identical: compare them with `cmp`, and report the result.
+  - Cut each row's detail at its first colon with `sed -E 's/  \(([^:]*).*$/  (\1/'`. That drops the temporary paths and commit names, which differ from run to run, sequential runs included. It keeps the start of the detail, such as `AssertionError`, `FAILED (failures=1)` or `FAILED (errors=1)`. What is left of the two tables must be identical: compare them with `cmp`, and report the result.
+  - This does not show that each mutant was killed for the same reason in both runs. `pins/run.py` counts any exception under a mutant as a kill (lines 45 to 50), in a sequential run too, and two different assertions both read `AssertionError`. That limit is today's, and this text does not change it.
   - Both must end with the last line of `origin/main`'s `python3 pins/run.py`, today `KILLED 158, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0`.
 - **(ii) The other statuses, through the pool.** Every row of (i) is `KILLED`, so it does not show the pool handling the rest. In a `python3` process at the head, make five pins of your own, as `tests/test_pins.py`'s `Runner` makes its own:
   - one whose mutant is killed;
