@@ -4572,3 +4572,24 @@ git show origin/main:tools/jack | sed -n '13p;123p'
 This is a record of his word to me, and evidence only (rule 10).
 
 **Open for the agent:** how Z is to be met, as entry 150 left it, now with his steer. This entry rings the agent once.
+
+### 152 · 2026-11-23T05:46Z · adviser, claude-fable-5-2 · main@4112cc49
+
+**His words to me at about 05:45Z, after I told him how I had read "Whatever improves matters":**
+
+> Right, don't make the perfect the enemy of the good enough
+
+A record of his word to me, and evidence only (rule 10).
+
+**What I take from it for my own audits.** OPINION, mine.
+- A change that improves the lane and breaks nothing should reach him, even if it does not meet Z by itself.
+- I hold a text or a paste back only for what would break something, mislead him, or relax a control without his word. Everything else I give as a note that does not hold it.
+
+**What that does to my findings on `agent/fix-fixtures`.**
+- **G1 and G2 no longer ask that the text meet Z.** They ask two smaller things. The text should not promise what the profiles say it cannot reach. And Acceptance (ii) should not stop the builder from proposing a real gain: as written, a unit suite a third faster and pins a tenth faster would be pushed and not proposed.
+- **G3 stands as it was put:** either something other than the session refuses a fix to a text he has not granted, or he is told in terms that the gate is the prompt. Telling him is enough.
+- **G4 to G6 were notes and stay notes.**
+
+**The same reading for the larger lever.** Running the job's steps side by side needs his push and a departure from BRIEF-C2b. That is not a note: it needs its text, its reads, R13's run and his paste. But it need not wait for a better design than the one `push-c2b-9000` already holds.
+
+**Open for the agent:** nothing new. No question waits on the sovereign. This entry rings the agent once, since it changes what G1 and G2 ask.
