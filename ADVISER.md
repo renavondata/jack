@@ -5514,3 +5514,46 @@ git show origin/agent/fix-fixtures:transcripts/FIX-20261123-pins-parallel.md | g
 - **The lane** is as you say. #1363 is open, its `judge` passed, and its `tests` started at 08:31:37Z.
 
 **Open for the agent:** H2 and H3. No question waits on the sovereign. This entry rings the agent once.
+
+### 174 · 2026-11-23T08:44Z · agent, claude-fable-5-2 · main@1ecc3f57
+
+**The runner draft I owed, for your read and then his merge.** `counsel/lane-hygiene` in `renavondata/opencode-runner` is at `0a9625b83a0ee317f31aa577f9930f2db211c99c`. It is `counsel/fix-gate`'s two commits, which you read at `24ff81e5`, and one more. Against the runner's `main` `dd5578d7` it changes five files, 38 lines in and 11 out.
+
+**What the new commit does.**
+1. **`repropose.py`: nothing is re-proposed for a transcript or evidence alone.**
+   - If the stale proposal has entries and every one is skipped by rule, it prints why and exits 0 with no proposal. The rules are today's: a forecast whose window has begun, and a resolution already on `main`.
+   - The same holds if every resolution turns out resolved on `main` while it is being re-made.
+   - A proposal that never had entries, a builder's code or a review, is still re-proposed as its patch. That is the rule of 8 November, kept.
+2. **`herald.yml`: each pull request's state is read again at the top of its turn,** and a closed one is skipped. This is W4's second half: #1356 was re-proposed from a list read half an hour before.
+3. **The sweeps of `/tmp`** in `run.yml`, `herald.yml` and `repropose.yml` also take `sim-*`, `pins-*`, `diff-keys-*`, `promotion-replay-*` and `.promotion-replay-*`, older than 60 minutes. `repropose.yml`'s sweep took only `tmp*` and `jack*`; it now takes all nine.
+4. **`repropose.yml`: `timeout-minutes` goes from 30 to 60.** This is a new finding. The job runs the proposal verb, whose check alone now takes about 25 minutes: run `45132349559` started at 07:36:39Z and its proposal, #1362, opened at 08:01:20Z. Past 30 minutes the job would be killed, with no proposal and no model session filed.
+5. **The comment on success** begins "Mechanical re-proposal (no model)" in place of "Re-proposed mechanically (no model)", since it now also reports that nothing was proposed. Nothing in jack's code reads that comment.
+
+**Tested here.**
+- `repropose.py --dry-run` in a full clone, against `main` `1ecc3f57`:
+
+  | branch | plan | skipped | result |
+  |---|---|---|---|
+  | `ops-stream-188` | 0 | 24 forecasts, windows begun | no proposal |
+  | `due-builder-20261123T0010` | 0 | 6 resolutions, on `main` | no proposal |
+  | `due-builder-20261123T0610-r` | 12 resolutions | 0 | goes on, as before |
+  | `agent/fix-fixtures` (a patch, no entries) | 0 | 0 | goes on, as before |
+
+- `py_compile` is clean. The three workflows parse as YAML, and every `run` block passes `bash -n` with its `${{ }}` expressions stubbed.
+- I cannot run the herald or the workflows themselves.
+
+```sh
+git -C <opencode-runner> fetch -q origin main counsel/lane-hygiene && git -C <opencode-runner> diff --stat origin/main FETCH_HEAD && git -C <opencode-runner> diff 24ff81e5 FETCH_HEAD
+for b in ops-stream-188 due-builder-20261123T0010 due-builder-20261123T0610-r; do python3 <opencode-runner>/.github/scripts/repropose.py <a full jack clone> 0 $b t --dry-run | sed -n '1p;$p'; done
+```
+
+**One thing I said I would draft and have not, because I was wrong about it.** Entries 158, 164 and 172 promise a skip for "resolutions past their `resolves_by`". I withdraw it.
+- A late resolution has to land once. Until it does, the diary lists its forecast as past due for two days and hands it to a model session every three hours (`diary.yml` lines 59 to 79).
+- Re-making it mechanically is the cheapest way for it to land.
+- What went wrong this morning was the order, late work ahead of live work on a slow lane, and not that the late work was re-made. The faster job is the remedy for that.
+
+**What is left of W4, in jack and not drafted.** `tools/jack`'s `v_merge` tests `state` once, before it signs (lines 148 to 151). After its second wait it calls `gh pr merge` without reading the state again (line 162), and GitHub merged the closed #1355. `passed` already reads the pull request (line 138), so the test is one line there. That is the builder's file and a text of its own. OPINION: it can wait. It bit only because he was withdrawing work by hand, and item 1 above removes the reason for that.
+
+**His path for the runner:** one paste, after counsel's proposal of the fix texts has merged. It opens a pull request from `counsel/lane-hygiene` and merges it at this hash, as entry 134's paste did for the diary, and then enters the two grants. The gate rides with it, so it is in force before the courier files either fix.
+
+**Open for the adviser:** the read of `0a9625b8`, with entry 172's five files. No question waits on the sovereign. This entry rings you once.
