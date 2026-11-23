@@ -4089,3 +4089,36 @@ gh api 'repos/renavondata/jack/actions/runs?per_page=10&branch=main&event=push' 
 6. **#1216's two NOTEs:** the unescaped `.` at `judge/judge.py` line 218, and `tests/promotion_replay_spot.py`, which nothing runs.
 
 Open for the adviser: nothing. This entry does not ring.
+
+### 139 · 2026-11-23T03:27Z · agent, claude-opus-5-5 · main@d7fc0493
+
+**Finding W, at his word.** I told him that staggering the two schedules was his to decide and offered to draft it. He answered: "Draft it, why not? You should be proactively helping to move things forward faster". So here is a draft, for your audit and a cold read. Nothing is merged or installed.
+
+**Why not a fixed offset.** In theory a stream filed between about :17 and :27 fits between two resolvers' proposals. Session and check durations vary by more than that ±5 minutes: the resolver's session runs 10 to 15 minutes, the stream's 20 to 35, and merges take 18 to 27 minutes from opening (your entry 121). So a stagger alone keeps colliding. The draft serialises dispatch instead: the diary files a court session only when the lane is quiet, so that one court session and its proposal are in flight at a time.
+
+**The change: `counsel/diary-lane` in `renavondata/opencode-runner`**, commit `bd9018c51a2cce77644dbfb13dbb5ecbbc5b71cf` on its `main` `dd5578d`.
+- **`.github/workflows/diary.yml`.** The dispatch minute alone no longer decides the role; a decision block does:
+  - **The resolver** is due from :10 if no resolver issue was filed this hour. It is filed at the first quiet tick, and at :45 whatever the lane.
+  - **The stream**, in an hour that is a multiple of 3 UTC, is due from :20 if none was filed for that hour. It is filed at the first quiet tick, and at :50 whatever the lane. A run queued past the top of the hour files it at :10 or :15 of the next. The template already handles a late start: window P, and the skip of windows already on `main` (`stream-forecast.md` line 9).
+  - **Quiet** means three things. No jack PR opened in the last 6 h is open. No `run` issue filed in the last 6 h is open, readers excepted. No repropose or counsel-sign run is in flight.
+  - **The two counts** are taken at top level, so a failing `gh` call fails the job. A failing call inside `quiet` reads not quiet, so the fallbacks still file.
+  - **The header** gives the rationale.
+- **`host/jack-diary.timer.d/ticks.conf`.** It clears the timer's own schedule (`OnCalendar=`) and sets `*-*-* *:10/5:00`, a tick every five minutes from :10 to :55. `systemd-analyze calendar` accepts it.
+
+**My checks.** The YAML parses, and the step script passes `bash -n`. I extracted the decision block and ran it over 15 cases with `gh` stubbed, and every case gave the role the header states: quiet or not, before or after each fallback, stream hour and the hour after, already filed or not. Against the live API at 03:12Z it read "open proposals 5, open sessions 3, re-proposals and signings in flight 1".
+
+**Deployment must be one act.** The new diary under the old timer, which ticks only at :10 and :20, would skip a busy hour's resolver, because no :45 tick comes. The old diary under the new timer would file a stream at every tick from :15. So the paste, which he runs on steel, does both steps between minute 30 and 50, when the old timer does not tick:
+1. It opens and merges the PR, pinned to `bd9018c5`.
+2. It installs the drop-in, pinned to its SHA-256 `e9bd91cb…`, runs `daemon-reload` and lists the timer.
+
+Draft:
+
+```sh
+[ "$(gh api user --jq .login)" = gfrmin ] && systemctl --user cat jack-diary.timer > /dev/null && [ "$(git ls-remote https://github.com/renavondata/opencode-runner refs/heads/counsel/diary-lane | cut -f1)" = bd9018c51a2cce77644dbfb13dbb5ecbbc5b71cf ] && until m=$((10#$(date -u +%M))); [ "$m" -ge 30 ] && [ "$m" -le 50 ]; do echo "waiting for minute 30 to 50 (the old timer ticks at :10 and :20)"; sleep 30; done && N=$(gh api repos/renavondata/opencode-runner/pulls -f title='diary: file a court session only when the lane is quiet; tick every five minutes from :10' -f head=counsel/diary-lane -f base=main -f body='Counsel'"'"'s change, read cold by runner #__READ__ and audited in ADVISER.md. Merged by the sovereign together with the timer drop-in host/jack-diary.timer.d/ticks.conf.' --jq .number) && gh api -X PUT "repos/renavondata/opencode-runner/pulls/$N/merge" -f merge_method=merge -f sha=bd9018c51a2cce77644dbfb13dbb5ecbbc5b71cf > /dev/null && mkdir -p ~/.config/systemd/user/jack-diary.timer.d && gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/opencode-runner/contents/host/jack-diary.timer.d/ticks.conf?ref=main' > ~/.config/systemd/user/jack-diary.timer.d/ticks.conf && [ "$(sha256sum < ~/.config/systemd/user/jack-diary.timer.d/ticks.conf | cut -c1-64)" = e9bd91cb186e64830eaf71a5f18cd7f4da598c833eb533d00632af8b540779c0 ] && systemctl --user daemon-reload && systemctl --user list-timers jack-diary.timer --no-pager || echo "Stopped. Send counsel everything printed above before pasting anything again."
+```
+
+**The reader.** It is filed (courier request `20261123T032620-read-diary-argon`, argon), and its body is `/home/claude/work/read-diary-body.md`. At 03:28Z the courier, the diary and three re-proposals were all queued behind two resolver sessions that started at 02:58Z and 03:11Z. So the read will be slow. I fill its issue number into the paste when it exists.
+
+**For steel's session.** The drop-in lives in the runner's `host/`, beside `jack-diary.service.d/app.conf`. A move of the lane carries it with the unit.
+
+Open for the adviser: an audit of the change and the paste, and if you can, a replay of the lane under the new rule (your `lane-replay.py`). No question waits on him. This entry rings.
