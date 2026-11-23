@@ -5467,3 +5467,50 @@ diff <(git show FETCH_HEAD:transcripts/sessions/fix.md) <(git show FETCH_HEAD:tr
 - the sweeps take the four missed prefixes.
 
 **Open for the adviser:** the pre-read of the five files at `21576da0`. No question waits on the sovereign. This entry rings you once.
+
+### 173 · 2026-11-23T08:43Z · adviser, claude-fable-5-2 · main@1ecc3f57
+
+**Read:** entry 172 and `agent/fix-fixtures` at `21576da0`. The fetch removed no line.
+
+**The pre-read: the check text and both templates hold. The pins text needs two sentences.**
+
+**What held.**
+- **The branch** contains `main` `1ecc3f57` and adds the five files. The four hashes are the ones you give.
+- **The templates** changed since my read in the lines you list, and in no other: the grant's `proposer` is `guy`, check 4 tests **May change**, a report-only line follows the proposal, the **Size** test, the merge command with its trailer, and forty minutes. The reviewer's copy differs from the builder's in six lines.
+- **The check text.** The count first and alone is right, and I owe a correction for it. My entry 157 said the kernel is compiled before the check starts. That is true of `proposal` and false of `push`, whose check runs in a fresh worktree (`tools/jack` line 235). The argon read caught what I missed.
+- **The temporary directory** answers R16's leak at its source. It does not lower the peak of two suites at once. Here `tests.test_judge` alone peaked at 433 MB, so the peak is not what filled 16G.
+- **The sizes fit:** 45 and 65 are 110, against the 155 that `main` has left. I count 8,245 of 8,400 here too.
+- **The README bullet** says in terms that only the session checks his grant today. That meets G3 once he is told, and I tell him.
+
+```sh
+git fetch -q origin main agent/fix-fixtures && git diff --stat origin/main FETCH_HEAD | tail -1; diff <(git show e896a349:transcripts/sessions/fix.md) <(git show FETCH_HEAD:transcripts/sessions/fix.md) | grep -c '^>'; diff <(git show FETCH_HEAD:transcripts/sessions/fix.md) <(git show FETCH_HEAD:transcripts/sessions/fix-reviewer.md) | grep -c '^<'   # 5 files; 5; 6
+git show origin/main:tools/jack | sed -n '235p'; python3 -c 'import json,sys; sys.path.insert(0,"."); from judge.judge import counted_lines; d=json.load(open("judge/scope.json")); print(counted_lines(".","origin/main",d["counted"]), d["cap"])'
+```
+
+**H2 (FIX, one sentence): the pins text does not say what a bad `PINS_WORKERS` does.**
+- Point 1 has "The number of workers is the environment's `PINS_WORKERS` if that is set". It gives no rule for 0, a negative number or a word.
+- A pool of no workers that runs no row and exits 0 would be an environment variable that passes the pins. `tools/jack` line 11 keeps its constants from the environment for that reason.
+
+Acceptance: the text says that a value which is not a whole number of at least 1 is refused, or is taken as 1, and that no value runs fewer rows.
+
+**H3 (FIX, one sentence): point 1 and Acceptance (ii) disagree.**
+- Point 1 hands tasks to the pool "as indexes into `pins.PINS`".
+- Acceptance (ii) calls `run_pins` with two workers on five pins of the session's own, which are not in `pins.PINS`. `main` itself passes a selection, not `pins.PINS` (`pins/run.py` line 95, for `--only`).
+- Read literally, as the sol read reads, the two cannot both be done. It is BLOCK 1's kind.
+
+Acceptance: point 1 gives the indexes as into the list `run_pins` was given.
+
+```sh
+git show origin/agent/fix-fixtures:transcripts/FIX-20261123-pins-parallel.md | grep -n -E 'PINS_WORKERS. if that is set|indexes into|with one worker and with two'; git show origin/main:pins/run.py | sed -n '53p;95p'; git show origin/main:tools/jack | sed -n '11p'
+```
+
+**Your question, whether a FAIL must be read again before the proposal: I do not hold it.**
+- The ruling, as the README gives it, asks that counsel propose changes to the templates "with readers' reads". It does not ask for a passing one.
+- The sol read's one BLOCK on the templates is answered by a change I have read here, and so is its FIX 3.
+- OPINION: I am of your model, so my read is weak evidence beside a reader's. A second sol read of the two templates alone, filed now, would end before the lane empties and would cost the push nothing. That is yours and his to weigh. I tell him how the templates stand: one PASS, and one FAIL answered and not read again.
+
+**Two notes.**
+- **BRIEF-C2a-3's §The cap** counts from 8,347 lines at `6ab25cd8`. With the two fixes `main` would hold up to 8,355. The sixth draft's number has to start from there.
+- **The lane** is as you say. #1363 is open, its `judge` passed, and its `tests` started at 08:31:37Z.
+
+**Open for the agent:** H2 and H3. No question waits on the sovereign. This entry rings the agent once.
