@@ -1,6 +1,6 @@
 # BRIEF-C2a-3 — the third window of C2a (draft v6, 23 November 2026, counsel, on v5 of 22 November and v4 of 18 November by counsel-5, after the reads of v1, v2 and v3 at runner issues #994, #998 and #1000, each `VERDICT: FAIL`)
 
-This file is `transcripts/BRIEF-C2a-3-draft.md`. Wherever a tool reads a name the window is called `C2a-3`. It is a draft: no read has passed it, nothing in it is proposed, and no builder session is filed on it before the sovereign has read it (A2.10: "Code is written to a text Guy has read").
+This file is `transcripts/BRIEF-C2a-3-draft.md`. Wherever a tool reads a name the window is called `C2a-3`. It is a draft: the two reads of §Precondition 3 have not been made, nothing in it is in force, and no builder session is filed on it before the sovereign has read it (A2.10: "Code is written to a text Guy has read").
 
 It is written on `transcripts/BRIEF-C2a-prime-draft.md` as `main` holds it, with its Amendments 1 to 11 ("the second brief" below). Every section that states a fact about this boundary is written out here. The read of v1 found that sections left standing by reference said things true of the second window and false of this one, so only rules are now taken by reference, and each place that does so names the sentences it replaces. The read of v2 found one statement of route B's still false: that the `fix` shows as a late report in the tool's assessment before the push. It does not, and §No item changes now says what the tool assesses there. The read of v3 found the last section still taken by reference, §The acts evidence, false in one sentence once this window's names were read into it; that section is now written out too. v5 changed v4 in five places, each to read C2a-prime's end as AMEND-A6 gives it (`transcripts/AMEND-A6.md`, read by him at seq 7132).
 
@@ -15,6 +15,9 @@ It is written on `transcripts/BRIEF-C2a-prime-draft.md` as `main` holds it, with
 - **The pin `third_window_cap`** names two mutants, 8,400 and 7,800, where v5 named 8,400.
 - **The new pins are required of C2a-3 alone,** in a tuple of their own, and the pin `replay_drift` is re-aimed, with two sentences of SPEC §10 in counsel's patch (§The code).
 - **V8's `resolves_by`** is counted from the stated end when V8 is entered before it (§The window).
+- **Counsel's revisions of RUNBOOK and of the resolver's template** are a precondition (§Precondition 9), an act of §Order of acts step 1 and a deliverable.
+- **The streams must be running:** §What continues says why, the opening paste waits for it, and §Stop and report if names it.
+- **Two of v5's pins change.** `scope_unchanged_on_main` loses its third requirement, which held C2a-prime's reading to the walk that the move has since corrected for every window. `veto_names_its_window` gains a twin.
 - Each sentence that named `tools/status.py`, or the code at `6ab25cd8`, as the evaluator in force now names `judge/status.py` as `main` holds it at `cbdac17b`; and each that spoke of C2a-prime's end as still to come now gives it as it fell.
 
 Where this brief quotes an "answer" of 20 November, it quotes the ruling's record of the option he chose (its section *The answers in short*).
@@ -110,7 +113,7 @@ A5.1's "whose `subject` names the window" is read as the window open for that su
 - its `ts` is after C2a-3's opening;
 - no `promote C2a` has `ts` at or before 2026-11-30T00:00:00Z.
 
-A `promote` with subject `C2a`, or a `veto` with subject `C2a` or `C2a-prime`, whose `ts` is after C2a-prime's opening and at or before C2a-3's opening names C2a-prime. That is the second brief's rule, bounded here by C2a-3's opening; the bound changes the typing of no `fix`, because the ruling's rule reads a `promote` or a `veto` only up to a window's stated end. So his vetoes at seqs 5879 and 7180 name C2a-prime and never C2a-3. A `veto` with subject `C2a-prime` entered after C2a-3's opening names no window. `status.py` assesses a `promote C2a` against the window it names, and prints `window: C2a-3 (third window of C2a, opened seq <n>)` beside the promotion line.
+A `promote` with subject `C2a`, or a `veto` with subject `C2a` or `C2a-prime`, whose `ts` is after C2a-prime's opening and at or before C2a-3's opening names C2a-prime. That is the second brief's rule, bounded here by C2a-3's opening; the bound changes the typing of no `fix`, because the ruling's rule reads a `promote` or a `veto` only up to a window's stated end. So his vetoes at seqs 5879 and 7180 name C2a-prime and never C2a-3. A `veto` with subject `C2a-prime` entered after C2a-3's opening names no window. The second brief's other rules stand as the code on `main` has them (`names_window`, lines 286 to 298): a `promote` or `veto` with subject `C2a` and a `ts` at or before C2a-prime's opening names C2a's first window, and any other window is named by a `subject` equal to its name. `status.py` assesses a `promote C2a` against the window it names, and prints `window: C2a-3 (third window of C2a, opened seq <n>)` beside the promotion line.
 
 ### What continues
 *The second brief's rules, written out.* Value *E* and continued liveness *E* continue as they stand (A4.1; `wealth_continues`): the same events, base rate and mixture; the same item process from C1b's opening; the same attack gates. The streams run as BRIEF-C2a's Amendments 2 and 3 state, and this brief changes none. Nothing in `judge/value.py`, `tools/clerk.py`, `item_process`, `score_items`, `sovereign_keys` or `P0` changes. Nothing in the functions the second brief's change 2 names changes either, except as change 3 below states. The late-report rule changes none of them: `item_process` gathers late reports as it does now, and criterion 6 reads them by the rule (§The late-report rule). The streams must be running: A3.4's ratio needs world-typed entries inside the window (line 551: `exit_procedure <= 5 * s["object"]`), and a window with none is refused. The opening paste checks that his timer shows its stream calendar (§Order of acts step 2). C2a-3's reading runs the one item process and the one value ledger over the whole prefix from their first openings. So what is finalised between C2a-prime's end and C2a-3's opening is in the wealth C2a-3 continues, as the interval before C2a-prime's opening was in its (A4.1).
@@ -161,7 +164,7 @@ C2a-prime's and C2a's assessments are not changed: on any instant inside either 
 *The ending veto.* A window that the evaluator reads, of any subject, is ended by the earliest `decision veto` on the prefix for which three things hold:
 - it names the window (§The subject);
 - its `seq` is at or above the `activate_at` of the `amend` entry with `id` `A6`. A prefix that holds no such `amend` holds no ending veto;
-- it lies inside the window: its `ts` is at or before the window's stated end, and no `promote` that closes the window precedes it.
+- it lies inside the window: its `ts` is after the window's opening and at or before the window's stated end, and no `promote` that closes the window precedes it.
 
 A window ends once: a later veto that names it ends nothing more. A veto below the height ends nothing, so seq 5879 is read as it is now.
 
@@ -305,7 +308,7 @@ This brief states no minimum length for the window.
   - Requires: criterion 7's acts interval begins at C2a-3's opening, with the overlap rule.
   - Mutant: C2a-prime's opening.
 - `vetoed_window_continues` (AMEND-A6, clause 3, *What reads it*)
-  - Requires: a window is ended by the earliest veto that names it at or above A6's `activate_at`, and whenever the prefix holds that veto the window is read on the prefix that ends with it, as of its `ts` (change 6).
+  - Requires: a window is ended by the earliest veto that names it at or above A6's `activate_at`, and whenever the prefix holds that veto the window is read on the prefix that ends with it, as of its `ts` (change 6). The pin tests what `report` returns, which is the same whether the two readings are made inside `assess` or in `report`.
   - Mutant: a veto at or above the height is ignored as an end.
   - Twins: such a veto ends the window there, at a later instant with no later entry as much as after a later entry; a veto after the window's stated end ends nothing; a prefix with no `amend` `A6` is read as now; a veto below the height ends nothing; of two such vetoes the earlier ends it; an entry that follows the veto with the veto's own `ts` is not read; with C2a-prime so ended and C2a-3's opening push on the prefix, C2a-3 is read; the list of overdue forecasts is read at the instant assessed.
 - `late_report_in_its_window`
