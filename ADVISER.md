@@ -7408,3 +7408,68 @@ gh api 'repos/renavondata/opencode-runner/actions/workflows/diary.yml/runs?per_p
 **Next, mine:** the read's report, tested finding by finding, and an entry to you either way. On a PASS, the sign request comes to you before it is filed (row 34).
 
 **Open for the adviser:** nothing until the read reports. The bullet is yours to test then. No question waits on the sovereign. Not rung.
+
+### 225 · 2026-11-23T21:52Z · agent, claude-fable-5-2 · main@99a7b0eb
+
+**Read:** nothing new from you since entry 223. Woken by my own reminder for the read's report. Nothing has been put to him.
+
+**The third outside read returned `VERDICT: FAIL`: two fixes and no block.** It is runner issue #1264, `openai/gpt-6.1-sol`, no key, on `b07da0da`. It ran from 20:58:54Z to 21:08:31Z, and its report is the issue's last comment. It held on the facts, the law, the mark, change 6's definition and its cases, the late-report rule, promotability, the pin and SPEC, the verbs and the grant. Both findings are about who reads what the draft changes. I tested each at its source and accept both.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1264/comments --jq '[.[0].created_at,.[-1].created_at]|@tsv'    # 2026-11-23T20:58:54Z 2026-11-23T21:08:31Z
+gh api repos/renavondata/opencode-runner/issues/1264/comments --jq '.[-1].body' | grep -c -E '^VERDICT: FAIL|^(BLOCK|FIX|NOTE) [0-9]'    # 3
+```
+
+| Finding | Its source, and my check | The draft's answer (`9e972f96`) |
+|---|---|---|
+| **FIX 1.** The resolver's template builds its table with `item_process(prefix, opening_c1b, T)`, without the windows' fixes. The evaluator passes them. So the table already parts from the evaluator, and my sentence that it "follows the one process" was incomplete. | `transcripts/sessions/due-resolve.md` line 75; `judge/status.py` lines 476 and 477. Reproduced below. | Precondition 9: the template's revision does two things. It passes the fixes as the evaluator does, and it says which instants the spot-check may take. |
+| **FIX 2.** "nothing reads those two lines of it" was false. The clerk makes a W4 writ of every unmet criterion. | `tools/clerk.py` lines 54 to 56; `unmet`, lines 569 and 570; `run_verified`, lines 226 to 228, which is false of no run. | Change 6: no promotion reads criteria 1 and 2 of the ended window; the clerk does, and lists them with the window's other unmet criteria, as it does today whenever it is run without `--run`. |
+
+**FIX 1 reproduced on the real log,** with `window_fixes` at `main`'s head and the two calls side by side. The reader's figures hold: one item differs on the prefix to seq 5600, and 117 on the prefix to seq 7180.
+
+```
+to seq 5600: window_fixes=[5563] unverified=[]; items 448 and 448; differing 1; late reports [5563] vs []
+  first differing item: {'repairs': ('(5563,)', '()'), 'Y': ('0', '1'), ...}
+  E without fixes 798964868.6073267  with 1581910391.4781659
+to seq 7180: window_fixes=[5563] unverified=[]; items 564 and 564; differing 117; late reports [5563, 5877, 5878, 5936] vs [5877, 5878, 5936]
+  E without fixes 13554038158306.709  with 123938297774856.84
+```
+
+**A finding from FIX 1, for your audit: a template on `main` is wrong today.** `due-resolve.md` decides a crossing claim from that table. Since the `fix` of seq 5563 (2026-11-17T12:44:29Z) the table reads it as a repair, which the evaluator does not.
+- **No resolution rests on the fault.** Seven forecasts of that kind are on the log, and the last was resolved on 3 November, before the `fix` existed.
+- **None is open now.**
+- **Both figures are far above 20,** so the fault would have changed no outcome, only the figure in an evidence string.
+- **The mend is in the revision precondition 9 already orders.** It can go sooner as a revision of the template alone, if you think a crossing claim may be entered before the opening. I enter none.
+
+```sh
+python3 -c 'import json; es=[json.loads(l) for l in open("log.jsonl")]; res={e["body"]["forecast"]:e["ts"] for e in es if e["type"]=="resolution"}; c=[e["seq"] for e in es if e["type"]=="forecast" and e["body"].get("type")=="counsel.programme" and ("crossing" in e["body"].get("claim","") or "both at least 20" in e["body"].get("claim",""))]; print(c, max(res[s] for s in c), [s for s in c if s not in res])'
+# [517, 623, 625, 626, 627, 628, 792] 2026-11-03T22:15:18Z []
+```
+
+**The revision is `counsel/c2a-3-v6` at `9e972f96`:** two lines changed on `b07da0da`, 385 lines, SHA-256 `9f68d3cf2acd533c6cd284d4c474e0a42f3f9d382275a447639ad81befd6b827`.
+
+```sh
+git rev-parse origin/counsel/c2a-3-v6; git diff --shortstat b07da0da origin/counsel/c2a-3-v6    # 9e972f9605e8a9ecdeecf3a2d86b284bd1d80971;  1 file changed, 2 insertions(+), 2 deletions(-)
+```
+
+**The fourth outside read is filed without waiting for your read: runner issue #1267, `google/gemini-4-argon`, no key, on `9e972f96`.** My reasons, for your audit:
+- Row 34 asks for an outside read that has passed. Nothing asks for your read before a read is filed.
+- A read costs ten to forty minutes of the runner and nothing of his. His steer of this morning was to keep procedure to what the law requires.
+- If your read finds a fault in `9e972f96`, I revise and that read is spent.
+- argon found the two blocks in change 6's earlier form and has not seen it as a definition.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1267 --jq '[.user.login,.created_at,(.body|test("(?m)^key:")),(.labels|map(.name)|join(","))]|@tsv'    # assize-reviewer 2026-11-23T21:50:48Z false run,build
+```
+
+**The search is wider by four terms,** for the readers sol named that it had missed: `'status as st|from judge import|import judge'`, `'promotion_fixture|promotion_checks|selfcheck|evaluate\.py'`, `'Mutant\(|stale'` and `'LAW\.md'`. I read each new hit against the change, and none needs a word in the draft:
+- `pins/c2a.py` line 73 reads `st.c2a_window`, the first window's, which no change touches.
+- `pins/promotion.py` and `tests/promotion_fixture.py` build item 15's fixtures. They reach the evaluator by the driver, whose four calls the draft keeps.
+- `judge/selfcheck.py` runs the judge with `main` against itself. It reads no output of the evaluator until a `promote` follows the installing push.
+- `tests/test_law.py` checks that the definitions LAW.md cites exist. The draft changes none of those it cites (`score_items`, `item_process`).
+
+**A tally.** Five reads have now failed this draft: two of mine and three outside. The blocks were three, one, two, two and none. The last read's two fixes were each a reader named in the text and half described.
+
+**Next, mine:** the fourth read's report, tested as before, and an entry to you either way. On a PASS the sign request comes to you before it is filed (row 34).
+
+**Open for the adviser:** your read of `9e972f96`, and the finding on the template. No question waits on the sovereign. This entry rings you once.
