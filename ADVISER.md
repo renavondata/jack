@@ -7141,3 +7141,38 @@ git show c5a9cf0d:transcripts/BRIEF-C2a-3-draft.md | grep -o 'the earliest `deci
 **And one on my guard.** Entry 216 was pushed at 19:17:16Z, inside the minutes you keep (07 to 12 and 17 to 22) though outside the ones I had set (8 to 11 and 18 to 21). No tick fell at 19:20Z. My guard now waits out your minutes.
 
 Nothing else in entry 216 changes. Not rung.
+
+### 218 · 2026-11-23T19:59Z · agent, claude-fable-5-2 · main@cb943ddd
+
+Woken by my own follow-up for the outside read. Nothing new from you since entry 215.
+
+**The outside cold read returned `VERDICT: FAIL`: two blocks, five fixes and a note.** It is runner issue #1261, `openai/gpt-6.1-sol`, no key, on `c5a9cf0d`; it ran from 19:25:54Z to 19:35:11Z, and its report is the issue's last comment. It left its checkout clean. It found no further unmarked-line counterexample, no criterion that must stay unmet, and no failed quotation. I tested each finding against its source and accept all of them.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1261/comments --jq '.[-1].body' | grep -n '^VERDICT:\|^[0-9]\. BLOCK\|^[0-9]\. FIX\|^[0-9]\. NOTE' | cut -c1-110
+```
+
+**The revision is the sixth commit on `counsel/c2a-3-v6`: `b6f5107140c8f18417ddfba50026889917747e5d`.** 368 lines, sha256 `0639ebe2c0675c11c157ae8ee19dd543f2105d5728d5ebc480e73f8ad62c93e3`; 20 insertions and 9 deletions on `c5a9cf0d`. Nothing has been put to him.
+
+| the reader's finding | its source, which I read | what the draft now says |
+|---|---|---|
+| **BLOCK 1.** "As of the veto's `ts`" admits an entry after the veto in the same second. A6 ends the window at the veto entry. | SPEC §7, lines 225 to 227: timestamps do not decrease, so they may repeat. `judge/status.py` line 160 filters by `ts`. | Change 6 reads the prefix that ends with the veto entry, as of its `ts`. An entry that follows it is not read, whatever its `ts`. The mark's run by `--as-of` is the same on this log, since seq 7180 alone has that `ts`; the draft says so. The pin has a twin for the tie. |
+| **BLOCK 2.** The status object was not settled: `end`, `as_of`, the history and the repair lines. `tools/clerk.py` takes `s["end"]` as the deadline of its W3 and W4 writs. | `tools/clerk.py` lines 54 to 56 and 82; RUNBOOK lines 363 to 368; `judge/status.py` lines 195 to 204 and 642 to 660. | Three things are named as not the window's and read as now: the overdue list, the history with the `sovereign REPAIR` lines, and the stated end. `end` stays the stated end, so the clerk reads what it reads today. `--json`'s members are listed by name. |
+| **FIX.** Change 6 was for C2a's windows; A6 says "every window". | CHARTER lines 433 to 439. | It applies to a window of any subject. No veto at or above the height names C1a or C1b, so no row changes. |
+| **FIX.** The grant's subject: the words leave open whether "the same way" carries the form forward, and I had excluded it. | SPEC lines 524 to 535; `judge/judge.py` lines 212 to 237. | The grant begins `promote_unmet: SPEC.md` and the patched file's SHA-256, as seq 6851 began. Either reading is met, and item 15 still finds the installing push at seq 7281. |
+| **FIX.** "There the three late reports refuse as before" was said of C1b and C2a's first window too. | `item_process` on those prefixes returns no late report. | The three are on C2a-prime's prefix alone. |
+| **FIX.** The second try needs his own `main` brought up first. | `tools/jack` lines 31 to 47 and 70 to 81. | The paste brings his `main` up to `origin/main`, then the branch, then tests and pushes. |
+| **FIX.** RUNBOOK's sentence that a late report "refuses `promote` while it stands" becomes false for C2a-3. | RUNBOOK line 425; lines 224 to 230. | Precondition 9: counsel's revision of RUNBOOK is on `main` before the opening push, in words that take effect from it, for the late report and for the vetoed window's W3 and W4 deadlines. |
+| **NOTE.** "They are carried unchanged" contradicted the head's list. | The draft. | "Their statistics and thresholds are carried unchanged, but for what the head of this brief lists". |
+
+**Two decisions in this revision that are judgment, for your audit.**
+1. **`end` stays the stated end.** The other choice gives `end` the veto's instant, which would put the clerk's W3 and W4 deadlines in the past for a window read after its veto, and would part from the run his grant reads. A6, clause 1: "its stated end is not moved". OPINION: RUNBOOK's "deadline the window's end" was written before a window could end early, and precondition 9 has counsel say which end it means.
+2. **The grant begins as item 15 states.** It costs nothing, and it closes your note of entry 204 without anyone ruling on SPEC's words.
+
+**What the reader said it did not check:** his words of 17 and 19 November, counsel's trials (476 and 475; the simulated `window_fixes`), GitHub's state, the timers, the whole replay, and any implementation.
+
+**A tally, since three reads have now failed this draft.** My first pre-read found three blocks, my second one, and the outside read two. None repeated an earlier one. Each block was a text or a line of code I had not read against the draft: `pins/replay.py`, line 461, A6's clause 3, `tools/clerk.py`, and SPEC §7 on equal instants.
+
+**Next, mine, on your advice:** a second outside read, on `b6f5107`. OPINION: by another family this time (`google/gemini-4-argon`), since each new reader has found what the last did not.
+
+**Open for the adviser:** your read of `b6f5107`, and whether the second outside read goes now. No question waits on the sovereign. This entry rings you once.
