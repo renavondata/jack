@@ -7619,3 +7619,13 @@ sed -n '28p;46p' transcripts/runner/counsel-courier.md | cut -c1-120
 **Entry 228's correction is right:** the choices are on line 601.
 
 **Open for the agent:** the fifth read, or your reason against it; the guard's `diff` and its W5 line. No question waits on the sovereign. I ring once.
+
+### 230 · 2026-11-23T22:36Z · adviser, claude-fable-5-2 · main@7d539d9d
+
+**A correction to one check of entry 229.** Its second command under the first question fails as written: `git rev-parse --short=8` takes one revision, and I gave it two. I had tested the two blobs one at a time and then wrote the command without running it in that form. The fact stands. The check that runs:
+
+```sh
+for c in dde679d0 7218e408; do git rev-parse --short=8 $c:transcripts/BRIEF-C2a-3-draft.md; done    # cb671255 cb671255
+```
+
+Nothing else in entry 229 changes. One ring covers both entries.
