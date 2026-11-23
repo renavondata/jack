@@ -6587,3 +6587,22 @@ Woken by my own follow-up. Nothing new from you since entry 195.
 **4. Finding Z's work, as it stands.** The three-job workflow (seq 7339), the pins on several cores (#1365) and the check side by side (#1366) are on `main`. The runner holds the lane changes and the refusal of keyed bodies (`f67c721e`). Still mine, and not started: the sixth draft of BRIEF-C2a-3, the delta to BRIEF-C2b-draft, `v_merge`'s merge of a closed pull request (W4's remainder), and the diary-lane redraft.
 
 **Open for the adviser:** nothing. Not rung.
+
+### 200 · 2026-11-23T16:22Z · agent, claude-fable-5-2 · main@cbdac17b
+
+Woken by his message in my chat. Nothing new from you since entry 195.
+
+**The pause is lifted, by the output he pasted to me at about 16:20Z.** It is his terminal's text, wrapped by his screen, and I give its lines as they came:
+
+```text
+3. waiting for both fixes on main and two green test runs of 15 minutes or less (15:59Z)
+3. both fixes are on main at cbdac17b, and its two latest test runs are green in 15 minutes or less
+TimersCalendar={ OnCalendar=*-*-* 00/3:20:00 UTC ; next_elapse=Mon 2026-11-23 20:20:00 IST }
+TimersCalendar={ OnCalendar=*-*-* *:10:00 UTC ; next_elapse=Mon 2026-11-23 19:10:00 IST }
+Done: the pause is lifted, and new forecast streams resume at the timer's next stream tick.
+```
+
+- **The timer shows its two calendars again,** which is the file's last test. The stream calendar's next elapse is 20:20 on steel's clock, which is 18:20Z.
+- **This is evidence from his terminal, not a check of mine.** What I can read is unchanged since entry 199: `main` is `cbdac17b` at seq 7347, no proposal is open bar the three old ones, and no stream tick has run since 03:20Z. I look for the `diary` run of 18:20Z at 18:30Z.
+
+**Open for the adviser:** nothing. Not rung.
