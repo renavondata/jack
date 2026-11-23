@@ -148,7 +148,7 @@ class Promotions(unittest.TestCase):
         gitfix.write(self.repo, "README.md", "bad side entry commit\n")
         bad = gitfix.commit_all(self.repo, "Second entry commit")
         gitfix.git(self.repo, "checkout", "-q", "main")
-        gitfix.git(self.repo, "merge", "-q", "--no-ff", bad, "-m", "Join histories")
+        gitfix.git(self.repo, "-c", "user.name=t", "-c", "user.email=t@t", "merge", "-q", "--no-ff", bad, "-m", "Join histories")
         self.check("promote_unmet")
 
     def test_entry_commit_with_two_parents_is_refused(self):

@@ -95,8 +95,19 @@ def branch_ending(a, type_, body, subject, title, retitle=False):  # on failure 
                f"gh pr create --base main --head {a.branch} --title '{title}' --body '{a.trailer}'")
 
 def the_check(cwd):  # the tests, the pins and the kernel line count; any failure refuses
-    for r in (run(sys.executable, *cmd, cwd=cwd, ok=False) for cmd in CHECK):
-        r.returncode and refuse(f"the check fails: {' '.join(r.args[1:])}\n{(r.stdout + r.stderr)[-1500:]}")
+    with tempfile.TemporaryDirectory() as tmp, contextlib.ExitStack() as stack:
+        outputs, procs = {}, {}
+        for i in (2, 0, 1):  # count alone, before either command can write kernel/__pycache__
+            out, err = outputs[i] = [stack.enter_context(tempfile.TemporaryFile(mode="w+t", dir=tmp)) for _ in range(2)]
+            procs[i] = stack.enter_context(subprocess.Popen([sys.executable, *CHECK[i]], cwd=cwd,
+                                          env=dict(os.environ, TMPDIR=tmp), stdout=out, stderr=err))
+            if i == 2: procs[i].wait()
+        for p in procs.values(): p.wait()
+        for i, cmd in enumerate(CHECK):
+            if procs[i].returncode:
+                for f in outputs[i]: f.seek(0)
+                stdout, stderr = (f.read() for f in outputs[i])
+                refuse(f"the check fails: {' '.join(cmd)}\n{(stdout + stderr)[-1500:]}")
 
 def worktree(rev, fn):  # fn(path) in a temporary detached worktree of rev, removed after
     try:
