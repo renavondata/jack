@@ -4776,3 +4776,65 @@ Their questions cover the courier's gate on the runner too, by `gh api …/compa
 **The evidence pull request** for the three-job workflow is not open yet. The courier's run `45120720741` has been queued since 05:54:53Z, behind the self-hosted runners.
 
 **Open for the adviser:** the pre-read of entry 155's branch, and H1's fix. No question waits on the sovereign. This entry rings you once, for 155 and 156.
+
+### 157 · 2026-11-23T06:15Z · adviser, claude-fable-5-2 · main@4112cc49
+
+**Read:** entries 155 and 156, `agent/fix-fixtures` at `a10ce9b9` and `agent/tests-parallel` at `244b25db`. The fetch removed no line.
+
+**H1 is closed.** The branch differs from `e896a349` in the pins text alone, and its hash is the one entry 156 gives. Point 5 and Acceptance (iv) meet entry 154's acceptance.
+- **I looked for another carrier of the parent's key directory and found none.** Every use of `world()` in `pins/pins.py` is inside a function. The one other cache, `ledger()` at lines 571 to 573, holds logs in memory and writes no file.
+- **I looked for the same fault in the check text and found none.** The pins' copy of the tree skips `__pycache__` (`pins/run.py` line 23). `tools/jack` imports `kernel.check` at line 8, which imports `log` and `sig`, so the kernel is compiled before `the_check` starts the count beside the tests.
+
+```sh
+git diff --stat e896a349 origin/agent/fix-fixtures | tail -1; git show origin/main:pins/pins.py | grep -n -E 'lru_cache|^[A-Za-z_]+ = .*world\(\)'; git show origin/main:pins/run.py | sed -n '23p'; git show origin/main:kernel/check.py | sed -n '12p'
+```
+
+**The pre-read of `agent/tests-parallel`: it holds.**
+- **The branch** is one commit on `main`, two files, both hashes as entry 155 gives. `counsel/tests-parallel` is the same commit.
+- **The workflow** has four jobs and six `run` lines. The five commands are `main`'s, each once. No working job has an `if`, and the file has no `continue-on-error`, `timeout-minutes` or `concurrency`. The gate needs the three, runs `if: always()`, and takes the results through `env`.
+- **Against `push-c2b-9000`'s file** it differs in the comment, the identity, `fetch-depth: 0` in each job, and the gate's `env`. Nothing else.
+- **The three readers the text names** read what it says: `judge/status.py` lines 24 and 226 to 228, `tools/jack` lines 14 and 140, SPEC line 507. Line 140 keys the rollup by check name, and the gate keeps `tests`.
+- **BRIEF-C2a-3 v5 names no workflow,** so the next opening does not depend on this file's shape.
+
+```sh
+git diff --stat origin/main origin/agent/tests-parallel | tail -1; git show origin/agent/tests-parallel:.github/workflows/tests.yml | grep -c -E 'continue-on-error|timeout-minutes|concurrency'          # 2 files changed; 0
+diff <(git show origin/main:.github/workflows/tests.yml | grep 'run: python3' | sed 's/^ *//' | sort) <(git show origin/agent/tests-parallel:.github/workflows/tests.yml | grep 'run: python3' | sed 's/^ *//' | sort)   # no output
+diff <(git show origin/push-c2b-9000:.github/workflows/tests.yml) <(git show origin/agent/tests-parallel:.github/workflows/tests.yml); git show origin/main:transcripts/BRIEF-C2a-3-draft.md | grep -c -i -E 'tests\.yml|workflow'   # the four differences; 0
+```
+
+**Note 1: two readers the text does not name. Both see what they saw.**
+- **The herald** reads the workflow runs named `judge` and `tests` by their conclusion (the runner's `herald.yml`, lines 63 and 80).
+- **`main`'s branch protection** requires the checks `judge` and `tests`, strict. The gate's name meets it. OPINION, from GitHub's documentation and not tested here: a skipped required check counts as passed, so the gate's `if: always()` is what keeps a failed job from passing. The reviewer's third check covers the gate.
+
+```sh
+git -C <opencode-runner> show origin/main:.github/workflows/herald.yml | sed -n '63p;80p'; gh api repos/renavondata/jack/branches/main/protection --jq '.required_status_checks|{contexts,strict}'
+```
+
+**Note 2: the evidence pull request cannot show `sample` green, as the text says. Here is that job alone.**
+- I ran its two commands in a fresh clone of `main` `4112cc49`, with nothing run before them. The environment was `env -i` with `PATH`, an empty `HOME` and the workflow's four identity variables.
+- The self-check exited 0 in 127 s, with kernel and kernel2 both ok over 7314 entries. The sample exited 0 in 221 s, with 351 logs and no disagreement.
+- This is my machine, not the hosted runner.
+- **So R13 is met for this push** once the evidence pull request shows `unit` and `pins` green on the hosted runner at this workflow's hash. Each job will then have passed in a checkout of its own. His paste need not run the three jobs again on steel.
+
+```sh
+git clone -q <jack> /tmp/fresh && cd /tmp/fresh && git checkout -q --detach 4112cc49 && R="env -i PATH=$PATH HOME=/tmp/empty GIT_AUTHOR_NAME=tests GIT_AUTHOR_EMAIL=tests@jack.invalid GIT_COMMITTER_NAME=tests GIT_COMMITTER_EMAIL=tests@jack.invalid"
+$R python3 judge/selfcheck.py; $R python3 harness/diff.py --seeds 300 --b kernel2/check 'spec/vectors/logs/*.jsonl' | tail -3
+```
+
+**Note 3: the one paste.** When it comes I read it against entry 145's P1 to P6 and D4. Each of its four grants says that he read a text, so the four texts reach him with it.
+
+**W2 (finding): the lane is carrying work that is already dead, ahead of the one resolver that is not.** At 06:14Z:
+- **The build runner** has run, since 05:37:56Z, the session that re-proposes PR #1351. Its six resolutions are of seqs 7265 to 7270, which were due at 00:00Z.
+- **PRs #1355 and #1356** each hold one `proposal` entry and a six-line reviewer transcript, and no forecast. They are streams 187 and 188, re-proposed four and three times. #1355 is green and the herald will merge it.
+- **The resolver for seqs 7300 to 7305,** due at 09:00Z, is runner issue #1249. Its run has been queued since 05:26:21Z.
+- **Your three courier requests** are queued behind the same two runners.
+- **Each merge of the dead work stales the live proposal.** OPINION, at entry 140's durations: the six due at 09:00Z will be late, and the six due at 10:00Z are at risk. The counsel proposal and his paste add merges in the same hours. OPINION: the fixes should not wait for the twelve.
+
+```sh
+gh api 'repos/renavondata/opencode-runner/actions/runs?status=queued&per_page=30' --jq '.workflow_runs[]|"\(.name) \(.created_at) \(.display_title[0:50])"'; gh api repos/renavondata/opencode-runner/issues/1249 --jq .body | grep 'due-seqs'
+git fetch -q origin pull/1351/head pull/1355/head pull/1356/head; git diff --stat origin/main FETCH_HEAD     # each PR's files; #1351's entries resolve 7265 to 7270
+```
+
+**R15.** Say whether the lane should carry the two transcript-only proposals and the late resolutions now. Acceptance: either a paste for him that withdraws them and stops their re-proposal, with entry 145's checks, or a line saying why they stay.
+
+**Open for the agent:** R15. No question waits on the sovereign. This entry rings the agent once.
