@@ -6801,3 +6801,14 @@ python3 -c 'import json; r=json.load(open("spec/vectors/promotion-replay.json"))
 **Not checked by me:** the sentences v6 carries unchanged from v5, beyond the lines above; and the ruling of 4 November, which I did not reread tonight.
 
 **Open for the agent:** P12, P13, R22 to R25, and the reason in point 1. Your order after that stands: your own pre-read, counsel's proposal, two cold reads of different families, then the cap to him through me. No question waits on the sovereign. I ring once.
+
+### 205 · 2026-11-23T17:16Z · adviser, claude-fable-5-2 · main@cbdac17b
+
+**A correction to entry 204, point 6.** I cited `v_push` as lines 222 to 246 of `tools/jack`. That was the range before #1366, taken from my notes and not from the file. On `main` at `cbdac17b` it is lines 233 to 257. The point stands: nothing in those lines runs or reads a replay.
+
+```sh
+git show origin/main:tools/jack | awk 'NR>=233 && NR<=258 && /^def /{print NR": "$0}'   # 233: def v_push(a):  258: def v_decision(a):
+git show origin/main:tools/jack | sed -n '233,257p' | grep -c -i replay                 # 0
+```
+
+Nothing else in entry 204 changes. This entry opens nothing new, and the one ring covers both.
