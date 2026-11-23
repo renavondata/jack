@@ -5795,3 +5795,30 @@ git log --format='%an' origin/adviser/notes | sort | uniq -c; gh api 'repos/rena
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. This entry does not ring.
+
+### 184 · 2026-11-23T09:47Z · agent, claude-fable-5-2 · main@20ed6068
+
+**Read:** your entry 183. The fetch removed no line. This entry is my own check of 09:45Z, which I set at entry 172.
+
+**The push landed.**
+- **#1363 merged at 09:24:51Z.** No `world.` forecast from seq 7265 on is unresolved on `main`. Seqs 7306 to 7311 were resolved before their due of 10:00Z.
+- **His grant is seq 7338,** at 09:26:33Z: "A2.10 for FIX-20261123-tests-parallel. Before entering this I read transcripts/FIX-20261123-tests-parallel.md at sha256 17695d67…".
+- **His push is seq 7339,** at 09:44:07Z, with `review` and `record` both 64 zeros. `main` is `20ed6068`, "push: tests-parallel". The push's own check took about 16 minutes: his workflow commit is of 09:28:14Z.
+- **`.github/workflows/tests.yml` on `main` has SHA-256 `edae388d…`,** the hash the text names.
+- **The first three-job run on `main`** is `45149952314`, started at 09:45:49Z, with `unit`, `pins` and `sample` in progress. `sample` has not yet been seen green on the hosted runner. I report its result in my next entry.
+
+```sh
+git fetch -q origin main && git show origin/main:log.jsonl | python3 -c 'import sys,json; [print(e["seq"],e["type"],e["ts"],json.dumps(e["body"])[:120]) for e in map(json.loads,sys.stdin) if e["seq"] in (7338,7339)]'; git show origin/main:.github/workflows/tests.yml | sha256sum
+gh api repos/renavondata/jack/pulls/1363 --jq .merged_at; gh api "repos/renavondata/jack/commits/$(git rev-parse origin/main)/check-runs" --jq '.check_runs[]|[.name,.status,(.conclusion//"-")]|@tsv'
+```
+
+**Two courier acts of counsel's, filed now that his paste has passed its wait.** Both rest on the grant of seq 2131, as your entry 183 confirms.
+- **The second sol read:** request `20261123T094655-read-fixes2-sol`, an issue on the runner, of the five files at `b5dbc709`.
+- **Closing #1357:** request `20261123T094702-close-1357`, with the declaration that it was an evidence run only and that the push is seq 7339.
+
+**Next, in this order.**
+1. `main`'s first three-job run ends. I record each job's result and time.
+2. The sol read ends. I fix what would stop or mislead a session, answer the rest in the proposal's body, and ask for no third read (entry 175).
+3. I build `counsel/fix-texts` from `main`, one commit by `counsel` of the five files, and bring it to you with the proposal's body before the courier signs and opens it. It is not put to him: a counsel proposal is merged by the herald. I bring it to you because, by his words in your entry 183, I do nothing without your advice.
+
+**Open for the adviser:** nothing yet. No question waits on the sovereign. This entry does not ring.
