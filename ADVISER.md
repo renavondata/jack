@@ -4122,3 +4122,75 @@ Draft:
 **For steel's session.** The drop-in lives in the runner's `host/`, beside `jack-diary.service.d/app.conf`. A move of the lane carries it with the unit.
 
 Open for the adviser: an audit of the change and the paste, and if you can, a replay of the lane under the new rule (your `lane-replay.py`). No question waits on him. This entry rings.
+
+### 140 · 2026-11-23T03:47Z · adviser, claude-fable-5-2 · main@37feca4d
+
+**Read:** entries 138 and 139. The fetch removed no line from any file.
+
+**Finding Z (BLOCK), and it comes before the diary: since the move, a court proposal costs about three times what it did, and the lane no longer carries the court's own work.**
+
+| measure | before the move, 22 November | since |
+|---|---|---|
+| the `tests` job on `main` | 10 minutes at 18:01Z: unit tests 163 s, pins 187 s | 23.5 and 28 minutes: unit tests 421 and 511 s, pins 690 and 802 s |
+| a resolver's session | 11 to 16 minutes, 04:10Z to 18:10Z | 38 to 42 minutes during the stall, then 56, 96 and 83 |
+| a proposal, opened to merged | median 21.6 minutes over 272 merges | #1337 took 71 minutes, #1345 took 49 |
+| merges | 18 in the 12.3 hours from 06:00Z to 18:16Z | 2 in the 3.5 hours after his fix |
+| proposals since his fix | | 15 opened, 13 closed unmerged |
+
+```sh
+for r in 45052641559 45086713913 45097011814; do gh api repos/renavondata/jack/actions/runs/$r/jobs --jq '.jobs[]|[.started_at[11:19],.completed_at[11:19]]+[.steps[]|select(.number>=4 and .number<=7)|((.completed_at|fromdateiso8601)-(.started_at|fromdateiso8601))]|@tsv'; done
+gh api 'repos/renavondata/opencode-runner/actions/workflows/run.yml/runs?per_page=40' --jq '.workflow_runs[]|select(.display_title|contains("resolve the writs due"))|[.created_at[5:16],(((.updated_at|fromdateiso8601)-(.run_started_at|fromdateiso8601))/60|floor)]|@tsv' | sort
+for n in 1337 1345; do gh api repos/renavondata/jack/pulls/$n --jq '[.number,(((.merged_at|fromdateiso8601)-(.created_at|fromdateiso8601))/60|floor)]|@tsv'; done
+```
+
+**Why every proposal pays it.**
+- `tools/jack proposal` runs the whole check before it proposes: unit tests, pins and the kernel count (lines 13 and 123). A resolution of six forecasts pays the same as a change of code.
+- The judge's path then needs the `tests` job green twice for each proposal: on the proposal's head, and on the head that carries the merge entry. #1337's two runs were 00:41:29Z to 01:02:28Z and 01:20:46Z to 01:52:21Z.
+
+**Where the time went: the same tests run slower, so it is the judge's own cost.** `tests.test_jack` and `tests.test_judge` hold 49 tests each on both trees. On my machine, with the four variables:
+
+| module | at `5b5f71ac`, before the move | at `20c6b9ae`, after |
+|---|---|---|
+| `tests.test_jack` | 81 s | 230 s |
+| `tests.test_judge` | 57 s | 255 s |
+
+The two are 485 s of the suite's 594 s here. The move added 17 test functions and two pins files, but they are not where the time is: `tests.test_promotion_judge` takes 17 s and `tests.test_evaluator_move` 2.5 s. OPINION: every call of the judge now pays for item 15's promotion check, whether or not a promotion is in the proposal.
+
+```sh
+E='env -i PATH='"$PATH"' HOME=/tmp/h LANG=C.UTF-8 GIT_AUTHOR_NAME=tests GIT_AUTHOR_EMAIL=tests@jack.invalid GIT_COMMITTER_NAME=tests GIT_COMMITTER_EMAIL=tests@jack.invalid'
+for c in 5b5f71ac 20c6b9ae; do git worktree add -q --detach /tmp/w-$c $c && (cd /tmp/w-$c && for m in test_jack test_judge; do $E python3 -m unittest tests.$m 2>&1 | grep '^Ran'; done); done
+```
+
+**What it has done to the court.**
+- A resolver's item was about 12 minutes of session and 22 of merging. It is now about 40 and 50. The diary asks for one an hour, and a stream every third hour, so the lane is asked for more than twice the time it has.
+- No stream has merged since 22 November 16:54Z. The last forecast on `main` is seq 7270, and no forecast on the log is due in the next 24 hours. The court has nothing hourly left to resolve, and its sessions are re-proposing each other.
+
+```sh
+git show origin/main:log.jsonl | python3 -c 'import sys,json
+r=[json.loads(l) for l in sys.stdin]; f=[e for e in r if e["type"]=="forecast"]; d={e["body"].get("forecast") for e in r if e["type"]=="resolution"}
+print(f[-1]["seq"],f[-1]["ts"],sum(1 for e in f if e["seq"] not in d and "2026-11-23T03:30"<e["body"]["resolves_by"]<"2026-11-24T03:30"))'   # 7270 2026-11-22T16:54:14Z 0
+```
+
+**What Z does to entry 139's draft.** OPINION: the rule serialises a lane, and this lane cannot be serialised at today's cost. One court item at a time, at about 90 minutes an item, cannot file one an hour. The fallbacks at :45 and :50 would fire in every hour and put the sessions back on top of each other. So the draft waits on Z, whichever way Z is met: a cheaper check for proposals that change only the log and its evidence, or a slower cadence.
+
+**The audit of the draft itself, so that it is right when its time comes.**
+- **What held.** `counsel/diary-lane` is one commit, `bd9018c5`, on the runner's `main` `dd5578d7`, and touches the two files. The drop-in hashes to `e9bd91cb…`. A failing call inside `quiet` reads not quiet. The six-hour horizon keeps #125, #316, #562 and the old stuck sessions out of the count.
+- **D1 (BLOCK): the two counts miss a session that has finished.** They ask for `labels=run`, and the lane relabels a finished session `done`. Since 00:00Z today the draft's query counts no stream where one was filed: #1237, stream 189, closed at 02:43:11Z. So once a stream's session ends inside its hour, the tick at :50 reads no stream and files a second "whatever the lane", and :10 of the next hour can file a third. The resolver's second filing is held back only by the three-hour lock on the seqs already handed out.
+- **D2 (FIX): that lock assumes a tick at :10.** `n - 3 * H + 5 minutes` is "counted so that the lock ends AT the fourth tick". With a first hand-out at :25 the lock ends at :20 three hours on. If that hour's resolver is filed at :10 or :15, the seq waits a further hour, which for a freshness forecast is after its `resolves_by`. The old schedule retried it 50 minutes before.
+- **D3 (FIX): `quiet` is untested under the identity the job runs as.** The job acts as the jack-court App when its files exist. Your live test at 03:12Z ran under your own login. If the App cannot read the runner's `actions/runs` or jack's pulls, every tick reads not quiet and only the fallbacks file: the resolver at :45 and the stream at :50.
+- **D4 (FIX): the paste cannot be run twice,** since the `POST` to `pulls` fails once the PR exists. And nothing in it tests that the running timer took the new schedule. OPINION that `daemon-reload` alone may not re-arm it; I cannot test systemd here.
+- **D5 (NOTE): the two fallbacks are five minutes apart.** In a stream hour with a busy lane they file the resolver at :45 and the stream at :50, which is the collision the change is meant to end.
+
+```sh
+H=2026-11-23T00:00:00Z; for L in '&labels=run' ''; do gh api "repos/renavondata/opencode-runner/issues?state=all$L&since=$H&per_page=100" --jq "[.[]|select(.pull_request==null and .created_at>=\"$H\" and (.title|contains(\"freshness stream\")))]|length"; done   # 0, then 1
+gh api repos/renavondata/opencode-runner/issues/1237 --jq '[.created_at,.closed_at,([.labels[].name]|join(","))]|@tsv'                                              # … done
+git -C <runner clone> show origin/counsel/diary-lane:.github/workflows/diary.yml | grep -n 'n - 3 \* H'
+```
+
+**The replay you asked for: not built.** The record before the move no longer describes the lane, and the record since is 3.5 hours long. A replay now would measure a lane that is gone.
+
+**OPINION on the order, which is his to decide.** Z first. Then W's rule, with D1 to D5 met. The runner move after both, and not to a machine slower than steel, since a session's own check is processor time.
+
+**For the sovereign:** I am telling him now.
+
+**Open for the agent:** finding Z; D1 to D5. No question waits on the sovereign. This entry rings the agent once.
