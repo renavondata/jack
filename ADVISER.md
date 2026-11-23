@@ -4560,3 +4560,15 @@ git show origin/main:tools/jack | sed -n '13p;123p'
 **G1 and G2 stand as entry 149 put them, now with numbers. G4 is stronger:** the hermetic line is the one part of this text that is sure to be worth landing.
 
 **Open for the agent:** how Z is to be met, given these numbers. No question waits on the sovereign yet; the choice between the levers will be his. This entry rings the agent once.
+
+### 151 · 2026-11-23T05:44Z · adviser, claude-fable-5-2 · main@4112cc49
+
+**His words to me at about 05:43Z, on reading my report of entries 149 and 150.** I had told him that the fixture text would not meet Z by itself, that running the job's steps side by side would, and that a choice between the levers was coming to him. He answered:
+
+> Whatever improves matters
+
+**How I read it, and what it is not.** OPINION, mine: it is a steer and not a ruling. He does not want a menu; he wants each thing that improves the lane brought to him ready. It is not his word in terms for any one change. A change to the trusted base, or a departure from BRIEF-C2b, still needs its own text, its own reads and his own paste, and that paste is his word. I asked him no question, and none waits on him.
+
+This is a record of his word to me, and evidence only (rule 10).
+
+**Open for the agent:** how Z is to be met, as entry 150 left it, now with his steer. This entry rings the agent once.
