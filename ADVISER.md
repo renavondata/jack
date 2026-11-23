@@ -4968,3 +4968,44 @@ gh api repos/renavondata/jack/issues/1358 --jq '[.state,.closed_at,.closed_by.lo
 ```
 
 **Open for the agent:** entry 160's P7, X2, R16 and R17. No question waits on the sovereign. This entry rings the agent once.
+
+### 162 · 2026-11-23T06:37Z · agent, claude-opus-5-5 · main@4112cc49
+
+**His word at about 06:34Z, on entry 159's paste: "Pasted".**
+
+**My error.** I retyped the paste for him instead of copying the file. The closing test I sent him reads `= "closed closed 0 0"`. The file reads `= "completed completed 0 0"`, which is right for runs. So his paste most likely ended `Stopped` although its acts were right. I copy pastes from the file from now on, byte for byte.
+
+**What the second paste did.**
+- Both `repropose` runs had completed before it, `success`, at 06:29:32Z and 06:28:34Z.
+- #1353's re-proposal had opened #1358 at 06:29:24Z. His paste closed it at 06:34:21Z, unmerged, with the comment.
+- #1354's mechanical run fell back to a model session, runner #1251, filed 06:28:28Z, which is now run `45124334509`, in progress. That is dead work still running.
+
+```sh
+R=renavondata/jack; RR=renavondata/opencode-runner; for id in 45116951385 45117784566 45124334509; do gh api repos/$RR/actions/runs/$id --jq '[.id,.status,(.conclusion//"-"),.updated_at]|@tsv'; done
+gh api repos/$R/pulls/1358 --jq '[.state,.closed_at,(.merged_at//"-")]|@tsv'; gh api repos/$RR/issues/1251 --jq '[.state,.title[0:40]]|@tsv'
+```
+
+**W3 (finding, mine): the live resolver did not propose, so seqs 7300 to 7305 will be late unless it is rescued.**
+- **The check failed.** Runner #1249 entered all six resolutions on `due-builder-20261123T0510`, from `72c2db19` to `7cdf9448`, on `main` `4112cc49`. Then `tools/jack proposal` refused: "the check fails: -m unittest discover". 311 tests ran with 7 errors. The one the report shows is `harness/gitfix.make_repo`'s `git init` in `/tmp/tmpozdxow2q/repo-…`, which exited 128.
+- **Nothing was pushed.** The branch is not on GitHub, the issue is closed `done`, and the run ended `success`.
+- **The diary will not hand them again in time.** It locks a handed seq for three hours from the issue's creation, 05:26:18Z, so they come back at the 09:10 tick, after the 09:00Z due (`diary.yml` line 60).
+- **The cause is not shown.** The report keeps the last 1500 characters. A failing `git init` in a fresh temporary directory, in 7 tests of 311, points to `/tmp` on steel being full. OPINION: test fixtures leave temporary trees behind. On my machine they had grown to 4.1 GB after a morning's runs. If steel's `/tmp` is a tmpfs, it is also memory.
+- **The same risk now runs in runner #1254,** which holds 7265 to 7270 and the live 7306 to 7311, due by 10:00Z.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1249/comments --jq '.[-1].body' | sed -n '/the check fails/,/^FAILED/p' | tail -6
+gh api repos/renavondata/jack/git/matching-refs/heads/due-builder-20261123T0510 --jq length    # 0
+```
+
+**The rescue paste, put to him** (`/home/claude/work/paste-rescue.sh`, SHA-256 `b72e3e25880211d2431e24da9bd65fb4b139b0d624f46230c9f2597af07538c8`, 1689 bytes, `bash -n` clean). It runs on steel and does three things.
+1. **It withdraws runner #1251** as in entries 158 and 159: it cancels run `45124334509`, closes the issue, and closes any open PR from `due-builder-20261123T0010-r-r`.
+2. **It diagnoses and deletes nothing.** It prints `df -h /tmp` and whether a `git init` under `/tmp` succeeds.
+3. **It proposes the six from the session's own worktree.** It requires the head `7cdf9448`, a clean tree and `origin/main` at `4112cc49`. It runs `tools/jack proposal` with the builder's key and the session's own title, with `TMPDIR` on disk under `~/.cache/jack-tmp` and removed after, so that a full `/tmp` cannot fail the check again. It ends `Done` only if the verb succeeds.
+
+His use of the builder's key here only finishes the builder's own act. The six resolutions are the builder's, signed by its session. The verb adds the `proposal` entry over them under the same key, as `tools/jack` requires of the party whose commits it proposes.
+
+```sh
+R=renavondata/jack; RR=renavondata/opencode-runner; V="Withdrawn by the sovereign, 23 Nov: the six resolutions of PR #1354 are already on main (seqs 7284-7289, by other sessions), so this re-proposal carries only a proposal entry and evidence no entry cites (ADVISER.md entry 160)."; [ "$(gh api user --jq .login)" = gfrmin ] && ( s=$(gh api repos/$RR/actions/runs/45124334509 --jq .status); if [ "$s" = completed ]; then echo "run 45124334509 had already completed"; else gh run cancel 45124334509 -R $RR && echo "cancelled run 45124334509, which was $s"; fi ) && ( if [ "$(gh api repos/$RR/issues/1251 --jq .state)" = closed ]; then echo "runner #1251 was already closed"; else gh issue close 1251 -R $RR -c "$V" && echo "closed runner #1251"; fi ) && ( n=$(gh api "repos/$R/pulls?state=open&head=renavondata:due-builder-20261123T0010-r-r" --jq '.[0].number // empty'); if [ -z "$n" ]; then echo "no pull request from runner #1251"; else gh pr close $n -R $R -c "$V" && echo "closed #$n"; fi ) && echo "--- /tmp on steel:" && df -h /tmp && ( d=$(mktemp -d) && { git init -q "$d/probe" && echo "git init under /tmp: ok" || echo "git init under /tmp: FAILED"; }; rm -rf "$d" ) && cd ~/git/worktrees/jack/due-builder-20261123T0510 && [ "$(git rev-parse --short=8 HEAD)" = 7cdf9448 ] && [ -z "$(git status --porcelain)" ] && git fetch -q origin && [ "$(git rev-parse --short=8 origin/main)" = 4112cc49 ] && mkdir -p ~/.cache/jack-tmp && { TMPDIR=$HOME/.cache/jack-tmp JACK_KEY=$HOME/.ssh/jack-builder tools/jack proposal --title "due 20261123T0510: 6 resolved (world.renavon)"; r=$?; rm -rf ~/.cache/jack-tmp; [ $r = 0 ]; } && echo "Done: resolutions 7300-7305 are proposed" || echo Stopped
+```
+
+**Open for the adviser:** nothing until he answers. A question waits on him, so this entry does not ring.
