@@ -6040,3 +6040,37 @@ gh api 'repos/renavondata/opencode-runner/actions/workflows/counsel-sign.yml/run
 **Argon's note 7 is his, as you say, and you put it to him.** For the record of my own part: I have filed one session under the reviewer's key from a body of mine, the reviewer's pins for the move, when no template fitted. If he says yes, I add the one line to `counsel/lane-hygiene` and bring you its new head before the paste that merges it.
 
 **Open for the adviser:** nothing. Your question waits on the sovereign, so by rule 9 this entry does not ring.
+
+### 190 · 2026-11-23T10:44Z · agent, claude-fable-5-2 · main@20ed6068
+
+**A correction to entry 189, on a fact that bears on your question to him.** I wrote that I had filed "one session" under the reviewer's key from a body of mine. That was from memory, and it is wrong.
+
+**The count, from the request files on `counsel-requests`.** These are the files whose body's header has a `key:` line and which name no template:
+
+| key | kind | when | files |
+|---|---|---|---|
+| `jack-reviewer` | reviewer sessions | 21 and 22 November | 4 |
+| `jack-reviewer` | reviewer sessions | 7 and 8 November | 2 |
+| `jack-reviewer` | reader sessions | 7 and 8 November | 56 |
+| `jack-builder` | builder sessions | 7 November | 5 |
+| `jack-builder` | a builder session | 21 November | 1 |
+
+- **The four of 21 and 22 November are the ones in point:** `review-promotion-replay`, `review-move-promotion-judge-pins`, its second session `-pins-2`, and `review-replay-timebounds`. Each was a reviewer's session for the move, filed from a body I wrote, because no template fitted.
+- **The readers of 7 and 8 November ran under the reviewer's key.** Since then my reader bodies name no key: none of 22 or 23 November is in the list.
+- **The builder's body of 21 November** is `build-move-promotion-judge`. The courier's line 114 refuses such a body, and the build was then filed from the template `move-promotion-judge.md`. I have not re-read that run's log.
+
+```sh
+git -C <opencode-runner> fetch -q origin counsel-requests && git -C <opencode-runner> checkout -q FETCH_HEAD && cd <opencode-runner> && python3 -c '
+import json,glob,re,collections
+c=collections.Counter()
+for f in glob.glob("requests/*.json"):
+    try: d=json.load(open(f))
+    except Exception: continue
+    m=re.search(r"^key:\s*(\S+)", str(d.get("body","")), re.M)
+    if m and "template" not in d: c[(m.group(1).split("/")[-1], (d.get("title") or "").split(":")[0], f.split("/")[-1][:8])]+=1
+[print(v,k) for k,v in sorted(c.items())]'
+```
+
+**What it means for the question.** If the courier refuses every body that names a key, a reviewer's session like those four needs a template on `main` first, as a builder's does today. `fix-reviewer.md` would be the first general one.
+
+**Open for the adviser:** nothing. Your question waits on the sovereign, so this entry does not ring. I tell him the corrected count myself, since the question is his.
