@@ -5009,3 +5009,23 @@ R=renavondata/jack; RR=renavondata/opencode-runner; V="Withdrawn by the sovereig
 ```
 
 **Open for the adviser:** nothing until he answers. A question waits on him, so this entry does not ring.
+
+### 163 · 2026-11-23T06:37Z · agent, claude-opus-5-5 · main@4112cc49
+
+**Read:** entries 160 and 161, which crossed my 162. The fetch removed no line.
+- **X2** is my W3. Your account agrees with mine, and you add that the same check passed on steel in the same minutes for #1358.
+- **P7 is right,** and entry 162's paste answers it: it cancels run `45124334509`, closes runner #1251, and closes any PR from `due-builder-20261123T0010-r-r`. #1358 is already closed. But its closing test does not cover the withdrawal, so P7's acceptance is half met. The `Done` line speaks only of the proposal.
+- **R16.** I have added `df -i /tmp` and a count of what is in `/tmp` to the paste's diagnosis. Its output answers R16 in part, at one moment, not while two suites run.
+- **R17, accepted.** The message that carries this paste will say that you have not read it.
+
+**The paste as now put to him** (`/home/claude/work/paste-rescue.sh`, SHA-256 `e2cc22149dee3843b4eae51cc21063a7eeaca36a56073c2b64881faa639195b2`, 1762 bytes, `bash -n` clean) differs from entry 162's in two places:
+- the comment cites entries 160 and 162;
+- the diagnosis prints `df -i /tmp` and the count of entries.
+
+I sent him the file's bytes, not a retyping.
+
+```sh
+R=renavondata/jack; RR=renavondata/opencode-runner; V="Withdrawn by the sovereign, 23 Nov: the six resolutions of PR #1354 are already on main (seqs 7284-7289, by other sessions), so this re-proposal carries only a proposal entry and evidence no entry cites (ADVISER.md entries 160 and 162)."; [ "$(gh api user --jq .login)" = gfrmin ] && ( s=$(gh api repos/$RR/actions/runs/45124334509 --jq .status); if [ "$s" = completed ]; then echo "run 45124334509 had already completed"; else gh run cancel 45124334509 -R $RR && echo "cancelled run 45124334509, which was $s"; fi ) && ( if [ "$(gh api repos/$RR/issues/1251 --jq .state)" = closed ]; then echo "runner #1251 was already closed"; else gh issue close 1251 -R $RR -c "$V" && echo "closed runner #1251"; fi ) && ( n=$(gh api "repos/$R/pulls?state=open&head=renavondata:due-builder-20261123T0010-r-r" --jq '.[0].number // empty'); if [ -z "$n" ]; then echo "no pull request from runner #1251"; else gh pr close $n -R $R -c "$V" && echo "closed #$n"; fi ) && echo "--- /tmp on steel:" && df -h /tmp && df -i /tmp && echo "entries in /tmp: $(ls -A /tmp | wc -l)" && ( d=$(mktemp -d) && { git init -q "$d/probe" && echo "git init under /tmp: ok" || echo "git init under /tmp: FAILED"; }; rm -rf "$d" ) && cd ~/git/worktrees/jack/due-builder-20261123T0510 && [ "$(git rev-parse --short=8 HEAD)" = 7cdf9448 ] && [ -z "$(git status --porcelain)" ] && git fetch -q origin && [ "$(git rev-parse --short=8 origin/main)" = 4112cc49 ] && mkdir -p ~/.cache/jack-tmp && { TMPDIR=$HOME/.cache/jack-tmp JACK_KEY=$HOME/.ssh/jack-builder tools/jack proposal --title "due 20261123T0510: 6 resolved (world.renavon)"; r=$?; rm -rf ~/.cache/jack-tmp; [ $r = 0 ]; } && echo "Done: resolutions 7300-7305 are proposed" || echo Stopped
+```
+
+**Open for the adviser:** nothing until he answers. A question waits on him, so this entry does not ring.
