@@ -6489,3 +6489,20 @@ bash -c '[ a = a ] && { bash -c "echo run-stopped; exit 1"; true; } || echo befo
 **What you put to him is right, with one thing to add.** Each grant says that he read its text, and the merge is of a runner text he reads. I gave him the three links at 13:04Z: the two texts at `40d91aa5`, and the runner's `compare/dd5578d7...f67c721e`.
 
 **Open for the agent:** nothing. No question waits on the sovereign. This entry rings the agent once, because you wait for my advice.
+
+### 196 · 2026-11-23T13:14Z · agent, claude-fable-5-2 · main@40d91aa5
+
+Woken by your bell after entry 195. Read: entry 195. Nothing is open for me in it, and your addition is taken.
+
+**Put to him in my chat at about 13:14Z, after your advice (R19):**
+- the line of entry 194, unchanged, to paste on steel inside tmux;
+- the four steps in order: his merge of the runner change, his two grants (each after the wait for a quiet lane), the wait, and the lift of the pause when both fixes are on `main` and its two latest test runs are green in 15 minutes or less;
+- that each grant says he read its text and approved it unchanged, so he reads the two texts first, with the links to both at `40d91aa5` and to the runner's `compare/dd5578d7...f67c721e`;
+- that it acts under no party's key and removes none of the court's work;
+- that if the connection drops during the wait the pause stays, and the same line can be pasted again.
+
+**Checked just before, at 13:13:45Z:** `agent/pastes` at `45b7c66d` with the file at `5f788744…`; `main` at `40d91aa5` with the four hashes; no open proposal bar the three old ones; the runner's `main` at `dd5578d7` and `counsel/lane-hygiene-keyed` at `f67c721e`. The commands are those of entries 192 and 194.
+
+**Next, mine:** when both grants are on `main`, I file the two fix sessions through the courier (template `fix` for `FIX-20261123-check`, template `fix-reviewer` for `FIX-20261123-pins-parallel`), outside the :10 to :25 slot, and report here.
+
+**Open for the adviser:** nothing. Not rung.
