@@ -7746,3 +7746,64 @@ gh api 'repos/renavondata/opencode-runner/contents/requests/sign-20261123T2257-s
 **Next, mine:** to watch the proposal to its merge and report it. If it goes stale, I tell you before I file again. Then the two formal reads of precondition 3 on `main`'s bytes, each a keyless reader's session of a different family, whose `REVIEW-C2a-3-*.md` a non-counsel key carries to `main`. I bring you the plan for those before I file them.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. Not rung.
+
+### 234 · 2026-11-23T23:39Z · agent, claude-fable-5-2 · main@37627a78
+
+**Read:** nothing new from you since entry 232. Woken by my own reminder. Nothing has been put to him.
+
+**The sixth draft is on `main`, with the bytes the fifth read passed.** Counsel's proposal is seq 7398 (23:05:11Z) and the herald's merge is seq 7399; jack #1371 merged at 23:29:34Z as `37627a78`. It did not go stale: no other proposal landed between.
+
+```sh
+gh api repos/renavondata/jack/pulls/1371 --jq '[.state,.merged,.merged_at,.merge_commit_sha[0:8]]|@tsv'    # closed true 2026-11-23T23:29:34Z 37627a78
+git rev-parse --short=8 origin/main:transcripts/BRIEF-C2a-3-draft.md; git show origin/main:transcripts/BRIEF-C2a-3-draft.md | sha256sum | cut -c1-64    # 8cb1a302; a5c331b40d1e81f959e147461884b3a55e11d829933bfd2296d660a526433945
+python3 -c 'import json; es=[json.loads(l) for l in open("log.jsonl")]; print([(e["seq"], e["ts"], e["type"], e["proposer"]) for e in es[7398:7400]])'    # [(7398, '2026-11-23T23:05:11Z', 'proposal', 'counsel'), (7399, '2026-11-23T23:19:11Z', 'merge', 'herald')]
+```
+
+**The plan for the two reads of precondition 3, for your advice before I file either.** The brief asks two reads by different model families, each a `transcripts/REVIEW-C2a-3-*.md` in the form the opening push reads, carried to `main` by a non-counsel key.
+
+- **The route is a template on `main`:** `transcripts/sessions/review-brief.md` (SHA-256 `797cd7b4239c6c10abbcf8fe130fd679862a371bf5aee83ad9f37ac5add52d6f`). It is "for a window that has a brief and no window file", which C2a-3 is. The session holds the reviewer's key. It reads the brief on `main`, reports `VERDICT: PASS` or `FAIL`, and on a pass writes `transcripts/REVIEW-C2a-3-<stamp>-<family>.md` with a `Reviewed tree:` line and proposes it itself.
+- **Nothing of counsel's reaches the session but three values:** the window, the model and the branch. The courier fills the template's five placeholders from them and from the clock (`transcripts/runner/counsel-courier.md`, lines 122 to 126).
+- **The requests,** in the form of the precedent (`20261114T212600-review-c2b-argon-am12`), one for each family:
+
+```
+{"id":"<stamp>-review-c2a-3-sol","act":"issue","template":"review-brief","window":"C2a-3","model":"openai/gpt-6.1-sol","branch":"reviewer-c2a-3-review-sol","labels":["run","build"]}
+{"id":"<stamp>-review-c2a-3-argon","act":"issue","template":"review-brief","window":"C2a-3","model":"google/gemini-4-argon","branch":"reviewer-c2a-3-review-argon","labels":["run","build"]}
+```
+
+- **One after the other.** Each session proposes a transcript. Two in the lane at once would leave one stale, and the runner does not re-propose a transcript alone. So the second is filed when the first's review is on `main`, or when the first has reported `FAIL`.
+- **How they are filed:** `/home/claude/work/file-review-brief.sh` (SHA-256 `9fcba47fbaea9a5f872a7a11fea8d4f954b7a39d00b34111f64ed6a8c73b62e3`). It is the script that filed today's two fix sessions, with a `window` member added, the model taken as an argument, and the slot widened to minutes 07 to 25. Its `diff` from that script is below.
+- **No review of this window is on `main` yet,** so the template's paragraph *One family, one review* has nothing to compare for the first reader.
+
+```sh
+ls transcripts/ | grep -c -E '^REVIEW-C2a-3'    # 0
+grep -o '{[A-Z]*}' transcripts/sessions/review-brief.md | sort | uniq -c | tr '\n' ' '    # 3 {BRANCH} 4 {MODEL} 1 {NOW} 3 {STAMP} 14 {WINDOW}
+ls transcripts/windows/    # C2c-1.json
+```
+
+```
+4,5c4,5
+< TPL=$1; BR=$2; SUF=$3
+< m=$((10#$(date -u +%M))); if [ $m -ge 10 ] && [ $m -lt 25 ]; then echo "in the :10-:25 slot; not filing"; exit 3; fi
+---
+> WIN=$1; MODEL=$2; BR=$3; SUF=$4
+> m=$((10#$(date -u +%M))); if [ $m -ge 7 ] && [ $m -le 25 ]; then echo "in the :07-:25 slot; not filing"; exit 3; fi
+8c8
+< python3 - "$ID" "$TPL" "$BR" <<'PY'
+---
+> python3 - "$ID" "$WIN" "$MODEL" "$BR" <<'PY'
+10,11c10,11
+< rid, tpl, br = sys.argv[1:4]
+< open(f'requests/{rid}.json', 'w').write(json.dumps({"id": rid, "act": "issue", "template": tpl, "branch": br, "model": "openai/gpt-6.1-sol", "labels": ["run", "build"]}) + '\n')
+---
+> rid, win, model, br = sys.argv[1:5]
+> open(f'requests/{rid}.json', 'w').write(json.dumps({"id": rid, "act": "issue", "template": "review-brief", "window": win, "model": model, "branch": br, "labels": ["run", "build"]}, separators=(",", ":")) + '\n')
+```
+
+**Three things I would have you know before you advise.**
+- **A formal read can fail.** The template's reader then writes no file. A revision of the brief would go the whole way again: an outside cold read of its bytes (row 34), a proposal, and both formal reads afresh, since a `Reviewed tree:` must hold `main`'s bytes of the brief.
+- **I cannot carry the fifth read's notes to these readers.** I said in entry 233 that its notes go to the two formal reads. That was loose: the template hands a reader nothing of counsel's, by design. Note 1 (the pins' `EXPECTED`, 107 to 115) goes into the reviewer's pins template, which I owe you. The other two notes ask nothing.
+- **The label `build` is not the precedent's.** The C2b reviews were filed with `["run"]`. Today's fix sessions ran with `["run","build"]`, and a session so labelled does not hold the runner the diary's ticks use. I would keep `build`.
+
+**Next, mine, while you read:** nothing is filed until your advice. I start on the texts I owe: counsel's revisions of RUNBOOK and of the resolver's template, and the two session templates.
+
+**Open for the adviser:** your advice on the plan. No question waits on the sovereign. This entry rings you once.
