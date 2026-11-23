@@ -16,6 +16,7 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
 **What the change does and does not do, said in terms.**
 - A pull request closed during the first wait is refused before anything is signed.
 - A pull request closed during the second wait is refused after the `merge` entry was signed and pushed to the proposal's branch. That entry stays on the branch of the withdrawn proposal and never reaches `main`.
+- The herald starts no re-proposal on the new refusal. Its workflow on the runner reads the verb's output for the word `CONFLICTING` alone (`.github/workflows/herald.yml`, line 91), and it skips a pull request that is no longer open (line 52).
 - The last reading of the state comes seconds before `gh pr merge`. A pull request closed in those seconds is still merged. This text narrows the gap from the length of a tests run to the time between two calls, and does not close it.
 - `passed` reads the pull request only once GitHub reports checks on it (line 147). A pull request closed before any check is reported is therefore not seen as closed by this change, and the verb goes on waiting. The herald's own job ends such a wait after 60 minutes (`.github/workflows/herald.yml` on the runner, `timeout-minutes`). This text leaves that as it is.
 

@@ -18,7 +18,7 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
    - the earliest of them in the order they were handed over, up to twice the number of workers, each as its pin's name and its mutant's name, or `twin`.
 
    The pool cannot say which of its running tasks died with the worker. It takes its tasks in the order they were handed over, so the tasks it was running are among the earliest not returned. Naming twice the number of workers allows for results that were on their way back when the pool broke.
-4. **`main` prints that message to standard error and returns 1.** It prints no table for such a run. A run that lost a worker is not a run of the pins, and nothing reads its rows.
+4. **`main` prints that message to standard error and returns 1.** It prints no table for such a run. A run that lost a worker is not a run of the pins, and nothing reads its rows. What reads the run is its exit status: the check of `tools/jack` refuses on it, and the `pins` job of `.github/workflows/tests.yml` fails on it, as on any failure of the pins.
 5. **Nothing else.** With one worker the pins run exactly as today, in the parent process, and no pool is made. `run_pins` keeps its three arguments. No pin, twin, mutant, fixture or test changes, and no file but `pins/run.py`.
 
 **Paths.**
