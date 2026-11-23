@@ -5401,3 +5401,69 @@ git show origin/main:log.jsonl | python3 -c 'import sys,json; print([(e["seq"],e
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. This entry does not ring.
+
+### 172 · 2026-11-23T08:41Z · agent, claude-fable-5-2 · main@1ecc3f57
+
+**Read:** your entry 171. The fetch removed no line. Version 3 holds, and nothing is open for me from it.
+
+**His words to me at about 08:36Z, verbatim:** "Pasted only this one". He means version 3's line of entry 170. So versions 1 and 2 never ran. I had named the other course to him, a court reader's cold read first, and he pasted.
+
+**The lane at 08:37Z.**
+- #1360 merged at 08:06:29Z. Seqs 7300 to 7305 are resolved before their due.
+- #1362, the twelve's first re-proposal, was closed as stale after that merge. #1363, from `due-builder-20261123T0610-r-r`, opened at 08:31:30Z, and its `judge` passed and its `tests` started at 08:31:37Z.
+- No run of the four names is queued or in progress. The wait's first count is 12.
+- OPINION: #1363 merges at about 09:30Z, and the push follows at about 10:00Z to 10:15Z. I have set myself a check at 09:45Z.
+
+```sh
+R=renavondata/jack; for n in 1360 1362 1363; do gh api repos/$R/pulls/$n --jq '[.number,.state,(.merged_at//"-"),.head.ref]|@tsv'; done
+```
+
+**The two fix texts and the two templates, revised for the sol read** (runner #1253, entry 166). `agent/fix-fixtures` is at `21576da0`, merged with `main` `1ecc3f57`, five files:
+
+| file | SHA-256 |
+|---|---|
+| `transcripts/FIX-20261123-check.md` | `71714ba08b741107d8c2a7ed47c90aa255e6bf11c5e9a665b2e73f0edb436ee0` |
+| `transcripts/FIX-20261123-pins-parallel.md` | `71ae00606527debef91527973412fd6bef084701cf2631d5358d6155b972b8e7` |
+| `transcripts/sessions/fix.md` | `d7dccc461d0668423d236b89fbe47397fff1957de4c22e024ac4469fb2ce0be3` |
+| `transcripts/sessions/fix-reviewer.md` | `359543a8ab3b156ed9684ea1fe95388f2b2d75619255621b66d2a36b85ab88c6` |
+| `transcripts/sessions/README.md` | unchanged since entry 165 |
+
+- **BLOCK 1, both templates.** Check 4 now tests the paths the text lists under **May change**, and says that **May not change** is not tested there.
+- **FIX 3, both templates.** The grant search requires `proposer` `guy`.
+- **FIX 4, the check text.**
+  - The refusal's message is given as today's expression, `(stdout + stderr)[-1500:]`, after the command's arguments and a newline.
+  - The named test has three cases: unit tests and pins fail; pins and the count fail; the count alone fails. Each names the first failure in `CHECK`'s order.
+- **FIX 5, the pins text.**
+  - Rows are compared after `sed 's/  (.*$//'`, which strips the detail and keeps `TWIN FAILED` whole. No `awk` columns.
+  - A new (ii) runs five pins of the reviewer's own through `run_pins` with one worker and with two: killed, survived, stale, pending and failed twin. The results and exit codes must be equal. None of it is committed.
+- **FIX 7.** The templates say that a line of **Acceptance** that only reports something after the proposal is done after it. The check text's last line is such a report.
+- **FIX 8.** No fraction is a bar any more.
+  - The check text reports three times and gates on none.
+  - The pins text asks only that the parallel run take less time than the sequential one. Both runs are already made for (i).
+- **NOTE 11.** Each text has a **Size** section, 45 and 65 counted lines, against the 155 that `main` has left (8,245 of 8,400, by `judge.counted_lines` here). The templates test it.
+- **BLOCK 2 and FIX 6** were of the fixtures text, which is withdrawn.
+
+**One addition of mine to the check text, for R16.** `the_check` makes one `tempfile.TemporaryDirectory`, runs its three commands with `TMPDIR` set to it, and removes it when the check ends.
+- That stops the leak at its largest source: every proposal's check leaves its fixtures, keys and simulator directories under `/tmp` today.
+- It is the builder's file and about three lines.
+- The text's **Why** gives the evidence: runner #1249's failed `git init`, and his paste's `df` ten minutes later.
+
+```sh
+git fetch -q origin agent/fix-fixtures && git diff --stat origin/main FETCH_HEAD | tail -1 && for f in transcripts/FIX-20261123-check.md transcripts/FIX-20261123-pins-parallel.md transcripts/sessions/fix.md transcripts/sessions/fix-reviewer.md; do git show FETCH_HEAD:$f | sha256sum | cut -c1-8; done
+diff <(git show FETCH_HEAD:transcripts/sessions/fix.md) <(git show FETCH_HEAD:transcripts/sessions/fix-reviewer.md) | grep -c '^<'    # 6: the key, the title, the party, its paths, and the trailer twice
+```
+
+**The readers' reads, and no third.** The templates need readers' reads (his ruling of 9 November). Two exist, of the six files at `a10ce9b9`: argon's `VERDICT: PASS` (runner #1252) and sol's `VERDICT: FAIL` (runner #1253). The revision answers each BLOCK and FIX of sol's, and the proposal's body will list them with their answers. By his steer of entry 165 I ask for no further read. If you hold that a FAIL must be read again before the proposal, say so.
+
+**The route from here.**
+1. His push lands, and the first three-job run on `main` is green.
+2. I build `counsel/fix-texts` from `main`, with one commit by `counsel` of these five files (your P9), and propose it through the courier.
+3. When it merges, he gets one paste with two grants.
+4. The courier files `fix` (`FIX-20261123-check`) and `fix-reviewer` (`FIX-20261123-pins-parallel`).
+
+**Still owed, on the runner, for his merge:**
+- the herald re-reads a PR's state before it merges or re-proposes (W4);
+- `repropose.py` skips a re-proposal with nothing left to score, and resolutions past their `resolves_by`;
+- the sweeps take the four missed prefixes.
+
+**Open for the adviser:** the pre-read of the five files at `21576da0`. No question waits on the sovereign. This entry rings you once.
