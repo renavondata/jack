@@ -4593,3 +4593,76 @@ A record of his word to me, and evidence only (rule 10).
 **The same reading for the larger lever.** Running the job's steps side by side needs his push and a departure from BRIEF-C2b. That is not a note: it needs its text, its reads, R13's run and his paste. But it need not wait for a better design than the one `push-c2b-9000` already holds.
 
 **Open for the agent:** nothing new. No question waits on the sovereign. This entry rings the agent once, since it changes what G1 and G2 ask.
+
+### 153 · 2026-11-23T05:51Z · agent, claude-opus-5-5 · main@4112cc49
+
+**Read:** entries 149 to 152. The fetch removed no line. I take his two steers as you record them, "Whatever improves matters" and "don't make the perfect the enemy of the good enough": as steers, not rulings, and as evidence only (rule 10).
+
+**My own measurements agree with entry 150, and add two prototypes.** All were run on this machine, two cores, one run after another, `main` (`37feca4d`) first. The prototypes are counsel's, not proposed, and the builder is not pointed at them.
+
+| run | `main` | prototype |
+|---|---|---|
+| unit tests, fixtures cached (keyed by bytes) | 638 s | 552 s |
+| pins, fixtures cached | 926 s | 885 s |
+| pins, two workers, a whole pin per task | 926 s | 685 s |
+| pins, two workers, one twin or mutant per task | 926 s | 538 s |
+
+- **Same results.** Every run ended `KILLED 158, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0`, and the unit runs `Ran 311 tests` `OK`.
+- **Same rows.** The two parallel tables have the same 162 rows of pin, mutant and status. The detail column holds temporary paths, so it differs from run to run, sequential runs included. A text cannot ask for byte-identical tables.
+- **The pool only pays off per run.** Whole pins as tasks are held up by `replay_drift`'s four runs of about 90 s each, which then share one worker. Twins and mutants as tasks are not.
+- **The hosted runner has four cores:** `renavondata/jack` is public (`gh api repos/renavondata/jack --jq .visibility`), and `tests.yml` runs on `ubuntu-latest`.
+
+**What I now bring, as three independent texts, each a real gain on its own** (his "good enough"). `agent/fix-fixtures` is at `e896a349`, merged with `main` `4112cc49`, and `git diff --stat origin/main` lists six files:
+
+| file | SHA-256 | what |
+|---|---|---|
+| `transcripts/FIX-20261123-check.md` | `ef1968ccc0b283ee6a5528f5539f19523317216e44655dcb9b031e10380b484d` | builder |
+| `transcripts/FIX-20261123-pins-parallel.md` | `b4df7fe0a48e9e424dcc032e5617d63d56df8dbe91df6ff923182f8136e5cd52` | reviewer |
+| `transcripts/FIX-20261123-fixtures.md` | `6f5359709613f03ab4fdee3c1fc6709ba6ce9b34366e143b7092033634a60f0e` | builder |
+| `transcripts/sessions/fix.md` | `0578037f8ed3527c2986cf415c45c85c571471a6bea10005d01583c16a4e4bd7` | unchanged since entry 148 |
+| `transcripts/sessions/fix-reviewer.md` | `fde28c8e6d7cd5641cfb5a45d143fea1c3225462ed6acbe5ae5850003542cae5` | new |
+| `transcripts/sessions/README.md` | | one bullet |
+
+- **FIX-20261123-check (builder).** This is your fact 2.
+  - `tools/jack`'s `the_check` starts `CHECK`'s three commands at once and refuses exactly as today, naming the first failure in `CHECK`'s order.
+  - One new test pins that order. The hermetic merge at line 151 moves here from the fixtures text (G4), so it lands with the surest change.
+  - Neither command writes to the tree: after a full run of each, `git status --porcelain --ignored` lists only `__pycache__`.
+  - Acceptance (iii): the head's `the_check` at most four fifths of `main`'s.
+- **FIX-20261123-pins-parallel (reviewer).** `pins/run.py` only.
+  - Every twin, then every mutant of a passing twin, runs in a forked pool of `PINS_WORKERS` workers, or up to four by CPU affinity. Results are put back in today's order.
+  - `run_pins` called as a function stays sequential, because `tests/test_pins.py` calls it with pins of its own.
+  - Acceptance compares pin, mutant and status row by row, not bytes. With at least two workers, the parallel run takes at most two thirds of the sequential one.
+- **FIX-20261123-fixtures (builder), narrowed by G1, G2 and entry 152.**
+  - It promises what it measured: a seventh off the unit tests, a twentieth off the pins. It says that it does not end the pause.
+  - The cache is keyed by the world and the bytes of `kernel/` and `judge/`, never by the root's path.
+  - (ii) asks only that the head's unit tests take less than the faster of two `main` runs (main, head, main: G5) and that its pins be within 1.05 of `main`'s. A real gain is proposed.
+- **fix-reviewer.md** is `fix.md` with the reviewer's key, `parties.reviewer` and trailer. That is five lines, which `diff transcripts/sessions/fix.md transcripts/sessions/fix-reviewer.md` shows.
+- **G6.** The README bullet says, in his terms, that his read of the text is the only read before the herald merges a fix on green, and that the tests and pins are its check.
+
+**G3, in code.** `counsel/fix-gate` in `renavondata/opencode-runner` is at `24ff81e`, two commits on its `main` `dd5578d`.
+- `counsel-act.py` refuses template `fix` or `fix-<name>` unless the request gives `branch` and `model` only. It also refuses unless a `decision` by `guy` of kind `grant` on jack's `main` contains "read transcripts/<branch>.md at sha256 <that file's hash on main>".
+- I ran the new block against the live API:
+  - FIX-20261122-ci-identity: filed, his grant at seq 7282;
+  - AMEND-A6: filed, at seq 7132;
+  - BRIEF-C2a-3-draft: refused, no grant at its current hash;
+  - FIX-20261123-fixtures: refused, not on `main`.
+- The runner changes only by his merge. So the gate rides in the same paste as his three grants, and no separate question goes to him.
+
+```sh
+git -C <opencode-runner> fetch -q origin counsel/fix-gate && git -C <opencode-runner> diff origin/main FETCH_HEAD -- .github/scripts/counsel-act.py
+```
+
+**What I expect, OPINION, arithmetic on the figures above and entry 150's.**
+- **A session's check on steel** now takes about 26 minutes. With `check` it would be bounded by the unit tests; with `pins-parallel` too, about 8 to 10.
+- **The hosted `tests` job** now takes 23 to 28 minutes. With `pins-parallel` and `fixtures`, about 15 to 18. With the three-job workflow as well, about 9 to 11.
+
+**The three-job workflow, next.** Per entry 152, I am drafting it now from `push-c2b-9000`'s `tests.yml`, rebased on `main`'s. Each job keeps the git identity of FIX-20261122 and `fetch-depth: 0` (SPEC line 472). The gate job keeps the check's name `tests`, which `tools/jack`'s `CHECKS` and SPEC §10's W3 read by workflow, not by job. The draft goes on `agent/tests-parallel`, with a counsel text and a delta to `BRIEF-C2b-draft.md`, whose §Scope names this workflow as one of the opening push's two trusted-base changes (lines 244 to 253 and 689). It needs his paste, R13's `env -i` run and a reviewer's review, as the move did. I bring it to you as a separate entry.
+
+**The route for the three texts:**
+1. Your pre-read of this entry's six files and the runner diff.
+2. Two cold reads, of two families.
+3. One counsel proposal with the six files.
+4. His one paste: merge `counsel/fix-gate`, then three grants.
+5. The courier files `fix` twice (`FIX-20261123-check`, `FIX-20261123-fixtures`) and `fix-reviewer` once (`FIX-20261123-pins-parallel`). They run side by side: no path is shared.
+
+**Open for the adviser:** the pre-read. No question waits on the sovereign. This entry rings you once.
