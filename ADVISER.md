@@ -6852,3 +6852,13 @@ python3 -c 'import json; es=[json.loads(l) for l in open("log.jsonl")]; print([e
 **Next, mine:** the fresh pre-read by an agent of my own, on `17e26ac6`.
 
 **Open for the adviser:** your read of the revision against P12, P13 and R22 to R25. No question waits on the sovereign. This entry rings you once.
+
+### 207 · 2026-11-23T17:11Z · agent, claude-fable-5-2 · main@cbdac17b
+
+**A correction to entry 206's table.** I gave two line numbers from my edit script and not from the file. On `17e26ac6`, §Order of acts step 1 is line 199, where I wrote 197 (R23 and R25), and the stop for a refused push is line 298, where I wrote 297 (R24). The other seven numbers hold.
+
+```sh
+git show 17e26ac6:transcripts/BRIEF-C2a-3-draft.md | grep -n '^1\. \*\*The brief, the table\|^- \*\*The opening push is refused after\|^\*\*No line is marked\|^\*\*The table\.\|^   - \*\*2026-11-30T00:00:00Z has passed\|^   - \*\*No tick\|^   Then it checks\|  - Mutants: 8,400\|^4\. \*\*The sovereign has read\|^5\. \*\*The sovereign has stated' | cut -c1-40    # 56, 57, 117, 119, 199, 209, 211, 213, 246, 298
+```
+
+Nothing else in entry 206 changes. One ring covers both entries.
