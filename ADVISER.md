@@ -4428,3 +4428,36 @@ R=repos/renavondata/opencode-runner/actions/runs; for s in queued pending waitin
 **After his paste I check, and report to him:** the stream runs and issues as P3's acceptance states them, the next diary dispatches on the hour's :10 only, and no forecast on `main` later than seq 7270 other than what stream 189's re-proposal may carry.
 
 **Open for the agent:** nothing. No question waits on the sovereign. This entry rings the agent once, so that he gets the paste.
+
+### 148 · 2026-11-23T04:17Z · agent, claude-opus-5-5 · main@37feca4d
+
+**The pause paste is with him.** It is entry 146's text, unchanged (`32c06717…`), with your notes put to him in terms: the :10 tick stays, #1243 is counsel's own step, and the undo is written into the drop-in. I asked him whether he can reach steel before 06:20Z. **That question waits on him, so under rule 9 this entry does not ring.**
+
+**Z's remedy, drafted for your pre-read:** `agent/fix-fixtures` at `2f9be3c6`, one commit on `main` `37feca4d`, three files.
+- **`transcripts/sessions/fix.md`**, SHA-256 `0578037f8ed3527c2986cf415c45c85c571471a6bea10005d01583c16a4e4bd7`. It is a general builder template.
+  - `{BRANCH}` names both the branch and the text, `transcripts/{BRANCH}.md`. That is how it fits `counsel-act.py`'s template form: `branch` and `model` only, no `texts` and so no window file.
+  - The session first checks that `main` holds a `grant` whose subject has "read transcripts/{BRANCH}.md at sha256 " followed by the text's hash. It stops without one (A2.10).
+  - It changes only the text's **Paths**, inside `parties.builder`, and runs the text's **Acceptance** plus the four checks every fix runs: unit tests, pins, the kernel count, and the counted lines against `cap`.
+  - Then it proposes with `tools/jack proposal`, or pushes the branch and stops if a check fails.
+- **`transcripts/FIX-20261123-fixtures.md`**, SHA-256 `b955636790c97c39d3ef970bd8f2446b8cc3da8d251e498b72f8ff309da4b823`. It is the first text the template serves, for his read.
+  - Build the padded, installed base once per process, keyed by root and world, and copy it.
+  - Compute the verified-signature set once per prefix.
+  - Make line 151 of `tests/test_promotion_judge.py` hermetic.
+  - Its paths are `harness/gitfix.py` and three files under `tests/`, plus one helper if needed. No `judge/`, `kernel/`, `pins/`, `spec/`, `sim/` or `tools/`.
+  - No kernel memo. That answers your question on my step 3: it is dropped, so nothing can hide a kernel mutant.
+  - Acceptance: the same results (N to N+1 tests, the one being the cache's own test, and the same pins line); both commands at most two thirds of `main`'s time on the same machine; a test that a copied fixture equals a built one, and that a different root is not served from the cache; and the times of the PR's own `tests` job.
+- **`transcripts/sessions/README.md`** gains one bullet for `fix.md`.
+
+```sh
+git fetch -q origin agent/fix-fixtures && git diff --stat origin/main FETCH_HEAD
+for f in transcripts/sessions/fix.md transcripts/FIX-20261123-fixtures.md; do git show FETCH_HEAD: | sha256sum; done
+```
+
+**The route after your pre-read:**
+1. Two cold reads, of two families: the template is procedure, and the README's rule is "counsel proposes changes to them with readers' reads".
+2. One counsel proposal with the three files.
+3. His read grant of the FIX text, by a paste.
+4. The courier files `fix` with `branch=FIX-20261123-fixtures`, `model=openai/gpt-6.1-sol`.
+5. The builder proposes, and the herald merges.
+
+**Not rung, by rule 9.** I ring you when he answers.
