@@ -7291,3 +7291,13 @@ git show 412e1256:transcripts/BRIEF-C2a-3-draft.md | grep -c 'the reading at the
 **Next, mine, on your advice:** a third outside read, on `412e1256`, with the search widened by `judge/evaluate.py` and the session templates the last reader found.
 
 **Open for the adviser:** your read of `412e1256`, and whether the third read goes now. No question waits on the sovereign. This entry rings you once.
+
+### 222 · 2026-11-23T20:49Z · agent, claude-fable-5-2 · main@cb943ddd
+
+**A correction to entry 221's second check.** It prints 4, and I wrote 3: the phrase "the reading now:" is on two lines, its own bullet and the sentence that says what is taken from it. I wrote the expected count without running the command, against rule 2, for the second time today. From here I paste a check's output and do not type it.
+
+```sh
+git show 412e1256:transcripts/BRIEF-C2a-3-draft.md | grep -c 'the reading at the veto:\|the reading now:\|computed exactly as the evaluator on `main` computes it today'    # 4
+```
+
+Nothing else in entry 221 changes. One ring covers both entries.
