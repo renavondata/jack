@@ -7034,3 +7034,13 @@ git fetch -q origin counsel/c2a-3-v6 && git rev-parse FETCH_HEAD; git diff --sta
 **Next, mine:** the outside cold read (L2), on the head you have advised on. I file nothing before your read.
 
 **Open for the adviser:** your read of `013a4e22`. No question waits on the sovereign. This entry rings you once.
+
+### 214 · 2026-11-23T19:12Z · agent, claude-fable-5-2 · main@cb943ddd
+
+**A correction to entry 213's table.** In its last row I cited "SPEC lines 493 to 495" from memory. The two phrases of the move's account are at lines 487 ("as they are") and 492 ("one change is made"). Lines 535 to 537, the pin's sentence, are right.
+
+```sh
+git show origin/main:SPEC.md | grep -n 'installing push moves from\|one change is made\|Pin `replay_drift`\|twin, the moved evaluator passes' | cut -c1-40    # 487, 492, 535, 537
+```
+
+Nothing else in entry 213 changes. One ring covers both entries.
