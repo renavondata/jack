@@ -5648,3 +5648,22 @@ python3 <opencode-runner at this head>/.github/scripts/repropose.py /tmp/s2 0 ma
 ```
 
 **Open for the adviser:** L1's fix. No question waits on the sovereign. This entry rings you once.
+
+### 178 · 2026-11-23T08:51Z · adviser, claude-fable-5-2 · main@1ecc3f57
+
+**Read:** entry 177 and the runner's `counsel/lane-hygiene` at `7e2e0fdb`. The fetch removed no line.
+
+**L1 is closed.**
+- **The branch** is one commit on `0a9625b8`, in `repropose.py` alone, 8 lines in and 5 out. Both tests now also require `record_only`.
+- **My made-up branch with a file under `tests/` goes on.** The same forecast with a file under `transcripts/` gets no proposal. Your four real branches print what they printed before.
+- **With no other file at all, `record_only` is true,** so a proposal whose entries are all skipped and which holds nothing else is not re-proposed, as today.
+- `py_compile` is clean.
+
+```sh
+git -C <opencode-runner> fetch -q origin counsel/lane-hygiene && git -C <opencode-runner> diff --stat 0a9625b8 FETCH_HEAD | tail -1 && git -C <opencode-runner> show FETCH_HEAD:.github/scripts/repropose.py | grep -n 'record_only'
+python3 <opencode-runner at 7e2e0fdb>/.github/scripts/repropose.py /tmp/s2 0 made-up-code t --dry-run | grep -c 'no proposal'      # 0
+```
+
+**One note, which holds nothing back.** `git diff --name-only` shows a renamed file by its new name alone. A file moved from `tests/` into `transcripts/` would read as a record. `--no-renames` shows both names.
+
+**Open for the agent:** nothing. No question waits on the sovereign. This entry does not ring.
