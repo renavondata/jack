@@ -8,6 +8,7 @@ exist yet (the second checker) is PENDING. A pin that cannot fail is a defect,
 so SURVIVED, STALE and TWIN FAILED fail the run; PENDING does not pass.
 """
 import argparse
+import multiprocessing
 import os
 import shutil
 import sys
@@ -50,26 +51,64 @@ def run_test(pin, root):
         return False, traceback.format_exc(limit=2).strip().splitlines()[-1]
 
 
-def run_pins(pin_list, root):
+def run_one(pin, root, mutant=None):
+    with tempfile.TemporaryDirectory() as tmp:
+        copy = disposable_copy(root, tmp)
+        if mutant is not None:
+            status = apply_mutant(copy, mutant)
+            if status != "ok":
+                return Result(pin.name, mutant.name, status, mutant.find[:60])
+        passed, detail = run_test(pin, copy)
+    if mutant is None:
+        return passed, detail
+    return Result(pin.name, mutant.name, "SURVIVED" if passed else "KILLED", detail)
+
+
+def init_worker(pin_list, root):
+    global worker_pins, worker_root
+    worker_pins, worker_root = pin_list, root
+    pins.world.cache_clear()
+
+
+def run_task(indexes):
+    i, j = indexes
+    pin = worker_pins[i]
+    return run_one(pin, worker_root, None if j is None else pin.mutants[j])
+
+
+def parallel_pins(pin_list, root, workers):
+    active = [i for i, p in enumerate(pin_list)
+              if all(os.path.exists(os.path.join(root, m.path)) for m in p.mutants)]
+    with multiprocessing.get_context("fork").Pool(workers, initializer=init_worker,
+                                                 initargs=(pin_list, root)) as pool:
+        twins = dict(zip(active, pool.map(run_task, [(i, None) for i in active], chunksize=1)))
+        tasks = [(i, j) for i in active if twins[i][0] for j in range(len(pin_list[i].mutants))]
+        mutants = dict(zip(tasks, pool.map(run_task, tasks, chunksize=1)))
+    results = []
+    for i, pin in enumerate(pin_list):
+        if i not in twins:
+            results += [Result(pin.name, m.name, "PENDING", f"{m.path} does not exist yet") for m in pin.mutants]
+        elif not twins[i][0]:
+            results.append(Result(pin.name, "twin", "TWIN FAILED", twins[i][1]))
+        else:
+            results.extend(mutants[i, j] for j in range(len(pin.mutants)))
+    return results
+
+
+def run_pins(pin_list, root, workers=1):
+    if workers != 1:
+        return parallel_pins(pin_list, root, workers)
     results = []
     for pin in pin_list:
         if any(not os.path.exists(os.path.join(root, m.path)) for m in pin.mutants):
             results += [Result(pin.name, m.name, "PENDING", f"{m.path} does not exist yet") for m in pin.mutants]
             continue
-        with tempfile.TemporaryDirectory() as tmp:
-            passed, detail = run_test(pin, disposable_copy(root, tmp))
+        passed, detail = run_one(pin, root)
         if not passed:
             results.append(Result(pin.name, "twin", "TWIN FAILED", detail))
             continue
         for m in pin.mutants:
-            with tempfile.TemporaryDirectory() as tmp:
-                copy = disposable_copy(root, tmp)
-                status = apply_mutant(copy, m)
-                if status != "ok":
-                    results.append(Result(pin.name, m.name, status, m.find[:60]))
-                    continue
-                passed, detail = run_test(pin, copy)
-            results.append(Result(pin.name, m.name, "SURVIVED" if passed else "KILLED", detail))
+            results.append(run_one(pin, root, m))
     return results
 
 
@@ -92,8 +131,16 @@ def main(argv=None):
     ap.add_argument("--transcript", help="also write the table to this path")
     ap.add_argument("--only", nargs="*", help="run only these pins")
     a = ap.parse_args(argv)
+    value = os.environ.get("PINS_WORKERS")
+    try:
+        workers = int(value) if value is not None else min(4, len(os.sched_getaffinity(0)))
+        if workers < 1:
+            raise ValueError
+    except ValueError:
+        print(f"invalid PINS_WORKERS {value!r}: expected a whole number of at least 1", file=sys.stderr)
+        return 1
     selected = [p for p in pins.PINS if not a.only or p.name in a.only]
-    results = run_pins(selected, ROOT)
+    results = run_pins(selected, ROOT, workers)
     text = table(results)
     print(text)
     if a.transcript:
