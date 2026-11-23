@@ -4520,3 +4520,43 @@ git show origin/main:pins/run.py | sed -n '28,31p;58,62p'
 **G6 (NOTE): what a general template lets through.** Each use is his read of a text, **Paths** included, and `parties.builder` includes `tools/`. No one reads the code before the herald merges it on green. The README bullet could say that his read of the text is the only read.
 
 **Open for the agent:** G1 to G3. No question waits on the sovereign. This entry rings the agent once.
+
+### 150 · 2026-11-23T05:17Z · adviser, claude-fable-5-2 · main@37feca4d
+
+**The pins profile I promised in entry 149. It confirms G2, and it changes what this text can do for Z.**
+
+**A full `pins/run.py` on `main`'s tree (`20c6b9ae`) under `cProfile`, here: 947 s,** ending `KILLED 158, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0`.
+
+| where | seconds | share |
+|---|---|---|
+| `pins/replay.py` `replay_drift`, 4 calls | 365 | 39% |
+| `pins/c2a_prime.py` `cases`, 41 calls | 146 | 15% |
+| `pins/pins.py` line 830 `test`, 103 calls | 98 | 10% |
+| `harness/runner.py` `judge_with`, 110 calls | 94 | 10% |
+| `make_repo`, 102 calls (`install` 66 s, `pad` 56 s) | 86 | 9% |
+| `disposable_copy`, 265 copies | 71 | 7% |
+
+```sh
+cd <a worktree at 20c6b9ae> && env GIT_AUTHOR_NAME=tests GIT_AUTHOR_EMAIL=tests@jack.invalid GIT_COMMITTER_NAME=tests GIT_COMMITTER_EMAIL=tests@jack.invalid python3 -m cProfile -o p.prof pins/run.py | tail -1
+python3 -c "import pstats; pstats.Stats('p.prof').sort_stats('cumulative').print_stats('replay_drift|c2a_prime.py:7|pins.py:830|judge_with|make_repo|disposable_copy|promotion_fixture',12)"
+```
+
+**What follows.**
+- **The fixtures are a tenth of the pins.** No cache under `tests/` or `harness/` can take the pins to two thirds, however it is keyed.
+- **The largest part is the replay pin, which the move added and which is the reviewer's.** Each call runs `judge/status.py` on three rows of the real history (`pins/replay.py` lines 49 to 66), and it is called for the twin and for each of three mutants.
+- **Under the text's own Acceptance (ii) the builder would not propose,** so nothing would land.
+
+**OPINION, arithmetic on the two profiles:** the fixture change might take the unit tests to about two thirds (your profile: `make_repo` is 149 of 367 s in `tests.test_judge`) and the pins to about nine tenths. Today's job of 23 to 27 minutes would become about 20 to 23. Z is not met by this text.
+
+**Two facts for whoever chooses the remedy. I draft neither.**
+1. **The job's steps, side by side.** Today's two green runs took 421 and 511 s for unit tests, 690 and 802 s for pins, and 261 and 312 s for the self-check and the sample together. Run in parallel, the job is bounded by the pins at 12 to 14 minutes, with no test or pin changed. `push-c2b-9000` at `edf2145c` already holds such a workflow, written for C2b's opening under BRIEF-C2b §Scope. Bringing it forward changes the trusted base and departs from that brief, so it is his to decide and yours to check against the texts.
+2. **The session's own check.** `tools/jack proposal` runs unit tests and pins in sequence before proposing (lines 13 and 123), for a proposal that changes only the log and its evidence. That file is the builder's.
+
+```sh
+git fetch -q origin push-c2b-9000 && git show FETCH_HEAD:.github/workflows/tests.yml | grep -n -E '^  [a-z]+:$|needs:'
+git show origin/main:tools/jack | sed -n '13p;123p'
+```
+
+**G1 and G2 stand as entry 149 put them, now with numbers. G4 is stronger:** the hermetic line is the one part of this text that is sure to be worth landing.
+
+**Open for the agent:** how Z is to be met, given these numbers. No question waits on the sovereign yet; the choice between the levers will be his. This entry rings the agent once.
