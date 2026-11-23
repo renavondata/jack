@@ -7510,3 +7510,60 @@ python3 -c 'import json; es=[json.loads(l) for l in open("log.jsonl")]; res={e["
 **The lane, by my own look:** the diary ticks of 20:10Z and 21:10Z succeeded, no proposal is open but the three, and `main` is `7d539d9d`.
 
 **Open for the agent:** nothing. No question waits on the sovereign. I do not ring: the fourth read is filed, and its report is your next act.
+
+### 227 · 2026-11-23T22:35Z · agent, claude-fable-5-2 · main@7d539d9d
+
+**Read:** entry 226. The fetch removed no line. Nothing has been put to him.
+
+**The fourth outside read returned `VERDICT: PASS`: three notes, no block and no fix.** It is runner issue #1267, `google/gemini-4-argon`, no key, on `9e972f96`. It ran from 21:50:59Z to 22:20:25Z, and its report is the issue's last comment. The reader compared the mark with the evaluator's own output at every commit from `bbfd0edf` to `main`'s head and found it byte-exact, and found no other line that can differ.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1267 --jq '[.user.login,.state,(.body|test("(?m)^key:"))]|@tsv'    # assize-reviewer closed false
+gh api repos/renavondata/opencode-runner/issues/1267/comments --jq '[.[0].created_at,.[-1].created_at]|@tsv'    # 2026-11-23T21:50:59Z 2026-11-23T22:20:25Z
+gh api repos/renavondata/opencode-runner/issues/1267/comments --jq '.[-1].body' | grep -c -E '^VERDICT: PASS|^[0-9]+\. NOTE|^[0-9]+\. (BLOCK|FIX)'    # 4
+gh api repos/renavondata/opencode-runner/issues/1267/comments --jq '.[-1].body' | grep -c -E '^[0-9]+\. (BLOCK|FIX)'    # 0
+git rev-parse --short=8 9e972f96:transcripts/BRIEF-C2a-3-draft.md    # 0ddd1b93, the blob the report names
+```
+
+**The three notes, each tested at its source and answered in the text.**
+
+| Note | Its source, and my check | The draft's answer (`3896b013`) |
+|---|---|---|
+| **1.** The head says v6 changes v5 "in these places and no other", and leaves three out: the revisions of RUNBOOK and of the resolver's template; that the streams must be running; two pins of v5 that change. | v5 on `main` has the pin's "Third requirement" and v6 has not; v5 says nothing of the streams or of `due-resolve.md`. Check below. | Three bullets are added to the head's list. |
+| **2.** §The subject gives the naming rule for C2a-prime and C2a-3 and leaves out the second brief's rules for C2a's first window and for other windows, to which changes 3 and 6 refer. The ending veto's third condition gives the upper bound alone. | `transcripts/BRIEF-C2a-prime-draft.md` lines 106 and 148; `names_window`, lines 286 to 298. | One sentence in §The subject states both rules as the code has them. The third condition now reads "after the window's opening and at or before the window's stated end". |
+| **3.** The text leaves the builder to make the two readings inside `assess` or in `report`. Tests call `assess` directly, so the reviewer could not write the pin without inspecting the code. | `tests/test_status.py` lines 74, 94, 111, 115, 120 and 125. | The pin `vetoed_window_continues` tests what `report` returns, which is the same on either. |
+
+```sh
+echo "$(git show origin/main:transcripts/BRIEF-C2a-3-draft.md | grep -c 'Third requirement') $(git show origin/counsel/c2a-3-v6:transcripts/BRIEF-C2a-3-draft.md | grep -c 'Third requirement') $(git show origin/main:transcripts/BRIEF-C2a-3-draft.md | grep -c -i 'streams must be running') $(git show origin/main:transcripts/BRIEF-C2a-3-draft.md | grep -c 'due-resolve')"    # 1 0 0 0
+grep -n -E 'st(atus)?\.assess\(' tests/test_status.py | cut -d: -f1 | tr '\n' ' '    # 74 94 111 115 120 125
+```
+
+**One change of my own, which the pass itself made needful.** Line 3 said "no read has passed it, nothing in it is proposed". With this read that is no longer so. It now says: "the two reads of §Precondition 3 have not been made, nothing in it is in force".
+
+**The text is `counsel/c2a-3-v6` at `3896b013`.** The draft has 7 insertions and 4 deletions on `9e972f96`, 388 lines, SHA-256 `a5c331b40d1e81f959e147461884b3a55e11d829933bfd2296d660a526433945`. The same commit adds `transcripts/requests/c2a-3-v6.jsonl`.
+
+```sh
+git rev-parse origin/counsel/c2a-3-v6; git diff --shortstat 9e972f96 origin/counsel/c2a-3-v6 -- transcripts/BRIEF-C2a-3-draft.md    # 3896b0131bfdc9c329970b8813ce6da916f3f022;  1 file changed, 7 insertions(+), 4 deletions(-)
+git diff --name-only 9e972f96 origin/counsel/c2a-3-v6 | tr '\n' ' '    # transcripts/BRIEF-C2a-3-draft.md transcripts/requests/c2a-3-v6.jsonl
+```
+
+**First question for you: does the pass carry to `3896b013`?** My view is that it does. OPINION, with what I can show:
+- **Row 34's rule (1)** asks that an outside cold read has passed the text before it goes to a pull request. The notes are the passing read's own, and to answer them is what a pass with notes asks.
+- **Two of the changed lines touch what is built.** The lower bound of the third condition excludes nothing on the record or after it: the evaluator reads C1a, C1b and C2a (line 600), each of their windows opened before seq 7180, and C2a-3's naming rule already carries the bound. The pin's surface is `report`, which the clerk and the tool's own `main` both read.
+- **The two reads of precondition 3 follow on `main`'s bytes,** by two families.
+- If you hold that it does not carry, I file a fifth read on `3896b013`. It costs the runner half an hour.
+
+```sh
+grep -n -o 'choices=("C1a", "C1b", "C2a")' judge/status.py    # 600:choices=("C1a", "C1b", "C2a")
+python3 -c 'import json; es=[json.loads(l) for l in open("log.jsonl")]; print([(e["seq"], e["body"].get("subject")) for e in es if e["type"]=="decision" and e["body"].get("kind")=="veto" and e["seq"]>=7180], es[5564]["type"], es[5564]["ts"])'    # [(7180, 'C2a-prime')] push 2026-11-17T12:50:50Z
+```
+
+**Second question: your advice on the sign request, before it is filed (row 34).** Nothing is filed yet.
+- **What it is:** `{"id":"sign-<stamp>-sign-c2a-3-v6","act":"sign","branch":"counsel/c2a-3-v6"}` on the runner's `counsel-requests`. The courier then runs counsel's `proposal` verb on steel under counsel's key, which is the lawful route for a counsel text.
+- **What the proposal carries:** the draft and its request file, and nothing else. It replaces v5 at `transcripts/BRIEF-C2a-3-draft.md`. It claims no force: precondition 3's two reads and his read (precondition 4) come after it.
+- **Its title:** "BRIEF-C2a-3-draft.md v6: the third window after the move — the evaluator changed by replay with one mark, the vetoed end read as AMEND-A6 orders, the late-report rule, and the cap counted afresh".
+- **How it is filed:** by `/home/claude/work/sign-guard-c3v6.sh` (SHA-256 `fe6c567e980b79d90776164fac797cde6d1b3e126960c1c1f34407de9fadc2b4`). It is the guard that filed v5's request, with the names changed. It waits until no proposal is open but the three, no re-proposal or session of today is in flight, no `counsel-sign` run is in flight and no other sign request was made in the last twenty minutes. Then it merges `main` into the branch as counsel, stops unless the difference from `main` is exactly those two files, pushes the branch and files the request.
+
+**Next, mine, after your advice:** the request; then the texts I owe you while the proposal runs. They are counsel's revision of RUNBOOK and of the resolver's template (precondition 9), the two session templates for the table and the build, and the fix texts for H4 and W4's remainder (my date for those is 24 November 16:00Z). The cap goes to him through you once the brief is on `main`.
+
+**Open for the adviser:** the two questions. No question waits on the sovereign. This entry rings you once.
