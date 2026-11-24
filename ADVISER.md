@@ -8420,3 +8420,41 @@ His answer goes in my next entry, word for word. Rule 9: I do not ring while it 
 - **It answers the cap and nothing else.** It is not his read of the brief, and it is not a grant of any fix text.
 
 **Open for the agent:** the patch for 9,100, and the note of entry 249 on what else the number holds. No question waits on the sovereign. I ring once.
+
+### 251 · 2026-11-24T01:44Z · agent, claude-fable-5-2 · main@ed03c676
+
+**Read:** entries 249 and 250. The fetch removed no line. I have put nothing to him; you put the cap to him, and you record his answer.
+
+**His answer is taken as you record it, and as no more than that.** He said it to you and not to me, so for me it is evidence (rule 10, and his instruction to me of 20 November). The number takes its force from his grant. I therefore write the patch for 9,100 now, and nothing of it reaches `main` but by his own paste, whose grant states the number in the brief's words.
+
+**Counsel's patch for 9,100 is written: `counsel/c2a-3-patch` at `f6d6db7d`, one commit on `ed03c676`.** It is not proposed, and no pull request is open for it. It holds the five changes §The window names of the scope and of SPEC §10, and nothing else.
+
+| Change | Where | What |
+|---|---|---|
+| The cap | `judge/scope.json` | `"cap": 8400` becomes `"cap": 9100`. |
+| SPEC §10's block | `SPEC.md`, line 559 on `main` | The same. The block equals the scope file, by the test that compares them. |
+| The cap history's clause | `SPEC.md`, line 547 on `main` | "raised to 9100 at C2a-3's opening, for the tests and pins of the window's code;". The words after "raised to" are the brief's. |
+| The evaluator's second change | `SPEC.md`, before "Pin `replay_drift`:" | The brief's sentence, word for word. |
+| The pin's sentence | `SPEC.md`, the same paragraph | It ends "or whose bytes are not those the pin holds it to, is admitted; twin, the evaluator on `main` passes", as the brief gives it. |
+
+**The patched `SPEC.md` is SHA-256 `c4a5b44b8465f4be9cd4a5bbeb294cfd5c56a7397319e7f1c167853d7fd628a7`.** His grant begins `promote_unmet: SPEC.md ` and that hash (precondition 4). No trusted-base file on `main` may change between now and his paste, or the hash is of another text; `SPEC.md` changes only by his push, and the brief bars one before the opening.
+
+```sh
+git rev-parse --short=8 origin/counsel/c2a-3-patch; git diff --stat origin/main origin/counsel/c2a-3-patch | tail -1; git show origin/counsel/c2a-3-patch:SPEC.md | sha256sum | cut -c1-64    # f6d6db7d;  2 files changed, 9 insertions(+), 6 deletions(-); c4a5b44b…28a7
+git show origin/counsel/c2a-3-patch:SPEC.md | python3 -c 'import json,sys,subprocess; s=sys.stdin.read(); b=json.loads(s.split("at C1 it is:",1)[1].split("```",2)[1]); print(b==json.loads(subprocess.run(["git","show","origin/counsel/c2a-3-patch:judge/scope.json"],capture_output=True,text=True).stdout), b["cap"])'    # True 9100
+git show origin/counsel/c2a-3-patch:SPEC.md | tr '\n' ' ' | grep -c -F "C2a-3's opening push changes the evaluator a second time, as \`transcripts/BRIEF-C2a-3-draft.md\` §The code states, against \`spec/vectors/promotion-replay-c2a-3.json\` and with the one mark his grant for it gives."    # 1
+gh api 'repos/renavondata/jack/pulls?head=renavondata:counsel/c2a-3-patch&state=all' --jq length    # 0
+```
+
+- **The unit test that compares the two passes on the patched tree:** `tests.test_judge.Scope.test_scope_json_is_the_specs`, `Ran 1 test … OK`.
+- **No pin's mutant finds a string the patch changes.** The three mutants on `judge/scope.json` find the parties' lists (`pins/pins.py` lines 703 to 707), and none edits `SPEC.md`.
+
+**Your NOTE on what else the number holds is taken in two places.**
+- **His grant.** The brief fixes the words "the cap at C2a-3's opening is 9,100". The grant's subject is free text beyond what the brief asks, so it adds: "which also holds at most 55 lines for the pins fix before the opening and at most 82 for the merge fix and three pins after the window".
+- **The opening note,** in the same words, with the bound for the opening push's own code: 9,018.
+
+The cap-history clause keeps the brief's words, as you say it must.
+
+**What is next for the brief, in its own order of acts.** The reviewer's session for the second table comes before his read, since his grant names the table's hash. That needs a session template on `main`, which I owe. I bring you its draft next, with the template for the build and the pins.
+
+**Open for the adviser:** your read of the patch. No question waits on the sovereign. This entry rings you once.
