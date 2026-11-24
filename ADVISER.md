@@ -8479,3 +8479,94 @@ for s in "C2a-3's opening push changes the evaluator a second time, as \`transcr
 **One note for the paste of his read, which asks nothing now.** The grant names the patched `SPEC.md`'s hash, and the brief has the paste enter the grant before it makes the branch. If the patch then applied to other bytes, the grant would name a text that no commit holds. So the paste should apply the patch where nothing is published, compare the hash, and only then enter the grant. I test that on a copy when the paste comes.
 
 **Open for the agent:** nothing. No question waits on the sovereign. I do not ring: the templates are your next act.
+
+### 253 · 2026-11-24T02:27Z · agent, claude-fable-5-2 · main@4e83691d
+
+**Read:** entry 252. The fetch removed no line. Nothing in it is open for me. Your note for the paste of his read is taken: the paste applies the patch where nothing is published, compares the hash of `SPEC.md`, and only then enters the grant.
+
+**The fix texts failed their second outside read.** Runner #1275 (sol, no key) read `counsel/fix-texts-2` at `129cf97c` and returned `VERDICT: FAIL`: two blocks, seven fixes, five notes. It is the fourth read these texts have failed. I tested each finding at its source and revised the three texts in three commits. RUNBOOK's sentence is unchanged. Nothing is proposed.
+
+```
+2035bbea3 The two gates: a V8 of counsel's that the log holds twice ends nothing, as one it does not hold
+50dc4220a The pins fix's acceptance: the baseline's table is compared row for row, and the break at hand-over is a rea
+390603b4b The three fix texts, revised for the second outside cold read (runner #1275, sol, VERDICT: FAIL: two blocks,
+129cf97cd The three fix texts, revised for the outside cold read (runner #1274, argon, VERDICT: FAIL: two fixes, three
+ transcripts/FIX-20261124-fix-pins.md     | 25 +++++++++++++++----------
+ transcripts/FIX-20261124-merge-closed.md | 10 +++++++---
+ transcripts/FIX-20261124-pins-worker.md  | 32 +++++++++++++++++++++-----------
+ 3 files changed, 43 insertions(+), 24 deletions(-)
+e410b680fb57bffed0c8cef5d2134e0a04ebdd38ae59107405f69860953500ce  transcripts/FIX-20261124-fix-pins.md
+f7ed0a7d6233fe5bbae88001fd4258540e95a5eb78cd954a712391291d460996  transcripts/FIX-20261124-merge-closed.md
+0a343e4b980517c3fe8c4ed21659270bc26be763286374929841043b51a98bd9  transcripts/FIX-20261124-pins-worker.md
+remote counsel/fix-texts-2: 2035bbea3345
+```
+
+**The two blocks are both in the window's gates, and both are right.**
+- **A gate could take an unended window as ended.** The texts accepted a decision "after the opening entry". The brief ends the window on a decision whose `ts` is after the opening's, and names V8 as counsel's forecast with that id and a `seq` below the opening's. The texts named V8 by its id alone.
+  - *Answer.* Merge-closed and fix-pins now hold one gate in the same words. The opening is the first `push` whose `ts` is after 2026-11-30T00:00:00Z. The end is a promote or a veto whose `ts` is after the opening's `ts`, or the instant now being after the `resolves_by` of counsel's `V8` below the opening. With no such forecast, or with more than one, the third does not apply. An entry at the opening's own `ts` ends nothing. No later window means no `push` with a `seq` above the opening's.
+- **The gate was read once, and a window can open while a session or its proposal is in flight.** The templates do not make the check again when `main` has moved. Pins-worker also lacked "no later window", so its route after C2a-3 allowed a session inside C2b.
+  - *Answer.* Each text makes the check again immediately before the proposal, and on a failure pushes the branch and does not propose. Each says in terms that no check of a session reaches the time between a proposal and its merge, and names the two guards there are: counsel files the session only when the check holds, and the opening paste enters nothing while a pull request beyond the three standing ones is open or a session is in flight.
+  - *Pins-worker is now made before C2a-3 opens, and not after.* That removes its second route, and with it any rule about C2b.
+
+The brief's lines 77, 113 and 258, which the gates and the guards rest on:
+
+```
+The window is (opening `ts`, V8's `resolves_by`], where V8 is counsel's forecast with `args.id` `V8` and a `seq` below the opening's. A5.2 names that 
+- its `ts` is after C2a-3's opening;
+   - **The lane is quiet:** no pull request is open on `renavondata/jack` but the three that stand open (#125, #316, #562), no session or re-proposal is in flight (no issue labelled `run` from the last 24 hours is open on the runn
+```
+
+**The seven fixes.**
+- **A broken pool does not by itself end the run.** Right. The first probe below shows it: the futures break at once, and `shutdown` then waits for the workers that survive. A worker that ignores the signal held the probe past its limit.
+  - *Answer.* Item 4 now says the run ends once the surviving workers have ended, which the pool asks of them at once. The list of what the fix does not do says that a worker which will not end holds the run, and that this is the hanging worker the text already leaves aside.
+  - I added no kill of the survivors. It would need lines the 55 do not hold, and no file of `pins/` or `tests/` sets a signal's handling (count below).
+- **An idle worker's death is not found by reading futures, and no acceptance item covered it.** Right as to the old sentence, which promised an end "on any worker's death, an idle worker's included".
+  - *Answer.* The sentence now says what happens. A worker that dies idle after the last result is in is not reported, and the run ends as a healthy one. One that dies idle earlier breaks the pool for the tasks still to come.
+  - Acceptance (iii) is now that case, made for real: at the third hand-over the probe waits for the first two results, kills an idle worker, waits for the executor's `_broken`, and calls the real `submit`. The message must give 7 and name the twins of the third to the sixth pin. The second probe below is that mechanism on a bare executor.
+- **The mutant `check_tmpdir_shared` could be killed by a broken fixture.** Right: the unit test's commands read `os.environ['TMPDIR']` (line 418). *Answer.* The pin sets `TMPDIR` to a directory of its own, and acceptance (iv) asks that the failure be an assertion of the unit test and not a `KeyError`.
+- **Acceptance (ii)(d) rested on timing.** Right. *Answer.* The first pin's test now waits for a file that the dying pin's test writes before it exits.
+- **The cap's line was not in the place cited.** Right: the texts said "the count brought to him has a line for these" and cited the brief's §The cap, which has none. *Answer.* The sentence is gone. **Size** in merge-closed and fix-pins now says that the cap in force is the one C2a-3's opening push sets, that it is his to state, and that a change which does not fit under the cap as `main` holds it is pushed and not proposed. The texts do not cite his yes to 9,100, which is not on `main`.
+- **"Which fix owes what" narrowed "rule" to a refusal without a basis.** Right. *Answer.* The account is marked as counsel's reading, which his read may correct. It names the three things left without a standing witness. It says that LAW.md binds nothing and that pins which come later do not make its sentence true of the past.
+- **Fix-pins' precondition tested a test's name and not the fix.** Right. *Answer.* It now tests the name and the refusal's words in `tools/jack`.
+
+```
+Python 3.13.18
+A idle death, tasks still to come: BrokenProcessPool at submit or result
+B idle death after the last result: results still read: 4
+B shutdown returned
+C one dies, one ignores SIGTERM: futures broken after 0.5s
+pool3.py under timeout 30: exit 124
+broken after 0.01s: True
+real submit raised BrokenProcessPool at call 3
+results of the first two: [0, 1]
+shutdown returned after 0.22s
+handover.py: exit 0
+files of pins/ and tests/ on main that set a signal's handling: 0
+```
+
+**The five notes.**
+- "Three times" for four calls: now "four times".
+- Executor workers are not daemonic, and `KeyboardInterrupt` travels differently: the first is in the list of what the fix asks nothing of, and the sentence on the second now says only what `run_test` catches.
+- The bound of twice the workers is not established: the text now says counsel has found no schedule that breaks it and has no proof.
+- Acceptance (i) compared the two runs at the head with each other, and with the baseline by its counts only: it now also compares the head's table, less the new pin's two rows, with the table of (x)'s run on `origin/main`.
+- Acceptance (iii) patched `submit` to raise, which breaks no executor: it is now the real break above.
+- The reader ran the search I gave it and found no reader of the changed files beyond the templates' gap, which is the second block.
+
+**Runner #1276 was no read.** I filed it on `390603b4` before I had read the report's last notes, which was a slip of order. Its session (argon) ended after 90 seconds with exit 0 and no verdict, and was closed as done; its last act was to open the brief. That is W6's fault again, in a reader's session. Nothing was in flight, so the second and third commits answer what the first had left: the idle death's acceptance, the two notes on (i) and (iii), and a V8 that the log holds twice.
+
+```
+1276	closed	done,build	2026-11-24T02:06:47Z	2026-11-24T02:08:26Z
+0 lines beginning VERDICT in its only report, of 267 lines; its line 265 is exit=0
+```
+
+**The next read is filed on `2035bbea`.** Its body is the last one with the head changed, and one more line asked of the report: for each of the three texts and for RUNBOOK's sentence, `clean` or the number of blocks and fixes found in it.
+
+```
+1277	assize-reviewer	2026-11-24T02:26:46Z	false	run,build	reader: cold read of three fix texts on counsel/fix-texts-2 at 2035bbea (read only, no key)
+```
+
+**One question for you.** These are three small texts and four failed reads, and each read has found faults the one before did not. If this read fails one text and reports the others clean, may the clean ones go forward on its report, with RUNBOOK's sentence travelling with merge-closed? The bytes proposed would still be bytes a read found no fault in. I act on your answer and not before.
+
+**Nothing has been put to him.** I tell him in a few lines that the read failed and that nothing is asked of him.
+
+**Open for the adviser:** the question above, and a read of the revision if you wish one. No question waits on the sovereign. I ring.
