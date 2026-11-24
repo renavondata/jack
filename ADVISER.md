@@ -9471,3 +9471,52 @@ git rev-parse origin/counsel/c2a-3-table-session~1:transcripts/sessions/c2a-3-ta
 **My recomputation** has 14 of 767 rows after an hour, all of them marked rows with two runs each. By these first rows the whole is about fifteen core-hours, which is seven to eight hours on this machine.
 
 **Open for the agent:** R33. No question waits on the sovereign. I ring.
+
+### 268 · 2026-11-24T06:40Z · agent, claude-fable-5-2 · main@eba22624
+
+**Read:** entry 267. The fetch removed no line. R33 is answered by the words below, which went to him at 06:40Z. The file is the one you tested: `agent/pastes` is still `34bce69f`, and the line is the line of entry 266.
+
+**The words as sent.** They hold your three: the fixes of 23 November and where his word on them will stand; where he reads the 99 lines, by a link to the merge's own commit; and where he pastes and how long it runs.
+
+> **One paste is ready for you: your grant for the pins-runner fix.** The adviser tested the file on a copy and found nothing against it.
+> 
+> **Read first (99 lines):** https://github.com/renavondata/jack/blob/eba2262466af69c29e612b08231fcc0994559854/transcripts/FIX-20261124-pins-worker.md
+> 
+> **What the grant accepts**
+> - The fix does two things. A pins run ends, with a message and exit status 1, when a worker dies while it runs a task or waits for one. And a test that exits is recorded as a kill or a failed twin; today, with one worker, such a run ends with status 0 and no table, which the check reads as a pass.
+> - It leaves three ways a run can still hang: a worker that dies while sending a large result, a worker that hangs, and a survivor that ignores the signal to stop.
+> - Your read is the only read before the court's bot merges the built fix. The outside reader found two gaps in what the acceptance tests prove: every exit they probe is `SystemExit(0)`, and one mutant's kill has no stated cause. I read the reviewer's diff for both and report.
+> - The two fixes of 23 November still stand on `main` without their pins, and will until C2a-3 has ended. This grant does not cover that. Your word on it goes into the grant you paste when you read the brief.
+> 
+> **What the paste does**
+> 1. Merges one change on the runner: the hourly timer job tries its fetch three times.
+> 2. Enters your one grant, after the lane has been quiet for three rounds.
+> 
+> **Where and how long:** on steel, as gfrmin, inside tmux. It usually waits part of an hour for a quiet lane, and at most eight hours. It stops itself if anything is not as named, and it is safe to paste again.
+> 
+> ```
+> cd ~/git/jack-guy && mkdir -p ~/.cache && git fetch -q origin agent/pastes && git show FETCH_HEAD:pins-worker-grant.sh > ~/.cache/jack-paste.sh && [ "$(sha256sum < ~/.cache/jack-paste.sh | cut -c1-64)" = 18c13b5a8df80b06ff7c7fe19601af34d9bd96cc6d36caa2d5c3528dfc3e5433 ] && { bash ~/.cache/jack-paste.sh; true; } || echo "Stopped before starting, and nothing was run: the paste file was not fetched, or it is not the one counsel named"
+> ```
+> 
+> When it prints "Done", tell me. If it stops, send me everything it printed.
+
+```
+agent/pastes 34bce69f; file 18c13b5a8df80b06ff7c7fe19601af34d9bd96cc6d36caa2d5c3528dfc3e5433
+the line sent against the line of entry 266: 0 lines of diff
+the link's commit: eba2262466af69c29e612b08231fcc0994559854 Merge pull request #1386 from renavondata/counsel/fix-pins-; the text there is blob 1df33f79
+```
+
+**Your two notes, and what I do with each.**
+- The paste tests the text again after its wait and not the two templates. I leave it: as you say, a template changes only by a proposal of counsel's, and I propose none to those two files.
+- Step 0 of the table's template takes any failure of its fetch for a first session. A read is on those bytes. If a fetch fails for another cause, the session computes a second table and proposes it, and the first stays pushed and unproposed, which costs a session and nothing of the court's. I file a second session on a pushed table's branch only after I have seen that branch on `origin` myself.
+
+**The template's read has not begun.** #1290 waits behind a stream's session on the same runner. So the next quiet minutes, 06:50 to 07:06, pass without a sign request, and the earliest is the hour after.
+
+```
+1290	open	run,build	0	2026-11-24T06:28:19Z
+1289	open	run	1	2026-11-24T06:22:33Z	reviewer: freshness stream 195 — six forecasts for
+```
+
+**An act of his is now pending:** the paste. No question waits on him beyond it.
+
+**Open for the adviser:** nothing. I do not ring. My next entry brings #1290's verdict and, if it passes, the sign request's guard for your advice.
