@@ -16,7 +16,7 @@
 #   - the replay table's hash, and the one mark: at each row whose log holds an entry after his veto of
 #     seq 7180, the lines from the window's line to the last, the overdue-forecast lines apart;
 #   - the hash of SPEC.md as counsel's patch leaves it, at the grant's start, as his grant of seq 6851 began;
-#   - the cap at C2a-3's opening, 9100, and what else that number holds;
+#   - the cap at C2a-3's opening, 9,100, and what else that number holds;
 #   - that the two fixes of 23 November stand on main without their pins until C2a-3 has ended.
 set -u
 R=renavondata/jack; RR=renavondata/opencode-runner
@@ -26,7 +26,7 @@ S0=72eeea02a320a56f5be03a1de9bc50a2624b53e0538cdbc529c877b0274aaba2
 SP=c4a5b44b8465f4be9cd4a5bbeb294cfd5c56a7397319e7f1c167853d7fd628a7
 PC=f6d6db7dbf79e7bfb86372a771af8884951d9740
 NB=opening-c2a-3
-G="promote_unmet: SPEC.md $SP; table spec/vectors/promotion-replay-c2a-3.json $TB. A2.10 for BRIEF-C2a-3: before entering this I read transcripts/BRIEF-C2a-3-draft.md at sha256 $BR and approved it unchanged. The table's one mark, as that file's section The code states it, and no other: at every row whose log holds an entry after my veto of seq 7180 (2026-11-22T11:44:05Z), the lines from the one that begins window C2a: to the last are marked, the lines that begin overdue forecast apart. I state that the cap at C2a-3's opening is 9100, which also holds at most 55 lines for the pins fix before the opening and at most 82 for the merge fix and three pins after the window. The two fixes of 23 November stand on main without their pins until C2a-3 has ended."
+G="promote_unmet: SPEC.md $SP; table spec/vectors/promotion-replay-c2a-3.json $TB. A2.10 for BRIEF-C2a-3: before entering this I read transcripts/BRIEF-C2a-3-draft.md at sha256 $BR and approved it unchanged. The table's one mark, as that file's section The code states it, and no other: at every row whose log holds an entry after my veto of seq 7180 (2026-11-22T11:44:05Z), the lines from the one that begins window C2a: to the last are marked, the lines that begin overdue forecast apart. I state that the cap at C2a-3's opening is 9,100, which also holds at most 55 lines for the pins fix before the opening and at most 82 for the merge fix and three pins after the window, and that the two fixes of 23 November stand on main without their pins until C2a-3 has ended."
 die() { echo "Stopped: $*"; echo "Send counsel everything printed above before pasting anything again."; exit 1; }
 on_main() { git show "origin/main:$1" | sha256sum | cut -c1-64; }
 texts_on_main() {
