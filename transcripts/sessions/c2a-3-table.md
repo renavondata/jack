@@ -8,7 +8,7 @@ You are the **reviewer** (`JACK_KEY=~/.ssh/jack-reviewer`, party `reviewer`), in
 
 **Quoting.** On this runner, double quotes in code copied from a prompt have reached bash, and files, as a literal `\"`, and the code failed (runners #1144 to #1146). Code a session composes itself has not done that. So put no double quote in any shell command you copy from here, and write your driver's strings in single quotes. Run `python3 -m py_compile` on each Python file you write before you run it.
 
-**One session, start to finish.** This session computes the whole table and proposes it, or it stops and reports. No row carries over to another session, and nothing is restarted within this one: the driver is started once. If it stops, counsel reads the report and may file a fresh session on a new branch, which begins again from nothing. One thing only carries over: a whole table that a session committed and pushed and did not propose. Counsel then files this text again on the same branch, and step 0 takes it up.
+**One session, start to finish.** This session computes the whole table and proposes it, or it stops and reports. Nothing carries over to another session, and nothing is restarted within this one: the driver is started once. If it stops, counsel reads the report and may file a fresh session on a new branch, which begins again from nothing.
 
 **The clock.** The first command of step 1 writes the session's start, in seconds, to `.replay/start`. Every minute named below is counted from it. The job stops at 180 minutes, and it began a little before your first command.
 
@@ -79,12 +79,6 @@ So for 766 rows expect the driver to take about 85 minutes with ten workers, and
 - **To stop the driver**, kill its whole group: `kill -TERM -- -$(cat .replay/driver.pid)`, then, after ten seconds, `kill -KILL -- -$(cat .replay/driver.pid) 2> .replay/kill.err; true`. Do this whenever the session stops with the driver running.
 
 **Steps.**
-0. **A table already pushed.** Run `git fetch -q origin {BRANCH}`. If it fails, the branch is not on `origin`: this is a first session, and you go to step 1. If it succeeds, an earlier session from this text committed a table, pushed it and did not propose it. Then compute nothing, and run no evaluator:
-   - run `mkdir .replay && date -u +%s > .replay/start`, for your message files and the clock;
-   - `git diff --name-only origin/main...FETCH_HEAD` must print `spec/vectors/promotion-replay-c2a-3.json` and `transcripts/evidence/promotion-replay-c2a-3-driver.py` and nothing else. If it prints anything else, stop and report;
-   - if `git merge-base --is-ancestor FETCH_HEAD HEAD` fails, bring the pushed commit in: `I=${ISSUE:-{BRANCH}}; printf 'Merge the pushed table into {BRANCH}\n\nProposer: reviewer {MODEL} runner-issue-%s\n' $I > .replay/tablemsg && git merge -q FETCH_HEAD -F .replay/tablemsg`;
-   - write the table's `T` member to `.replay/T`, and make checks (a), (c), (d), (e) and (f) of step 4 on the table in your tree. If one fails, stop and report which;
-   - then do step 5 from **Bring the branch up to `main`** to its end. There are no checkouts to remove.
 1. If `.replay/` already exists, stop and report: this session begins from nothing. Otherwise run `mkdir .replay && date -u +%s > .replay/start`, fix *T* and make the checks above. Create `.replay/frozen`, the worker checkouts and the driver.
 2. Run the driver to the last row.
 3. Assemble the table from `.replay/rows/`.
