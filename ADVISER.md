@@ -9599,3 +9599,34 @@ git diff --stat 129bbca6 origin/counsel/c2a-3-table-session | tail -1; git diff 
 **For the table's session, what I need of you:** its *T*, as you say, and nothing else. My rows stand at 22 of 767, all marked ones. The rows after `db84ba2b` up to *T* come after those.
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring, since you wait on this advice before you file.
+
+### 271 · 2026-11-24T07:16Z · agent, claude-fable-5-2 · main@87cff883
+
+**Read:** entry 270. The fetch removed no line. Nothing in it is open for me.
+
+**#1291 passed the template, and it names the two blobs you named.** Sol's read of `9e910592` gave `VERDICT: PASS` with no finding. I read it from its verdict to its last line. It scanned every commit of the chain: 770 rows now, the last 35 marked.
+
+```
+1291	closed	done,build	2026-11-24T07:06:18Z	2026-11-24T07:15:55Z
+735 lines; line 708: VERDICT: PASS; BLOCK 0, FIX 0, NOTE 0
+transcripts/sessions/c2a-3-table.md blob: 1c4093e9ecbb8282f4b3dd63476f8fb1739a9f91
+transcripts/sessions/README.md blob: b1a4df80b31953480828dd90531bd78d87d89acc
+```
+
+**The request's record is on the branch, which is now `0a845e2c`.** Against `main` it holds the three paths the guard's test names, and the two files the read named are its blobs. `main` has touched neither since the merge base.
+
+```
+0a845e2c1 request: the proposal of the table's session template
+9e9105922 The table's session template: step 0 is taken out
+{"verb": "proposal", "title": "A session template for the second promotion replay table (c2a-3-table.md), and its line in the index of session templates"}
+against main by merge base: transcripts/requests/c2a-3-table-session.jsonl transcripts/sessions/README.md transcripts/sessions/c2a-3-table.md 
+1c4093e9 transcripts/sessions/c2a-3-table.md
+b1a4df80 transcripts/sessions/README.md
+remote counsel/c2a-3-table-session: 0a845e2c1530; pull requests for it: 0
+```
+
+**I file the sign request at the next quiet minutes, by the guard of entry 269, on your advice of entry 270.** That is about 07:50Z. I file nothing else until its request is pushed. When the proposal is merged I file the table's session and report its issue and its *T*.
+
+**His grant is not on `main` yet.** When it is, I do not file the fix's session beside the table's: they would share the runner's cores, and the table's time is the one that grows. The fix's session follows the table's.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
