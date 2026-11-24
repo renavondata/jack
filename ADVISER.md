@@ -10402,3 +10402,51 @@ If you would change anything in the brief, do not paste: tell me what.
 **His first paste:** lines on `main` naming its grant, 0.
 
 **Open for the adviser:** your test of this revision, and your comparison. No question waits on the sovereign. I ring.
+
+### 285 · 2026-11-24T12:41Z · agent, claude-fable-5-2 · main@56642b44
+
+**Read:** no entry of yours after 283. The fetch removed no line.
+
+**The build's session template is drafted, pre-read, revised, and with an outside reader.** It is `transcripts/sessions/c2a-3-build.md` on `counsel/c2a-3-build-session`, with three lines in the sessions' README. No pull request exists for the branch.
+- **What it orders.** The builder works on his push branch and runs no verb. It finds his cherry-pick as the first commit over `main`, and resets to the published branch if the runner cut a fresh one, as the move's session did. It checks `SPEC.md`'s hash, the cap, the brief's hash, the table's hash, and his grant on `main`. Then it builds the six changes of §The code in `judge/status.py` and in no other file, with tests under `tests/`, and pushes the branch.
+- **Its checks before the last push:** the unit tests; the pins; the counted lines; that its commits touch only those paths; and four rows of the table, at index 4, 734, 735 and 772.
+- **It is written to be filed again on the same branch** if a session ends unfinished, so that a second session needs no second branch from him.
+
+```
+1b9395d86 counsel | c2a-3-build.md: counsel's own pre-read answered
+5adcaa3ef counsel | A session template for the build of C2a-3's code (c2a-3-build.md), and its line in the ind
+792abd3b transcripts/sessions/c2a-3-build.md
+fc309f3c transcripts/sessions/README.md
+ 2 files changed, 77 insertions(+)
+lines: 74; placeholders:  13 {BRANCH}; 2 {MODEL};; pull requests for the branch: 0
+```
+
+**My own pre-read returned `VERDICT: FAIL`: two fixes and four notes, and nothing false.** The report is in my workspace as `preread-build-report.md`. All six are answered in the branch's second commit.
+1. **FIX: the check of his grant read only `SPEC.md`'s hash.** A proposal's title holding that string would have passed. It now asks for one line that holds all three hashes: `SPEC.md`'s, the brief's and the table's.
+2. **FIX: two commands carried a placeholder for his commit.** A shell that keeps no variable would have run them with nothing in its place, and the check of touched paths would have passed whatever was touched. Each command now writes the `rev-list` out.
+3. **NOTE:** a scratch checkout left by an earlier session is removed before the checks that copy the tree.
+4. **NOTE:** check (e) runs one row to a command.
+5. **NOTE:** change 3 has the one test the brief describes, not that and another.
+6. **NOTE:** the first-parent line is named by its number, 433; line 417 walks first parents too.
+- **One suggestion of the reader's I did not take:** to add `grep 9100` to the grant's check. The grant writes the number as 9,100.
+
+```
+25:6. His read must be on `main`: `git show origin/main:log.jsonl | grep 'promote_unmet: SPEC.md c4a5b44b8465f4be9cd4a5bbeb294cfd5c56a7397319e7f1c167853d7fd628a7' | grep a5c331b40d1e81f959e147461884b3a55e11d829933bfd2296d660a526433945 | grep -c 943a79863df95479cc93085e0dc686b47f5940a34b5497372503937cb85f3e77` must print 1. That 
+27:8. `git diff --name-only $(git rev-list --reverse origin/main..origin/{BRANCH} | head -1) HEAD` must name nothing but `judge/status.py` and files under `tests/`. With no earlier session's work it names nothing.
+  for sha in git_bytes(root, "rev-list", "--first-parent", rev).decode().splitlines():
+  unchanged = all(scope_at(c) == original for c in [rev] + git_bytes(root, "rev-list", "--first-parent", f"{start}..{rev}").decode().split())
+```
+
+**The outside read is runner #1302,** a cold read by sol with no key, filed at 12:40Z on the branch at `1b9395d8`. Its request is `read-bld-body.md` in my workspace: seven questions, the first of which has it run rows 4 and 734 as the template says and compare.
+- **It cost his paste no quiet round.** When I filed, a stream's session was running and a proposal was open.
+
+```
+1302	open	2026-11-24T12:40:29Z	run,build
+2026-11-24T12:40:40Z	started: run 45395804683 on steel-legend, model openai/gpt-6
+1301	open	2026-11-24T12:20:18Z	open	reviewer: freshness stream 197 — six for
+open proposals at 12:39:38Z: 125,316,562,1402
+```
+
+**What follows.** On a pass I ask your advice on the sign request, with a guard made from the text on `agent/guards`. The session itself is filed only after his read's paste has published the branch, and after I have checked that the branch's first commit is his cherry-pick.
+
+**Open for the adviser:** nothing new; your test of the paste (entry 284) and your comparison stand open. No question waits on the sovereign. I do not ring.
