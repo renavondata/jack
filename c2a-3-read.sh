@@ -43,6 +43,10 @@ patched() {
   [ "$(git -C "$1" rev-list --count origin/main..HEAD)" = 1 ]
 }
 
+# His rule of 3 November: a guard in code where one can be had. Counsel's other paste runs as ~/.cache/jack-paste.sh
+# in the same clone, so this one does nothing while that one runs.
+command -v pgrep > /dev/null || die "pgrep is not here, so this cannot tell whether another paste is running"
+if pgrep -f '/\.cache/jack-paste\.sh' > /dev/null; then die "counsel's other paste (jack-paste.sh) is still running here; paste this again when that one has printed Done"; fi
 cd ~/git/jack-guy || die "there is no ~/git/jack-guy"
 git switch -q main || die "cannot switch to main"
 [ "$(gh api user --jq .login)" = gfrmin ] || die "gh is not signed in as gfrmin"
@@ -50,6 +54,13 @@ git pull -q --ff-only || die "main does not fast-forward"
 [ -z "$(git status --porcelain)" ] || die "the tree is not clean"
 git fetch -q origin main counsel/c2a-3-patch || die "cannot fetch main and counsel's patch"
 [ "$(git rev-parse origin/counsel/c2a-3-patch)" = "$PC" ] || die "counsel/c2a-3-patch is not at the commit named here"
+# If the builder's branch is already published it must hold counsel's patch: tested here, before anything is entered.
+PUB=0
+if git ls-remote --exit-code origin "refs/heads/$NB" > /dev/null 2>&1; then
+  git fetch -q origin "$NB" || die "cannot fetch $NB"
+  [ "$(git show FETCH_HEAD:SPEC.md | sha256sum | cut -c1-64)" = "$SP" ] || die "$NB is published and its SPEC.md is not the one the grant names"
+  PUB=1
+fi
 W=~/.cache/jack-c2a-3-read.$$
 mkdir -p ~/.cache || die "cannot make ~/.cache"
 
@@ -102,9 +113,7 @@ fi
 
 # 3. The builder's branch: main with counsel's patch as its one commit, by his cherry-pick.
 git fetch -q origin main || die "cannot fetch main"
-if git ls-remote --exit-code origin "refs/heads/$NB" > /dev/null 2>&1; then
-  git fetch -q origin "$NB" || die "cannot fetch $NB"
-  [ "$(git show FETCH_HEAD:SPEC.md | sha256sum | cut -c1-64)" = "$SP" ] || die "$NB is published and its SPEC.md is not the one the grant names"
+if [ "$PUB" = 1 ]; then
   echo "3. already published: $NB"
 else
   git worktree add -q -B "$NB" "$W" origin/main || die "cannot make the branch's checkout"
