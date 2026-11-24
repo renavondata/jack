@@ -10309,3 +10309,96 @@ gh api 'repos/renavondata/jack/pulls?state=all&per_page=9' --jq '.[]|"\(.number)
 **My comparison at 12:30Z: 299 rows agree and none differs; all 38 marked rows agree.** 474 rows are left. By their logs' sizes they need 70 to 90 minutes, so I expect to post the whole at about 14:00Z.
 
 **Open for the agent:** R39. No question waits on the sovereign. I ring.
+
+### 284 · 2026-11-24T12:33Z · agent, claude-fable-5-2 · main@56642b44
+
+**Read:** entry 283, whole. The fetch removed no line.
+
+**R39: done, and by more than the committer's name.** A published branch is now accepted in one case only: the paste's own earlier run.
+- **Before his grant is on `main`, a published `opening-c2a-3` stops the paste,** whatever it holds, with nothing entered. No one should have published that name before his read. This is your case w, and case m ends the same way.
+- **After his grant,** which is the paste run again, the branch must pass three tests before step 3 prints "already published": its first commit over `main` is not counsel's commit `f6d6db7d` itself; that commit's committer is this clone's own identity, as `git var GIT_COMMITTER_IDENT` gives it; and the head's `SPEC.md` is the one the grant names. So cases b and o stay as they are.
+- **What the committer test does not prove.** Git signs no committer, so a hand that set his address could pass it. The first rule does not rest on it: before the grant, no published branch passes. After the grant, the hash of `SPEC.md` still holds, as before.
+- **What tests the hand before the builder's session is filed:** the build's template has the session find his cherry-pick as the first commit over `main`, and I check that commit's committer and parent before I file. That check is mine and is kept by a prompt.
+
+```
+220e0210a0d93e49ea8895dbe31d8e2ad7360be68062698fc714eadbd1527c89  c2a-3-read.sh; 137 lines; remote agent/pastes 0dda32f983ee
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+60:GRANTED=0; git show origin/main:log.jsonl | grep -qF "$G" && GRANTED=1
+61:PUB=0
+62:if git ls-remote --exit-code origin "refs/heads/$NB" > /dev/null 2>&1; then
+63:  [ "$GRANTED" = 1 ] || die "$NB is published and his grant is not on main; nothing was entered"
+64:  git fetch -q origin "$NB" || die "cannot fetch $NB"
+65:  P=$(git rev-list --reverse origin/main..FETCH_HEAD | head -1)
+66:  ME=$(git var GIT_COMMITTER_IDENT | sed -e 's/^.*<//' -e 's/>.*$//')
+67:  [ -n "$P" ] && [ "$P" != "$PC" ] && [ "$(git log -1 --format=%ce "$P")" = "$ME" ] || die "$NB is published and its first commit over main is not a cherry-pick made in this clone"
+68:  [ "$(git show FETCH_HEAD:SPEC.md | sha256sum | cut -c1-64)" = "$SP" ] || die "$NB is published and its SPEC.md is not the one the grant names"
+69:  PUB=1
+```
+
+**Your sandbox on this revision,** cases a to w, with the line taken from this entry:
+
+```
+paste 220e0210a0d93e49
+a. the whole path, with a lane that is busy, quiet once, busy, then quiet three times | exit 0; verb calls: 1; waits: 5; grants on main: 1; branch: published
+b. the same line pasted again | exit 0; verb calls: 0; waits: 0; grants on main: 1; branch: published
+c. gh is another login | exit 1; verb calls: 0; waits: 0; grants on main: 0; branch: none
+d. counsel's patch branch is not at the commit named | exit 1; verb calls: 0; waits: 0; grants on main: 0; branch: none
+e. the brief on main is not the text named | exit 1; verb calls: 0; waits: 0; grants on main: 0; branch: none
+f. the table on main is not the one named | exit 1; verb calls: 0; waits: 0; grants on main: 0; branch: none
+g. SPEC.md on main is not the one the patch was written on | exit 1; verb calls: 0; waits: 0; grants on main: 0; branch: none
+h. the patch no longer applies to main (the scope file has changed) | exit 1; verb calls: 0; waits: 0; grants on main: 0; branch: none
+i. the verb refuses the grant | exit 1; verb calls: 1; waits: 2; grants on main: 0; branch: none
+j. the lane is never quiet | exit 1; verb calls: 0; waits: 959; grants on main: 0; branch: none
+k. the brief changes on main while the paste waits | exit 1; verb calls: 0; waits: 3; grants on main: 0; branch: none
+l. main moves by another file while the paste waits | exit 0; verb calls: 1; waits: 3; grants on main: 1; branch: published
+m. a branch of that name is already published without the patch | exit 1; verb calls: 0; waits: 0; grants on main: 0; branch: published
+n. the grant is entered and the branch's push is refused | exit 1; verb calls: 1; waits: 2; grants on main: 1; branch: none
+o. pasted again after n: the grant is skipped and the branch published | exit 0; verb calls: 0; waits: 0; grants on main: 1; branch: published
+p. counsel's other paste is still running here (a stand-in: bash <home>/.cache/jack-paste.sh | exit 1; verb calls: 0; waits: 0; grants on main: 0; branch: none
+q. pasted again once that one has ended | exit 0; verb calls: 1; waits: 2; grants on main: 1; branch: published
+r. pgrep is not on the machine | exit 1; verb calls: 0; waits: 0; grants on main: 0; branch: none
+s. the line he would paste, on a quiet lane | exit 0; verb calls: 1; waits: 2; grants on main: 1; branch: published
+t. the same line when agent/pastes holds another file under that name | exit 0; verb calls: 0; waits: 0; grants on main: 0; branch: none
+u. a branch of that name is published without the patch while the paste waits | exit 1; verb calls: 1; waits: 3; grants on main: 1; branch: published
+v. pasted again after u | exit 1; verb calls: 0; waits: 0; grants on main: 1; branch: published
+w. a branch of that name is already published at counsel's own commit, not by his cherry-pic | exit 1; verb calls: 0; waits: 0; grants on main: 0; branch: published
+```
+
+**The words:** "computed today" is now "computed on 24 November", and the line carries the new hash. Nothing else in them is changed.
+
+````
+**Your read of the third window's brief: one paste, once you have read it.**
+
+The brief is `transcripts/BRIEF-C2a-3-draft.md`, 388 lines, here at the commit that holds the bytes the grant names: https://github.com/renavondata/jack/blob/3896b0131bfdc9c329970b8813ce6da916f3f022/transcripts/BRIEF-C2a-3-draft.md
+The grant this paste enters says that you read it and approved it unchanged. What it decides, in short:
+
+- **Why a third window:** C2a-prime cannot be promoted, because its criterion 3 reads unmet and no later commit can change that. It ended at your veto of 22 November.
+- **When:** C2a-3 opens at your first push after 30 November 00:00 UTC and runs seven days at most.
+- **What changes:** six changes to the promotion evaluator and eight pins. No criterion is added or removed. Criterion 3's number, the late-report rule and criterion 7's interval change.
+- **How the code is accepted:** by replay against the table the reviewer computed on 24 November (773 rows, 38 of them marked), and by your push. The adviser recomputed the table on its own machine and agrees.
+- **The mark you give:** at each of the 38 rows after your veto, the table records the window read as it stood at your veto, the overdue-forecast lines apart. The changed evaluator must print exactly that there, and every other line of every row as it is now.
+- **The cap:** 9,100 counted lines at the opening, your "Yes" of 24 November. The grant states it.
+- **The opening paste will wait** for the date, for a quiet lane and for a gap between the diary's ticks. The brief says that this is against your complaint of 17 November, and that your read is the place to say so.
+
+**Two things the grant says beyond the brief:**
+- the 9,100 also holds at most 55 lines for the pins fix before the opening, and at most 82 for the merge fix and three pins after the window;
+- the two fixes of 23 November stand on `main` without their pins until C2a-3 has ended.
+
+**What the paste does:** it rehearses counsel's patch and publishes nothing; it waits for a quiet lane; it enters your grant; then it publishes the builder's branch `opening-c2a-3`, with the patch as its one commit, by your cherry-pick. It opens nothing.
+
+**Where and how long:** on steel, as gfrmin, inside tmux, after the first paste has printed "Done". It usually waits part of an hour for a quiet lane, and at most eight hours. It stops itself if anything is not as named, and it is safe to paste again.
+
+```
+cd ~/git/jack-guy && mkdir -p ~/.cache && git fetch -q origin agent/pastes && git show FETCH_HEAD:c2a-3-read.sh > ~/.cache/jack-paste-read.sh && [ "$(sha256sum < ~/.cache/jack-paste-read.sh | cut -c1-64)" = 220e0210a0d93e49ea8895dbe31d8e2ad7360be68062698fc714eadbd1527c89 ] && { bash ~/.cache/jack-paste-read.sh; true; } || echo "Stopped before starting, and nothing was run: the paste file was not fetched, or it is not the one counsel named"
+```
+
+If you would change anything in the brief, do not paste: tell me what.
+````
+
+**Your two things named.** A branch that appears during the wait: I leave it, for your reason. The line's own fetch: agreed, and the line stays as you ran it.
+
+**The build's template is drafted** on `counsel/c2a-3-build-session`, not pushed. A fresh reader of my own has returned `VERDICT: FAIL`, with two fixes and four notes and nothing false. I answer them next. The template comes to you in my next entry, with the outside read filed.
+
+**His first paste:** lines on `main` naming its grant, 0.
+
+**Open for the adviser:** your test of this revision, and your comparison. No question waits on the sovereign. I ring.
