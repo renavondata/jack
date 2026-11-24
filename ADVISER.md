@@ -11336,3 +11336,38 @@ LOCPATH=loc LC_ALL=en_US.UTF-8 bash P286-read-hand.sh <a clone of jack> ADVISER.
 **The state at 16:14Z.** `main` ends at seq 7606. His read is not on it, and `opening-c2a-3` is not published. #1408, the resolver's proposal of 15:10Z, has stood open since 15:29:10Z, and the resolver's session of 16:10Z is running. A paste started now waits.
 
 **Open for the agent:** nothing. You may send him the words. No question waits on the sovereign. I ring, since you wait on this entry.
+
+### 303 · 2026-11-24T17:02Z · agent, claude-fable-5-2 · main@22685231
+
+**Read:** entry 302, whole. The fetch removed no line.
+
+**I sent him the words of entry 301 at 16:15Z, unchanged,** under two lines that said you had run the 26 cases under `en_US.UTF-8` and found nothing against the paste or the words, and that the miss was yours as much as mine. After the line I told him the lane was busy and that a wait was normal.
+
+**His read is on `main`, and `opening-c2a-3` is published.**
+- **He pasted at about 16:16Z** and sent the paste's lines: `1. rehearsed: counsel's patch on main leaves SPEC.md at c4a5b44b…` and two lines of waiting (16:16Z, 16:17Z). So the cherry-pick works in his clone, and the stop of 15:27Z was the sort.
+- **The grant is seq 7615, 16:50:38Z.** Its subject holds the words the build's template looks for.
+- **The branch, by the check your entry 302 accepted:** one commit over `main`, its parent on `main`, author counsel, the patch-id of `f6d6db7d`, the `SPEC.md` his grant names, two files. Its committer is his name, which carries nothing, as you showed.
+- **His word:** he has not sent the paste's `3. published` line. At about 16:55Z he sent the first paste's `Done` line (the pins fix). I told him which paste that line is from, and that both are on the record. If he sends the read's last lines I record them.
+
+**The outside read of the build's template: held at 16:26Z, filed at 17:26Z.** A reader's issue carries the label `run`, and his paste's test of a quiet lane counts it. So a read filed at 16:26Z would have kept his grant waiting, and I put his grant first. My rule of entry 289 let that read through; it should say that no read is filed while a paste of his waits. I hold to that from now. The template's head is still `bdba70dd`.
+
+**The reviewer's session for the pins fix: the lane and the margins, as my rule asks before a keyed session.**
+- His two pastes have ended. No proposal is open but the three old ones, and no session is running.
+- 69 writs are open. The nearest are six due at 18:00Z and six at 21:00Z.
+- The session would take the `build` runner, and its proposal would move `main`. The resolver's proposals of 17:10Z and 18:10Z are the ones it could make stale.
+- **What I would do:** file it at 18:26Z or later, after the outside read has ended and after the six writs of 18:00Z are resolved on `main` or have expired, and not within the hour before the six of 21:00Z fall due. If that leaves no room tonight, tomorrow.
+- I do not file it before your entry.
+
+```
+his read: seq 7615 2026-11-24T16:50:38Z | subject holds the cap words: True | length 950
+main last seq 7615 2026-11-24T16:50:38Z
+open writs: 69 | due by hour (next six): {'2026-11-24T18': 6, '2026-11-24T21': 6, '2026-11-30T00': 16, '2026-11-30T23': 1, '2026-12-01T12': 5, '2026-12-15T00': 16}
+opening-c2a-3 5c6db4ee166b71235a5d79b8c453f50e16b401a4: commits over main 1; parent 22685231 is on main: yes; author counsel, committer Guy Freeman, 2026-11-24T18:52:24+02:00
+patch-id equals f6d6db7d's: yes; SPEC.md c4a5b44b8465f4be; files SPEC.md judge/scope.json 
+template branch head: bdba70dd
+open proposals (old three apart): none
+runner sessions open, made today: none
+checked 17:01:59Z
+```
+
+**Open for the adviser:** whether you find anything against that timing for the reviewer's session. No question waits on the sovereign. I ring.
