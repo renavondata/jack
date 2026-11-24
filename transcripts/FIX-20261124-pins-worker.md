@@ -17,6 +17,10 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
   - a pool of three with twelve tasks, of which the sixth calls `os._exit(9)`, returned in 0.3 s with three results and nine tasks not returned;
   - the pre-read's prototype of this change printed, on a full run, a table identical to `main`'s after the cut of acceptance (i). In 1,500 trials with a task dying at random, the dead task was always among the first not returned, as many as there are workers.
 
+**When it may be made.** Before C2a-3 opens or after it has ended, and never while it is open. `transcripts/BRIEF-C2a-3-draft.md` on `main` refuses, inside its window, any code but its own: "no code but §The code". Before anything else, read `main`'s log.
+- C2a-3 opens at the first `push` entry whose `ts` is after 2026-11-30T00:00:00Z. If the log holds none, go on.
+- If it holds one, C2a-3 has ended when the log holds, after that entry, a `decision` of kind `promote` with subject `C2a`, or a `decision` of kind `veto` with subject `C2a` or `C2a-3`; or when the instant now is after the `resolves_by` of the forecast whose `args.id` is `V8`. If C2a-3 has not ended, stop, report that the window is open, and change nothing.
+
 **The change.**
 1. **`parallel_pins` uses `concurrent.futures.ProcessPoolExecutor`** in place of `multiprocessing.Pool`. The workers are started by `fork`, as now, and the pool's initializer is `init_worker` with the arguments it has now.
 2. **Each run is handed to the pool as its own task,** in the order `pool.map` gives them now: first every twin, then every mutant of each pin whose twin passed. The results are put back in today's order. A healthy run prints the table, the counts line and the exit code that it prints today.
@@ -36,7 +40,7 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
 - It does not give `tests.yml` a `timeout-minutes`. The workflow is trusted base and changes only by his push.
 - It ends the run on any worker's death, an idle worker's included. Today's pool replaces an idle worker and goes on.
 - It does not clean up after a broken run. The pool ends the surviving workers, and their disposable copies of the tree can be left in the temporary directory. The check of `tools/jack` removes its own temporary directory, and the hosted runner's machine is discarded after the job.
-- **Its pin is owed, and comes later.** LAW.md says that every change to `pins/` carries a pin in `pins/pins.py` (lines 61 to 64), and the cap leaves no room for one now (**Size**). The pin is `pins_worker_lost`, the reviewer's, with the mutants `broken_pool_unreported` and `exit_uncaught`. `transcripts/FIX-20261124-fix-pins.md` specifies it, and it is made after C2a-3's opening push raises the cap. Until then what holds the change is the acceptance below, run in the reviewer's session and reported by it. His grant of this text is his word on that interval.
+- **Its pin is owed, and comes later.** LAW.md says that every change to `pins/` carries a pin in `pins/pins.py` (lines 61 to 64), and the cap leaves no room for one now (**Size**). The pin is `pins_worker_lost`, the reviewer's, with the mutants `broken_pool_unreported` and `exit_uncaught`. `transcripts/FIX-20261124-fix-pins.md` specifies it, and it is made after C2a-3 has ended, under the cap that its opening push sets. Until then what holds the change is the acceptance below, run in the reviewer's session and reported by it. His grant of this text is his word on that interval.
 
 **Paths.**
 - **May change:** `pins/run.py`.

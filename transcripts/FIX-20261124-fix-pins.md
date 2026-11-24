@@ -1,12 +1,12 @@
 # FIX-20261124-fix-pins: the pins that the fixes of 23 and 24 November owe
 
-Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The reviewer makes it under `transcripts/sessions/fix-reviewer.md`, on branch `FIX-20261124-fix-pins`, and proposes it. **It is made after C2a-3's opening push and not before.** It adds four pins to `pins/pins.py`. It changes no code that the pins test.
+Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The reviewer makes it under `transcripts/sessions/fix-reviewer.md`, on branch `FIX-20261124-fix-pins`, and proposes it. **It is made after C2a-3 has ended and not before.** It adds four pins to `pins/pins.py`. It changes no code that the pins test.
 
 **Why.**
 - **The charter asks a witness for every rule.** CHARTER.md, line 42: "Every rule is admitted with a witness that violates it and one that satisfies it". LAW.md says how that is kept today: "every change to `tools/`, `harness/`, `sim/` or `pins/` carries a pin in `pins/pins.py` whose named mutant it kills and whose passing twin it admits" (lines 61 to 64).
 - **Four fixes do not carry one.** The two fixes of 23 November changed `pins/run.py` and `tools/jack` and added no pin, and counsel's texts for them did not say so. The two of 24 November add none either, and their texts say so.
-- **The cap leaves no room for the pins now.** `main` has 8,340 counted lines against a cap of 8,400, and the two fixes of 24 November take at most 48 of the 60 lines left. Only an opening push raises the cap, and C2a-3's is the next.
-- **So the pins are owed, and this text is where the debt is written.** His grant of this text is his word that those fixes stand on `main` without their pins until C2a-3's opening, and no longer than it takes to make them after it.
+- **The cap leaves no room for the pins now.** `main` has 8,340 counted lines against a cap of 8,400, and the two fixes of 24 November take at most 48 of the 60 lines left. Only an opening push raises the cap, and C2a-3's is the next. And while C2a-3 is open its brief refuses any code but its own: "no code but §The code" (`transcripts/BRIEF-C2a-3-draft.md`, refusal list).
+- **So the pins are owed, and this text is where the debt is written.** His grant of this text is his word that those fixes stand on `main` without their pins until C2a-3 has ended, and no longer than it takes to make them after that. C2a-3 runs for seven days at most.
 
 **Which fix owes what.**
 - **`transcripts/FIX-20261123-pins-parallel.md` owes one pin.** It added one rule: "A `PINS_WORKERS` that is not a whole number of at least 1 is refused before any pin runs". Its other points say how the runs are scheduled and put back in order. They add no refusal, and what holds them is that text's acceptance (i), which `transcripts/FIX-20261124-pins-worker.md` repeats.
@@ -14,8 +14,10 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
 - **`transcripts/FIX-20261124-pins-worker.md` owes one pin with two mutants,** for its two rules: a run that loses a worker ends by `WorkerLost`, and a test that exits is a kill or a failed twin.
 - **`transcripts/FIX-20261124-merge-closed.md` owes one pin,** for its refusal of a pull request that is no longer open.
 
-**Before anything else.** If either of these fails, stop, report which, and change nothing.
-- `main`'s log holds a `push` entry whose `ts` is after 2026-11-30T00:00:00Z. That is C2a-3's opening.
+**Before anything else.** If any of these fails, stop, report which, and change nothing.
+- C2a-3 has opened: `main`'s log holds a `push` entry whose `ts` is after 2026-11-30T00:00:00Z. The first such entry is its opening.
+- C2a-3 has ended: after that entry the log holds a `decision` of kind `promote` with subject `C2a`, or a `decision` of kind `veto` with subject `C2a` or `C2a-3`; or the instant now is after the `resolves_by` of the forecast whose `args.id` is `V8`.
+- No later window has opened: the log holds no second `push` entry after C2a-3's opening.
 - Both fixes of 24 November are on `main`: `pins/run.py` defines `WorkerLost`, and `tests/test_jack.py` holds `test_merge_refused_when_the_pull_request_is_closed_during_a_wait`.
 
 **The change.** Four pins are registered in `pins/pins.py`, each in the form `Pin("<name>", <test>, [Mutant(...)])`.
@@ -48,7 +50,7 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
 - **May change:** `pins/pins.py`.
 - **May not change:** any other file.
 
-**Size.** `pins/` is counted. This change adds at most 80 counted lines. The cap in force when the session runs is the one C2a-3's opening push sets, which is his to state (`transcripts/BRIEF-C2a-3-draft.md`, §The cap), and the count brought to him for it has a line for these 80. If the pins do not fit under the cap as `main` holds it, push the branch, do not propose, and report the count.
+**Size.** `pins/` is counted. This change adds at most 80 counted lines. The cap in force when the session runs is the one C2a-3's opening push sets, which stays until the next opening and is his to state (`transcripts/BRIEF-C2a-3-draft.md`, §The cap), and the count brought to him for it has a line for these 80. If the pins do not fit under the cap as `main` holds it, push the branch, do not propose, and report the count.
 
 **Acceptance.**
 - **(i) The four pins.** At the head, `python3 pins/run.py --only pins_workers_refused pins_worker_lost merge_refuses_closed check_refuses_failure` prints five rows, each `KILLED`, and ends `KILLED 5, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0`. Report the table and how long the run took. If it took more than two minutes, push the branch, do not propose, and report the time: these pins run in every `tests` job.
