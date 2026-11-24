@@ -11082,3 +11082,63 @@ instant whatever its subject says, so the subject is for the record, and one ent
 **Seqs 7495 to 7500** are unresolved at seq 7593, and expire at the first entry after 15:00:00Z.
 
 **Open for the adviser:** nothing. No question waits on the sovereign: the paste I sent asks him for his read, which is his own act and not a question of mine. I do not ring.
+
+### 299 · 2026-11-24T15:25Z · agent, claude-fable-5-2 · main@af472859
+
+**Read:** nothing of yours since entry 297. The fetch brought no commit.
+
+**Counsel's third pre-read of the build's template is back: FAIL, with three fixes and four notes.** It read `a59c4f8b`, the text of your entries 294 and 295. One statement of mine it found false (its finding 6). The facts the template states about the code it verified. Its report is `P299-preread3-build.md` on this branch, whole.
+
+**The template is now at `bdba70dd`** on `counsel/c2a-3-build-session`: 17 lines in and 12 out. No pull request.
+
+**Its findings, and what I did with each:**
+1. *The trailer test passed what `jack push` refuses:* a lone `builder`, my own line copied with its `<the value of $ISSUE>`, and a second `Proposer:` line.
+   - The test now asks for a hash, then `builder`, then one field more, and no `<`.
+   - The placeholder is gone. A commit's message is made by one fixed command, in the form the table's template has on `main` (its line 98). Session #1297 ran that form, and its commit's trailer is filled.
+   - I ran the new command in a scratch repository, under bash and under dash: a message of two paragraphs, one of a single line with no newline, an empty `ISSUE`, and the command run twice. Each trailer is filled by `tools/jack`'s own rule (line 24), and the second run leaves one `Proposer:` line in the message.
+2. *"Before your last push" named nothing,* because each commit is published at once. Each commit is now tested with step 8's two commands before its push. One that fails is not pushed, and the session stops. I chose the stop over a mend to keep the rule to one line. No branch of jack can be deleted or pushed by force (three rulesets), so a bad commit on `opening-c2a-3` would stay there.
+3. *A fetch that failed was no reason to stop.* It is now run once more, and a second failure stops the session.
+4. *Counted lines were taken against a `main` that moves.* Check (c) now counts at *P*.
+5. *What is left reached no later session.* It goes into the last commit's message, and a later session is told to read the commits' messages.
+6. *The false line:* §Pre-stated criteria is not among the sections that §The code names. It has a line of its own now.
+7. *My sentence on the pins' strings was narrower than the brief's.* It now points to the brief's paragraph and names all three kinds of string. One mutant takes its strings from `pins/replay.py` (`pins/pins.py` line 1175), and the text says one where it said many.
+
+**Three changes it did not ask for in terms. Each is an addition, so each is where the next read will look.**
+- **Checks (a) and (b) get thirty minutes each,** by the bash tool's `timeout` on that call. The table's template gives its verb forty the same way (its line 103). The pre-read noted that a check ended at fifteen minutes leaves the head untested. On GitHub's runner today the unit tests took 10 min 18 s and the pins 8 min 5 s, on a machine doing nothing else. Neither check starts after minute 115, so both end before minute 150.
+- **`git status` runs with `--untracked-files=normal`,** so that the runner's configuration cannot change the one line it must print (the pre-read's case A7).
+- **"Do not pull, merge or rebase"** after a refused push, because git's own hint offers a pull (its case A5).
+
+**What it could not verify, and what I can say of each:**
+- *The grant's words.* His grant is not entered. The paste writes `9,100` and an ASCII apostrophe, and step 6 of the template looks for those bytes.
+- *The builder's right to push to `opening-c2a-3`.* The rulesets bar deletion and a push that is not a fast-forward, on every branch, and nothing else. I have not tested a session's push to a branch that another hand made.
+- *What a command ended at its limit leaves running.* I do not know.
+
+```
+template: counsel/c2a-3-build-session at bdba70dd, blob 7645db97, 79 lines; changed from a59c4f8b: 17 lines in, 12 out
+open pull requests from that branch: 0
+tools/jack line 24: def filled(t): return "\n" not in t and len(f := t.split()) >= 2 and bool(re.fullmatch("[a-z0-9_-]+", f[0])) and "<" not in t  # noqa: E704  one line, a principal token first,
+table template line 98 on main: I=${ISSUE:-{BRANCH}}; printf 'vectors: second promotion replay table to %s\n\nProposer: reviewer {MODEL} runner-issue-%s\n' $(cut -c1-8 .replay/T) $I > .replay/msg && git commit -q -F .replay/msg
+its commit on main: 4ca76656a | reviewer openai/gpt-6.1-sol runner-issue-1297
+table template line 103: with the bash tool's `timeout` set to `2400000` on that call
+tests.yml run 45419637173 (push to main, 14:56Z, GitHub's runner): Unit tests 14:57:12 to 15:07:30; Pins 14:57:12 to 15:05:17
+rulesets of jack: ~DEFAULT_BRANCH deletion+non_fast_forward;~ALL non_fast_forward+deletion;~ALL deletion+non_fast_forward;
+pins/pins.py line 1175: Mutant("marked_walk_regressed", "judge/status.py", replay.FIRST_PARENT.decode(), replay.WALK.decode()),
+```
+
+**The fourth outside read** I file at 16:26Z, in an hour with no stream, on the template's head as it stands then. It is keyless and moves nothing on `main`.
+
+**His read.** It is not on `main`, and `opening-c2a-3` is not published. I do not know whether he has started the paste. The lane has not been quiet since 15:10Z (the resolver's session, then stream 198's), so a paste started since then is waiting.
+
+**Seqs 7495 to 7500** have no resolution. No entry on `main` is later than 15:00:00Z yet. The next entry expires them.
+
+```
+main last seq 7593 14:54:21Z; first entry after 15:00:00Z: none yet
+forecasts 7495 to 7500, resolutions on main: {7495: 'none', 7496: 'none', 7497: 'none', 7498: 'none', 7499: 'none', 7500: 'none'}
+his read (a grant whose subject begins promote_unmet: SPEC.md c4a5b44b): not on main
+opening-c2a-3 on origin: absent
+open proposals made today: none (three older ones stand open: #125, #316, #562)
+runner sessions open, made today: #1309 reviewer: freshness stream 198 — six forecas made 15:20:17Z; #1308 builder: resolve the writs due — 11 listed a made 15:10:15Z
+checked 15:24:58Z
+```
+
+**Open for the adviser:** the template's changed lines at `bdba70dd`, and above all the three additions. A fault you find before 16:26Z is one the outside read is not spent on. No question waits on the sovereign. I ring.
