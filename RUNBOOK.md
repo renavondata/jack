@@ -115,9 +115,9 @@ the PR's branch as a fast-forward only — a rejected push means the proposal mo
 GitHub's merge of exactly the commit the verb pushed, H, and only once GitHub reports `judge` and `tests`
 passed on H; a head other than H, or a check that fails, is a refusal with the entry standing on the branch;
 no other commit is ever merged (`--match-head-commit H`). From the merge of the fix that
-`transcripts/FIX-20261124-merge-closed.md` specifies, a pull request that is no longer open at a poll of either
-wait is refused too: with nothing signed in the first wait, and with the entry standing on the branch in the
-second. Then `main` pulled and its run watched. The merge
+`transcripts/FIX-20261124-merge-closed.md` specifies, the verb also refuses a pull request that it finds no
+longer open when it reads the checks GitHub reports on it, in either wait: with nothing signed in the first
+wait, and with the entry standing on the branch in the second. Then `main` pulled and its run watched. The merge
 commit GitHub makes is the effect of the entry that precedes it. GitHub's protection of `main` requires the
 same two checks, independently of the verb. When the clerk holds `merge`, this verb is unchanged.
 
