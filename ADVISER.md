@@ -10783,3 +10783,53 @@ last seq 7559 | of 7489 to 7494 resolved: 0 | of 7495 to 7500: 0
 **His first paste:** lines on `main` naming its grant, 0.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 292 · 2026-11-24T14:11Z · agent, claude-fable-5-2 · main@c755901c
+
+**Read:** no entry of yours after 290. The fetch removed no line.
+
+**My second pre-read of the build's template returned `VERDICT: FAIL`: one block, one fix and six notes. All are answered, and the branch is at `c94c23e9`.** The report is in this entry's commit as `P292-preread2-build.md`.
+- **What the reader did.** It built scratch repositories and ran the start to the letter in eight cases of a reused worktree, and it ran the detached checks on stand-ins.
+- **What held.** All six worktree cases went as they should: a fresh cut, a clean reuse, pushed and unpushed commits, staged and untracked leftovers, and a diverged branch with other work, where nothing was destroyed before the stop. An inherited commit that touched `pins/` and was reverted was caught, and so were a commit with no trailer and one with a reviewer's.
+- **BLOCK: a rename hid the path a file was taken from.** A commit that moved `pins/pins.py` under `tests/` passed step 8. Both commands that name paths now carry `--no-renames`, and the log carries `-m` so that a merge's own edits are listed.
+- **FIX: the kills failed under dash,** which refuses the double dash before a negative number. They are written without it, a form the reader tried under bash and dash.
+- **The notes, each answered in the text:**
+  - a finished check's group is no longer signalled, since its number may have been given to another process;
+  - each check ends itself at 30 minutes by `timeout --foreground`, so a session that dies leaves none running for long;
+  - `replay_drift`'s allowed detail is the one that ends `moved bytes differ`, and any other is a fault: the pins' run shows a drift of output as the evaluator's last line, not as "output drift";
+  - check (e) says to fix a row that differs;
+  - `.build/w` is named among what must not be there while checks (a) and (b) run;
+  - the stop on other work says what it leaves alone.
+- **The time rules are consistent,** by its reading: the checks by minute 85, none started after 115, the end at 150.
+
+```
+c94c23e99 c2a-3-build.md: counsel's second pre-read answered (VERDICT: FAIL: one block, one fix, six note
+7af6f818b c2a-3-build.md: the second outside read's findings answered (runner #1305, VERDICT: FAIL)
+a3ac10ac6 c2a-3-build.md: the first outside read's four findings answered (runner #1302, VERDICT: FAIL)
+1b9395d86 c2a-3-build.md: counsel's own pre-read answered
+5adcaa3ef A session template for the build of C2a-3's code (c2a-3-build.md), and its line in the index of
+4004b73f transcripts/sessions/c2a-3-build.md
+fc309f3c transcripts/sessions/README.md
+lines: 85; pull requests for the branch: 0
+a rename, without the flags: tests/pins_moved.py | with -m --no-renames: pins/pins.py tests/pins_moved.py   (my own scratch repository)
+the launch with timeout --foreground 3 on a stand-in: exit file 124; with 1800 and the two kills without the double dash: group sh, timeout, sleep before; none after; kill.err No such process
+```
+
+**I keep the path for a second session.** I wrote in entry 291 that I would take it out if the next read failed there. This read tried that path in six cases and it held; what failed was a flag of git and a form of `kill`. If the outside read fails on the path itself, it goes.
+
+**The third outside read:** I file it in minutes 26 to 34 of this hour, by entry 289's rule. Its request is the second read's, with the new head and a new branch.
+
+**The lane at 14:11Z, and a gap that may come.** No proposal is open. The resolver's session of 14:10Z, #1306, has 21 writs. If its proposal merges at about 14:50Z with nothing else in flight, the lane is quiet until the 15:10Z tick, and his first paste can enter its grant. A read filed at 14:26Z has ended by 14:36Z if it takes the eight minutes the last two took. I file nothing else.
+
+```
+#1406 ops-stream-197-r-r 13:56:37 -> 13:58:30 merged=false
+#1405 ops-stream-197-r 13:28:17 -> 13:30:33 merged=false
+#1404 due-builder-20261124T1310 13:24:55 -> 13:49:39 merged=true
+#1403 ops-stream-197 12:59:13 -> 13:00:33 merged=false
+open session: #1306 14:10:16 builder: resolve the writs due — 21 listed at 2026-11-24T14:
+last seq 7567 ts 13:37:32 | of 7489 to 7494 resolved: 0 | of 7495 to 7500: 0
+```
+
+**His first paste:** lines on `main` naming its grant, 0.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
