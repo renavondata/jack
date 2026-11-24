@@ -532,9 +532,12 @@ removed from the list after `refused: `, or as `promote C2a: lawful` if none is 
 (answer 7). A later change to the evaluator is accepted the same way, against a table of
 the evaluator it changes and with the lines his grant for it marks. The table tests what
 its rows run; for a later change it is no proof on inputs no row holds, which his read
-of the change answers (A2.10). Pin `replay_drift`: an evaluator that changes an unmarked
-line, prints a marked line otherwise than its mark states, or is moved from other bytes
-than those named, is admitted; twin, the moved evaluator passes.
+of the change answers (A2.10). C2a-3's opening push changes the evaluator a second time,
+as `transcripts/BRIEF-C2a-3-draft.md` §The code states, against
+`spec/vectors/promotion-replay-c2a-3.json` and with the one mark his grant for it gives.
+Pin `replay_drift`: an evaluator that changes an unmarked
+line, prints a marked line otherwise than its mark states, or whose bytes are not those
+the pin holds it to, is admitted; twin, the evaluator on `main` passes.
 
 `judge/scope.json` is under `judge/`, so it is trusted base and changes only
 by Guy's own push. Its members are `layer` (a string), `paths` and `counted`
@@ -544,7 +547,7 @@ The file equals
 the block below, byte for byte less whitespace; a push that changes one without
 the other is refused by the tests. At C0 the layer was `C0` and the cap 3000. C1
 opened at 4500 on 19 October and was raised to 5500 the same day, when the tests
-of the verbs exceeded it, a finding against the pre-statement for the C1 report; raised to 6200 on 25 October by C1a's installing push, when the ledger's tests and simulator kinds reached 5614 before the reviewer's pins, a second finding against the pre-statement (transcripts/BUILD-C1a.md §0); raised to 6900 on 31 October by C1b's cap push, when the clerk, its tests and the reviewer's 24 pins measured 6874 (pull requests #60 and #61) against BRIEF-C1b v3–v7's "no cap change" and v2's anticipated 7000, a third finding against the pre-statement (transcripts/PUSH-cap-6900.md); raised to 7800 at the opening of C2a, the budget BRIEF-C2a pre-stated before its build (v2, after its first read put 418 lines against the scorer, its tests, its pins and the status extension), by the one push its brief allows, and nothing else in the push (transcripts/PUSH-c2a-opening.md); raised to 8400 at the opening of C2a-prime, the budget BRIEF-C2a-prime v7 pre-stated and measured before the build (the builder's draft of the window code stopped at 8,022 counted lines, opencode-runner #242), by the opening push that carries the window code, its tests and the reviewer's pins (transcripts/PUSH-c2a-prime-opening.md);
+of the verbs exceeded it, a finding against the pre-statement for the C1 report; raised to 6200 on 25 October by C1a's installing push, when the ledger's tests and simulator kinds reached 5614 before the reviewer's pins, a second finding against the pre-statement (transcripts/BUILD-C1a.md §0); raised to 6900 on 31 October by C1b's cap push, when the clerk, its tests and the reviewer's 24 pins measured 6874 (pull requests #60 and #61) against BRIEF-C1b v3–v7's "no cap change" and v2's anticipated 7000, a third finding against the pre-statement (transcripts/PUSH-cap-6900.md); raised to 7800 at the opening of C2a, the budget BRIEF-C2a pre-stated before its build (v2, after its first read put 418 lines against the scorer, its tests, its pins and the status extension), by the one push its brief allows, and nothing else in the push (transcripts/PUSH-c2a-opening.md); raised to 8400 at the opening of C2a-prime, the budget BRIEF-C2a-prime v7 pre-stated and measured before the build (the builder's draft of the window code stopped at 8,022 counted lines, opencode-runner #242), by the opening push that carries the window code, its tests and the reviewer's pins (transcripts/PUSH-c2a-prime-opening.md); raised to 9100 at C2a-3's opening, for the tests and pins of the window's code;
 at C1 it is:
 
 ```
@@ -556,7 +559,7 @@ at C1 it is:
              "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",
                          "transcripts/", "sim/runs/", "log.jsonl"]},
  "counted": ["sim/", "harness/", "tests/", "pins/", "tools/"],
- "cap": 8400}
+ "cap": 9100}
 ```
 
 Pins for items 7–10, each with its mutant and a passing twin:
