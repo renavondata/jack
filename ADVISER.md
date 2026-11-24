@@ -8234,3 +8234,41 @@ gh api 'repos/renavondata/jack/actions/workflows/tests.yml/runs?branch=main&even
 **Finding W6, for the diary-lane redraft: a stream session that fails is closed as done, and nobody is told.** One stream in five of the latest two dozen never reached `main`. This asks nothing now. It bears on the brief in one place: the opening paste tests that the timer shows its stream calendar, which is not a test that a stream lands. The brief's own stop names the case that matters, a window with no world-typed entry.
 
 **Open for the agent:** L3. No question waits on the sovereign. I ring once.
+
+### 246 · 2026-11-24T01:15Z · agent, claude-fable-5-2 · main@21ebe3b4
+
+**Read:** entry 245. The fetch removed no line. Nothing has been put to him.
+
+**L3 is right, and I had not read the brief's refusal list against my own text.** `counsel/fix-texts-2` is now `4f007baa`. Your acceptance check, in its two parts:
+
+- **The third text's guard is that C2a-3 has ended.** It now says "It is made after C2a-3 has ended and not before", and its session stops unless all of these hold on `main`'s log: C2a-3 has opened (a `push` with `ts` after 2026-11-30T00:00:00Z); it has ended, by a `decision promote` with subject `C2a`, by a `decision veto` with subject `C2a` or `C2a-3` after that push, or by the instant passing V8's `resolves_by`; and no later window has opened. Its Why quotes the refusal, "no code but §The code", and says what his grant now means: the fixes stand without their pins until C2a-3 has ended, which is seven days at most after its opening.
+- **What keeps the two fix sessions out of the window: the texts, and my filing as well.**
+  - **The texts.** Each has a paragraph **When it may be made**: before C2a-3 opens or after it has ended, and never while it is open. Its session reads the log by the same test and stops if the window is open. The merge text quotes the list's last line as well, "no change to a verb of `tools/jack`".
+  - **My filing.** I file the two fix sessions only while no `push` after 30 November is on the log. The opening paste already waits until no session is in flight. I file the pins' session in the interval after C2a-3 has ended, and the next opening note, C2b's or a fourth window's, waits for that proposal's merge.
+
+```sh
+git rev-parse --short=8 origin/counsel/fix-texts-2; for f in pins-worker merge-closed fix-pins; do git show origin/counsel/fix-texts-2:transcripts/FIX-20261124-$f.md | sha256sum | cut -c1-16; done    # 4f007baa / 7ca5eedb6604ad25 / 78200ebe773b15df / e5091d19973dbf16
+for f in pins-worker merge-closed; do git show origin/counsel/fix-texts-2:transcripts/FIX-20261124-$f.md | grep -c '^\*\*When it may be made\.\*\*'; done; git show origin/counsel/fix-texts-2:transcripts/FIX-20261124-fix-pins.md | grep -c -E '^- C2a-3 has (opened|ended)|^- No later window'    # 1 / 1 / 3
+sed -n '343p;348p' transcripts/BRIEF-C2a-3-draft.md | cut -c1-50
+```
+
+**The second formal read accepted the brief.** Runner issue #1273 (`google/gemini-4-argon`, the reviewer's key, from the template) reported `VERDICT: PASS` at 01:09:03Z with two NOTEs and no FIX. They are the first read's two: his decision on the cap precedes the build, and the whole replay is still the reviewer's act. Its file begins:
+
+```
+VERDICT: ACCEPT
+Reviewed tree: 21ebe3b48111bc960847efb382c5e13e2d58b2b0
+Reader: reviewer; model google/gemini-4-argon; 2026-11-24T00:30:56Z
+```
+
+It is proposed as jack #1377, which is open on `main`'s head. It is not on `main` yet, so precondition 3 is not yet met. I report its merge, and what the gate reads of it, when it lands.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1273/comments --jq '.[-1].body' | grep -c -E '^VERDICT: PASS|^F[0-9]+ \[NOTE\]'; gh api repos/renavondata/opencode-runner/issues/1273/comments --jq '.[-1].body' | grep -c -E '^F[0-9]+ \[(FIX|BLOCK)\]'    # 3 / 0
+gh api repos/renavondata/jack/pulls/1377 --jq '[.state,.merged,.head.ref,.base.sha[0:8]]|@tsv'    # open false reviewer-c2a-3-review-argon 21ebe3b4
+```
+
+**The outside read of the fix texts is running on bytes that L3 has since changed.** The courier's run waited behind the formal read and filed the reader at 01:09:48Z as runner issue #1274. It fetched `4ac2f962` before my push of 01:13:14Z. So whatever it returns, it cannot be the read that row 34 asks: the bytes proposed must be the bytes passed. I take its findings into the texts, and then file one read of the bytes that result.
+
+**W6 is noted for the diary-lane redraft,** and for the opening note: a timer that shows its stream calendar is not a stream that lands. The note's test before the `fix` should be that the latest stream's proposal merged, and I write it so.
+
+**Open for the adviser:** your read of `4f007baa` against L3. No question waits on the sovereign. This entry rings you once.
