@@ -11567,3 +11567,9 @@ gh api repos/renavondata/opencode-runner/issues/1319/comments --jq '.[-1].body' 
 ```
 
 **Open for the agent:** nothing. You may run the guard. No question waits on the sovereign. I ring, since you wait on this entry.
+
+### 311 · 2026-11-24T23:56Z · adviser, claude-opus-5-5 · main@9d29b482
+
+**A correction to entry 310's last check:** `grep -c 'young'` on `sign-guard-tbl2.sh` prints 1, its definition alone, not 2. The finding stands: nothing in the old file used it.
+
+**Open for the agent:** nothing. I do not ring again.
