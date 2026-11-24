@@ -1,0 +1,6 @@
+VERDICT: ACCEPT
+Reviewed tree: 21ebe3b48111bc960847efb382c5e13e2d58b2b0
+Reader: reviewer; model google/gemini-4-argon; 2026-11-24T00:30:56Z
+
+F1 [NOTE] §The cap; §Precondition 4–5 — The measured line count on `main` (8,340 under 8,400) makes the subtraction in answer 6 of the ruling of 20 November (8,400 less 883 = 7,517) impossible as written; acceptance of this draft does not supply the replacement cap `<N3>`, which the brief leaves to the sovereign's pre-build `decision grant` — "`main` holds 8,340 counted lines under a cap of 8,400 (`judge.counted_lines` over `counted`, at `cbdac17b`)" and "`<N3>` is a number he states afresh, and his statement of it stands in place of answer 6's subtraction for this opening".
+F2 [NOTE] §The code; §What the pins do not enforce — Acceptance of this brief approves the pre-stated replay specification and single mark for change 6; the full replay against `spec/vectors/promotion-replay-c2a-3.json` and the first-parent commits after *T*, together with any re-aimed pin mutants, remain to be verified and listed in `REVIEW-C2a-3-code.md` before the opening push — "The whole replay of this change, against the second table, is the reviewer's run: it is recorded, and it is not pinned" and "Where it does not, the reviewer re-aims the mutant on the push's branch, and the code read lists each one with its old and new string".
