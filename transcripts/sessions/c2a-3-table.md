@@ -61,11 +61,14 @@ Build exactly the rows and the marks they define, and nothing else. Write your o
 
 `spec/vectors/promotion-replay.json` on `main` is the first table. Yours has its form, with `frozen` naming the evaluator's two files where they now are, and with `marked` added.
 
+The adviser recomputes the table on its own machine and compares it row by row: `commit`, `argv`, `run`, `exit`, `stdout` and `marked`. It does not compare the file's bytes. `python` and `git` record this machine's versions, so that a row which differs only by interpreter can be told from an error.
+
 **Time.** `main`'s first-parent chain had 766 commits on 24 November, of which the last 31 were marked. It grows by about twenty a day, and each new commit is a marked row with two runs. What is measured:
 - Runner #1147 measured the first table on this machine (twelve cores), with the evaluator as it then was: the 100th row took 0.3 s, the 350th 26 s, and the last, about the 700th, 95 s. The whole of it was about seven core-hours.
-- On counsel's machine, with today's evaluator, the 101st row took 0.4 s, the 351st 23 s, the 706th 204 s, the 742nd 232 s and the 766th 258 s.
+- On counsel's machine, with today's evaluator, the 101st row took 0.4 s, the 351st 23 s, the 706th 204 s, the 742nd 232 s and the 766th 258 s. Summed over the chain, with the second runs, that is about sixteen core-hours there.
+- On this machine, with today's evaluator, a reader's session (runner #1285) timed the two runs at `main`'s head on 24 November at 114 s and 111 s.
 
-So for 766 rows expect eleven to sixteen core-hours, the second runs included, and about two more for each day since 24 November. That is counsel's estimate and no measurement.
+So for 766 rows expect seven to eleven core-hours on this machine, the second runs included, and about one more for each day since 24 November. That is counsel's estimate from those figures and no measurement of the whole.
 - Run **ten** workers.
 - Give the latest rows to the workers first, so that the long rows do not all fall at the end.
 - A single command here stops at fifteen minutes. So start the driver detached, once: `nohup setsid python3 .replay/driver.py > .replay/driver.log 2>&1 &`. The driver writes its process id to `.replay/driver.pid` first. Being started with `setsid`, it leads its own process group. Start no worker or evaluator with a new session or group, so that all of them stay in it.
@@ -73,7 +76,7 @@ So for 766 rows expect eleven to sixteen core-hours, the second runs included, a
 - **Rows written whole.** The driver writes each finished row to `.replay/rows/<index>.json.tmp`, then renames it to `.replay/rows/<index>.json` with `os.replace`. Only renamed files are rows. A marked row is finished when both its runs are done and its three checks hold.
 - Poll about every ten minutes with one command that prints the rows done, whether the driver's process is alive, and the minute. Poll a running row only through `.replay/rows/` and `.replay/driver.log`.
 - If a poll finds the driver gone with rows left, stop: kill its group (below), commit nothing, and report the end of `.replay/driver.log`, the rows done and the time the last finished rows took. Do not start it again. Never commit, or propose, a partial table.
-- **To stop the driver**, kill its whole group: `kill -TERM -- -$(cat .replay/driver.pid)`, then, after ten seconds, `kill -KILL -- -$(cat .replay/driver.pid) 2>/dev/null; true`. Do this whenever the session stops with the driver running.
+- **To stop the driver**, kill its whole group: `kill -TERM -- -$(cat .replay/driver.pid)`, then, after ten seconds, `kill -KILL -- -$(cat .replay/driver.pid) 2> .replay/kill.err; true`. Do this whenever the session stops with the driver running.
 
 **Steps.**
 1. If `.replay/` already exists, stop and report: this session begins from nothing. Otherwise run `mkdir .replay && date -u +%s > .replay/start`, fix *T* and make the checks above. Create `.replay/frozen`, the worker checkouts and the driver.
@@ -81,11 +84,11 @@ So for 766 rows expect eleven to sixteen core-hours, the second runs included, a
 3. Assemble the table from `.replay/rows/`.
 4. **Check before you commit,** and print each result:
    - (a) the table's `commit` values, in order, equal `git rev-list --first-parent --reverse $T` exactly: no row missing, repeated or out of order;
-   - (b) three rows you pick at random after the 165th, and one marked row you pick at random with both its runs, recomputed outside the driver, equal their stored rows exactly, `marked` included. Run these five recomputations at the same time, each in a worker's checkout;
+   - (b) three rows you pick at random after the 165th, and one marked row you pick at random, recomputed outside the driver, equal their stored rows exactly. A marked row is recomputed with both its runs, and its `marked` compared too; any of the three may be marked. Run the four rows' recomputations at the same time, each in a worker's checkout;
    - (c) the first four rows have `log` false, `exit` 1 and no line of `stdout`, and the fifth has `log` true;
    - (d) print how many rows are marked. No row before `bbfd0edf` has `marked`, and every row from it to *T* has. At the last row, print the line of `stdout` and the line of `marked` that begin `window C2a:`. The line of `marked` must end `(as of 2026-11-22T11:44:05Z; prefix to seq 7180)`;
    - (e) at every marked row, `stdout` and `marked` are equal in every line before the one that begins `window C2a:`;
-   - (f) `python3 -m json.tool spec/vectors/promotion-replay-c2a-3.json > /dev/null && echo valid`, then `sha256sum spec/vectors/promotion-replay-c2a-3.json`.
+   - (f) `python3 -m json.tool spec/vectors/promotion-replay-c2a-3.json > .replay/tool.out && echo valid`, then `sha256sum spec/vectors/promotion-replay-c2a-3.json`.
 
    If any check fails, stop and report which. Commit nothing, and do not draw (b)'s rows again.
 5. **Record, push and propose.**
