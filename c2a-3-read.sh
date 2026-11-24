@@ -35,12 +35,16 @@ texts_on_main() {
   [ "$(on_main SPEC.md)" = "$S0" ] || die "SPEC.md on main is not the text counsel's patch was written on"
 }
 # Counsel's patch applied to origin/main in the checkout $1: one commit, two files, and the SPEC.md named above.
+# A test that fails names itself. The two file names are put in byte order (LC_ALL=C), whatever language the machine
+# is set to: under an English UTF-8 setting a plain sort puts judge/scope.json first, and this test then failed
+# with nothing wrong in the patch (the file at 220e0210, his run of 24 November).
 patched() {
-  ( cd "$1" && git cherry-pick "$PC" > /dev/null 2>&1 ) || return 1
-  [ "$(sha256sum < "$1/SPEC.md" | cut -c1-64)" = "$SP" ] || return 1
-  [ "$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["cap"])' "$1/judge/scope.json")" = 9100 ] || return 1
-  [ "$(git -C "$1" diff --name-only origin/main HEAD | sort | tr '\n' ' ')" = "SPEC.md judge/scope.json " ] || return 1
-  [ "$(git -C "$1" rev-list --count origin/main..HEAD)" = 1 ]
+  local out
+  out=$( cd "$1" && git cherry-pick "$PC" 2>&1 ) || { echo "   failed: the cherry-pick of counsel's patch: $(printf '%s\n' "$out" | tail -3 | tr '\n' ' ')"; return 1; }
+  [ "$(sha256sum < "$1/SPEC.md" | cut -c1-64)" = "$SP" ] || { echo "   failed: SPEC.md after the patch is not the one named here"; return 1; }
+  [ "$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["cap"])' "$1/judge/scope.json")" = 9100 ] || { echo "   failed: the cap after the patch is not 9100"; return 1; }
+  [ "$(git -C "$1" diff --name-only origin/main HEAD | LC_ALL=C sort | tr '\n' ' ')" = "SPEC.md judge/scope.json " ] || { echo "   failed: the patch changes files other than SPEC.md and judge/scope.json"; return 1; }
+  [ "$(git -C "$1" rev-list --count origin/main..HEAD)" = 1 ] || { echo "   failed: the patch is not one commit over main"; return 1; }
 }
 
 # His rule of 3 November: a guard in code where one can be had. Counsel's other paste runs as ~/.cache/jack-paste.sh
@@ -105,7 +109,7 @@ else
   git worktree add -q --detach "$W" origin/main || die "cannot make the scratch checkout"
   if patched "$W"; then ok=1; else ok=0; fi
   git worktree remove --force "$W"; git worktree prune
-  [ "$ok" = 1 ] || die "counsel's patch does not leave the SPEC.md named here on today's main, so the grant was not entered"
+  [ "$ok" = 1 ] || die "the rehearsal of counsel's patch on today's main failed at the test named above, so the grant was not entered"
   echo "1. rehearsed: counsel's patch on main leaves SPEC.md at $SP"
 
   # 2. The grant.
@@ -128,7 +132,7 @@ else
   if [ "$ok" = 1 ]; then git -C "$W" push -q origin "$NB" || ok=2; fi
   H=$(git -C "$W" rev-parse HEAD)
   git worktree remove --force "$W"; git worktree prune
-  [ "$ok" != 0 ] || die "the grant is on main, and counsel's patch no longer leaves the SPEC.md it names; nothing was published"
+  [ "$ok" != 0 ] || die "the grant is on main, and counsel's patch failed on today's main at the test named above; nothing was published"
   [ "$ok" != 2 ] || die "the grant is on main, and the branch $NB could not be pushed"
   [ "$(git ls-remote origin "refs/heads/$NB" | cut -f1)" = "$H" ] || die "$NB on jack is not the commit made here"
   echo "3. published: $NB at $H"
