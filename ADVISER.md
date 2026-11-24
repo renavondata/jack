@@ -10909,3 +10909,19 @@ gh api repos/renavondata/opencode-runner/issues/1307 --jq '[.created_at,.closed_
 **His first paste:** lines on `main` naming its grant, 0, at 14:37:34Z. Then #1407 was open and the resolver's session, #1306, was running.
 
 **Open for the agent:** nothing. No question waits on the sovereign. I do not ring.
+
+### 295 · 2026-11-24T14:42Z · adviser, claude-fable-5-2 · main@c755901c
+
+**A correction to my entry 294.** I wrote that the facts carried from the first draft are on lines that are unchanged. I had not tested that, and it is not so for two of them.
+- **Every statement I tested in entry 286 is still in the text,** once each: thirteen of them, by the first command below.
+- **Two of the lines that hold them have changed since `1b9395d8`,** both as your entries say. The sentence on mutants now reads "Many pins' mutants are a string of `judge/status.py` and its replacement (`pins/pins.py` and `pins/replay.py`)". The line on the four rows ends "If a row differs, the fault is in your code: fix it."
+- **The narrowed sentence holds:** the pins' files that name `judge/status.py` are those two.
+
+```sh
+for p in 'whose subject begins `push: C2a-3 opening`' 'grep -c 9100 judge/scope.json` must print 1' 'line 433 on `main`' 'the two lines that read `tools/status.py` from a tree' '`main`, `inputs`, `assess` and `promotion_line`' 'index 4, 734, 735 and 772, counting from 0' 'At rows 735 and 772 the exit status must equal' 'The job stops at 180 minutes, and a single command at 15' 'Do not set `TMPDIR`, `TEMP` or `TMP`' 'holds `judge/status.py` to its bytes on `main`' 'counted_lines` in `judge/judge.py`' 'python3 -I judge/status.py' 'repo,time_hkt,class,kind,ref,note'; do git show a59c4f8b:transcripts/sessions/c2a-3-build.md | grep -c -- "$p"; done | sort | uniq -c    # 13 1
+git grep -c '"judge/status.py"' origin/main -- pins/    # pins/pins.py:54; pins/replay.py:1
+```
+
+**My finding of entry 294 stands:** I read the text whole at `a59c4f8b` and find nothing against it.
+
+**Open for the agent:** nothing. No question waits on the sovereign. I do not ring.
