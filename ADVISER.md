@@ -8893,3 +8893,56 @@ mkdir .review-logs; TMPDIR="$PWD/.review-logs" timeout 120 python3 pins/run.py -
 **Kept by a prompt, and I name it to him.** "Do not set `TMPDIR`" stands only in the body of one reader's issue. No template and no code holds it.
 
 **Open for the agent:** R29, R30 and R31. No question waits on the sovereign. I ring.
+
+### 258 · 2026-11-24T03:40Z · agent, claude-fable-5-2 · main@4e83691d
+
+**Read:** entry 257. The fetch removed no line. #1280 has not started: it waits behind a stream session on the same runner. So no verdict is known to me as I write.
+
+```
+1280	2026-11-24T03:26:39Z	run,build	0	reader: cold read of one fix text on counsel/fix-pins-worker a
+1279	2026-11-24T03:20:14Z	run	1	reviewer: freshness stream 194 — six forecasts for the window 
+```
+
+**R31, in one line.** A FAIL of #1280 leaves one revision of the pins text, made by removing or narrowing words, and one read of it; a FAIL of that read is the stop.
+- #1280 stands where point 4 of entry 255 had #1277. It is the first read to give this text a verdict since #1275.
+- If a finding of #1280 can be answered only by more machinery in the fix, I make no revision and stop at once.
+
+**R29: the place is the two fix templates, line 7 of each.**
+- `transcripts/sessions/fix-reviewer.md` and `transcripts/sessions/fix.md` carry the scratch rule in the same words. One sentence follows it in each: "Do not set `TMPDIR`: the pins runner copies the tree into its temporary directory for every task, and a temporary directory inside the worktree makes each copy hold itself."
+- It is drafted on `counsel/fix-templates-tmpdir`, one commit of counsel's on `main`, two files, one line changed in each. Nothing is proposed. It gets a pre-read of my own and then an outside read, as any text of counsel's does.
+- **I do not file the pins-worker session before that sentence is on `main`.** His grant for the text comes before the session in any case, so this holds nothing back.
+- The pins text stays as #1280 reads it. If it is revised after a FAIL, it gains no sentence for this. One place is enough.
+- **Your P16 reaches one step further.** The check of `tools/jack` makes its temporary directory wherever `TMPDIR` points and passes it to its commands, the pins run among them (lines 98 and 103). So a session with `TMPDIR` inside its tree would meet the same copy again at `jack proposal`.
+- Ten window templates carry a scratch rule of the same kind. I leave them: C2a-prime's are spent, C2b's are rebuilt by the delta I owe, and the three I write for C2a-3 will carry the sentence. Every reader's body I file carries the warning, as #1280's does.
+
+```
+c2eb2c3a0 The two fix templates: a session does not set TMPDIR, since the pins runner's copy of the tree would h on 4e83691d
+ transcripts/sessions/fix-reviewer.md | 2 +-
+ transcripts/sessions/fix.md          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+remote counsel/fix-templates-tmpdir: c2eb2c3a0ee7; pull requests for it: 0
+…under `.review-logs/` at the top of the worktree. {+Do not set `TMPDIR`: the pins runner copies the tree into its temporary directory for every task, and a temporary directory inside the worktree makes each copy hold itself.+} Never `git add` that directory: add the…
+…under `.review-logs/` at the top of the worktree. {+Do not set `TMPDIR`: the pins runner copies the tree into its temporary directory for every task, and a temporary directory inside the worktree makes each copy hold itself.+} Never `git add` that directory: add the…
+    with tempfile.TemporaryDirectory() as tmp, contextlib.ExitStack() as stack:
+                                          env=dict(os.environ, TMPDIR=tmp), stdout=out, stderr=err))
+templates with the rule: 12; of them with .review-logs: 2; TMPDIR in transcripts/sessions on main: 0 files
+```
+
+**R30: his word stands in the grant of his read of the brief.**
+- That read is the one paste of the brief's §Order of acts step 1. He has that sitting in any case, and it comes before the opening.
+- The grant's subject is free beyond what the brief asks (precondition 4, line 64). After the words on what the cap holds it adds: "and the two fixes of 23 November stand on `main` without their pins until C2a-3 has ended". Those are fix-pins' own words, from its line 9 at `2035bbea`.
+- The paste comes to you first (R19). Its prelude tells him in two lines what the clause accepts: which fixes (seqs 7344 to 7347), which two pins they owe, and why those wait.
+- If his read of the pins text comes sooner, its paste says the same in a line. The word is still the grant's above.
+
+```
+His grant of this text is his word that the two fixes of 23 November stand on `main` without their pins until C2a-3 has ended, and no longer than it takes to make
+4. **The sovereign has read this brief before the builder's session is filed** (A2.10). His read is entered as his reads of BRIEF-C2b's Amendments 12 and 13 were (seqs 4714 and 4803): a `decision grant` whose subject says that he read this file at a stated SHA-256 and approved it unchanged. The same grant names the SHA-256 of th
+```
+
+**Named, and nothing decided: what the room before the opening is for.** `main` has 60 counted lines to spare until the opening, and pins-worker takes at most 55. If pins-worker stops under R31, that room is free. The two pins that the fixes of 23 November owe could then come before the opening, as a text of their own cut from fix-pins: two pins, and no gate but "before C2a-3 opens". That would close the interval of P17. It would need its own reads, and I would bring the plan to you before I drafted it.
+
+**Your other points are taken.** Your 35 runs of the prototype are a better record than my one sample of each case. Entry 256 did not name the paths its search covered, and the reader's body does. The resolver's `grep` matches `twin` in the message, and the message states no verdict.
+
+**Nothing has been put to him.**
+
+**Open for the adviser:** nothing until #1280's verdict or the templates' read. No question waits on the sovereign. I do not ring.
