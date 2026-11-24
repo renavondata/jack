@@ -8020,3 +8020,48 @@ grep -rn -i -E 'diary' transcripts/runner/*.md RUNBOOK.md | grep -c -i -E 'fetch
 **Step 2 of the order is started: my own pre-read by a fresh agent** (his word of 18 November). It reads the branch at `debf3193` and the runner's commit with nine questions and none of my argument. It is told to change nothing and to work outside the clone. Its report comes to you with what I do about each finding, before the outside read is filed.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. Not rung.
+
+### 241 · 2026-11-24T00:35Z · agent, claude-fable-5-2 · main@21ebe3b4
+
+**Read:** nothing new from you since entry 239. Woken by my own reminder. Nothing has been put to him.
+
+**The first formal read accepted the brief, and its review is on `main`.** Runner issue #1271 (`openai/gpt-6.1-sol`, the reviewer's key, from the template) reported `VERDICT: PASS` at 23:52:50Z with two NOTEs and no FIX. Its file is `transcripts/REVIEW-C2a-3-20261123T2340-openai.md`:
+
+```
+VERDICT: ACCEPT
+Reviewed tree: 37627a7884fc4ecf7b2e08b4f58d5005c92ae371
+Reader: reviewer; model openai/gpt-6.1-sol; 2026-11-23T23:40:14Z
+```
+
+**There is no obligation to carry.** The verdict is `ACCEPT`, not `ACCEPT WITH OBLIGATIONS`. Its two notes say what the brief already orders:
+- **F1:** acceptance of the draft does not supply his decision on the cap, which must precede the build (§The cap; precondition 5).
+- **F2:** the whole replay is still a required act of the reviewer's, beyond the rows the pin samples (§The code; *What the pins do not enforce*).
+
+**What the opening gate reads of it, tested by reading** (`tools/jack`, `push_read_gate`, lines 188 to 231). The gate itself runs only on a branch that changes the scope, so I did not run it.
+- The first line is `VERDICT: ACCEPT`.
+- The reviewed tree `37627a78` is an ancestor of `main`, and the brief there is blob `8cb1a302`, as on `main`.
+- The proposal that brought it is seq 7408, signed by the reviewer, and the review at that proposal's commit is the blob `main` holds. The herald's merge is seq 7409.
+
+```sh
+R=transcripts/REVIEW-C2a-3-20261123T2340-openai.md; T=$(git show origin/main:$R | sed -n '2p' | grep -o -E '[0-9a-f]{40}'); git merge-base --is-ancestor $T origin/main && echo yes; for c in $T origin/main; do git rev-parse --short=8 $c:transcripts/BRIEF-C2a-3-draft.md; done | tr '\n' ' '    # yes; 8cb1a302 8cb1a302
+python3 -c 'import json,subprocess as s; es=[json.loads(l) for l in open("log.jsonl")]; R="transcripts/REVIEW-C2a-3-20261123T2340-openai.md"; b=s.run(["git","rev-parse","origin/main:"+R],capture_output=True,text=True).stdout; e=es[7408]; print(e["type"], e["proposer"], s.run(["git","rev-parse",e["body"]["commit"]+":"+R],capture_output=True,text=True).stdout==b, es[7409]["type"], es[7409]["body"]["proposal"])'    # proposal reviewer True merge 1375
+```
+
+**A correction to entry 234: the runner does re-propose a review.** I gave as my reason for filing the reads one after the other that "the runner does not re-propose a transcript alone". That was wrong of this case. The review's first pull request, jack #1374, went stale at 00:01Z, when the resolver's #1373 merged ahead of it. The herald closed it and re-proposed it without a model, as #1375, which merged at 00:30:25Z. Its comment on #1374:
+
+> Mechanical re-proposal (no model), 00:09Z: PR #1374 (reviewer-c2a-3-review-sol): shares 7400 lines with main; 0 entries to re-make, 0 skipped; a content patch proposal recorded; PR #1375
+
+The other reason for the order stands: the template's paragraph *One family, one review* reads the reviews on `main`.
+
+**The second formal read is filed: runner issue #1273, `google/gemini-4-argon`, from the template,** at 00:31:17Z, after the first review reached `main`. The request is `20261124T003045-review-c2a-3-argon`.
+
+```sh
+gh api repos/renavondata/jack/pulls/1375 --jq '[.state,.merged,.merged_at]|@tsv'    # closed true 2026-11-24T00:30:25Z
+gh api repos/renavondata/opencode-runner/issues/1273 --jq '[.user.login,.created_at,(.body|test("(?m)^key: ~/.ssh/jack-reviewer")),(.labels|map(.name)|join(","))]|@tsv'    # assize-reviewer 2026-11-24T00:31:17Z true run,build
+```
+
+**Housekeeping on my own machine, which touches nothing of the court's.** The disk here fell to 1.7 GB free while my pre-read agent ran the whole pins in a copy of the tree. I removed twenty finished worktrees of this session's clone. Each was clean, and its commits stay on a branch of the clone. Four with uncommitted files were left. No remote was touched. The pre-read is still running.
+
+**Next, mine:** the second read's report and its review's merge; the pre-read's report on the fix texts, to you with what I do about it.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. Not rung.
