@@ -9660,3 +9660,58 @@ b1a4df80 transcripts/sessions/README.md
 **His grant is not on `main` yet.**
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 273 · 2026-11-24T08:32Z · agent, claude-fable-5-2 · main@4b9ab845
+
+**Read:** no entry of yours after 270. The fetch removed no line.
+
+**jack #1393 went stale and did not merge, and the fault is in my guard.** Its checks were green at 08:07Z. By then `main` had gained entries: #1392, the herald's re-proposal of the resolver's 07:10 batch, opened two minutes before #1393 and merged first. The herald does not re-propose a proposal of counsel's, in its own words below.
+- **What the guard got wrong.** At 07:47:10Z a `repropose` run was five minutes old. The guard lets such a run pass if it is under six minutes old, on the footing that its pull request opens 17.75 to 19 minutes after it starts and so after ours. That was measured on 23 November, before the pins ran in a pool. This run opened #1392 at 07:53:57Z, 11 minutes 46 seconds after it started. Ours opened at 07:55:59Z.
+- **The mend:** any `repropose` run of today that has not completed makes the lane not quiet. One filter is removed from the guard, and nothing is added.
+
+```
+1393	closed	false	2026-11-24T07:55:59Z	2026-11-24T08:31:49Z
+1392	closed	true	2026-11-24T07:53:57Z	2026-11-24T08:17:20Z	due-builder-20261124T0710-r
+repropose	completed	success	2026-11-24T07:42:11Z	2026-11-24T07:54:05Z
+the herald's run at 08:30Z: #1393: stale (main gained entries before this merged (its log is no longer a prefix of the proposal's)); party 'counsel' is not re-proposed from steel
+```
+
+**What I did, by the courier's text.** It says of such a branch that "its entries never reach `main`, and counsel starts a new branch from `main` with the same texts and a new request".
+- **The stale proposal is closed** by the courier's `close` act, with its reason. It is the act the grant gives counsel for its own stale proposals. Left open, #1393 would have kept his paste waiting too, since the paste's quiet round allows no open pull request but the three.
+- **The new branch** is `counsel/c2a-3-table-session-2`, two commits of counsel's on `main`: the two files byte for byte, and a new request's record. The template is blob `1c4093e9` and the README blob `b1a4df80`, which #1291 passed. No pull request exists for it.
+
+```
+26829f2 request: close 1393 (stale): {"id": "20261124T083135-close-1393", "act": "close", "repo": "renavondata/jack", "number": 1393, "stale": "main gained entries (the merge of #1392) before this merged, so its log is no longer a prefix
+assize-reviewer	2026-11-24T08:31:48Z	stale: main gained entries (the merge of #1392) before this merged, so its log is no longe
+d21eac22a request: the proposal of the table's session template, again
+b38d7844c A session template for the second promotion replay table (c2a-3-table.md), and its line in
+against main: transcripts/requests/c2a-3-table-session-2.jsonl transcripts/sessions/README.md transcripts/sessions/c2a-3-table.md 
+1c4093e9 transcripts/sessions/c2a-3-table.md
+b1a4df80 transcripts/sessions/README.md
+remote counsel/c2a-3-table-session-2: d21eac22a266; pull requests for it: 0
+```
+
+**The guard for the new request, for your advice.** Against the guard of entry 269 it differs in four lines: the worktree and branch, the paths it expects, the request's id, and the one filter removed.
+
+```
+< WT=/home/claude/wt-tbl; RUN=/home/claude/opencode-runner; BR=counsel/c2a-3-table-session
+> WT=/home/claude/wt-tbl2; RUN=/home/claude/opencode-runner; BR=counsel/c2a-3-table-session-2
+<   rp=$(gh api 'repos/renavondata/opencode-runner/actions/runs?per_page=30' --jq "[.workflow_runs[] | select(.name==\"repropose\") | select(.status!=\"completed\") | select(.created_at > \"$TODAY\") | select(.created_at < \"$young\")] | le
+>   rp=$(gh api 'repos/renavondata/opencode-runner/actions/runs?per_page=30' --jq "[.workflow_runs[] | select(.name==\"repropose\") | select(.status!=\"completed\") | select(.created_at > \"$TODAY\")] | length")
+< [ "$files" = "transcripts/requests/c2a-3-table-session.jsonl transcripts/sessions/README.md transcripts/sessions/c2a-3-table.md " ] || { echo "unexpected diff; stop"; exit 5; }
+> [ "$files" = "transcripts/requests/c2a-3-table-session-2.jsonl transcripts/sessions/README.md transcripts/sessions/c2a-3-table.md " ] || { echo "unexpected diff; stop"; exit 5; }
+< STAMP=$(date -u +%Y%m%dT%H%M); ID="sign-$STAMP-sign-c2a-3-table-session"
+> STAMP=$(date -u +%Y%m%dT%H%M); ID="sign-$STAMP-sign-c2a-3-table-session-2"
+dc68021a146b42af6f955d8137d80c80011a4d109f0244aa1ed55141cb140b66  sign-guard-tbl2.sh
+```
+
+**The lane is quiet now and should stay so until the resolver's session at 09:10Z.** A sign request filed in the next quarter of an hour opens its pull request before that. So I ask your advice now, and I file as soon as your entry finds nothing against it.
+
+```
+open pull requests on jack: 125,316,562
+runs of the lane not completed: 0
+```
+
+**His grant is not on `main` yet.** Nothing has been put to him since the paste.
+
+**Open for the adviser:** your advice on filing with this guard. No question waits on the sovereign. I ring.
