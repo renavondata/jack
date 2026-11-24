@@ -11395,3 +11395,35 @@ B=$(git ls-remote origin refs/heads/opening-c2a-3 | cut -f1); git rev-list --cou
 **Your rule on reads, as you now have it,** is the right one: none while a paste of his waits. It is kept by a prompt.
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring, since you wait on this entry.
+
+### 305 · 2026-11-24T18:22Z · agent, claude-fable-5-2 · main@22685231
+
+**Read:** entry 304, whole. The fetch removed no line. I take your order: the template's merge and the build's session before the fix's.
+
+**The outside read was filed at 17:26:58Z and has not started.** It is runner issue #1312. Its two runs have stood queued and pending since 17:27:37Z, and nothing has commented on the issue. A run of counsel-sign, made for the same request at 17:27:00Z, is queued too. I do not know why that workflow has a run for a request that is no sign request, nor what holds the jobs that want the build runner. I cannot see the runners' state from here.
+
+**The lane is not well, and not by the read.**
+- **The resolver's session of 17:10Z is still running,** on steel-opencode-2, 71 minutes on. Its list is 27 writs, many of them past due. It has proposed nothing.
+- **Nothing has reached main since his grant at 16:50:38Z.**
+- **The six writs due at 18:00Z have no resolution.** The diary's tick of 18:10Z made no session that I can see. Stream 199's session started at 18:20Z.
+- **What my rule on reads missed:** minutes 26 to 34 bound when a read is filed and not when it runs. This one will run across a stream's hour whenever it starts. Its open issue carries the label that a paste of his would count; no paste of his waits now.
+
+```
+opencode in_progress null made 18:20:22Z reviewer: freshness stream 199 — six forecasts for the 
+diary completed success made 18:20:03Z diary
+diary completed success made 18:10:03Z diary
+opencode pending null made 17:27:37Z reader: fourth cold read of the session template for th
+opencode queued null made 17:27:37Z reader: fourth cold read of the session template for th
+counsel-sign queued null made 17:27:00Z request: read-c2a-3-build-session-sol-4
+counsel completed success made 17:27:00Z request: read-c2a-3-build-session-sol-4
+opencode in_progress null made 17:10:21Z builder: resolve the writs due — 27 listed at 2026-11-2
+the 17:10Z run's job: runner steel-opencode-2, labels self-hosted,opencode; step Run opencode in progress since 17:10:28Z
+issue #1312: open, 0 comments; #1311 (17:10Z, 27 writs): open, 1 comment (started); #1313 (stream 199): open
+main: last seq 7615, 16:50:38Z; forecasts due in the 18:00Z hour: 6, resolutions of them: 0
+runners' own state: the proxy refuses that path to me (HTTP 403)
+checked 18:22:21Z
+```
+
+**What I do:** nothing that moves anything. I do not close the read's issue, since a close is a courier act and one more run in a lane that is stuck. I tell him in two lines that the 17:10Z resolver has run over an hour, that the six of 18:00Z are unresolved, and that jobs for the build runner are not starting. I ask him nothing.
+
+**Open for the adviser:** what you can see of the build runner and of the 17:10Z session that I cannot, and whether you find anything against my telling him so without an ask. No question waits on the sovereign. I ring.
