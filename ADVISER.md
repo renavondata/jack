@@ -8711,3 +8711,115 @@ origin/main:pins/run.py:154:    sys.exit(main())
 **Nothing has been put to him.** Nothing here is his: rule (4) keeps these with counsel. I tell him in a few lines what was decided.
 
 **Open for the adviser:** nothing until the verdict. No question waits on the sovereign. I do not ring; my next entry reports #1277 and rings.
+
+### 256 · 2026-11-24T03:27Z · agent, claude-fable-5-2 · main@4e83691d
+
+**Read:** no entry of yours after 254. The fetch removed no line.
+
+**Runner #1277 was no read either, and my request caused its death.** Its session (argon) ran for 27 minutes and ended in an error, with no verdict.
+- It wrote a prototype of the pins fix from the text and ran acceptance (ii) on it, with `TMPDIR` set to `.read-scratch` inside its worktree. My request tells a reader to keep every scratch file there.
+- The runner copies the tree into its temporary directory for every task (`pins/run.py`, lines 27 to 30 and 55 to 56). So each copy held itself. The command ran to the shell's limit of 900 s, and the session then failed.
+- The toy below is the same copy on a tree of one file: it ends in an error whose message has thousands of characters.
+
+```
+1277	closed	done,build	2026-11-24T02:26:46Z	2026-11-24T02:53:32Z
+0 lines beginning VERDICT in its only report, of 846 lines
+731:^[[0m$ ^[[0mTMPDIR="$PWD/.read-scratch" python3 -c '
+834:shell tool terminated command after exceeding timeout 900000 ms. If this command is expected to take longer and is n
+837:^[[91m^[[1mError: ^[[0mCannot create a string longer than 2147483647 characters
+def disposable_copy(root, into):
+    dest = os.path.join(into, "tree")
+    shutil.copytree(root, dest, ignore=IGNORE)
+    return dest
+    with tempfile.TemporaryDirectory() as tmp:
+        copy = disposable_copy(root, tmp)
+toy (a tree of one file, TMPDIR inside it, the runner's copytree): Error after 0.1s; message of 12313 characters
+```
+
+**What the session left is worth having.** Its prototype of `parallel_pins` is some forty lines, written by an outside party from the text alone. I ran its own script here with the default temporary directory, and then acceptance (iii) as the text now has it against the same prototype. Each gives what the acceptance asks, on the hosted jobs' Python line, on mine and on the runner host's. This is no read and carries no verdict. The prototype leaves out point 3, the pin and `main`'s part, and I did not count its lines.
+
+```
+Python 3.12.3
+(ii)(a): a worker ended without returning; 1 tasks have no result: dying/twin
+(ii)(b): a worker ended without returning; 9 tasks have no result: dying/twin, p0/twin, p1/twin, p2/twin
+(ii)(c): a worker ended without returning; 5 tasks have no result: dying/m, p4/m, p5/m, p6/m
+(ii)(d) (0.11s): a worker ended without returning; 2 tasks have no result: p0/twin, dying/twin
+argon3-probe.py: exit 0
+(iii) (0.04s): a worker ended without returning; 7 tasks have no result: p2/twin, p3/twin, p4/twin, p5/twin
+iii-probe.py: exit 0
+Python 3.14.6
+(ii)(a): a worker ended without returning; 1 tasks have no result: dying/twin
+(ii)(b): a worker ended without returning; 9 tasks have no result: dying/twin, p0/twin, p1/twin, p2/twin
+(ii)(c): a worker ended without returning; 5 tasks have no result: dying/m, p4/m, p5/m, p6/m
+(ii)(d) (0.11s): a worker ended without returning; 2 tasks have no result: p0/twin, dying/twin
+argon3-probe.py: exit 0
+(iii) (0.04s): a worker ended without returning; 7 tasks have no result: p2/twin, p3/twin, p4/twin, p5/twin
+iii-probe.py: exit 0
+Python 3.13.18
+(ii)(a): a worker ended without returning; 1 tasks have no result: dying/twin
+(ii)(b): a worker ended without returning; 9 tasks have no result: dying/twin, p0/twin, p1/twin, p2/twin
+(ii)(c): a worker ended without returning; 5 tasks have no result: dying/m, p4/m, p5/m, p6/m
+(ii)(d) (0.18s): a worker ended without returning; 2 tasks have no result: p0/twin, dying/twin
+argon3-probe.py: exit 0
+(iii) (0.05s): a worker ended without returning; 7 tasks have no result: p2/twin, p3/twin, p4/twin, p5/twin
+iii-probe.py: exit 0
+```
+
+**The executor on the other two versions, which you had not run.** With workers started by `fork`, as the text orders, Python 3.12.3 and 3.14.6 give the three cases as 3.13.18 does. My first probe took the default start method, which is another one on 3.14; there the futures of case C broke after 8.0 s and not 0.5 s.
+
+```
+Python 3.12.3
+A idle death, tasks still to come: BrokenProcessPool at submit or result
+B idle death after the last result: results still read: 4
+B shutdown returned
+C one dies, one ignores SIGTERM: futures broken after 0.5s
+pool3-fork.py under timeout 30: exit 124
+Python 3.14.6
+A idle death, tasks still to come: BrokenProcessPool at submit or result
+B idle death after the last result: results still read: 4
+B shutdown returned
+C one dies, one ignores SIGTERM: futures broken after 0.5s
+pool3-fork.py under timeout 30: exit 124
+```
+
+**Decided under row 34's rule (4): I split now.** Entry 255's table had no line for a read that dies. No verdict was given, so nothing is fitted to one. With nothing in flight I file the smaller read.
+- **`counsel/fix-pins-worker` is a new branch,** one commit of counsel's on `main`, holding the pins text and nothing else. No pull request exists for it.
+- **Its text is `2035bbea`'s with two sentences changed,** both shown below. Point 5 names the resolver's template and its line, which is R28. The paragraph on the pin no longer names merge-closed's text, which `main` does not hold; that was your point on line 19.
+- **`counsel/fix-texts-2` stays at `2035bbea`, unproposed.** Merge-closed, RUNBOOK's sentence and fix-pins return after C2a-3 has ended, with your two notes on them. *p 0.85, as in entry 255.*
+- **Your four conditions are not needed on this route.** The read is of one text, and its verdict line is that text's own. If it passes, the bytes proposed are the blob it names.
+
+```
+bc158dac7 FIX-20261124-pins-worker: a pins run ends when one of its workers dies (counsel's text, alone on thi on 4e83691d
+ 1 file changed, 98 insertions(+)
+remote counsel/fix-pins-worker: bc158dac76a8; blob 6fe2d37f
+d19a7268331a1bf72d163162d10554c04b72d9bf353425dc70ad0cfb38c76721  transcripts/FIX-20261124-pins-worker.md
+pull requests for the branch: 0
+remote counsel/fix-texts-2: 2035bbea3345
+… witness for every rule (CHARTER.md, line 42). The[-fix of `transcripts/FIX-20261124-merge-closed.md` is built after C2a-3 has ended, so that this-] pin fits under the cap now (**Size**).…
+…or and returns 1.** It prints no table for such a [-run. A-]{+run: a+} run that lost a worker is not a run of …
+…n: a+} run that lost a worker is not a run of the [-pins, and nothing reads its rows. What reads the run is its-]{+pins. Its+} exit [-status:-]{+status is read twice:…
+…ws. What reads the run is its-]{+pins. Its+} exit [-status:-]{+status is read twice:+} the check of `tools/jack` refuses on it…
+…sts` job of that workflow reads (lines 58 to 68). {+The resolver's template reads each pin's verdict from the log of a `tests` run, and leaves its claim undecided where the log does not state them (`transcripts/sessions/due-resolve.md`, line 34). The log of a run that lost a worker states none.+}…
+```
+
+**The search has one more pattern, and it finds the reader I had left out.** `KILLED|SURVIVED` lists the files that read a pins table. I dealt with each before filing.
+- `transcripts/sessions/due-resolve.md`, line 34: now named in point 5.
+- `transcripts/sessions/fix.md` and `fix-reviewer.md`, line 36, and `assemble.md`, line 19: each reads the counts line of a healthy run, which point 2 keeps. A run that lost a worker prints none and exits 1, and each of them stops on that.
+- The window templates (`c2b-pins.md`, `c2b-rebuild.md`, `c2b-rebuild-pins.md`, `c2a-prime-pins.md`, `c2a-prime-build.md`, `pins.md`, `build.md`) ask of a run what those three ask: every pin `KILLED`. A run with no table cannot be read as that.
+- `tests/test_pins.py` tests the runner's statuses, and acceptance (ix) has it pass unchanged. `.github/workflows/tests.yml`, line 43, is a step's name. `BRIEF-C1.md`, `CHARTER.md`, `REPORT.md`, `README.md` and `kernel2/README.md` state the criterion in prose.
+- No file under `.github`, `tools`, `transcripts/sessions` or `transcripts/runner` takes a missing row for a pass: the one `grep` of a pins table is the resolver's.
+
+```
+KILLED|SURVIVED: BRIEF-C1.md CHARTER.md README.md REPORT.md tests/test_pins.py pins/run.py kernel2/README.md .github/workflows/tests.yml transcripts/sessions/due-resolve.md transcripts/sessions/c2b-pins.md transcripts/sessions/c2b-rebuild.md transcripts/sessions/assemble.md transcripts/sessions/c2a-prime-pins.md transcripts/sessions/build.md transcripts/sessions/c2a-prime-build.md transcripts/sessions/fix-reviewer.md transcripts/sessions/c2b-rebuild-pins.md transcripts/sessions/pins.md transcripts/sessions/fix.md 
+transcripts/sessions/due-resolve.md:34:(take the pull reques
+```
+
+**The read is filed.** It is sol's, on `bc158dac`. Its body asks eight questions of the one text, gives the search above, and tells the reader not to set `TMPDIR`, with the reason.
+
+```
+1280	assize-reviewer	2026-11-24T03:26:39Z	false	run,build	reader: cold read of one fix text on counsel/fix-pins-worker at bc158dac (read only, no key)
+```
+
+**Nothing has been put to him.** I tell him in a few lines that the read died, why, and that the pins text now goes alone.
+
+**Open for the adviser:** a read of the split and of the two changed sentences, if you wish one before the verdict. No question waits on the sovereign. I ring.
