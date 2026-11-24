@@ -1,0 +1,34 @@
+VERDICT: PASS
+
+transcripts/sessions/c2a-3-build.md: 85956deda693ffe2c2dfebe4f28dc5857d8358f0
+transcripts/sessions/README.md: 3d24b515ed7b8c3d3da7112780d9259edc57fcec
+
+Read branch: e22e11c052a21d3e2f6971123ebb4420819a9877.
+Read the eight commits as one diff against origin/main.
+
+Findings: none.
+
+The earlier finding is answered at both places. Line 9 now requires reporting git’s message without inferring why publication failed. Line 55 now requires stopping and reporting an unexpected replay_drift detail without inferring output drift. The expected detail is supported by pins/replay.py:69–80: after its sample-output comparisons, it compares the evaluator’s bytes and raises “status: moved bytes differ”. Its sampled rows precede the veto whose reading change 6 changes.
+
+Both prerequisites exist. The search described at lines 21–23 selects the sovereign’s grant at seq 7615, timestamp 2026-11-24T16:50:38Z, including its mark and cap statement. The published opening branch contains P = 5c6db4ee166b71235a5d79b8c453f50e16b401a4 over main. Its author is counsel, its committer Guy Freeman, and its patch is identical to f6d6db7dbf79e7bfb86372a771af8884951d9740. Its SPEC hash and cap match the template.
+
+1. Facts — HELD. Checked the brief, table, evaluator and patched SPEC hashes; paths, functions, status.py:433 and 436–437, evaluate.py:20–28, mutant targets and replay_drift. All four indexes name the stated positions in the table’s first-parent chain; 735 begins the marked suffix and 772 is its last row. Following check (e), row 4 reproduced exit 1 and no stdout lines in 0.08 seconds; row 734 reproduced exit 0 and all 46 lines in 95.60 seconds. A third evaluator run, at row 772 with the veto instant, reproduced its 49 marked lines after restoring that row’s current overdue lines, with exit 0, in 121.51 seconds.
+
+2. Builder’s remit — HELD. Compared lines 32–51 with the requested brief sections, including all six changes and change 3’s baseline-comparison test. The six implementation changes can reside in judge/status.py; judge/value.py, judge/evaluate.py and judge/judge.py need no change. “At least one” test per change includes the brief’s requirement without weakening it; the specific real-log test remains required. Pins, whole-table replay, code review and counsel’s document revisions remain assigned as the brief assigns them.
+
+3. Start and publication — HELD on command inspection and targeted probes. A fresh runner branch at newer main passes the ancestry test before being reset to the older published branch. Existing scratch or a dirty/reused build head stops; a clean head already ancestral to main can be reset without importing its changes. Good earlier published builder commits are retained; the per-commit path and trailer tests reject the listed out-of-scope, missing, unfilled and other-party cases. Confirmed that --no-renames exposes both paths of an existing rename and -m exposes an existing merge’s changes. Both step-8 commands are empty at the actual P. A competing advance prevents a divergent plain push from overwriting it; publication failure stops without retrying integration. Two failed fetches explicitly stop before reset. Step 6’s search is composable and currently selects only seq 7615. The message command produced filled, stable trailers with ISSUE set and unset, on both successive invocations, under bash and bash --posix; the final commit operation was stubbed, so nothing was committed.
+
+4. Followability — HELD on static review and evaluator timings. The small-files-only scratch rule avoids copying a nested checkout during checks (a) and (b); pins/run.py:24–29 otherwise includes that scratch directory. No detached/background process is ordered. The thirty-minute bounds, no-repeat-on-timeout rule, minute-115 start cutoff and minute-150 publication/report cutoff introduce no unavoidable contradiction. The two readings required at marked rows preserve current overdue/history information while freezing the chosen window at its ending veto; the stored rows and the third run support that distinction.
+
+5. Allowed failures — HELD on source inspection. The allowances cover stale mutant strings and replay_drift’s intentional byte mismatch, while preserving failures that expose implementation defects. Relevant readers include tests/test_pins.py:23–50; tests/test_status.py:187–205; tests/test_value.py:248–250; tests/test_evaluator_move.py:41–56; tests/test_promotion_judge.py:36–37; pins/pins.py’s status mutants; pins/c2a_prime.py:22–34 and 53–54; and pins/replay.py:69–80. The exact replacements in test_status can be preserved while making the six changes. I found no additional test on main that a correct implementation must fail.
+
+6. Quoting and dispatch — HELD. No copyable shell command contains a double quote. The quoted backslash-double-quote at line 11 describes the earlier quoting fault; it is not a command. The only matches for the dispatcher’s uppercase-brace placeholder pattern are MODEL and BRANCH. No executable command orders an outside-worktree path; the key and worktree declarations are session metadata/context. Checked against counsel-courier.md:122–137.
+
+7. Other readers — HELD. The README addition indexes the template and accurately describes its publication route. Checked RUNBOOK’s hand-written trailer and Text before code rules, LAW’s citations, the existing replay helper and the sibling template. I found no additional file that this template itself makes false or breaks. The brief already assigns the later RUNBOOK and due-resolve.md revisions to counsel before opening.
+
+Not checked: I did not build the six changes, run the unit suite, run pins/run.py or any pin, replay the whole table, or measure the complete build/check schedule on the runner. Dash was unavailable; its command was inspected for POSIX-shell syntax, with execution checks limited to bash and bash --posix. I did not exercise remote publication failures or rulesets, and did not execute destructive start commands in this checkout.
+
+Exactly three evaluator runs were made, sequentially. No jack verb or gh command was run. Nothing was committed or pushed. The scratch checkout and .read-scratch directory were removed; git status is clean.
+exit=0
+```
+

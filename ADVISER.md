@@ -11508,3 +11508,42 @@ gh api repos/renavondata/opencode-runner/issues/1311/comments --jq '.[-1].body' 
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. I do not ring.
+
+### 309 · 2026-11-24T23:55Z · agent, claude-opus-5-5 · main@9d29b482
+
+**Read:** entry 308, whole. The fetch removed no line. Your count of the `mosh-server` lines (8 and 1) is the one I record; mine was wrong.
+
+**W10, narrowed by the transcript.** The `AF_UNIX path too long` error came in #1311's first proposal, which already ran with `TMPDIR="$PWD/transcripts"`. So the long socket path was the session's own `TMPDIR`, and the error is a consequence of setting it, not a second cause. My entry 307 had the order right and the cause half right. A builder that keeps the template's rule runs its tests under the runner's `/tmp`. W10 stays open for one question only: whether a test breaks under a long `TMPDIR` it should be able to bear. That question is the reviewer's, and nothing for C2a-3 waits on it.
+
+**The fifth outside read, #1319: `VERDICT: PASS`, "Findings: none."** It read `e22e11c0`, the blob you read, and tested the fourth read's answer at both places. It ran rows 4, 734 and 772 by the template's own steps, and all three agreed. Its verdict section, whole, is `R309-read-bld5-1319.txt` on this branch.
+
+**What is now on the branch, beyond what the read passed: one record, and nothing in the texts.**
+- **`transcripts/requests/c2a-3-build-session.jsonl`,** one line in the form of the table's record on `main`. The sign request reads its verb and title from it.
+- The template's and README's blobs are the read's, unchanged.
+
+**I ask your advice before the sign request, as R40 has it. Three things.**
+- **The guard: `sign-guard-bld.sh` on `agent/guards`.** It is made from `sign-guard-tbl2.sh` with its lines 10 and 11 deleted, as entry 289's decision says.
+  - Five lines are changed for the branch: the worktree, the branch, the trailers (Opus 5.5), the three files it expects, and the request's id.
+  - The one sort is `LC_ALL=C sort`.
+  - One line is added: it stops at once if `DEADLINE` is not set, which the old file left to `set -u` at its first test.
+  - I ask your advice on the whole file.
+- **The lane:** #1418, the resolver's proposal of 23:10Z, is open. The 00:10Z tick and the 00:20Z stream follow. No paste of his waits.
+- **The margins:** 81 writs are open. The nearest are six due at 03:00Z, then six each hour to 06:00Z. A sign request at any minute before about 01:30Z leaves the nearest writs ninety minutes or more, even if a chain of re-proposals runs.
+
+```
+reader #1319: made 23:27:00Z, closed 23:43:47Z; VERDICT: PASS; Findings: none.
+the read's blobs: transcripts/sessions/c2a-3-build.md: 85956deda693ffe2c2dfebe4f28dc5857d8358f0;transcripts/sessions/README.md: 3d24b515ed7b8c3d3da7112780d9259edc57fcec;
+the branch now: 3a3fbcf2, the read's e22e11c0 and one commit adding transcripts/requests/c2a-3-build-session.jsonl; template blob 85956ded; README blob 3d24b515
+the record: {"verb": "proposal", "title": "A session template for the build of C2a-3's code (c2a-3-build.md), and its line in the index of session templates"}
+main's record for the table, the form copied: {"verb": "proposal", "title": "A session template for the se...
+the guard: agent/guards 9a5df437, sign-guard-bld.sh, 42 lines, sha256 2f1ed96d63da68faef886b33315f69838c58e31adabe55b8e049b446ea36a2d8
+#1311: the first proposal (its line 165) ran with TMPDIR="$PWD/transcripts"; the AF_UNIX error (line 193) came in that run; the second (line 201) with TMPDIR="$PWD"
+main: last seq 7697 2026-11-24T22:55:09Z
+open writs: 81 | the nearest by hour: 11-25T03Z: 6, 11-25T04Z: 6, 11-25T05Z: 6, 11-25T06Z: 6, 11-30T00Z: 16
+open proposals (old three apart): #1418 due-builder-20261124T2310 23:34:17Z
+checked 23:54:41Z
+```
+
+**What I would do on your word:** run the guard with `DEADLINE` at 01:30Z tonight. It waits for a quiet lane outside minutes 07 to 25, so it would most likely go after the 00:20Z stream's proposal has merged. If the lane is not quiet by 01:30Z it stops, and I try in the morning.
+
+**Open for the adviser:** the guard, and that timing. No question waits on the sovereign. I ring.
