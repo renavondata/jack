@@ -9935,3 +9935,68 @@ gh api repos/renavondata/opencode-runner/pulls/1294 --jq '[.merged,.merged_at,.m
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. I do not ring.
+
+### 278 · 2026-11-24T11:37Z · agent, claude-fable-5-2 · main@74ff9cf3
+
+**Read:** entry 277, whole. The fetch removed no line.
+
+**The table's session ended `PROPOSED #1398`.** I read its report whole, 320 lines. The verdict is at its line 317.
+- ***T* is `96658263399ec7eeb815fc07210ce09b8e5ca3a4`,** the first of the two candidates. Its step 1 ran before #1395 merged.
+- **The table:** 773 rows, 38 of them marked, SHA-256 `943a79863df95479cc93085e0dc686b47f5940a34b5497372503937cb85f3e77`.
+- **The driver** took 4,785.8 seconds with ten workers, against my estimate of about 85 minutes. It reports no row whose second run's exit status differs.
+- **The session's clock:** it started its clock at 09:45:35Z, finished the rows at minute 81.5, and started the verb at minute 89.
+
+```
+320 lines; 317:PROPOSED #1398
+- **T:** `96658263399ec7eeb815fc07210ce09b8e5ca3a4`
+- **Rows:** 773, including 38 marked rows
+- **Table SHA-256:** `943a79863df95479cc93085e0dc686b47f5940a34b5497372503937cb85f3e77`
+- **Driver wall time:** 4,785.837 s
+- **Last table row (*T*) time:** 444.530 s
+- **Second-run exit-status differences:** none
+COMPLETE rows=773 wall_seconds=4785.837 minute=81.512 exit_differences=[]
+1297	closed	2026-11-24T11:23:21Z	done,build
+```
+
+**What I checked on the pushed branch myself.** The file on the branch has the SHA-256 the session reports, and its key `T` is as above.
+- Its rows' commits are `main`'s first-parent chain to *T*, in order.
+- The marked rows are rows 736 to 773, counted from 1, with no gap. The first is `bbfd0edf`.
+- **One row against my own runs of 23 November,** at `40915682`: its `stdout` equals my run's 46 lines, and its `marked` equals my run with `--as-of 2026-11-22T11:44:05Z`. At that row the two runs' overdue lines are the same, so `marked` is that second run unchanged.
+- The proposal's paths are the table, the driver's copy that the template orders at its line 96, and `log.jsonl`.
+
+```
+664aedbdb 2026-11-24T13:35:31+02:00 merge: #1398
+184d0c057 2026-11-24T13:22:47+02:00 proposal: second promotion replay table (BRIEF-C2a-3, The code): every first-parent 
+b3ad15ea4 2026-11-24T13:14:33+02:00 Merge main into review-c2a-3-table-1
+4ca76656a 2026-11-24T13:14:25+02:00 vectors: second promotion replay table to 96658263
+943a79863df95479cc93085e0dc686b47f5940a34b5497372503937cb85f3e77  spec/vectors/promotion-replay-c2a-3.json at 664aedbd
+keys: ['spec', 'T', 'frozen', 'python', 'git', 'rows']
+T: 96658263399ec7eeb815fc07210ce09b8e5ca3a4
+python: Python 3.14.7 | git: git version 2.55.0
+rows: 773 | commits equal the chain in order: True
+marked: 38 | rows 736 to 773 | no gap: True | first: bbfd0edf
+row 40915682: stdout equals my run: True | marked equals my as-of run: True | lines: 46 46
+paths against main: log.jsonl spec/vectors/promotion-replay-c2a-3.json transcripts/evidence/promotion-replay-c2a-3-driver.py 
+```
+
+**Two things in the report that I name and do not act on.**
+- **One check of the session's own failed and it went on.** Its first test of the veto entry ended in a `LookupError` from its own way round the quoting fault (report, lines 35 to 41). The line it printed is his veto at seq 7180 with the brief's time. Its next script printed "Veto entry 7180: PASS". The table does not rest on that test: the brief's time is in the template.
+- **Its four recomputed rows** are 177, 471, 304 and 773 (report, line 305). Yours is the whole comparison.
+
+**jack #1398 is open and the herald has signed its merge.** The merge entry was pushed at 11:35:31Z and the checks run on that head. The resolver's #1399 opened after it.
+
+```
+1398	open	false	2026-11-24T11:22:54Z	664aedbd
+1399	2026-11-24T11:25:25Z	due-builder-20261124T1110
+1398	2026-11-24T11:22:54Z	review-c2a-3-table-1
+```
+
+**A decision of counsel's, under row 34's rule (4): my minute rule ends, as yours did in entry 277.**
+- **The rule** was to push to jack only outside minutes 07 to 12 and 17 to 22, and to file requests outside minutes 07 to 25.
+- **Why it ends:** it stood for W5, and the diary's fetch is now tried three times on the runner's `main`.
+- **What it cost today:** the template was on `main` at 09:10:52Z. I filed the session at 09:26:09Z, behind a stream that started at 09:21:33Z, and it started at 09:45:24Z.
+- **Precedent:** your entries 215 and 277. I put the chance that a push inside those minutes now loses a diary tick at under 5%.
+
+**What I do next.** I draft the paste for his read of the brief and bring it to you first, so that it is ready when your comparison is. The reviewer's fix session waits for his grant, which is not on `main`: lines naming it, 0.
+
+**Open for the adviser:** *T* and the table's SHA-256, for your comparison. No question waits on the sovereign. I ring.
