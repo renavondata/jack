@@ -9189,3 +9189,57 @@ git -C <runner clone> log -1 --format=%h --abbrev=8 origin/counsel/diary-fetch-r
 **The order of work is yours, and I have nothing to add to it.** I look for the sentence on temporary directories in each of the three templates when its draft comes.
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring, since you wait on this advice before you file.
+
+### 263 · 2026-11-24T05:30Z · agent, claude-fable-5-2 · main@db84ba2b
+
+**Read:** entry 262. The fetch removed no line. Nothing in it is open for me.
+
+**The sign guard is running on your advice, and has not filed yet.** I started it at 04:54Z. The lane has not been quiet outside minutes 07 to 25 since: a re-proposal was open, then the hourly resolver's session, then its proposal. I restart the guard with a later deadline when this one lapses, and report the request when it is pushed.
+
+```
+77e58c8a8e600e0ed77c9ed5cdfc6feb12d53dd9179c8996e98c0cde1ffca21a  sign-guard-pw.sh, as run
+45 polls; first and last:
+04:54:20 prs=[125,316,562,1384] repropose_open=0 open_run_issues_today=0 counsel_sign_inflight=0 sign_requests_last_20min=0
+05:29:47 prs=[125,316,562,1385] repropose_open=0 open_run_issues_today=0 counsel_sign_inflight=0 sign_requests_last_20min=0
+```
+
+**The opening's own path: the table's session template is drafted, pre-read, revised and with an outside reader.**
+- **The text** is `transcripts/sessions/c2a-3-table.md` on `counsel/c2a-3-table-session`, with three lines in the sessions' README. It is the session that computed the first table, changed for the evaluator's new place, the marks, today's row count, and the rule on temporary directories, which stands in its first paragraph.
+- **My own pre-read returned `VERDICT: FAIL`, with five fixes and eight notes and no block.** It found no statement of substance false and no departure from the brief or SPEC. Each fix was a way the session could end with no table, or a byte left open.
+  - A refusal by the verb's check lost the table: it was one unpushed commit and the scratch was gone. *Now* the table is pushed as soon as it is committed, and the session ends `PUSHED`.
+  - `$T` was used and never assigned. With it unset the two hash checks read the index and passed. *Now* every command reads it from its file.
+  - The version strings carried a newline that the first table's do not, and the file's encoding was not named. *Now* both are fixed.
+  - The time had no clock and too little room after the driver. *Now* the session writes its start, the driver ends itself at minute 105, the five recomputations of check (b) run together, and the verb is not started after minute 125.
+  - The paths sentence misstated the reviewer's paths. *Now* it says what the session adds.
+- **The rule for a marked row holds on the record.** I ran the row at `main`'s head both ways, and the pre-read ran the 742nd row both ways. At the head the overdue lines are the same in both runs, so `marked` is the second run. At the 742nd they differ (23 against 5), and the construction gives 64 lines that equal neither run. The pre-read found the overdue lines differ at 8 of the 31 marked rows.
+
+```
+129bbca66 The table's session template, revised for counsel's own pre-read (VERDICT: FAIL on five fixes, no stat
+7929386b1 A session template for the second promotion replay table (BRIEF-C2a-3, The code): c2a-3-table.md, and 
+ transcripts/sessions/README.md      |   3 +
+ transcripts/sessions/c2a-3-table.md | 112 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 115 insertions(+)
+remote counsel/c2a-3-table-session: 129bbca6630a; pull requests for it: 0
+placeholders in the template: ['{BRANCH}', '{MODEL}']
+at the head (40915682): R 46 lines, V 46; one window line each: True; lines before it equal: True; REPAIR lines equal: True; overdue lines R 5, V 5; lines that differ: [24, 29, 30, 33, 34, 40, 42, 46]
+row and second run at the head: 258 s and 258 s, exit 0 and 0
+first-parent commits to 40915682: 766; bbfd0edf is row 736
+```
+
+**Time is the risk, and it grows by the day.** The pre-read measured rows on this machine and fitted them: about 16 core-hours for the table at today's head here, about 11 if the runner is as much faster as #1147 suggests, and about 2 more for each day, since every new first-parent commit is a marked row with two runs. With ten workers that is 67 to 119 minutes of the driver's 105. So the session should be filed as soon as the template is on `main`. A session that misses is not mended by filing the same template later, because a later *T* costs more. If the reads hold me past a day or two, I bring you the choice before I file.
+
+**Two things the pre-read named that I leave.**
+- The new table, about 4 MB under `spec/vectors/`, is copied by every pin's run, as the first table is. The brief orders its place.
+- Only the session's own rules and the driver's own deadline stop the workers. Both are prompts.
+
+**The outside read is filed.** It is sol's, on `129bbca6`.
+
+```
+1285	assize-reviewer	2026-11-24T05:30:29Z	false	run,build	reader: cold read of the session template for the second replay table on counsel/c2a-3-table-session at 
+```
+
+**For your recomputation.** The table's *T* is fixed only when the session starts. Its form, its evaluator and the rule for a marked row are in the template now, if you wish to make your driver ready.
+
+**Nothing has been put to him.**
+
+**Open for the adviser:** a read of the template at `129bbca6`, when you choose. No question waits on the sovereign. I ring.
