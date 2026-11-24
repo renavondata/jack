@@ -18,20 +18,20 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
   - the pre-read's prototype of this change printed, on a full run, a table identical to `main`'s after the cut of acceptance (i). In 1,500 trials with a task dying at random, the dead task was always among the first not returned, as many as there are workers.
 - **The fix carries its own pin.** LAW.md says that every change to `pins/` carries a pin in `pins/pins.py` (lines 61 to 64), and the charter asks a witness for every rule (CHARTER.md, line 42). The fix of `transcripts/FIX-20261124-merge-closed.md` is built after C2a-3 has ended, so that this pin fits under the cap now (**Size**).
 
-**When it may be made.** Before C2a-3 opens or after it has ended, and never while it is open. `transcripts/BRIEF-C2a-3-draft.md` on `main` refuses, inside its window, any code but its own: "no code but §The code". Before anything else, read `main`'s log.
-- C2a-3 opens at the first `push` entry whose `ts` is after 2026-11-30T00:00:00Z. If the log holds none, go on.
-- If it holds one, C2a-3 has ended when the log holds, after that entry, a `decision` of kind `promote` with subject `C2a`, or a `decision` of kind `veto` with subject `C2a` or `C2a-3`; or when the instant now is after the `resolves_by` of the forecast whose `args.id` is `V8`. If C2a-3 has not ended, stop, report that the window is open, and change nothing.
+**When it may be made.** Before C2a-3 opens, and not after. `transcripts/BRIEF-C2a-3-draft.md` on `main` refuses, inside its window, any code but its own: "no code but §The code". Before anything else, read `main`'s log: it must hold no `push` entry whose `ts` is after 2026-11-30T00:00:00Z. If it holds one, stop, report it, and change nothing. Make the same check again immediately before you propose. If it fails then, do not propose: push the branch and report.
+
+These checks do not reach the time between the proposal and its merge. There the guards are two: counsel files this session well before 30 November, and C2a-3's opening paste enters nothing while a proposal other than the three standing ones is open or a session is in flight (`transcripts/BRIEF-C2a-3-draft.md`, §Order of acts step 2).
 
 **The change.**
 1. **`parallel_pins` uses `concurrent.futures.ProcessPoolExecutor`** in place of `multiprocessing.Pool`. The workers are started by `fork`, as now, and the pool's initializer is `init_worker` with the arguments it has now.
 2. **Each run is handed to the pool as its own task,** in the order `pool.map` gives them now: first every twin, then every mutant of each pin whose twin passed. The results are put back in today's order. A healthy run prints the table, the counts line and the exit code that it prints today.
-3. **`run_test` catches `SystemExit` as it catches `Exception`.** Under a mutant it is a kill, and on the twin it is a failed twin, with the detail it gives any other exception. This holds in a worker and in the parent alike. `KeyboardInterrupt` is left as it is.
-4. **When the pool breaks, the run ends.** `parallel_pins` raises an exception of a class of its own, `WorkerLost`, defined in `pins/run.py`. It does so whether the break shows when a task is handed to the pool or when a result is asked of it. Its message says:
+3. **`run_test` catches `SystemExit` as it catches `Exception`.** Under a mutant it is a kill, and on the twin it is a failed twin, with the detail it gives any other exception. This holds in a worker and in the parent alike. `run_test` does not catch `KeyboardInterrupt`.
+4. **When the pool breaks, the run ends,** once the workers that survive have ended, which the pool asks of them at once. `parallel_pins` raises an exception of a class of its own, `WorkerLost`, defined in `pins/run.py`. It does so whether the break shows when a task is handed to the pool or when a result is asked of it. Its message says:
    - that a worker ended without returning;
    - how many tasks of the phase in hand, twins or mutants, have no result, those not yet handed over included;
    - the earliest of them in the order of hand-over, up to twice the number of workers, each as its pin's name and its mutant's name, or `twin`.
 
-   The pool cannot say which of its running tasks died with the worker. It takes its tasks in the order they were handed over, so the tasks it was running are among the earliest without a result. Naming twice the number of workers allows for results that were on their way back when the pool broke.
+   The pool cannot say which of its running tasks died with the worker. It takes its tasks in the order they were handed over, so the tasks it was running are among the earliest without a result. Naming twice the number of workers allows for results that were on their way back when the pool broke. Counsel has found no schedule in which the lost task is not among those named, and has no proof that there is none.
 
    A task has a result when its own future gave one. `parallel_pins` reads every future of the phase before it counts and names, whatever order the results came in: a task that was still running when the pool broke does not hide the results of tasks handed over after it.
 5. **`main` catches `WorkerLost`, prints its message to standard error and returns 1.** It prints no table for such a run. A run that lost a worker is not a run of the pins, and nothing reads its rows. What reads the run is its exit status: the check of `tools/jack` refuses on it, and the `pins` job of `.github/workflows/tests.yml` fails on it, which the `tests` job of that workflow reads (lines 58 to 68).
@@ -49,7 +49,9 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
 - It sets no limit on how long one pin may run. A worker that hangs, and does not die, still holds the run. That is a different fault, with a different remedy.
 - It does not retry the lost task. A run that lost a worker is run again whole, by whoever started it.
 - It does not give `tests.yml` a `timeout-minutes`. The workflow is trusted base and changes only by his push.
-- It ends the run on any worker's death, an idle worker's included. Today's pool replaces an idle worker and goes on.
+- It does not report a worker that dies while idle after the last task of the run has returned. Every result is in by then, and the run ends as a healthy one. A worker that dies while idle earlier breaks the pool for the tasks still to come, and the run ends by `WorkerLost`; today's pool replaces such a worker and goes on.
+- It does not end a run whose surviving worker will not end. When the pool breaks it signals its other workers to end and waits for them. A worker that ignores the signal holds the run, and that is the hanging worker of the first line.
+- It asks nothing of one other difference between the two pools: the executor's workers are not daemonic, as the pool's are, so a pin's test may start child processes of its own.
 - It does not clean up after a broken run. The pool ends the surviving workers, and their disposable copies of the tree can be left in the temporary directory. The check of `tools/jack` removes its own temporary directory, and the hosted runner's machine is discarded after the job.
 
 **Paths.**
@@ -62,18 +64,18 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
 - **(i) The same rows.** At the head, run `PINS_WORKERS=1 python3 pins/run.py` and then `PINS_WORKERS=2 python3 pins/run.py`, keeping both tables. Report `nproc`.
   - Cut each row's detail at its first colon with `sed -E 's/  \(([^:]*).*$/  (\1/'`, as `transcripts/FIX-20261123-pins-parallel.md` does and for its reason. What is left of the two tables must be identical: compare them with `cmp`, and report the result.
   - Both must end with the last line of `origin/main`'s `python3 pins/run.py`, with its `KILLED` raised by two.
-- **(ii) A lost worker ends the run.** Make nine pins: eight whose test passes and whose one mutant is killed, and a ninth, the dying pin. Call `run_pins` on the nine with two workers, under `timeout 60`, three times:
+- **(ii) A lost worker ends the run.** Make nine pins: eight whose test passes and whose one mutant is killed, and a ninth, the dying pin. Call `run_pins` on the nine with two workers, under `timeout 60`, four times:
   - (a) the dying pin's test calls `os._exit(9)` whenever it runs, and the pin is last in the list;
   - (b) the same pin, first in the list;
   - (c) the dying pin's test passes on the tree as it is and calls `os._exit(9)` when its mutant has been applied, and the pin is fifth in the list;
-  - (d) as (a), but the first pin's test sleeps three seconds before it passes.
+  - (d) as (a), but the first pin's test waits until a file exists, at a path both tests are given, that the dying pin's test writes just before it exits, and then sleeps five seconds before it passes.
 
   Each call must raise `WorkerLost` within the 60 seconds. For each message of (a), (b) and (c):
   - it names the dying pin's task: with `twin` in (a) and (b), and with its mutant's name in (c);
   - it names at most four tasks;
   - the number it gives is at least the number of tasks it names, and at most nine.
 
-  The message of (d) must name exactly two tasks, the first pin's twin and the dying pin's twin, and the number it gives must be 2: the seven pins between returned while the first was still running.
+  The message of (d) must name exactly two tasks, the first pin's twin and the dying pin's twin, and the number it gives must be 2: the first pin's task is held until the dying one has run, and the seven between ran before the dying one on the other worker.
 
   Report the four messages and how long each call took.
 - **(iii) A break at hand-over.** In a `python3` process at the head, replace `concurrent.futures.ProcessPoolExecutor.submit`, with `unittest.mock.patch.object`, by a function that calls the real one for its first two calls and raises `concurrent.futures.process.BrokenProcessPool` at its third. Call `run_pins` on nine pins of the passing kind with two workers, under `timeout 60`. It must raise `WorkerLost`, and no other exception. Report the message.

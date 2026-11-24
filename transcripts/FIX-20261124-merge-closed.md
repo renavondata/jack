@@ -11,8 +11,12 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
 
 **When it may be made.** After C2a-3 has ended, and not before. Until C2a-3's opening push raises the cap there is no room for it beside the pins fix and its pin (**Size**). And while C2a-3 is open, `transcripts/BRIEF-C2a-3-draft.md` on `main` refuses any code but its own: "no code but §The code", and "no change to a verb of `tools/jack`". Before anything else, read `main`'s log. If any of these fails, stop, report which, and change nothing.
 - C2a-3 has opened: the log holds a `push` entry whose `ts` is after 2026-11-30T00:00:00Z. The first such entry is its opening.
-- C2a-3 has ended: after that entry the log holds a `decision` of kind `promote` with subject `C2a`, or a `decision` of kind `veto` with subject `C2a` or `C2a-3`; or the instant now is after the `resolves_by` of the forecast whose `args.id` is `V8`.
-- No later window has opened: the log holds no second `push` entry after C2a-3's opening.
+- C2a-3 has ended, by one of three. A `decision` of kind `promote` with subject `C2a` whose `ts` is after the opening's `ts`. Or a `decision` of kind `veto` with subject `C2a` or `C2a-3` whose `ts` is after the opening's `ts`. Or the instant now is after the `resolves_by` of the `forecast` entry whose proposer is `counsel`, whose `args.id` is `V8` and whose `seq` is below the opening's; if the log holds no such forecast, this third does not apply. An entry that carries the opening's own `ts` ends nothing (`transcripts/BRIEF-C2a-3-draft.md`, §The subject).
+- No later window has opened: the log holds no `push` entry whose `seq` is above the opening's.
+
+Make the same check again immediately before you propose. If it fails then, do not propose: push the branch and report.
+
+These checks do not reach the time between a proposal and its merge. There the guards are two, and both are counsel's: counsel files this session only when the check holds, and counsel writes the next window's opening paste to enter nothing while a proposal other than the three standing ones is open or a session is in flight, as C2a-3's does (`transcripts/BRIEF-C2a-3-draft.md`, §Order of acts step 2).
 
 **The change.**
 1. **`passed` reads the pull request's `state` with the head and the checks,** in the call it makes now at line 149.
@@ -34,7 +38,7 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
 - **May change:** `tools/jack`, `tests/test_jack.py`.
 - **May not change:** any other file.
 
-**Size.** `tools/` and `tests/` are counted. This change adds at most 22 counted lines. Every line of a Python file counts, blank lines and comments included. The cap in force when the session runs is the one C2a-3's opening push sets, which stays until the next opening and is his to state (`transcripts/BRIEF-C2a-3-draft.md`, §The cap), and the count brought to him for it has a line for these 22. If the change does not fit under the cap as `main` holds it, push the branch, do not propose, and report the count.
+**Size.** `tools/` and `tests/` are counted. This change adds at most 22 counted lines. Every line of a Python file counts, blank lines and comments included. The cap in force when the session runs is the one C2a-3's opening push sets, which stays until the next opening and is his to state (`transcripts/BRIEF-C2a-3-draft.md`, §The cap). If the change does not fit under the cap as `main` holds it, push the branch, do not propose, and report the count.
 
 **Acceptance.**
 - **This text adds one test by name,** and no other: `test_merge_refused_when_the_pull_request_is_closed_during_a_wait` in `tests/test_jack.py`, with a sub-test for each of (i) to (iv).
