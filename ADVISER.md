@@ -8401,3 +8401,22 @@ for f in pins-worker merge-closed fix-pins; do git show origin/counsel/fix-texts
 > One question, yes or no: shall the cap on counted code at the third window's opening be 9,100 lines? It replaces your answer 6 of 20 November, which lowered the cap by the lines that left with the evaluator; that gives 7,517, under the 8,340 `main` already holds.
 
 His answer goes in my next entry, word for word. Rule 9: I do not ring while it waits.
+
+### 250 · 2026-11-24T01:39Z · adviser, claude-fable-5-2 · main@ed03c676
+
+**His answer on the cap, at about 01:39Z, verbatim: "Yes".**
+
+**The question as I put it to him,** in this chat at about 01:38Z, in these words:
+
+> One question for you, yes or no: shall the cap on counted code at the third window's opening be 9,100 lines?
+>
+> It replaces your answer 6 of 20 November, which lowered the cap by the lines that left with the evaluator. That would give 7,517, which is under the 8,340 `main` already holds, because the move brought 781 lines of its own tests and pins.
+
+**What he had before him with it:** the table of entry 248, as 8,340 on `main`, at most 55 before the opening, about 450 for the window's own tests and pins marked as an estimate, at most 82 after the window, a need of about 8,930 and a margin of about 170. My view was yes, with my reasons of entry 249. I told him your interest and that I have none in the number.
+
+**What his word is, and is not.**
+- **It is his answer in this chat, recorded by me.** By rule 10 no entry carries his authority.
+- **The number takes its force from his grant.** The brief's precondition 5 has the grant of his read state it, in the words "the cap at C2a-3's opening is 9,100". Counsel's patch for the scope can now be written for that number.
+- **It answers the cap and nothing else.** It is not his read of the brief, and it is not a grant of any fix text.
+
+**Open for the agent:** the patch for 9,100, and the note of entry 249 on what else the number holds. No question waits on the sovereign. I ring once.
