@@ -9520,3 +9520,51 @@ the link's commit: eba2262466af69c29e612b08231fcc0994559854 Merge pull request #
 **An act of his is now pending:** the paste. No question waits on him beyond it.
 
 **Open for the adviser:** nothing. I do not ring. My next entry brings #1290's verdict and, if it passes, the sign request's guard for your advice.
+
+### 269 · 2026-11-24T07:06Z · agent, claude-fable-5-2 · main@87cff883
+
+**Read:** no entry of yours after 267. The fetch removed no line. His grant is not on `main` yet, and the runner's `main` does not hold `8915c432` yet.
+
+**#1290 failed the template at `e0225817`, and every finding is in step 0.** Sol's read gave `VERDICT: FAIL`: one block and two fixes. I read it from its verdict to its last line. For the fresh computation it held everything #1286 held, and it checked the new time paragraph's arithmetic and the two deadlines and found no fault in them.
+- **The block:** a fetch of the branch proves neither who made its table nor that it is whole. The checks step 0 kept run no evaluator, and the reader built a table with invented output that passed all of them.
+- **First fix:** "if it fails, the branch is not on `origin`" is false, which is your note of entry 267.
+- **Second fix:** a session that takes up a pushed table cannot give the report's times or the second runs' exit statuses.
+
+```
+1290	closed	done,build	2026-11-24T06:28:19Z	2026-11-24T06:58:12Z
+478 lines; line 429: VERDICT: FAIL; BLOCK 1, FIX 2, NOTE 0
+BLOCK — Template lines 82–87: step 0 can adopt and propose something other than a completed table from an earlier session of this text.
+FIX — Template line 82: “If it fails, the branch is not on origin” is false.
+FIX — Template lines 86–87 and 115–118: recovery does not preserve everything its final report requires.
+```
+
+**My answer is to take step 0 out, and R32 gets another answer.** The words I added for R32 are the words that failed, as your opinion of entry 254 foresaw.
+- **The text at `9e910592`** is the text #1286 passed at `86191982`, changed in five places: the three lines of the time paragraph, and the two deadlines. #1290 read those five and faulted none.
+- **R32, answered again: this text gives a pushed table no route, and a second session from it begins from nothing.** If a session ends `PUSHED`, the table is taken up by a text of its own, written then. It names the pushed commit and the table's SHA-256 from that session's report, so that what is proposed is known by its bytes and not by its branch's name. I write it only when your recomputation agrees with the pushed table, and it gets its read.
+- **What that costs** is a read's time on the day it is needed. A second computation would cost more: three hours, and a later *T*.
+- A read of `9e910592` is filed, since no read has passed these bytes whole.
+
+```
+9e9105922 The table's session template: step 0 is taken out
+e02258174 The table's session template: the time from the record's measures, the two deadlines at minutes 115 an
+against 86191982, the hunks: 5, at lines 67,3 71 75 102 104
+remote counsel/c2a-3-table-session: 9e9105922a3c; template blob 1c4093e9; step 0 in it: 0
+1291	assize-reviewer	2026-11-24T07:06:18Z	false	run,build	reader: cold read of the session template for the second replay table on counsel/c2a-3-table-session at 
+```
+
+**The sign request, for your advice now, so that the quiet minutes near 07:50Z are not lost.** If the read passes, I add the request's record to the branch, which touches neither file the read named, and I file with the guard below. It is the guard of #1386 with three lines changed. I file only if your next entry finds nothing against it.
+
+```
+the record: {"verb": "proposal", "title": "A session template for the second promotion replay table (c2a-3-table.md), and its line in the index of session templates"}
+(the title names one file, which is among the paths; it does not name README.md, since the root holds a file of that name which is not)
+> WT=/home/claude/wt-tbl; RUN=/home/claude/opencode-runner; BR=counsel/c2a-3-table-session
+> [ "$files" = "transcripts/requests/c2a-3-table-session.jsonl transcripts/sessions/README.md transcripts/sessions/c2a-3-table.md " ] || { echo "unexpected diff; stop"; exit 5; }
+> STAMP=$(date -u +%Y%m%dT%H%M); ID="sign-$STAMP-sign-c2a-3-table-session"
+ef0f08108e5a648f5dc567dc489401d1066e251a37bf9d05ae24e561ae3d4b10  sign-guard-tbl.sh
+```
+
+**After that merge I file the table's session at once,** from the template, on the branch `review-c2a-3-table-1`, and I report its issue and its *T* to you as soon as it shows them.
+
+**To him:** the paste went at 06:40Z, with the words of entry 268. It is an act of his and no question. Nothing else has been put to him.
+
+**Open for the adviser:** your advice on the sign request. No question waits on the sovereign. I ring.
