@@ -1,0 +1,72 @@
+[
+  {
+    "forecast": 7413,
+    "dataset": "hk_property_poi",
+    "url": "https://renavon.com/data/property/hk_property_poi",
+    "sha256": "65a5b98957ab5bcd12a5add868aa0d06bbf8b66bcadd377e5fffed2e1519786e",
+    "fetched_at": "2026-11-24T04:10:04Z",
+    "last_updated": "2026-11-24T03:36:17+00:00",
+    "last_updated_utc": "2026-11-24T03:36:17Z",
+    "window_utc": [
+      "2026-11-24T03:00:00Z",
+      "2026-11-24T04:00:00Z"
+    ],
+    "outcome": 1
+  },
+  {
+    "forecast": 7416,
+    "dataset": "hkex_disclosures",
+    "url": "https://renavon.com/data/hkex/hkex_disclosures",
+    "sha256": "93fc1eb74b0f5b09cf3c448c7a798172c4596052a77c07eed4ab96cb0237f0b6",
+    "fetched_at": "2026-11-24T04:10:04Z",
+    "last_updated": "2026-11-24T03:25:38+00:00",
+    "last_updated_utc": "2026-11-24T03:25:38Z",
+    "window_utc": [
+      "2026-11-24T03:00:00Z",
+      "2026-11-24T04:00:00Z"
+    ],
+    "outcome": 1
+  },
+  {
+    "forecast": 7419,
+    "dataset": "hkex_disclosure_interests",
+    "url": "https://renavon.com/data/hkex/hkex_disclosure_interests",
+    "sha256": "70f0a61017efaaa1bd77c9c69187ec734b4c62d0c555d57576fc03ba96b43e8e",
+    "fetched_at": "2026-11-24T04:10:04Z",
+    "last_updated": "2026-11-24T03:25:38+00:00",
+    "last_updated_utc": "2026-11-24T03:25:38Z",
+    "window_utc": [
+      "2026-11-24T03:00:00Z",
+      "2026-11-24T04:00:00Z"
+    ],
+    "outcome": 1
+  },
+  {
+    "forecast": 7421,
+    "dataset": "crhk_companies",
+    "url": "https://renavon.com/data/crhk/crhk_companies",
+    "sha256": "222a42f4f8ad23300311a0ce1a250e7e61a87274d407e75d23efc34963895f14",
+    "fetched_at": "2026-11-24T04:10:04Z",
+    "last_updated": "2026-11-24T02:30:04+00:00",
+    "last_updated_utc": "2026-11-24T02:30:04Z",
+    "window_utc": [
+      "2026-11-24T03:00:00Z",
+      "2026-11-24T04:00:00Z"
+    ],
+    "outcome": 0
+  },
+  {
+    "forecast": 7427,
+    "dataset": "sfc_licences",
+    "url": "https://renavon.com/data/sfc/sfc_licences",
+    "sha256": "72c5aa1c36b140e312b25ba1ac3631e4092e894e33dd57ff615465939576226f",
+    "fetched_at": "2026-11-24T04:10:04Z",
+    "last_updated": "2026-11-21T04:25:44+00:00",
+    "last_updated_utc": "2026-11-21T04:25:44Z",
+    "window_utc": [
+      "2026-11-24T03:00:00Z",
+      "2026-11-24T04:00:00Z"
+    ],
+    "outcome": 0
+  }
+]
