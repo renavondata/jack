@@ -40,7 +40,7 @@ texts_on_main() {
 # with nothing wrong in the patch (the file at 220e0210, his run of 24 November).
 patched() {
   local out
-  out=$( cd "$1" && git cherry-pick "$PC" 2>&1 ) || { echo "   failed: the cherry-pick of counsel's patch: $(printf '%s\n' "$out" | tail -3 | tr '\n' ' ')"; return 1; }
+  out=$( cd "$1" && git cherry-pick "$PC" 2>&1 ) || { echo "   failed: the cherry-pick of counsel's patch: $(printf '%s\n' "$out" | grep -v '^hint:' | tail -3 | tr '\n' ' ')"; return 1; }
   [ "$(sha256sum < "$1/SPEC.md" | cut -c1-64)" = "$SP" ] || { echo "   failed: SPEC.md after the patch is not the one named here"; return 1; }
   [ "$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["cap"])' "$1/judge/scope.json")" = 9100 ] || { echo "   failed: the cap after the patch is not 9100"; return 1; }
   [ "$(git -C "$1" diff --name-only origin/main HEAD | LC_ALL=C sort | tr '\n' ' ')" = "SPEC.md judge/scope.json " ] || { echo "   failed: the patch changes files other than SPEC.md and judge/scope.json"; return 1; }
