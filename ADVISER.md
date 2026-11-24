@@ -9832,3 +9832,66 @@ herald.yml:  runs-on: [self-hosted, herald]
 **His grant:** lines on `main` naming it: 0.
 
 **Open for the adviser:** nothing until the session is filed. No question waits on the sovereign. I do not ring.
+
+### 276 · 2026-11-24T09:48Z · agent, claude-fable-5-2 · main@31fcf651
+
+**Read:** no entry of yours after 274. The fetch removed no line.
+
+**The table's template is on `main`.** jack #1394 merged at 09:10:52Z, seqs 7510 and 7511. Both files are the blobs #1291 passed.
+- **It merged sooner than I wrote in entry 275.** I took the herald's ten minutes from the `cron` line of its workflow. Its runs today are dispatched every two minutes, as the list below shows.
+
+```
+1394	closed	true	2026-11-24T09:10:52Z
+7510 counsel A session template for the second promotion replay table (c2a-3-table.md), and its line in the index
+7511 herald 1394
+1c4093e9 transcripts/sessions/c2a-3-table.md
+b1a4df80 transcripts/sessions/README.md
+workflow_dispatch	success	2026-11-24T09:26:05Z
+workflow_dispatch	success	2026-11-24T09:24:03Z
+workflow_dispatch	success	2026-11-24T09:22:02Z
+workflow_dispatch	success	2026-11-24T09:20:05Z
+workflow_dispatch	success	2026-11-24T09:18:03Z
+```
+
+**The table's session is filed and running: runner #1297.** I filed it at 09:26:09Z, the first minute my rule allows. It waited behind the 09:20Z stream, #1296, which had taken the `build` runner, and it started at 09:45:24Z. That is the wait entry 275 named.
+
+```
+{"id": "20261124T092607-table-session-1", "act": "issue", "template": "c2a-3-table", "branch": "review-c2a-3-table-1", "model": "openai/gpt-6.1-sol", "labels": ["run", "build"]}
+1297	open	2026-11-24T09:27:00Z	run,build
+model: openai/gpt-6.1-sol
+key: ~/.ssh/jack-reviewer
+branch: review-c2a-3-table-1
+2026-11-24T09:45:24Z	started: run 45365310385 on steel-legend, model openai/gpt-6.1-sol, key ~/.ssh/jack-reviewer, branch review-c2a-3-table-
+1295	done	2026-11-24T09:10:16Z	2026-11-24T09:26:23Z started 2026-11-24T09:10:26Z
+1296	done	2026-11-24T09:21:22Z	2026-11-24T09:45:02Z started 2026-11-24T09:21:33Z
+```
+
+***T* is one of two commits, and I cannot tell which until the session reports.** The template fixes *T* by the session's own fetch at step 1. The resolver's proposal, #1395, merged 2 minutes 18 seconds after the session started.
+- If step 1 ran before 09:47:42Z, *T* is `96658263399ec7eeb815fc07210ce09b8e5ca3a4`, with 773 rows.
+- If after, *T* is `31fcf6518911aa124a954e202d7061287ae00323`, with 774 rows.
+- The table's own key `T` and the session's report settle it. I report it as soon as either is on the runner. A recomputation to `31fcf651` covers both.
+
+```
+31fcf6518911aa124a954e202d7061287ae00323 2026-11-24T11:47:40+02:00 Merge pull request #1395 from renavondata/due-builder-20261124T
+96658263399ec7eeb815fc07210ce09b8e5ca3a4 2026-11-24T11:10:51+02:00 Merge pull request #1394 from renavondata/counsel/c2a-3-table-s
+1395	true	2026-11-24T09:47:42Z
+first-parent commits to 96658263: 773; to 31fcf651: 774
+```
+
+**The session's times, from its start.** The driver ends itself at minute 115, which is 11:40Z. The verb is not started after minute 130, which is 11:55Z. The job's limit is 12:45Z. I file nothing with `build` until it has ended.
+
+**His paste is running.** He wrote "Pasted" to me at about 09:02Z, and nothing else.
+- **Its first step is done:** he merged the runner's change at 09:02:33Z, and it is the commit the paste names.
+- **Its second step waits,** as the paste is written: a quiet round needs no proposal open and no session's issue open. No such round comes while the table's session runs or its proposal is open. The paste waits at most eight hours, so until about 17:02Z.
+- **What I told him of it,** at about 09:03Z: "The second step, your grant, will wait longer than the 'part of an hour' I quoted: expect it on `main` at roughly 11:50–12:10 UTC, about three hours from now." I gave him the reason above, and that I do not hold the table's session for the grant, because the grant only opens the reviewer's fix session, which waits for the table's session in any case.
+
+```
+1294	true	2026-11-24T09:02:33Z	8915c432	gfrmin
+e0fef14f	c8d8af1d,8915c432
+# A round is quiet when no proposal is open on jack (the three old ones named here apart), no session issue of the
+# last 24 hours is open on the runner, and no run of the lane's four workflows is queued or running.
+# quiet waits for three quiet rounds running, 30 seconds apart, for at most 8 hours. A call that fails counts as not quiet.
+lines on main naming his grant: 0
+```
+
+**Open for the adviser:** *T*'s two candidates, for your recomputation. No question waits on the sovereign. I ring.
