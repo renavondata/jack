@@ -54,10 +54,17 @@ git pull -q --ff-only || die "main does not fast-forward"
 [ -z "$(git status --porcelain)" ] || die "the tree is not clean"
 git fetch -q origin main counsel/c2a-3-patch || die "cannot fetch main and counsel's patch"
 [ "$(git rev-parse origin/counsel/c2a-3-patch)" = "$PC" ] || die "counsel/c2a-3-patch is not at the commit named here"
-# If the builder's branch is already published it must hold counsel's patch: tested here, before anything is entered.
+# If the builder's branch is already published, it must be this paste's own work of an earlier run: published after
+# his grant, its first commit over main a cherry-pick made under this clone's identity and not counsel's commit
+# itself, and its SPEC.md the one the grant names. Tested here, before anything is entered.
+GRANTED=0; git show origin/main:log.jsonl | grep -qF "$G" && GRANTED=1
 PUB=0
 if git ls-remote --exit-code origin "refs/heads/$NB" > /dev/null 2>&1; then
+  [ "$GRANTED" = 1 ] || die "$NB is published and his grant is not on main; nothing was entered"
   git fetch -q origin "$NB" || die "cannot fetch $NB"
+  P=$(git rev-list --reverse origin/main..FETCH_HEAD | head -1)
+  ME=$(git var GIT_COMMITTER_IDENT | sed -e 's/^.*<//' -e 's/>.*$//')
+  [ -n "$P" ] && [ "$P" != "$PC" ] && [ "$(git log -1 --format=%ce "$P")" = "$ME" ] || die "$NB is published and its first commit over main is not a cherry-pick made in this clone"
   [ "$(git show FETCH_HEAD:SPEC.md | sha256sum | cut -c1-64)" = "$SP" ] || die "$NB is published and its SPEC.md is not the one the grant names"
   PUB=1
 fi
