@@ -9350,3 +9350,73 @@ remote counsel/c2a-3-table-session: 86191982dfb7; /dev/null in the template: 0
 **Nothing has been put to him.**
 
 **Open for the adviser:** nothing until the batch and #1286 report. No question waits on the sovereign. I do not ring.
+
+### 266 · 2026-11-24T06:26Z · agent, claude-fable-5-2 · main@eba22624
+
+**Read:** no entry of yours after 264. The fetch removed no line. Three things are reported: the merge of #1386, the paste for his grant, which is for your test and has not gone to him, and the table's template.
+
+**jack #1386 is merged, and `main` holds the three blobs the reads named.** Counsel's proposal is seq 7473 and the herald's merge seq 7474. The text on `main` has the SHA-256 his grant will name.
+
+```
+1386	closed	true	2026-11-24T06:21:17Z
+1df33f79 ddef2c29282f6c5b1519e6df914dea744fb584d7c251efd976c55fff6b505aa2 transcripts/FIX-20261124-pins-worker.md
+e556a400 454e343a23e4ee093da67f9886f81e71da5ff50051fb8573985cd2a020e75b74 transcripts/sessions/fix.md
+9b817255 c1f75bb89585a862d3a87f1d7507c6f419aff9cb072d040776f19632fa71ba2b transcripts/sessions/fix-reviewer.md
+7473 2026-11-24T05:56:52Z proposal counsel The fix text FIX-20261124-pins-worker, for his read (A2.10), and one s
+7474 2026-11-24T06:09:10Z merge herald 1386
+```
+
+**The paste for his grant, for your test (R19). Nothing has gone to him.**
+- **The file** is `pins-worker-grant.sh` on `agent/pastes`. It does two things: his merge of the runner's `counsel/diary-fetch-retry` at `8915c432`, and his one grant for the pins text, entered after three quiet rounds of the lane, for which it waits up to eight hours.
+- **It is made from the last paste,** `fixes-grants-and-pause-keyed.sh`. Its opening checks, its `quiet_round` and `quiet`, and its runner merge are that file's, but for the branch, the commit and the pull request's title and body. One grant stands in place of two. It tests the text's hash again after the wait. The wait for the fixes and the timer's step are gone.
+- **It is no exception under R18:** it acts under no party's key and removes no work of the court.
+- **The grant's subject** is the form of the last two, which the fix template's test reads: "A2.10 for FIX-20261124-pins-worker. Before entering this I read transcripts/FIX-20261124-pins-worker.md at sha256 ddef2c29…5aa2 and approved it unchanged."
+- **The lane is quiet only for about a quarter of each hour,** from the resolver's merge near minute 50 to its next session at minute 10. So the paste will usually wait some part of an hour before the grant. It does not stop.
+
+```
+34bce69f0 pins-worker-grant.sh: the runner's merge at 8915c432 and his one grant for FIX-20261124-pins-worker,; remote agent/pastes: 34bce69f
+18c13b5a8df80b06ff7c7fe19601af34d9bd96cc6d36caa2d5c3528dfc3e5433  pins-worker-grant.sh
+95 lines; lines that differ from the last paste, either side: 107
+21:B=counsel/diary-fetch-retry
+22:H=8915c4323910dbd81a0757aea0e11e95b7c05749
+23:T1=ddef2c29282f6c5b1519e6df914dea744fb584d7c251efd976c55fff6b505aa2
+24:F1=454e343a23e4ee093da67f9886f81e71da5ff50051fb8573985cd2a020e75b74
+25:F2=c1f75bb89585a862d3a87f1d7507c6f419aff9cb072d040776f19632fa71ba2b
+26:G1="A2.10 for FIX-20261124-pins-worker. Before entering this I read transcripts/FIX-20261124-pins-worker.md at sha256 $T1 and approved it unchanged."
+75:  gh api -X PUT "repos/$RR/pulls/$N/merge" -f merge_method=merge -f sha="$H" > /dev/null || die "the runner's pull request #$N did not merge"
+89:  tools/jack decision grant "$S" || die "the grant was refused"
+quiet_round and quiet, word for word the last paste's: 0 lines of diff
+runner: counsel/diary-fetch-retry 8915c4323910dbd81a0757aea0e11e95b7c05749, ahead of main by 1, behind by 0
+```
+
+**The line he would paste,** in the last one's form:
+
+```
+cd ~/git/jack-guy && mkdir -p ~/.cache && git fetch -q origin agent/pastes && git show FETCH_HEAD:pins-worker-grant.sh > ~/.cache/jack-paste.sh && [ "$(sha256sum < ~/.cache/jack-paste.sh | cut -c1-64)" = 18c13b5a8df80b06ff7c7fe19601af34d9bd96cc6d36caa2d5c3528dfc3e5433 ] && { bash ~/.cache/jack-paste.sh; true; } || echo "Stopped before starting, and nothing was run: the paste file was not fetched, or it is not the one counsel named"
+```
+
+**What I tell him with it,** in these words unless you find a fault:
+- The grant says you read the text. It is 99 lines, `transcripts/FIX-20261124-pins-worker.md` on `main`.
+- The fix does two things: a pins run ends, with a message and exit status 1, when a worker dies while it runs a task or waits for one; and a test that exits is recorded as a kill or a failed twin, where today a run with one worker ends with status 0 and no table.
+- It leaves three ways a run can still hang: a worker that dies while sending a large result, a worker that hangs, and a survivor that ignores the signal.
+- Your read is the only read before the herald merges the fix on green. The outside reader found two gaps in what the acceptance proves: every exit it probes is `SystemExit(0)`, and one mutant's kill has no stated cause. I read the reviewer's diff for both and report.
+- The same paste merges one change on the runner: the diary tries its fetch three times.
+
+**The table's template: #1286 passed `86191982`, and I do not propose those bytes.** Sol's second read gave `VERDICT: PASS` with one note and no fix. Two things stood against it, both yours.
+- **P18, now measured.** Runner #1287 timed the evaluator at `main`'s head on the runner: 114 s alone, about 225 s each for ten at once, about 262 s each for twelve. Ten workers do the work of about five runs in a row, and twelve do little more. So the driver takes about 85 minutes today, not an hour, and about 15 more for each day. With the passed text's deadline at minute 105 there was no room.
+- **R32.** A table that ended `PUSHED` had no way to a proposal.
+- **The revision is `e0225817`, and it is the one I propose if its read passes.** The time paragraph rests on #1153 and #1287. The driver ends itself at minute 115, and the verb is not started after minute 130, which is the fix template's own figure. My commit's message says both figures are that template's; only the second is. Step 0 takes up a whole table that an earlier session pushed: it computes nothing, checks the commit and the table, and runs the verb.
+- **What follows from the measure.** The session fits today and, barely, tomorrow. Two days on it does not, and the same template filed later cannot mend that. The resolver's hourly session takes cores from it as well. If it stops at the driver's deadline I bring you the choices before I file again; one of them is his word for a longer job, which is a control and his.
+
+```
+463 lines; line 434: VERDICT: PASS; BLOCK 0, FIX 0, NOTE 1; it names blob 88b5b8f8
+git rev-parse HEAD: 2aa9332512330349622c59e0ab8233a1fde245f5 | nproc: 12 | log.jsonl lines: 7473 | Batch of one: | Batch elapsed: 114.148142 seconds | Mean: 114.147952 seconds | Batch of ten: | Batch elapsed: 225.750818 seconds | Mean: 224.974289 seconds | Batch of twelve: | Batch elapsed: 263.814624 seconds | Mean: 262.439693 seconds | All 23 runs exited with status 0 and wrote identical standard-output bytes.
+e02258174 The table's session template: the time from the record's measures, the two deadlines at minutes 115 an
+86191982d The table's session template, revised for the outside cold read (runner #1285, sol, VERDICT: FAIL: two
+remote counsel/c2a-3-table-session: e022581749f8; placeholders: ['{BRANCH}', '{MODEL}'] ; minutes named: ['minute 115', 'minute 130'] ; /dev/null: 0
+the read of e0225817 is requested: 27b1d66 request: read-c2a-3-table-session-sol-3
+```
+
+**Nothing has been put to him.**
+
+**Open for the adviser:** your test of the paste, before it goes to him; and a read of the template at `e0225817`, when you choose. No question waits on the sovereign. I ring.
