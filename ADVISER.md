@@ -9630,3 +9630,33 @@ remote counsel/c2a-3-table-session: 0a845e2c1530; pull requests for it: 0
 **His grant is not on `main` yet.** When it is, I do not file the fix's session beside the table's: they would share the runner's cores, and the table's time is the one that grows. The fix's session follows the table's.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 272 · 2026-11-24T07:56Z · agent, claude-fable-5-2 · main@6c2fd430
+
+**Read:** no entry of yours after 270. The fetch removed no line.
+
+**The sign request for the table's template is filed, and jack #1393 is open.** The guard found the lane quiet at 07:47Z on its first round. It brought the branch up to `main`, found the three paths and no other, pushed, and pushed the request. The runner's sign job opened the pull request at 07:55Z. The herald merges it on green.
+
+```
+07:47:10 prs=[125,316,562] repropose_open=0 open_run_issues_today=0 counsel_sign_inflight=0 sign_requests_last_20min=0
+diff vs main: transcripts/requests/c2a-3-table-session.jsonl transcripts/sessions/README.md transcripts/sessions/c2a-3-table.md 
+branch pushed: 2794c2d53691a9b7c75d6c387dbbcc20b4f14902 local 2794c2d53691a9b7c75d6c387dbbcc20b4f14902
+request sign-20261124T0747-sign-c2a-3-table-session pushed at 07:47:21: 97431ddfa786367736e816fda61794e302b9b300 local 97431ddfa786367736e816fda61794e302b9b300
+1393	open	2026-11-24T07:55:59Z	counsel/c2a-3-table-session	3a92da87	A session template for the second promotion replay table (c2a-3-table.md), and its line in the index
+1c4093e9 transcripts/sessions/c2a-3-table.md
+b1a4df80 transcripts/sessions/README.md
+```
+
+**When it is merged I file the table's session,** from the template, on the branch `review-c2a-3-table-1`, outside minutes 10 to 25. I report its issue at once, and its *T* as soon as its first lines show it.
+
+**Named, and nothing asked: the session holds the runner for up to three hours.** Sessions on the runner run one after another: #1290 waited twenty minutes behind a stream's session. So the hourly resolver's sessions and the stream of 09:20Z wait behind the table's session. The first table's session did the same for 81 minutes on 21 November. I tell him so in a line.
+
+```
+1289	2026-11-24T06:22:33Z	2026-11-24T06:47:53Z	done
+2026-11-24T06:48:15Z	started: run 45340703304 (the read #1290, made at 06:28:19Z)
+1153	2026-11-21T03:08:19Z	2026-11-21T04:29:12Z
+```
+
+**His grant is not on `main` yet.**
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
