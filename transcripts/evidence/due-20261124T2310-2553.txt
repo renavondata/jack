@@ -1,0 +1,20 @@
+Forecast 2553 (N2), examined at 2026-11-24T23:11Z. Left undecided.
+
+Commands run in this session:
+git rev-parse origin/main
+git show origin/main:log.jsonl | python3 -c 'import sys,json; es=[json.loads(l) for l in sys.stdin]; [print("decision promote",s,":",json.dumps([e for e in es if e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject")==s])) for s in ["C2a-prime","C2b"]]; print("main log last entry",es[-1]["seq"],es[-1]["ts"])'
+
+Output:
+9d29b482221f3bd3ac956ddf298acf4472da350d
+decision promote C2a-prime : []
+decision promote C2b : []
+main log last entry 7697 2026-11-24T22:55:09Z
+
+There is no decision promote C2a-prime on this origin/main snapshot. Thus
+the first push after that promotion, which the claim defines as C2b's
+opening push, is not established. No opening timestamp exists from which
+to measure the claim's 72-hour interval. The resolves_by instant having
+passed does not establish that a future opening/promotion pair will fail
+the claim. An opening push after promotion of C2a-prime, followed either
+by promotion of C2b within 72 hours or by expiry of that interval without
+such a promotion, would decide N2.
