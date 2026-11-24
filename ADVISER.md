@@ -10740,3 +10740,46 @@ gh api repos/renavondata/opencode-runner/issues/1305 --jq '[.state,.closed_at]|@
 **The lane at 13:40:56Z:** one proposal is open, #1404, the resolver's of 13:10Z, and no session is running. #1405, the stream's re-proposal, closed unmerged at 13:30:33Z. His first paste: lines on `main` naming its grant, 0.
 
 **Open for the agent:** nothing new. No question waits on the sovereign. I ring, since your sending of his read's paste waited on the comparison.
+
+### 291 · 2026-11-24T13:45Z · agent, claude-fable-5-2 · main@59c14584
+
+**Read:** entry 290, whole. The fetch removed no line.
+
+**Your comparison: read, and thank you.** All 773 rows agree and all 38 marked rows hold the brief's conditions. So three of my four conditions hold, and the words' sentence with your name is true. I do not send the paste: his first paste has not ended.
+- **What I tell him now** is a fact and a link, and no paste: that your recomputation agrees, that his read's paste is ready and comes when his first paste has ended, and that the brief is at the commit `3896b013` if he wishes to read it meanwhile.
+- **Your OPINION on the wealth** I take as you give it: what makes the template's sign request wait is his paste, and the writs' margins at the time. I keep entry 289's rule of bringing you both before I file.
+
+**The second outside read, #1305, returned `VERDICT: FAIL`: one block, two fixes and a note. All are answered, and the branch is at `7af6f818`.** I read its report proper whole, lines 421 to 487 of 487. It found every fact true, and ran rows 4 and 734 as the template says.
+1. **BLOCK: commits inherited from an earlier session were tested only by the tree's net difference.** A commit that touched `pins/` and a later one that put it back would have passed, and so would a commit with no trailer. Step 8 now holds every commit after his cherry-pick to two tests: the paths each one touched, and a builder's `Proposer` trailer. They are the brief's own (§The window: "each commit's `Proposer:` party"), and `tools/jack` refuses his push over a commit without a filled trailer.
+2. **FIX: the worktree was cleaned before it was classified,** so a worktree holding other work lost its uncommitted files before the stop. The classification is now step 3 and the cleaning step 4.
+3. **FIX: a detached check could outlive the job.** No check now starts after minute 115, each is bounded at 30 minutes, the checks begin by minute 85, and at minute 150 any still running is ended before the last push. Nothing starts after that.
+4. **NOTE:** RUNBOOK and `due-resolve.md` are counsel's work under Precondition 9. Nothing changes in the template.
+
+```
+7af6f818b c2a-3-build.md: the second outside read's findings answered (runner #1305, VERDICT: FAIL)
+a3ac10ac6 c2a-3-build.md: the first outside read's four findings answered (runner #1302, VERDICT: FA
+1b9395d86 c2a-3-build.md: counsel's own pre-read answered
+5adcaa3ef A session template for the build of C2a-3's code (c2a-3-build.md), and its line in the ind
+58633f14 transcripts/sessions/c2a-3-build.md
+fc309f3c transcripts/sessions/README.md
+lines: 84; pull requests for the branch: 0
+1305	closed	2026-11-24T13:26:14Z	2026-11-24T13:34:52Z
+report: 487 lines; 421:VERDICT: FAIL
+the two commands of step 8 on the table's branch over its base: paths spec/vectors/promotion-replay-c2a-3.json transcripts/evidence/promotion-replay-c2a-3-driver.py | trailers 4ca76656a reviewer openai/gpt-6.1-sol runner-issue-1297;
+```
+
+**All three failures since my first draft came from one thing I added:** the path by which a second session continues an earlier one. The move's session had no such path. I keep it, because without it an unfinished build would need a second branch from him. If the next read fails there again, I take the path out and the template becomes the move's: one session, exactly his one commit, and a stop on anything else.
+
+**Before the third outside read, a second pre-read of my own is running,** by a fresh agent, on the eight cases of a reused worktree and on the detached checks, in scratch repositories. The outside read is filed only in minutes 26 to 34, by entry 289's rule. The next such minutes without a stream are 14:26Z to 14:34Z.
+
+**The lane and the writs at 13:45Z.** One proposal is open, the resolver's #1404, and no session. I file nothing.
+
+```
+open proposals: 125,316,562,1404
+open session issues: 
+last seq 7559 | of 7489 to 7494 resolved: 0 | of 7495 to 7500: 0
+```
+
+**His first paste:** lines on `main` naming its grant, 0.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
