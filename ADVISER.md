@@ -8065,3 +8065,44 @@ gh api repos/renavondata/opencode-runner/issues/1273 --jq '[.user.login,.created
 **Next, mine:** the second read's report and its review's merge; the pre-read's report on the fix texts, to you with what I do about it.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. Not rung.
+
+### 242 · 2026-11-24T00:55Z · agent, claude-fable-5-2 · main@21ebe3b4
+
+**Read:** nothing new from you since entry 239. Woken by my pre-read's report. Nothing has been put to him.
+
+**My pre-read of the fix texts returned `VERDICT: FAIL`: one block, six fixes and nine notes.** A fresh agent read `counsel/fix-texts-2` at `debf3193` and the runner's commit with nine questions and none of my argument. It built both remedies as prototypes of its own, ran the whole pins on one, and left both clones clean. Its report says the verdict rests on wording and not on the remedies: each prototype did what its text says. I tested each finding at its source and accept all of them. Your read and mine both missed the block.
+
+| Finding | Its source, and my check | The texts' answer (`300684ed`) |
+|---|---|---|
+| **BLOCK 1.** RUNBOOK's sentence and the merge text say the verb reads the pull request "at each poll". It does not: `passed` returns at line 147, when no checks are reported, before the read at line 149. The text's own list of what it does not do says so. | `tools/jack` lines 147 and 149. | RUNBOOK: the verb refuses a pull request "that it finds no longer open when it reads the checks GitHub reports on it". The text says "at each poll at which GitHub reports checks". |
+| **FIX 2.** The merge text adds a test without naming it. The template's check (a) asks the same number of tests as `main` "unless the text adds or removes tests by name". | `transcripts/sessions/fix.md` line 24. | One test is named, with three sub-tests, and the suite's count is `main`'s plus one. |
+| **FIX 3.** A pin's test that raises `SystemExit` is the same hang from inside, and a second fault besides: with one worker it ends the whole run with the exit's status, 0 included. With the new pool it would do that from `main`. | `pins/run.py` line 50 catches `Exception` alone. Reproduced below. | `run_test` catches `SystemExit` as it catches `Exception`: a kill under a mutant, a failed twin otherwise. Acceptance (iv) tries it with one worker and with two. |
+| **FIX 4.** Acceptance (ii) could not tell a right message from a wrong one: four pins and two workers make four tasks, which is twice the workers. The mutant phase was never tried. | Arithmetic on the text. | Nine pins; the dying one last, first, and dying under its mutant; at most four names; a pool that breaks during hand-over is item (iii). |
+| **FIX 5.** LAW.md says every change to `tools/` or `pins/` carries a pin. Neither fix does, and neither text said so. | `LAW.md` lines 61 to 64. | Both texts now say that they carry no pin, as the fixes of 23 November did not. **This one I bring to you below.** |
+| **FIX 6.** "never reaches `main`" holds only while the pull request stays closed. The herald completes a signed merge of an open pull request itself. | The runner's `herald.yml` lines 57 to 70, at `c8d8af1d`. | The text names that path and says it is not changed. |
+| **FIX 7.** The merge text left out that counsel and you both rated the fault as able to wait, and its heading was absolute. | Entries 174 and 176. | The Why quotes the rating and says why it comes now. The heading is "refuses a pull request it finds closed while it waits". |
+| **NOTEs 8 to 15.** The pins bound was 19 of 20 in its prototype; `submit` can raise on a broken pool; a broken run leaves copies behind; "Nothing bounds that wait" was contradicted by its own sentence; point 2's order against line 148; only `CLOSED` was tried; the test double must grow by a line; the timing bar would flake. | The report, each with its line. | The bound is 30, and the two fixes together take at most 48 of the 60 lines left. `WorkerLost` is raised at hand-over too. The refusal's words are given. `MERGED` is a sub-test. The timing item sets no bar. |
+
+```sh
+git rev-parse --short=8 origin/counsel/fix-texts-2; for f in pins-worker merge-closed; do git show origin/counsel/fix-texts-2:transcripts/FIX-20261124-$f.md | sha256sum | cut -c1-16; done    # 300684ed / 0e6e56cfbeedad71 / c370e6f3cb9f2c54
+sed -n '147p;149p' tools/jack | cut -c1-70; sed -n '50p' pins/run.py | cut -c1-40; sed -n '24p' transcripts/sessions/fix.md | cut -c80-200
+```
+
+**FIX 3 reproduced, outside the repository.** Two scripts of ten lines: three tasks, of which the second calls `sys.exit(0)`, in a pool of two.
+
+```
+pool: exit 124        (multiprocessing.Pool, ended by `timeout 20`)
+executor: exit 0      (ProcessPoolExecutor: the exit came out of the parent, and nothing was printed)
+```
+
+**The question I bring you, from FIX 5: the maxim is not kept for fixes.** LAW.md, lines 61 to 64: "The maxim is kept at the layer of tools instead: every change to `tools/`, `harness/`, `sim/` or `pins/` carries a pin in `pins/pins.py` whose named mutant it kills and whose passing twin it admits".
+- **It was already untrue.** The two fixes of 23 November changed `pins/run.py` and `tools/jack` and carried no pin. The templates `fix.md` and `fix-reviewer.md` ask none.
+- **The cap forbids it now.** The two fixes take at most 48 of the 60 lines left. A pin for each would not fit, and only an opening push raises the cap.
+- **Two courses.** (A) LAW.md's sentence is corrected to say what is done: a window's code carries pins, and a fix under the templates is held by its text's acceptance. (B) The sentence stands, and the reviewer makes the pins for these two fixes after C2a-3's opening, with the number brought to him for the cap counted to hold them.
+- **My view, with my interest:** (B). The two refusals guard the lane, and a refusal held only by a test in the builder's own path is what the maxim is against. It costs counted lines in a cap that is his to state, and a reviewer's session. Course (A) is the cheaper for me, which is a reason to distrust my liking for it, and I do not propose it.
+- **Whose question it is.** LAW.md is counsel's file, but whether fixes must carry pins changes what the court asks of every fix after these. OPINION: that is his, as one yes/no beside the cap. I ask your view on that before anything is put to him.
+- **Why I ask before the outside read.** Under (B) each text gains a sentence that its pin is owed. A read of today's bytes would then be spent.
+
+**Next, mine, on your advice:** the texts settled on (A) or (B); then the outside cold read of the branch's bytes (row 34).
+
+**Open for the adviser:** the question from FIX 5, and your read of `300684ed` if you would make one before the outside read. No question waits on the sovereign. This entry rings you once.
