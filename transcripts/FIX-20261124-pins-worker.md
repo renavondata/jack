@@ -49,7 +49,7 @@ These checks do not reach the time between the proposal and its merge. There the
 - It sets no limit on how long one pin may run. A worker that hangs, and does not die, still holds the run. That is a different fault, with a different remedy.
 - It does not retry the lost task. A run that lost a worker is run again whole, by whoever started it.
 - It does not give `tests.yml` a `timeout-minutes`. The workflow is trusted base and changes only by his push.
-- It does not report a worker that dies while idle after the last task of the run has returned. Every result is in by then, and the run ends as a healthy one. A worker that dies while idle earlier breaks the pool for the tasks still to come, and the run ends by `WorkerLost`; today's pool replaces such a worker and goes on.
+- It does not report a worker that dies while idle after the last task of the run has returned. Every result is in by then, and the run ends as a healthy one. A worker that dies while idle earlier breaks the pool for the tasks still to come, and the run ends by `WorkerLost` (acceptance (iii)); today's pool replaces such a worker and goes on.
 - It does not end a run whose surviving worker will not end. When the pool breaks it signals its other workers to end and waits for them. A worker that ignores the signal holds the run, and that is the hanging worker of the first line.
 - It asks nothing of one other difference between the two pools: the executor's workers are not daemonic, as the pool's are, so a pin's test may start child processes of its own.
 - It does not clean up after a broken run. The pool ends the surviving workers, and their disposable copies of the tree can be left in the temporary directory. The check of `tools/jack` removes its own temporary directory, and the hosted runner's machine is discarded after the job.
@@ -64,6 +64,7 @@ These checks do not reach the time between the proposal and its merge. There the
 - **(i) The same rows.** At the head, run `PINS_WORKERS=1 python3 pins/run.py` and then `PINS_WORKERS=2 python3 pins/run.py`, keeping both tables. Report `nproc`.
   - Cut each row's detail at its first colon with `sed -E 's/  \(([^:]*).*$/  (\1/'`, as `transcripts/FIX-20261123-pins-parallel.md` does and for its reason. What is left of the two tables must be identical: compare them with `cmp`, and report the result.
   - Both must end with the last line of `origin/main`'s `python3 pins/run.py`, with its `KILLED` raised by two.
+  - Keep the table that (x)'s run on `origin/main` prints, and cut it the same way. Take the two rows of `pins_worker_lost` out of the head's table with two workers. The two tables must then be identical, the last line of each apart: compare them with `cmp`, and report the result.
 - **(ii) A lost worker ends the run.** Make nine pins: eight whose test passes and whose one mutant is killed, and a ninth, the dying pin. Call `run_pins` on the nine with two workers, under `timeout 60`, four times:
   - (a) the dying pin's test calls `os._exit(9)` whenever it runs, and the pin is last in the list;
   - (b) the same pin, first in the list;
@@ -78,7 +79,14 @@ These checks do not reach the time between the proposal and its merge. There the
   The message of (d) must name exactly two tasks, the first pin's twin and the dying pin's twin, and the number it gives must be 2: the first pin's task is held until the dying one has run, and the seven between ran before the dying one on the other worker.
 
   Report the four messages and how long each call took.
-- **(iii) A break at hand-over.** In a `python3` process at the head, replace `concurrent.futures.ProcessPoolExecutor.submit`, with `unittest.mock.patch.object`, by a function that calls the real one for its first two calls and raises `concurrent.futures.process.BrokenProcessPool` at its third. Call `run_pins` on nine pins of the passing kind with two workers, under `timeout 60`. It must raise `WorkerLost`, and no other exception. Report the message.
+- **(iii) A break at hand-over, by a worker that dies idle.** In a `python3` process at the head, replace `concurrent.futures.ProcessPoolExecutor.submit`, with `unittest.mock.patch.object`, by a function that calls the real one and keeps the futures it returns. At its third call, before it calls the real one, it makes a real break:
+  - it waits until its first two futures are done, so that both workers are idle;
+  - it sends `SIGKILL` to one of the executor's worker processes, whose pids are the keys of the executor's `_processes`;
+  - it waits, for at most ten seconds, until the executor's `_broken` is set.
+
+  Those two names are the executor's own and no part of its documented face. This probe is not committed. If either name is absent, push the branch, do not propose, and report that.
+
+  Call `run_pins` on nine pins of the passing kind with two workers, under `timeout 60`. It must raise `WorkerLost`, and no other exception. The number its message gives must be 7, and it must name four tasks, the twins of the third to the sixth pin: two twins had returned, and the break showed at the third hand-over. Report the message and how long the call took.
 - **(iv) A test that exits.** Make three pins: one whose test calls `sys.exit(0)` when its mutant has been applied and passes otherwise; one whose test calls `sys.exit(0)` whenever it runs; one of the passing kind. Call `run_pins` on them with one worker and with two, each under `timeout 60`. Both calls must return. Their results must be equal, in order: `KILLED` for the first pin's mutant, `TWIN FAILED` for the second pin, `KILLED` for the third pin's mutant. `exit_code` of each must be 1. Report both lists.
 - **(v) `main` reports a lost worker.** With a temporary line that you remove before the commit, or by a small script that imports `pins/run.py` and replaces its pin list, run `main` over the nine pins of (ii)(a) with `PINS_WORKERS=2`. It must print the message to standard error, print no table and return 1. Report what it printed.
 - **(vi) The other statuses still come through the pool.** Repeat acceptance (ii) of `transcripts/FIX-20261123-pins-parallel.md` at the head: five pins, one for each status, with one worker and with two. The two results must be equal, in order, in pin, mutant and status. Report both lists.
