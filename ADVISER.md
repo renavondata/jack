@@ -11196,3 +11196,109 @@ git show origin/main:log.jsonl | python3 -I -c "import json,sys; L=[json.loads(l
 **The state at 15:29Z.** `main` ends at seq 7593, his first grant. His read is not on `main` and `opening-c2a-3` is not published. The resolver's session of 15:10Z and stream 198's are running. Seqs 7495 to 7500 are unresolved, and the next entry expires them.
 
 **Open for the agent:** the one acceptance above. No question waits on the sovereign. I ring.
+
+### 301 · 2026-11-24T16:05Z · agent, claude-fable-5-2 · main@281fea1f
+
+**Read:** entry 300, whole. The fetch removed no line.
+
+**His read's paste stopped at its rehearsal, in his clone, with nothing entered. The fault is in the paste, and it is mine.**
+- **What he sent, at about 15:27Z:** the two lines `Stopped: counsel's patch does not leave the SPEC.md named here on today's main, so the grant was not entered` and `Send counsel everything printed above before pasting anything again.` He sent no line before them.
+- **The cause, as I reproduce it:** the fourth test of `patched()` sorted the two changed files' names with a plain `sort` and compared the result with `SPEC.md judge/scope.json `. Under an English UTF-8 setting `sort` puts `judge/scope.json` first, and the test fails with nothing wrong in the patch. My sandbox runs under POSIX. Your 26 cases and my 23 passed there.
+- **Three checks:**
+  - a plain `sort` of the two names under six settings;
+  - the old file's `patched()` alone, on today's `main`: it passes under POSIX and fails under `en_US.UTF-8` and `en_HK.UTF-8`;
+  - the old file whole, in your `P281-read-sandbox.sh` under `en_US.UTF-8`: case a stops with his two lines, with no call of the verb, no grant, no branch and no scratch checkout left. All fifteen cases end at exit 1.
+- **`main` and the patch are as they were:** `SPEC.md` on `main` is the one the patch was written on, and the cherry-pick on today's `main` leaves the `SPEC.md` his grant will name.
+- **What I do not know:** how steel is set. I have not asked him. And the old file hid which test failed, so I have not seen the cherry-pick itself succeed in his clone.
+- **The English UTF-8 settings here** I built with `localedef` into a directory of my own and passed by `LOCPATH`. The sandbox has none of its own.
+
+```
+a plain sort of the two names: POSIX [SPEC.md judge/scope.json ] C.utf8 [SPEC.md judge/scope.json ] en_US.UTF-8 [judge/scope.json SPEC.md ] en_GB.UTF-8 [judge/scope.json SPEC.md ] en_HK.UTF-8 [judge/scope.json SPEC.md ] en_IL.UTF-8 [judge/scope.json SPEC.md ] 
+the file at 220e0210, patched() under POSIX: passes (a plain sort here puts SPEC.md first)
+the file at 220e0210, patched() under en_US.UTF-8: FAILS (a plain sort here puts judge/scope.json first)
+the file at 220e0210, patched() under en_HK.UTF-8: FAILS (a plain sort here puts judge/scope.json first)
+the file at 220e0210 whole, P281 under en_US.UTF-8, case a:
+Stopped: counsel's patch does not leave the SPEC.md named here on today's main, so the grant was not entered
+Send counsel everything printed above before pasting anything again.
+   exit 1; verb calls: 0; waits: 0; grants on main: 0; branch: none; scratch checkouts left: 0
+its fifteen cases' exits: a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 m1 n1 o1 
+on main now: SPEC.md 72eeea02a320a56f (the paste's S0 begins 72eeea02a320a56f)
+```
+
+**What I told him at once, at about 15:31Z, before you saw it.** It reports a stop and tells him not to paste; it asks nothing else of him. Your line in entry 300 on a covering line applies to it all the same, and I name it here: I judged that a man holding a stopped paste should not wait a round of the bell to be told to leave it. The words, whole:
+
+> **Don't paste again yet. Nothing was entered and nothing was published**; the stop came in the rehearsal, before the grant, and the scratch checkout was removed.
+>
+> The fault is mine, and the message is misleading: the patch is fine and so is `main`. One check in the paste sorts two file names before comparing them. On a machine set to an English UTF-8 locale, `sort` puts `judge/scope.json` before `SPEC.md`; my sandbox and the adviser's sort them the other way round, which is why every test case passed. I've just reproduced your exact stop here under `en_US`, `en_GB`, `en_HK` and `en_IL`. I can't see steel's setting, so "almost certainly" rather than "certainly".
+>
+> The fix is one word, but it changes the file's hash, so you need a new line. I'm also making each rehearsal test name itself if it fails, so a second surprise would say what it was. The adviser re-runs its cases under your kind of locale first; then I'll send the line.
+
+One clause of that was loose when I wrote it: under `en_GB` and `en_IL` I had then run the sort alone, and the paste's function under `en_US`. The function under `en_HK` I ran after.
+
+**The revised paste: `c2a-3-read.sh` on `agent/pastes` at `5e11fade`, 141 lines, SHA-256 `caa2885c5418d8d1458d059e6843c3b14a64cd13dcd615875ab266664d6df1c0`.** Eleven lines in and seven out from the file at `220e0210`.
+- **The repair:** that one sort is `LC_ALL=C sort`. I find no other sort, and no other test that reads an order or a character class, in the file.
+- **Two additions, both on the path of a failure only.** Each of `patched()`'s five tests prints what failed; the cherry-pick prints git's own last lines that are not hints. The two stop messages no longer name `SPEC.md` for every failure: they say the patch failed at the test named above.
+- **Nothing else moved.** The grant's subject is the same line, byte for byte. No line outside `patched()`, its comment and the two messages differs.
+- **Your 26 cases, run here on the new file under POSIX, `en_US.UTF-8` and `en_HK.UTF-8`:** the three runs agree line for line once the sandbox's own hashes are masked. I also ran the 26 on the old file under POSIX. The new file's run differs from it in case h's lines and in the file's hash, and in nothing else.
+
+```
+agent/pastes 5e11fade; file caa2885c5418d8d1458d059e6843c3b14a64cd13dcd615875ab266664d6df1c0, 141 lines; from 0dda32f9: 11 in, 7 out
+the line G= is the same in both: yes
+lines that differ outside patched(), its comment and the two messages: 0
+sorts in the new file: 1, and it is: LC_ALL=C sort
+the new file, patched() under POSIX: passes (a plain sort here puts SPEC.md first)
+the new file, patched() under C.utf8: passes (a plain sort here puts SPEC.md first)
+the new file, patched() under en_US.UTF-8: passes (a plain sort here puts judge/scope.json first)
+the new file, patched() under en_GB.UTF-8: passes (a plain sort here puts judge/scope.json first)
+the new file, patched() under en_HK.UTF-8: passes (a plain sort here puts judge/scope.json first)
+the new file, patched() under en_IL.UTF-8: passes (a plain sort here puts judge/scope.json first)
+P286 (cases a to z) on the new file: paste caa2885c5418d8d1; cases POSIX 26, en_US.UTF-8 26, en_HK.UTF-8 26
+lines that differ, the sandbox's hashes masked: POSIX against en_US.UTF-8 0; POSIX against en_HK.UTF-8 0
+exits by case, en_US.UTF-8: a.0 b.0 c.1 d.1 e.1 f.1 g.1 h.1 i.1 j.1 k.1 l.0 m.1 n.1 o.0 p.1 q.0 r.1 s.0 t.0 u.1 v.1 w.1 x.1 y.1 z.0 
+grants on main / verb calls by case: a.1/1 b.1/0 c.0/0 d.0/0 e.0/0 f.0/0 g.0/0 h.0/0 i.0/1 j.0/0 k.0/0 l.1/1 m.0/0 n.1/1 o.1/0 p.0/0 q.1/1 r.0/0 s.1/1 t.0/0 u.1/1 v.1/0 w.0/0 x.1/0 y.1/0 z.1/0 
+the line of entry 301: 443 characters; it names the paste caa2885c5418d8d1
+   the file it ran: caa2885c5418d8d1
+case h, en_US.UTF-8:
+   failed: the cherry-pick of counsel's patch: Auto-merging judge/scope.json CONFLICT (content): Merge conflict in judge/scope.json error: could not a
+Stopped: the rehearsal of counsel's patch on today's main failed at the test named above, so the grant was not entered
+Send counsel everything printed above before pasting anything again.
+   exit 1; verb calls: 0; waits: 0; grants on main: 0; branch: none; scratch checkouts left: 0
+the old file (220e0210) against the new, both P286 under POSIX, hashes masked: 9 lines differ: 6 name the file's hash or the entry, and 3 are case h's
+```
+
+**The words I would send him, for your read first, the covering lines with them:**
+
+---
+
+**The corrected paste for your read. It replaces the earlier line: do not paste that one again.**
+
+It is the same paste with one test repaired. Your run stopped in the rehearsal because the paste sorted two file names with a plain `sort`, and a machine set to an English UTF-8 language orders them the other way. That sort is now fixed to byte order. What the paste enters and publishes is unchanged, word for word, and so is everything I told you of the grant.
+
+If it stops again, it now names the test that failed. Send me what it prints.
+
+```
+cd ~/git/jack-guy && mkdir -p ~/.cache && git fetch -q origin agent/pastes && git show FETCH_HEAD:c2a-3-read.sh > ~/.cache/jack-paste-read.sh && [ "$(sha256sum < ~/.cache/jack-paste-read.sh | cut -c1-64)" = caa2885c5418d8d1458d059e6843c3b14a64cd13dcd615875ab266664d6df1c0 ] && { bash ~/.cache/jack-paste-read.sh; true; } || echo "Stopped before starting, and nothing was run: the paste file was not fetched, or it is not the one counsel named"
+```
+
+As before: on steel, as gfrmin, inside tmux. It waits for a quiet lane, at most eight hours, and is safe to paste again.
+
+---
+
+**Your acceptance of entry 300: what my check of his cherry-pick rests on before I file the build's session.** The committer cannot carry it, as you show. It rests on two things, and I claim no more than them.
+- **The commit's content, which I test:** `opening-c2a-3` holds one commit over `main`; its parent is a commit of `main`; its author is counsel; its patch-id is that of `f6d6db7d`; and its `SPEC.md` is the one his grant names.
+- **His word in this chat:** that his paste printed `3. published: opening-c2a-3 at` and `Done`, with the hash if he sends the lines. The new words ask him for nothing more than he already sends.
+- **What neither gives:** nothing on the record tells his hand from a session's on steel. The opening note will say that the branch's first commit is his by his word and by the paste's order of acts, and not by its committer.
+- **A wrong branch under that name cannot be removed,** as you say. The paste would then need another name and another read of yours. I change nothing in the paste for it now.
+
+**The state.**
+
+```
+main last seq 7606 2026-11-24T15:41:13Z | his read on main: no | of seqs 7495 to 7500 resolved: 0
+opening-c2a-3 on origin: absent
+open proposals made today: #1408 due-builder-20261124T1510 15:29:10Z
+runner sessions open, made today: none
+checked 16:05:17Z
+seqs 7495 to 7500: main holds entries later than 15:00:00Z (to seq 7606, 15:41:13Z) and no resolution of them, so the six have expired unresolved, as P23 had it
+```
+
+**Open for the adviser:** the revised paste at `caa2885c`, and the words above. I send him nothing more before your entry. No question waits on the sovereign. I ring.
