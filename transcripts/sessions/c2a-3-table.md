@@ -8,7 +8,7 @@ You are the **reviewer** (`JACK_KEY=~/.ssh/jack-reviewer`, party `reviewer`), in
 
 **Quoting.** On this runner, double quotes in code copied from a prompt have reached bash, and files, as a literal `\"`, and the code failed (runners #1144 to #1146). Code a session composes itself has not done that. So put no double quote in any shell command you copy from here, and write your driver's strings in single quotes. Run `python3 -m py_compile` on each Python file you write before you run it.
 
-**One session, start to finish.** This session computes the whole table and proposes it, or it stops and reports. Nothing carries over to another session, and nothing is restarted within this one: the driver is started once. If it stops, counsel reads the report and may file a fresh session on a new branch, which begins again from nothing.
+**One session, start to finish.** This session computes the whole table and proposes it, or it stops and reports. No row carries over to another session, and nothing is restarted within this one: the driver is started once. If it stops, counsel reads the report and may file a fresh session on a new branch, which begins again from nothing. One thing only carries over: a whole table that a session committed and pushed and did not propose. Counsel then files this text again on the same branch, and step 0 takes it up.
 
 **The clock.** The first command of step 1 writes the session's start, in seconds, to `.replay/start`. Every minute named below is counted from it. The job stops at 180 minutes, and it began a little before your first command.
 
@@ -64,21 +64,27 @@ Build exactly the rows and the marks they define, and nothing else. Write your o
 The adviser recomputes the table on its own machine and compares it row by row: `commit`, `argv`, `run`, `exit`, `stdout` and `marked`. It does not compare the file's bytes. `python` and `git` record this machine's versions, so that a row which differs only by interpreter can be told from an error.
 
 **Time.** `main`'s first-parent chain had 766 commits on 24 November, of which the last 31 were marked. It grows by about twenty a day, and each new commit is a marked row with two runs. What is measured:
-- Runner #1147 measured the first table on this machine (twelve cores), with the evaluator as it then was: the 100th row took 0.3 s, the 350th 26 s, and the last, about the 700th, 95 s. The whole of it was about seven core-hours.
-- On counsel's machine, with today's evaluator, the 101st row took 0.4 s, the 351st 23 s, the 706th 204 s, the 742nd 232 s and the 766th 258 s. Summed over the chain, with the second runs, that is about sixteen core-hours there.
-- On this machine, with today's evaluator, a reader's session (runner #1285) timed the two runs at `main`'s head on 24 November at 114 s and 111 s.
+- The first table's session (runner #1153) ran its 706 rows on this machine with eight workers. Its driver took 4,129.8 s.
+- A session on this machine (runner #1287) timed the evaluator at `main`'s head on 24 November: one run took 114 s; ten at once took 225 s each; twelve at once took 262 s each. So ten workers do the work of about five runs one after another, and twelve do little more.
+- On counsel's machine, which is slower, the 101st row took 0.4 s, the 351st 23 s, the 706th 204 s and the 766th 258 s. Summed along the chain with the second runs, that is about sixteen hours of runs there, and about seven here by the ratio of 114 to 258.
 
-So for 766 rows expect seven to eleven core-hours on this machine, the second runs included, and about one more for each day since 24 November. That is counsel's estimate from those figures and no measurement of the whole.
+So for 766 rows expect the driver to take about 85 minutes with ten workers, and about 15 more for each day since 24 November. That is counsel's estimate from those figures and no measurement of the whole.
 - Run **ten** workers.
 - Give the latest rows to the workers first, so that the long rows do not all fall at the end.
 - A single command here stops at fifteen minutes. So start the driver detached, once: `nohup setsid python3 .replay/driver.py > .replay/driver.log 2>&1 &`. The driver writes its process id to `.replay/driver.pid` first. Being started with `setsid`, it leads its own process group. Start no worker or evaluator with a new session or group, so that all of them stay in it.
-- **The driver ends itself.** It reads `.replay/start`. If rows remain at minute 105, it ends its workers and their evaluator runs, writes how many rows are done to `.replay/driver.log`, and exits. So no worker outlives a job that has stopped.
+- **The driver ends itself.** It reads `.replay/start`. If rows remain at minute 115, it ends its workers and their evaluator runs, writes how many rows are done to `.replay/driver.log`, and exits. So no worker outlives a job that has stopped.
 - **Rows written whole.** The driver writes each finished row to `.replay/rows/<index>.json.tmp`, then renames it to `.replay/rows/<index>.json` with `os.replace`. Only renamed files are rows. A marked row is finished when both its runs are done and its three checks hold.
 - Poll about every ten minutes with one command that prints the rows done, whether the driver's process is alive, and the minute. Poll a running row only through `.replay/rows/` and `.replay/driver.log`.
 - If a poll finds the driver gone with rows left, stop: kill its group (below), commit nothing, and report the end of `.replay/driver.log`, the rows done and the time the last finished rows took. Do not start it again. Never commit, or propose, a partial table.
 - **To stop the driver**, kill its whole group: `kill -TERM -- -$(cat .replay/driver.pid)`, then, after ten seconds, `kill -KILL -- -$(cat .replay/driver.pid) 2> .replay/kill.err; true`. Do this whenever the session stops with the driver running.
 
 **Steps.**
+0. **A table already pushed.** Run `git fetch -q origin {BRANCH}`. If it fails, the branch is not on `origin`: this is a first session, and you go to step 1. If it succeeds, an earlier session from this text committed a table, pushed it and did not propose it. Then compute nothing, and run no evaluator:
+   - run `mkdir .replay && date -u +%s > .replay/start`, for your message files and the clock;
+   - `git diff --name-only origin/main...FETCH_HEAD` must print `spec/vectors/promotion-replay-c2a-3.json` and `transcripts/evidence/promotion-replay-c2a-3-driver.py` and nothing else. If it prints anything else, stop and report;
+   - if `git merge-base --is-ancestor FETCH_HEAD HEAD` fails, bring the pushed commit in: `I=${ISSUE:-{BRANCH}}; printf 'Merge the pushed table into {BRANCH}\n\nProposer: reviewer {MODEL} runner-issue-%s\n' $I > .replay/tablemsg && git merge -q FETCH_HEAD -F .replay/tablemsg`;
+   - write the table's `T` member to `.replay/T`, and make checks (a), (c), (d), (e) and (f) of step 4 on the table in your tree. If one fails, stop and report which;
+   - then do step 5 from **Bring the branch up to `main`** to its end. There are no checkouts to remove.
 1. If `.replay/` already exists, stop and report: this session begins from nothing. Otherwise run `mkdir .replay && date -u +%s > .replay/start`, fix *T* and make the checks above. Create `.replay/frozen`, the worker checkouts and the driver.
 2. Run the driver to the last row.
 3. Assemble the table from `.replay/rows/`.
@@ -99,9 +105,9 @@ So for 766 rows expect seven to eleven core-hours on this machine, the second ru
    - **Push the branch at once:** `git push -q origin {BRANCH}`. From here the table is kept whatever happens next.
    - **Bring the branch up to `main`.** `main` moves every hour, so it has moved while you worked. Run `git fetch -q origin main`. If `git merge-base --is-ancestor origin/main HEAD` fails, run `I=${ISSUE:-{BRANCH}}; printf 'Merge main into {BRANCH}\n\nProposer: reviewer {MODEL} runner-issue-%s\n' $I > .replay/mergemsg && git merge -q origin/main -F .replay/mergemsg`. If the merge conflicts, run `git merge --abort` and report, ending `PUSHED`. The table and its *T* stay as they are: *T* is `main` as it was when the session began.
    - Read the minute from `.replay/start` and keep the start for the two tests below. Then remove the checkouts and `.replay/`: `git worktree remove --force` for each, then `rm -rf .replay`, then `git worktree prune`. `git status --porcelain` must print nothing: the verb refuses a tree that is not clean, and its check copies the whole tree.
-   - **Do not start the verb after minute 125.** It can take forty minutes. If it is later than that, report, ending `PUSHED`.
+   - **Do not start the verb after minute 130.** It can take forty minutes. If it is later than that, report, ending `PUSHED`.
    - Otherwise run `python3 tools/jack proposal --title 'second promotion replay table (BRIEF-C2a-3, The code): every first-parent commit of main to <first 8 of T>'`, with the bash tool's `timeout` set to `2400000` on that call.
-   - If it refuses because the branch does not contain `origin/main`, and minute 125 has not passed, fetch and merge again and run the proposal again, once. Give that merge the same two-paragraph message with two `-m` arguments in single quotes, with the issue's number written out in the second.
+   - If it refuses because the branch does not contain `origin/main`, and minute 130 has not passed, fetch and merge again and run the proposal again, once. Give that merge the same two-paragraph message with two `-m` arguments in single quotes, with the issue's number written out in the second.
    - If the verb refuses at its own push, run the two commands it prints.
    - If the verb refuses for any other reason, its check's failure included, do not run it again. The branch is already pushed. Report the refusal's words, ending `PUSHED`.
 
