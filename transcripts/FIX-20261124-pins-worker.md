@@ -1,19 +1,19 @@
-# FIX-20261124-pins-worker: a pins run ends when one of its workers dies
+# FIX-20261124-pins-worker: a pins run ends when a worker dies in a pin's test
 
-Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The reviewer makes it under `transcripts/sessions/fix-reviewer.md`, on branch `FIX-20261124-pins-worker`, and proposes it. It changes what `pins/run.py` does when a worker process of its pool ends without returning, and when a pin's test raises `SystemExit`. It adds one pin, for the two rules it makes. It changes no other pin, twin or mutant, and no row of the table a healthy run prints but that pin's own two.
+Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The reviewer makes it under `transcripts/sessions/fix-reviewer.md`, on branch `FIX-20261124-pins-worker`, and proposes it. It changes what `pins/run.py` does when a worker process of its pool dies in a pin's test, and when a pin's test raises `SystemExit`. It adds one pin, for the two rules it makes. It changes no other pin, twin or mutant, and no row of the table a healthy run prints but that pin's own two.
 
 **Why.**
 - **Since 23 November the pins run in a pool of worker processes** (`transcripts/FIX-20261123-pins-parallel.md`; proposal #1365, seqs 7344 and 7345). `parallel_pins` hands the pool its tasks by `pool.map`, at lines 84 and 86 of `pins/run.py`, and waits for every result with no bound.
-- **If a worker ends without returning, the run waits for ever.** `multiprocessing.Pool` starts another worker in its place, and the result of the task the dead one held never comes. It does not matter how the worker ended.
-  - Killed from outside: the adviser tried it (ADVISER.md entry 201). A pool of two in which one task calls `os._exit(9)` was still waiting after 20 s, when `timeout` ended it.
-  - By an exit of its own: counsel's pre-read gave the runner on `main` a pin whose test calls `sys.exit(0)` when it meets its mutant, with two workers. It was still waiting after 20 s.
+- **If a worker ends without returning, the run waits for ever.** `multiprocessing.Pool` starts another worker in its place, and the result of the task the dead one held never comes.
+  - By `os._exit`: the adviser tried it (ADVISER.md entry 201). A pool of two in which one task calls `os._exit(9)` was still waiting after 20 s, when `timeout` ended it.
+  - By `sys.exit`: counsel's pre-read gave the runner on `main` a pin whose test calls `sys.exit(0)` when it meets its mutant, with two workers. It was still waiting after 20 s.
 - **No bound of the court's own ends that wait.**
   - `.github/workflows/tests.yml` sets no `timeout-minutes`, so the `pins` job would run to GitHub's own limit for a job.
   - `tools/jack`'s check waits for its three commands with no timeout (lines 97 to 108). It runs in every session's `jack proposal`.
   - The merge verb's wait for a proposal's checks has no deadline (`tools/jack`, line 154). The herald's job ends it after 60 minutes.
 - **A test that exits is a second fault, in the parent.** `run_test` catches `Exception` (line 50), and `SystemExit` is not one. With one worker, a pin's test that calls `sys.exit(0)` ends the whole run with status 0 and no table, and the check reads that as a pass.
-- **No pin does either today.** `sys.exit`, `SystemExit` and `os._exit` occur in `pins/` and `harness/` only in the two `__main__` guards. This text is here so that neither fault can hold the lane, or pass for a run, when it comes.
-- **Python's other pool ends a run with a dead worker at once.** `concurrent.futures.ProcessPoolExecutor` marks the pool broken when a worker ends abruptly, and every task without a result then raises `BrokenProcessPool`. Two trials of counsel's, neither proposed:
+- **No pin does either today.** `sys.exit`, `SystemExit` and `os._exit` occur in `pins/` and `harness/` only in the two `__main__` guards. This text is here for when one does.
+- **Python's other pool ends such a run.** `concurrent.futures.ProcessPoolExecutor` marks the pool broken when a worker's process ends while it runs a task or waits for one, and every task without a result then raises `BrokenProcessPool`. Two trials of counsel's, neither proposed:
   - a pool of three with twelve tasks, of which the sixth calls `os._exit(9)`, returned in 0.3 s with three results and nine tasks not returned;
   - the pre-read's prototype of this change printed, on a full run, a table identical to `main`'s after the cut of acceptance (i). In 1,500 trials with a task dying at random, the dead task was always among the first not returned, as many as there are workers.
 - **The fix carries its own pin.** LAW.md says that every change to `pins/` carries a pin in `pins/pins.py` (lines 61 to 64), and the charter asks a witness for every rule (CHARTER.md, line 42). The pin fits under the cap now (**Size**).
@@ -41,7 +41,7 @@ These checks do not reach the time between the proposal and its merge. There the
    - Mutant `broken_pool_unreported`, in `pins/run.py`: `parallel_pins` no longer turns the pool's break into `WorkerLost`.
    - Mutant `exit_uncaught`, in `pins/run.py`: `SystemExit` is removed from what `run_test` catches.
    - Twin: the runner at the head does both.
-   - The pin's test runs the copy's runner in a process of its own, with a time limit of 60 seconds, on pins it makes there. A pin's test is itself run inside a worker of the pool, so it cannot use that pool.
+   - The pin's test runs the copy's runner in a process of its own, with a time limit of 60 seconds, on pins it makes there.
    - Each mutant's `find` must occur exactly once in `pins/run.py` (`tests/test_pins.py`, line 49).
 7. **Nothing else.** With one worker the pins run in the parent process and no pool is made, as today. `run_pins` keeps its three arguments. No other pin, twin, mutant, fixture or test changes, and no file but `pins/run.py` and `pins/pins.py`.
 
@@ -50,6 +50,7 @@ These checks do not reach the time between the proposal and its merge. There the
 - It does not retry the lost task. A run that lost a worker is run again whole, by whoever started it.
 - It does not give `tests.yml` a `timeout-minutes`. The workflow is trusted base and changes only by his push.
 - It does not report a worker that dies while idle after the last task of the run has returned. Every result is in by then, and the run ends as a healthy one. A worker that dies while idle earlier breaks the pool for the tasks still to come, and the run ends by `WorkerLost` (acceptance (iii)); today's pool replaces such a worker and goes on.
+- It does not end a run whose worker dies while it is sending a result back. The pool's manager can then be left waiting for the rest of the message, and it does not mark the pool broken. A reader of this text showed it with a result of 20 million characters and a manager made slow (runner #1280).
 - It does not end a run whose surviving worker will not end. When the pool breaks it signals its other workers to end and waits for them. A worker that ignores the signal holds the run, and that is the hanging worker of the first line.
 - It asks nothing of one other difference between the two pools: the executor's workers are not daemonic, as the pool's are, so a pin's test may start child processes of its own.
 - It does not clean up after a broken run. The pool ends the surviving workers, and their disposable copies of the tree can be left in the temporary directory. The check of `tools/jack` removes its own temporary directory, and the hosted runner's machine is discarded after the job.
@@ -65,7 +66,7 @@ These checks do not reach the time between the proposal and its merge. There the
   - Cut each row's detail at its first colon with `sed -E 's/  \(([^:]*).*$/  (\1/'`, as `transcripts/FIX-20261123-pins-parallel.md` does and for its reason. What is left of the two tables must be identical: compare them with `cmp`, and report the result.
   - Both must end with the last line of `origin/main`'s `python3 pins/run.py`, with its `KILLED` raised by two.
   - Keep the table that (x)'s run on `origin/main` prints, and cut it the same way. Take the two rows of `pins_worker_lost` out of the head's table with two workers. The two tables must then be identical, the last line of each apart: compare them with `cmp`, and report the result.
-- **(ii) A lost worker ends the run.** Make nine pins: eight whose test passes and whose one mutant is killed, and a ninth, the dying pin. Call `run_pins` on the nine with two workers, under `timeout 60`, four times:
+- **(ii) A worker that dies in a test ends the run.** Make nine pins: eight whose test passes and whose one mutant is killed, and a ninth, the dying pin. Call `run_pins` on the nine with two workers, under `timeout 60`, four times:
   - (a) the dying pin's test calls `os._exit(9)` whenever it runs, and the pin is last in the list;
   - (b) the same pin, first in the list;
   - (c) the dying pin's test passes on the tree as it is and calls `os._exit(9)` when its mutant has been applied, and the pin is fifth in the list;
