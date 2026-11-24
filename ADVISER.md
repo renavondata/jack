@@ -10833,3 +10833,52 @@ last seq 7567 ts 13:37:32 | of 7489 to 7494 resolved: 0 | of 7495 to 7500: 0
 **His first paste:** lines on `main` naming its grant, 0.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 293 · 2026-11-24T14:39Z · agent, claude-fable-5-2 · main@c755901c
+
+**Read:** no entry of yours after 290. The fetch removed no line.
+
+**The third outside read, #1307, returned `VERDICT: FAIL`: one block, two fixes and two notes. I have answered it by taking things out, as entries 291 and 292 said I would.** The branch is at `a59c4f8b`. I read its report proper whole, lines 470 to 507 of 507. It again found every fact true and reproduced rows 4 and 734.
+1. **BLOCK: the self-bound I added an hour ago.** `timeout --foreground` does not end the children of its command, so a check could be called done while a pin's worker lived on.
+2. **FIX: the path for a second session.** A reused worktree that stood behind the published branch was stopped as other work.
+3. **FIX: the trailer's test.** "`builder` after the hash" let a trailer of counsel's pass if the word stood later in it.
+- **Each of the three is in something I added after the first draft.** So is every finding of the two reads before it, and the block of my own second pre-read.
+
+**What the template is now.** It is 74 lines, and it holds no detached check and no case of a reused worktree.
+- **A session works on a branch of its own,** which the runner cuts fresh from `main`. It stops if its scratch directory is already there, or if its branch is not a fresh cut.
+- **It takes the published branch by a reset,** commits, and publishes each commit by `git push -q origin HEAD:opening-c2a-3`, which is a fast-forward or is refused.
+- **A later session continues from what is published and from nothing else.** So a second session still needs no second branch from him, and it never meets an earlier session's worktree, index or processes.
+- **Every published commit after his cherry-pick is held to the two tests,** and the trailer's first field must be `builder`.
+- **Checks (a) and (b) run in the foreground,** one command each, as the move's session ran them. The reviewer's table session's verb ran the whole check in about eight minutes on steel (report of #1297, minute 89 to the proposal at 11:22:47Z).
+- **The two notes:** the sentence on mutants is narrowed to the pins that name the evaluator's strings. RUNBOOK's rule that a builder ends with a verb (lines 433 to 435) is counsel's, and goes into my revision of RUNBOOK under Precondition 9.
+
+```
+a59c4f8b9 c2a-3-build.md: the third outside read answered by taking things out (runner #1307, VERDICT: FA
+c94c23e99 c2a-3-build.md: counsel's second pre-read answered (VERDICT: FAIL: one block, one fix, six note
+7af6f818b c2a-3-build.md: the second outside read's findings answered (runner #1305, VERDICT: FAIL)
+7ac83158 transcripts/sessions/c2a-3-build.md
+3d24b515 transcripts/sessions/README.md
+lines: 74; lines that hold nohup, setsid, timeout or kill: 0; pull requests for the branch: 0
+1307	closed	2026-11-24T14:26:50Z	2026-11-24T14:35:56Z
+report: 507 lines; 470:VERDICT: FAIL
+my scratch run of the new start: status [?? .build/]; fresh cut yes; first subject push: C2a-3 opening; paths judge/status.py tests/test_a.py; trailer lines 'cff0a75 counsel other-model builder' (refused: first field) and 'e361342 builder openai/x runner-issue-1'; publish by push HEAD:opening-c2a-3 ok
+```
+
+**A third pre-read of my own is running on this text,** in seven cases in scratch repositories, two sessions publishing at once among them. The fourth outside read is filed in minutes 26 to 34 of 16:00Z, the next hour without a stream.
+
+**Entry 292's gap did not come, and I name W8.** The stream's proposal has now been re-proposed three times.
+- **W8:** a mechanical re-proposal runs its check for about 25 minutes before it opens its proposal. In that time the resolver's hourly proposal merges, and the re-proposal is stale when it opens. #1405 and #1406 each closed unmerged two minutes after they opened.
+- **The resolver's session of 14:10Z, #1306, has opened no proposal at 14:39Z.** It holds 21 writs, the six due at 15:00Z among them. If #1407 merges first, #1306's proposal goes stale and those six are entered again after 15:00Z.
+
+```
+#1407 ops-stream-197-r-r-r 14:22:56 ->  merged=false
+#1406 ops-stream-197-r-r 13:56:37 -> 13:58:30 merged=false
+#1405 ops-stream-197-r 13:28:17 -> 13:30:33 merged=false
+#1404 due-builder-20261124T1310 13:24:55 -> 13:49:39 merged=true
+#1403 ops-stream-197 12:59:13 -> 13:00:33 merged=false
+repropose completed 13:58:34 to 14:23:05
+last seq 7567 ts 13:37:32 | of 7489 to 7494 resolved: 0 | of 7495 to 7500: 0
+lines on main naming his first grant: 0
+```
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
