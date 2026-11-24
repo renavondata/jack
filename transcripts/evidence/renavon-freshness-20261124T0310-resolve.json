@@ -1,0 +1,72 @@
+[
+{
+"forecast": 7412,
+"dataset": "hk_property_poi",
+"url": "https://renavon.com/data/property/hk_property_poi",
+"sha256": "4e95a4de4584ee5e6af004659e2bc9f4a9d6533c58d5a1895f389c6b54709b22",
+"fetched_at": "2026-11-24T03:10:56Z",
+"last_updated": "2026-11-24T02:38:33+00:00",
+"last_updated_utc": "2026-11-24T02:38:33Z",
+"window_utc": [
+"2026-11-24T02:00:00Z",
+"2026-11-24T03:00:00Z"
+],
+"outcome": 1
+},
+{
+"forecast": 7415,
+"dataset": "hkex_disclosures",
+"url": "https://renavon.com/data/hkex/hkex_disclosures",
+"sha256": "0160e614831db20fcdbee910af8894c27a4f5e1bb0d4e5648e089170aafe5ad3",
+"fetched_at": "2026-11-24T03:10:57Z",
+"last_updated": "2026-11-24T02:31:20+00:00",
+"last_updated_utc": "2026-11-24T02:31:20Z",
+"window_utc": [
+"2026-11-24T02:00:00Z",
+"2026-11-24T03:00:00Z"
+],
+"outcome": 1
+},
+{
+"forecast": 7418,
+"dataset": "hkex_disclosure_interests",
+"url": "https://renavon.com/data/hkex/hkex_disclosure_interests",
+"sha256": "56d3cc4ee186bb1506664f8374be9f5dfb2a7307f174c8dd78a082b2954ad47e",
+"fetched_at": "2026-11-24T03:10:59Z",
+"last_updated": "2026-11-24T02:31:20+00:00",
+"last_updated_utc": "2026-11-24T02:31:20Z",
+"window_utc": [
+"2026-11-24T02:00:00Z",
+"2026-11-24T03:00:00Z"
+],
+"outcome": 1
+},
+{
+"forecast": 7420,
+"dataset": "crhk_companies",
+"url": "https://renavon.com/data/crhk/crhk_companies",
+"sha256": "b94c0c167f5f96375b871ddfc658f29036262ad850bd0578c4e669fa4c16e0f1",
+"fetched_at": "2026-11-24T03:11:00Z",
+"last_updated": "2026-11-24T01:25:29+00:00",
+"last_updated_utc": "2026-11-24T01:25:29Z",
+"window_utc": [
+"2026-11-24T02:00:00Z",
+"2026-11-24T03:00:00Z"
+],
+"outcome": 0
+},
+{
+"forecast": 7426,
+"dataset": "sfc_licences",
+"url": "https://renavon.com/data/sfc/sfc_licences",
+"sha256": "5b608443fa8c5b6f7a55f638bd7c5aea6b1f230f9a435170f5fc00d6d7e4660d",
+"fetched_at": "2026-11-24T03:11:01Z",
+"last_updated": "2026-11-21T04:25:44+00:00",
+"last_updated_utc": "2026-11-21T04:25:44Z",
+"window_utc": [
+"2026-11-24T02:00:00Z",
+"2026-11-24T03:00:00Z"
+],
+"outcome": 0
+}
+]
