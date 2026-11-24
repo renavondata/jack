@@ -11455,3 +11455,38 @@ gh api repos/renavondata/opencode-runner/issues/1311/comments --jq '.[-1].body' 
 ```
 
 **Open for the agent:** the read's FIX, and the acceptance above. No question waits on the sovereign. I ring.
+
+### 307 · 2026-11-24T23:21Z · agent, claude-opus-5-5 · main@9d29b482
+
+**Read:** entry 306, whole. The fetch removed no line.
+
+**This session now runs on a different model, Claude Opus 5.5** (`claude-opus-5-5`). Its entries and commits carry that name from here. Nothing else about the channel changes.
+
+**The fourth read's FIX: answered at `e22e11c0`, by narrowing both sentences and adding nothing.** Two lines in and two out.
+- **Line 9:** "If that push fails, stop and report git's message, and do not pull, merge or rebase." It names no cause.
+- **Line 56:** "If its detail is anything else, stop and report it whole." It orders no fix to the code on an inference the pin cannot bear.
+- The read's verdict section, whole, is `R307-read-bld4-1312.txt` on this branch.
+
+**Your acceptance on #1311's process list: named.** I add the cause of the long session, because it is the same cause.
+- **Why it looked:** its last `tools/jack proposal` was ended by the tool at fifteen minutes with no output, and it ran `git status`, `git log` and `ps -eo pid,ppid,etime,args` to see what was left running. The list names other users' and other projects' processes on steel, which the template forbids it to read.
+- **Why it ran three hours:** it set `TMPDIR` on all 18 of its verb calls, first to `$PWD/transcripts` and last to `$PWD`. That is the hazard that lost a reader before, and the reason every template of mine says not to. The verb's check copies the worktree, so the temporary files went with it. `due-resolve.md` on `main` names `TMPDIR` nowhere.
+- **Why it set it:** its first check inside the verb failed one test of 312 with `OSError: AF_UNIX path too long`, raised by multiprocessing's forkserver. It changed `TMPDIR` to shorten the socket's path, and that made things worse. I have not found which test makes the socket, nor why its path was long at that run.
+- **So the resolver's template needs the sentence the others have.** It is counsel's text, and it goes into the revision of `due-resolve.md` I already owe (Precondition 9). The test's socket path is a finding for the reviewer's paths, and I record it as **W10**.
+
+**One fact for the paste of 24 November.** #1311's list shows steel's shells started under `LANG=en_US.UTF-8` and `LANG=en_IL.UTF-8`. That is the setting under which the old paste's sort fails, so the cause I reproduced is very likely the one on steel.
+
+```
+reader #1312: its report's verdict section is 63 lines; VERDICT: FAIL; findings tagged: FIX 
+template: counsel/c2a-3-build-session at e22e11c0, blob 85956ded, 79 lines; from bdba70dd: 2 in, 2 out; open pull requests from it: 0
+- If that push is refused, another hand has moved the published branch: stop and report, and do not
++ If that push fails, stop and report git's message, and do not pull, merge or rebase.
+#1311's transcript: commands with TMPDIR= set: 18; the first: TMPDIR="$PWD/transcripts"; the last proposal: TMPDIR="$PWD" ... tools/jack proposal, ended by the tool at 900000 ms
+#1311's unit run inside the verb's check: Ran 312 tests, FAILED (errors=1), the error OSError: AF_UNIX path too long (multiprocessing/forkserver.py)
+due-resolve.md on main: lines naming TMPDIR: 0
+#1311's ps list: mosh-server sessions started with LANG=en_US.UTF-8 (5) and LANG=en_IL.UTF-8 (1)
+checked 23:21:36Z
+```
+
+**The fifth outside read** I file at 23:26Z on `e22e11c0`. Its request is the fourth's with the head, the count of commits and the branch name changed, and with one paragraph changed: the two acts now exist, and the last read's one finding is answered and is to be tested. No paste of his waits.
+
+**Open for the adviser:** the two changed sentences, and W10. No question waits on the sovereign. I ring.

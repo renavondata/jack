@@ -1,0 +1,63 @@
+VERDICT: FAIL
+transcripts/sessions/c2a-3-build.md blob: 7645db97eb3175f24b430569de26136cc6d97bad
+transcripts/sessions/README.md blob: 3d24b515ed7b8c3d3da7112780d9259edc57fcec
+
+FIX — c2a-3-build.md:9,56 — The failure diagnoses claim more than the commands establish.
+
+Line 9 says a refused push means another hand moved the published branch. The command can also fail because of transport, authentication, server availability or repository access. Stopping remains appropriate, but the stated cause is not established by its exit status.
+
+Line 56 similarly says that every replay_drift detail other than “moved bytes differ” proves the build changed an old row’s output. pins/replay.py:17–18,41–51 shows other failure points: checked git subprocesses, the frozen table’s hash assertion and its chain assertion. Those can fail before any evaluator output is compared. The output comparisons themselves are at lines 66–67. A failure elsewhere does not establish output drift, and ordering the builder to fix its code on that inference is unsound.
+
+These are diagnostic defects, not reproduced evaluator regressions. I found no BLOCK in the specified startup, build scope or replay instructions. The verdict is FAIL under the requested rule that any false statement fails the template.
+
+Verification record
+
+Both anticipated prerequisites now exist. The grant is decision seq 7615, ts 2026-11-24T16:50:38Z, proposer guy. It contains the required prefix, the one mark and the cap words. origin/opening-c2a-3 is 5c6db4ee166b71235a5d79b8c453f50e16b401a4. Its first commit over main is the specified patch, with counsel as author and Guy Freeman as committer. Its diff is byte-identical to f6d6db7dbf79e7bfb86372a771af8884951d9740’s diff and changes only SPEC.md and judge/scope.json.
+
+The patched SPEC, brief, replay table, evaluator and value-file SHA-256 values matched their stated values.
+
+The literal replay procedure reproduced both currently testable rows:
+Row 4, 95679e730a67bd73901195b79d6a536c805f63a5: exit 1, empty stdout, exact match; about 0.08 seconds.
+Row 734, bd05ed5c1acc58993b8063bcb92dea6f09af2ed3: exit 0, all 46 stdout lines identical; about 102.78 seconds.
+
+The table has 773 rows. Row 734 is unmarked. Row 735 is bbfd0edf71df6dfe2183bfbbf24a372dd871146e, the first marked row. Row 772 is T, 96658263399ec7eeb815fc07210ce09b8e5ca3a4. Their marked outputs retain the assessed commit’s counted-lines figure while reading the window at seq 7180. The marked comparisons in line 64 agree with the brief.
+
+Source-sensitive checks on main
+
+The relevant sites include:
+- tests/test_pins.py:23–50: every mutant’s find string must occur exactly once.
+- tests/test_status.py:182–205: reads the live evaluator and makes exact-string edits.
+- pins/c2a_prime.py:22–34: exact-string editing of tests/test_status.py; lines 53–54 run its source-comparison test.
+- pins/pins.py:844,880–950,1057–1105: evaluator-string mutants for the liveness, promotion, window, tree-evidence and related pins.
+- pins/pins.py:1172–1176: replay_drift’s three evaluator mutants, including its first-parent string imported from pins/replay.py.
+- pins/replay.py:69–80: exact moved-byte comparison of status and value.
+- tests/test_evaluator_move.py:41–56 and tests/test_value.py:248–249: source-backed synthetic historical trees.
+- tests/test_promotion_judge.py:36–37,239–249: source-backed evaluator fixtures.
+- tests/promotion_replay_spot.py:16–58: the separate three-row replay script; its filename is not selected by unittest’s default test*.py discovery.
+
+The template correctly distinguishes necessary byte/string failures from ordinary semantic failures, subject to the overstrong diagnosis above. I found no additional unit test that a correct implementation necessarily must fail.
+
+Answers to the seven questions
+
+1. Tested hashes, paths, functions, line 433, evaluator-driver calls, mutant sources, replay_drift and all four row records; these held, and literal runs of rows 4 and 734 matched exactly; the failure-cause statements identified above did not hold.
+
+2. Compared the build instructions with the requested brief sections; scope held: all six evaluator changes can reside in judge/status.py, tests may reside under tests/, the change-3 test is incorporated by reference in full, and “at least one” does not reduce the brief’s requirement; no reviewer or counsel deliverable is assigned to the builder.
+
+3. Exercised the git checks in a scratch repository: a fresh branch after main advanced passed; valid earlier builder commits passed; forbidden renames and merges of main failed; missing, unfilled, placeholder and other-party trailers failed; a retained builder branch failed the ancestry gate, while a retained .build is explicitly stopped; the grant search is composable and excludes other entry types/parties; a non-fast-forward publication must stop, though other push failures are misdiagnosed; the fetch retry/stop rule is explicit; trailer creation passed twice with ISSUE set, empty and unset under bash and bash’s POSIX mode.
+
+4. Examined literal executability, scratch copying, timing and the two readings: no unavoidable stuck step or contradictory rule found; pins/run.py:24–29 confirms why excluding .build/w during copying matters; both thirty-minute checks must be budgeted early enough to leave the four-row check before minute 150; the schedule is feasible, but I did not establish worst-case runtimes or descendant cleanup at a tool timeout.
+
+5. Inspected the source-sensitive checks listed above; the allowed byte/string failures fit the reviewer’s later re-aiming role, replay_drift necessarily reaches its byte mismatch after correct old-row behavior, and no other unavoidable main-unit-test failure was found; this was static inspection, not a suite or pin run.
+
+6. Scanned the template: only {MODEL} and {BRANCH} match the dispatcher’s uppercase-placeholder pattern; no copyable shell command contains a double quote or names a path outside the worktree; the double quotes on lines 11 and 59 are explanatory prose, not copyable commands.
+
+7. Checked the session index and downstream users: the README addition names the template appropriately; judge/evaluate.py’s interface remains supported; RUNBOOK’s late-report/deadline descriptions and due-resolve.md’s table/spot-check require the separate counsel revisions already ordered by BRIEF-C2a-3:69, rather than builder edits forbidden by this template.
+
+Not checked
+
+I did not build the six changes, execute rows 735 or 772, recompute either full replay table, run unittest discovery, run any pin, run pins/run.py, invoke a tools/jack verb, use gh or contact a publication endpoint. Fetch failure and concurrent remote movement were reasoned from the commands rather than induced against origin. Dash was unavailable; its command syntax was reviewed as POSIX shell, with runtime checks performed under bash and bash --posix.
+
+All experimental repository objects were confined to the scratch repository. The detached checkout and .read-scratch directory were removed. The worktree finished clean, with no checkout changes committed or pushed.
+exit=0
+```
+
