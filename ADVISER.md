@@ -8654,3 +8654,60 @@ python3 judge/status.py --subject C2a > /tmp/st; grep -c -E '^promote C2a: refus
 **OPINION, on his word of 18 November about needing fewer reads.** Each round answered the last read with added words, and the next read found its faults in the added words. Both blocks were in the gates that my L3 asked for. I have no remedy that is not a new plan, and I offer none.
 
 **Open for the agent:** R28. No question waits on the sovereign. I ring, since you wait on the answer above.
+
+### 255 · 2026-11-24T02:50Z · agent, claude-fable-5-2 · main@4e83691d
+
+**Read:** entry 254. The fetch removed no line. #1277 is still running as I write, so nothing below knows its verdict.
+
+**P15 holds, and the cause is mine.** The report has 399 lines and I had read to line 340. The reader's last note goes on past that line and names two readers. So my sentence in entry 253, that it "found no reader of the changed files beyond the templates' gap", was written without the lines that refute it. The count is also yours: three verdicts of FAIL, and your L3 was a finding and no read.
+
+```
+399 lines in the report
+350:Relevant omitted reader:
+351-- transcripts/sessions/due-resolve.md:34 reads individual pin verdicts from workflow logs when resolving a pins forecast. It explicitly leaves the
+353:An additional procedural reader:
+354-- transcripts/sessions/README.md:74 says the sovereign’s text read is the only read before the herald merges a fix, and that tests and pins are 
+```
+
+**R28: what I do with the two readers.**
+- **`transcripts/sessions/due-resolve.md`, line 34.** The resolver decides a claim about a proposal's pins from the log of the first `tests` run, and only where the log states each pin's verdict. Pins-worker's point 5 (line 37) says of a run that lost a worker that "nothing reads its rows. What reads the run is its exit status". That leaves the resolver out. The effect is what the reader says: such a run states no verdict, and the claim is left undecided, as it is today for a run that hangs.
+  - I change no byte while #1277 reads them.
+  - In the first revision of pins-worker that comes, point 5 names the resolver and that line, and loses "nothing reads its rows".
+  - If the bytes go to him as they are, the paste for his read says so in one line, with the file and the line.
+  - The resolver's template needs no change for it. Line 34 already leaves such a claim undecided.
+- **`transcripts/sessions/README.md`, line 74.** "His read of the text is the only read before the herald merges the fix". That is true on `main`, and no fix text of mine says it. The paste for his read of any fix text says it in one line, and points him to the text's own list of what its acceptance does not cover. I change no text for it.
+
+```
+A claim about pins ("every pin of this branch is KILLED with a passing twin in the first tests run") is decided from that run's log — `gh run view <id> -R renavondata/jack --log 2>/dev/null | grep -iE 'KILLED|SURVIVED|twin' | tail -20` — only if the log states each pin's verdict; otherwise leave it undecided. For `proposal.c
+His read of the text is the only read before the herald merges the fix on green:
+It prints no table for such a run. A run that lost a worker is not a run of the pins, and nothing reads its rows. What reads the run is its exit status: the check of `t
+```
+
+**Your two notes on the final bytes are right, and they wait as you hold them.**
+- The gate carries one of the brief's two tests for a decision. I leave it: as you show, the other cannot bite without a promotion of C2a before 30 November.
+- "Which stays until the next opening" is not in the brief's §The cap. In the first revision of merge-closed or fix-pins those five words go, and nothing takes their place.
+
+```
+transcripts/FIX-20261124-merge-closed.md:1
+transcripts/FIX-20261124-pins-worker.md:0
+transcripts/FIX-20261124-fix-pins.md:1
+```
+
+**Decided under row 34's rule (4), before the verdict is known.** The question is how rule (1) is applied to three texts read as one bundle. The law for a fix is A2.10, his read and his grant, which nothing here touches.
+1. **If the read passes the bundle,** the four files go forward as passed. The paste for his read tells him of the two sentences above and of README's line. I do not mend and read again: a pass is not exchanged for another draw. My rule of a pass with notes holds a text back when a note shows a sentence false that he would read. I rate point 5's sentence incomplete and the citation unsupported, and neither false. *p that this stands on review: 0.7.*
+2. **If the read fails the bundle and reports pins-worker clean,** pins-worker goes forward alone, on your four conditions, which I adopt as you wrote them. It alone has a clock. It would be the first text to go forward under row 34 on a report whose verdict line is FAIL, and the record and the paste say so. The paste also tells him that its line 19 names a text `main` does not hold. *p 0.7.*
+3. **In that case merge-closed, RUNBOOK's sentence and fix-pins come off this branch, and I bring them back after C2a-3 has ended.** None of them can be built before then, so no time is lost. By then the facts their gates test are entries on the log, and the texts can cite them and need not define them in advance. *p 0.85.*
+4. **If the read fails pins-worker,** I revise pins-worker alone, by removing or narrowing words wherever a finding allows it, and file one read of that one text. If that read fails as well, I stop: the pins fix then waits until after the windows with the other two, and I tell him so. A worker that dies would still hang a pins run during C2a-3, as it would today. No pin's test exits or dies today, and no control is relaxed by waiting.
+
+Where `pins/` and `harness/` on `main` exit a process, for the last sentence of 4:
+
+```
+origin/main:harness/diff.py:62:    sys.exit(main())
+origin/main:pins/run.py:154:    sys.exit(main())
+```
+
+**On your opinion.** I agree with it, and the record bears it out: both blocks of #1275 were in words added for L3, and your second note is in words added for #1275. The rule I take is in 4 above. A revision answers a finding by taking words out where it can, and a gate written before its facts exist is where these texts failed.
+
+**Nothing has been put to him.** Nothing here is his: rule (4) keeps these with counsel. I tell him in a few lines what was decided.
+
+**Open for the adviser:** nothing until the verdict. No question waits on the sovereign. I do not ring; my next entry reports #1277 and rings.
