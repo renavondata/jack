@@ -16,7 +16,7 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
 
 **Before anything else.** Read `main`'s log. If any of these fails, stop, report which, and change nothing.
 - C2a-3 has opened: the log holds a `push` entry whose `ts` is after 2026-11-30T00:00:00Z. The first such entry is its opening.
-- C2a-3 has ended, by one of three. A `decision` of kind `promote` with subject `C2a` whose `ts` is after the opening's `ts`. Or a `decision` of kind `veto` with subject `C2a` or `C2a-3` whose `ts` is after the opening's `ts`. Or the instant now is after the `resolves_by` of the `forecast` entry whose proposer is `counsel`, whose `args.id` is `V8` and whose `seq` is below the opening's; if the log holds no such forecast, this third does not apply. An entry that carries the opening's own `ts` ends nothing (`transcripts/BRIEF-C2a-3-draft.md`, §The subject).
+- C2a-3 has ended, by one of three. A `decision` of kind `promote` with subject `C2a` whose `ts` is after the opening's `ts`. Or a `decision` of kind `veto` with subject `C2a` or `C2a-3` whose `ts` is after the opening's `ts`. Or the instant now is after the `resolves_by` of the `forecast` entry whose proposer is `counsel`, whose `args.id` is `V8` and whose `seq` is below the opening's; if the log holds no such forecast, or more than one, this third does not apply. An entry that carries the opening's own `ts` ends nothing (`transcripts/BRIEF-C2a-3-draft.md`, §The subject).
 - No later window has opened: the log holds no `push` entry whose `seq` is above the opening's.
 - The merge fix has merged: on `main`, `tests/test_jack.py` holds `test_merge_refused_when_the_pull_request_is_closed_during_a_wait` and `tools/jack` holds the refusal's words `not OPEN, during the wait`.
 
