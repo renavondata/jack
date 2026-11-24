@@ -1,0 +1,210 @@
+{
+  "resolutions": [
+    {
+      "forecast": 7489,
+      "outcome": 1,
+      "resolution_seq": 7636,
+      "resolved_at": "2026-11-24T20:13:16Z",
+      "resolves_by": "2026-11-24T14:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7490,
+      "outcome": 1,
+      "resolution_seq": 7637,
+      "resolved_at": "2026-11-24T20:14:13Z",
+      "resolves_by": "2026-11-24T14:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7491,
+      "outcome": 1,
+      "resolution_seq": 7638,
+      "resolved_at": "2026-11-24T20:14:56Z",
+      "resolves_by": "2026-11-24T14:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7492,
+      "outcome": 1,
+      "resolution_seq": 7639,
+      "resolved_at": "2026-11-24T20:15:39Z",
+      "resolves_by": "2026-11-24T14:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7493,
+      "outcome": 0,
+      "resolution_seq": 7640,
+      "resolved_at": "2026-11-24T20:16:22Z",
+      "resolves_by": "2026-11-24T14:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7494,
+      "outcome": 1,
+      "resolution_seq": 7641,
+      "resolved_at": "2026-11-24T20:17:06Z",
+      "resolves_by": "2026-11-24T14:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7495,
+      "outcome": 1,
+      "resolution_seq": 7642,
+      "resolved_at": "2026-11-24T20:17:49Z",
+      "resolves_by": "2026-11-24T15:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7496,
+      "outcome": 1,
+      "resolution_seq": 7643,
+      "resolved_at": "2026-11-24T20:18:33Z",
+      "resolves_by": "2026-11-24T15:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7497,
+      "outcome": 1,
+      "resolution_seq": 7644,
+      "resolved_at": "2026-11-24T20:19:16Z",
+      "resolves_by": "2026-11-24T15:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7498,
+      "outcome": 1,
+      "resolution_seq": 7645,
+      "resolved_at": "2026-11-24T20:20:01Z",
+      "resolves_by": "2026-11-24T15:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7499,
+      "outcome": 0,
+      "resolution_seq": 7646,
+      "resolved_at": "2026-11-24T20:20:44Z",
+      "resolves_by": "2026-11-24T15:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7500,
+      "outcome": 1,
+      "resolution_seq": 7647,
+      "resolved_at": "2026-11-24T20:21:27Z",
+      "resolves_by": "2026-11-24T15:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7532,
+      "outcome": 1,
+      "resolution_seq": 7648,
+      "resolved_at": "2026-11-24T20:22:11Z",
+      "resolves_by": "2026-11-24T18:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7533,
+      "outcome": 1,
+      "resolution_seq": 7649,
+      "resolved_at": "2026-11-24T20:22:54Z",
+      "resolves_by": "2026-11-24T18:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7534,
+      "outcome": 1,
+      "resolution_seq": 7650,
+      "resolved_at": "2026-11-24T20:23:37Z",
+      "resolves_by": "2026-11-24T18:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7535,
+      "outcome": 1,
+      "resolution_seq": 7651,
+      "resolved_at": "2026-11-24T20:24:20Z",
+      "resolves_by": "2026-11-24T18:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7536,
+      "outcome": 0,
+      "resolution_seq": 7652,
+      "resolved_at": "2026-11-24T20:25:03Z",
+      "resolves_by": "2026-11-24T18:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7537,
+      "outcome": 0,
+      "resolution_seq": 7653,
+      "resolved_at": "2026-11-24T20:25:47Z",
+      "resolves_by": "2026-11-24T18:00:00Z",
+      "late": true
+    },
+    {
+      "forecast": 7585,
+      "outcome": 1,
+      "resolution_seq": 7654,
+      "resolved_at": "2026-11-24T20:26:30Z",
+      "resolves_by": "2026-11-24T21:00:00Z",
+      "late": false
+    },
+    {
+      "forecast": 7586,
+      "outcome": 1,
+      "resolution_seq": 7655,
+      "resolved_at": "2026-11-24T20:27:13Z",
+      "resolves_by": "2026-11-24T21:00:00Z",
+      "late": false
+    },
+    {
+      "forecast": 7587,
+      "outcome": 1,
+      "resolution_seq": 7656,
+      "resolved_at": "2026-11-24T20:27:57Z",
+      "resolves_by": "2026-11-24T21:00:00Z",
+      "late": false
+    },
+    {
+      "forecast": 7588,
+      "outcome": 1,
+      "resolution_seq": 7657,
+      "resolved_at": "2026-11-24T20:29:38Z",
+      "resolves_by": "2026-11-24T21:00:00Z",
+      "late": false
+    },
+    {
+      "forecast": 7589,
+      "outcome": 0,
+      "resolution_seq": 7658,
+      "resolved_at": "2026-11-24T20:30:21Z",
+      "resolves_by": "2026-11-24T21:00:00Z",
+      "late": false
+    },
+    {
+      "forecast": 7590,
+      "outcome": 0,
+      "resolution_seq": 7659,
+      "resolved_at": "2026-11-24T20:31:04Z",
+      "resolves_by": "2026-11-24T21:00:00Z",
+      "late": false
+    }
+  ],
+  "left_undecided": [
+    {
+      "forecast": 7424,
+      "reason": "Exact args.url returns not_found, no last-updated instant."
+    },
+    {
+      "forecast": 7425,
+      "reason": "Exact args.url returns not_found, no last-updated instant."
+    },
+    {
+      "forecast": 2553,
+      "reason": "No promote C2a-prime on origin/main, so qualifying C2b opening push and relative 72-hour period are not established."
+    }
+  ]
+}

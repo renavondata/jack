@@ -1,0 +1,63 @@
+[
+  {
+    "dataset": "hk_property_poi",
+    "url": "https://renavon.com/data/property/hk_property_poi",
+    "path": "transcripts/evidence/renavon-freshness/20261124T2010/hk_property_poi.html",
+    "fetched_at": "2026-11-24T20:11:35Z",
+    "curl_returncode": 0,
+    "sha256": "98c60bdc09dc8cae8e19fd5668b0b438d3508edbeffa4a388edd4455db82ec5f",
+    "bytes": 122206
+  },
+  {
+    "dataset": "hkex_disclosures",
+    "url": "https://renavon.com/data/hkex/hkex_disclosures",
+    "path": "transcripts/evidence/renavon-freshness/20261124T2010/hkex_disclosures.html",
+    "fetched_at": "2026-11-24T20:11:36Z",
+    "curl_returncode": 0,
+    "sha256": "83f055af15623dedcc919044a5a6839dc43c675c399aa7500d2c02934fed8845",
+    "bytes": 231390
+  },
+  {
+    "dataset": "hkex_disclosure_interests",
+    "url": "https://renavon.com/data/hkex/hkex_disclosure_interests",
+    "path": "transcripts/evidence/renavon-freshness/20261124T2010/hkex_disclosure_interests.html",
+    "fetched_at": "2026-11-24T20:11:38Z",
+    "curl_returncode": 0,
+    "sha256": "57813207b9e566fb570f9cfb0f0a09d8c716594bd800e933134c070280f7c65c",
+    "bytes": 299285
+  },
+  {
+    "dataset": "crhk_companies",
+    "url": "https://renavon.com/data/crhk/crhk_companies",
+    "path": "transcripts/evidence/renavon-freshness/20261124T2010/crhk_companies.html",
+    "fetched_at": "2026-11-24T20:11:42Z",
+    "curl_returncode": 0,
+    "sha256": "d935ae6de6e3f9e0c965beb8a36c5a3f82284abe9e5dc44c5d08fb9807563183",
+    "bytes": 367831
+  },
+  {
+    "dataset": "sfc_licences",
+    "url": "https://renavon.com/data/sfc/sfc_licences",
+    "path": "transcripts/evidence/renavon-freshness/20261124T2010/sfc_licences.html",
+    "fetched_at": "2026-11-24T20:11:44Z",
+    "curl_returncode": 0,
+    "sha256": "ed26b7bb18e023e9890dda529935628086a5194b8ed481d12310c423608b5991",
+    "bytes": 200973
+  },
+  {
+    "dataset": "hk_property_transactions",
+    "url": "https://renavon.com/data/hk_property_transactions",
+    "path": "transcripts/evidence/renavon-freshness/20261124T2010/hk_property_transactions-legacy-url.html",
+    "sha256": "00aa3d872e7d3ca62e6362170bfcb21af29f861debbe5d71d7c9c0bb382c67d6",
+    "note": "Initial fresh fetch returned not_found; no last-updated instant."
+  },
+  {
+    "dataset": "hk_property_transactions",
+    "url": "https://renavon.com/data/property/hk_property_transactions",
+    "path": "transcripts/evidence/renavon-freshness/20261124T2010/hk_property_transactions.html",
+    "fetched_at": "2026-11-24T20:11:45Z",
+    "curl_returncode": 0,
+    "sha256": "0b4cae10fb84e32d6a301e23ed0cea2d0f7e91f19b5ff11a0bfb5f3bcf16e162",
+    "bytes": 512857
+  }
+]

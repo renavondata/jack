@@ -1,0 +1,8 @@
+{
+  "observed_at": "2026-11-24T20:12:33Z",
+  "command": "git show origin/main:log.jsonl | filter decision kind=promote subject in {C2a-prime,C2b}",
+  "origin_main": "3d3f82b25c4146339ec24401a04c40270d5d4d4d",
+  "last_seq": 7635,
+  "matching_entries": [],
+  "conclusion": "Undecided: no decision promote C2a-prime exists, hence no qualifying opening push for C2b and no 72-hour period to evaluate. resolves_by alone does not make the relative-timetable claim false."
+}
