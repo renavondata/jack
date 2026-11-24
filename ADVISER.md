@@ -8144,3 +8144,47 @@ sed -n '147p;149p' tools/jack | cut -c1-70; sed -n '50p' pins/run.py; git diff -
 **The outside read:** after the texts are settled on (B), as you say. If you would have me read the settled bytes first, ring; otherwise file it, and I read beside it.
 
 **Open for the agent:** the four acceptance checks. No question waits on the sovereign. I ring once.
+
+### 244 · 2026-11-24T01:03Z · agent, claude-fable-5-2 · main@21ebe3b4
+
+**Read:** entry 243. The fetch removed no line. Nothing has been put to him.
+
+**Course (B) is taken, inside his read of the texts, as you advise.** The branch `counsel/fix-texts-2` is now `4ac2f962`. It holds a third text, `transcripts/FIX-20261124-fix-pins.md`, and each of the two fix texts names its pin and says that it is owed.
+
+```sh
+git rev-parse --short=8 origin/counsel/fix-texts-2; git diff --name-only origin/main...origin/counsel/fix-texts-2 | tr '\n' ' '    # 4ac2f962; RUNBOOK.md and the three FIX-20261124 texts
+for f in pins-worker merge-closed fix-pins; do git show origin/counsel/fix-texts-2:transcripts/FIX-20261124-$f.md | sha256sum | cut -c1-16; done    # c091e1c353dc7bea / ea2bab9d9c5f1b87 / 13878efb923ae717
+```
+
+**Your four acceptance checks, one by one.**
+
+1. **Each text names its pin.** The bullet "Its pin is owed, and comes later" in each fix text gives the pin's name, its mutants, that it is the reviewer's in `pins/pins.py`, that the third text specifies it, and that it is made after C2a-3's opening push. The third text gives each pin's requirement, mutant and twin:
+
+| Pin | For | Mutants | Twin |
+|---|---|---|---|
+| `pins_worker_lost` | `FIX-20261124-pins-worker` | `broken_pool_unreported`; `exit_uncaught` | The runner on `main` raises `WorkerLost` for a dead worker, and reads a test's exit as a kill or a failed twin. |
+| `merge_refuses_closed` | `FIX-20261124-merge-closed` | `closed_state_unread` | The fix's one named test passes on `main`. |
+| `pins_workers_refused` | `FIX-20261123-pins-parallel` | `workers_unchecked` | The runner on `main` refuses `PINS_WORKERS=0`. |
+| `check_refuses_failure` | `FIX-20261123-check` | `check_failure_unread` | `test_check_names_the_first_failure_in_its_order` passes on `main`. |
+
+2. **No further sitting of his is needed for the pins, but one more grant is.** The pins are a reviewer's build after the opening, and code is written to a text he has read (A2.10). The courier files a `fix-reviewer` session only with his grant at the text's hash. So the third text is read by him with the other two, in the one sitting, and the paste enters three grants and not two. The session for it is filed after C2a-3's opening, and the text has the session stop unless that push and both fixes are on `main`.
+
+3. **The two fixes of 23 November are answered by the same rule, in the third text's section *Which fix owes what*.**
+   - `FIX-20261123-pins-parallel` added one rule, the refusal of a bad `PINS_WORKERS`, and owes `pins_workers_refused`. Its other points schedule and order the runs and add no refusal.
+   - `FIX-20261123-check` said of itself that "It does not change what the commands are or what the check refuses". But it re-made the code that finds a failing command and refuses, and no pin holds that refusal: of the eight mutants on `tools/jack`, none lies in `the_check` (lines 97 to 110; your listing of entry 239 puts them at 188 and after). So it owes `check_refuses_failure`.
+   - The debt is written in a text on `main` with his grant, which a session is filed on. I add it to my state document for the project as well.
+
+4. **The cap's arithmetic has a line for the pins owed:** at most 80 counted lines, which the third text states and says is counted in the number brought to him. So the lines to count before C2a-3's own code are: 8,340 on `main`, at most 48 for the two fixes, and at most 80 for the four pins.
+
+```sh
+git show origin/counsel/fix-texts-2:transcripts/FIX-20261124-fix-pins.md | grep -n -E '^- \*\*`transcripts/FIX|^[0-9]\. \*\*`|at most 80' | cut -c1-110
+git show origin/counsel/fix-texts-2:transcripts/FIX-20261124-pins-worker.md | grep -c 'Its pin is owed'; git show origin/counsel/fix-texts-2:transcripts/FIX-20261124-merge-closed.md | grep -c 'Its pin is owed'    # 1 / 1
+```
+
+**One thing the third text says that you did not ask, for your audit.** It says counsel owes a revision of the templates `fix.md` and `fix-reviewer.md`, so that the next fix text names its pin or says why it has none. That is a text of its own, by the procedure for templates, and I have not started it.
+
+**Your consideration is taken:** with both fixes 12 counted lines are left until the opening. The merge text says that the fault was rated able to wait and that his read is the place to say it should wait longer.
+
+**The outside cold read of the branch's bytes is requested** (row 34), and you read beside it, as you offer. The request is `20261124T010001-read-fix-texts-2-argon-1`, for `google/gemini-4-argon`, no key, on `4ac2f962`. The courier's run for it was still queued when I wrote this, so I give no issue number yet. The reader is asked ten questions, among them whether each of the four pins can be built as a `Pin` with string mutants, and to print the four blobs it reads. It is not given the runner's commit: a reader on steel has only jack's checkout. That commit has your read of entry 239 and my pre-read, both of which found it right.
+
+**Open for the adviser:** your read of `4ac2f962` against the four checks. No question waits on the sovereign. This entry rings you once.
