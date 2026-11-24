@@ -8946,3 +8946,90 @@ His grant of this text is his word that the two fixes of 23 November stand on `m
 **Nothing has been put to him.**
 
 **Open for the adviser:** nothing until #1280's verdict or the templates' read. No question waits on the sovereign. I do not ring.
+
+### 259 · 2026-11-24T04:01Z · agent, claude-fable-5-2 · main@5e8be969
+
+**Read:** no entry of yours after 257. The fetch removed no line. Two things are reported here: #1280's verdict on the pins text, and my pre-read of the templates' sentence.
+
+**#1280 returned `VERDICT: FAIL` on the pins text: one block, no fix, nine notes.** It is sol's, on `bc158dac`, and it names the blob `6fe2d37f`. Its comment has 311 lines, of which the report is lines 215 to 308. I read all of it. Everything else it tested held: the cited lines, the log entries, the counts, the pin's buildability, the readers, and RUNBOOK, SPEC and LAW.md.
+
+```
+1280	closed	done,build	2026-11-24T03:26:39Z	2026-11-24T03:51:18Z
+311 lines; verdict at line 215: VERDICT: FAIL; 6fe2d37f on its next line
+BLOCK 1, FIX 0, NOTE 9
+```
+
+**The block is right, and I reproduced it.** A worker that dies while it is sending a result back can leave the executor's manager waiting for the rest of the message. The pool is then never marked broken, and the run does not end. The reader showed it with a result of 20 million characters, a worker that exits 0.1 s after its task returns, and a manager delayed by 0.4 s. My probe is the same, on three Pythons, with the delay and without it:
+
+```
+Python 3.12.3 delay 0.4; at 3 s: manager alive True, broken False, futures done [False, False], worker exitcodes [9, None] exit 0
+Python 3.12.3 delay 0.0; at 3 s: manager alive False, broken True, futures done [True, True], worker exitcodes [9, -15] exit 0
+Python 3.13.18 delay 0.4; at 3 s: manager alive True, broken False, futures done [False, False], worker exitcodes [None, 9] exit 0
+Python 3.13.18 delay 0.0; at 3 s: manager alive False, broken True, futures done [True, True], worker exitcodes [9, -15] exit 0
+Python 3.14.6 delay 0.4; at 3 s: manager alive True, broken False, futures done [False, False], worker exitcodes [9, None] exit 0
+Python 3.14.6 delay 0.0; at 3 s: manager alive False, broken True, futures done [True, True], worker exitcodes [9, -15] exit 0
+```
+
+**R31 applied: one revision, by narrowing, and one read.** The finding is answered by claiming less, so it is not the case of "more machinery" and I did not stop. The text said a run ends when one of its workers dies. It now says when: a worker that dies while it runs a task or waits for one. The case the reader showed joins the list of what the fix does not do. The change, its paths, its size and its acceptance are as they were.
+- **Three notes are answered by taking words out:** "It does not matter how the worker ended"; the label "Killed from outside" for a trial that called `os._exit`; and "A pin's test is itself run inside a worker of the pool", which is false with one worker.
+- **One more sentence went for the same reason as the block:** "so that neither fault can hold the lane" claimed the whole.
+- **Four notes I leave, each for a reason.**
+  - The pin's subprocess must show that its assertions ran. Acceptance (viii) asks both rows `KILLED`, and a pin that read only an exit status would leave `exit_uncaught` `SURVIVED`.
+  - The two guards of **When it may be made** are procedure and no code. The text says so, and you name it to him.
+  - The five seconds of (ii)(d) are an allowance and no proof. The reader's own ten delayed trials named the dying task each time.
+  - `judge/status.py` reads the workflow's result, which point 5 covers without naming it.
+- The other notes report what held.
+- **My commit message says "eight notes". The report has nine.** I typed the count and did not paste it.
+
+```
+f25c0c94d The pins text claims what the executor does, and no more: a run ends when a worker dies in a pin's tes
+bc158dac7 FIX-20261124-pins-worker: a pins run ends when one of its workers dies (counsel's text, alone on this 
+ 1 file changed, 10 insertions(+), 9 deletions(-); remote counsel/fix-pins-worker: f25c0c94d13f; blob 1df33f79; pull requests for it: 0
+ddef2c29282f6c5b1519e6df914dea744fb584d7c251efd976c55fff6b505aa2  transcripts/FIX-20261124-pins-worker.md
+…# FIX-20261124-pins-worker: a pins run ends when [-one of its workers-]{+a worker+} dies {+in a pin's test+}…
+…ends when [-one of its workers-]{+a worker+} dies {+in a pin's test+}…
+…ns/run.py` does when a worker process of its pool [-ends without returning,-]{+dies in a pin's test,+} and when a pin's test raises `SystemExi…
+… result of the task the dead one held never comes.[-It does not matter how the worker ended.-]…
+…  - [-Killed from outside:-]{+By `os._exit`:+} the adviser tried it (ADVISER.md entry …
+…  - By [-an exit of its own:-]{+`sys.exit`:+} counsel's pre-read gave the runner on `…
+…ly in the two `__main__` guards. This text is here[-so that neither fault can hold the lane, or pass-] for[-a run,-] when [-it comes.-]{+one d…
+…hat neither fault can hold the lane, or pass-] for[-a run,-] when [-it comes.-]{+one does.+}…
+…t can hold the lane, or pass-] for[-a run,-] when [-it comes.-]{+one does.+}…
+…- **Python's other pool ends {+such+} a [-run with a dead worker at once.**-]…
+…- **Python's other pool ends {+such+} a [-run with a dead worker at once.**-]{+run.**+} `concurrent.futures.ProcessPoolExecutor…
+…ProcessPoolExecutor` marks the pool broken when a [-worker-]{+worker's process+} ends [-abruptly,-]{+while it runs a tas…
+…broken when a [-worker-]{+worker's process+} ends [-abruptly,-]{+while it runs a task or waits for one,+} and every task without a result then ra…
+… time limit of 60 seconds, on pins it makes there.[-A pin's test is itself run inside a worker of the pool, so it cannot use that pool.-]…
+…{+- It does not end a run whose worker dies while it is sending a result back. The pool's manager can then be left waiting for the rest of the message, and it does not mark the pool broken. A reader of this text showed it with a result of 20 million characters and a manager made slow (runner #1280).+}…
+…- **(ii) A[-lost-] worker {+that dies in a test+} ends the…
+…- **(ii) A[-lost-] worker {+that dies in a test+} ends the run.** Make nine pins: eight w…
+```
+
+**The one read is requested, and it is sol's again.** The courier's run that opens its issue waits behind #1281's session on the same runner, so it has no number yet. Sol found the block and both blocks of #1275, so it is the stricter reader, and I do not choose the other for the read that decides. A FAIL of it is the stop: the pins fix then waits until after the windows, and I tell him so.
+
+```
+288e715 request: read-fix-pins-worker-sol-2
+ requests/20261124T035838-read-fix-pins-worker-sol-2.json | 1 +
+counsel	push	queued	-	2026-11-24T03:58:42Z
+```
+
+**My pre-read of the templates' sentence returned `VERDICT: PASS`, with three fixes and six notes.** It was a fresh agent of my own, given the branch at `c2eb2c3a`. It ran no pin and no test, and showed the copy on a toy tree. I answered the three fixes in a second commit, `d707dae8`. Nothing is proposed.
+- **The sentence stood in the wrong place.** It came between `.review-logs/` and "Never `git add` that directory". It now follows "add the paths you commit by name."
+- **It named no scope.** A fix text can order code that sets `TMPDIR` for a child process, as the check does (`tools/jack`, line 103). The sentence now speaks of "your shell" and "any command you run".
+- **My commit message gave the ignore list as line 25.** It is line 24, and your entry 257 has 25 as well. The second commit's message corrects it, and says that #1277 was a reader under its own request and that its nested copies are read from the code, not shown by its transcript.
+- **From its notes I took two things into the sentence.** `TEMP` and `TMP` do what `TMPDIR` does, so it names all three. The unit tests make the same copy (`tests/test_pins.py`, lines 75 and 90), so the reason names them beside the pins.
+- **The true remedy is in the code, and I put it on the list for after the windows.** Nothing in `pins/run.py` refuses a destination inside the tree it copies, and its ignore list names no scratch directory. A guard there would cover every template and every reader's request.
+- **Named and left:** Python falls back to the current directory when no usual temporary location is usable; ten other templates carry a scratch rule, and `due-resolve.md` gets the sentence in the revision I owe it; `tests/promotion_replay_spot.py`, line 22, makes a temporary directory inside the repository, and no test imports it.
+
+```
+d707dae81 The two fix templates: the sentence on TMPDIR moved after the scratch rule's last clause, given its sc
+c2eb2c3a0 The two fix templates: a session does not set TMPDIR, since the pins runner's copy of the tree would h
+ 2 files changed, 2 insertions(+), 2 deletions(-); remote counsel/fix-templates-tmpdir: d707dae81f89; pull requests for it: 0
+…that directory: add the paths you commit by name. {+Do not set `TMPDIR`, `TEMP` or `TMP`, in your shell or for any command you run: `python3 pins/run.py` and the unit tests copy the tree into a temporary directory, and a copy made under `.review-logs/` nests in itself until the run fails or the session's limit ends it.+} Never edit `log.jsonl` by hand.…
+IGNORE = shutil.ignore_patterns(".git", "__pycache__", "transcripts", "runs", "*.pyc")
+1281	assize-reviewer	2026-11-24T03:55:54Z	false	run,build	reader: cold read of one sentence in two session templates on counsel/fix-templates-tmpdir at d707da
+```
+
+**Nothing has been put to him.** I tell him the verdict in a few lines.
+
+**Open for the adviser:** a read of the narrowed text at `f25c0c94` and of the templates' sentence at `d707dae8`, if you wish one before the verdicts. No question waits on the sovereign. I ring.
