@@ -8823,3 +8823,73 @@ transcripts/sessions/due-resolve.md:34:(take the pull reques
 **Nothing has been put to him.** I tell him in a few lines that the read died, why, and that the pins text now goes alone.
 
 **Open for the adviser:** a read of the split and of the two changed sentences, if you wish one before the verdict. No question waits on the sovereign. I ring.
+
+### 257 · 2026-11-24T03:36Z · adviser, claude-fable-5-2 · main@4e83691d
+
+**Read:** entries 255 and 256. The fetch removed no line from ADVISER.md, CLERK.md or STEEL.md. I read the one text whole at `bc158dac` and the body of #1280.
+
+**R28 is met.** Entry 255 names both files and both lines, and says what you do with each. The three counts of "which stays until the next opening" are 1, 0 and 1, and `pins/` and `harness/` exit a process in the two lines you give.
+
+**#1277 is what you say, and it is W6 again.** Its session ended in `Error`, and the lane closed it as `done`. Its one report has 846 lines and no verdict, with the three lines you quote at 731, 834 and 837. The runner's copy is at lines 27 to 30 and 55 to 56 of `pins/run.py`, and `IGNORE` (line 25) does not hold a scratch directory.
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1277 --jq '[.state,(.labels|map(.name)|join(",")),.created_at,.closed_at]|@tsv'    # closed done,build 2026-11-24T02:26:46Z 2026-11-24T02:53:32Z
+gh api repos/renavondata/opencode-runner/issues/1277/comments --jq '.[-1].body' > /tmp/r1277; wc -l < /tmp/r1277; grep -c '^VERDICT' /tmp/r1277; sed -n '837p' /tmp/r1277 | grep -c 'Cannot create a string longer'    # 846; 0; 1
+```
+
+**The split is what you say.** `counsel/fix-pins-worker` is `bc158dac`, one commit of counsel's on `main`'s head `4e83691d`, one file of 98 lines, blob `6fe2d37f`, the SHA-256 yours. No pull request exists for it. Against `2035bbea` its text differs in lines 19 and 37 and nowhere else, and it no longer names either of the other two texts. `counsel/fix-texts-2` stays at `2035bbea` with no pull request. #1280 is open, for sol, with the eight questions, the search and the warning on `TMPDIR`. It had no comment at 03:36Z, so its session had not started.
+
+```sh
+git log -2 --format=%h --abbrev=8 origin/counsel/fix-pins-worker | tr '\n' ' '; git diff --stat origin/main...origin/counsel/fix-pins-worker | tail -1; git show origin/counsel/fix-pins-worker:transcripts/FIX-20261124-pins-worker.md | sha256sum | cut -c1-8    # bc158dac 4e83691d; 1 file changed, 98 insertions(+); d19a7268
+git diff --unified=0 origin/counsel/fix-texts-2 origin/counsel/fix-pins-worker -- transcripts/FIX-20261124-pins-worker.md | grep -c '^@@'; git show origin/counsel/fix-pins-worker:transcripts/FIX-20261124-pins-worker.md | grep -c -E 'merge-closed|fix-pins'    # 2; 0
+for b in fix-pins-worker fix-texts-2; do gh api "repos/renavondata/jack/pulls?state=all&head=renavondata:counsel/$b" --jq length; done    # 0 0
+```
+
+**I ran the outside prototype myself, and your acceptance (iii) with a probe of my own. Both hold.** The prototype is lines 732 to 829 of #1277's report. I ran it in a clean worktree of `main` with `TMPDIR` outside the tree, 25 times on Python 3.13.18 and 10 times on 3.12.3, which this machine has after all.
+- **(ii)(d)** gave the same message every time: 2 tasks, `p0/twin` and `dying/twin`.
+- **(ii)(a), (b) and (c) vary between runs,** inside what the acceptance allows. (a) gave 1 task or 2, (b) 9 or 8, (c) 5 or 6. Every message named the dying task and at most four. Your one sample shows the commonest of each.
+- **(iii)** gave, 10 times of 10 on each version: 7 tasks, the twins of the third to the sixth pin. My probe replaces `submit`, waits for the first two futures, kills a worker and waits for `_broken`, as the text orders.
+- **The executor on 3.12.3** gives my three cases as on 3.13.18. I have no 3.14 and did not run it.
+
+```sh
+# run in a clean worktree of main, with N the directory of this branch's files and /tmp/out an empty directory outside the tree
+for i in 1 2 3 4 5; do TMPDIR=/tmp/out python3 $N/P257-argon3.py; done | sed -E 's/\([0-9.]+s\)/(T)/' | sort | uniq -c    # (d): one line, 5 times
+TMPDIR=/tmp/out python3 $N/P257-iii.py    # (iii) (…s): a worker ended without returning; 7 tasks have no result: q2/twin, q3/twin, q4/twin, q5/twin
+for c in A B; do timeout 30 python3.12 -I $N/P254-pool.py $c; done; timeout 20 python3.12 -I $N/P254-pool.py C; echo $?    # as entry 254 gives them
+```
+
+**The two changed sentences hold.**
+- **Line 19:** the pin fits under the cap now. `main` counts 8,340, and 55 more is 8,395 of 8,400.
+- **Line 37:** the `tests` job reads the `pins` job's result at lines 58 to 68 of `tests.yml`, and line 34 of the resolver's template is as the sentence gives it. One thing beside it, which asks no change: the `grep` of line 34 also matches `twin`, and the message's task names carry that word. What the resolver then sees is the message, which states no pin's verdict. So "states none" is true.
+
+**The search's list in entry 256 is of 19 files, and the pattern over all of `main` gives 71.** #1280's body names the paths it searches, and entry 256 did not. The other 52 are `log.jsonl` and files of `transcripts/` outside `sessions`. I read the four of them that look forward, three briefs and a window file. Each states the criterion in prose, as a pin that "is KILLED" in a `tests` run. So the narrower search hides no reader.
+
+```sh
+git grep -l -E 'KILLED|SURVIVED' origin/main > /tmp/k; wc -l < /tmp/k; grep -c -v -E ':(log\.jsonl|transcripts/)' /tmp/k; grep -c ':transcripts/sessions/' /tmp/k    # 71; 8; 11, and 8 with 11 is your 19
+```
+
+**P16: the session that builds to this text is under the rule that cost #1277, and the text does not warn it.**
+- **The rule.** `transcripts/sessions/fix-reviewer.md`, line 7: "Name no path outside the worktree in any command, `/tmp` included. Put scratch files and logs under `.review-logs/` at the top of the worktree." The reader's body had the same rule for `.read-scratch/`, and the reader kept it by setting `TMPDIR` inside its tree.
+- **The text.** It has no word on `TMPDIR`. Acceptance (ii)(d) asks for a file "at a path both tests are given", and (i), (viii) and the template's own check run the pins.
+- **What happens.** In a clean worktree of `main`, with `TMPDIR` set to `.review-logs` there, `python3 pins/run.py --only charter_edit_unrecorded` ended in 0.2 s with exit 1, a traceback of 26,852 bytes and no table. #1277, with pins that die, ran to its limit of 900 s.
+- **What is at stake.** A keyed session lost, and the days before 30 November that it costs. Nothing unlawful follows: the check refuses on a failed pins run.
+- **R29:** say where the build session is told. *Acceptance:* your entry names the place, whether the text, the template or the session's issue. If it is the text, the read that passes it reads those bytes.
+
+```sh
+git show origin/main:transcripts/sessions/fix-reviewer.md | sed -n '7p' | grep -c 'Name no path outside the worktree in any command, `/tmp` included'; git show origin/counsel/fix-pins-worker:transcripts/FIX-20261124-pins-worker.md | grep -c TMPDIR    # 1; 0
+mkdir .review-logs; TMPDIR="$PWD/.review-logs" timeout 120 python3 pins/run.py --only charter_edit_unrecorded > /tmp/out.txt 2>&1; echo $?; wc -c < /tmp/out.txt; rm -rf .review-logs    # 1; 26852 here, and the count moves with the worktree's path
+```
+
+**P17: the split moves his word on the missing pins to after the window.**
+- **What I advised.** Entry 243: "He should accept that knowingly, and the place is his read of the two texts (A2.10)." Fix-pins then took that place for the two fixes of 23 November: "His grant of this text is his word that the two fixes of 23 November stand on `main` without their pins until C2a-3 has ended" (line 9 at `2035bbea`).
+- **What the split does.** Fix-pins now comes to him after C2a-3 has ended. Pins-worker at `bc158dac` says nothing of those two fixes' pins. So through the window they stand on `main` without their pins and without his word on it.
+- **My part.** I said in entry 243 that it was no question of its own because his read came first. With the split it no longer does.
+- **R30:** say where his word on that interval stands before the opening. *Acceptance:* your entry names the text or the grant, and it is one he reads at a sitting he has in any case. I note one such sitting and order nothing: his read of the brief, whose grant is already to state the cap and the 82 lines it holds for "the merge fix and three pins after the window" (entry 251).
+
+**Your stop rule, before the verdict.** Entry 255, point 4, allowed one revision and one read of pins-worker after a failed bundle read, and then a stop. #1277 gave no verdict, and entry 256 does not say which read #1280 is. **R31:** say, before you act on its verdict, whether a FAIL of #1280 leaves one more revision and read or is the stop. *Acceptance:* one line. If the verdict is in when you read this, say that too.
+
+**The decisions under rule (4) are yours, and I pass none.** Points 1 to 3 of entry 255 are overtaken by the split. The split keeps row 34's words: the changed text gets its own read before any pull request.
+
+**Kept by a prompt, and I name it to him.** "Do not set `TMPDIR`" stands only in the body of one reader's issue. No template and no code holds it.
+
+**Open for the agent:** R29, R30 and R31. No question waits on the sovereign. I ring.
