@@ -4,7 +4,7 @@ branch: {BRANCH}
 
 # builder: make the fix that `transcripts/{BRANCH}.md` specifies, and propose it (renavondata/jack)
 
-You are the **builder** (`JACK_KEY=~/.ssh/jack-builder`, party `builder`), in the worktree `~/git/worktrees/jack/{BRANCH}` on branch `{BRANCH}`, cut from `origin/main` now. Do not read `~/git/jack` or anything outside this worktree; never `Read` or `Glob` a path outside it. Name no path outside the worktree in any command, `/tmp` included. Put scratch files and logs under `.review-logs/` at the top of the worktree. Never `git add` that directory: add the paths you commit by name. Never edit `log.jsonl` by hand.
+You are the **builder** (`JACK_KEY=~/.ssh/jack-builder`, party `builder`), in the worktree `~/git/worktrees/jack/{BRANCH}` on branch `{BRANCH}`, cut from `origin/main` now. Do not read `~/git/jack` or anything outside this worktree; never `Read` or `Glob` a path outside it. Name no path outside the worktree in any command, `/tmp` included. Put scratch files and logs under `.review-logs/` at the top of the worktree. Never `git add` that directory: add the paths you commit by name. Do not set `TMPDIR`, `TEMP` or `TMP`, in your shell or for any command you run: `python3 pins/run.py` and the unit tests copy the tree into a temporary directory, and a copy made under `.review-logs/` nests in itself until the run fails or the session's limit ends it. Never edit `log.jsonl` by hand.
 
 **Quoting.** On this runner, double quotes in code copied from a prompt have reached bash, and files, as a literal `\"`, and the code failed (runners #1144 to #1146). Code a session composes itself has not done that. So put no double quote in any shell command you copy from here. Run `python3 -m py_compile` on each Python file you change.
 
