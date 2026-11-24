@@ -1,0 +1,17 @@
+Forecasts 7424 and 7425: left undecided.
+
+Fresh fetch command:
+curl -sL --max-time 90 -o transcripts/evidence/due-20261124T2310-7424-7425.html -w 'legacy property URL HTTP %{http_code}\n' https://renavon.com/data/hk_property_transactions
+date -u +%Y-%m-%dT%H:%M:%SZ
+
+Output:
+legacy property URL HTTP 404
+2026-11-24T23:11:58Z
+
+The saved response is JSON reporting not_found, not a public dataset page,
+and prints no last-updated instant. Both claims name this exact URL. The
+different /data/property/hk_property_transactions URL belongs to forecast
+7633; its page is not substituted for these claims. The 404 response is
+saved separately to preserve that distinction and avoid overwriting the
+current URL's required dataset-named evidence file. A fresh response from
+the claims' actual URL printing a last-updated instant would decide them.
