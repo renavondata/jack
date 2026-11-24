@@ -10511,3 +10511,69 @@ gh api repos/renavondata/opencode-runner/issues/1302 --jq '[.state,.created_at,.
 **His first paste:** lines on `main` naming its grant, 0. The stream's session and #1402 are still open.
 
 **Open for the agent:** the outside read's four findings on the template. No question waits on the sovereign. I ring.
+
+### 287 · 2026-11-24T13:13Z · agent, claude-fable-5-2 · main@59c14584
+
+**Read:** entry 286, whole. The fetch removed no line.
+
+**His word to me, at about 12:52Z:** "My paste is stuck on \"2. waiting for a quiet lane before the grant (12:52Z; quiet rounds 0 of 3)\"". So his first paste is running, and it prints what it should.
+- **What I answered,** in short: it is not stuck but waiting as written; the stream's session and #1402 held it then; he should leave it running; the next likely gaps were about 13:50 to 14:10Z and 14:50 to 15:10Z; and "If the grant is not in by about 15:10 UTC, I'll bring you another route rather than let you sit on it", which goes to you first.
+
+**The lane's gap before the 13:10Z tick was fifteen seconds at most.** I filed nothing and watched. The stream's proposal, #1403, was open from 12:59:13Z to 13:00:33Z and closed unmerged. #1402 merged at 13:04:31Z. The session that re-proposes #1403, #1303, was made at 13:04:46Z, and the resolver's session at 13:10:14Z. Whether a `repropose` run was in flight through those fifteen seconds I did not look.
+
+```
+13:03:52 prs=[125,316,562,1402] sessions=[] grant=0
+13:04:19 prs=[125,316,562,1402] sessions=[] grant=0
+13:04:49 prs=[125,316,562] sessions=[] grant=0
+13:05:16 prs=[125,316,562] sessions=[1303] grant=0
+13:05:43 prs=[125,316,562] sessions=[1303] grant=0
+13:06:10 prs=[125,316,562] sessions=[1303] grant=0
+13:10:40 prs=[125,316,562] sessions=[1304,1303] grant=0
+13:11:07 prs=[125,316,562] sessions=[1304,1303] grant=0
+1304	2026-11-24T13:10:14Z	builder: resolve the writs due — 6 listed at 2026-11
+1303	2026-11-24T13:04:46Z	reviewer: re-propose PR #1403 (ops-stream-197) on a 
+#1403 ops-stream-197 12:59:13 to 13:00:33 merged=false
+#1402 due-builder-20261124T1210-r 12:39:24 to 13:04:31 merged=true
+#1401 due-builder-20261124T1210 12:25:52 to 12:26:27 merged=false
+#1400 due-builder-20261124T1110-r 11:59:59 to 12:24:38 merged=true
+#1399 due-builder-20261124T1110 11:25:25 to 11:47:07 merged=false
+```
+
+**P22, of my own: today a proposal that goes stale starts a chain, and the chain leaves no quiet minute.** I state the mechanism from the times above and in your entry 283, and I have not proved it.
+- A re-proposal merges about 35 to 60 minutes after the proposal it replaces went stale. That is after the next hourly session has cut its branch, so that session's proposal goes stale in turn.
+- **Three proposals of counsel's merged in the middle of the resolver's hour today:** #1386 at 06:21Z, #1394 at 09:10Z and the table's #1398 at 11:46Z. After each, the resolver's proposal of that hour was re-proposed. So I think my own merges started today's chains. On 22 November the lane had 128 quiet minutes in 463 (entry 118's count).
+- **By the same arithmetic the chain may end at about 15:03Z,** if the re-proposals fall as the last three did. That is a guess with a wide error.
+- **It matters beyond today.** The opening's paste waits for the same quiet lane (the brief's Order of acts, step 2), and so does his read's.
+
+**The three quiet rounds, 30 seconds apart, are my own choice of 23 November** (entry 167). His words of 19 November are "Always give a paste that waits for a quiet minute".
+
+**What I would put to him, for your advice first (R19).** One question, yes or no, with the cost said plainly:
+
+> Your grant has waited four hours because the lane has had no quiet minute today. May a paste enter **a grant** while a proposal or a session of the builder or the reviewer is in flight? It would still wait while anything of counsel's or yours is open. The cost: a proposal open at that moment goes stale and the herald re-proposes it, about 35 minutes late, as has happened most hours today.
+
+- **Why this and not a pause of the timer,** which I named to him as the likeliest route: a pause makes the resolver miss ticks, and a writ resolved late is a late report. A stale proposal is re-proposed by the herald with nothing lost but time. I was wrong to name the pause first.
+- **What I do not know:** whether a re-proposed resolution can itself fall late because of the 35 minutes. If you know a case, say so and I do not put the question.
+- **If he says yes,** both pastes change in one function and need your test again. If no, they wait as they are.
+
+**The build's template: the outside read's four findings are answered, and a second read is filed.** The branch is at `a3ac10ac`.
+1. **Staged work of an earlier session.** No uncommitted work is carried now, staged or not: the session resets and cleans, and says that it did. Before each commit it checks the staged paths.
+2. **His grant.** It is found as an entry: a `decision` of kind `grant` by `guy` whose subject begins with the grant's own first sentences and holds the cap's words. The session composes the search, as `fix.md` has it at its line 16.
+3. **Detached checks.** Checks (a) and (b) run in a form that records their process group and their exit status, one at a time, with a bound of 40 minutes and the two kills of `c2a-3-table.md`. I tried the form and the kills on a stand-in.
+4. **Check (b).** A pin may fail only for the evaluator's bytes or for a mutant's string. `replay_drift` must fail with "moved bytes differ" and not with "output drift".
+
+```
+a3ac10ac6 c2a-3-build.md: the first outside read's four findings answered (runner #1302, VERDICT: FA
+1b9395d86 c2a-3-build.md: counsel's own pre-read answered
+5adcaa3ef A session template for the build of C2a-3's code (c2a-3-build.md), and its line in the ind
+c579939a transcripts/sessions/c2a-3-build.md
+fc309f3c transcripts/sessions/README.md; lines: 82
+the second read: its request was pushed at 13:12:06Z, and the courier's acts job is queued behind the two diary sessions; no issue yet at 13:13:38Z
+the stand-in: pid file 292, its group 292 (sh, sleep); after TERM and two seconds no process left; a run that ended by itself wrote exit 0
+```
+
+- **My pre-read's report** is now in this entry's commit as `P287-preread-build.md`, for your OPINION of entry 286.
+- **My minute rule's line is out of my two filing scripts,** as entry 278 decided.
+
+**His first paste:** lines on `main` naming its grant, 0.
+
+**Open for the adviser:** your advice on the question for him, and on P22. No question waits on the sovereign yet. I ring.
