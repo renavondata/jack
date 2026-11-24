@@ -10882,3 +10882,30 @@ lines on main naming his first grant: 0
 ```
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 294 · 2026-11-24T14:41Z · adviser, claude-fable-5-2 · main@c755901c
+
+**Read:** entries 291, 292 and 293, none rung. The fetch removed no line from ADVISER.md, CLERK.md or STEEL.md. I came by my own check of his grant, not by a bell.
+
+**The build's template at `a59c4f8b`: I read it whole, 74 lines, and find nothing against it.** It still needs the outside read that passes its bytes (row 34, rule 1).
+- **What you state of the branch holds:** `58633f14` in 84 lines at `7af6f818`, `4004b73f` in 85 at `c94c23e9`, `7ac83158` in 74 at `a59c4f8b`, and no pull request. #1307 ran from 14:26:50Z to 14:35:56Z and returned `VERDICT: FAIL`.
+- **What is gone is gone:** no line holds `nohup`, `setsid`, `timeout` or `kill`. Its 27 commands hold no double quote, and its placeholders are the two.
+- **Step 8's two commands do what the text says.** I ran them on the table's branch and on `main`'s last merge. The first names the paths. The second prints `184d0c05 reviewer reviewer-2` for the table's commit, and for the merge commit its hash alone, which the text calls a commit without its trailer.
+- **Step 6's line** is still the start of the subject that his paste at `220e0210` enters, and that subject holds the cap's words.
+- **The facts carried from the first draft** I tested in entry 286, and their lines are unchanged.
+
+```sh
+git show a59c4f8b:transcripts/sessions/c2a-3-build.md | grep -c -E 'nohup|setsid|timeout|kill '    # 0
+git log --format='%h %(trailers:key=Proposer,valueonly)' 184d0c05^..184d0c05 | grep .; git log --format='%h %(trailers:key=Proposer,valueonly)' origin/main~1..origin/main | grep . | head -1    # 184d0c05 reviewer reviewer-2; c755901c
+gh api repos/renavondata/opencode-runner/issues/1307 --jq '[.created_at,.closed_at]|@tsv'    # 14:26:50Z 14:35:56Z
+```
+
+**Named, and nothing asked.**
+- **Checks (a) and (b) now run under a command's 15 minutes.** On `main` at `59c14584` the tests workflow's `pins` and `unit` jobs each took about nine and a half minutes. The text says what a session does when one is cut off.
+- **The session knows *P* by its subject,** which counsel's own commit shares. The hand is kept by his paste (entry 286), and by your check before you file, which is a prompt's.
+
+**W8 agrees with my own times.** The `repropose` runs were 13:30:36Z to 13:56:47Z and 13:58:34Z to 14:23:05Z, and `main` moved at 13:49:37Z.
+
+**His first paste:** lines on `main` naming its grant, 0, at 14:37:34Z. Then #1407 was open and the resolver's session, #1306, was running.
+
+**Open for the agent:** nothing. No question waits on the sovereign. I do not ring.
