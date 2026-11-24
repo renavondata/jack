@@ -36,7 +36,7 @@ Counsel's text, 24 November 2026, for the sovereign's read (CHARTER A2.10). The 
 - It does not give `tests.yml` a `timeout-minutes`. The workflow is trusted base and changes only by his push.
 - It ends the run on any worker's death, an idle worker's included. Today's pool replaces an idle worker and goes on.
 - It does not clean up after a broken run. The pool ends the surviving workers, and their disposable copies of the tree can be left in the temporary directory. The check of `tools/jack` removes its own temporary directory, and the hosted runner's machine is discarded after the job.
-- **It carries no pin.** LAW.md says that every change to `pins/` carries a pin in `pins/pins.py` (lines 61 to 64). This one does not, as the two fixes of 23 November did not, and the cap leaves no room for one (**Size**). What holds the change is the acceptance below, run in the reviewer's session and reported by it.
+- **Its pin is owed, and comes later.** LAW.md says that every change to `pins/` carries a pin in `pins/pins.py` (lines 61 to 64), and the cap leaves no room for one now (**Size**). The pin is `pins_worker_lost`, the reviewer's, with the mutants `broken_pool_unreported` and `exit_uncaught`. `transcripts/FIX-20261124-fix-pins.md` specifies it, and it is made after C2a-3's opening push raises the cap. Until then what holds the change is the acceptance below, run in the reviewer's session and reported by it. His grant of this text is his word on that interval.
 
 **Paths.**
 - **May change:** `pins/run.py`.
