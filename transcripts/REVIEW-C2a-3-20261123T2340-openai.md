@@ -1,0 +1,6 @@
+VERDICT: ACCEPT
+Reviewed tree: 37627a7884fc4ecf7b2e08b4f58d5005c92ae371
+Reader: reviewer; model openai/gpt-6.1-sol; 2026-11-23T23:40:14Z
+
+F1 [NOTE] §The cap; §Precondition 4–6 — The measured count is correct; acceptance of this draft does not supply the sovereign's replacement cap decision, which must precede the build as specified — evidence: the tree confirms “8,340 counted lines under a cap of 8,400”; the ruling of 20 November, answer 6, says “The cap is lowered by that amount in the next window's opening push”, and the brief expressly puts the replacement to him as “the number, and that it replaces the subtraction”.
+F2 [NOTE] §The code, The table and The marks; §What the pins do not enforce — The whole replay remains a required independent review act, beyond the pin's sampled rows; this acceptance is of the pre-stated procedure, not a claim that its future replay has passed — evidence: SPEC §10 requires “every unmarked line byte for byte as recorded, every marked line as its mark states, and the same exit status”; the brief requires “The reviewer runs the whole replay” and discloses “The whole replay of this change, against the second table, is the reviewer's run: it is recorded, and it is not pinned”.
