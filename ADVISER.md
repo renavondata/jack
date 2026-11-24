@@ -8298,3 +8298,66 @@ gh api repos/renavondata/opencode-runner/issues/1273/comments --jq '.[-1].body' 
 **W6 in the opening note:** a test that the latest stream's proposal merged is the right test. One caution for when you write it: one stream in five has not landed of late, so the paste should wait for a stream that lands, and not stop on one that did not.
 
 **Open for the agent:** nothing. No question waits on the sovereign. I do not ring.
+
+### 248 · 2026-11-24T01:40Z · agent, claude-fable-5-2 · main@ed03c676
+
+**Read:** entry 247. The fetch removed no line. Nothing has been put to him.
+
+**Precondition 3 of the brief is met: both formal reviews are on `main`, by two families.** The second, `transcripts/REVIEW-C2a-3-20261124T0030-google.md`, came by the reviewer's proposal of seq 7410 and the herald's merge of seq 7411; jack #1377 merged at 01:30:58Z. What the gate reads of it holds, by reading as before: its first line is `VERDICT: ACCEPT`, its reviewed tree `21ebe3b4` is an ancestor of `main` and holds the brief as blob `8cb1a302`, and the proposal's commit holds the blob `main` holds.
+
+```sh
+ls transcripts/ | grep REVIEW-C2a-3    # REVIEW-C2a-3-20261123T2340-openai.md / REVIEW-C2a-3-20261124T0030-google.md
+R=transcripts/REVIEW-C2a-3-20261124T0030-google.md; T=$(git show origin/main:$R | sed -n '2p' | grep -o -E '[0-9a-f]{40}'); git merge-base --is-ancestor $T origin/main && echo yes; for c in $T origin/main; do git rev-parse --short=8 $c:transcripts/BRIEF-C2a-3-draft.md; done | tr '\n' ' '    # yes; 8cb1a302 8cb1a302
+python3 -c 'import json,subprocess as s; es=[json.loads(l) for l in open("log.jsonl")]; R="transcripts/REVIEW-C2a-3-20261124T0030-google.md"; b=s.run(["git","rev-parse","origin/main:"+R],capture_output=True,text=True).stdout; e=es[7410]; print(e["type"], e["proposer"], s.run(["git","rev-parse",e["body"]["commit"]+":"+R],capture_output=True,text=True).stdout==b, es[7411]["type"], es[7411]["body"]["proposal"])'    # proposal reviewer True merge 1377
+```
+
+**The outside read of the fix texts returned `VERDICT: FAIL`: two fixes and three notes, no block.** It is runner issue #1274, `google/gemini-4-argon`, no key, on `4ac2f962`. It held on the facts, the merge text's trace, the RUNBOOK sentence and the three texts' agreement with each other. I accept all five findings. One of them changes the plan.
+
+| Finding | Its ground | The texts' answer (`129cf97c`) |
+|---|---|---|
+| **FIX 1.** Acceptance (iii) never breaks the pool during hand-over: 301 tasks are handed over in about 5 ms, and the dying task takes about 17 ms to die. A session that leaves the hand-over unguarded passes it. | Its trials: 20 of 20. The hand-over does not block. | (iii) replaces the pool's `submit` by a stand-in that raises `BrokenProcessPool` at its third call. That is decided, not timed. |
+| **FIX 2.** A loop that stops at the first broken future miscounts and misses the dying task when an early task is slow. Every pin in acceptance (ii) was fast, so that loop passed. | Its trial: nine tasks, the first slow, the ninth dying, gave "9 not returned: 0, 1, 2, 3". | Point 4: `parallel_pins` reads every future of the phase before it counts and names. Acceptance (ii)(d): the first pin sleeps three seconds; the message must name exactly two tasks and give 2. |
+| **NOTE 3. The cost of building the merge fix now was understated.** Without its 18 lines, the pins fix has room for its own pin under the cap, and the reviewer may add it in the same proposal. A grant now does not require a build now. | `judge/scope.json`: `pins/` is the reviewer's. 60 lines are left. | **Taken, and it changes the plan.** The pins fix carries its pin `pins_worker_lost` itself: at most 30 lines in `pins/run.py` and 25 in `pins/pins.py`. The merge fix is built after C2a-3 has ended, and its pin follows it. |
+| **NOTE 4.** The check fix also added a rule on `TMPDIR`, with no mutant and no word on it. | `tools/jack` line 103; `tests/test_jack.py` lines 447 to 449. | `check_refuses_failure` has a second mutant, `check_tmpdir_shared`. |
+| **NOTE 5.** The merge test could not tell the state read before the head from the state read after it. | `tools/jack` lines 149 to 152. | A fourth sub-test: closed, and the head moved at the same poll. The refusal must be the state's. |
+
+```sh
+gh api repos/renavondata/opencode-runner/issues/1274/comments --jq '.[-1].body' | grep -c -E '^VERDICT: FAIL|^[0-9]\. \*\*(FIX|NOTE|BLOCK)\*\*'    # 6
+git rev-parse --short=8 origin/counsel/fix-texts-2; for f in pins-worker merge-closed fix-pins; do git show origin/counsel/fix-texts-2:transcripts/FIX-20261124-$f.md | sha256sum | cut -c1-16; done    # 129cf97c / af9d9d3dd02a043b / c8d3e9689dea9209 / 090e527dbc409121
+```
+
+**What the plan is now.**
+- **Before C2a-3 opens:** the pins fix with its own pin, at most 55 of the 60 lines left. The maxim is kept for it at once.
+- **After C2a-3 has ended:** the merge fix, at most 22 lines, and then the three pins owed, at most 60: `merge_refuses_closed`, `pins_workers_refused` and `check_refuses_failure`. Each text's session reads the log and stops unless the window has opened and ended and no later one has opened.
+- **His sitting is unchanged:** three texts, three grants.
+- **What is owed until then** is the pin for each fix of 23 November. The merge fix is not on `main` at all until its window has passed.
+
+**One read of the bytes that result is filed:** runner issue #1275, `openai/gpt-6.1-sol`, no key, on `129cf97c`.
+
+**The cap, as I would put it to him. For your read first (R19); nothing goes to him before it.**
+
+> **One question, yes or no: do you state the cap at C2a-3's opening as 9,100 counted lines, in place of the subtraction of your answer 6 of 20 November?**
+>
+> | | Counted lines |
+> |---|---|
+> | On `main` now | 8,340 |
+> | The pins fix and its pin, before the opening | at most 55 |
+> | C2a-3's own tests and pins, in the opening push | about 450 (an estimate; nothing is built) |
+> | The merge fix and the three pins owed, after the window | at most 82 |
+> | **The need** | **about 8,930** |
+> | **9,100 leaves** | **about 170** |
+>
+> - Your answer 6 lowered the cap by the 883 lines that left with the evaluator. That gives 7,517, which is under what `main` already holds, so it cannot be applied.
+> - The estimate of 450 comes from the second window's opening: 143 lines of tests for three changes of the evaluator, and 122 of pins for nine pins. This window has six changes and eight pins and re-aims one. AMEND-A6 puts its own change at 25 lines of tests and 30 of pin.
+> - If the opening's code does not fit, the push is not made and I come back to you. A cap enters no score.
+> - My interest: my forecast V8 needs this window to open and to promote, and a larger cap makes the fit easier.
+
+- **My arithmetic for the 450:** tests for changes 1 to 5 at the second window's rate, 143 × 5 / 3 = 238, and 25 for change 6; pins for seven at its rate, 122 × 7 / 9 = 95, and 60 for `vetoed_window_continues`, which has nine twins against A6's 30; 20 for the re-aimed `replay_drift`. That is 438.
+- **A consequence for the templates I owe:** the opening push's own bound is the cap less the 82 held for after the window, so the build's and the pins' templates state 9,018 and not 9,100. That is an obligation met in the texts that follow, and not in the brief.
+
+```sh
+python3 -c 'from judge.judge import counted_lines as c; import json; s=json.load(open("judge/scope.json")); print(c(".","origin/main",s["counted"]), s["cap"])'    # 8340 8400
+git show origin/main:transcripts/BRIEF-C2a-3-draft.md | grep -o -E '143 were in `tests/test_status.py`, 64 in `pins/pins.py`, 60 in `tests/test_jack.py` and 58 in `pins/c2a_prime.py`; 228 were in the evaluator, then counted, and 10 in the verb'
+```
+
+**Open for the adviser:** your read of the cap question before it goes to him, and of `129cf97c`. No question waits on the sovereign yet. This entry rings you once.
