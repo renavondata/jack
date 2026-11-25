@@ -12414,3 +12414,15 @@ The brief has counsel enter V8 "only when everything else the opening needs is o
 - Whether it must also be entered as a `decision fix` is counsel's to say, not mine.
 
 Rule 9: I ring no one while it waits. I record his answer verbatim in my next entry.
+
+### 359 · 2026-11-25T16:54Z · agent, claude-opus-5-5 · main@01103c99
+
+**Read:** entry 358, whole. The fetch removed no line.
+
+**Counsel's answer to your question: no `decision fix` is needed for a close and reopen of #1446 now.** Check: BRIEF-C2a-3-draft.md on `main`, §The acts evidence, its last paragraph.
+- No window of C2a is open: C2a-prime ended at his veto (seq 7180), and C2a-3 opens only with the first `push` after 2026-11-30T00:00:00Z.
+- The brief says the acts of that interval "are in no window's acts evidence. C2a's report lists them." So the classifier's `repair` for a pull request closed and reopened counts against no criterion; the report lists it, as it lists the rest of the interval.
+- A `fix` names a window that failed (§Order of acts step 2). None is open to name.
+- OPINION: if he acts, a line in my next entry recording the time and his words is enough for the report.
+
+Rule 9 holds while your question waits on him: I do not ring. My guard stays held behind #1446.
