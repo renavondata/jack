@@ -8,6 +8,7 @@ exist yet (the second checker) is PENDING. A pin that cannot fail is a defect,
 so SURVIVED, STALE and TWIN FAILED fail the run; PENDING does not pass.
 """
 import argparse
+import concurrent.futures
 import multiprocessing
 import os
 import shutil
@@ -15,6 +16,7 @@ import sys
 import tempfile
 import traceback
 from collections import namedtuple
+from concurrent.futures.process import BrokenProcessPool
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pins import pins  # noqa: E402
@@ -22,6 +24,10 @@ from pins import pins  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 Result = namedtuple("Result", "pin mutant status detail")
 IGNORE = shutil.ignore_patterns(".git", "__pycache__", "transcripts", "runs", "*.pyc")
+
+
+class WorkerLost(Exception):
+    pass
 
 
 def disposable_copy(root, into):
@@ -47,7 +53,7 @@ def run_test(pin, root):
     try:
         pin.test(root)
         return True, ""
-    except Exception:  # any failure under a mutant is detection; on the twin it is a defect
+    except (Exception, SystemExit):  # any failure under a mutant is detection; on the twin it is a defect
         return False, traceback.format_exc(limit=2).strip().splitlines()[-1]
 
 
@@ -79,11 +85,29 @@ def run_task(indexes):
 def parallel_pins(pin_list, root, workers):
     active = [i for i, p in enumerate(pin_list)
               if all(os.path.exists(os.path.join(root, m.path)) for m in p.mutants)]
-    with multiprocessing.get_context("fork").Pool(workers, initializer=init_worker,
-                                                 initargs=(pin_list, root)) as pool:
-        twins = dict(zip(active, pool.map(run_task, [(i, None) for i in active], chunksize=1)))
+    with concurrent.futures.ProcessPoolExecutor(workers, mp_context=multiprocessing.get_context("fork"),
+                                               initializer=init_worker, initargs=(pin_list, root)) as pool:
+        def phase(tasks, name):
+            futures, results = {}, {}
+            try:
+                for task in tasks:
+                    futures[task] = pool.submit(run_task, task)
+            except BrokenProcessPool as exc:
+                broken = exc
+            for task, future in futures.items():
+                try:
+                    results[task] = future.result()
+                except BrokenProcessPool as exc:
+                    broken = exc
+            missing = [task for task in tasks if task not in results]
+            if missing:
+                names = [f"{pin_list[i].name}/{pin_list[i].mutants[j].name if j is not None else 'twin'}" for i, j in missing[:2 * workers]]
+                message = f"worker ended without returning; {name}: {len(missing)} tasks without a result: " + ", ".join(names)
+                raise WorkerLost(message) from broken
+            return results
+        twins = {i: result for (i, _), result in phase([(i, None) for i in active], "twins").items()}
         tasks = [(i, j) for i in active if twins[i][0] for j in range(len(pin_list[i].mutants))]
-        mutants = dict(zip(tasks, pool.map(run_task, tasks, chunksize=1)))
+        mutants = phase(tasks, "mutants")
     results = []
     for i, pin in enumerate(pin_list):
         if i not in twins:
@@ -140,7 +164,11 @@ def main(argv=None):
         print(f"invalid PINS_WORKERS {value!r}: expected a whole number of at least 1", file=sys.stderr)
         return 1
     selected = [p for p in pins.PINS if not a.only or p.name in a.only]
-    results = run_pins(selected, ROOT, workers)
+    try:
+        results = run_pins(selected, ROOT, workers)
+    except WorkerLost as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
     text = table(results)
     print(text)
     if a.transcript:

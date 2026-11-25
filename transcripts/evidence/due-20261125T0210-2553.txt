@@ -1,0 +1,17 @@
+Observed at 2026-11-25T02:11:42Z.
+Command: git rev-parse origin/main
+4d199aa4a3e67bc794437368800b27b808ee16a6
+
+Command: git show origin/main:log.jsonl | python3 -c 'import sys,json; promotes=[]; pushes=[]; last=None
+for line in sys.stdin:
+ e=json.loads(line); last=e
+ if e["type"]=="decision" and e["body"].get("kind")=="promote": promotes.append({k:e[k] for k in ["seq","ts","body"]})
+ if e["type"]=="push": pushes.append({k:e[k] for k in ["seq","ts"]})
+print("Promotion decisions:",json.dumps(promotes)); print("Push entries:",json.dumps(pushes)); print("Latest main entry:",json.dumps({k:last[k] for k in ["seq","ts","type"]})); print("C2a-prime promotion exists:",any(e["body"].get("subject")=="C2a-prime" for e in promotes)); print("C2b promotion exists:",any(e["body"].get("subject")=="C2b" for e in promotes))'
+Promotion decisions: [{"seq": 188, "ts": "2026-10-31T10:42:10Z", "body": {"kind": "promote", "subject": "C1a"}}, {"seq": 337, "ts": "2026-11-01T11:31:58Z", "body": {"kind": "promote", "subject": "C1b"}}]
+Push entries: [{"seq": 2, "ts": "2026-10-18T14:42:38Z"}, {"seq": 5, "ts": "2026-10-19T04:36:23Z"}, {"seq": 9, "ts": "2026-10-19T06:00:46Z"}, {"seq": 12, "ts": "2026-10-20T02:06:48Z"}, {"seq": 29, "ts": "2026-10-25T16:16:20Z"}, {"seq": 197, "ts": "2026-10-31T13:04:49Z"}, {"seq": 367, "ts": "2026-11-01T15:04:14Z"}, {"seq": 5564, "ts": "2026-11-17T12:50:50Z"}, {"seq": 7281, "ts": "2026-11-22T18:16:20Z"}, {"seq": 7283, "ts": "2026-11-23T00:03:40Z"}, {"seq": 7339, "ts": "2026-11-23T09:44:07Z"}]
+Latest main entry: {"seq": 7722, "ts": "2026-11-25T01:41:21Z", "type": "merge"}
+C2a-prime promotion exists: False
+C2b promotion exists: False
+
+Undecided: C2b's opening push is defined as the first push after decision promote C2a-prime. That promotion does not exist, so the opening instant and its 72-hour deadline have not been established. The forecast's resolves_by has passed, but its relative-time claim is not thereby false. A C2a-prime promotion and subsequent opening push, followed by either a timely C2b promotion or expiry of that opening's 72-hour period, would decide it.

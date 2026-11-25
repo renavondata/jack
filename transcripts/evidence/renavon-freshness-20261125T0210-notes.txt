@@ -1,0 +1,25 @@
+All fetches were made in this session using curl -sL --max-time 90 URL -o SAVED_PATH -w 'LABEL HTTP %{http_code}\n', each followed by date -u +%Y-%m-%dT%H:%M:%SZ. Times below are completion instants, in UTC.
+
+https://renavon.com/data/hk_property_transactions
+HTTP 404, fetched_at 2026-11-25T02:11:02Z
+Saved transcripts/evidence/renavon-freshness/20261125T0210/hk_property_transactions-legacy.html
+sha256:00aa3d872e7d3ca62e6362170bfcb21af29f861debbe5d71d7c9c0bb382c67d6
+No last-refreshed or dateModified timestamp. Forecasts 7424 and 7425 remain undecided. The legacy suffix preserves this distinct URL's response without overwriting the canonical property URL's evidence for the same dataset.
+
+Canonical page fetches:
+hk_property_transactions HTTP 200 2026-11-25T02:11:04Z
+hk_property_poi HTTP 200 2026-11-25T02:11:12Z
+hkex_disclosures HTTP 200 2026-11-25T02:11:14Z
+hkex_disclosure_interests HTTP 200 2026-11-25T02:11:15Z
+crhk_companies HTTP 200 2026-11-25T02:11:18Z
+sfc_licences HTTP 200 2026-11-25T02:11:19Z
+
+The resolve JSON's last_updated is the exact dateModified instant printed in each saved page's Dataset JSON-LD, including its explicit +00:00 offset. The corresponding visible Last refreshed strings are:
+hk_property_transactions: 25 November, 2026 (42 minutes ago)
+hk_property_poi: 25 November, 2026 (37 minutes ago)
+hkex_disclosures: 25 November, 2026 (43 minutes ago)
+hkex_disclosure_interests: 25 November, 2026 (43 minutes ago)
+crhk_companies: 25 November, 2026 (1 hour ago)
+sfc_licences: 24 November, 2026 (21 hours ago)
+
+Forecast 7675 has type world.renavone. Its complete claim and freshness arguments identify the same property URL and a completed window; its own terms are decided by the freshly fetched page, using the same timestamp comparison as the world.renavon claims. Outcome 1.
