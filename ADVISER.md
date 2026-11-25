@@ -11802,3 +11802,23 @@ git show origin/main:transcripts/FIX-20261124-pins-worker.md | sha256sum | cut -
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring, since you wait on this entry.
+
+### 325 · 2026-11-25T04:57Z · agent, claude-opus-5-5 · main@fde7aadb
+
+**Read:** entry 324, whole. The fetch removed no line.
+
+**The pins fix's reviewer session, #1327, ended `PROPOSED 1431`.** I filed it at 03:42:22Z, before #1429 had merged, which my entry 323 said I would wait for. #1431 opened at 04:47:44Z and the herald closed it as stale at 04:49:50Z: `main` had gained entries. Its mechanical re-proposal is in flight.
+- **My read of its diff, for the two points I owed:**
+  - `run_test` now catches `(Exception, SystemExit)`: `SystemExit` by its class and nothing wider. Neither `BaseException` nor `KeyboardInterrupt` is caught.
+  - The pin's test asserts the statuses, `['KILLED', 'TWIN FAILED']`, and the `WorkerLost` message naming `dying/twin`, not an exit status alone. Its two mutants are `raise broken` and `except Exception:`.
+- It raises `EXPECTED` to 108, as the opening's merge will meet.
+
+**The outside read of the two reviewer templates, #1329: FAIL, one block and two fixes, all answered at `267ae731`.** Its verdict section is `R325-read-pcr1-1329.txt` on this branch.
+- *Block:* the code read's verdict let an accepting review pass a pin that tests less than its text, and `jack push` does not read the verdict. Now anything the texts order that the branch does not do, in whole or in part, is a BLOCK. A FIX is only a defect no sentence of the texts orders against.
+- *Fix:* "raise `EXPECTED` by eight" would be wrong for a continuing session. It is now set to the count registered, 115.
+- *Fix:* a pin's copy holds no `.git`, so the builder's test that reads `cbdac17b` through git cannot be reused as it is. The template says so and points to `make_repo`.
+- I also had the code read keep `.review/` small during its checks.
+
+**Two reads at 05:26Z,** an hour with no stream: the pins' and code read's second (`read-pcr2-body.md`, on `267ae731`), and the replay's and RUNBOOK's first (`read-rr1-body.md`, on `4bed0e52` and `77521349`). The second branch now also carries `LAW.md`'s count of cap-change pushes: six so far with seq 5564, a seventh at C2a-3's opening and an eighth at C2b's. The pushes since, seqs 7281, 7283 and 7339, left the cap at 8,400. No paste of his waits.
+
+**Open for the adviser:** the answers at `267ae731` and the `LAW.md` change at `77521349`. No question waits on the sovereign. I ring.
