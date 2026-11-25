@@ -1,0 +1,59 @@
+VERDICT: FAIL
+
+Blob ids
+
+A — origin/counsel/c2a-3-replay-session, eb33aa93589bb09712da36cf53428594f06342d2:
+transcripts/sessions/c2a-3-replay.md: 55ee880f61d43e0970d8ec83fcfb7d6446108f30
+transcripts/sessions/README.md: aeac5d43767aab88a6b618717f6256ebb5751fba
+
+B — origin/counsel/c2a-3-runbook, 0863f7f07917b086eac3575fb4581ec4651bb4e5:
+RUNBOOK.md: f2d15d351f2db29d983a4bd869e77852746ff930
+transcripts/sessions/due-resolve.md: a4fca0b1255b2318613158873f31db76292212cc
+LAW.md: f432614539f920b64ac6457ad77379e4dac2c087
+
+Findings
+
+FIX — B, transcripts/sessions/due-resolve.md:74: the strict-before-I correction introduces an undeclared dispatcher-shaped token, {START}, in the Python singleton set. It matches the stipulated \{[A-Z]+\} pattern but is not one of this template’s placeholders. The corresponding expression on main was {START, END}, which did not match that pattern. A regex scan finds foreign tokens {START} and {T} in the revision, versus only {T} on main. This violates the stated dispatcher contract independently of the Python expression’s correctness.
+
+FIX — B, transcripts/sessions/due-resolve.md:74: the revised copied command still contains double quotes:
+instants = sorted({e["ts"] for e in es if START <= e["ts"] < END} | {START})
+The earlier quoting finding is therefore not fully answered. This is a changed computation line, and its e["ts"] expressions remain exposed to the reported literal-backslash corruption. Evidence: the branch diff’s added line 74 contains these double quotes. The new fixes computation and header at lines 69–72 use single quotes successfully.
+
+NOTE — B, transcripts/sessions/due-resolve.md:84: the inherited output f-string contains {T}, another token matching the dispatcher pattern outside the template’s placeholders. It already exists on main; this revision does not change that line.
+
+NOTE — B, transcripts/sessions/due-resolve.md:31–34, 42–46, 54–65, 73, 77, 80–85 and 92: older copied commands and computation lines retain double quotes. Line 34 also retains the copied command’s 2>/dev/null, which names a path outside the worktree. These are inherited issues, rather than newly introduced instructions. Line 7’s inherited log-entry search likewise contains double quotes.
+
+Checks of the earlier findings
+
+A’s publication rule at line 61 now explicitly discards completed chain rows beyond the first unfinished row. That answers out-of-order completion; queue order alone at line 49 would not have sufficed.
+
+A’s line 33 now checks existing table records against the expected exit and output digest without rerunning them. Its digest convention is compatible across sessions.
+
+A’s line 51 now expressly permits normal completion, watchdog completion and a failed row as three distinct driver endings. Finishing every row no longer reads as an unexplained stop.
+
+B’s line 49 explicitly grants the crossing computation 3,600,000 ms and specifies leaving the claim undecided on timeout. Line 74 excludes I itself for the crossing claims described here. Those two corrections hold; the same line introduces the dispatcher token and retains the quoting issue reported above.
+
+Six questions
+
+1. Facts: checked evaluator/value/table hashes, T, row counts, marked-row count, chain logs, function names, review prerequisites and cap history; these held. The table has 773 rows, 38 marked; the fetched main has 26 subsequent first-parent commits, all beyond seq 7180.
+
+2. Brief and code: read Precondition 9 whole, the late-report rule, change 6 and the changed evaluator; the substantive RUNBOOK wording, fixes argument and permitted spot-check intervals held. window_fixes returned {5563} without unverified entries, and returned {5563} again on the prefix ending at that fix.
+
+3. Record and continuation: the defined keys, digest bytes, kind/index mapping, duplicate checks and contiguous chain publication held on inspection. Oldest-first indexing is stable under ordinary first-parent extension, and incomplete work is expressly permitted.
+
+4. Executability and resources: the atomic-row, watchdog, group-stop, scheduling, disk and timeout instructions were checked. A small nohup/setsid probe under the available sh produced PID = process-group ID, and negative-group TERM succeeded. Twelve tracked checkouts total approximately 9.3 GiB, within the stated free-space floor. Exact dash execution was unavailable.
+
+5. Quoting and dispatcher: A held: only {MODEL}/{BRANCH}, no double quotes in copied commands, and no copied command naming an outside path. B failed at line 74; inherited quote, {T} and /dev/null issues are noted above.
+
+6. Other readers: checked main’s session index, builder/pins/code-review templates, README, RUNBOOK and the brief’s deliverables. The index addition and RUNBOOK push-branch exception cover the new replay procedure; no further change-induced contradiction or missing reference was found.
+
+What I did not check
+
+I did not run the full replay, any evaluator CLI row, the full crossing table, the test suite, any pin, any tools/jack verb or any gh command. I did not independently retrieve runner logs to verify the historical timing figures or dispatcher implementation, and did not execute the newly authored driver a future session must supply.
+
+The fetched opening branch had advanced to 719d407def2f9eb04e394322830d4e56e2b12be5, including pins and an accepting code read; its evaluator still has the template’s stated SHA-256.
+
+No tracked files were changed. No scratch directory was created.
+exit=0
+```
+

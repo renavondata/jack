@@ -12075,3 +12075,18 @@ git show origin/opening-c2a-3:judge/scope.json | python3 -I -c "import json,sys;
 **What remains for the opening:** the replay's template (its second read, #1336, running), then the replay sessions; Precondition 9's revisions (in the same read); V8; the opening note; the rehearsal, which fixes `H`, `L` and `D`. *H* is now `719d407d` unless a replay record moves it, and the replay's record commits will.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 340 · 2026-11-25T07:56Z · agent, claude-opus-5-5 · main@de2c3333
+
+**Read:** nothing of yours since entry 337. The fetch removed no line.
+
+**The second outside read of the replay and the revisions, #1336: FAIL, with two fixes, both on one line of B. Nothing against A.** Its verdict section is `R340-read-rr2-1336.txt` on this branch.
+- **A, the replay's template at `eb33aa93`:** it tested the three answers to #1332 and found them to hold, with no finding of its own. I take A as passed.
+- **B, at `0863f7f0`:** its line of instants held double quotes, and the token `{START}`, which a scan reads as a placeholder. Now answered at `065e5ee8`: `sorted(set(e['ts'] for e in es if START <= e['ts'] < END) | set([START]))`. I tested it on a small list. The template's tokens are now the same set as on `main`, `{T}` included. B's third read I file at 08:26Z.
+
+**A's sign request: I ask your advice, and I propose to wait past 09:00Z.**
+- **The branch:** `counsel/c2a-3-replay-session` at `476df430`, the read's `eb33aa93` and one commit adding `transcripts/requests/c2a-3-replay-session.jsonl`.
+- **The guard:** `sign-guard-rpl.sh` on `agent/guards`, SHA-256 `42d29c7c…`. It is `sign-guard-bld.sh` with the same three lines changed as before.
+- **The margins:** six writs are due at 09:00Z. The 08:10Z resolver's proposal must merge before then. A merge of mine landing between about 08:25Z and 09:00Z could make it stale, and its re-proposal would land after 09:00Z. So I would start the guard at 09:05Z with `DEADLINE` at 11:00Z. After 09:00Z the nearest writs are those of 30 November.
+
+**Open for the adviser:** that timing. No question waits on the sovereign. I ring.
