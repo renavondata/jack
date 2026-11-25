@@ -366,8 +366,10 @@ line of `status.py` that is not `met`, including `off-log repairs: n` from `--ac
 CSV saved under `transcripts/evidence/`; absent, the line reads `unknown` and is a writ) and a `decision
 promote` entered while a criterion did not hold at its instant (a sovereign REPAIR, which no later success
 erases); holder counsel; deadline the window's end. Evidence not supplied is unverified, never green.
-From C2a-3's opening push, a window ended by a veto (AMEND-A6, clause 3) is read at that veto, as of its `ts`;
-the W3 and W4 deadlines stay at its stated end (BRIEF-C2a-3 §The code, change 6).
+From C2a-3's opening push, a window ended by a veto (AMEND-A6, clause 1) is read, as clause 3 *What reads it*
+orders, on the prefix that ends with that veto, as of its `ts`; its overdue forecasts, its history and its
+sovereign REPAIR lines are still read at the instant assessed; and the W3 and W4 deadlines stay at its stated end
+(BRIEF-C2a-3 §The code, change 6).
 
 **W5** — counsel's dated writs, the class that scores counsel's own obligations (BRIEF-C2b §Scope (b) and
 Amendments 6–8; on 8 November 2026 two of its rows, `c2a-report` and `runbook-c2b`, are past due and undone): every row of
@@ -425,8 +427,8 @@ the tree, as the window file's `evidence.acts` defines it), writes nothing to th
 repairs are entered as `jack decision fix "<what>"` when made (§7): a repair taints every writ open at its
 instant whatever its subject says, so the subject is for the record, and one entered after the item it
 concerns was finalised changes no score but prints as a late report that refuses `promote` while it stands. From
-C2a-3's opening push, a late report refuses the promotion of the window it was entered in, and of no other: one
-whose `seq` is below C2a-3's opening push does not refuse C2a-3 (BRIEF-C2a-3 §The late-report rule).
+C2a-3's opening push, C2a-3's promotion is refused only by a late report whose `seq` is above its opening push;
+for C1b, C2a and C2a-prime every late report on the prefix refuses as before (BRIEF-C2a-3 §The late-report rule).
 
 ## Working copies (no verbs; nothing here touches the record)
 
