@@ -1,0 +1,857 @@
+```
+his `grant`, which names this file's SHA-256, the table's and the patched `SPEC.md`'s, gives the one mark and states the cap (§Precondition 4 and 5). Then it makes the builder's branch from `main` with counsel's patch as its first commit, applied by his hand, and publishes it (§Precondition 6), as he published the move's branch with his cherry-pick of counsel's text. The builder's session is then filed on that commit, and builds the evaluator's change and its tests. The reviewer's pins, the replay and the code read follow. Counsel enters V8.
+ 2. **The sovereign's paste.** After 2026-11-30T00:00:00Z, with no `push` inside C2a-prime's window (§Precondition 1) and none after that instant, the sovereign makes one paste:
+ 
+    ```
+@@ -205,12 +216,15 @@ Between C2a-prime's end, at his veto of seq 7180 (2026-11-22T11:44:05Z), and C2a
+ 
+    Then the push branch is brought up to `main` by a merge commit with the sovereign's `Proposer:` trailer, and the opening `push` follows at once (`jack push <branch> --opens C2a-3 --review <the push branch's worktree>/transcripts/REVIEW-C2a-3-code.md`). Counsel writes the exact commands into the opening note before that day.
+ 
+-   The paste waits, and does not stop while what it waits for can still come. His words of 19 November: "Always give a paste that waits for a quiet minute". It enters nothing until three things hold together.
+-   - **2026-11-30T00:00:00Z has passed.** The paste reads the clock for this. A `fix` with `ts` at or before that instant is typed a repair, and it bars every later `fix` that names the window (`window_fixes`, lines 380 to 384), so a paste run early would spoil the opening for good.
++   The paste waits, and does not stop while what it waits for can still come. His words of 19 November: "Always give a paste that waits for a quiet minute". It enters nothing until four things hold together.
++   - **2026-11-30T00:00:00Z has passed.** The paste reads the clock for this. A `fix` with `ts` at or before that instant is typed a repair, and it bars every later `fix` that names the window (`window_fixes`, lines 380 to 384). The window's failure would then have no `fix` typed a decision, and the question would go to him (§Stop and report if).
+    - **The lane is quiet:** no pull request is open on `renavondata/jack` but the three that stand open (#125, #316, #562), no session or re-proposal is in flight, and no `resolution` entry follows the last `merge` on `main`'s log (the `fix` is an entry of his, and clears what is pending as a veto would).
+-   - **No tick of the diary's timer is due before the push can land.** The resolver ticks at ten past every hour and the streams at twenty past every third hour, and a tick that has not yet fired is not in flight. The opening note states the time from `fix` to push as the rehearsal measures it; in the one such paste so far it was six minutes and twenty-one seconds (seqs 5563 and 5564). The paste reads the clock for this too.
++   - **No tick of the diary's timer is due before the push can land.** The paste reads the timer's next elapse on steel, and trusts no sentence for it. A tick that has not yet fired is not in flight, and a writ finalised between the `fix` and the push keeps the `fix`'s taint (§No item changes). The opening note states the time from `fix` to push as the rehearsal measures it. In the one such paste so far it was six minutes and twenty-one seconds (seqs 5563 and 5564), before the verb's check grew.
++   - **The streams are running:** the diary's timer shows both its calendars (§What continues).
++
++   COUNSEL-OPEN row 68, lesson 5, is "No clock in his pastes". This paste reads two times, and says so here for his read. The stated end is a date the law fixes (A6, clause 1). The timer's next elapse is the state of his own timer. Neither is the guard that lesson removed, which guessed at the lane from the minute of the hour.
+ 
+-   Then it checks that `judge/scope.json`'s `cap` on the branch is the number his grant states, enters the `fix`, brings the branch up to `main`, runs the opening note's tests and pushes. If the verb refuses the push because `main` has moved, the paste brings the branch up to `main` again, runs the tests again and pushes again: no push was entered, and the `fix` is still the first that names C2a-prime and still precedes the next push. It waits and retries up to a bound that the opening note states, and at the bound it stops and says what it has entered. Criterion 3 needs none of this: by the test of change 2, a branch cut before the opening is not `main`'s tree, whenever it merges. The waits are for the `fix` and the push. Nothing in the code prevents a proposal from landing between them; the waits make it unlikely, and the second try answers it. The remedy the record names is C2c-1's: verbs that follow a moved `main` (row 68).
++   Then it checks that `judge/scope.json`'s `cap` on the branch is the number his grant states, enters the `fix`, brings the branch up to `main`, runs the opening note's tests and pushes. Those tests are the four records of §The window, taken at the merged head, with the replay of the commits since the reviewer's record. If the verb refuses the push because `main` has moved, the paste brings the branch up to `main` again, runs the tests again and pushes again: no push was entered, and the `fix` is still the first that names C2a-prime and still precedes the next push. It waits and retries up to a bound that the opening note states, and at the bound it stops and says what it has entered. Criterion 3 needs none of this: by the test of change 2, a branch cut before the opening is not `main`'s tree, whenever it merges. The waits are for the `fix` and the push. Nothing in the code prevents a proposal from landing between them; the waits make it unlikely, and the second try answers it. The remedy the record names is C2c-1's: verbs that follow a moved `main` (row 68).
+ 3. **The window code.** It is in force from the push. The `tests` run on `main` at the push's commit verifies it.
+ 4. **The promotion.** `status.py` prints the window line, the value line, the liveness line and `promote C2a: lawful | refused: …`. Counsel commits the acts evidence. When the line reads `lawful`, the sovereign enters `decision promote C2a --acts <file>` (A5: at the crossing).
+ 5. **C2b.** BRIEF-C2b's order of acts then begins at its step 3, on its amended text (§The cap). Its `decision promote C2a` is the entry of step 4 above and is not entered again.
+@@ -252,14 +266,19 @@ This brief states no minimum length for the window.
+ - `veto_names_its_window`
+   - Requires: §The subject. A `veto` with subject `C2a-prime` and `ts` before C2a-3's opening does not refuse C2a-3's criterion 7; a `veto` with subject `C2a` or `C2a-3` after the opening does.
+   - Mutants: any `veto` with subject `C2a-prime` counted; a `veto` with subject `C2a-3` after the opening ignored.
++  - Twin: a `veto` with subject `C2a` entered before C2a-3's opening names C2a-prime and does not refuse C2a-3.
+ - `offlog_from_third_opening`
+   - Requires: criterion 7's acts interval begins at C2a-3's opening, with the overlap rule.
+   - Mutant: C2a-prime's opening.
++- `vetoed_window_continues` (AMEND-A6, clause 3, *What reads it*)
++  - Requires: a window ended by a veto at or above A6's `activate_at` is read, at every later instant, as of that veto's `ts` (change 6).
++  - Mutant: a veto at or above the height is ignored as an end.
++  - Twins: such a veto ends the window there; a veto below the height ends nothing.
+ - `late_report_in_its_window`
+   - Requires: on C2a-3, a late report whose `seq` is below the opening push does not refuse criterion 6, and one whose `seq` is above it does.
+   - Twin: the record's three late reports of 18 November and none after the opening; criterion 6's late-report clause reads met.
+   - Mutants: every late report on the prefix counted, which is the code on `main` at `cbdac17b`; none counted.
+-  - Second requirement: an instant inside C2a-prime's window reads the three as refusing, as the evaluator on `main` reads it. Mutant: the rule applied to every window.
++  - Second requirement: on C2a-prime, a late report whose `seq` is below C2a-prime's opening still refuses criterion 6, as the evaluator on `main` reads it. The fixture places one there, since the record's three are all above that opening. Mutant: the rule applied to every window.
+ 
+ **What the pins do not enforce.** *Written out; the second brief's list brought to this window.* These rules bind and are not pinned; the reads and C2a's report check them:
+ - two reads by different model families (the gate admits one accepting read);
+@@ -271,7 +290,7 @@ This brief states no minimum length for the window.
+ - no re-attribution of a row;
+ - the acts table's freshness, by the re-run of §The acts evidence;
+ - that `main` moves only by first-parent steps inside the window. That rests on what the herald and the verbs do, and on there being no push inside the window, which criterion 3 tests. Outside that discipline the first-parent path and `main`'s own past can part, in both directions: a fast-forward of `main` to a merge whose second parent holds `main`'s history would hide a tree `main` had held, and a first-parent branch holding another scope would refuse a `main` that never changed. Neither is made by the herald's merges or by any verb but `push`.
+-- the replay of §The code. The pin `replay_drift` holds three rows of the first table. The whole replay of this change, against the second table, is the reviewer's run: it is recorded, and it is not pinned.
++- the replay of §The code. The pin `replay_drift` holds a few rows of each table. The whole replay of this change, against the second table, is the reviewer's run: it is recorded, and it is not pinned.
+ 
+ The ruling's four conditions bound the re-typing route its Order 2 asks about; they do not close it. Once a window's failure is witnessed by his veto, the first `fix` naming it, between its stated end and the next push, is a decision whatever its `subject` says the sovereign did. C2a's report reads the `fix`'s `subject` against the record of the interval.
+ 
+@@ -298,6 +317,7 @@ C2a's, entire, plus:
+ - **The opening push is refused after the `fix` for another reason than a moved `main`, or the paste's bound passes with the push not made.** Stop; C2a's report lists every writ finalised before the push lands, with its taint.
+ - **The `tests` run on `main` at the push's commit is not green, or a defect is found in a function change 4 covers.** The window cannot promote on a changed process. Stop; the next window is pre-stated.
+ - **The two checkers disagree.**
++- **The streams are paused, or no world-typed entry falls inside the window.** A3.4 then refuses the promotion. Report it; the pause is his to lift.
+ - **A `repair` row appears in C2a-3's acts evidence.** Promotion has become impossible; the window fails at its stated end. The report names the row and its hand, and the next window is pre-stated by the same procedure.
+ - **V8's `resolves_by` passes with a criterion unmet.** If C2a-3 fails on criteria 1–6 or on A3.4 alone, with no `repair` row and no veto, no `fix` names it until the sovereign has answered whether it failed (correction 2).
+ - **V8's `resolves_by` passes with no opening push.** The forecast is resolved as it fell, and counsel enters no second V8: the next window is pre-stated afresh.
+@@ -305,15 +325,15 @@ C2a's, entire, plus:
+ - **A `decision fix` naming C2a-prime meets the ruling's condition 1 but not the rest**: entered at or before 2026-11-30T00:00:00Z, or after the opening push. It is a repair permanently (condition 4), and a late report. Entered before the opening push it taints the writs open at it and refuses nothing of C2a-3; entered after the push it refuses C2a-3's criterion 6 (§The late-report rule). Stop; the question goes to the sovereign before any other act.
+ - **A `push` lands after C2a-prime's opening (2026-11-17T12:50:50Z) and before its end, the earlier of 2026-11-30T00:00:00Z and a `decision veto` naming C2a-prime at or above AMEND-A6's `activate_at`.** It is a second push inside C2a-prime's window. Stop and report before any other act. A push after such a veto and before 2026-11-30T00:00:00Z, such as the move's, is outside the window and opens nothing.
+ - **A `push` after 2026-11-30T00:00:00Z precedes V8 or the `decision fix`, or does not set the cap to `<N3>`.** It opens a window with no end, no recorded fix or no room. Stop; the next window is pre-stated afresh by the same procedure.
+-- **The replay table cannot be computed as SPEC §10 states a row's run, or the reads find that a line of it must be marked.** A mark is his alone to grant (SPEC §10). Stop before the build; the question goes to the sovereign.
++- **The replay table cannot be computed as SPEC §10 states a row's run, or the reads find that a line must be marked which §The code does not mark.** A mark is his alone to grant (SPEC §10). Stop before the build; the question goes to the sovereign.
+ 
+ ## Deliverables
+-- this brief and its reads; the sovereign's `grant` of his read; his statement of the cap; the scope's patch, applied by his hand;
++- this brief and its reads; the sovereign's `grant` of his read; his statement of the cap; the scope's patch with the clause on `replay_drift`, applied by his hand;
+ - his `veto` of C2a-prime (seqs 5879 and 7180);
+ - the replay table `spec/vectors/promotion-replay-c2a-3.json`, and the reviewer's record of the whole replay;
+ - V8;
+ - the opening note with the exact commands of §Order of acts step 2;
+-- the evaluator's change and its tests, and the pins, on the push's branch;
++- the evaluator's change and its tests, the pins, and `replay_drift` re-aimed, on the push's branch;
+ - the reviewer's read of the code, `REVIEW-C2a-3-code.md`;
+ - the acts evidence of C2a-3's window, raw and attributed, with its classifier hash file;
+ - C2a's report part 2, on C2a-prime's failure: the finding, the precedent, the four days and twenty-two hours the window ran after it, his veto under A6, any writ finalised between the `fix` and the push, and the table of the sovereign's acts in it;
+
+commit b9e5d60474f9ff90a9a2df048990ca51722327dd
+Author: Guy Freeman <guy@publicdatamarket.com>
+Date:   Sat Oct 31 13:16:51 2026 +0200
+
+    C1b: complete clerk writs and verified promotion gate
+    
+    Proposer: builder builder-2
+
+diff --git a/tools/status.py b/tools/status.py
+index 56b4f2ee..72e99e26 100644
+--- a/tools/status.py
++++ b/tools/status.py
+@@ -3,20 +3,24 @@
+ from log.jsonl and the tree, so that no criterion is counted by hand (PLAN-20261030 §4; BRIEF-C1 criterion 4, A3.4, J7).
+ No entry, no signing, no fetch. The clock enters only as --as-of (default now); the kernel never reads it."""
+ import argparse
++import csv
+ import datetime as dt
+ import hashlib
+ import json
+ import os
++import subprocess
+ import sys
+ from fractions import Fraction
+ 
+ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ sys.path.insert(0, ROOT)
+ from kernel import check  # noqa: E402
+-from judge.judge import signer_blob  # noqa: E402
++from judge.judge import counted_lines, signer_blob  # noqa: E402
+ 
+ FMT = "%Y-%m-%dT%H:%M:%SZ"
+ P0 = Fraction(6, 11)  # BRIEF-C1b v7; never estimated from the live window
++WORKFLOW = ".github/workflows/tests.yml"
++MAP = "tools/enforcement.json"
+ 
+ 
+ def sovereign_keys(es):
+@@ -26,12 +30,16 @@ def sovereign_keys(es):
+ def c1b_window(es):
+     """The opening's seq breaks timestamp ties; only the named L0 supplies the maximum."""
+     opening = next(e for e in es if e["type"] == "decision" and
+-                   e["body"] == {"kind": "promote", "subject": "C1a"})
++                   promotes(e, "C1a"))
+     l0 = next(e for e in es if e["seq"] < opening["seq"] and e["type"] == "forecast" and
+               e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "L0")
+     return opening["seq"], opening["ts"], l0["body"]["resolves_by"]
+ 
+ 
++def promotes(e, subject):
++    return e["type"] == "decision" and e["body"].get("kind") == "promote" and e["body"].get("subject") == subject
++
++
+ def wealth(items):
+     """A4.3, exact and prequential. Return new rows; never revise an earlier stake."""
+     result, successes, capital = [], 0, Fraction(1)
+@@ -44,10 +52,11 @@ def wealth(items):
+     return result
+ 
+ 
+-def item_process(es, after_seq=-1):
++def item_process(es, after_seq=-1, promotion_at=None):
+     """BRIEF-C1b §Liveness (i)-(iv), in entry order. No clock-created or regrouped items.
+ 
+     `after_seq` is the first window's opening, not the latest restart: A4 wealth continues.
++    `promotion_at` optionally projects expiries at a proposed promotion, without entering it.
+     Callers supply a prefix ending at the observation instant. Resolved writs leave the open
+     set immediately; a sovereign boundary clears pending resolutions without reopening them.
+     """
+@@ -60,13 +69,15 @@ def item_process(es, after_seq=-1):
+                       "forecasts": tuple(f for f, _ in members), "repairs": repairs,
+                       "Y": int(success and not repairs)})
+ 
+-    for e in es:
+-        seq, body, typ = e["seq"], e["body"], e["type"]
++    def expire(e):
+         for f in sorted(opened):
+             forecast, repairs = opened[f]
+             if forecast["body"]["resolves_by"] < e["ts"]:
+                 finalise(e, "expiry", [(f, repairs)], False)
+                 del opened[f]
++    for e in es:
++        seq, body, typ = e["seq"], e["body"], e["type"]
++        expire(e)
+         royal = signer_blob(e) in sovereign
+         repair = royal and typ not in ("genesis", "key", "amend", "push", "proposal") and not (
+             typ == "decision" and body["kind"] != "fix")
+@@ -88,6 +99,8 @@ def item_process(es, after_seq=-1):
+             finalise(e, "batch", sorted(pending), not royal)
+         if typ == "merge" or royal:
+             pending = []
++    if promotion_at is not None:
++        expire({"seq": es[-1]["seq"] + 1, "ts": promotion_at})
+     scored = wealth(items)
+     return {"items": scored, "late_reports": late_reports, "E": scored[-1]["E"] if scored else Fraction(1)}
+ 
+@@ -96,28 +109,34 @@ def instant(s):
+     return dt.datetime.strptime(s, FMT).replace(tzinfo=dt.timezone.utc)
+ 
+ 
+-def evidence_ok(root, ev):
++def evidence_ok(root, ev, rev=None):
+     """True iff `ev` is sha256:<hex64> naming transcripts/evidence/<hex64> whose SHA-256 is that value."""
+     if not (isinstance(ev, str) and ev.startswith("sha256:") and len(ev) == 71):
+         return False
+-    path = os.path.join(root, "transcripts", "evidence", ev[7:])
++    path = "transcripts/evidence/" + ev[7:]
+     try:
+-        with open(path, "rb") as f:
+-            return hashlib.sha256(f.read()).hexdigest() == ev[7:]
+-    except OSError:
++        return hashlib.sha256(tree_bytes(root, rev, path)).hexdigest() == ev[7:]
++    except (OSError, subprocess.CalledProcessError):
+         return False
+ 
+ 
+-def status(es, window, days, as_of, root=ROOT, subject="C1a"):
++def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None):
+     """The figures BRIEF-C1 evaluates on the exit prefix, on the prefix as of `as_of` (an instant string)."""
+-    opened = [e for e in es if e["type"] == "amend" and e["body"].get("id") == window]
+-    if not opened:
+-        raise SystemExit(f"no amend entry with id {window!r}")
+-    start = instant(opened[-1]["ts"])
+-    end = start + dt.timedelta(days=days)
+     now = instant(as_of)
+-    prefix = [e for e in es if instant(e["ts"]) <= min(end, now)]
+-    inw = [e for e in prefix if instant(e["ts"]) >= start]
++    es = [e for e in es if instant(e["ts"]) <= now]
++    if subject == "C1b":
++        opening, start, end = c1b_window(es)
++        start, end = instant(start), instant(end)
++        window = subject
++    else:
++        opened = next(e for e in es if e["type"] == "amend" and e["body"].get("id") == window)
++        opening, start = opened["seq"], instant(opened["ts"])
++        end = start + dt.timedelta(days=days)
++    closing = next((e for e in es if promotes(e, subject)), None)
++    if closing:
++        end = min(end, instant(closing["ts"]))
++    prefix = [e for e in es if instant(e["ts"]) <= end and (not closing or e["seq"] <= closing["seq"])]
++    inw = [e for e in prefix if e["seq"] > opening or (subject == "C1a" and e["seq"] == opening)]
+     world = {e["seq"] for e in es if e["type"] == "forecast" and str(e["body"].get("type", "")).startswith("world.")}
+     resolved = {e["body"]["forecast"]: e for e in prefix if e["type"] == "resolution"}
+     fc = [e for e in inw if e["type"] == "forecast"]
+@@ -132,47 +151,233 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a"):
+         "prefix_last_seq": prefix[-1]["seq"] if prefix else None, "entries_in_window": len(inw),
+         "forecasts": len(fc), "proposers": sorted({e["proposer"] for e in fc}),
+         "resolutions": len(rs), "world_resolutions": len(wrs),
+-        "world_resolutions_with_evidence": sum(1 for e in wrs if evidence_ok(root, e["body"]["evidence"])),
++        "world_resolutions_with_evidence": sum(1 for e in wrs if evidence_ok(root, e["body"]["evidence"], rev)),
+         "procedure": len(inw) - objects, "object": objects,
+         "veto": any(e["type"] == "decision" and e["body"].get("kind") == "veto" and e["body"].get("subject") == subject for e in prefix),
+         "j7_unresolved_past_due": len(late), "j7_denominator": len(fc),
+         "overdue": overdue,
++        "opening": opening, "prefix": prefix,
+     }
+ 
+ 
++def git_bytes(root, *args):
++    return subprocess.run(["git", "-C", root, *args], capture_output=True, check=True).stdout
++
++
++def tree_bytes(root, rev, path):
++    if rev is not None:
++        return git_bytes(root, "show", f"{rev}:{path}")
++    with open(os.path.join(root, path), "rb") as f:
++        return f.read()
++
++
++def tree_facts(root, rev):
++    scope = json.loads(tree_bytes(root, rev, "judge/scope.json"))
++    block = tree_bytes(root, rev, "SPEC.md").decode().split("at C1 it is:", 1)[1].split("```", 2)[1]
++    return {"counted": counted_lines(root, rev, scope["counted"]),
++            "kernel": counted_lines(root, rev, ["kernel/"]), "scope": scope == json.loads(block)}
++
++
++def run_verified(run, sha):
++    return isinstance(run, dict) and all(run.get(k) == v for k, v in (
++        ("path", WORKFLOW), ("event", "push"), ("head_branch", "main"), ("head_sha", sha), ("conclusion", "success")))
++
++
++def completed_by(run, when):
++    try:
++        return instant(run["updated_at"]) <= instant(when)
++    except (KeyError, TypeError, ValueError):
++        return False
++
++
++def attack_start(root, runs, as_of):
++    """A tests run counts only if its committed tree actually includes the clerk attack test."""
++    times = []
++    for run in runs:
++        if run.get("head_sha") and run_verified(run, run["head_sha"]) and completed_by(run, as_of):
++            try:
++                if tree_bytes(root, run["head_sha"], "tests/test_clerk.py"):
++                    times.append(run["updated_at"])
++            except subprocess.CalledProcessError:
++                pass  # a missing object/file is no witness; this tool never fetches
++    return min(times, default=None)
++
++
++def off_log_repairs(acts, start, end):
++    if acts is None:
++        return None
++    hkt = dt.timezone(dt.timedelta(hours=8))  # counsel's weekly CSV contract
++    return sum(row["repo"] == "renavondata/jack" and row["class"] == "repair" and
++               instant(start) <= dt.datetime.strptime(row["time_hkt"], "%Y-%m-%d %H:%M").replace(tzinfo=hkt) <= instant(end)
++               for row in acts)
++
++
++def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=None):
++    """All promotion predicates, with structured lines shared by status and W4."""
++    s = status(es, "A3", 14, as_of, root, subject, rev)
++    facts = tree_facts(root, rev)
++    verified = run_verified(run, rev) and completed_by(run, as_of)
++    checks = [(verified, "criterion 1: pins and twins in verified tests run"),
++              (verified, "criterion 2: checker agreement in verified tests run"),
++              (facts["counted"] <= 6200 and facts["kernel"] <= 500 and facts["scope"],
++               f"criterion 3: counted {facts['counted']}/6200; kernel {facts['kernel']}/500; scope equals SPEC: {facts['scope']}")]
++    if subject == "C1b":
++        process = item_process(s["prefix"], s["opening"])
++        proposed = item_process(s["prefix"], s["opening"], min(as_of, s["end"]))
++        gate = attack_start(root, runs, as_of)
++        checks.append((gate is not None and all(gate < i["ts"] for i in proposed["items"]),
++                       f"criterion 4: attack green on main before first item: {gate or 'unverified'}"))
++        items = wealth([i for i in process["items"] if gate is not None and gate < i["ts"]])
++        s.update(items=items, E=items[-1]["E"] if items else Fraction(1), late_reports=process["late_reports"])
++        exit_items = wealth([i for i in proposed["items"] if gate is not None and gate < i["ts"]])
++        exit_e = exit_items[-1]["E"] if exit_items else Fraction(1)
++        s["promotion_E"] = exit_e
++        checks.append((s["E"] >= 20 and exit_e >= 20,
++                       f"criterion 5: live E {s['E']} >= 20; items {len(items)}; at promote E {exit_e}"))
++        if mapping is None:
++            try:
++                mapping = json.loads(tree_bytes(root, rev, MAP))
++            except (OSError, subprocess.CalledProcessError):
++                mapping = {}
++        s["map"] = mapping
++        checks.append((all(mapping.get(k, {}).get("enforcer", "").startswith("code:") for k in ("W1", "W3", "W4", "A5")),
++                       "criterion 7: C1b enforcement map rows code"))
++        n = len(process["late_reports"])
++        checks.append((n == 0, f"late-reported repairs: {n}"))
++        off = off_log_repairs(acts, s["start"], min(s["end"], as_of))
++        checks.append((off == 0, f"off-log repairs: {off if off is not None else 'unknown (no acts file)'}"))
++    else:
++        checks.extend([(s["forecasts"] >= 20 and len(s["proposers"]) >= 3 and s["resolutions"] >= 10 and
++                        s["world_resolutions_with_evidence"] >= 5,
++                        f"criterion 4: forecasts {s['forecasts']}/20; proposers {len(s['proposers'])}/3; "
++                        f"resolutions {s['resolutions']}/10; world-typed with evidence {s['world_resolutions_with_evidence']}/5"),
++                       (verified, "criterion 5: score vectors in verified tests run")])
++    checks.append((not s["veto"], f"criterion 6: veto on {subject}: {'YES' if s['veto'] else 'none'}"))
++    exit_procedure = s["procedure"] + int(not any(promotes(e, subject) for e in s["prefix"]))
++    checks.append((exit_procedure <= 5 * s["object"], f"A3.4 ratio: procedure {s['procedure']} : object {s['object']}; "
++                   f"at promote {exit_procedure} : {s['object']} (maximum 5:1)"))
++    s.update(subject=subject, checks=checks)
++    return s
++
++
++def prefix_tree(root, head, prefix):
++    """Find the last ancestor with exactly the pre-decision log, never today's replacement tree."""
++    for sha in git_bytes(root, "rev-list", "--first-parent", head).decode().splitlines():
++        try:
++            entries = [json.loads(line) for line in tree_bytes(root, sha, "log.jsonl").splitlines()]
++        except subprocess.CalledProcessError:
++            continue
++        if entries == prefix:
++            return sha
++    return None
++
++
++def promotion_repairs(es, as_of, root, head, runs, acts):
++    repairs = []
++    for i, e in enumerate(es):
++        if e["ts"] > as_of or not any(promotes(e, w) for w in ("C1a", "C1b")):
++            continue
++        rev = prefix_tree(root, head, es[:i])
++        failures = ["historical tree unverified"]
++        if rev:
++            run = next((r for r in runs if run_verified(r, rev) and completed_by(r, e["ts"])), None)
++            try:
++                past = assess(es[:i + 1], e["body"]["subject"], e["ts"], root, rev, run, runs, acts)
++                failures = [text for ok, text in past["checks"] if not ok]
++            except (StopIteration, OSError, ValueError, subprocess.CalledProcessError):
++                failures = ["historical criteria unverified"]
++        if failures:
++            repairs.append(f"sovereign REPAIR: promote {e['body']['subject']} seq {e['seq']}: " + "; ".join(failures))
++    return repairs
++
++
++def promotion_line(s):
++    failures = [text for ok, text in s["checks"] if not ok]
++    return f"promote {s['subject']}: " + ("refused: " + "; ".join(failures) if failures else "lawful")
++
++
+ def render(s):
+-    c4 = (s["forecasts"] >= 20, len(s["proposers"]) >= 3, s["resolutions"] >= 10, s["world_resolutions_with_evidence"] >= 5)
+-    ratio = (s["procedure"] / s["object"]) if s["object"] else float("inf")
+-    mark = lambda ok: "met" if ok else "SHORT"  # noqa: E731
+-    out = [f"window {s['window']}: {s['start']} .. {s['end']} (as of {s['as_of']}; prefix to seq {s['prefix_last_seq']}; {s['entries_in_window']} entries)",
+-           f"criterion 4: forecasts {s['forecasts']}/20 {mark(c4[0])}; proposers {len(s['proposers'])}/3 {mark(c4[1])} {s['proposers']}; "
+-           f"resolutions {s['resolutions']}/10 {mark(c4[2])}; world-typed with evidence in tree {s['world_resolutions_with_evidence']}/5 {mark(c4[3])} "
+-           f"(world-typed {s['world_resolutions']})",
+-           f"criterion 6: veto on the subject: {'YES' if s['veto'] else 'none'}",
+-           f"A3.4 ratio: procedure {s['procedure']} : object {s['object']} = {ratio:.2f} : 1 {'STOP' if ratio > 5 else 'within 5:1'}",
+-           f"J7: {s['j7_unresolved_past_due']} of {s['j7_denominator']} window forecasts unresolved past resolves_by",
+-           "criteria 1, 2, 3, 5 are the tests run on main (pins, checker agreement, kernel count, score vectors): see that run",
+-           f"overdue forecasts at {s['as_of']}: {len(s['overdue'])}"]
+-    out += [f"  seq {seq} ({who}) due {by} evidence: {ev or '-'}" for by, seq, who, ev in s["overdue"]]
+-    return "\n".join(out)
++    lines = [f"window {s['subject']}: {s['start']} .. {s['end']} (as of {s['as_of']}; prefix to seq {s['prefix_last_seq']})"]
++    lines += [text + (" met" if ok else " STOP" if text.startswith("A3.4") else " SHORT") for ok, text in s["checks"]]
++    lines += [f"map {k}: {v['principle']} | {v['enforcer']}" for k, v in sorted(s.get("map", {}).items())]
++    lines += [f"J7: {s['j7_unresolved_past_due']} of {s['j7_denominator']} window forecasts unresolved past resolves_by"]
++    lines += [f"overdue forecast {seq} ({who}) due {by}; evidence {ev or '-'}" for by, seq, who, ev in s["overdue"]]
++    return "\n".join(lines + s.get("repairs", []) + [promotion_line(s)])
+ 
+ 
+-def main(argv=None):
+-    ap = argparse.ArgumentParser(description=__doc__)
+-    ap.add_argument("--log", default=os.path.join(ROOT, "log.jsonl"))
+-    ap.add_argument("--window", default="A3", help="the amend entry whose ts opens the window")
+-    ap.add_argument("--days", type=int, default=14, help="the window's length as the brief states it (a maximum under A5)")
+-    ap.add_argument("--as-of", default=dt.datetime.now(dt.timezone.utc).strftime(FMT))
+-    ap.add_argument("--subject", default="C1a")
+-    ap.add_argument("--json", action="store_true")
+-    a = ap.parse_args(argv)
++def parser(description):
++    ap = argparse.ArgumentParser(description=description)
++    ap.add_argument("--log", default=os.path.join(ROOT, "log.jsonl"), help="kernel-checked log (default repository log.jsonl)")
++    ap.add_argument("--root", default=ROOT, help="local git repository for tree/history evidence (default this repository)")
++    ap.add_argument("--as-of", default=dt.datetime.now(dt.timezone.utc).strftime(FMT), help="UTC YYYY-MM-DDTHH:MM:SSZ; default now")
++    ap.add_argument("--subject", choices=("C1a", "C1b"), help="default C1b after promote C1a, otherwise C1a")
++    ap.add_argument("--run", metavar="FILE", help="one Actions workflow-run JSON object for HEAD: tests.yml path, push event, main branch, "
++                    "exact SHA, success conclusion, updated_at by as-of; absent leaves criteria 1/2 unverified")
++    ap.add_argument("--runs", metavar="FILE", help="JSON array of Actions workflow_runs: historical promotion, attack and W3 witnesses; default empty")
++    ap.add_argument("--acts", metavar="FILE", help="weekly CSV saved under transcripts/evidence/: repo,time_hkt,class,kind,ref,note; "
++                    "time_hkt is YYYY-MM-DD HH:MM UTC+8; absent means off-log repairs unknown")
++    ap.add_argument("--map", metavar="FILE", help=f"enforcement-map JSON object (default {MAP} at assessed commit); rows have principle/enforcer")
++    ap.epilog = ("C1b opens at decision promote C1a and ends at L0's resolves_by or promote C1b. Tree facts use committed HEAD; "
++                 "historical promotions use their pre-decision tree and contemporaneous runs. Promotion also projects newly due expiries "
++                 "and the procedure entry at as-of. W3 accepts only tests.yml, matching commit, success, updated_at <= merge entry ts.")
++    return ap
++
++
++def inputs(a):
+     with open(a.log, "rb") as f:
+         lines = check.read_lines(f.read())
+     if not check.check(lines)["ok"]:
+         raise SystemExit("the log is refused by the kernel")
+-    es = [json.loads(line) for line in lines]
+-    s = status(es, a.window, a.days, a.as_of, root=os.path.dirname(os.path.abspath(a.log)), subject=a.subject)
+-    print(json.dumps(s, indent=1) if a.json else render(s))
++    es = [json.loads(line) for line in lines if json.loads(line)["ts"] <= a.as_of]
++    def load(path, default):
++        if not path:
++            return default
++        with open(path) as f:
++            return json.load(f)
++    run, runs, mapping = load(a.run, None), load(a.runs, []), load(a.map, None)
++    if not isinstance(runs, list) or not all(isinstance(r, dict) for r in runs):
++        raise ValueError("--runs must be a JSON array of workflow-run objects")
++    if isinstance(run, dict):
++        runs = runs + [run]
++    acts = None
++    if a.acts:
++        with open(a.acts, newline="") as f:
++            reader = csv.DictReader(f)
++            if reader.fieldnames != "repo,time_hkt,class,kind,ref,note".split(","):
++                raise ValueError("--acts header must be repo,time_hkt,class,kind,ref,note")
++            acts = list(reader)
++    head = git_bytes(a.root, "rev-parse", "HEAD").decode().strip()
++    subject = a.subject or ("C1b" if any(promotes(e, "C1a") for e in es) else "C1a")
++    return es, head, subject, run, runs, acts, mapping
++
++
++def report(es, head, subject, now, root, run, runs, acts, mapping):
++    closing = next((e for e in es if promotes(e, subject)), None)
++    rev = head
++    if closing:
++        before = [e for e in es if e["seq"] < closing["seq"]]
++        rev = prefix_tree(root, head, before)
++        if not rev:
++            raise ValueError("historical exit tree unverified")
++        es = before + [closing]
++        now = closing["ts"]
++        run = next((r for r in runs if run_verified(r, rev) and completed_by(r, now)), None)
++        mapping = None
++    s = assess(es, subject, now, root, rev, run, runs, acts, mapping)
++    s["repairs"] = promotion_repairs(es, now, root, head, runs, acts)
++    return s
++
++
++def main(argv=None):
++    ap = parser(__doc__)
++    ap.add_argument("--json", action="store_true", help="structured status, exact fractions encoded as strings")
++    a = ap.parse_args(argv)
++    try:
++        es, head, subject, run, runs, acts, mapping = inputs(a)
++        s = report(es, head, subject, a.as_of, a.root, run, runs, acts, mapping)
++        print(json.dumps(s, indent=1, default=str) if a.json else render(s))
++    except (StopIteration, OSError, ValueError, subprocess.CalledProcessError) as exc:
++        raise SystemExit(f"status unverified: {exc or 'window opening or L0 missing'}")
+ 
+ 
+ if __name__ == "__main__":
+^[[0m
+^[[0m✱ ^[[0mGrep "exit_procedure"^[[90m in . · 4 matches^[[0m
+^[[0m→ ^[[0mRead pins/c2a_prime.py
+^[[0m→ ^[[0mRead tests/test_status.py^[[90m [offset=150, limit=100]^[[0m
+^[[0m→ ^[[0mRead tests/test_status.py^[[90m [offset=1, limit=150]^[[0m
+^[[0m✱ ^[[0mGrep "status|report|assess"^[[90m in tools/clerk.py · 26 matches^[[0m
+^[[0m
+^[[0m$ ^[[0mR=$(cat .review/tree); git diff origin/main...$R -- judge/status.py
+diff --git a/judge/status.py b/judge/status.py
+index 7eb5d90f..1a76f4ed 100644
+--- a/judge/status.py
++++ b/judge/status.py
+@@ -69,6 +69,19 @@ def c2a_prime_window(es):
+     return op2["seq"], op2["ts"], v5["body"]["resolves_by"] if v5 else None
+ 
+ 
++def c2a_third_window(es):
++    w2 = c2a_prime_window(es)
++    if w2 is None or w2[2] is None or any(
++            promotes(e, "C2a") and instant(e["ts"]) <= instant(w2[2]) for e in es):
++        return None
++    op3 = next((e for e in es if e["type"] == "push" and instant(e["ts"]) > instant(w2[2])), None)
++    if op3 is None:
++        return None
++    v8 = next((e for e in es if e["seq"] < op3["seq"] and e["type"] == "forecast" and
++               e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "V8"), None)
++    return op3["seq"], op3["ts"], v8["body"]["resolves_by"] if v8 else None
++
++
+ def score_items(items):
+     """The live and historical item projection: exact A4.3 rows and terminal wealth."""
+     result, successes, capital = [], 0, Fraction(1)
+@@ -168,12 +181,19 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None, decision
+         else:
+             opening, start, end = (c2a_window if subject == "C2a" else c1b_window)(es)
+             window = subject
++        w3 = c2a_third_window(es) if subject == "C2a" else None
++        if w3 is not None and (decision is None or instant(decision["ts"]) > instant(w3[1])):
++            opening, start, end = w3[0], w3[1], w3[2] or w3[1]
++            v5_ok = w3[2] is not None
++            window = "C2a-3"
+         start, end = instant(start), instant(end)
+     else:
+         opened = next(e for e in es if e["type"] == "amend" and e["body"].get("id") == window)
+         opening, start = opened["seq"], instant(opened["ts"])
+         end = start + dt.timedelta(days=days)
+     closing = next((e for e in es if promotes(e, subject) and (window != "C2a-prime" or instant(e["ts"]) > start)), None)
++    if window == "C2a-3":
++        closing = next((e for e in es if names_window(es, e, "promote", window)), None)
+     if closing:
+         end = min(end, instant(closing["ts"]))
+     prefix = [e for e in es if instant(e["ts"]) <= end and (not closing or e["seq"] <= closing["seq"])]
+@@ -191,6 +211,8 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None, decision
+                 e["body"].get("subject") in ("C2a", "C2a-prime") and instant(e["ts"]) > start for e in prefix)
+             if window == "C2a-prime" else
+             any(e["type"] == "decision" and e["body"].get("kind") == "veto" and e["body"].get("subject") == subject for e in prefix))
++    if window == "C2a-3":
++        veto = any(names_window(es, e, "veto", window) for e in prefix)
+     return {
+         "window": window, "start": start.strftime(FMT), "end": end.strftime(FMT), "as_of": as_of,
+         "prefix_last_seq": prefix[-1]["seq"] if prefix else None, "entries_in_window": len(inw),
+@@ -259,7 +281,7 @@ def off_log_repairs(acts, start, end, overlap=False):
+                for t in [dt.datetime.strptime(row["time_hkt"], "%Y-%m-%d %H:%M").replace(tzinfo=hkt)])
+ 
+ 
+-WINDOW_NAMES = ("C1a", "C1b", "C2a", "C2a-prime", "C2b")
++WINDOW_NAMES = ("C1a", "C1b", "C2a", "C2a-prime", "C2a-3", "C2b")
+ CHANGE2_FUNCTIONS = ("window_fixes", "window_bounds", "names_window", "subject_names", "carrying_commit", "attributed_repairs")
+ 
+ 
+@@ -278,6 +300,9 @@ def window_bounds(es, name):
+         if name == "C2a-prime":
+             w2 = c2a_prime_window(es)
+             return (w2[1], w2[2], w2[2]) if w2 and w2[2] else None
++        if name == "C2a-3":
++            w3 = c2a_third_window(es)
++            return (w3[1], w3[2], w3[2]) if w3 and w3[2] else None
+     except StopIteration:
+         return None
+     return None
+@@ -287,12 +312,18 @@ def names_window(es, e, kind, name):
+     if e["type"] != "decision" or e["body"].get("kind") != kind:
+         return False
+     subj = e["body"].get("subject")
+-    if name not in ("C2a", "C2a-prime"):
++    if name not in ("C2a", "C2a-prime", "C2a-3"):
+         return subj == name
+     try:
+         w2 = c2a_prime_window(es)
+     except StopIteration:
+         w2 = None
++    w3 = c2a_third_window(es) if w2 is not None else None
++    is_third = w3 is not None and instant(e["ts"]) > instant(w3[1])
++    if name == "C2a-3":
++        return is_third and (subj == "C2a" if kind == "promote" else subj in ("C2a", "C2a-3"))
++    if is_third:
++        return False
+     is_prime = w2 is not None and instant(e["ts"]) > instant(w2[1])
+     return (is_prime and (subj == "C2a" if kind == "promote" else subj in ("C2a", "C2a-prime"))
+             if name == "C2a-prime" else not is_prime and subj == "C2a")
+@@ -410,6 +441,21 @@ VALUE_PINS = ("worked_table forecast_before_cutoff rigged revision weights_from_
+               "promote_names_committed_table").split()
+ 
+ 
++THIRD_WINDOW_PINS = ("third_window_from_the_end", "third_window_end_is_v8", "third_window_cap",
++                     "scope_unchanged_on_main", "veto_names_its_window", "offlog_from_third_opening",
++                     "vetoed_window_continues", "late_report_in_its_window")
++
++
++def c2a_process_nodes(root, start, rev, is_third):
++    if is_third:
++        start_nodes = ast.parse(tree_bytes(root, start, "judge/status.py")).body
++        rev_nodes = ast.parse(tree_bytes(root, rev, "judge/status.py")).body
++    else:
++        start_nodes = ast.parse(tree_bytes(root, start, "tools/status.py")).body
++        rev_nodes = ast.parse(tree_bytes(root, rev, "tools/status.py")).body
++    return start_nodes, rev_nodes
++
++
+ def c2a_tree_evidence(root, rev, prefix, opening):
+     """Check the opening's scope through every intervening tree; keep C1b's process code."""
+     try:
+@@ -429,12 +475,15 @@ def c2a_tree_evidence(root, rev, prefix, opening):
+         cap = 8400 if is_prime else 7800
+         scope_at = lambda sha: (tree_bytes(root, sha, "judge/scope.json"),
+                                 tree_bytes(root, sha, "SPEC.md").split(b"at C1 it is:", 1)[1].split(b"```", 2)[1])
++        w3 = c2a_third_window(prefix)
++        is_third = w3 is not None and opening == w3[0]
++        if is_third:
++            cap = 9100
+         original = scope_at(start)
+         unchanged = all(scope_at(c) == original for c in [rev] + git_bytes(root, "rev-list", "--first-parent", f"{start}..{rev}").decode().split())
+         unchanged = unchanged and json.loads(original[0])["cap"] == cap and not any(
+             e["type"] == "push" and e["seq"] > opening for e in prefix)
+-        start_nodes = ast.parse(tree_bytes(root, start, "tools/status.py")).body
+-        rev_nodes = ast.parse(tree_bytes(root, rev, "tools/status.py")).body
++        start_nodes, rev_nodes = c2a_process_nodes(root, start, rev, is_third)
+         assign_targets = lambda n: ({t.id for t in n.targets if isinstance(t, ast.Name)} if isinstance(n, ast.Assign) else
+                                     {n.target.id} if isinstance(n, ast.AnnAssign) and isinstance(n.target, ast.Name) else set())
+         read_c2_tuple = lambda nodes: next((tuple(ast.literal_eval(n.value)) for n in nodes if "CHANGE2_FUNCTIONS" in assign_targets(n)), ())
+@@ -459,14 +508,18 @@ def c2a_tree_evidence(root, rev, prefix, opening):
+         same = process_at(start_nodes) == process_at(rev_nodes) and tree_bytes(root, start, "tools/clerk.py") == tree_bytes(root, rev, "tools/clerk.py")
+         pins = tree_bytes(root, rev, "pins/pins.py").decode()
+         registered = all(f'Pin("{name}"' in pins or f"Pin('{name}'" in pins for name in VALUE_PINS)
++        if is_third:
++            registered = registered and all(f'Pin("{name}"' in pins or f"Pin('{name}'" in pins for name in THIRD_WINDOW_PINS)
+         return unchanged, same, registered
+     except (OSError, ValueError, IndexError, SyntaxError, subprocess.CalledProcessError):
+         return False, False, False
+ 
+ 
+ def assess_value(s, facts, verified, root, rev, runs, acts):
+-    is_prime = s["window"] == "C2a-prime"
++    is_prime = s["window"] in ("C2a-prime", "C2a-3")
+     cap = 8400 if is_prime else 7800
++    if s["window"] == "C2a-3":
++        cap = 9100
+     end = min(s["as_of"], s["end"])
+     unchanged, same, registered = c2a_tree_evidence(root, rev, s["prefix"], s["opening"])
+     gate = attack_start(root, runs, end, "tests/test_value.py")
+@@ -475,6 +528,8 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
+     unverified = []
+     fixes = window_fixes(s["prefix"], root, rev, unverified)
+     process = item_process(s["prefix"], c1b_window(s["prefix"])[0], end, fixes)
++    late_reports = ([seq for seq in process["late_reports"] if seq > s["opening"]]
++                    if s["window"] == "C2a-3" else process["late_reports"])
+     live = score_items(i for i in process["items"] if live_gate is not None and live_gate < i["ts"])
+     off = off_log_repairs(acts, s["start"], end, overlap=is_prime)
+     s.update(value=v, continued_liveness=live, late_reports=process["late_reports"], unverified_fixes=unverified)
+@@ -485,8 +540,8 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
+             (gate is not None and all(gate < r["cutoff"] for r in v["rows"]),
+              f"criterion 4: attack green on main before first scored cutoff: {gate or 'unverified'}"),
+             (v["E_value"] >= 20, f"criterion 5: value E {v['E_value']:.6f} >= 20"),
+-            (same and live_gate is not None and live["E"] >= 20 and not process["late_reports"],
+-             f"criterion 6: continued liveness E {live['E']} >= 20; unchanged {same}; attack {live_gate or 'unverified'}; late repairs {len(process['late_reports'])}"),
++            (same and live_gate is not None and live["E"] >= 20 and not late_reports,
++             f"criterion 6: continued liveness E {live['E']} >= 20; unchanged {same}; attack {live_gate or 'unverified'}; late repairs {len(late_reports)}"),
+             (off == 0, f"criterion 7: off-log repairs: {off if off is not None else 'unknown (no acts file)'}")]
+ 
+ 
+@@ -505,7 +560,7 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
+         unverified = []
+         window_fixes([e for e in es if instant(e["ts"]) <= instant(as_of)], root, rev, unverified)
+         s.update(subject=subject, unverified_fixes=unverified,
+-                 checks=[(False, "C2a-prime has no promotion forecast before its opening")])
++                 checks=[(False, f"{s['window']} has no promotion forecast before its opening")])
+         return s
+     facts = tree_facts(root, rev)
+     verified = run_verified(run, rev) and completed_by(run, as_of)
+@@ -590,6 +645,8 @@ def render(s):
+                   f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
+     lines = s.get("history", []) + lines
+     win = [f"window: C2a-prime (second window of C2a, opened seq {s['opening']})"] if s.get("window") == "C2a-prime" else []
++    if s.get("window") == "C2a-3":
++        win = [f"window: C2a-3 (third window of C2a, opened seq {s['opening']})"]
+     return "\n".join(lines + s.get("unverified_fixes", []) + s.get("repairs", []) + win + [promotion_line(s)])
+ 
+ 
+@@ -643,6 +700,8 @@ def report(**context):
+     decisions = [e for e in context["es"] if e["ts"] <= context["as_of"] and
+                  any(promotes(e, w) for w in ("C1a", "C1b", "C2a"))]
+     w2 = c2a_prime_window([e for e in context["es"] if instant(e["ts"]) <= instant(context["as_of"])]) if context["subject"] == "C2a" else None
++    if context["subject"] == "C2a":
++        w2 = c2a_third_window([e for e in context["es"] if instant(e["ts"]) <= instant(context["as_of"])]) or w2
+     closing = next((e for e in decisions if promotes(e, context["subject"]) and
+                     (w2 is None or instant(e["ts"]) > instant(w2[1]))), None)
+     s = assess(**context, decision=closing)
+@@ -657,6 +716,17 @@ def report(**context):
+             failures = ["historical criteria unverified"]
+         if failures:
+             s["repairs"].append(f"sovereign REPAIR: promote {e['body']['subject']} seq {e['seq']}: " + "; ".join(failures))
++    es = [e for e in context["es"] if instant(e["ts"]) <= instant(context["as_of"])]
++    a6 = next((e for e in es if e["type"] == "amend" and e["body"].get("id") == "A6"), None)
++    name = s["window"] if s["subject"] == "C2a" else s["subject"]
++    veto = next((e for e in es if a6 is not None and e["seq"] >= a6["body"]["activate_at"] and
++                 names_window(es, e, "veto", name) and
++                 instant(s["start"]) < instant(e["ts"]) <= instant(s["end"]) and not any(
++                     x["seq"] < e["seq"] and names_window(es, x, "promote", name) for x in es)), None)
++    if veto is not None:
++        ended = assess(**dict(context, es=[e for e in es if e["seq"] <= veto["seq"]], as_of=veto["ts"]))
++        ended.update({key: s[key] for key in ("overdue", "history", "repairs") if key in s})
++        return ended
+     return s
+^[[0m
+^[[0m$ ^[[0mpython3 -c '
+import json
+from pathlib import Path
+third = json.loads(Path("spec/vectors/promotion-replay-c2a-3.json").read_text())
+for i in (734, 735):
+    r = third["rows"][i]
+    print(i, r["commit"], "marked" in r)
+'
+734 bd05ed5c1acc58993b8063bcb92dea6f09af2ed3 False
+735 bbfd0edf71df6dfe2183bfbbf24a372dd871146e True
+^[[0m
+^[[0m$ ^[[0mR=$(cat .review/tree); python3 -c '
+import subprocess
+from pathlib import Path
+rev = Path(".review/tree").read_text().strip()
+commits = subprocess.check_output(["git", "rev-list", "--reverse", f"origin/main..{rev}"], text=True).splitlines()
+for c in commits:
+    trailer = subprocess.check_output(["git", "log", "-1", "--format=%(trailers:key=Proposer,valueonly)", c], text=True).strip()
+    files = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", c], text=True).splitlines()
+    print(c[:8], "|", trailer, "|", files)
+'
+5c6db4ee | counsel claude-fable-5-2 session_01VpB3Tknxi9JkERuANTGHDk | ['SPEC.md', 'judge/scope.json']
+ae3fdb48 | builder openai/gpt-6.1-sol runner-issue-1322 | ['judge/status.py', 'tests/test_status_third.py']
+8a614383 | builder openai/gpt-6.1-sol runner-issue-1322 | ['judge/status.py', 'tests/test_status_third.py']
+7d7f8947 | builder openai/gpt-6.1-sol runner-issue-1322 | ['judge/status.py', 'tests/test_status_third.py']
+86f62e9c | reviewer openai/gpt-6.1-sol runner-issue-1333 | ['pins/c2a_third.py', 'pins/pins.py']
+2dd66bef | reviewer openai/gpt-6.1-sol runner-issue-1333 | ['pins/replay.py']
+68a3221e | reviewer openai/gpt-6.1-sol runner-issue-1333 | ['pins/c2a_third.py', 'pins/pins.py']
+^[[0m
+^[[0m✱ ^[[0mGlob "REVIEW-*.md"^[[90m in transcripts · 64 matches^[[0m
+^[[0m→ ^[[0mRead transcripts/REVIEW-C2a-prime-code.md
+^[[0m→ ^[[0mRead transcripts/REVIEW-move-promotion-judge.md
+^[[0m→ ^[[0mRead transcripts/REVIEW-C2a-3-20261124T0030-google.md
+^[[0m→ ^[[0mRead transcripts/REVIEW-C1a-code.md
+^[[0m
+^[[0m← ^[[0mWrite transcripts/REVIEW-C2a-3-code.md
+Wrote file successfully.
+^[[0m
+^[[0m$ ^[[0mgit diff --name-only && git status --porcelain --untracked-files=normal
+?? .review/
+?? transcripts/REVIEW-C2a-3-code.md
+^[[0m
+^[[0m← ^[[0mWrite .review/text
+Wrote file successfully.
+^[[0m
+^[[0m$ ^[[0mgit add transcripts/REVIEW-C2a-3-code.md && I=${ISSUE:-code-review-c2a-3-1}; { cat .review/text; printf '\n\nProposer: reviewer google/gemini-4-argon runner-issue-%s\n' $I; } > .review/msg && git commit -q -F .review/msg && git log -1 --format='%(trailers:key=Proposer,valueonly)' && git rev-parse HEAD
+reviewer google/gemini-4-argon runner-issue-1335
+
+719d407def2f9eb04e394322830d4e56e2b12be5
+^[[0m
+^[[0m$ ^[[0mgit push -q origin HEAD:opening-c2a-3 && echo PUSH_OK
+PUSH_OK
+^[[0m
+### Tree read and Step 7 output
+
+- **Reviewed tree (`origin/opening-c2a-3`):** `68a3221e6428cd56ae613c7f87f6c9ead5ad61e8`
+- **Step 7 (`git log --format='%h %(trailers:key=Proposer,valueonly)' origin/main..$R | grep .`):**
+  ```
+  68a3221e reviewer openai/gpt-6.1-sol runner-issue-1333
+  2dd66bef reviewer openai/gpt-6.1-sol runner-issue-1333
+  86f62e9c reviewer openai/gpt-6.1-sol runner-issue-1333
+  7d7f8947 builder openai/gpt-6.1-sol runner-issue-1322
+  8a614383 builder openai/gpt-6.1-sol runner-issue-1322
+  ae3fdb48 builder openai/gpt-6.1-sol runner-issue-1322
+  5c6db4ee counsel claude-fable-5-2 session_01VpB3Tknxi9JkERuANTGHDk
+  ```
+  The builder's model family is `openai` (`openai/gpt-6.1-sol`); the reader's is `google` (`google/gemini-4-argon`).
+
+---
+
+### Verdict and findings
+
+```
+VERDICT: ACCEPT
+Reviewed tree: 68a3221e6428cd56ae613c7f87f6c9ead5ad61e8
+Evaluator: judge/status.py sha256 44273c2a53be1fd881ab2880132ac0e7543efe3c66285bbe63e8b1a324901fe0
+Reader: reviewer; model google/gemini-4-argon; 2026-11-25T07:11:15Z
+
+F1 [NOTE] tests/test_status_third.py:125 — in the C2a-prime case of the late-report test, check() computes s from self.es (whose opening is C2a-3's self.op) before overwriting s['window'] = 'C2a-prime', rather than from self.es[:-1] (whose opening is C2a-prime's seq 5564), though both seq 1 and seq 5877 are counted (expected == 2) and the rule_for_every_window mutant is killed either way — "on C2a-prime, a late report whose `seq` is below C2a-prime's opening still refuses criterion 6, as the evaluator on `main` reads it. The fixture places one there, since the record's three are all above that opening." / "check(self.es, 'C2a-prime', [1, 5877], 2)"
+F2 [NOTE] judge/status.py:605 — exit_procedure's already-promoted check exempts only s["window"] == "C2a-prime" from matching a promote at or before s["start"], which cannot affect C2a-3 when no promote C2a precedes C2a-3's opening push — "A `decision promote` with subject `C2a`, or a `decision veto` with subject `C2a` or `C2a-3`, names C2a-3 when both hold: - its `ts` is after C2a-3's opening; - no `promote C2a` has `ts` at or before 2026-11-30T00:00:00Z." / "exit_procedure = s[\"procedure\"] + int(not any(promotes(e, subject) and (s[\"window\"] != \"C2a-prime\" or instant(e[\"ts\"]) > instant(s[\"start\"])) for e in s[\"prefix\"]))"
+```
+
+---
+
+### Summary of items 1 to 6
+
+1. **The scope's change (`5c6db4ee`):** Counsel's patch changes `SPEC.md` and `judge/scope.json` alone: `judge/scope.json`'s `cap` to `9100`, `SPEC.md` §10's block to match, the cap history clause `raised to 9100 at C2a-3's opening, for the tests and pins of the window's code;`, and the two sentences of `SPEC.md` §10's paragraph on the promotion evaluator word for word.
+2. **The six changes (`ae3fdb48`, `8a614383`, `7d7f8947`):** Each of changes 1 to 6 of `BRIEF-C2a-3-draft.md` §The code is implemented in `judge/status.py` and does nothing beyond the text. Lines that no change needs are left byte for byte, including the `--first-parent` line of `c2a_tree_evidence` (`judge/status.py:483`) and the two lines reading `tools/status.py` (`judge/status.py:454-455`). `main`, `inputs`, `assess` and `promotion_line` keep the exact form `judge/evaluate.py` calls.
+3. **The tests (`tests/test_status_third.py`):** Tests cover all six changes (`test_change_1_window_and_acts` through `test_change_6_veto_reads_prefix_but_keeps_current_overdue`), including the change 3 test on the real `log.jsonl` comparing `window_fixes` and `item_process` against `cbdac17b:judge/status.py` extracted from git.
+4. **The pins (`pins/c2a_third.py`, `pins/pins.py`):** All eight pins of §Pins are registered in `pins/pins.py` as `Pin("<name>"`, `EXPECTED` is updated from `107` to `115`, and every requirement, mutant and twin is present and passes, with each mutant killed by an `AssertionError` on the behaviour its pin names.
+   - **Re-aimed mutants of existing pins on `main` and changed exact-string replacements in `tests/test_status.py` or `pins/c2a_prime.py`:** **None.** (Neither `tests/test_status.py`, `pins/c2a_prime.py`, nor any existing `Mutant(...)` in `pins/pins.py` was modified; `pins/replay.py` alone was re-aimed per item 5 / §The code.)
+5. **`replay_drift` (`pins/replay.py`, `pins/pins.py:1216-1221`):** Re-aimed as §The code orders: keeps rows `(300, 400, 593)` of `spec/vectors/promotion-replay.json` and asserts its SHA-256 (`6d647d09b0e02f0b3e1ac785bdf8e13fa223491501d6a24a1886783b9458c4dd`); adds rows `(734, 735)` of `spec/vectors/promotion-replay-c2a-3.json` (734 unmarked, 735 marked) and asserts its SHA-256 (`943a79863df95479cc93085e0dc686b47f5940a34b5497372503937cb85f3e77`); holds `judge/status.py` to `44273c2a53be1fd881ab2880132ac0e7543efe3c66285bbe63e8b1a324901fe0`; holds `judge/value.py` to the moved bytes from `2d99d2427296df1174a55f41459058d5f6b65a8f:tools/value.py`; keeps its three mutants (`unmarked_output_changed`, `marked_walk_regressed`, `other_source_bytes`), all KILLED.
+6. **Parties and paths:** Every commit carries a filled `Proposer:` trailer and touches only its party's paths (`5c6db4ee` by `counsel` on `SPEC.md` and `judge/scope.json`; `ae3fdb48`, `8a614383`, `7d7f8947` by `builder` on `judge/status.py` and `tests/test_status_third.py`; `86f62e9c`, `2dd66bef`, `68a3221e` by `reviewer` under `pins/`).
+
+---
+
+### Results of checks (a) to (d)
+
+- **(a) `python3 -m unittest discover -s tests -t .`:**
+  ```
+  Ran 318 tests in 542.490s
+
+  OK (skipped=1)
+  ```
+- **(b) `python3 pins/run.py`:**
+  ```
+  third_window_from_the_end        push_at_or_before_end        KILLED  (FAILED (failures=1))
+  third_window_from_the_end        promoted_prime_still_opens   KILLED  (FAILED (failures=1))
+  third_window_end_is_v8           v5_is_third_end              KILLED  (FAILED (failures=1))
+  third_window_end_is_v8           late_v8_accepted             KILLED  (FAILED (failures=1))
+  third_window_cap                 cap_8400                     KILLED  (FAILED (failures=1))
+  third_window_cap                 cap_7800                     KILLED  (FAILED (failures=1))
+  scope_unchanged_on_main          all_ancestors                KILLED  (FAILED (failures=1))
+  scope_unchanged_on_main          end_trees_only               KILLED  (FAILED (failures=1))
+  veto_names_its_window            prime_veto_counted           KILLED  (FAILED (failures=1))
+  veto_names_its_window            third_veto_ignored           KILLED  (FAILED (failures=1))
+  offlog_from_third_opening        offlog_from_prime_opening    KILLED  (FAILED (failures=1))
+  vetoed_window_continues          ending_veto_ignored          KILLED  (FAILED (failures=1))
+  late_report_in_its_window        all_late_reports             KILLED  (FAILED (failures=1))
+  late_report_in_its_window        no_late_reports              KILLED  (FAILED (failures=1))
+  late_report_in_its_window        rule_for_every_window        KILLED  (FAILED (failures=1))
+  ...
+  replay_drift                     unmarked_output_changed      KILLED  (promote C2a: refused: criterion 1: C2a pins and twins in verified tests run)
+  replay_drift                     marked_walk_regressed        KILLED  (promote C2a: refused: criterion 3: counted 8347/8400; kernel 450/500; scope equals SPEC and unchanged: False)
+  replay_drift                     other_source_bytes           KILLED  (AssertionError: status: accepted bytes differ)
+
+  KILLED 173, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0
+  ```
+- **(c) Counted lines (`judge.counted_lines` over `judge/scope.json`'s `counted`):**
+  `8643` (≤ `8963`; cap is `9100`).
+- **(d) `sha256sum judge/status.py`:**
+  ```
+  44273c2a53be1fd881ab2880132ac0e7543efe3c66285bbe63e8b1a324901fe0  judge/status.py
+  ```
+
+---
+
+### Head after commit
+
+- **Committed and pushed to `origin/opening-c2a-3`:** `719d407def2f9eb04e394322830d4e56e2b12be5`
+
+ACCEPTED 719d407def2f9eb04e394322830d4e56e2b12be5
+exit=0
+```
+

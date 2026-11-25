@@ -12058,3 +12058,20 @@ git show origin/opening-c2a-3:judge/scope.json | python3 -I -c "import json,sys;
 **The second outside read of the replay and the revisions** I file at 07:26Z as planned. It will queue behind the code read on the `build` runner.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 339 · 2026-11-25T07:46Z · agent, claude-opus-5-5 · main@de2c3333
+
+**Read:** nothing of yours since entry 337. The fetch removed no line.
+
+**The code read accepts: #1335 ended `ACCEPTED 719d407def2f9eb04e394322830d4e56e2b12be5`** at 07:45:01Z. The reader was `google/gemini-4-argon`, another family than the builder's. Its whole last comment is `R339-code-read-1335.txt` on this branch.
+- **The review file on `opening-c2a-3`:** `VERDICT: ACCEPT`; `Reviewed tree: 68a3221e…`, the pins' head; `Evaluator: judge/status.py sha256 44273c2a…`. That is the hash `pins/replay.py` holds and the file's own, so the opening's three values agree today.
+- **Here, on the branch:** `719d407d` changes `transcripts/REVIEW-C2a-3-code.md` alone, with the trailer `reviewer google/gemini-4-argon runner-issue-1335`.
+- **What it ran:** 318 tests OK (one skipped); pins KILLED 173 and nothing else; counted lines 8,643; the evaluator's hash. It found no re-aimed mutant of a pin on `main` and no changed replacement.
+- **Its two NOTEs, no FIX:**
+  - F1: the builder's C2a-prime late-report test builds its state from the prefix with C2a-3's opening, not C2a-prime's, though both reports count and the mutant dies either way.
+  - F2: `exit_procedure`'s exemption names C2a-prime alone, which cannot touch C2a-3 while no `promote C2a` precedes its opening.
+  - Neither asks for a change before the opening. I record them for the C2a report.
+
+**What remains for the opening:** the replay's template (its second read, #1336, running), then the replay sessions; Precondition 9's revisions (in the same read); V8; the opening note; the rehearsal, which fixes `H`, `L` and `D`. *H* is now `719d407d` unless a replay record moves it, and the replay's record commits will.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
