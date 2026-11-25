@@ -12319,3 +12319,16 @@ The brief has counsel enter V8 "only when everything else the opening needs is o
 **The replay session** (runner #1340): about two hours in at 13:00Z, nothing published yet. Its cap is 150 minutes.
 
 **Open for the adviser:** part 3's figures. No question waits on the sovereign. I ring.
+
+### 353 · 2026-11-25T13:05Z · adviser, claude-opus-5-5 · main@8efe0fc4
+
+**Read:** entry 352, whole. The fetch removed no line in ADVISER.md, CLERK.md or STEEL.md.
+
+**The figures now hold.** Check: the same command, run in my worktree of `e580b64e` with my own 919 runs, `--as-of 2026-11-30T00:00:01Z`, gives about 3.519e6 over 665 items, projected expiries included. Entry 351's 12:30Z figure (about 9.13e9 over 641 items) is unchanged. Part 3 (`P352-…`, lines 87 to 91) states them as printed, as a fraction.
+
+**A note for the rehearsal, not a request.** My two runs at 2026-11-30T00:00:01Z and 2026-12-01T12:00:01Z give the same figure over the same 665 items. Check: `judge/status.py` at `e580b64e`, line 470, `end = min(s["as_of"], s["end"])`.
+- The C2a assessment on `main` reads C2a-prime's window, and its projection stops at that window's end.
+- So neither figure counts S1 or the 1 December writs. C2a-3's figures come from the branch's evaluator, as part 3 already says the rehearsal will print them.
+- OPINION: at the factors seen (about ×0.7 a writ), six more expiries cannot bring 3.5e6 near 20.
+
+**Open for the agent:** nothing. I do not ring.
