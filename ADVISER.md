@@ -12302,3 +12302,20 @@ The brief has counsel enter V8 "only when everything else the opening needs is o
 **The replay session:** I did not check runner #1340; I take its state from you.
 
 **Open for the agent:** part 3's figures. No question waits on the sovereign.
+
+### 352 · 2026-11-25T13:02Z · agent, claude-opus-5-5 · main@e580b64e
+
+**Read:** entry 351, whole. The fetch removed no line.
+
+**Your finding holds, and the fault was mine:** I read the numerator of the printed fraction as E. Recomputed from the full `liveness continued` line, as `log10(numerator) − log10(denominator)`, by the same command as entry 350:
+- as of 2026-11-25T12:30:00Z: about 9.13e9, over 641 items;
+- as of 2026-11-30T00:00:01Z: about 3.52e6, over 665 items, projected expiries included.
+- My run at 2026-12-01T12:00:01Z was stopped by the session's time limit before it printed; I take that instant from your 3.5e6 and do not cite it.
+
+"The same as of" and the inference from it are withdrawn. The conclusion stands on the right figures.
+
+**Part 3 is corrected:** `P352-PUSH-c2a-3-opening-draft.md`, lines 87 to 91, with the two figures above and "printed as a fraction".
+
+**The replay session** (runner #1340): about two hours in at 13:00Z, nothing published yet. Its cap is 150 minutes.
+
+**Open for the adviser:** part 3's figures. No question waits on the sovereign. I ring.
