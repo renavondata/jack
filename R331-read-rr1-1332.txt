@@ -1,0 +1,77 @@
+VERDICT: FAIL
+
+Blob ids (origin/main -> reviewed branch):
+
+A — origin/counsel/c2a-3-replay-session, commit 4bed0e5232f966f65d0ae4f77774c248d2f85ba9
+transcripts/sessions/c2a-3-replay.md:
+  absent -> 4a5e176239b8237ddd6a074797471340b19e87f7
+transcripts/sessions/README.md:
+  3d24b515ed7b8c3d3da7112780d9259edc57fcec -> aeac5d43767aab88a6b618717f6256ebb5751fba
+
+B — origin/counsel/c2a-3-runbook, commit 775213495cf9afc8968d520821dd23c19185a4e4
+RUNBOOK.md:
+  53492bee0ff8e1d73f1d60c7e9520c1c5756bc71 -> de2f97629a4de6ae2fba9423ca7856860d81a6f1
+transcripts/sessions/due-resolve.md:
+  96eb14bd33d9774787a7804426e7c2d228f9dd8e -> 09d0f8df5cfd6fd4628edcb1156c7506891a2067
+LAW.md:
+  baee8b192885a92b45624cef748d59793b91e71d -> f432614539f920b64ac6457ad77379e4dac2c087
+
+Findings, most serious first:
+
+BLOCK — A — transcripts/sessions/c2a-3-replay.md:48–49,61–63
+Oldest-first dispatch does not ensure an unbroken completed chain. Ten workers finish independently. At minute 110, an earlier chain commit can still be running while later commits have passed and been atomically written. Line 61 requires appending every passed row; line 63 then rejects the resulting gap and requires committing nothing. Thus an entirely correct evaluator can lose the session’s completed work precisely when continuation is needed.
+
+Evidence: a short ten-worker queue simulation, enqueuing indices 0 through 9 in order, produced completed indices [1,2,3,4,5,6,7,8,9] at its cutoff while index 0 remained running. Atomic row replacement prevents torn rows; it does not prevent this ordering failure. The template contains no contiguous-prefix publication rule or ordered completion barrier.
+
+BLOCK — B — transcripts/sessions/due-resolve.md:51,69–85
+The crossing-table command has no longer bash-tool timeout despite combining history walks with thousands of complete process recomputations. Finding fixes once avoids an even larger cost, but does not make this command fit the runner’s 900-second default.
+
+Evidence: calling the main evaluator’s functions on the current main log took 50.46 seconds for window_fixes over the whole log and 53.71 seconds for its required check at fix 5563. Both returned {5563}, with no unverified fixes. Separately, one val.value computation took 1.11 seconds at the 5,000-entry prefix and 5.22 seconds at the 7,770-entry prefix. Main has 770 distinct entry instants from seq 7000 onward alone; lines 74–80 recompute value and liveness separately at every such instant. These measurements establish a plausible command-limit failure without running the whole table. No timeout instruction accompanies this command; line 92’s explicit timeout applies to the later proposal command.
+
+FIX — A — transcripts/sessions/c2a-3-replay.md:33,61–63
+Continuation validates old record entries’ locations, but does not validate their recorded exits or output digests against the expected results before using their commits to skip work. A wrong prior result can therefore survive every listed continuation check and be counted toward completeness.
+
+Evidence: table index 0 names c404b8392180a3509c4723d6a4e51aec8701eed9 and requires exit 1 with empty stdout. Its expected digest is e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855. An existing record entry with that correct kind/index/commit, exit 0, and a 64-zero “lines” value parses, has no duplicate, and has the right location. The stated checks do not compare those two wrong values with the table. This is a validation gap in continuation, rather than evidence that an existing record is corrupt.
+
+FIX — A — transcripts/sessions/c2a-3-replay.md:51
+The early-exit instruction also covers successful completion when read literally. It says that if the driver ends “for any other reason” before its watchdog, the session must commit nothing. Normal completion before minute 110 is another reason, and no successful-completion exception is stated.
+
+Evidence: the table driver’s main function explicitly sets FINISHED and returns normally after completing all rows. A replay driver retaining that form can finish successfully before the watchdog, satisfying line 51’s stop condition while also reaching “Otherwise, the record.” This leaves contradictory instructions for a successful run.
+
+FIX — B — transcripts/sessions/due-resolve.md:74,88
+The revised spot-check/decision paragraph retains a false assertion about the claim’s strict upper boundary. The claim concerns a prefix before I, but the computation includes entry instants equal to I and explicitly adds I. The paragraph says the maximizing row is before I “by construction”; that does not follow.
+
+Evidence: line 74 uses START <= e["ts"] <= END and unions {START, END}. Lines 81–83 allow the maximum to be updated at END. A first crossing at an entry whose timestamp equals I is therefore included even though it does not establish a crossing before I. This defect is inherited from main and remains in the paragraph B revises.
+
+FIX — B — transcripts/sessions/due-resolve.md:69–72,84
+The copied crossing heredoc contains double quotes, including newly added expressions such as e["ts"], e["seq"], and the new f-string header. These retain the prompt-copy failure mode expressly documented by A at line 11 and by main’s builder/table templates. B supplies the heredoc as a command to copy without addressing that failure mode.
+
+Evidence: the reviewed blob’s lines 69–72 contain those literal double quotes. Additional inherited copy/dispatcher hazards remain: line 84 contains {T}, which matches the requested placeholder scan but is not a due-resolve dispatcher placeholder; line 34’s copied command redirects to /dev/null, a path outside the worktree. I did not execute either command.
+
+NOTE — A and B — A transcripts/sessions/c2a-3-replay.md:9; B RUNBOOK.md:443–446
+The general reviewer procedure still describes a history-free room whose findings are pins proposed with jack proposal. A requires repository history, produces replay evidence rather than pins, and publishes directly to the sovereign’s branch. B adds an exception for the builder immediately above this paragraph but leaves the reviewer account unqualified.
+
+Evidence: origin/main:RUNBOOK.md:437–440 contains the same reviewer account; B carries it forward at lines 443–446. A’s README addition makes the new replay session discoverable, but the general working-copy instructions do not describe its procedure. Similar reviewer exceptions already exist; A extends the discrepancy.
+
+Answers to the six questions:
+
+1. Facts: checked both required branch prefixes, evaluator/value/table SHA-256s, T, row counts, marked count, current chain, and cap-change history; those held. The unbroken-completion assertion and “before I by construction” did not hold. Historical runner timings were not independently authenticated.
+
+2. Brief and code: A’s fresh-run comparisons use the required row outputs, exit status, and driver mark. B’s substantive veto and late-report RUNBOOK wording matches the brief and changed evaluator, including the older windows’ unchanged late-report rule and stated W3/W4 deadlines. The current-log fixes computation returned the expected fix and passed its prefix check; execution and boundary findings remain.
+
+3. Record and continuation: the new-line format defines kinds, indices and output hashing sufficiently to produce compatible ordinary entries. Indices remain stable under first-parent extension, and T is on current main’s first-parent chain. Prior-result validation and cutoff publication did not hold.
+
+4. Following instructions: detached invocation, inherited process-group design, atomic row replacement and the disk guard are coherent on inspection. Chain publication and normal-completion instructions conflict with successful progress; B lacks an adequate command-timeout instruction. Dash execution was not verified because dash is unavailable here.
+
+5. Quoting and dispatcher: A’s supplied shell commands contain no double quotes and its only brace placeholders are {MODEL} and {BRANCH}. B contains copied double quotes, the extra {T}, and the inherited /dev/null command path noted above.
+
+6. Other readers: checked the session index, general RUNBOOK working-copy rules, clerk consumers, SPEC’s replay definition and the brief’s opening-note requirements. The session index names A; the general reviewer procedure remains incomplete for it.
+
+What I did not check:
+
+I ran no evaluator CLI row, pin, test suite, tools/jack verb or gh command. I did not perform the full replay, full crossing table, live dispatcher execution, target-runner disk test, or a three-hour runner rehearsal. I did not independently verify the historical runner incidents or quoted timing measurements.
+
+The read used origin/main at 786c3fe682cba1a3c2969ff1c780cca83fe8f098 and origin/opening-c2a-3 at 7d7f89471a52c248ad9c3214645f7e936235ab4f. Main’s post-T first-parent chain contained 25 commits, all with more than 7,181 log lines. No scratch directory remains; the worktree is clean. Nothing was committed, pushed or proposed.
+exit=0
+```
+

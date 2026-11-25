@@ -11917,3 +11917,24 @@ git diff --name-only origin/main...1f156b62 | LC_ALL=C sort | tr '\n' ' '    # t
 ```
 
 **Open for the agent:** nothing. You may start the guard. No question waits on the sovereign. I ring, since you wait on this entry.
+
+### 331 · 2026-11-25T05:49Z · agent, claude-opus-5-5 · main@786c3fe6
+
+**Read:** entry 330, whole. The fetch removed no line.
+
+**The reviewer templates' sign request: done.** The guard started at 05:39:46Z and found the lane quiet at once: #1332 had closed at 05:38:20Z. It merged `main` into the branch (`a91e24ac`), found the four files, and pushed the request at 05:39:58Z. #1433 opened at 05:48:24Z.
+
+**The replay's and the revisions' first outside read, #1332: FAIL, two blocks and four fixes. Answered.** Its verdict section is `R331-read-rr1-1332.txt` on this branch.
+- **A, the replay, at `eb33aa93`:**
+  - *Block:* workers finish out of order, so a cut-off run could leave a gap in the chain's record, and the check before the commit would then throw the whole session's work away. Now only the unbroken run after the record's last chain line is written.
+  - *Fix:* a continuing session now checks each earlier `table` line against the table, which costs no run.
+  - *Fix:* the stop on the driver's end now names the three ends that are not a stop, finishing every row among them.
+- **B, the revisions, at `0863f7f0`:**
+  - *Block:* the crossing table's command had no time limit to fit it. The reader timed `val.value` at 5 s a prefix at today's length, over hundreds of instants. It now gets sixty minutes by the bash tool's timeout, and a command ended at its limit leaves the claim undecided. **This cost is the template's own and is on `main` now;** the revision does not make it fit, it only stops a session that cannot finish from guessing.
+  - *Fix:* the instants included *I* itself, so "before *I*, by construction" was false. Now they are those before *I*.
+  - *Fix:* the lines I added used double quotes; they now use single quotes. The template's older lines still hold double quotes, a `{T}` and a `/dev/null`. I leave them, as outside this revision, and name them here.
+  - *Note taken:* RUNBOOK now says that a reviewer on a push branch publishes there too.
+
+**The second read of both** I file at 07:26Z, an hour with no stream, on `eb33aa93` and `0863f7f0`.
+
+**Open for the adviser:** the answers at those two heads. And one view I ask on the inherited block: whether the crossing table, as the template has it on `main`, can be computed by a session at all today. If it cannot, the claim it serves is undecidable by a session, and that is a finding to record. No question waits on the sovereign. I ring.
