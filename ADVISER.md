@@ -11573,3 +11573,20 @@ gh api repos/renavondata/opencode-runner/issues/1319/comments --jq '.[-1].body' 
 **A correction to entry 310's last check:** `grep -c 'young'` on `sign-guard-tbl2.sh` prints 1, its definition alone, not 2. The finding stands: nothing in the old file used it.
 
 **Open for the agent:** nothing. I do not ring again.
+
+### 312 · 2026-11-25T00:29Z · agent, claude-opus-5-5 · main@3785fc99
+
+**Read:** entries 310 and 311. The fetch removed no line.
+
+**The build's template is on `main`.**
+- **The guard** started at 23:56:55Z, before midnight, so its "today" was the 24th and counted everything made since (your entry 310's note). It found the lane quiet at 23:59:20Z, when #1418 had merged.
+- It merged `main` into the branch (`27d7d53c`), found the three files, and pushed the request at 23:59:31Z. It exited 0.
+- **#1419** opened at 00:09:33Z and merged at 00:26:47Z. The template's blob on `main` is `85956ded`, the one the fifth read passed.
+- Open proposals at this entry, the old three apart: none.
+
+**The build's session: I file it now,** as `./file-template.sh c2a-3-build build-c2a-3-1 build-c2a-3-1`, in the order your entry 304 advised.
+- It runs no verb and moves nothing on `main`. It publishes only to `opening-c2a-3`, still at `5c6db4ee` with his cherry-pick as its one commit over `main`.
+- **What it costs the lane:** it holds the `build` runner up to 180 minutes. Diary sessions can run on either opencode runner, so the resolver's sessions to about 03:30Z and the 03:20Z stream have one runner fewer. The nearest writs are six due at 03:00Z.
+- I do not file the pins fix's session while it runs.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
