@@ -1,0 +1,28 @@
+VERDICT: PASS
+
+transcripts/sessions/c2a-3-pins.md: e51697d1dd6a92bf32cebf25283d94bfabc74339
+transcripts/sessions/c2a-3-code-review.md: bdce1ee3d565e311ff25e6eaa34e15060b7ae9f2
+transcripts/sessions/README.md: cd307fa3cf4a64f94abb349ffaba932139d50df2
+
+Findings: No BLOCK or FIX found. Both templates were read whole afresh. The fetched counsel head was 267ae731bd4ab01ff2cfba9606bb3c8c58c2264f; opening-c2a-3 remained at B, 7d7f89471a52c248ad9c3214645f7e936235ab4f.
+
+1. Facts — Held. Independently computed every stated file hash and confirmed B’s three builder commits and counsel’s preceding scope patch. The eight names and registration forms match judge/status.py:444–446, 509–512. pins/replay.py:41–80 confirms the existing three rows, first-table hash, move-parent hashes and moved-byte comparisons. Short JSON inspections confirmed that second-table row 734 is the last unmarked row, row 735 is marked, and neither commit occurs in the first table. Grant seq 7615 states 9,100 including the two allowances; reserving 55 plus 82 gives 8,963. tools/jack:188–255 confirms the distinction between the opening gate’s brief reviews and the --review file, whose bytes are copied and hashed without checking its verdict. The proposed review header supplies the evaluator hash required by the brief:83–87.
+
+2. Orders and ownership — Held. The pins template incorporates every requirement, mutant and twin of §Pins, the replay re-aim, and the existing-mutant/replacement obligations; it confines edits to pins/. The code read covers all six changes, their tests, pin completeness and behavioural kills, scope, trailers and evaluator identity. Full replay, counsel’s RUNBOOK revision and the sovereign’s opening remain assigned to their respective acts. The earlier verdict-class BLOCK is answered at c2a-3-code-review.md:45: partial compliance, including fewer tested cases than the text names, is expressly a BLOCK. FIX now covers defects against no ordered sentence.
+
+3. Starts and publication — Held by command and history inspection. The ancestor test accepts a runner branch cut from main before main advances normally; resetting then selects the published branch. Both fetch failures stop before that reset. Pins continuation checks every post-B commit’s paths and filled trailer; substantive defects remain subject to the brief and verification. The code read rejects missing pins, pre-opening merges and an existing review file. A competing divergent publication is rejected by the plain, non-forced push, with no merge/rebase retry authorized. Trailer generation passed with ISSUE set and unset under bash and bash POSIX mode; its substitutions are POSIX-compatible. Native dash execution was unavailable.
+
+4. Followability — Held on inspection. The earlier history-copy FIX is answered at c2a-3-pins.md:46: tests/test_status_third.py:94 requires historical git objects, while pins/run.py:24–30 excludes .git; the template now requires a history-independent fixture or locally constructed history. Both scratch directories must contain only small files during copying checks, and neither template sets temporary-directory environment variables or directs background execution. Foreground checks have explicit thirty-minute tool limits; the minute-115 start cutoff ends them by minute 145, leaving the pins session’s minute-150 publication deadline compatible. Verdict classes and check (d)’s distinction between B’s evaluator hash and the move-parent hashes are clear. Replay wall time remains unmeasured.
+
+5. Correct-session checks — Held statically; not runtime-certified. AST inspection counted 107 existing Pin calls, agreeing with EXPECTED; c2a-3-pins.md:41 now sets the registered count, reaching 115, rather than adding eight again on continuation. B has 8,493 counted lines, leaving 470 below the templates’ limit. Existing literal evaluator-mutant find strings remain single-occurrence, and the first-parent replay target remains unique. No source-level incompatibility was found between the prescribed re-aim and B. At B, the code-read readiness check correctly rejects all eight absent registrations and the unre-aimed replay hash. Passing future tests and pins requires their completed implementation.
+
+6. Quoting and dispatcher — Held. Regex inspection found only {MODEL} and {BRANCH} in the pins template, plus {NOW} in the code-read template. No copied shell command contains a double quote; the quoted Pin form is source syntax, not a shell command. Executable command examples name only worktree-relative paths. The key declaration is session metadata. These placeholders agree with counsel-courier.md:122–137.
+
+7. Other readers — Held. Searched main’s template references and the runner, tools and tests for consumers or template-name lists. No additional registration requirement or conflicting consumer was found. The six README lines accurately index the new sessions. Historical precedents remain historical; the brief already names the pins and code-read deliverables.
+
+Not checked: I ran no test suite, pin, pins/run.py, tools/jack verb or gh command. I did not run an evaluator row, benchmark marked-row replay, simulate network failures or concurrent pushes, or execute commits/publications in a scratch repository. Native dash was not installed; bash POSIX mode supplemented the portability inspection. I did not recompute either whole replay table or audit the builder’s implementation as a separate code review.
+
+No scratch directory was created. No files were changed, no commits were made, nothing was pushed, and the worktree finished clean.
+exit=0
+```
+
