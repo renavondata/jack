@@ -1,0 +1,22 @@
+Claim: renavon's public page for dataset hk_property_transactions (https://renavon.com/data/property/hk_property_transactions), fetched after 2026-11-25T00:00:00Z, shows a last-updated instant at or after 2026-11-24T23:00:00Z.
+Type as entered: world.renavone. The typo does not obscure the claim's exact dataset, URL, or instants.
+
+Commands run:
+curl -sL --max-time 90 https://renavon.com/data/property/hk_property_transactions -o transcripts/evidence/renavon-freshness/20261125T0210/hk_property_transactions.html -w 'transactions HTTP %{http_code}\n'
+date -u +%Y-%m-%dT%H:%M:%SZ
+Output:
+transactions HTTP 200
+2026-11-25T02:11:04Z
+
+Computation run on the freshly fetched page:
+python3 - <<'PY'
+import pathlib,re,hashlib,json
+root=pathlib.Path('transcripts/evidence/renavon-freshness/20261125T0210')
+name='hk_property_transactions'
+p=root/(name+'.html'); b=p.read_bytes(); s=b.decode(); m=re.search(r'"dateModified":\s*"([^"]+)"',s); v=re.search(r'Last refreshed</div>\s*<div[^>]*>([^<]+)',s)
+print(json.dumps({'dataset':name,'sha256':hashlib.sha256(b).hexdigest(),'last_updated':m.group(1) if m else None,'visible':v.group(1) if v else None}))
+PY
+Output (the same computation was run for all seven fetched pages):
+{"dataset": "hk_property_transactions", "sha256": "957e2f0f936b1a9c99845ab19a83d9ab0d2b5eda9c74085362953318c4c70fdc", "last_updated": "2026-11-25T01:28:38+00:00", "visible": "25 November, 2026 (42 minutes ago)"}
+
+Result: outcome 1. Fetch completion is after the window end, and the explicitly UTC Dataset dateModified instant printed in the HTML is at or after 2026-11-24T23:00:00Z.
