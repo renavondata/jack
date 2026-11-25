@@ -366,6 +366,8 @@ line of `status.py` that is not `met`, including `off-log repairs: n` from `--ac
 CSV saved under `transcripts/evidence/`; absent, the line reads `unknown` and is a writ) and a `decision
 promote` entered while a criterion did not hold at its instant (a sovereign REPAIR, which no later success
 erases); holder counsel; deadline the window's end. Evidence not supplied is unverified, never green.
+From C2a-3's opening push, a window ended by a veto (AMEND-A6, clause 3) is read at that veto, as of its `ts`;
+the W3 and W4 deadlines stay at its stated end (BRIEF-C2a-3 §The code, change 6).
 
 **W5** — counsel's dated writs, the class that scores counsel's own obligations (BRIEF-C2b §Scope (b) and
 Amendments 6–8; on 8 November 2026 two of its rows, `c2a-report` and `runbook-c2b`, are past due and undone): every row of
@@ -422,7 +424,9 @@ the tree, as the window file's `evidence.acts` defines it), writes nothing to th
 `numbers.acts_fresh_minutes` before the decision's `ts`. The sovereign's hand
 repairs are entered as `jack decision fix "<what>"` when made (§7): a repair taints every writ open at its
 instant whatever its subject says, so the subject is for the record, and one entered after the item it
-concerns was finalised changes no score but prints as a late report that refuses `promote` while it stands.
+concerns was finalised changes no score but prints as a late report that refuses `promote` while it stands. From
+C2a-3's opening push, a late report refuses the promotion of the window it was entered in, and of no other: one
+whose `seq` is below C2a-3's opening push does not refuse C2a-3 (BRIEF-C2a-3 §The late-report rule).
 
 ## Working copies (no verbs; nothing here touches the record)
 
@@ -432,7 +436,8 @@ but `~/git/jack`.
 
 - A builder works in a worktree cut from a pulled `main`: `git worktree add ~/git/worktrees/jack/<branch> -b
   <branch> main`, with `JACK_KEY=~/.ssh/jack-builder` in its environment. It reads the text it builds to,
-  touches only the paths that text names, and ends with `jack proposal` or `jack spec_conflict`.
+  touches only the paths that text names, and ends with `jack proposal` or `jack spec_conflict`; a builder on a
+  sovereign's push branch ends with a plain `git push` to that branch, and runs no verb.
 - A reviewer reads cold in a copy with no history: `R=~/git/worktrees/jack/<name>-room`, `git archive <ref> |
   tar -x -C $R`, `git diff <merge-base> <ref> > $R/DIFF.patch`, `git init` there. Its findings are pins,
   proposed under `~/.ssh/jack-reviewer` with `jack proposal`; a round that adds no pin ends the review (A2
