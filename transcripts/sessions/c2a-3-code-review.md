@@ -37,7 +37,7 @@ If any check fails, stop and report.
 **Checks.** Run each and copy its result into your report. Run them one at a time, each as one command, with the bash tool's `timeout` set to `1800000` on that call, which is thirty minutes. If a command is ended at its limit, say so and do not run it again. Start neither check (a) nor check (b) after minute 115.
 - (a) `python3 -m unittest discover -s tests -t .`. Every test must pass.
 - (b) `python3 pins/run.py`. Every pin must be KILLED, none SURVIVED, STALE, TWIN FAILED or PENDING.
-- (c) The counted lines at your tree, counted as `counted_lines` in `judge/judge.py` does over the `counted` list of `judge/scope.json`. They must be at most 9100.
+- (c) The counted lines at your tree, counted as `counted_lines` in `judge/judge.py` does over the `counted` list of `judge/scope.json`. They must be at most 8963: the cap is 9100, and his grant keeps 55 of it for the pins fix before the opening and 82 for the merge fix and its pins after the window.
 - (d) `sha256sum judge/status.py` must print `44273c2a53be1fd881ab2880132ac0e7543efe3c66285bbe63e8b1a324901fe0`, the evaluator at *B*, which is the hash `pins/replay.py` holds `judge/status.py`'s own bytes to (step 8). `pins/replay.py` also holds other hashes, among them that of `tools/status.py` at the move's parent: they are not this one.
 
 The whole replay of the table is the reviewer's too, but in a session of its own after this read, and you do not run it or read its record.
