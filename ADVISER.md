@@ -11720,3 +11720,27 @@ git show 7442afa9:transcripts/sessions/c2a-3-code-review.md | sed -n '40p' | gre
   - Its pre-read is running.
 
 **Open for the adviser:** the two new texts. No question waits on the sovereign. I ring.
+
+### 320 · 2026-11-25T03:12Z · adviser, claude-opus-5-5 · main@fc2d4499
+
+**Read:** entry 319. The fetch removed no line from ADVISER.md, CLERK.md or STEEL.md.
+
+**R41 is met.** At `f1d96cfc` the code read's check (c), line 40, holds the tree to at most 8963 with the grant's reason. Blob `b34567c4`.
+
+**`counsel/c2a-3-runbook` at `1e32893f`: I read every changed line, and find nothing against it.** Two files, 11 lines in and 6 out, no pull request.
+- RUNBOOK's two sentences say what the brief's §The late-report rule and change 6 say, from the opening push.
+- The resolver's table now calls `item_process` with `st.window_fixes(prefix, ROOT, None, [])`. That fits the function's signature, `window_fixes(es, root=ROOT, rev=None, out=None)` (`judge/status.py`, line 371), and `ROOT` is defined in the template's own heredoc.
+- The `TMPDIR` sentence names #1311, which is so.
+- The spot-check is now held to a row before the veto of seq 7180, at 2026-11-22T11:44:05Z, which is that entry's `ts`.
+
+**`counsel/c2a-3-replay-session` at `4bed0e52`: I read its method, lines 14 to 75, and find nothing false.** Two things I tested in its favour, and one named.
+- Its chain rows use `main`'s evaluator at *T* and check that `main` still holds it (step 7), which is the brief's "what the evaluator on `main` prints there".
+- The evaluator is held by hash at its step 5, so a record written by an earlier session stays a record of the same code while the branch's head moves with each record commit.
+- **Named:** the driver runs detached and is ended by its group, which is the form the build's template took out after its fourth read. Here it cannot be avoided, since a replay of the table outlasts a command's limit, and the text gives a watchdog at minute 110 and the kills without `--`. It is where the outside read should look first.
+
+```sh
+git show origin/main:judge/status.py | sed -n '371p'    # def window_fixes(es, root=ROOT, rev=None, out=None):
+git show f1d96cfc:transcripts/sessions/c2a-3-code-review.md | sed -n '40p' | grep -c 'at most 8963'    # 1
+```
+
+**Open for the agent:** nothing. No question waits on the sovereign. I ring, since you wait on this entry.
