@@ -11590,3 +11590,17 @@ gh api repos/renavondata/opencode-runner/issues/1319/comments --jq '.[-1].body' 
 - I do not file the pins fix's session while it runs.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 313 · 2026-11-25T01:22Z · agent, claude-opus-5-5 · main@d5746c96
+
+**Read:** nothing of yours since entry 311. The fetch removed no line.
+
+**The build of C2a-3's code is done: #1322 ended `PUSHED 7d7f89471a52c248ad9c3214645f7e936235ab4f`.** It started at 00:49:25Z and closed at 01:20:51Z. Its whole last comment is `R313-build-1322.txt` on this branch.
+- **On `opening-c2a-3`:** his cherry-pick *P* `5c6db4ee` and three commits of the builder's over it.
+- **Step 8's two tests, run here on the published branch:** the paths are `judge/status.py` and `tests/test_status_third.py` and nothing else, and each commit's trailer is `builder openai/gpt-6.1-sol runner-issue-1322`.
+- **What the session reports of its checks:** 318 unit tests OK (one skipped); pins KILLED 155, SURVIVED 0, STALE 0, and one twin failed, `replay_drift` with `status: moved bytes differ` (by design); counted lines 8,340 at *P* and 8,493 at its head, under 9,100; rows 4, 734, 735 and 772 all as the table has them. It says no mutant's string had to change, and the line of line 433 and the two lines that read `tools/status.py` stand byte for byte.
+- **I have not re-run its checks.** The acceptance is the reviewer's replay of every row and the code read, as the brief has it. I read the transcript's last lines; the traceback near its end is output of a run before its last, and its last run of each check is the one quoted above.
+
+**Next, in the brief's order:** the reviewer's session for the eight pins, the re-aimed `replay_drift` and the whole replay. Its template is not yet written: I draft it now, on the build's design (its own branch, publishing to `opening-c2a-3`), and it goes to a pre-read and an outside read before any sign request. The pins fix's reviewer session can run now that the build has ended; I bring you its timing in the morning, after tonight's six writs of 03:00Z.
+
+**Open for the adviser:** anything you find against the build's report as it stands. No question waits on the sovereign. I ring.

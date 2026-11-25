@@ -1,0 +1,815 @@
+```
+build-c2a-3-1/judge/status.py", line 554, in assess
+    window_fixes([e for e in es if instant(e["ts"]) <= instant(as_of)], root, rev, unverified)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g/git/worktrees/jack/build-c2a-3-1/judge/status.py", line 407, in window_fixes
+    if not (signer_blob(e) in sovereign and e["type"] == "decision" and e["body"].get("kind") == "fix"):
+            ~~~~~~~~~~~^^^
+  File "/home/g/git/worktrees/jack/build-c2a-3-1/judge/judge.py", line 98, in signer_blob
+    blob = base64.b64decode(e["sig"])
+                            ~^^^^^^^
+KeyError: 'sig'
+
+----------------------------------------------------------------------
+Ran 15 tests in 103.200s
+
+FAILED (errors=1)
+^[[0m
+^[[0m% ^[[0mPatch 1 file
+^[[0m
+^[[0m$ ^[[0mpython3 -m py_compile judge/status.py tests/test_status_third.py && python3 -m unittest -q tests.test_status_third && git diff --check && git diff --stat && git status --short && git log --oneline -10
+----------------------------------------------------------------------
+Ran 4 tests in 145.368s
+
+OK
+ judge/status.py | 64 +++++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 58 insertions(+), 6 deletions(-)
+ M judge/status.py
+?? .build/
+?? tests/test_status_third.py
+5c6db4ee push: C2a-3 opening — cap 9100, and SPEC §10's two sentences on the evaluator's second change (BRIEF-C2a-3 §The window)
+22685231 decision: grant promote_unmet: SPEC.md c4a5b44b8465f4be9cd4a5bbeb294cfd5c56a7397319e7f1c167853d7fd628a7; table spec/vectors/promotion-replay-c2a-3.json 943a79863df95479cc93085e0dc686b47f5940a34b5497372503937cb85f3e77. A2.10 for BRIEF-C2a-3: before entering this I read transcripts/BRIEF-C2a-3-draft.md at sha256 a5c331b40d1e81f959e147461884b3a55e11d829933bfd2296d660a526433945 and approved it unchanged. The table's one mark, as that file's section The code states it, and no other: at every row whose log holds an entry after my veto of seq 7180 (2026-11-22T11:44:05Z), the lines from the one that begins window C2a: to the last are marked, the lines that begin overdue forecast apart. I state that the cap at C2a-3's opening is 9,100, which also holds at most 55 lines for the pins fix before the opening and at most 82 for the merge fix and three pins after the window, and that the two fixes of 23 November stand on main without their pins until C2a-3 has ended.
+559559a3 Merge pull request #1409 from renavondata/due-builder-20261124T1610
+e12035dc merge: #1409
+f46018d6 proposal: due 20261124T1610: 6 resolved (world.renavon freshness)
+0e9f10d7 evidence: renavon freshness 20261124T1610
+0bda086b resolution: 7584 0
+d35cfe82 resolution: 7583 0
+8d02eaad resolution: 7582 0
+1660bb26 resolution: 7581 1
+^[[0m
+^[[0m→ ^[[0mRead pins/pins.py^[[90m [offset=1050, limit=60]^[[0m
+^[[0m% ^[[0mPatch 2 files
+^[[0m
+^[[0m$ ^[[0mgit diff --no-renames && git add judge/status.py tests/test_status_third.py && git diff --cached --no-renames --name-only
+diff --git a/judge/status.py b/judge/status.py
+index 7eb5d90f..ec145fe5 100644
+--- a/judge/status.py
++++ b/judge/status.py
+@@ -69,6 +69,19 @@ def c2a_prime_window(es):
+     return op2["seq"], op2["ts"], v5["body"]["resolves_by"] if v5 else None
+ 
+ 
++def c2a_third_window(es):
++    w2 = c2a_prime_window(es)
++    if w2 is None or w2[2] is None or any(
++            promotes(e, "C2a") and instant(e["ts"]) <= instant(w2[2]) for e in es):
++        return None
++    op3 = next((e for e in es if e["type"] == "push" and instant(e["ts"]) > instant(w2[2])), None)
++    if op3 is None:
++        return None
++    v8 = next((e for e in es if e["seq"] < op3["seq"] and e["type"] == "forecast" and
++               e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "V8"), None)
++    return op3["seq"], op3["ts"], v8["body"]["resolves_by"] if v8 else None
++
++
+ def score_items(items):
+     """The live and historical item projection: exact A4.3 rows and terminal wealth."""
+     result, successes, capital = [], 0, Fraction(1)
+@@ -168,12 +181,19 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None, decision
+         else:
+             opening, start, end = (c2a_window if subject == "C2a" else c1b_window)(es)
+             window = subject
++        w3 = c2a_third_window(es) if subject == "C2a" else None
++        if w3 is not None and (decision is None or instant(decision["ts"]) > instant(w3[1])):
++            opening, start, end = w3[0], w3[1], w3[2] or w3[1]
++            v5_ok = w3[2] is not None
++            window = "C2a-3"
+         start, end = instant(start), instant(end)
+     else:
+         opened = next(e for e in es if e["type"] == "amend" and e["body"].get("id") == window)
+         opening, start = opened["seq"], instant(opened["ts"])
+         end = start + dt.timedelta(days=days)
+     closing = next((e for e in es if promotes(e, subject) and (window != "C2a-prime" or instant(e["ts"]) > start)), None)
++    if window == "C2a-3":
++        closing = next((e for e in es if names_window(es, e, "promote", window)), None)
+     if closing:
+         end = min(end, instant(closing["ts"]))
+     prefix = [e for e in es if instant(e["ts"]) <= end and (not closing or e["seq"] <= closing["seq"])]
+@@ -191,6 +211,8 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None, decision
+                 e["body"].get("subject") in ("C2a", "C2a-prime") and instant(e["ts"]) > start for e in prefix)
+             if window == "C2a-prime" else
+             any(e["type"] == "decision" and e["body"].get("kind") == "veto" and e["body"].get("subject") == subject for e in prefix))
++    if window == "C2a-3":
++        veto = any(names_window(es, e, "veto", window) for e in prefix)
+     return {
+         "window": window, "start": start.strftime(FMT), "end": end.strftime(FMT), "as_of": as_of,
+         "prefix_last_seq": prefix[-1]["seq"] if prefix else None, "entries_in_window": len(inw),
+@@ -259,7 +281,7 @@ def off_log_repairs(acts, start, end, overlap=False):
+                for t in [dt.datetime.strptime(row["time_hkt"], "%Y-%m-%d %H:%M").replace(tzinfo=hkt)])
+ 
+ 
+-WINDOW_NAMES = ("C1a", "C1b", "C2a", "C2a-prime", "C2b")
++WINDOW_NAMES = ("C1a", "C1b", "C2a", "C2a-prime", "C2a-3", "C2b")
+ CHANGE2_FUNCTIONS = ("window_fixes", "window_bounds", "names_window", "subject_names", "carrying_commit", "attributed_repairs")
+ 
+ 
+@@ -278,6 +300,9 @@ def window_bounds(es, name):
+         if name == "C2a-prime":
+             w2 = c2a_prime_window(es)
+             return (w2[1], w2[2], w2[2]) if w2 and w2[2] else None
++        if name == "C2a-3":
++            w3 = c2a_third_window(es)
++            return (w3[1], w3[2], w3[2]) if w3 and w3[2] else None
+     except StopIteration:
+         return None
+     return None
+@@ -287,12 +312,18 @@ def names_window(es, e, kind, name):
+     if e["type"] != "decision" or e["body"].get("kind") != kind:
+         return False
+     subj = e["body"].get("subject")
+-    if name not in ("C2a", "C2a-prime"):
++    if name not in ("C2a", "C2a-prime", "C2a-3"):
+         return subj == name
+     try:
+         w2 = c2a_prime_window(es)
+     except StopIteration:
+         w2 = None
++    w3 = c2a_third_window(es) if w2 is not None else None
++    is_third = w3 is not None and instant(e["ts"]) > instant(w3[1])
++    if name == "C2a-3":
++        return is_third and (subj == "C2a" if kind == "promote" else subj in ("C2a", "C2a-3"))
++    if is_third:
++        return False
+     is_prime = w2 is not None and instant(e["ts"]) > instant(w2[1])
+     return (is_prime and (subj == "C2a" if kind == "promote" else subj in ("C2a", "C2a-prime"))
+             if name == "C2a-prime" else not is_prime and subj == "C2a")
+@@ -410,6 +441,11 @@ VALUE_PINS = ("worked_table forecast_before_cutoff rigged revision weights_from_
+               "promote_names_committed_table").split()
+ 
+ 
++THIRD_WINDOW_PINS = ("third_window_from_the_end", "third_window_end_is_v8", "third_window_cap",
++                     "scope_unchanged_on_main", "veto_names_its_window", "offlog_from_third_opening",
++                     "vetoed_window_continues", "late_report_in_its_window")
++
++
+ def c2a_tree_evidence(root, rev, prefix, opening):
+     """Check the opening's scope through every intervening tree; keep C1b's process code."""
+     try:
+@@ -429,12 +465,20 @@ def c2a_tree_evidence(root, rev, prefix, opening):
+         cap = 8400 if is_prime else 7800
+         scope_at = lambda sha: (tree_bytes(root, sha, "judge/scope.json"),
+                                 tree_bytes(root, sha, "SPEC.md").split(b"at C1 it is:", 1)[1].split(b"```", 2)[1])
++        w3 = c2a_third_window(prefix)
++        is_third = w3 is not None and opening == w3[0]
++        if is_third:
++            cap = 9100
+         original = scope_at(start)
+         unchanged = all(scope_at(c) == original for c in [rev] + git_bytes(root, "rev-list", "--first-parent", f"{start}..{rev}").decode().split())
+         unchanged = unchanged and json.loads(original[0])["cap"] == cap and not any(
+             e["type"] == "push" and e["seq"] > opening for e in prefix)
+-        start_nodes = ast.parse(tree_bytes(root, start, "tools/status.py")).body
+-        rev_nodes = ast.parse(tree_bytes(root, rev, "tools/status.py")).body
++        if is_third:
++            start_nodes = ast.parse(tree_bytes(root, start, "judge/status.py")).body
++            rev_nodes = ast.parse(tree_bytes(root, rev, "judge/status.py")).body
++        else:
++            start_nodes = ast.parse(tree_bytes(root, start, "tools/status.py")).body
++            rev_nodes = ast.parse(tree_bytes(root, rev, "tools/status.py")).body
+         assign_targets = lambda n: ({t.id for t in n.targets if isinstance(t, ast.Name)} if isinstance(n, ast.Assign) else
+                                     {n.target.id} if isinstance(n, ast.AnnAssign) and isinstance(n.target, ast.Name) else set())
+         read_c2_tuple = lambda nodes: next((tuple(ast.literal_eval(n.value)) for n in nodes if "CHANGE2_FUNCTIONS" in assign_targets(n)), ())
+@@ -459,14 +503,18 @@ def c2a_tree_evidence(root, rev, prefix, opening):
+         same = process_at(start_nodes) == process_at(rev_nodes) and tree_bytes(root, start, "tools/clerk.py") == tree_bytes(root, rev, "tools/clerk.py")
+         pins = tree_bytes(root, rev, "pins/pins.py").decode()
+         registered = all(f'Pin("{name}"' in pins or f"Pin('{name}'" in pins for name in VALUE_PINS)
++        if is_third:
++            registered = registered and all(f'Pin("{name}"' in pins or f"Pin('{name}'" in pins for name in THIRD_WINDOW_PINS)
+         return unchanged, same, registered
+     except (OSError, ValueError, IndexError, SyntaxError, subprocess.CalledProcessError):
+         return False, False, False
+ 
+ 
+ def assess_value(s, facts, verified, root, rev, runs, acts):
+-    is_prime = s["window"] == "C2a-prime"
++    is_prime = s["window"] in ("C2a-prime", "C2a-3")
+     cap = 8400 if is_prime else 7800
++    if s["window"] == "C2a-3":
++        cap = 9100
+     end = min(s["as_of"], s["end"])
+     unchanged, same, registered = c2a_tree_evidence(root, rev, s["prefix"], s["opening"])
+     gate = attack_start(root, runs, end, "tests/test_value.py")
+@@ -505,7 +553,7 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
+         unverified = []
+         window_fixes([e for e in es if instant(e["ts"]) <= instant(as_of)], root, rev, unverified)
+         s.update(subject=subject, unverified_fixes=unverified,
+-                 checks=[(False, "C2a-prime has no promotion forecast before its opening")])
++                 checks=[(False, f"{s['window']} has no promotion forecast before its opening")])
+         return s
+     facts = tree_facts(root, rev)
+     verified = run_verified(run, rev) and completed_by(run, as_of)
+@@ -590,6 +638,8 @@ def render(s):
+                   f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
+     lines = s.get("history", []) + lines
+     win = [f"window: C2a-prime (second window of C2a, opened seq {s['opening']})"] if s.get("window") == "C2a-prime" else []
++    if s.get("window") == "C2a-3":
++        win = [f"window: C2a-3 (third window of C2a, opened seq {s['opening']})"]
+     return "\n".join(lines + s.get("unverified_fixes", []) + s.get("repairs", []) + win + [promotion_line(s)])
+ 
+ 
+@@ -643,6 +693,8 @@ def report(**context):
+     decisions = [e for e in context["es"] if e["ts"] <= context["as_of"] and
+                  any(promotes(e, w) for w in ("C1a", "C1b", "C2a"))]
+     w2 = c2a_prime_window([e for e in context["es"] if instant(e["ts"]) <= instant(context["as_of"])]) if context["subject"] == "C2a" else None
++    if context["subject"] == "C2a":
++        w2 = c2a_third_window([e for e in context["es"] if instant(e["ts"]) <= instant(context["as_of"])]) or w2
+     closing = next((e for e in decisions if promotes(e, context["subject"]) and
+                     (w2 is None or instant(e["ts"]) > instant(w2[1]))), None)
+     s = assess(**context, decision=closing)
+judge/status.py
+tests/test_status_third.py
+^[[0m
+^[[0m% ^[[0mPatch 1 file
+^[[0m
+^[[0m$ ^[[0mpython3 -m py_compile judge/status.py tests/test_status_third.py && python3 -m unittest -q tests.test_status_third.ThirdWindowTest.test_change_4_process_reads_judge_source && git add judge/status.py tests/test_status_third.py && git diff --cached --no-renames --name-only && I=${ISSUE:-build-c2a-3-1}; { cat .build/text; printf '\n\nProposer: builder openai/gpt-6.1-sol runner-issue-%s\n' $I; } > .build/msg && git commit -q -F .build/msg && python3 .build/commits.py && git push -q origin HEAD:opening-c2a-3
+----------------------------------------------------------------------
+Ran 1 test in 0.492s
+
+OK
+judge/status.py
+tests/test_status_third.py
+judge/status.py
+tests/test_status_third.py
+ae3fdb48 builder openai/gpt-6.1-sol runner-issue-1322
+^[[0m
+Changes 1–4 are committed and published as `ae3fdb48`: third-window selection, names, the 9,100 cap, and process comparison using `judge/status.py`. The tests include the required real-log comparison against the evaluator extracted from `cbdac17b`; fixes and item-process results match.
+^[[0m% ^[[0mPatch 3 files
+^[[0m
+^[[0m$ ^[[0mpython3 -m py_compile judge/status.py tests/test_status_third.py && python3 -m unittest -q tests.test_status_third.ThirdWindowTest.test_change_5_late_reports_belong_to_third_window && git diff --check && git status --short && git diff && git log --oneline -10 && git add judge/status.py tests/test_status_third.py && git diff --cached --no-renames --name-only && I=${ISSUE:-build-c2a-3-1}; { cat .build/text; printf '\n\nProposer: builder openai/gpt-6.1-sol runner-issue-%s\n' $I; } > .build/msg && git commit -q -F .build/msg && python3 .build/commits.py && git push -q origin HEAD:opening-c2a-3
+----------------------------------------------------------------------
+Ran 1 test in 13.315s
+
+OK
+ M judge/status.py
+ M tests/test_status_third.py
+?? .build/
+diff --git a/judge/status.py b/judge/status.py
+index 489782df..f9609cab 100644
+--- a/judge/status.py
++++ b/judge/status.py
+@@ -528,6 +528,8 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
+     unverified = []
+     fixes = window_fixes(s["prefix"], root, rev, unverified)
+     process = item_process(s["prefix"], c1b_window(s["prefix"])[0], end, fixes)
++    late_reports = ([seq for seq in process["late_reports"] if seq > s["opening"]]
++                    if s["window"] == "C2a-3" else process["late_reports"])
+     live = score_items(i for i in process["items"] if live_gate is not None and live_gate < i["ts"])
+     off = off_log_repairs(acts, s["start"], end, overlap=is_prime)
+     s.update(value=v, continued_liveness=live, late_reports=process["late_reports"], unverified_fixes=unverified)
+@@ -538,8 +540,8 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
+             (gate is not None and all(gate < r["cutoff"] for r in v["rows"]),
+              f"criterion 4: attack green on main before first scored cutoff: {gate or 'unverified'}"),
+             (v["E_value"] >= 20, f"criterion 5: value E {v['E_value']:.6f} >= 20"),
+-            (same and live_gate is not None and live["E"] >= 20 and not process["late_reports"],
+-             f"criterion 6: continued liveness E {live['E']} >= 20; unchanged {same}; attack {live_gate or 'unverified'}; late repairs {len(process['late_reports'])}"),
++            (same and live_gate is not None and live["E"] >= 20 and not late_reports,
++             f"criterion 6: continued liveness E {live['E']} >= 20; unchanged {same}; attack {live_gate or 'unverified'}; late repairs {len(late_reports)}"),
+             (off == 0, f"criterion 7: off-log repairs: {off if off is not None else 'unknown (no acts file)'}")]
+ 
+ 
+diff --git a/tests/test_status_third.py b/tests/test_status_third.py
+index de96e585..ebcb0ef3 100644
+--- a/tests/test_status_third.py
++++ b/tests/test_status_third.py
+@@ -105,3 +105,21 @@ class ThirdWindowTest(unittest.TestCase):
+             changed = files['judge/status.py'].replace('P0 = Fraction(6, 11)', 'P0 = Fraction(1, 2)')
+             head = commit(root, {'judge/status.py': changed})
+             self.assertFalse(st.c2a_tree_evidence(root, head, self.es, self.op)[1])
++
++    def test_change_5_late_reports_belong_to_third_window(self):
++        def check(es, window, reports, expected):
++            s = self.status(es)
++            s['window'] = window
++            process = dict(items=[], late_reports=reports)
++            with patch.object(st, 'c2a_tree_evidence', return_value=(True, True, True)), \
++                    patch.object(st, 'attack_start', return_value='2026-10-31T00:00:00Z'), \
++                    patch.object(st, 'window_fixes', return_value=set()), \
++                    patch.object(st, 'item_process', return_value=process), \
++                    patch.object(st, 'score_items', return_value=dict(items=[], E=20)):
++                checks = st.assess_value(s, dict(counted=0, kernel=0, scope=True), True, st.ROOT, None, [], [])
++            self.assertEqual(checks[5][0], expected == 0)
++            self.assertTrue(checks[5][1].endswith(f'late repairs {expected}'))
++            self.assertEqual(s['late_reports'], reports)
++        check(self.es, 'C2a-3', [5877, 5878, 5936], 0)
++        check(self.es, 'C2a-3', [5877, self.op + 1], 1)
++        check(self.es, 'C2a-prime', [1, 5877], 2)
+ae3fdb48 status: read C2a-3 window, names, cap and moved process evidence
+5c6db4ee push: C2a-3 opening — cap 9100, and SPEC §10's two sentences on the evaluator's second change (BRIEF-C2a-3 §The window)
+22685231 decision: grant promote_unmet: SPEC.md c4a5b44b8465f4be9cd4a5bbeb294cfd5c56a7397319e7f1c167853d7fd628a7; table spec/vectors/promotion-replay-c2a-3.json 943a79863df95479cc93085e0dc686b47f5940a34b5497372503937cb85f3e77. A2.10 for BRIEF-C2a-3: before entering this I read transcripts/BRIEF-C2a-3-draft.md at sha256 a5c331b40d1e81f959e147461884b3a55e11d829933bfd2296d660a526433945 and approved it unchanged. The table's one mark, as that file's section The code states it, and no other: at every row whose log holds an entry after my veto of seq 7180 (2026-11-22T11:44:05Z), the lines from the one that begins window C2a: to the last are marked, the lines that begin overdue forecast apart. I state that the cap at C2a-3's opening is 9,100, which also holds at most 55 lines for the pins fix before the opening and at most 82 for the merge fix and three pins after the window, and that the two fixes of 23 November stand on main without their pins until C2a-3 has ended.
+559559a3 Merge pull request #1409 from renavondata/due-builder-20261124T1610
+e12035dc merge: #1409
+f46018d6 proposal: due 20261124T1610: 6 resolved (world.renavon freshness)
+0e9f10d7 evidence: renavon freshness 20261124T1610
+0bda086b resolution: 7584 0
+d35cfe82 resolution: 7583 0
+8d02eaad resolution: 7582 0
+judge/status.py
+tests/test_status_third.py
+judge/status.py
+tests/test_status_third.py
+8a614383 builder openai/gpt-6.1-sol runner-issue-1322
+ae3fdb48 builder openai/gpt-6.1-sol runner-issue-1322
+^[[0m
+^[[0m% ^[[0mPatch 3 files
+^[[0m% ^[[0mPatch 1 file
+^[[0m
+^[[0m$ ^[[0mpython3 -m py_compile judge/status.py tests/test_status_third.py && python3 -m unittest -q tests.test_status_third.ThirdWindowTest.test_change_6_veto_reads_prefix_but_keeps_current_overdue && git diff --check
+----------------------------------------------------------------------
+Ran 1 test in 0.040s
+
+OK
+^[[0m
+^[[0m$ ^[[0mgit status --short && git diff && git log --oneline -10 && git add judge/status.py tests/test_status_third.py && git diff --cached --no-renames --name-only && I=${ISSUE:-build-c2a-3-1}; { cat .build/text; printf '\n\nProposer: builder openai/gpt-6.1-sol runner-issue-%s\n' $I; } > .build/msg && git commit -q -F .build/msg && python3 .build/commits.py && git push -q origin HEAD:opening-c2a-3
+M judge/status.py
+ M tests/test_status_third.py
+?? .build/
+diff --git a/judge/status.py b/judge/status.py
+index f9609cab..1a76f4ed 100644
+--- a/judge/status.py
++++ b/judge/status.py
+@@ -716,6 +716,17 @@ def report(**context):
+             failures = ["historical criteria unverified"]
+         if failures:
+             s["repairs"].append(f"sovereign REPAIR: promote {e['body']['subject']} seq {e['seq']}: " + "; ".join(failures))
++    es = [e for e in context["es"] if instant(e["ts"]) <= instant(context["as_of"])]
++    a6 = next((e for e in es if e["type"] == "amend" and e["body"].get("id") == "A6"), None)
++    name = s["window"] if s["subject"] == "C2a" else s["subject"]
++    veto = next((e for e in es if a6 is not None and e["seq"] >= a6["body"]["activate_at"] and
++                 names_window(es, e, "veto", name) and
++                 instant(s["start"]) < instant(e["ts"]) <= instant(s["end"]) and not any(
++                     x["seq"] < e["seq"] and names_window(es, x, "promote", name) for x in es)), None)
++    if veto is not None:
++        ended = assess(**dict(context, es=[e for e in es if e["seq"] <= veto["seq"]], as_of=veto["ts"]))
++        ended.update({key: s[key] for key in ("overdue", "history", "repairs") if key in s})
++        return ended
+     return s
+ 
+ 
+diff --git a/tests/test_status_third.py b/tests/test_status_third.py
+index ebcb0ef3..cef7cb9c 100644
+--- a/tests/test_status_third.py
++++ b/tests/test_status_third.py
+@@ -123,3 +123,31 @@ class ThirdWindowTest(unittest.TestCase):
+         check(self.es, 'C2a-3', [5877, 5878, 5936], 0)
+         check(self.es, 'C2a-3', [5877, self.op + 1], 1)
+         check(self.es, 'C2a-prime', [1, 5877], 2)
++
++    def test_change_6_veto_reads_prefix_but_keeps_current_overdue(self):
++        # A small C1a log also checks that ending is not confined to C2a.
++        es = [e(0, '2026-11-01T00:00:00Z', 'amend', 'guy', id='A3'),
++              e(1, '2026-11-01T00:00:01Z', 'amend', 'guy', id='A6', activate_at=3),
++              e(2, '2026-11-01T01:00:00Z', 'decision', 'guy', kind='veto', subject='C1a'),
++              e(3, '2026-11-02T00:00:00Z', 'forecast', 'counsel', resolves_by='2026-11-04T00:00:00Z'),
++              e(4, '2026-11-03T00:00:00Z', 'decision', 'guy', kind='veto', subject='C1a'),
++              e(5, '2026-11-03T00:00:00Z', 'forecast', 'counsel', resolves_by='2026-11-06T00:00:00Z'),
++              e(6, '2026-11-05T00:00:00Z', 'decision', 'guy', kind='veto', subject='C1a')]
++        context = dict(es=es, subject='C1a', as_of='2026-11-07T00:00:00Z', root=None, rev='c',
++                       run=dict(path=st.WORKFLOW, event='push', head_branch='main', head_sha='c',
++                                conclusion='success', updated_at='2026-11-04T00:00:00Z'))
++        with patch.object(st, 'tree_facts', return_value=dict(counted=0, kernel=0, scope=True)):
++            now = st.assess(**context)
++            ended = st.report(**context)
++            expected = st.assess(**dict(context, es=es[:5], as_of=es[4]['ts']))
++            expected.update(overdue=now['overdue'], repairs=[])
++            self.assertEqual(ended, expected)
++            self.assertEqual((ended['forecasts'], ended['prefix_last_seq']), (1, 4))
++            self.assertEqual(ended['end'], '2026-11-15T00:00:00Z')
++            self.assertFalse(ended['checks'][0][0])
++            for prefix in (es[:5], es[:6]):
++                self.assertEqual(st.report(**dict(context, es=prefix))['as_of'], es[4]['ts'])
++            for modified in ([es[0], *es[2:]], [es[0], dict(es[1], body=dict(id='A6', activate_at=10)), *es[2:]],
++                             [*es[:2], dict(es[4], ts='2026-11-16T00:00:00Z')]):
++                args = dict(context, es=modified, as_of='2026-11-20T00:00:00Z')
++                self.assertEqual(st.report(**args)['as_of'], args['as_of'])
+8a614383 status: restrict C2a-3 late-report refusal to its own window
+ae3fdb48 status: read C2a-3 window, names, cap and moved process evidence
+5c6db4ee push: C2a-3 opening — cap 9100, and SPEC §10's two sentences on the evaluator's second change (BRIEF-C2a-3 §The window)
+22685231 decision: grant promote_unmet: SPEC.md c4a5b44b8465f4be9cd4a5bbeb294cfd5c56a7397319e7f1c167853d7fd628a7; table spec/vectors/promotion-replay-c2a-3.json 943a79863df95479cc93085e0dc686b47f5940a34b5497372503937cb85f3e77. A2.10 for BRIEF-C2a-3: before entering this I read transcripts/BRIEF-C2a-3-draft.md at sha256 a5c331b40d1e81f959e147461884b3a55e11d829933bfd2296d660a526433945 and approved it unchanged. The table's one mark, as that file's section The code states it, and no other: at every row whose log holds an entry after my veto of seq 7180 (2026-11-22T11:44:05Z), the lines from the one that begins window C2a: to the last are marked, the lines that begin overdue forecast apart. I state that the cap at C2a-3's opening is 9,100, which also holds at most 55 lines for the pins fix before the opening and at most 82 for the merge fix and three pins after the window, and that the two fixes of 23 November stand on main without their pins until C2a-3 has ended.
+559559a3 Merge pull request #1409 from renavondata/due-builder-20261124T1610
+e12035dc merge: #1409
+f46018d6 proposal: due 20261124T1610: 6 resolved (world.renavon freshness)
+0e9f10d7 evidence: renavon freshness 20261124T1610
+0bda086b resolution: 7584 0
+d35cfe82 resolution: 7583 0
+judge/status.py
+tests/test_status_third.py
+judge/status.py
+tests/test_status_third.py
+7d7f8947 builder openai/gpt-6.1-sol runner-issue-1322
+8a614383 builder openai/gpt-6.1-sol runner-issue-1322
+ae3fdb48 builder openai/gpt-6.1-sol runner-issue-1322
+^[[0m
+^[[0m$ ^[[0mpython3 -m unittest discover -s tests -t .
+............................................................../home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/tools/digest.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/judge/__init__.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/judge/judge.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/kernel/check.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/SPEC.md'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/tools/digest.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/judge/__init__.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/judge/judge.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/kernel/check.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/SPEC.md'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/tools/digest.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/judge/__init__.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/judge/judge.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/kernel/check.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/SPEC.md'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/tools/digest.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/judge/__init__.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/judge/judge.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/kernel/check.py'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/g/git/worktrees/jack/build-c2a-3-1/tests/test_digest.py:38: ResourceWarning: unclosed file <_io.BufferedReader name='/home/g/git/worktrees/jack/build-c2a-3-1/SPEC.md'>
+  gitfix.write(tmp, rel_, open(os.path.join(ROOT, rel_), "rb").read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+....................................................................................................................................................................................s..............................1/10 seeds (10.0%), 9/s, 0 failures, 0.0m elapsed, ~0.0m left  
+10/10 seeds (100.0%), 27/s, 0 failures, 0.0m elapsed, ~0.0m left  
+.............................................
+----------------------------------------------------------------------
+Ran 318 tests in 619.156s
+
+OK (skipped=1)
+10 seeds in 0.4s, 0 property failures → /tmp/tmpnl269ajn/20261125T010531Z-10.json
+^[[0m
+^[[0m$ ^[[0mpython3 pins/run.py
+pin                              mutant                       status
+------------------------------------------------------------------------
+charter_edit_unrecorded          charter_unchecked            KILLED  (AssertionError: {'appended': 0, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'b6)
+amend_stale                      genesis_charter_compared     KILLED  (AssertionError: {'appended': 0, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '4e)
+push_unrecorded                  trusted_base_unchecked       KILLED  (AssertionError: {'appended': 0, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '0f)
+freeze_ignored                   amendment_freeze_unchecked   KILLED  (AssertionError: {'appended': 4, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'f9)
+one_act_amendment                transmutation_unchecked      KILLED  (AssertionError: {'appended': 2, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '2b)
+decision_forged                  sovereign_unchecked          KILLED  (AssertionError: {'appended': 3, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'e7)
+trusted_path_unguarded           guard_removed                KILLED  (AssertionError: ('kernel/check.py', {'appended': 0, 'attested': [], 'detail': 'no appended proposal entry name)
+trusted_path_unguarded           judge_dir_untrusted          KILLED  (AssertionError: ('judge/judge.py', {'appended': 0, 'attested': [], 'detail': 'no appended proposal entry names)
+trusted_rename_admitted          path_guard_only              KILLED  (AssertionError: ('SPEC.md', 'docs/SPEC.md', {'appended': 0, 'attested': [], 'detail': 'no appended proposal en)
+judge_from_proposal              digest_unchecked             KILLED  (AssertionError: {'appended': 2, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'f3)
+unattributed_proposal_admitted   commit_unchecked             KILLED  (AssertionError: {'appended': 1, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '22)
+unattributed_proposal_admitted   later_commits_unchecked      KILLED  (AssertionError: {'appended': 1, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'ab)
+unattributed_proposal_admitted   law_at_end                   KILLED  (AssertionError: {'appended': 2, 'attested': [], 'detail': "outside reviewer's paths: sim/x.py", 'kernel2': 'ab)
+unattributed_proposal_admitted   first_entry_attributes       KILLED  (AssertionError: {'appended': 2, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '86)
+unattributed_proposal_admitted   party_by_key_id              KILLED  (AssertionError: {'appended': 2, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '16)
+counsel_build_admitted           counsel_unlisted             KILLED  (AssertionError: {'appended': 1, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '2a)
+builder_pin_admitted             builder_unlisted             KILLED  (AssertionError: {'appended': 2, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '42)
+reviewer_code_admitted           reviewer_unlisted            KILLED  (AssertionError: {'appended': 1, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '58)
+scope_unguarded                  scope_unchecked              KILLED  (AssertionError: {'appended': 1, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '43)
+scope_unguarded                  rename_hides_source          KILLED  (AssertionError: {'appended': 1, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '4c)
+cap_unguarded                    cap_unchecked                KILLED  (AssertionError: {'appended': 1, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '28)
+shebang_uncounted                py_suffix_only               KILLED  (AssertionError: {'appended': 1, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': '83)
+foreign_object_admitted          mode_unchecked               KILLED  (AssertionError: {'appended': 1, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'de)
+foreign_object_admitted          trusted_mode_unchecked       KILLED  (AssertionError: {'appended': 0, 'attested': [], 'detail': '', 'kernel2': 'absent', 'ok': True, 'proposal': 'bb)
+unsigned_change                  power_unchecked              KILLED  (AssertionError: expected (1, 'no_power'), got {'entries': 2, 'ok': True})
+history_rewritten                signature_always_valid       KILLED  (AssertionError: expected (1, 'bad_signature'), got {'detail': '', 'ok': False, 'reason': 'parent_mismatch', 's)
+fork_admitted                    parent_unchecked             KILLED  (AssertionError: expected (3, 'parent_mismatch'), got {'entries': 4, 'ok': True})
+unattributed_entry               empty_proposer_admitted      KILLED  (AssertionError: expected (1, 'no_proposer'), got {'detail': 'key ann-1 belongs to ann', 'ok': False, 'reason':)
+unattributed_entry               unknown_key_trusted          KILLED  (AssertionError: expected (1, 'unknown_key'), got {'entries': 2, 'ok': True})
+forged_signature_admitted        s_bound_unchecked            KILLED  (AssertionError: expected (1, 'bad_signature'), got {'entries': 2, 'ok': True})
+weak_key_admitted                noncanonical_key_admitted    KILLED  (AssertionError: expected (1, 'bad_key'), got {'entries': 2, 'ok': True})
+weak_key_admitted                small_order_key_admitted     KILLED  (AssertionError: expected (1, 'bad_key'), got {'entries': 2, 'ok': True})
+reserved_bytes_admitted          reserved_unchecked           KILLED  (AssertionError: expected (1, 'bad_signature'), got {'entries': 2, 'ok': True})
+ts_not_an_instant                unicode_digits_admitted      KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+ts_not_an_instant                calendar_unchecked           KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+deep_nesting_crashes             depth_unbounded              KILLED  (AssertionError: expected (0, 'malformed_json'), got {'detail': 'top-level keys', 'ok': False, 'reason': 'schem)
+deep_nesting_crashes             recursion_uncaught           KILLED  (AssertionError: expected (0, 'malformed_json'), got {'ok': False, 'reason': 'crash', 'detail': 'le "/tmp/tmpgn)
+big_integer_unreadable           int_digits_limited           KILLED  (AssertionError: expected (0, 'not_canonical'), got {'detail': '', 'ok': False, 'reason': 'malformed_json', 'se)
+pubkey_reused                    ownership_forgotten          KILLED  (AssertionError: expected (2, 'bad_key'), got {'entries': 3, 'ok': True})
+key_decl_extra_member            extra_members_allowed        KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+last_key_revocable               last_key_unguarded           KILLED  (AssertionError: expected (1, 'bad_key'), got {'entries': 2, 'ok': True})
+kernel2_unrunnable               modes_ignored                KILLED  (AssertionError: {'ok': False, 'reason': 'crash', 'detail': 'judge error: /tmp/tmp9jitg1u1/kernel2/check failed)
+selfcheck_blind                  judge_errors_ignored         KILLED  (AssertionError: self-check passed a trunk whose kernel2 cannot run)
+checker_drift                    reason_code_flipped          KILLED  (AssertionError: [('/tmp/tmpu2maevkc/tree/spec/vectors/logs/12_bad_signature_tampered.jsonl', 2, {'ok': False, )
+whole_log_only                   prefixes_uncompared          KILLED  (AssertionError)
+loose_parse                      ok_not_boolean               KILLED  (AssertionError: n=$(($(wc -l < "$1"))); [ $n -eq -1 ] && n=9; echo "{\"ok\":1,\"entries\":$n}")
+loose_parse                      exit_status_ignored          KILLED  (AssertionError: n=$(($(wc -l < "$1"))); [ $n -eq -1 ] && n=9; echo "{\"ok\":true,\"entries\":$n}"; exit 1)
+crash_as_agreement               like_failures_agree          KILLED  (AssertionError: exit 3)
+prefix_skipped                   empty_prefix_skipped         KILLED  (AssertionError: 0)
+prefix_skipped                   prefix_off_by_one            KILLED  (AssertionError: 0)
+clock_runs_backward              ts_unchecked                 KILLED  (AssertionError: expected (2, 'ts_decreased'), got {'entries': 3, 'ok': True})
+self_resolution_admitted         self_unchecked               KILLED  (AssertionError: expected (2, 'self_judged'), got {'entries': 3, 'ok': True})
+dangling_resolution_admitted     target_unchecked             KILLED  (AssertionError: expected (2, 'schema'), got {'ok': False, 'reason': 'crash', 'detail': 'Traceback (most recent)
+double_resolution_admitted       resolved_unchecked           KILLED  (AssertionError: expected (3, 'schema'), got {'entries': 4, 'ok': True})
+past_forecast_admitted           resolves_by_unchecked        KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+permille_out_of_range_admitted   p_0_admitted                 KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+permille_out_of_range_admitted   p_1000_admitted              KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+boolean_integer_admitted         p_boolean_admitted           KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+boolean_integer_admitted         outcome_boolean_admitted     KILLED  (AssertionError: expected (2, 'schema'), got {'entries': 3, 'ok': True})
+boolean_integer_admitted         booleans_are_integers        KILLED  (AssertionError: expected (1, 'schema'), got {'entries': 2, 'ok': True})
+self_judged_uncoded              self_judged_as_schema        KILLED  (AssertionError: expected (2, 'self_judged'), got {'detail': 'ann made forecast 1', 'ok': False, 'reason': 'sch)
+self_judged_uncoded              judged_before_signature      KILLED  (AssertionError: expected (2, 'bad_signature'), got {'detail': 'ann made forecast 1', 'ok': False, 'reason': 's)
+score_not_proper                 linear_score                 KILLED  (| world.screen | 4 | 2 | 0.4500 | 0.5000 | 0.6500 | 0.8959 |)
+score_not_proper                 minimised_at_999             KILLED  (| world.screen | 4 | 2 | 0.4500 | 0.5000 | 0.5500 | 0.8959 |)
+overdue_strictly_after           equality_overdue             KILLED  (FAILED (failures=1))
+w1_from_entry                    only_when_overdue            KILLED  (FAILED (failures=1))
+self_holder                      self_filter_dropped          KILLED  (FAILED (failures=1))
+w3_unwitnessed                   any_run_accepted             KILLED  (FAILED (failures=1))
+w4_promote_unmet                 repair_never_raised          KILLED  (FAILED (failures=1))
+promote_refused                  promotion_check_dropped      KILLED  (FAILED (failures=5))
+promote_refused                  regression_run_for_live_E    KILLED  (FAILED (failures=1))
+run_verified                     any_run_accepted             KILLED  (FAILED (failures=7))
+run_verified                     event_unchecked              KILLED  (FAILED (failures=1))
+escalated                        escalation_silent            KILLED  (FAILED (failures=1))
+wealth_arithmetic                p0_reestimated               KILLED  (FAILED (failures=1))
+item_before_open                 preopening_counted           KILLED  (FAILED (failures=1))
+item_is_batch                    resolutions_counted_singly   KILLED  (FAILED (failures=1))
+regroup_scored_items             evidence_component_regrouping KILLED  (FAILED (failures=1))
+expired_writ_zero                late_resolution_success      KILLED  (FAILED (failures=2))
+expired_writ_zero                empty_batch_success          KILLED  (FAILED (failures=1))
+repair_erased_from_success       repair_predicate_dropped     KILLED  (FAILED (failures=1))
+repair_taints_all_open           named_subject_only           KILLED  (FAILED (failures=1))
+repair_taints_all_open           oldest_only_attribution      KILLED  (FAILED (failures=1))
+replay_merge_110                 oldest_only_attribution      KILLED  (FAILED (failures=1))
+late_report_immutable            finalised_item_revised       KILLED  (FAILED (failures=1))
+late_report_immutable            late_report_line_omitted     KILLED  (FAILED (failures=1))
+sovereign_resolution_zero        sovereign_completion_as_herald KILLED  (FAILED (failures=1))
+window_from_the_promote          latest_decision_opens        KILLED  (FAILED (failures=1))
+window_from_the_promote          latest_counsel_forecast_ends KILLED  (FAILED (failures=1))
+evidence_unhashed                rehash_skipped               KILLED  (FAILED (failures=1))
+ratio_misclassified              world_resolution_procedure   KILLED  (FAILED (failures=1))
+flooding_bounded                 deduplicated_by_claim        KILLED  (FAILED (failures=1))
+veto_c1b                         veto_subject_ignored         KILLED  (FAILED (failures=1))
+map_printed                      hand_row_passes              KILLED  (FAILED (failures=1))
+worked_table                     laplace_n_plus_3             KILLED  (FAILED (failures=1))
+forecast_before_cutoff           latest_forecast              KILLED  (FAILED (failures=1))
+rigged                           cutoff_forecast_included     KILLED  (FAILED (failures=1))
+revision                         second_replaces_first        KILLED  (FAILED (failures=1))
+weights_from_resolved_prefix     terminal_weights             KILLED  (FAILED (failures=1))
+abstention_is_base               abstention_half              KILLED  (FAILED (failures=1))
+one_event_one_key                grouped_by_claim             KILLED  (FAILED (failures=1))
+grouping_by_principal            two_keys_two_entrants        KILLED  (FAILED (failures=1))
+uniform_prior                    counsel_double               KILLED  (FAILED (failures=1))
+no_learning_rate                 eta_half                     KILLED  (FAILED (failures=1))
+exact_probabilities              one_float_division           KILLED  (FAILED (failures=1))
+per_type_base                    base_per_dataset             KILLED  (FAILED (failures=1))
+bounded_difference               no_clip                      KILLED  (FAILED (failures=1))
+lambda_predictable               current_item_in_lambda       KILLED  (FAILED (failures=1))
+factor_algebra                   factor_plus_one_fiftieth     KILLED  (FAILED (failures=1))
+window_from_the_push             from_brief_merge             KILLED  (FAILED (failures=1))
+wealth_continues                 reset_at_second_window       KILLED  (FAILED (failures=1))
+promote_refused_value            signs_below_twenty           KILLED  (FAILED (failures=1))
+second_window_from_the_end       first_push_after_c2a_opening KILLED  (FAILED (failures=1))
+second_window_from_the_end       first_push_after_c2a_end     KILLED  (FAILED (failures=1))
+second_window_end_is_v5          v0_is_second_end             KILLED  (FAILED (failures=1))
+second_window_end_is_v5          late_v5_accepted             KILLED  (FAILED (errors=1))
+second_window_cap                cap_7800                     KILLED  (FAILED (failures=1))
+second_window_cap                cap_from_head                KILLED  (FAILED (failures=1))
+offlog_from_second_opening       offlog_from_c2a_opening      KILLED  (FAILED (failures=1))
+offlog_from_second_opening       minute_must_begin_in_window  KILLED  (FAILED (failures=1))
+promote_refused_before_end       v5_always_second_window      KILLED  (FAILED (failures=1))
+promote_refused_before_end       prime_veto_ignored           KILLED  (FAILED (failures=1))
+window_fix_is_decision           fix_typed_repair             KILLED  (FAILED (failures=1))
+window_fix_is_decision           condition_2_ended_without_promotion KILLED  (FAILED (failures=1))
+window_fix_is_decision           veto_read_late               KILLED  (FAILED (failures=1))
+window_fix_is_decision           acts_interval_read_late      KILLED  (FAILED (errors=1))
+window_fix_is_decision           condition_3_read_early       KILLED  (FAILED (failures=1))
+window_fix_is_decision           condition_1_contains_name    KILLED  (FAILED (failures=1))
+window_fix_is_decision           next_push_bound_dropped      KILLED  (FAILED (failures=1))
+window_fix_is_decision           condition_4_dropped          KILLED  (FAILED (failures=1))
+window_fix_is_decision           carrying_commit_is_head      KILLED  (FAILED (failures=1))
+window_fix_is_decision           attribution_dropped          KILLED  (FAILED (failures=1))
+window_fix_is_decision           raw_substring_names_csv      KILLED  (FAILED (failures=1))
+window_fix_is_decision           push_clears_all_fixes        KILLED  (FAILED (failures=1))
+window_fix_not_retroactive       fix_applies_immediately      KILLED  (FAILED (failures=1))
+window_fix_not_retroactive       fix_never_clears             KILLED  (FAILED (failures=1))
+process_unchanged_from_opening   change2_functions_omitted    KILLED  (FAILED (failures=1))
+process_unchanged_from_opening   references_not_transitive    KILLED  (FAILED (failures=1))
+process_unchanged_from_opening   callers_omitted              KILLED  (FAILED (failures=1))
+process_unchanged_from_opening   assignments_omitted          KILLED  (FAILED (failures=1))
+process_unchanged_from_opening   tuple_read_at_head           KILLED  (FAILED (failures=1))
+promote_names_committed_table    committed_check_removed      KILLED  (FAILED (failures=1))
+promote_names_committed_table    path_form_unchecked          KILLED  (FAILED (failures=1))
+promote_names_committed_table    acts_left_out_of_body        KILLED  (FAILED (errors=1))
+push_without_read_refused        gate_always_admits           KILLED  (FAILED (failures=1))
+read_of_this_text                brief_bytes_unchecked        KILLED  (FAILED (failures=1))
+read_not_counsels                proposer_unchecked           KILLED  (FAILED (failures=1))
+promote_while_unmet              refusal_admitted             KILLED  (FAILED (failures=1))
+evidence_substituted             hash_unchecked               KILLED  (FAILED (failures=1))
+promote_tree_changed             other_paths_admitted         KILLED  (FAILED (failures=2))
+promote_tree_changed             side_entry_ignored           KILLED  (FAILED (failures=1))
+promote_retroactive              earlier_promotions_judged    KILLED  (FAILED (failures=1))
+promote_retroactive              ungranted_spec_installs      KILLED  (FAILED (failures=1))
+evaluator_not_in_force           assessed_digest_unchecked    KILLED  (FAILED (failures=1))
+promote_judged_once              old_promotions_skipped       KILLED  (FAILED (failures=1))
+replay_drift                     twin                         TWIN FAILED  (AssertionError: status: moved bytes differ)
+
+KILLED 155, SURVIVED 0, STALE 0, TWIN FAILED 1, PENDING 0
+^[[0m
+^[[0m✱ ^[[0mGrep "A run at a commit|whatever it holds|promotion evaluator"^[[90m in SPEC.md · 52 matches^[[0m
+^[[0m→ ^[[0mRead SPEC.md^[[90m [offset=486, limit=39]^[[0m
+^[[0m→ ^[[0mRead judge/judge.py^[[90m [offset=117, limit=18]^[[0m
+The full suite passed: 318 tests, one skipped. The pin run killed all 155 exercised mutants, with no stale or surviving mutants. Its sole failure is the expected `replay_drift` byte check: `AssertionError: status: moved bytes differ`. I’m checking the four replay rows and final line counts next.
+^[[0m
+^[[0m# ^[[0mTodos
+[✓] Verify opening preconditions and read required brief and existing evaluator/mutants
+[✓] Implement and test six evaluator changes; commit and publish each completed part
+[•] Run required suite, pins, counts, commit checks and replay rows; report results
+^[[0m
+^[[0m% ^[[0mPatch 1 file
+^[[0m
+^[[0m$ ^[[0mpython3 .build/replay.py 4
+row 4 95679e730a67bd73901195b79d6a536c805f63a5 exit 1 expected 1 lines 0
+PASS
+^[[0m
+^[[0m$ ^[[0mpython3 .build/replay.py 734
+row 734 bd05ed5c1acc58993b8063bcb92dea6f09af2ed3 exit 0 expected 0 lines 46
+PASS
+^[[0m
+^[[0m$ ^[[0mpython3 .build/replay.py 735
+row 735 bbfd0edf71df6dfe2183bfbbf24a372dd871146e exit 0 expected 0 lines 46
+PASS
+^[[0m
+^[[0m$ ^[[0mpython3 .build/replay.py 772
+row 772 96658263399ec7eeb815fc07210ce09b8e5ca3a4 exit 0 expected 0 lines 49
+PASS
+^[[0m
+^[[0m$ ^[[0mgit worktree remove --force .build/w && git worktree prune && python3 - <<'PY'
+import json
+import subprocess
+import time
+from pathlib import Path
+from judge.judge import counted_lines
+p = subprocess.check_output(['git', 'rev-list', '--reverse', 'origin/main..HEAD'], text=True).splitlines()[0]
+for rev in (p, 'HEAD'):
+ scope = json.loads(subprocess.check_output(['git', 'show', rev + ':judge/scope.json']))
+ print(rev, 'counted', counted_lines('.', rev, scope['counted']), 'cap', scope['cap'])
+print('elapsed minutes', round((time.time() - int(Path('.build/start').read_text())) / 60, 2))
+PY
+5c6db4ee166b71235a5d79b8c453f50e16b401a4 counted 8340 cap 9100
+HEAD counted 8493 cap 9100
+elapsed minutes 30.07
+^[[0m
+^[[0m→ ^[[0mRead pins/run.py^[[90m [limit=120]^[[0m
+^[[0m
+^[[0m$ ^[[0mgit rev-parse HEAD && git rev-list --reverse origin/main..HEAD && git diff --stat 5c6db4ee166b71235a5d79b8c453f50e16b401a4 HEAD && git log -m --no-renames --name-only --format= 5c6db4ee166b71235a5d79b8c453f50e16b401a4..HEAD | grep . | sort -u
+7d7f89471a52c248ad9c3214645f7e936235ab4f
+5c6db4ee166b71235a5d79b8c453f50e16b401a4
+ae3fdb4886e4a0c794b3d25589a8cf3b5b652daf
+8a6143831b6eb3a0a0ff2e520460f2a20231a3b3
+7d7f89471a52c248ad9c3214645f7e936235ab4f
+ judge/status.py            |  86 ++++++++++++++++++++++---
+ tests/test_status_third.py | 153 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 231 insertions(+), 8 deletions(-)
+judge/status.py
+tests/test_status_third.py
+^[[0m
+^[[0m$ ^[[0mgit log --format='%h %(trailers:key=Proposer,valueonly)' 5c6db4ee166b71235a5d79b8c453f50e16b401a4..HEAD | grep .
+7d7f8947 builder openai/gpt-6.1-sol runner-issue-1322
+8a614383 builder openai/gpt-6.1-sol runner-issue-1322
+ae3fdb48 builder openai/gpt-6.1-sol runner-issue-1322
+^[[0m
+^[[0m$ ^[[0mpython3 - <<'PY'
+import subprocess
+from pathlib import Path
+from pins import pins
+src = Path('judge/status.py').read_text()
+old = subprocess.check_output(['git', 'show', '5c6db4ee166b71235a5d79b8c453f50e16b401a4:judge/status.py'], text=True)
+changed = []
+checked = 0
+for pin in pins.PINS:
+ for mutant in pin.mutants:
+  if mutant.path == 'judge/status.py':
+   checked += 1
+   if src.count(mutant.find) != old.count(mutant.find):
+    changed.append((pin.name, mutant.name, mutant.find, src.count(mutant.find)))
+print('Evaluator mutant search strings checked:', checked)
+print('Changed mutant search strings:', changed)
+assert not changed
+from pins.replay import FIRST_PARENT
+assert FIRST_PARENT.decode() in src
+for line in old.splitlines(keepends=True):
+ if 'ast.parse(tree_bytes(root,' in line and 'tools/status.py' in line:
+  assert line in src
+print('First-parent line and both legacy tools-source lines preserved byte for byte')
+PY
+Evaluator mutant search strings checked: 55
+Changed mutant search strings: []
+First-parent line and both legacy tools-source lines preserved byte for byte
+^[[0m
+^[[0m$ ^[[0mgit status --porcelain --untracked-files=normal && git ls-remote origin refs/heads/opening-c2a-3 && git diff --check 5c6db4ee166b71235a5d79b8c453f50e16b401a4 HEAD && python3 .build/commits.py
+?? .build/
+7d7f89471a52c248ad9c3214645f7e936235ab4f	refs/heads/opening-c2a-3
+judge/status.py
+tests/test_status_third.py
+7d7f8947 builder openai/gpt-6.1-sol runner-issue-1322
+8a614383 builder openai/gpt-6.1-sol runner-issue-1322
+ae3fdb48 builder openai/gpt-6.1-sol runner-issue-1322
+^[[0m
+^[[0m# ^[[0mTodos
+[✓] Verify opening preconditions and read required brief and existing evaluator/mutants
+[✓] Implement and test six evaluator changes; commit and publish each completed part
+[✓] Run required suite, pins, counts, commit checks and replay rows; report results
+^[[0m
+Implemented all six changes and their tests, committed in three parts and published each to `opening-c2a-3`. The remote branch matches HEAD.
+
+- **HEAD:** `7d7f89471a52c248ad9c3214645f7e936235ab4f`
+- **P:** `5c6db4ee166b71235a5d79b8c453f50e16b401a4`
+- No earlier builder commits followed P.
+- Guy’s matching grant: seq **7615**, `2026-11-24T16:50:38Z`.
+
+### Diff from P
+
+```text
+ judge/status.py            |  86 ++++++++++++++++++++++---
+ tests/test_status_third.py | 153 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 231 insertions(+), 8 deletions(-)
+```
+
+### Checks (a)–(e)
+
+**(a) Unit tests**
+```text
+Ran 318 tests in 619.156s
+OK (skipped=1)
+```
+
+**(b) Pins**
+```text
+KILLED 155, SURVIVED 0, STALE 0, TWIN FAILED 1, PENDING 0
+```
+
+The sole non-passing pin is the expected evaluator-byte check:
+
+```text
+replay_drift  twin  TWIN FAILED  (AssertionError: status: moved bytes differ)
+```
+
+**(c) Counted lines**
+- At P: **8,340**
+- At HEAD: **8,493**
+- Cap: **9,100**; remaining capacity: **607 lines**
+
+**(d) Step 8 checks — both passed**
+
+Touched paths:
+```text
+judge/status.py
+tests/test_status_third.py
+```
+
+Commit trailers:
+```text
+7d7f8947 builder openai/gpt-6.1-sol runner-issue-1322
+8a614383 builder openai/gpt-6.1-sol runner-issue-1322
+ae3fdb48 builder openai/gpt-6.1-sol runner-issue-1322
+```
+
+**(e) Replay spot checks**
+
+| Row | Expected output | Exit | Result |
+|---:|---|---:|---|
+| 4 | `stdout` | 1 | PASS, 0 lines |
+| 734 | `stdout` | 0 | PASS, 46 lines |
+| 735 | `marked` | 0 | PASS, 46 lines |
+| 772 | `marked` | 0 | PASS, 49 lines |
+
+The replay checkout was removed and worktrees pruned. Neither long check timed out.
+
+### Preservation and completion
+
+- No mutant search string required alteration: all **55** evaluator-targeted strings retain their occurrence counts.
+- The first-parent walk line and both legacy `tools/status.py` read lines remain byte-for-byte intact.
+- The required real-log test extracts the evaluator from `cbdac17b` and confirms identical fixes and item-process results.
+- `python3 -m py_compile` passed for both changed Python files.
+- Nothing in the required text remains unbuilt. Only `.build/` is untracked.
+
+PUSHED 7d7f89471a52c248ad9c3214645f7e936235ab4f
+exit=0
+```
+
