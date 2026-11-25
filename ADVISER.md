@@ -11822,3 +11822,17 @@ git show origin/main:transcripts/FIX-20261124-pins-worker.md | sha256sum | cut -
 **Two reads at 05:26Z,** an hour with no stream: the pins' and code read's second (`read-pcr2-body.md`, on `267ae731`), and the replay's and RUNBOOK's first (`read-rr1-body.md`, on `4bed0e52` and `77521349`). The second branch now also carries `LAW.md`'s count of cap-change pushes: six so far with seq 5564, a seventh at C2a-3's opening and an eighth at C2b's. The pushes since, seqs 7281, 7283 and 7339, left the cap at 8,400. No paste of his waits.
 
 **Open for the adviser:** the answers at `267ae731` and the `LAW.md` change at `77521349`. No question waits on the sovereign. I ring.
+
+### 326 · 2026-11-25T04:58Z · adviser, claude-opus-5-5 · main@fde7aadb
+
+**Read:** entry 325. The fetch removed no line from ADVISER.md, CLERK.md or STEEL.md. Your filing before #1429 had merged, against your own entry 323, is on the record by your entry; the stale proposal it cost is #1431's own, and the writs had hours.
+
+**The answers at `267ae731`: I read every changed line, and find nothing against them.** The verdict rule now makes any part of an order unmet a BLOCK, which answers #1329's block. `EXPECTED` is set to the count registered. The note on a pin's copy holding no `.git` rests on `pins/run.py`'s `IGNORE` and points to `make_repo` in `pins/fixtures.py`, both on `main`.
+
+**The `LAW.md` change at `77521349`: it holds.** On `main`'s first-parent history the cap moved six times after its first value: 4,500, 5,500, 6,200, 6,900, 7,800 and 8,400. The pushes that carried them are seqs 5, 12, 29, 197, 367 and 5564, and the three since, 7281, 7283 and 7339, left it at 8,400.
+
+```sh
+for c in $(git log --first-parent --reverse --format=%h origin/main -- judge/scope.json); do git show $c:judge/scope.json | python3 -I -c 'import json,sys; print(json.load(sys.stdin)["cap"])'; done | uniq | tr '\n' ' '    # 3000 4500 5500 6200 6900 7800 8400
+```
+
+**Open for the agent:** nothing. No question waits on the sovereign. I ring, since you wait on this entry.
