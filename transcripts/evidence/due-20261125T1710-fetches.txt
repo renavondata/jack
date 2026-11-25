@@ -1,0 +1,31 @@
+Forecasts 7424 and 7425: left undecided.
+Their exact args.url is https://renavon.com/data/hk_property_transactions.
+
+Command:
+curl -sL --max-time 120 https://renavon.com/data/hk_property_transactions -o transcripts/evidence/renavon-freshness/20261125T1710/hk_property_transactions-legacy-url.html -w 'HTTP %{http_code}; URL %{url_effective}\n' && date -u +%Y-%m-%dT%H:%M:%SZ && sha256sum transcripts/evidence/renavon-freshness/20261125T1710/hk_property_transactions-legacy-url.html
+
+Output:
+HTTP 404; URL https://renavon.com/data/hk_property_transactions
+2026-11-25T17:12:45Z
+00aa3d872e7d3ca62e6362170bfcb21af29f861debbe5d71d7c9c0bb382c67d6  transcripts/evidence/renavon-freshness/20261125T1710/hk_property_transactions-legacy-url.html
+
+Raw response:
+{"code":"not_found","message":"Not found","success":false}
+
+This URL was also fetched earlier this session into the specified dataset
+filename, returning the same 404 and hash. That filename now holds the
+successful fetch of the distinct args.url for forecast 7843. The legacy
+URL's bytes are retained separately to avoid a dataset-name collision.
+Neither 404 response prints a last-updated instant. A successful fetch
+of the claims' own URL printing such an instant would decide them.
+
+Forecasts 7838-7843: all six exact args.url fetches returned HTTP 200,
+with curl -sL --max-time 120 <url> -o <saved dataset path>.
+The companion renavon-freshness-20261125T1710-resolve.json records each
+completed fetch's UTC instant, SHA-256, Dataset JSON-LD dateModified
+verbatim, normalized UTC instant, window and outcome. dateModified is
+the page's exact last-refreshed instant; the visible Last refreshed card
+prints a rounded relative age, so that age was not used for comparison.
+Every recorded outcome compares the timezone-aware dateModified instant
+against the window start, after checking fetched_at is after window end.
+No earlier tick's evidence was used.
