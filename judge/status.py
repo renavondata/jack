@@ -69,6 +69,19 @@ def c2a_prime_window(es):
     return op2["seq"], op2["ts"], v5["body"]["resolves_by"] if v5 else None
 
 
+def c2a_third_window(es):
+    w2 = c2a_prime_window(es)
+    if w2 is None or w2[2] is None or any(
+            promotes(e, "C2a") and instant(e["ts"]) <= instant(w2[2]) for e in es):
+        return None
+    op3 = next((e for e in es if e["type"] == "push" and instant(e["ts"]) > instant(w2[2])), None)
+    if op3 is None:
+        return None
+    v8 = next((e for e in es if e["seq"] < op3["seq"] and e["type"] == "forecast" and
+               e["proposer"] == "counsel" and e["body"].get("args", {}).get("id") == "V8"), None)
+    return op3["seq"], op3["ts"], v8["body"]["resolves_by"] if v8 else None
+
+
 def score_items(items):
     """The live and historical item projection: exact A4.3 rows and terminal wealth."""
     result, successes, capital = [], 0, Fraction(1)
@@ -168,12 +181,19 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None, decision
         else:
             opening, start, end = (c2a_window if subject == "C2a" else c1b_window)(es)
             window = subject
+        w3 = c2a_third_window(es) if subject == "C2a" else None
+        if w3 is not None and (decision is None or instant(decision["ts"]) > instant(w3[1])):
+            opening, start, end = w3[0], w3[1], w3[2] or w3[1]
+            v5_ok = w3[2] is not None
+            window = "C2a-3"
         start, end = instant(start), instant(end)
     else:
         opened = next(e for e in es if e["type"] == "amend" and e["body"].get("id") == window)
         opening, start = opened["seq"], instant(opened["ts"])
         end = start + dt.timedelta(days=days)
     closing = next((e for e in es if promotes(e, subject) and (window != "C2a-prime" or instant(e["ts"]) > start)), None)
+    if window == "C2a-3":
+        closing = next((e for e in es if names_window(es, e, "promote", window)), None)
     if closing:
         end = min(end, instant(closing["ts"]))
     prefix = [e for e in es if instant(e["ts"]) <= end and (not closing or e["seq"] <= closing["seq"])]
@@ -191,6 +211,8 @@ def status(es, window, days, as_of, root=ROOT, subject="C1a", rev=None, decision
                 e["body"].get("subject") in ("C2a", "C2a-prime") and instant(e["ts"]) > start for e in prefix)
             if window == "C2a-prime" else
             any(e["type"] == "decision" and e["body"].get("kind") == "veto" and e["body"].get("subject") == subject for e in prefix))
+    if window == "C2a-3":
+        veto = any(names_window(es, e, "veto", window) for e in prefix)
     return {
         "window": window, "start": start.strftime(FMT), "end": end.strftime(FMT), "as_of": as_of,
         "prefix_last_seq": prefix[-1]["seq"] if prefix else None, "entries_in_window": len(inw),
@@ -259,7 +281,7 @@ def off_log_repairs(acts, start, end, overlap=False):
                for t in [dt.datetime.strptime(row["time_hkt"], "%Y-%m-%d %H:%M").replace(tzinfo=hkt)])
 
 
-WINDOW_NAMES = ("C1a", "C1b", "C2a", "C2a-prime", "C2b")
+WINDOW_NAMES = ("C1a", "C1b", "C2a", "C2a-prime", "C2a-3", "C2b")
 CHANGE2_FUNCTIONS = ("window_fixes", "window_bounds", "names_window", "subject_names", "carrying_commit", "attributed_repairs")
 
 
@@ -278,6 +300,9 @@ def window_bounds(es, name):
         if name == "C2a-prime":
             w2 = c2a_prime_window(es)
             return (w2[1], w2[2], w2[2]) if w2 and w2[2] else None
+        if name == "C2a-3":
+            w3 = c2a_third_window(es)
+            return (w3[1], w3[2], w3[2]) if w3 and w3[2] else None
     except StopIteration:
         return None
     return None
@@ -287,12 +312,18 @@ def names_window(es, e, kind, name):
     if e["type"] != "decision" or e["body"].get("kind") != kind:
         return False
     subj = e["body"].get("subject")
-    if name not in ("C2a", "C2a-prime"):
+    if name not in ("C2a", "C2a-prime", "C2a-3"):
         return subj == name
     try:
         w2 = c2a_prime_window(es)
     except StopIteration:
         w2 = None
+    w3 = c2a_third_window(es) if w2 is not None else None
+    is_third = w3 is not None and instant(e["ts"]) > instant(w3[1])
+    if name == "C2a-3":
+        return is_third and (subj == "C2a" if kind == "promote" else subj in ("C2a", "C2a-3"))
+    if is_third:
+        return False
     is_prime = w2 is not None and instant(e["ts"]) > instant(w2[1])
     return (is_prime and (subj == "C2a" if kind == "promote" else subj in ("C2a", "C2a-prime"))
             if name == "C2a-prime" else not is_prime and subj == "C2a")
@@ -410,6 +441,21 @@ VALUE_PINS = ("worked_table forecast_before_cutoff rigged revision weights_from_
               "promote_names_committed_table").split()
 
 
+THIRD_WINDOW_PINS = ("third_window_from_the_end", "third_window_end_is_v8", "third_window_cap",
+                     "scope_unchanged_on_main", "veto_names_its_window", "offlog_from_third_opening",
+                     "vetoed_window_continues", "late_report_in_its_window")
+
+
+def c2a_process_nodes(root, start, rev, is_third):
+    if is_third:
+        start_nodes = ast.parse(tree_bytes(root, start, "judge/status.py")).body
+        rev_nodes = ast.parse(tree_bytes(root, rev, "judge/status.py")).body
+    else:
+        start_nodes = ast.parse(tree_bytes(root, start, "tools/status.py")).body
+        rev_nodes = ast.parse(tree_bytes(root, rev, "tools/status.py")).body
+    return start_nodes, rev_nodes
+
+
 def c2a_tree_evidence(root, rev, prefix, opening):
     """Check the opening's scope through every intervening tree; keep C1b's process code."""
     try:
@@ -429,12 +475,15 @@ def c2a_tree_evidence(root, rev, prefix, opening):
         cap = 8400 if is_prime else 7800
         scope_at = lambda sha: (tree_bytes(root, sha, "judge/scope.json"),
                                 tree_bytes(root, sha, "SPEC.md").split(b"at C1 it is:", 1)[1].split(b"```", 2)[1])
+        w3 = c2a_third_window(prefix)
+        is_third = w3 is not None and opening == w3[0]
+        if is_third:
+            cap = 9100
         original = scope_at(start)
         unchanged = all(scope_at(c) == original for c in [rev] + git_bytes(root, "rev-list", "--first-parent", f"{start}..{rev}").decode().split())
         unchanged = unchanged and json.loads(original[0])["cap"] == cap and not any(
             e["type"] == "push" and e["seq"] > opening for e in prefix)
-        start_nodes = ast.parse(tree_bytes(root, start, "tools/status.py")).body
-        rev_nodes = ast.parse(tree_bytes(root, rev, "tools/status.py")).body
+        start_nodes, rev_nodes = c2a_process_nodes(root, start, rev, is_third)
         assign_targets = lambda n: ({t.id for t in n.targets if isinstance(t, ast.Name)} if isinstance(n, ast.Assign) else
                                     {n.target.id} if isinstance(n, ast.AnnAssign) and isinstance(n.target, ast.Name) else set())
         read_c2_tuple = lambda nodes: next((tuple(ast.literal_eval(n.value)) for n in nodes if "CHANGE2_FUNCTIONS" in assign_targets(n)), ())
@@ -459,14 +508,18 @@ def c2a_tree_evidence(root, rev, prefix, opening):
         same = process_at(start_nodes) == process_at(rev_nodes) and tree_bytes(root, start, "tools/clerk.py") == tree_bytes(root, rev, "tools/clerk.py")
         pins = tree_bytes(root, rev, "pins/pins.py").decode()
         registered = all(f'Pin("{name}"' in pins or f"Pin('{name}'" in pins for name in VALUE_PINS)
+        if is_third:
+            registered = registered and all(f'Pin("{name}"' in pins or f"Pin('{name}'" in pins for name in THIRD_WINDOW_PINS)
         return unchanged, same, registered
     except (OSError, ValueError, IndexError, SyntaxError, subprocess.CalledProcessError):
         return False, False, False
 
 
 def assess_value(s, facts, verified, root, rev, runs, acts):
-    is_prime = s["window"] == "C2a-prime"
+    is_prime = s["window"] in ("C2a-prime", "C2a-3")
     cap = 8400 if is_prime else 7800
+    if s["window"] == "C2a-3":
+        cap = 9100
     end = min(s["as_of"], s["end"])
     unchanged, same, registered = c2a_tree_evidence(root, rev, s["prefix"], s["opening"])
     gate = attack_start(root, runs, end, "tests/test_value.py")
@@ -505,7 +558,7 @@ def assess(es, subject, as_of, root, rev, run=None, runs=(), acts=None, mapping=
         unverified = []
         window_fixes([e for e in es if instant(e["ts"]) <= instant(as_of)], root, rev, unverified)
         s.update(subject=subject, unverified_fixes=unverified,
-                 checks=[(False, "C2a-prime has no promotion forecast before its opening")])
+                 checks=[(False, f"{s['window']} has no promotion forecast before its opening")])
         return s
     facts = tree_facts(root, rev)
     verified = run_verified(run, rev) and completed_by(run, as_of)
@@ -590,6 +643,8 @@ def render(s):
                   f"liveness continued: E {live['E']} over {len(live['items'])} items (including projected expiries)"]
     lines = s.get("history", []) + lines
     win = [f"window: C2a-prime (second window of C2a, opened seq {s['opening']})"] if s.get("window") == "C2a-prime" else []
+    if s.get("window") == "C2a-3":
+        win = [f"window: C2a-3 (third window of C2a, opened seq {s['opening']})"]
     return "\n".join(lines + s.get("unverified_fixes", []) + s.get("repairs", []) + win + [promotion_line(s)])
 
 
@@ -643,6 +698,8 @@ def report(**context):
     decisions = [e for e in context["es"] if e["ts"] <= context["as_of"] and
                  any(promotes(e, w) for w in ("C1a", "C1b", "C2a"))]
     w2 = c2a_prime_window([e for e in context["es"] if instant(e["ts"]) <= instant(context["as_of"])]) if context["subject"] == "C2a" else None
+    if context["subject"] == "C2a":
+        w2 = c2a_third_window([e for e in context["es"] if instant(e["ts"]) <= instant(context["as_of"])]) or w2
     closing = next((e for e in decisions if promotes(e, context["subject"]) and
                     (w2 is None or instant(e["ts"]) > instant(w2[1]))), None)
     s = assess(**context, decision=closing)
