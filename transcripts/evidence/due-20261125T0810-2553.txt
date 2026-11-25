@@ -1,0 +1,26 @@
+N2 inspection performed in this session, UTC.
+
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-11-25T08:11:12Z
+$ git rev-parse origin/main
+de2c3333da9ca09d44f335ac2357a5eb16b88e1b
+
+Computation run with python3, using json and subprocess:
+ref = subprocess.check_output(['git','rev-parse','origin/main'], text=True).strip()
+raw = subprocess.check_output(['git','show',f'{ref}:log.jsonl'], text=True)
+es = [json.loads(l) for l in raw.splitlines()]
+a = [e for e in es if e['type']=='decision' and e['body'].get('kind')=='promote' and e['body'].get('subject')=='C2a-prime']
+b = [e for e in es if e['type']=='decision' and e['body'].get('kind')=='promote' and e['body'].get('subject')=='C2b']
+print('decision promote C2a-prime:', json.dumps(a))
+print('decision promote C2b:', json.dumps(b))
+print('C2b opening push:', 'undefined: no decision promote C2a-prime exists' if not a else next((json.dumps(e) for e in es if e['seq']>a[0]['seq'] and e['type']=='push'),'none'))
+
+Output:
+decision promote C2a-prime: []
+decision promote C2b: []
+C2b opening push: undefined: no decision promote C2a-prime exists
+N2 undecided: its 72-hour clock has not started; resolves_by is not the opening-relative deadline in the claim.
+
+Deciding evidence would be the first push after a decision promote C2a-prime,
+and either a decision promote C2b within the next 72 hours or the completed
+72-hour interval without such a decision.
