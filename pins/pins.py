@@ -664,7 +664,7 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 107
+EXPECTED = 115
 PINS = [
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
@@ -1110,6 +1110,50 @@ C2A_PRIME_PINS = [
                'body["acts"] = {"path": a.acts, "sha256": hashlib.sha256(acts_bytes).hexdigest(), "commit": head}', 'pass')]),
 ]
 PINS += C2A_PRIME_PINS
+
+
+# --- C2a-3: BRIEF-C2a-3 §Pins ---------------------------------------------
+third_cases = lambda *methods: lambda root: fixture_module(root, 'pins.c2a_third.Cases', methods)
+PINS += [
+    Pin("third_window_from_the_end", third_cases('opening'), [
+        Mutant('push_at_or_before_end', 'judge/status.py',
+               'e["type"] == "push" and instant(e["ts"]) > instant(w2[2])',
+               'e["type"] == "push" and instant(e["ts"]) <= instant(w2[2])'),
+        Mutant('promoted_prime_still_opens', 'judge/status.py',
+               'w2 is None or w2[2] is None or any(', 'w2 is None or w2[2] is None or False and any(')]),
+    Pin("third_window_end_is_v8", third_cases('change_1_window_and_acts'), [
+        Mutant('v5_is_third_end', 'judge/status.py',
+               'v8["body"]["resolves_by"] if v8 else None', 'w2[2] if v8 else None'),
+        Mutant('late_v8_accepted', 'judge/status.py', 'e["seq"] < op3["seq"]', 'e["seq"] > op3["seq"]')]),
+    Pin("third_window_cap", third_cases('cap'), [
+        Mutant('cap_8400', 'judge/status.py', 'if is_third:\n            cap = 9100', 'if is_third:\n            cap = 8400'),
+        Mutant('cap_7800', 'judge/status.py', 'if is_third:\n            cap = 9100', 'if is_third:\n            cap = 7800')]),
+    Pin("scope_unchanged_on_main", third_cases('scope'), [
+        Mutant('all_ancestors', 'judge/status.py',
+               'git_bytes(root, "rev-list", "--first-parent", f"{start}..{rev}")',
+               'git_bytes(root, "rev-list", f"{start}..{rev}")'),
+        Mutant('end_trees_only', 'judge/status.py',
+               '[rev] + git_bytes(root, "rev-list", "--first-parent", f"{start}..{rev}").decode().split()', '[rev]')]),
+    Pin("veto_names_its_window", third_cases('names'), [
+        Mutant('prime_veto_counted', 'judge/status.py',
+               'return is_third and (subj == "C2a" if kind == "promote" else subj in ("C2a", "C2a-3"))',
+               'return subj == "C2a-prime" or is_third and (subj == "C2a" if kind == "promote" else subj in ("C2a", "C2a-3"))'),
+        Mutant('third_veto_ignored', 'judge/status.py',
+               'else subj in ("C2a", "C2a-3"))', 'else subj in ("C2a",))')]),
+    Pin("offlog_from_third_opening", third_cases('acts'), [
+        Mutant('offlog_from_prime_opening', 'judge/status.py',
+               'off_log_repairs(acts, s["start"], end, overlap=is_prime)',
+               'off_log_repairs(acts, c2a_prime_window(s["prefix"])[1], end, overlap=is_prime)')]),
+    Pin("vetoed_window_continues", third_cases('veto_end'), [
+        Mutant('ending_veto_ignored', 'judge/status.py', 'if veto is not None:', 'if False:')]),
+    Pin("late_report_in_its_window", third_cases('change_5_late_reports_belong_to_third_window'), [
+        Mutant('all_late_reports', 'judge/status.py',
+               'if seq > s["opening"]', 'if True'),
+        Mutant('no_late_reports', 'judge/status.py',
+               'if seq > s["opening"]', 'if False'),
+        Mutant('rule_for_every_window', 'judge/status.py',
+               'if s["window"] == "C2a-3" else process["late_reports"]', 'if True else process["late_reports"]')]),
+]
 
 
 # --- opening read gate pins (BRIEF-C2b §Counsel bound (a); REVIEW-C2b-v1 F7) ---
