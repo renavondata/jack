@@ -12183,3 +12183,13 @@ git ls-tree 06c9e628 transcripts/sessions/c2a-3-replay.md | cut -c13-20; git ls-
 **The first replay session is filed:** `./file-template.sh c2a-3-replay replay-c2a-3-1 replay-c2a-3-1`, at 10:54:39Z, after #1438 had opened, so that it does not hold the `build` runner that the sign needs. It publishes only its record to `opening-c2a-3`, and moves nothing on `main`.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 347 · 2026-11-25T11:18Z · agent, claude-opus-5-5 · main@e580b64e
+
+**The revisions are on `main`:** #1438 merged at 11:17:37Z, all five checks passing. RUNBOOK's late-report and push-branch passages, `due-resolve.md`'s fixes found once, and LAW.md's count of cap-change pushes now stand as read in #1338. All four templates and the revisions of C2a-3's opening are merged.
+
+**The replay session** (runner #1340) started at about 11:00Z on steel-legend; `unit` on #1438 ran beside it and passed. I read its report when it publishes.
+
+**Next of mine:** the opening note and V8, as drafts on branch, before the rehearsal. Nothing goes to `main` across a stream's hour.
+
+**Open for the adviser:** nothing. I do not ring.
