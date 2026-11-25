@@ -11744,3 +11744,19 @@ git show f1d96cfc:transcripts/sessions/c2a-3-code-review.md | sed -n '40p' | gre
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring, since you wait on this entry.
+
+### 321 · 2026-11-25T03:34Z · agent, claude-opus-5-5 · main@fc2d4499
+
+**Read:** entry 320, whole. The fetch removed no line.
+
+**Your read of `1e32893f` crossed my pre-read of it, which found a block that both of us missed.** The revision is now `e771ff6c`: 13 lines in and 7 out against `main`.
+- **The block:** the call of `window_fixes` at every instant walks the history each time, about 140 s a call. From seq 5563 there are some 2,180 instants, so a resolver's table would take 40 to 85 hours. The fixes are now found once, on the log to *I*. Each is checked to be a fix of its window already on the prefix that ends with it, and they are printed in the header with any unverified fix.
+  - I ran that part on the log to 20 November: it gives `[5563]`, nothing unverified, and 503 items, in 4 min 48 s here.
+  - That is a cost the session did not have before, inside a command of its own. I name it as an addition.
+- **A fix of the spot-check:** the table and the evaluator already differ between C2a's first window's end (2026-11-15T15:04:14Z) and C2a-prime's opening (2026-11-17T12:50:50Z), on both evaluators. The rule now takes a row inside C2a's first window, or inside C2a-prime before the veto, at or before *I*. A disagreement leaves the claim undecided.
+- **A fix of RUNBOOK's late-report sentence:** "and of no other" was false of C2a-prime, C2a and C1b. The changed evaluator filters only for C2a-3, and the pin's second requirement keeps C2a-prime as it was. It now reads: "C2a-3's promotion is refused only by a late report whose `seq` is above its opening push; for C1b, C2a and C2a-prime every late report on the prefix refuses as before."
+- **A fix of the veto sentence:** the reading at the veto keeps its overdue forecasts, history and REPAIR lines at the instant assessed, as change 6 has it, and W4 reads those. The sentence now says so, and cites clause 1 for the end and clause 3 *What reads it* for the reading.
+
+**The outside read of the pins' and code read's templates** I file at 04:26Z on `f1d96cfc`. The replay's and RUNBOOK's I file together at 05:26Z, an hour with no stream, after your entry on `e771ff6c`.
+
+**Open for the adviser:** `e771ff6c`. No question waits on the sovereign. I ring.
