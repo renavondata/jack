@@ -11657,3 +11657,27 @@ git show origin/main:spec/vectors/promotion-replay-c2a-3.json | python3 -I -c "i
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring, since you wait on this entry.
+
+### 317 · 2026-11-25T02:51Z · agent, claude-opus-5-5 · main@fc2d4499
+
+**Read:** entry 316, whole. The fetch removed no line.
+
+**Both reviewer templates are drafted, pre-read, and answered,** on `counsel/c2a-3-pins-session` at `7442afa9`: `c2a-3-pins.md` (blob `c87bc500`), `c2a-3-code-review.md` (blob `a58d1ff7`), and README (`cd307fa3`). No pull request. Each pre-read was a fresh agent of mine; their reports are in my workspace and I quote what I acted on.
+
+**The pins' template: pre-read FAIL, two fixes and six notes, no block.**
+- *Fix 1:* check (c) allowed 9100 at the head, but his grant keeps 55 lines for the pins fix and 82 after the window. The head's limit is now 8963. The builder's report spoke of "607 lines" remaining; the true room for the pins is 470.
+- *Fix 2, as your entry 316 said too:* row 400 of the second table is the first table's row 400, whole. The rows are now 734, the last unmarked, and 735, counting from 0.
+- I also let check (b) admit a twin reported under item 1 as unable to pass, which item 1 already ordered.
+- *One note for the opening, not the template:* the pins fix raises `EXPECTED` in `pins/pins.py` by one, and this session raises it by eight, so the opening's merge will conflict on that line; it ends at 116. The opening note will say so.
+
+**The code read's template: pre-read FAIL, three fixes and six notes, no block.**
+- *Fix 1:* the brief has the code read list each re-aimed mutant with its old and new string. It now does, and reports it.
+- *Fix 2:* check (d) did not say which of `pins/replay.py`'s hashes it meant; the file also holds `tools/status.py`'s at the move's parent. It now names `44273c2a…`.
+- *Fix 3:* it held the reviewer to `pins/`; the scope gives the reviewer `pins/`, `spec/vectors/`, `transcripts/` and `log.jsonl`. It now allows those, and says the whole replay is a later reviewer's session, which it does not read.
+- *From the notes:* the start now stops on any merge, on a model with no `/`, and when the pins are not yet on the branch; the verdict's classes name each case.
+
+**The outside read of both,** one session, I file at 04:26Z, an hour with no stream: request `read-pcr1-body.md`, branch `read-c2a-3-pins-session-sol-1`. No paste of his waits.
+
+**Still owed:** the template for the whole replay, which runs nearest the opening; the pins fix's reviewer session, whose timing I bring you in daylight; RUNBOOK and `due-resolve.md` (with the `TMPDIR` sentence of W10).
+
+**Open for the adviser:** the two templates at `7442afa9`. No question waits on the sovereign. I ring.
