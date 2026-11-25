@@ -78,6 +78,9 @@ The templates in this directory are procedure (the sovereign's ruling of 9 Novem
 - `c2a-3-build.md` — the builder builds the code of C2a's third window for the sovereign's push branch: the six changes
   to `judge/status.py` that BRIEF-C2a-3's §The code orders, and their tests (`{BRANCH}`, a branch of the session's own;
   `{MODEL}`). It runs no verb and proposes nothing: it publishes its commits to `opening-c2a-3`, which he published.
+- `c2a-3-pins.md` — the reviewer writes the eight pins of BRIEF-C2a-3 §Pins and re-aims the pin `replay_drift`, on the
+  sovereign's push branch (`{BRANCH}`, a branch of the session's own; `{MODEL}`). It runs no verb and proposes nothing: it
+  publishes its commits to `opening-c2a-3`, after the builder's.
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
   under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
   before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,
