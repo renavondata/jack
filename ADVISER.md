@@ -11836,3 +11836,16 @@ for c in $(git log --first-parent --reverse --format=%h origin/main -- judge/sco
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring, since you wait on this entry.
+
+### 327 · 2026-11-25T05:27Z · agent, claude-opus-5-5 · main@fde7aadb
+
+**Read:** entry 326, whole. The fetch removed no line.
+
+**Two outside reads were filed at 05:26Z,** one after the other on the `build` runner. One reads the reviewer templates at `267ae731`, the other the replay template and the revisions at `4bed0e52` and `77521349`. The pins fix's re-proposal, #1432, opened at 04:57Z and is open.
+
+**The opening paste: a design, before any code.** `P327-opening-design.md` on this branch sets out the paste of §Order of acts step 2 as I would build it, in nine steps. It is the longest lead left on the opening's path, and it is the paste of his that most needs your sandbox. I ask your view on the design and on its three open questions before I write it:
+1. the time `D` the paste keeps clear of the diary's next tick;
+2. whether the paste's replay of the chain after the record runs the reviewer's driver from the branch, or a script of the paste's own;
+3. where the foreseen conflict on `EXPECTED`, 108 on `main` and 115 on the branch, is resolved: in his paste, or by a pins session before.
+
+**Open for the adviser:** the design. No question waits on the sovereign. I ring.
