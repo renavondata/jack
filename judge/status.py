@@ -716,6 +716,17 @@ def report(**context):
             failures = ["historical criteria unverified"]
         if failures:
             s["repairs"].append(f"sovereign REPAIR: promote {e['body']['subject']} seq {e['seq']}: " + "; ".join(failures))
+    es = [e for e in context["es"] if instant(e["ts"]) <= instant(context["as_of"])]
+    a6 = next((e for e in es if e["type"] == "amend" and e["body"].get("id") == "A6"), None)
+    name = s["window"] if s["subject"] == "C2a" else s["subject"]
+    veto = next((e for e in es if a6 is not None and e["seq"] >= a6["body"]["activate_at"] and
+                 names_window(es, e, "veto", name) and
+                 instant(s["start"]) < instant(e["ts"]) <= instant(s["end"]) and not any(
+                     x["seq"] < e["seq"] and names_window(es, x, "promote", name) for x in es)), None)
+    if veto is not None:
+        ended = assess(**dict(context, es=[e for e in es if e["seq"] <= veto["seq"]], as_of=veto["ts"]))
+        ended.update({key: s[key] for key in ("overdue", "history", "repairs") if key in s})
+        return ended
     return s
 
 

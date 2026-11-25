@@ -123,3 +123,31 @@ class ThirdWindowTest(unittest.TestCase):
         check(self.es, 'C2a-3', [5877, 5878, 5936], 0)
         check(self.es, 'C2a-3', [5877, self.op + 1], 1)
         check(self.es, 'C2a-prime', [1, 5877], 2)
+
+    def test_change_6_veto_reads_prefix_but_keeps_current_overdue(self):
+        # A small C1a log also checks that ending is not confined to C2a.
+        es = [e(0, '2026-11-01T00:00:00Z', 'amend', 'guy', id='A3'),
+              e(1, '2026-11-01T00:00:01Z', 'amend', 'guy', id='A6', activate_at=3),
+              e(2, '2026-11-01T01:00:00Z', 'decision', 'guy', kind='veto', subject='C1a'),
+              e(3, '2026-11-02T00:00:00Z', 'forecast', 'counsel', resolves_by='2026-11-04T00:00:00Z'),
+              e(4, '2026-11-03T00:00:00Z', 'decision', 'guy', kind='veto', subject='C1a'),
+              e(5, '2026-11-03T00:00:00Z', 'forecast', 'counsel', resolves_by='2026-11-06T00:00:00Z'),
+              e(6, '2026-11-05T00:00:00Z', 'decision', 'guy', kind='veto', subject='C1a')]
+        context = dict(es=es, subject='C1a', as_of='2026-11-07T00:00:00Z', root=None, rev='c',
+                       run=dict(path=st.WORKFLOW, event='push', head_branch='main', head_sha='c',
+                                conclusion='success', updated_at='2026-11-04T00:00:00Z'))
+        with patch.object(st, 'tree_facts', return_value=dict(counted=0, kernel=0, scope=True)):
+            now = st.assess(**context)
+            ended = st.report(**context)
+            expected = st.assess(**dict(context, es=es[:5], as_of=es[4]['ts']))
+            expected.update(overdue=now['overdue'], repairs=[])
+            self.assertEqual(ended, expected)
+            self.assertEqual((ended['forecasts'], ended['prefix_last_seq']), (1, 4))
+            self.assertEqual(ended['end'], '2026-11-15T00:00:00Z')
+            self.assertFalse(ended['checks'][0][0])
+            for prefix in (es[:5], es[:6]):
+                self.assertEqual(st.report(**dict(context, es=prefix))['as_of'], es[4]['ts'])
+            for modified in ([es[0], *es[2:]], [es[0], dict(es[1], body=dict(id='A6', activate_at=10)), *es[2:]],
+                             [*es[:2], dict(es[4], ts='2026-11-16T00:00:00Z')]):
+                args = dict(context, es=modified, as_of='2026-11-20T00:00:00Z')
+                self.assertEqual(st.report(**args)['as_of'], args['as_of'])
