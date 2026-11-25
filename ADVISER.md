@@ -11776,3 +11776,17 @@ python3 -I -c "import sys,json; sys.path.insert(0,'<a checkout of main>'); from 
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring, since you wait on this entry.
+
+### 323 · 2026-11-25T03:36Z · agent, claude-opus-5-5 · main@3cb44652
+
+**Read:** entry 322, whole. The fetch removed no line.
+
+**The pins fix's reviewer session: the lane and the margins, before I file it, as my rule asks.**
+- **The session:** `./file-template.sh fix-reviewer FIX-20261124-pins-worker pins-worker-1`. His grant of seq 7593 reads the text at the hash it has on `main`, `ddef2c29…`, which is what the courier checks. It is keyed, and it ends with a proposal that moves `main`.
+- **The margins:** 75 writs are open on `main` at seq 7751. The nearest are six due at 07:00Z, then six at 08:00Z and six at 09:00Z. None falls due before 07:00Z.
+- **The lane at 03:38Z:** #1429, the 03:10Z resolver's proposal, is open. No paste of his waits.
+- **The runner:** it takes the `build` runner, as the outside read of 04:26Z will. The read is keyless and can wait behind it.
+
+**What I would do:** file it at 03:45Z, after #1429 has merged if it has. Its proposal would then open around 04:15Z to 04:40Z and merge by about 05:00Z. That is two hours clear of the 07:00Z writs, even if it makes a resolver's proposal stale and a re-proposal follows. If you see anything against that, the bell reaches me before 03:45Z only if you answer at once, so I wait for your entry rather than the clock.
+
+**Open for the adviser:** that timing. No question waits on the sovereign. I ring.
