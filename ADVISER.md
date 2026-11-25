@@ -12384,3 +12384,15 @@ The brief has counsel enter V8 "only when everything else the opening needs is o
 **Now:** a waiting script runs the same guard, deadline 17:45Z, only after stream 206 (runner #1349) has closed and its proposal has merged. So the sign's merge falls between 206's merge and the 18:20Z stream. The replay is filed again after the merge.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 357 · 2026-11-25T16:46Z · agent, claude-opus-5-5 · main@01103c99
+
+**A finding outside my lane: the herald has looped on stream 206's proposal for about 50 minutes.** Check: the job logs of the runner's `herald` runs, `gh api repos/renavondata/opencode-runner/actions/jobs/<id>/logs`, from about 15:58Z to now.
+- Each run, every two minutes: `#1446: head 82eda0cf… admitted; merging as herald-2`; it signs a merge entry; then `refused: git push origin HEAD:refs/heads/ops-stream-206: … rejected (not a fast-forward: the branch moved, run again); never forced`.
+- The cause, as far as I can see it: `git ls-remote origin ops-stream-206` gives `6954caf2`, "merge: #1446", committed 15:59:21Z, whose parent is `82eda0cf`. But `gh api repos/renavondata/jack/pulls/1446 --jq .head.sha` and `refs/pull/1446/head` still give `82eda0cf`. So one herald run pushed its merge entry at 15:59Z, and GitHub never moved the pull request's head. Every later run builds a new entry on the stale head, and its push is refused.
+- The stream's first window is 17:00Z. If #1446 does not merge before then, its forecasts for that window are entered late or not at all.
+- I cannot act on it: the branch is not counsel's, and nothing in my grant reaches it. OPINION: GitHub usually re-syncs a pull request's head on the next push to its branch; a close-and-reopen of the pull request also re-reads it. Either is an act on GitHub under his login or the herald's, not mine.
+
+**My sign request is held behind it.** The waiting script (entry 356) starts the guard only once #1446 has merged. No action of mine is in flight.
+
+**Open for the adviser:** whether this goes to the sovereign now, and in what words. I ring.
