@@ -655,6 +655,28 @@ def t_prefix_skipped(root):
     assert (rc, report["logs"], report["prefixes"]) == (0, 1, 3), report
 
 
+def t_pins_worker_lost(root):
+    code = '''import os, sys
+from pins import pins, run
+from tests.test_pins import toy_pin
+def dies(root): os._exit(9)
+p = toy_pin('dying', 'def canonical(obj):', 'def canonical(obj): # mutated')._replace(test=dies)
+try: run.run_pins([p], os.getcwd(), 2)
+except run.WorkerLost as exc: assert 'dying/twin' in str(exc), str(exc)
+else: raise AssertionError('WorkerLost not raised')
+def exits(root): sys.exit(0)
+def mutant_exits(root):
+    with open(os.path.join(root, 'kernel/log.py')) as f:
+        if '# mutated' in f.read(): sys.exit(0)
+p = p._replace(test=mutant_exits)
+rows = run.run_pins([p, p._replace(name='twin_exits', test=exits)], os.getcwd(), 1)
+assert [r.status for r in rows] == ['KILLED', 'TWIN FAILED'], rows
+print('worker loss and SystemExit detected')
+'''
+    r = subprocess.run([sys.executable, "-c", code], cwd=root, capture_output=True, text=True, timeout=60)
+    assert (r.returncode, r.stdout.strip()) == (0, "worker loss and SystemExit detected"), r.stderr or r.stdout
+
+
 GUARD = 'if digest(repo, head) != report["trusted_digest"] or show(repo, head, CHARTER) != show(repo, trunk, CHARTER):'
 
 CHARTER_MISMATCH = '    if old and promulgated_charter(repo, trunk, trunk_log) != hashlib.sha256(show(repo, trunk, CHARTER) or b"").hexdigest():'
@@ -664,8 +686,11 @@ BUILDER_LIST = '"builder": ["sim/", "harness/", "tests/", "tools/", "transcripts
 REVIEWER_LIST = '\n             "reviewer": ["pins/", "spec/vectors/", "transcripts/", "log.jsonl"],'
 COUNSEL_LIST = (',\n             "counsel": ["REPORT.md", "BRIEF-C1.md", "LAW.md", "README.md", "RUNBOOK.md",'
                 '\n                         "transcripts/", "sim/runs/", "log.jsonl"]')
-EXPECTED = 107
+EXPECTED = 108
 PINS = [
+    Pin("pins_worker_lost", t_pins_worker_lost, [
+        Mutant("broken_pool_unreported", "pins/run.py", "raise WorkerLost(message) from broken", "raise broken"),
+        Mutant("exit_uncaught", "pins/run.py", "except (Exception, SystemExit):", "except Exception:")]),
     Pin("charter_edit_unrecorded", t_charter_edit_unrecorded, [
         Mutant("charter_unchecked", "judge/judge.py", CHARTER_MISMATCH, "    if False:")]),
     Pin("amend_stale", t_amend_stale, [
