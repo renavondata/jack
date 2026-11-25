@@ -18,7 +18,9 @@ You are a **reader** and, if the branch passes, the **reviewer** (`JACK_KEY=~/.s
 3. Run `git reset -q --hard origin/opening-c2a-3`, then `git rev-parse HEAD > .review/tree`. That commit is the tree you read. Begin every command that uses it with `R=$(cat .review/tree);`.
 4. `git merge-base --is-ancestor 7d7f89471a52c248ad9c3214645f7e936235ab4f HEAD` must succeed, and `ls transcripts/REVIEW-C2a-3-code.md` must fail: no code read is on the branch yet.
 5. `sha256sum transcripts/BRIEF-C2a-3-draft.md` must give `a5c331b40d1e81f959e147461884b3a55e11d829933bfd2296d660a526433945`, `sha256sum SPEC.md` must give `c4a5b44b8465f4be9cd4a5bbeb294cfd5c56a7397319e7f1c167853d7fd628a7`, and `sha256sum spec/vectors/promotion-replay-c2a-3.json` must give `943a79863df95479cc93085e0dc686b47f5940a34b5497372503937cb85f3e77`. The sovereign read the brief before the build: his grant is seq 7615 on `main`'s log.
-6. **Another family than the builder's.** `R=$(cat .review/tree); git log --no-merges --format='%h %(trailers:key=Proposer,valueonly)' origin/main..$R` prints one line for each commit of the branch: its hash, then its trailer's fields. A line whose second field is `builder` names the builder's model as its third. A model's family is the part of its name before the `/`. Yours is the family of `{MODEL}`. If a `builder` line names a model of your family, stop and report that line: this code is read by a family that did not write it.
+6. **No merge yet.** `R=$(cat .review/tree); git rev-list --merges origin/main..$R` must print nothing: the only merge the branch is to hold is the sovereign's, at the opening.
+7. **Another family than the builder's.** `R=$(cat .review/tree); git log --format='%h %(trailers:key=Proposer,valueonly)' origin/main..$R | grep .` prints a line for each commit of the branch: its hash, then its trailer's fields. A line whose second field is `builder` names the builder's model as its third. A model's family is the part of its name before the `/`. Yours is the family of `{MODEL}`. If `{MODEL}` or a `builder` line's model has no `/`, or a `builder` line names a model of your family, stop and report that line: this code is read by a family that did not write it.
+8. **The pins are on the branch.** Every name in `THIRD_WINDOW_PINS` in `judge/status.py` is registered in `pins/pins.py` as `Pin(` followed by the name in quotes, and `pins/replay.py` holds the SHA-256 `44273c2a53be1fd881ab2880132ac0e7543efe3c66285bbe63e8b1a324901fe0`. Compose both checks yourself. If either fails, stop and report: the pins' session has not finished.
 
 If any check fails, stop and report.
 
@@ -28,19 +30,19 @@ If any check fails, stop and report.
 1. **The scope's change.** The first commit is counsel's patch and changes `SPEC.md` and `judge/scope.json` alone: the cap at 9100, SPEC §10's block, one clause of its cap history, and the two sentences §The code gives word for word.
 2. **The six changes** of §The code, each in `judge/status.py`: does the code do what each paragraph says, and nothing it does not? Is every line that no change needs left byte for byte, among them the first-parent line of `c2a_tree_evidence` and the two lines that read `tools/status.py`? Do `main`, `inputs`, `assess` and `promotion_line` keep the form `judge/evaluate.py` calls?
 3. **The tests:** at least one for each change, and for change 3 the test the brief describes, on the real `log.jsonl`.
-4. **The pins:** each of the eight of §Pins, with every requirement, mutant and twin it gives, registered as `Pin("<name>"`, and `EXPECTED` counting them. Is each mutant the edit the text describes, and is it killed by the behaviour its pin names?
+4. **The pins:** each of the eight of §Pins, with every requirement, mutant and twin it gives, registered as `Pin("<name>"`, and `EXPECTED` counting them. Is each mutant the edit the text describes, and is it killed by the behaviour its pin names? The brief's paragraph **Existing pins and their mutants** has the code read list each mutant of a pin on `main` that was re-aimed on this branch, and each exact-string replacement in `tests/test_status.py` or `pins/c2a_prime.py` that was changed, with its old and new string: find them with `R=$(cat .review/tree); git diff origin/main...$R -- pins/ tests/test_status.py`, and list them, or say there are none.
 5. **`replay_drift`,** re-aimed as the paragraph of §The code orders: the first table's three rows and its hash; rows of the second table, one marked, and its hash; `judge/status.py` held to a SHA-256; `judge/value.py` to the moved bytes; its three mutants.
-6. **Parties and paths.** Each commit's trailer is filled, and its paths are its party's: the builder's under `judge/status.py` and `tests/`, the reviewer's under `pins/`, counsel's patch as item 1 says.
+6. **Parties and paths.** Each commit's trailer is filled, and its paths are its party's: the builder's under `judge/status.py` and `tests/`; the reviewer's among the reviewer's paths in `judge/scope.json`, which are `pins/`, `spec/vectors/`, `transcripts/` and `log.jsonl`; counsel's patch as item 1 says.
 
 **Checks.** Run each and copy its result into your report. Run them one at a time, each as one command, with the bash tool's `timeout` set to `1800000` on that call, which is thirty minutes. If a command is ended at its limit, say so and do not run it again. Start neither check (a) nor check (b) after minute 115.
 - (a) `python3 -m unittest discover -s tests -t .`. Every test must pass.
 - (b) `python3 pins/run.py`. Every pin must be KILLED, none SURVIVED, STALE, TWIN FAILED or PENDING.
 - (c) The counted lines at your tree, counted as `counted_lines` in `judge/judge.py` does over the `counted` list of `judge/scope.json`. They must be at most 9100.
-- (d) `sha256sum judge/status.py`, and the SHA-256 that `pins/replay.py` holds `judge/status.py` to. The two must be equal.
+- (d) `sha256sum judge/status.py` must print `44273c2a53be1fd881ab2880132ac0e7543efe3c66285bbe63e8b1a324901fe0`, the evaluator at *B*, which is the hash `pins/replay.py` holds `judge/status.py`'s own bytes to (step 8). `pins/replay.py` also holds other hashes, among them that of `tools/status.py` at the move's parent: they are not this one.
 
-The whole replay of the table is another session's, and you do not run it.
+The whole replay of the table is the reviewer's too, but in a session of its own after this read, and you do not run it or read its record.
 
-**Your verdict.** A change that does not do what a quoted sentence says, a twin the text lists that is absent or failing, a change outside a party's paths, an unfilled trailer, a check that fails, or (d)'s two hashes differing is a BLOCK. A sentence of the text that the code meets only in part, or a test or pin weaker than the text asks, is a FIX. Anything else you would mend is a NOTE.
+**Your verdict.** Each of these is a BLOCK: a change of §The code that the code does not make, or makes otherwise than its sentence says; a change with no test; a requirement, mutant or twin of §Pins that is absent, or a twin that fails; a mutant killed by an error rather than by the behaviour its pin names; a commit outside its party's paths, or with an unfilled trailer; a check that fails. A test or pin that tests what the text names, but less of it than the text asks, is a FIX. Anything else you would mend is a NOTE.
 
 **On FAIL** (any BLOCK): write no file and commit nothing.
 
@@ -58,8 +60,9 @@ Write `VERDICT: ACCEPT` instead if you have no FIX. Then:
 - Run `git push -q origin HEAD:opening-c2a-3`.
 
 **Report.** Give:
-- the tree you read, and the output of step 6;
+- the tree you read, and the output of step 7;
 - your verdict and every finding, in the form above, BLOCKs first;
+- the re-aimed mutants and changed replacements of item 4, old and new, or that there are none;
 - the results of checks (a) to (d);
 - on a pass, the head after your commit.
 

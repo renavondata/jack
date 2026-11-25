@@ -83,7 +83,7 @@ The templates in this directory are procedure (the sovereign's ruling of 9 Novem
   publishes its commits to `opening-c2a-3`, after the builder's.
 - `c2a-3-code-review.md` — the reviewer, of another family than the builder's, reads the code, tests and pins on
   `opening-c2a-3` against BRIEF-C2a-3 and, on a pass, publishes `transcripts/REVIEW-C2a-3-code.md` to that branch, the
-  file the opening push names (`{BRANCH}`, `{MODEL}`). It runs no verb and changes no code.
+  file the opening push names (`{BRANCH}`, `{MODEL}`, `{NOW}`). It runs no verb and changes no code.
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
   under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
   before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,
