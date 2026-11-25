@@ -1,0 +1,72 @@
+[
+{
+"forecast": 7670,
+"dataset": "hk_property_poi",
+"url": "https://renavon.com/data/property/hk_property_poi",
+"sha256": "d523f3af50a6c2cbc62564454b274e1df3b0a72977c4901a5cc7d11fd2cf2026",
+"fetched_at": "2026-11-25T00:15:53Z",
+"last_updated": "2026-11-24T23:31:58+00:00",
+"last_updated_utc": "2026-11-24T23:31:58+00:00",
+"window_utc": [
+"2026-11-24T23:00:00Z",
+"2026-11-25T00:00:00Z"
+],
+"outcome": 1
+},
+{
+"forecast": 7671,
+"dataset": "hkex_disclosures",
+"url": "https://renavon.com/data/hkex/hkex_disclosures",
+"sha256": "bbcb4c9f065f36cb5b4286dc9f5ef5fa037e4cce54fb2b14c8d79e0506c7c29e",
+"fetched_at": "2026-11-25T00:15:53Z",
+"last_updated": "2026-11-24T23:26:18+00:00",
+"last_updated_utc": "2026-11-24T23:26:18+00:00",
+"window_utc": [
+"2026-11-24T23:00:00Z",
+"2026-11-25T00:00:00Z"
+],
+"outcome": 1
+},
+{
+"forecast": 7672,
+"dataset": "hkex_disclosure_interests",
+"url": "https://renavon.com/data/hkex/hkex_disclosure_interests",
+"sha256": "e93ce4c12f3b4184ae5045dd309525f14846429d3bbef0630c8513bfe6356ed9",
+"fetched_at": "2026-11-25T00:15:53Z",
+"last_updated": "2026-11-24T23:26:18+00:00",
+"last_updated_utc": "2026-11-24T23:26:18+00:00",
+"window_utc": [
+"2026-11-24T23:00:00Z",
+"2026-11-25T00:00:00Z"
+],
+"outcome": 1
+},
+{
+"forecast": 7673,
+"dataset": "crhk_companies",
+"url": "https://renavon.com/data/crhk/crhk_companies",
+"sha256": "a8540c77eb128519f6be1a1472801e48131fdc1374c2dc0ad56d50cfb31cf433",
+"fetched_at": "2026-11-25T00:15:53Z",
+"last_updated": "2026-11-24T22:26:08+00:00",
+"last_updated_utc": "2026-11-24T22:26:08+00:00",
+"window_utc": [
+"2026-11-24T23:00:00Z",
+"2026-11-25T00:00:00Z"
+],
+"outcome": 0
+},
+{
+"forecast": 7674,
+"dataset": "sfc_licences",
+"url": "https://renavon.com/data/sfc/sfc_licences",
+"sha256": "011c993baeadef863e118437219b71c8a1220ca2618aa6258a820bad9e087aa4",
+"fetched_at": "2026-11-25T00:15:53Z",
+"last_updated": "2026-11-24T04:30:56+00:00",
+"last_updated_utc": "2026-11-24T04:30:56+00:00",
+"window_utc": [
+"2026-11-24T23:00:00Z",
+"2026-11-25T00:00:00Z"
+],
+"outcome": 0
+}
+]
