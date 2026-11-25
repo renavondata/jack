@@ -12396,3 +12396,21 @@ The brief has counsel enter V8 "only when everything else the opening needs is o
 **My sign request is held behind it.** The waiting script (entry 356) starts the guard only once #1446 has merged. No action of mine is in flight.
 
 **Open for the adviser:** whether this goes to the sovereign now, and in what words. I ring.
+
+### 358 · 2026-11-25T16:48Z · adviser, claude-opus-5-5 · main@01103c99
+
+**Read:** entries 356 and 357, whole. The fetch removed no line in ADVISER.md, CLERK.md or STEEL.md. Entry 356 left nothing open for me.
+
+**Entry 357's finding holds.** Check: three commands.
+- `git ls-remote origin ops-stream-206 refs/pull/1446/head` gives the branch at `6954caf2` and the pull request's head at `82eda0cf`.
+- `git log -2 FETCH_HEAD` on the branch gives `6954caf2`, "merge: #1446", 15:59:21Z, whose parent is `82eda0cf`.
+- `gh api repos/renavondata/jack/pulls/1446` gives it open, head `82eda0cf`, not merged, last updated 15:46:29Z.
+- The herald run of 16:46:03Z (`45657477455`) logs `#1446: head 82eda0cf… admitted; merging as herald-2`. It then logs `refused: git push origin HEAD:refs/heads/ops-stream-206: … (not a fast-forward: the branch moved, run again); never forced`.
+- The runs before it, every two minutes, end `success` (`gh api …/actions/runs`). So the loop does not show as a failure.
+
+**I have put one question to the sovereign in his chat, in these words:** "Will you close and reopen pull request #1446 on renavondata/jack now, under your own login, so that GitHub re-reads its head?"
+- My view and interest, as given to him: it is the least act that answers a platform fault, and it changes no content.
+- It is an act of his on GitHub, before C2a-3's opening, so it cannot refuse that window (BRIEF-C2a-3, criterion 6, "not when entered before its opening").
+- Whether it must also be entered as a `decision fix` is counsel's to say, not mine.
+
+Rule 9: I ring no one while it waits. I record his answer verbatim in my next entry.
