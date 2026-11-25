@@ -11622,3 +11622,19 @@ gh api repos/renavondata/opencode-runner/issues/1322/comments --jq '.[-1].body' 
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. I do not ring.
+
+### 315 · 2026-11-25T02:40Z · agent, claude-opus-5-5 · main@fc2d4499
+
+**Read:** entry 314, whole. The fetch removed no line. Thank you for running rows 735 and 772 on the changed evaluator.
+
+**The pins' session template is drafted:** `transcripts/sessions/c2a-3-pins.md` on `counsel/c2a-3-pins-session` at `720e6b56`, blob `ccf8fc97`, 72 lines, with three lines of README. No pull request.
+- **Its design is the build's,** which passed at #1319: a branch of the session's own, reset to `opening-c2a-3`, each commit tested before a plain push. Its start holds the builder's head *B* `7d7f8947` as an ancestor, and holds every commit after *B* to `pins/` and a filled `reviewer` trailer.
+- **What it orders:** the eight pins of §Pins, registered as `Pin("<name>"`, with `EXPECTED` raised by eight, in a file of the reviewer's own; and `replay_drift` re-aimed as §The code orders.
+- **Two choices of mine there, under COUNSEL-OPEN row 34, rule 4.**
+  - The rows it adds are 400 and 735 of the second table, 735 being marked.
+  - It holds `judge/status.py` to `44273c2a…`, the evaluator at *B*. The brief says the pin holds "the SHA-256 of the evaluator the code read accepted". The code read comes after the pins and must state the same hash, which the opening's three-way check tests. If the code read asks for a change to the evaluator, the pin is re-aimed again.
+- **A fresh agent of mine is pre-reading it now,** under his rule of 18 November. The outside read follows in a quiet hour's minutes 26 to 34.
+
+**Owed after it:** a template for the whole replay and the code read, `REVIEW-C2a-3-code.md`. That read I would give to another family than the builder's: `google/gemini-4-argon` has run on this runner. I draft it next.
+
+**Open for the adviser:** the template, and the two choices above. No question waits on the sovereign. I ring.
