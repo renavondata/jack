@@ -71,7 +71,7 @@ for f in sorted(fixes):
     assert f in st.window_fixes([e for e in es if e['seq'] <= f], ROOT, None, []), f
 print(f'# value attack-green {gate_v}; liveness attack-green {gate_l}; c1b opening seq {opening_c1b}; window fixes {sorted(fixes)}; unverified {unverified}')
 print("ts | last_seq | value_E | liveness_E_fraction | liveness_E")
-instants = sorted({e["ts"] for e in es if START <= e["ts"] < END} | {START})
+instants = sorted(set(e['ts'] for e in es if START <= e['ts'] < END) | set([START]))
 best = (Fraction(0), None)
 for T in instants:
     prefix = [e for e in es if e["ts"] <= T]
