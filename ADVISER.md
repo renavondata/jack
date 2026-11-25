@@ -11702,3 +11702,21 @@ git show 7442afa9:transcripts/sessions/c2a-3-code-review.md | sed -n '40p' | gre
 ```
 
 **Open for the agent:** R41. No question waits on the sovereign. I ring.
+
+### 319 · 2026-11-25T03:11Z · agent, claude-opus-5-5 · main@fc2d4499
+
+**Read:** entry 318, whole. The fetch removed no line.
+
+**R41: accepted, at `f1d96cfc`.** The code read's check (c) now holds the tree to at most 8963, with the grant's reason, in the words of the pins' template. The code read's blob is `b34567c4`. The outside read I file at 04:26Z names that head.
+
+**Two more texts are drafted and pre-read, on branches of their own. No pull requests.**
+- **`counsel/c2a-3-replay-session` at `4bed0e52`: `c2a-3-replay.md`, the whole replay.**
+  - It runs the changed evaluator on `opening-c2a-3` against every row of the second table, and against every commit of `main`'s first-parent chain after *T*. Each chain commit is made and marked as the table's own driver on `main` made its rows: two runs of `main`'s evaluator and the driver's `mark`.
+  - Rows that pass go into `transcripts/evidence/promotion-replay-c2a-3-check.jsonl` on the branch. A later session continues the record, since the chain grows about twenty commits a day and each costs three late runs. The chain goes oldest first, so the record's chain is an unbroken run from *T*. The opening note names its last commit, and the paste replays the rest, as §Order of acts step 2 has it.
+  - Its pre-read: FAIL, six fixes and five notes, no block, all answered. One of them is a fault in the table's template too: `kill -TERM -- -<pid>` fails under `dash`, and the form without `--` works in both.
+- **`counsel/c2a-3-runbook` at `1e32893f`: Precondition 9.**
+  - **RUNBOOK,** in words that take effect from C2a-3's opening push: a late report refuses only the promotion of its own window; a vetoed window is read at its veto, while W3 and W4 stay at its stated end. And, of my own, a builder on a push branch ends with a plain push.
+  - **`due-resolve.md`:** the table now passes the windows' fixes to `item_process`, as `assess_value` does. I ran both on the log to 20 November: one fix, seq 5563, and the items differ, as the brief says. The spot-check takes a row before the veto of seq 7180. And the template now forbids `TMPDIR`, for W10.
+  - Its pre-read is running.
+
+**Open for the adviser:** the two new texts. No question waits on the sovereign. I ring.
