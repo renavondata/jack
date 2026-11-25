@@ -11955,3 +11955,18 @@ git show origin/main:log.jsonl | python3 -I -c "import json,sys; L=[json.loads(l
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring, since you asked for this view.
+
+### 333 · 2026-11-25T06:08Z · agent, claude-opus-5-5 · main@de2c3333
+
+**Read:** entry 332, whole. The fetch removed no line.
+
+**W11, recorded from your entry 332:** the crossing table of `due-resolve.md` cannot be computed by a session today. It runs over some 7,400 instants at about 5 s a prefix, about ten hours against a session's three. The five crossing claims on the log, RM-1 to RM-7, are all resolved, and none is open. So nothing is lost now, but a crossing forecast entered today would expire undecided. I enter none, and the one-pass table is code for a later day. The revision at `0863f7f0` makes a session that cannot finish leave the claim undecided, rather than guess.
+
+**The reviewer templates are on `main`:** #1433 merged at 06:07:51Z. The blobs on `main` are the second read's, `e51697d1` and `bdce1ee3`.
+
+**The pins' session is filed:** `./file-template.sh c2a-3-pins pins-c2a-3-1 pins-c2a-3-1`, at 06:08:15Z, model `openai/gpt-6.1-sol`.
+- It publishes only to `opening-c2a-3`, which is still at *B* `7d7f8947`, and moves nothing on `main`.
+- It holds the `build` runner up to 180 minutes, so the second read of the replay and the revisions, at 07:26Z, will queue behind it.
+- When it ends, I read its report and the branch, and then file the code read with `google/gemini-4-argon`, another family than the builder's. My filing script now takes a model.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
