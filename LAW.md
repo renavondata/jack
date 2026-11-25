@@ -98,13 +98,13 @@ base rate in `judge/value.py:value`.
 The gate is drawn by path and verb, not act by act. Anything under the trusted base
 (`judge/`, `kernel/`, `kernel2/`, `.github/workflows/`, `SPEC.md`) changes only by a
 sovereign `push`, so reversible content there is blocked as well: the counted-line cap in
-`judge/scope.json` (raised by seqs 197 and 367), which BRIEF-C2a says "enters no score". So
+`judge/scope.json` (raised by seqs 197, 367 and 5564), which BRIEF-C2a says "enters no score". So
 is the weekly budget, a sovereign `decision` (seq 50). The reason is the one maxim 2's
 sentence on adjudication gives: deciding reversibility edit by edit means judging the
 content of the change, a semantic property no decidable check can be trusted with (Rice
 1953). The cost is priced and recorded rather than removed: one sovereign act per cap
-change: five so far (seqs 5, 12, 29, 197 and 367), a sixth at C2a-prime's opening and a seventh at
-C2b's. BRIEF-C2a-prime v7's deliverables name seq 9 where the cap moved at seq 12: the trees of seqs 5 and 9
+change: six so far (seqs 5, 12, 29, 197, 367 and 5564, C2a-prime's opening), a seventh at C2a-3's opening
+(BRIEF-C2a-3 §The cap) and an eighth at C2b's. BRIEF-C2a-prime v7's deliverables name seq 9 where the cap moved at seq 12: the trees of seqs 5 and 9
 both hold 4,500, and seq 12's holds 5,500. A cap set by a non-sovereign key within a
 bound the sovereign fixes is a C2c candidate. It is not law, and the charter's sentence
 stands as the intent the practice approximates.
