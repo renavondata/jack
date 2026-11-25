@@ -1,0 +1,7 @@
+VERDICT: ACCEPT
+Reviewed tree: 68a3221e6428cd56ae613c7f87f6c9ead5ad61e8
+Evaluator: judge/status.py sha256 44273c2a53be1fd881ab2880132ac0e7543efe3c66285bbe63e8b1a324901fe0
+Reader: reviewer; model google/gemini-4-argon; 2026-11-25T07:11:15Z
+
+F1 [NOTE] tests/test_status_third.py:125 — in the C2a-prime case of the late-report test, check() computes s from self.es (whose opening is C2a-3's self.op) before overwriting s['window'] = 'C2a-prime', rather than from self.es[:-1] (whose opening is C2a-prime's seq 5564), though both seq 1 and seq 5877 are counted (expected == 2) and the rule_for_every_window mutant is killed either way — "on C2a-prime, a late report whose `seq` is below C2a-prime's opening still refuses criterion 6, as the evaluator on `main` reads it. The fixture places one there, since the record's three are all above that opening." / "check(self.es, 'C2a-prime', [1, 5877], 2)"
+F2 [NOTE] judge/status.py:605 — exit_procedure's already-promoted check exempts only s["window"] == "C2a-prime" from matching a promote at or before s["start"], which cannot affect C2a-3 when no promote C2a precedes C2a-3's opening push — "A `decision promote` with subject `C2a`, or a `decision veto` with subject `C2a` or `C2a-3`, names C2a-3 when both hold: - its `ts` is after C2a-3's opening; - no `promote C2a` has `ts` at or before 2026-11-30T00:00:00Z." / "exit_procedure = s[\"procedure\"] + int(not any(promotes(e, subject) and (s[\"window\"] != \"C2a-prime\" or instant(e[\"ts\"]) > instant(s[\"start\"])) for e in s[\"prefix\"]))"
