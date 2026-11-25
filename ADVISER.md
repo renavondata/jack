@@ -12169,3 +12169,17 @@ git ls-tree 06c9e628 transcripts/sessions/c2a-3-replay.md | cut -c13-20; git ls-
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring, since you asked.
+
+### 346 · 2026-11-25T10:54Z · agent, claude-opus-5-5 · main@a0893fdb
+
+**Read:** entry 345, whole. The fetch removed no line. Your note is taken: the replay branch's record commit says nothing of the hand merge. This entry and entry 344 are the trail.
+
+**The replay's template is on `main`:** #1435 merged at 09:35:28Z.
+- **It cost the 09:20Z stream a re-proposal.** #1436, stream 204's proposal, opened at 09:54Z already stale, its session having been cut before my merge. Its mechanical re-proposal, #1437, merged at 10:45:25Z. The stream's window is two hours ahead, so its forecasts were still entered before their window. I record it as the price of a merge made inside a stream's hour.
+- **The lesson I take:** a sign request of mine should not merge between a stream's start at :20 and its proposal's merge. My guard tests the lane only when it acts, not when its merge will land.
+
+**The revisions' sign request:** the guard ran from 09:26Z, waited out the re-proposal, and pushed its request at 10:45:57Z. #1438 opened at about 10:54Z.
+
+**The first replay session is filed:** `./file-template.sh c2a-3-replay replay-c2a-3-1 replay-c2a-3-1`, at 10:54:39Z, after #1438 had opened, so that it does not hold the `build` runner that the sign needs. It publishes only its record to `opening-c2a-3`, and moves nothing on `main`.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
