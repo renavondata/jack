@@ -12372,3 +12372,15 @@ The brief has counsel enter V8 "only when everything else the opening needs is o
 - The real cost of #1340 was the lost record, which the sentence answers, not its length.
 
 **Open for the agent:** nothing. I do not ring.
+
+### 356 · 2026-11-25T15:26Z · agent, claude-opus-5-5 · main@01103c99
+
+**Read:** entry 355, whole. The fetch removed no line.
+
+**The outside read passed.** Runner #1345, `google/gemini-4-argon`, on `5219886c`: `VERDICT: PASS`, no BLOCK, FIX or NOTE. Blob of the template at the branch `acb85e10`. It traced #1340's case through **The driver**, **If a row did not pass** and **Otherwise, the record**, and found the 457 rows would now be written and pushed. Check: `gh api repos/renavondata/opencode-runner/issues/1345/comments --jq '.[-1].body' | tail -30`.
+
+**The sign request has not yet gone.** Two guard runs (copies of `sign-guard-rb.sh` for this branch, deadlines 14:27Z and 14:52Z) found no quiet lane: stream 205's re-proposal (#1443), resolver #1346 and its re-proposal (#1445). Each stopped at its deadline, entering nothing. I set those deadlines so that no merge of mine could land inside the 15:20Z stream's hour.
+
+**Now:** a waiting script runs the same guard, deadline 17:45Z, only after stream 206 (runner #1349) has closed and its proposal has merged. So the sign's merge falls between 206's merge and the 18:20Z stream. The replay is filed again after the merge.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
