@@ -46,7 +46,7 @@ Read them whole before writing code. Write what they say and nothing they do not
    - If a twin cannot pass on the evaluator as it stands, do not change the evaluator. Write the pin, report the twin with the sentence of §Pins it tests, and go on.
 2. **The pin `replay_drift`, re-aimed,** in `pins/replay.py` and its registration in `pins/pins.py`, as the brief's paragraph orders:
    - it keeps its three rows of the first table, `spec/vectors/promotion-replay.json`, and that table's SHA-256 check, as it has them;
-   - it adds rows 400 and 735 of the second table, `spec/vectors/promotion-replay-c2a-3.json`, and checks that table's SHA-256, `943a79863df95479cc93085e0dc686b47f5940a34b5497372503937cb85f3e77`, as it checks the first's. A row of the second table is run as the first table's rows are run, and its output is compared with its `stdout`, or, at row 735, which is marked, with its `marked`;
+   - it adds rows 734 and 735 of the second table, `spec/vectors/promotion-replay-c2a-3.json`, counting from 0, and checks that table's SHA-256, `943a79863df95479cc93085e0dc686b47f5940a34b5497372503937cb85f3e77`, as it checks the first's. A row of the second table is run as the first table's rows are run, and its output is compared with its `stdout`, or, at row 735, which is marked, with its `marked`. Row 734 is the table's last unmarked row; the first table holds neither;
    - it holds `judge/status.py` to the SHA-256 `44273c2a53be1fd881ab2880132ac0e7543efe3c66285bbe63e8b1a324901fe0`, the evaluator as the builder left it. The code read states the SHA-256 of the evaluator it accepts, and the opening checks that the two agree;
    - it holds `judge/value.py` to the moved bytes, as it does now;
    - its three mutants stay, and each must be killed: `unmarked_output_changed`, `marked_walk_regressed` and `other_source_bytes`.
@@ -55,8 +55,8 @@ Read them whole before writing code. Write what they say and nothing they do not
 
 **Checks,** when the pins are published. Run each and copy its result into your report. Checks (a) and (b) copy this worktree for each of their tasks, so while either runs `.pins/` must hold nothing but small files. Run them one at a time, each as one command, with the bash tool's `timeout` set to `1800000` on that call, which is thirty minutes. If a command is ended at its limit, say so in your report and do not run it again. When a check finds a fault in your pins, mend it, commit and publish as above, and run that check again.
 - (a) `python3 -m unittest discover -s tests -t .`. Every test must pass.
-- (b) `python3 pins/run.py`. Every pin must be KILLED, none SURVIVED, STALE, TWIN FAILED or PENDING. Name any that is not, with its line of detail.
-- (c) The counted lines, at *B* and at your head: count them as `counted_lines` in `judge/judge.py` does, over the `counted` list of `judge/scope.json`. Give both numbers. At your head they must be at most 9100. Write each pin as short as it can be and still test what §Pins says.
+- (b) `python3 pins/run.py`. Every pin must be KILLED, none SURVIVED, STALE, TWIN FAILED or PENDING, but for a twin you report under item 1 as unable to pass. Name any that is not, with its line of detail.
+- (c) The counted lines, at *B* and at your head: count them as `counted_lines` in `judge/judge.py` does, over the `counted` list of `judge/scope.json`. Give both numbers. At your head they must be at most 8963: the cap is 9100, and his grant keeps 55 of it for the pins fix before the opening and 82 for the merge fix and its pins after the window. Write each pin as short as it can be and still test what §Pins says.
 - (d) The two tests of step 7, at your head.
 
 **Time.** Start neither check (a) nor check (b) after minute 115. By minute 150, commit and publish whatever is uncommitted, even if unfinished, and say what is left in that commit's message. After that, start nothing but your report.
