@@ -1,0 +1,26 @@
+All fetches were made in this session with curl -sL --max-time 90 -o <path>
+-w '%{http_code}' <args.url>. fetched_at was recorded in UTC immediately
+after curl completed. Every successful fetch returned HTTP 200, curl exit 0.
+
+forecast | fetched_at | status | saved filename under renavon-freshness/20261125T0810/
+7424 | 2026-11-25T08:11:27Z | 404 | hk_property_transactions-legacy.html
+7425 | 2026-11-25T08:12:12Z | 404 | hk_property_transactions-7425.html
+7735 | 2026-11-25T08:11:32Z | 200 | hk_property_poi.html
+7736 | 2026-11-25T08:11:33Z | 200 | hkex_disclosures.html
+7737 | 2026-11-25T08:11:35Z | 200 | hkex_disclosure_interests.html
+7738 | 2026-11-25T08:11:36Z | 200 | crhk_companies.html
+7739 | 2026-11-25T08:11:37Z | 200 | sfc_licences.html
+7740 | 2026-11-25T08:11:38Z | 200 | hk_property_transactions.html
+
+7424 and 7425 both name https://renavon.com/data/hk_property_transactions.
+Their raw responses are {"code":"not_found","message":"Not found","success":false}
+with sha256:00aa3d872e7d3ca62e6362170bfcb21af29f861debbe5d71d7c9c0bb382c67d6.
+Neither response supplies a last-updated instant. Both forecasts remain
+undecided. The newer URL of forecast 7740 is not substituted for their URL.
+
+For the six successful pages, last_updated is the text displayed beneath
+"Last refreshed". last_updated_utc is the exact dateModified instant in the
+same page's Dataset JSON-LD, normalized from explicit +00:00 to Z. The raw
+dateModified string is also recorded in the JSON rows. No timezone is
+inferred from a relative "hours ago" label. Outcomes compare that exact
+UTC instant against window_utc[0], as the specified procedure requires.
