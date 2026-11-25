@@ -1,0 +1,13 @@
+Fresh fetches: curl -sL --max-time 90 -w '<label> HTTP %{http_code}\n' -o <raw path> <forecast args.url>, followed by date -u +%Y-%m-%dT%H:%M:%SZ.
+Raw paths are under transcripts/evidence/renavon-freshness/20261125T1410/.
+2026-11-25T14:11:23Z hk_property_transactions-legacy.html HTTP 404 https://renavon.com/data/hk_property_transactions
+2026-11-25T14:11:24Z hk_property_poi.html HTTP 200 https://renavon.com/data/property/hk_property_poi
+2026-11-25T14:11:25Z hkex_disclosures.html HTTP 200 https://renavon.com/data/hkex/hkex_disclosures
+2026-11-25T14:11:29Z hkex_disclosure_interests.html HTTP 200 https://renavon.com/data/hkex/hkex_disclosure_interests
+2026-11-25T14:11:30Z crhk_companies.html HTTP 200 https://renavon.com/data/crhk/crhk_companies
+2026-11-25T14:11:31Z sfc_licences.html HTTP 200 https://renavon.com/data/sfc/sfc_licences
+2026-11-25T14:11:33Z hk_property_transactions.html HTTP 200 https://renavon.com/data/property/hk_property_transactions
+
+7424 and 7425 left undecided: their exact args.url returns HTTP 404 with no last-refreshed display or dateModified instant. Raw response saved separately with -legacy suffix to distinguish the different URL for the same dataset; sha256:00aa3d872e7d3ca62e6362170bfcb21af29f861debbe5d71d7c9c0bb382c67d6. The newer /data/property/ URL cannot substitute for the exact URL named by those claims.
+
+Parsing: exact UTC instants are the Dataset JSON-LD dateModified strings printed in each saved HTML page. The visible Last refreshed card gives the same date and rounded relative age; it is not used to infer seconds. last_updated in the manifest preserves dateModified exactly as printed. UTC conversion normalizes +00:00 to Z. outcome is 1 iff this instant is at or after the window start. Each shared page was fetched after both windows ended.
