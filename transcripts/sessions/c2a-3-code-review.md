@@ -34,7 +34,7 @@ If any check fails, stop and report.
 5. **`replay_drift`,** re-aimed as the paragraph of §The code orders: the first table's three rows and its hash; rows of the second table, one marked, and its hash; `judge/status.py` held to a SHA-256; `judge/value.py` to the moved bytes; its three mutants.
 6. **Parties and paths.** Each commit's trailer is filled, and its paths are its party's: the builder's under `judge/status.py` and `tests/`; the reviewer's among the reviewer's paths in `judge/scope.json`, which are `pins/`, `spec/vectors/`, `transcripts/` and `log.jsonl`; counsel's patch as item 1 says.
 
-**Checks.** Run each and copy its result into your report. Run them one at a time, each as one command, with the bash tool's `timeout` set to `1800000` on that call, which is thirty minutes. If a command is ended at its limit, say so and do not run it again. Start neither check (a) nor check (b) after minute 115.
+**Checks.** Run each and copy its result into your report. Checks (a) and (b) copy this worktree for each of their tasks, so while either runs `.review/` must hold nothing but small files. Run them one at a time, each as one command, with the bash tool's `timeout` set to `1800000` on that call, which is thirty minutes. If a command is ended at its limit, say so and do not run it again. Start neither check (a) nor check (b) after minute 115.
 - (a) `python3 -m unittest discover -s tests -t .`. Every test must pass.
 - (b) `python3 pins/run.py`. Every pin must be KILLED, none SURVIVED, STALE, TWIN FAILED or PENDING.
 - (c) The counted lines at your tree, counted as `counted_lines` in `judge/judge.py` does over the `counted` list of `judge/scope.json`. They must be at most 8963: the cap is 9100, and his grant keeps 55 of it for the pins fix before the opening and 82 for the merge fix and its pins after the window.
@@ -42,7 +42,7 @@ If any check fails, stop and report.
 
 The whole replay of the table is the reviewer's too, but in a session of its own after this read, and you do not run it or read its record.
 
-**Your verdict.** Each of these is a BLOCK: a change of §The code that the code does not make, or makes otherwise than its sentence says; a change with no test; a requirement, mutant or twin of §Pins that is absent, or a twin that fails; a mutant killed by an error rather than by the behaviour its pin names; a commit outside its party's paths, or with an unfilled trailer; a check that fails. A test or pin that tests what the text names, but less of it than the text asks, is a FIX. Anything else you would mend is a NOTE.
+**Your verdict.** Anything the texts order that the branch does not do, in whole or in part, is a BLOCK. Among them: a change of §The code that the code does not make, or makes otherwise than its sentence says; a change with no test; a requirement, mutant or twin of §Pins that is absent, or tested in fewer of the cases than the text names, or a twin that fails; a mutant killed by an error rather than by the behaviour its pin names; a commit outside its party's paths, or with an unfilled trailer; a check that fails. A defect that no sentence of the texts orders against, and that you would have mended, is a FIX. Anything else is a NOTE.
 
 **On FAIL** (any BLOCK): write no file and commit nothing.
 

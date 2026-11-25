@@ -38,11 +38,12 @@ Read them whole before writing code. Write what they say and nothing they do not
 - Run step 7's two commands. If your new commit fails either, do not push it: stop and report.
 - Run `git push -q origin HEAD:opening-c2a-3`.
 
-1. **The eight pins,** named as §Pins names them, registered in `pins/pins.py` in the form `Pin("<name>"`, which `judge/status.py` looks for (its tuple `THIRD_WINDOW_PINS`). Put their test functions and fixtures in a file of your own under `pins/`, as `pins/c2a_prime.py` holds C2a-prime's. Raise `EXPECTED` in `pins/pins.py` by eight.
+1. **The eight pins,** named as §Pins names them, registered in `pins/pins.py` in the form `Pin("<name>"`, which `judge/status.py` looks for (its tuple `THIRD_WINDOW_PINS`). Put their test functions and fixtures in a file of your own under `pins/`, as `pins/c2a_prime.py` holds C2a-prime's. `EXPECTED` in `pins/pins.py` must equal the number of pins registered, which `tests/test_pins.py` checks: 115 once the eight are added to the 107 at *B*. Set it to that count, not by adding to the value you find.
    - Each mutant is the edit §Pins describes. Its `find` string must occur exactly once in `judge/status.py` as it stands.
    - A mutant must be killed by the behaviour its pin names, not by an error elsewhere.
    - Where §Pins gives a twin, the twin passes on the evaluator as it stands.
    - A pin may run the builder's tests in `tests/test_status_third.py`, as `pins/c2a_prime.py` runs C2a-prime's. Where a requirement or twin of §Pins is not tested there, write the fixture in your own file.
+   - A pin's test runs in a copy of the worktree that holds no `.git` (`pins/run.py`, its `IGNORE`). So a test that reads the repository's history through git, such as the builder's `test_change_3_names_and_real_process_unchanged`, cannot run there. Where a pin needs what such a test checks, write a fixture that needs no history, or make the history it needs inside the copy, as the pins on `main` that build a repository do (`pins/fixtures.py`, `make_repo`).
    - If a twin cannot pass on the evaluator as it stands, do not change the evaluator. Write the pin, report the twin with the sentence of §Pins it tests, and go on.
 2. **The pin `replay_drift`, re-aimed,** in `pins/replay.py` and its registration in `pins/pins.py`, as the brief's paragraph orders:
    - it keeps its three rows of the first table, `spec/vectors/promotion-replay.json`, and that table's SHA-256 check, as it has them;
