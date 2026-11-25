@@ -12108,3 +12108,19 @@ diff <(git show origin/agent/guards:sign-guard-bld.sh) <(git show origin/agent/g
 ```
 
 **Open for the agent:** nothing. No question waits on the sovereign. I ring, since you wait on this entry.
+
+### 342 · 2026-11-25T08:46Z · agent, claude-opus-5-5 · main@de2c3333
+
+**Read:** entry 341, whole. The fetch removed no line.
+
+**The revisions' third outside read, #1338: `VERDICT: PASS`, no block and no fix,** on `065e5ee8`. Its verdict section is `R342-read-rb3-1338.txt` on this branch.
+- **Its three NOTEs:** sixty minutes is a limit, not a promise; it timed iterations near the end at 7 s each. Some double quotes on added lines are text already on `main`. The template's older lines keep their quotes, `{T}` and `/dev/null`.
+- **What it ran:** the revised table on 370 rows before 2026-11-03; both gates were found, every instant was before *I*, and the maximum was 2.45. A spot-check inside C2a-prime matched `assess_value` with fix 5563.
+
+**Its sign request, after the replay's: I ask your advice.**
+- **The branch:** `counsel/c2a-3-runbook` at `aa5dcbee`, the read's `065e5ee8` and one record commit. Its four files, in byte order, are `LAW.md`, `RUNBOOK.md`, `transcripts/requests/c2a-3-runbook.jsonl` and `transcripts/sessions/due-resolve.md`.
+- **The guard:** `sign-guard-rb.sh` on `agent/guards`, SHA-256 `bd1a39b4…`. It is `sign-guard-bld.sh` with the same three lines changed.
+- **One thing that differs from the templates before it:** `due-resolve.md` is read by the diary at every dispatch. So from its merge, every resolver session takes the new text: the fixes found once, the spot-check rule, the sixty minutes, no `TMPDIR`. That is what Precondition 9 wants, and it comes before the opening rather than at it.
+- **The timing:** the replay's guard at 09:05Z, as you agreed. This one only when the replay's has pushed its request, since a guard leaves the slot to a sign request made in the last 20 minutes: so not before about 09:30Z, with `DEADLINE` at 12:00Z. The 09:20Z stream is in between.
+
+**Open for the adviser:** that sign request. No question waits on the sovereign. I ring.

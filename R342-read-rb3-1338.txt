@@ -1,0 +1,29 @@
+VERDICT: PASS
+
+Blob ids at origin/counsel/c2a-3-runbook (065e5ee8806c21f41c24e866bf50475b7c260912):
+RUNBOOK.md: f2d15d351f2db29d983a4bd869e77852746ff930
+transcripts/sessions/due-resolve.md: 229e0aa15d6d224f4a39483e0b8f54160f1a82fb
+LAW.md: f432614539f920b64ac6457ad77379e4dac2c087
+
+No BLOCK or FIX findings.
+
+NOTE — transcripts/sessions/due-resolve.md:49,69–71,88 — Sixty minutes is a limit, not an assurance that every table will finish. On this checkout, window_fixes on main’s log returned {5563}, with no unverified fixes, in 46.56 seconds; its required check on the prefix ending at 5563 returned the same set in 46.37 seconds. The per-instant calculations can dominate: a table ending at 2026-11-25T00:00:00Z has 7,339 instants, and sampled iterations grew from 0.002 seconds at the opening to 7.258 seconds near that end. I did not run that whole table. The new instruction explicitly leaves the claim undecided and reports a timeout, so reaching the limit does not authorize a resolution from partial output. Evidence: short Python calls to main’s window_fixes, item_process, score_items and value on main’s log.
+
+NOTE — transcripts/sessions/due-resolve.md:7,88; LAW.md:101 — A literal scan of git’s added lines still finds double quotes on these three lines. Their quoted text already exists on main; none of the inserted or replaced character spans introduces a double quote. In particular, the newly written Python lines use single quotes. This distinguishes the raw added-line result from a newly introduced quoting fault.
+
+NOTE — transcripts/sessions/due-resolve.md:17,19,31–32,34,42–43,45–46,54–55,60,62,65,73,77,80–81,84–85,92 — These unchanged template lines contain double quotes. Line 84 retains {T}; line 34 retains the redirection to /dev/null. Those are inherited content, not findings against this revision. No newly introduced nonstandard token matching the requested brace pattern remains; {START} is gone.
+
+1. Facts — HELD. I checked the changed prose against the brief, both evaluators, the clerk and cap history. The six cap-change pushes are seqs 5, 12, 29, 197, 367 and 5564, reaching caps 4500, 5500, 6200, 6900, 7800 and 8400. Later pushes 7281, 7283 and 7339 retain 8400. LAW correctly describes C2a-3’s seventh and C2b’s eighth as prospective.
+
+2. Precondition 9 and scope — HELD. RUNBOOK:369–372 matches change 6: veto-prefix reading, current overdue/history/REPAIR information, and unchanged stated deadlines. Lines 430–431 match opening evaluator judge/status.py:531–544: only C2a-3 filters late reports above its opening; earlier windows retain the old rule. The template now supplies window fixes to item_process. At 2026-11-18T12:01:17Z, inside its permitted C2a-prime spot-check interval, its value and continued-liveness results equalled main’s assess_value results with fix 5563 included. The working-copy clarification also agrees with main’s C2a-3 session templates.
+
+3. Following the template — HELD, with the runtime NOTE above. I completed the revised 370-row calculation before 2026-11-03T00:00:00Z using committed run witnesses: both gates were established, every sampled instant was strictly before I, and the joint maximum was 2.4508867741275955. The spot-check intervals avoid both the first window’s post-end gap and C2a-prime’s ending veto. Timeout and disagreement both require leaving the claim undecided.
+
+4. Quoting and dispatcher — HELD for newly introduced text; the literal added-line quote scan has the inherited occurrences noted above. No new unapproved brace token was found.
+
+5. Other readers — HELD in the checked references. I examined main’s session index and C2a-3 templates, clerk consumers, LAW citation checker and repository references to these files. I found no file that this revision newly makes false.
+
+Not checked: live GitHub or runner state; runner #1311’s reported three-hour duration; actual dispatcher execution; a complete late-November crossing table; the whole promotion replay; tests or pins. I ran no jack verb or gh command, set no temporary-directory variable, and committed, pushed and proposed nothing. No scratch directory was created. The worktree is clean.
+exit=0
+```
+
