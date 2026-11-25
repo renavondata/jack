@@ -528,6 +528,8 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
     unverified = []
     fixes = window_fixes(s["prefix"], root, rev, unverified)
     process = item_process(s["prefix"], c1b_window(s["prefix"])[0], end, fixes)
+    late_reports = ([seq for seq in process["late_reports"] if seq > s["opening"]]
+                    if s["window"] == "C2a-3" else process["late_reports"])
     live = score_items(i for i in process["items"] if live_gate is not None and live_gate < i["ts"])
     off = off_log_repairs(acts, s["start"], end, overlap=is_prime)
     s.update(value=v, continued_liveness=live, late_reports=process["late_reports"], unverified_fixes=unverified)
@@ -538,8 +540,8 @@ def assess_value(s, facts, verified, root, rev, runs, acts):
             (gate is not None and all(gate < r["cutoff"] for r in v["rows"]),
              f"criterion 4: attack green on main before first scored cutoff: {gate or 'unverified'}"),
             (v["E_value"] >= 20, f"criterion 5: value E {v['E_value']:.6f} >= 20"),
-            (same and live_gate is not None and live["E"] >= 20 and not process["late_reports"],
-             f"criterion 6: continued liveness E {live['E']} >= 20; unchanged {same}; attack {live_gate or 'unverified'}; late repairs {len(process['late_reports'])}"),
+            (same and live_gate is not None and live["E"] >= 20 and not late_reports,
+             f"criterion 6: continued liveness E {live['E']} >= 20; unchanged {same}; attack {live_gate or 'unverified'}; late repairs {len(late_reports)}"),
             (off == 0, f"criterion 7: off-log repairs: {off if off is not None else 'unknown (no acts file)'}")]
 
 

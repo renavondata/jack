@@ -105,3 +105,21 @@ class ThirdWindowTest(unittest.TestCase):
             changed = files['judge/status.py'].replace('P0 = Fraction(6, 11)', 'P0 = Fraction(1, 2)')
             head = commit(root, {'judge/status.py': changed})
             self.assertFalse(st.c2a_tree_evidence(root, head, self.es, self.op)[1])
+
+    def test_change_5_late_reports_belong_to_third_window(self):
+        def check(es, window, reports, expected):
+            s = self.status(es)
+            s['window'] = window
+            process = dict(items=[], late_reports=reports)
+            with patch.object(st, 'c2a_tree_evidence', return_value=(True, True, True)), \
+                    patch.object(st, 'attack_start', return_value='2026-10-31T00:00:00Z'), \
+                    patch.object(st, 'window_fixes', return_value=set()), \
+                    patch.object(st, 'item_process', return_value=process), \
+                    patch.object(st, 'score_items', return_value=dict(items=[], E=20)):
+                checks = st.assess_value(s, dict(counted=0, kernel=0, scope=True), True, st.ROOT, None, [], [])
+            self.assertEqual(checks[5][0], expected == 0)
+            self.assertTrue(checks[5][1].endswith(f'late repairs {expected}'))
+            self.assertEqual(s['late_reports'], reports)
+        check(self.es, 'C2a-3', [5877, 5878, 5936], 0)
+        check(self.es, 'C2a-3', [5877, self.op + 1], 1)
+        check(self.es, 'C2a-prime', [1, 5877], 2)
