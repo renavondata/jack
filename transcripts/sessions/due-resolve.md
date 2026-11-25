@@ -46,7 +46,7 @@ keep=["id","name","path","event","status","conclusion","head_branch","head_sha",
 json.dump([{k:x.get(k) for k in keep} for x in runs], open("transcripts/evidence/runs-tests-{STAMP}.json","w"), indent=0); print("runs saved:", len(runs))
 EOF
 ```
-then the table, with `END` set to *I* exactly as the claim states it (the heredoc is a computation, not repository code; it calls the functions `assess_value` in `judge/status.py` calls, the windows' fixes among them — confirm that by reading `assess_value` first):
+then the table, with `END` set to *I* exactly as the claim states it, over every instant before *I*, with the bash tool's `timeout` set to `3600000` on that call, which is sixty minutes (if the command is ended at its limit, leave the claim undecided and report it) (the heredoc is a computation, not repository code; it calls the functions `assess_value` in `judge/status.py` calls, the windows' fixes among them — confirm that by reading `assess_value` first):
 ```
 python3 - <<'EOF' > transcripts/evidence/crossing-{STAMP}-<I without punctuation>.txt
 import json, os, sys
@@ -66,17 +66,17 @@ gate_v = st.attack_start(ROOT, runs, END, "tests/test_value.py")
 gate_l = st.attack_start(ROOT, runs, END)
 opening_c1b = st.c1b_window(es)[0]
 unverified = []
-fixes = st.window_fixes([e for e in es if e["ts"] <= END], ROOT, None, unverified)
+fixes = st.window_fixes([e for e in es if e['ts'] < END], ROOT, None, unverified)
 for f in sorted(fixes):
-    assert f in st.window_fixes([e for e in es if e["seq"] <= f], ROOT, None, []), f
-print(f"# value attack-green {gate_v}; liveness attack-green {gate_l}; c1b opening seq {opening_c1b}; window fixes {sorted(fixes)}; unverified {unverified}")
+    assert f in st.window_fixes([e for e in es if e['seq'] <= f], ROOT, None, []), f
+print(f'# value attack-green {gate_v}; liveness attack-green {gate_l}; c1b opening seq {opening_c1b}; window fixes {sorted(fixes)}; unverified {unverified}')
 print("ts | last_seq | value_E | liveness_E_fraction | liveness_E")
-instants = sorted({e["ts"] for e in es if START <= e["ts"] <= END} | {START, END})
+instants = sorted({e["ts"] for e in es if START <= e["ts"] < END} | {START})
 best = (Fraction(0), None)
 for T in instants:
     prefix = [e for e in es if e["ts"] <= T]
     v = val.value(prefix, as_of=T, attack_green=gate_v)
-    process = st.item_process(prefix, opening_c1b, T, {f for f in fixes if f <= prefix[-1]["seq"]})
+    process = st.item_process(prefix, opening_c1b, T, {f for f in fixes if f <= prefix[-1]['seq']})
     live = st.score_items(i for i in process["items"] if gate_l is not None and gate_l < i["ts"])
     both = min(Fraction(v["E_value"]), live["E"])
     if both > best[0]:
@@ -85,7 +85,7 @@ for T in instants:
 print(f"# max over instants of min(value E, liveness E): {float(best[0]):.6f} at {best[1]}")
 EOF
 ```
-The header line must name both gates (neither `None`; otherwise the runs file is incomplete — leave the claim undecided). The windows' fixes are found once, on the log to *I*, and each is checked to be a fix of its window already on the prefix that ends with it: a call of `window_fixes` walks the history and takes minutes, so it is not made at every instant. Spot-check one row at or before *I* whose `ts` lies from `2026-11-01T15:04:14Z` to `2026-11-15T15:04:14Z`, or from `2026-11-17T12:50:50Z` to before `2026-11-22T11:44:05Z`: inside C2a's first window, or inside C2a-prime before the sovereign's veto of seq 7180. Between those, the evaluator reads an ended window and the table does not. If the spot-check disagrees, leave the claim undecided and report both lines. Check it against `python3 judge/value.py --as-of <ts> --attack-green <value gate>` and `python3 judge/status.py --as-of <ts> --runs transcripts/evidence/runs-tests-{STAMP}.json | grep '^liveness continued'`. If the last line's maximum is below 20, the claim is **0**; if 20 or more, it is **1** only if that row's `ts` is before *I* (it is, by construction) — and then stop and report before resolving, because a crossing is the sovereign's business too. Evidence string: `"joint table <file>: max over every prefix before <I> of min(value E, continued liveness E) = <value> at <ts>"`. Several crossing claims with the same *I* share one table; a claim with a later *I* needs its own run. The instant *I* must have passed; a claim whose *I* is still ahead is left undecided (it is not yet false).
+The header line must name both gates (neither `None`; otherwise the runs file is incomplete — leave the claim undecided). The windows' fixes are found once, on the log to *I*, and each is checked to be a fix of its window already on the prefix that ends with it: a call of `window_fixes` walks the history and takes minutes, so it is not made at every instant. Spot-check one row at or before *I* whose `ts` lies from `2026-11-01T15:04:14Z` to `2026-11-15T15:04:14Z`, or from `2026-11-17T12:50:50Z` to before `2026-11-22T11:44:05Z`: inside C2a's first window, or inside C2a-prime before the sovereign's veto of seq 7180. Between those, the evaluator reads an ended window and the table does not. If the spot-check disagrees, leave the claim undecided and report both lines. Check it against `python3 judge/value.py --as-of <ts> --attack-green <value gate>` and `python3 judge/status.py --as-of <ts> --runs transcripts/evidence/runs-tests-{STAMP}.json | grep '^liveness continued'`. If the last line's maximum is below 20, the claim is **0**; if 20 or more, it is **1** only if that row's `ts` is before *I* (it is: the table holds no instant at or after *I*) — and then stop and report before resolving, because a crossing is the sovereign's business too. Evidence string: `"joint table <file>: max over every prefix before <I> of min(value E, continued liveness E) = <value> at <ts>"`. Several crossing claims with the same *I* share one table; a claim with a later *I* needs its own run. The instant *I* must have passed; a claim whose *I* is still ahead is left undecided (it is not yet false).
 
 *Anything else* (`counsel.programme`, `review.forecast`, untyped) — read the whole entry: the claim, `args.evidence`, `args.id`. Decide it only if the claim's own terms are settled by evidence you can produce in this session with the tools on this tree (`git log`/`git show` on `origin/main`, `judge/status.py`, `judge/value.py`, `tools/jack score`, the GitHub API) and the claim's instant has passed or the claim is already true. Save what you ran and what it printed under `transcripts/evidence/due-{STAMP}-<seq>.txt` and name that file in the evidence string. If the claim needs a procedure you cannot complete here (a joint statistic over many prefixes, a table counsel keeps, a judgement about text), leave it undecided and say exactly what would decide it.
 

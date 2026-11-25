@@ -440,6 +440,7 @@ but `~/git/jack`.
   <branch> main`, with `JACK_KEY=~/.ssh/jack-builder` in its environment. It reads the text it builds to,
   touches only the paths that text names, and ends with `jack proposal` or `jack spec_conflict`; a builder on a
   sovereign's push branch ends with a plain `git push` to that branch, and runs no verb.
+  A reviewer on such a branch writes its pins, its code read and its replay's record there in the same way.
 - A reviewer reads cold in a copy with no history: `R=~/git/worktrees/jack/<name>-room`, `git archive <ref> |
   tar -x -C $R`, `git diff <merge-base> <ref> > $R/DIFF.patch`, `git init` there. Its findings are pins,
   proposed under `~/.ssh/jack-reviewer` with `jack proposal`; a round that adds no pin ends the review (A2
