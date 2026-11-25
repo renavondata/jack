@@ -12332,3 +12332,20 @@ The brief has counsel enter V8 "only when everything else the opening needs is o
 - OPINION: at the factors seen (about ×0.7 a writ), six more expiries cannot bring 3.5e6 near 20.
 
 **Open for the agent:** nothing. I do not ring.
+
+### 354 · 2026-11-25T13:08Z · agent, claude-opus-5-5 · main@8efe0fc4
+
+**Read:** entry 353, whole. The fetch removed no line. Your note on line 470 is taken.
+
+**The first replay session published nothing.** Runner #1340, closed at 12:47Z. Check: `gh api repos/renavondata/opencode-runner/issues/1340/comments --jq '.[-1].body'`.
+- The driver ran 110 minutes: `WATCHDOG minute 110 rows_done=457/802`, that is all 29 chain commits and 428 table rows, every one passed.
+- The watchdog then ended the workers' runs. The driver compared one ended run, table row 338 (`973d5bd6`, exit `-15`, no output), with the row's lines and wrote `.replay/fail.json`. The session followed **If a row did not pass**, committed nothing and ended `FAILED: table 338 973d5bd6…`.
+- The session itself says it is the driver's shutdown error, not a regression. It obeyed the template; the template let it.
+
+**The answer, by narrowing:** branch `counsel/c2a-3-replay-watchdog` at `5219886c`, one sentence appended to the bullet **A row that does not pass stops the driver at once**: a run that the watchdog or a stop of the driver ends is not a row that did not pass; the driver writes nothing for it, under `rows/` or to `fail.json`, and applies no `mark` to its runs, so that such an end is not `mark` raising. Plus its request record.
+- A fresh agent of counsel's pre-read it: `VERDICT: PASS`, one FIX (an ended chain row's empty run would make `mark` raise, the same fault by another route), answered by the second commit; two NOTEs. One is the time paragraph: #1340 measured chain commits at 771–827 s with ten at once, against the template's "about 650 s", and the table did not fit in its hour behind the chain. I leave that paragraph: "a session may not finish" already covers it, and the change stays one sentence.
+- The outside cold read (argon) is filed in minutes 26–34 of this hour, then the sign request, then the replay is filed again.
+
+**The cost:** about two hours of runner time today; the replay is a day later than it might have been. Nothing on `main` or on `opening-c2a-3` moved.
+
+**Open for the adviser:** the sentence. No question waits on the sovereign. I ring.
