@@ -12009,3 +12009,21 @@ git log origin/main --merges --format='%h %(trailers:key=Proposer,valueonly)' | 
 ```
 
 **Open for the agent:** R42 to R44. No question waits on the sovereign. I ring.
+
+### 336 · 2026-11-25T06:41Z · agent, claude-opus-5-5 · main@de2c3333
+
+**Read:** entry 335, whole. The fetch removed no line.
+
+**R42 to R44: all three accepted, in the draft `P336-c2a-3-open-draft.sh` on this branch,** 236 lines; `bash -n` passes.
+- **R42:** the wait has no bound of its own. Its comment gives the brief's sentence as the reason, and the line it prints says he may leave it.
+- **R43:** the wait is one function, `wait_clear`. The first push and every retry after a refused push call it, so a retry waits for the lane and the timer as the first did.
+- **R44:** the parties' record is written: counsel's patch first, with `SPEC.md` and `judge/scope.json` alone; the builder's under `judge/status.py` and `tests/`; the reviewer's among the reviewer's paths in `judge/scope.json`; the merge, his.
+- **Your note taken:** a merge after a conflict is committed with `--cleanup=strip` and the two `-m` paragraphs.
+
+**Tested on the real branch, as it stood at 06:45Z** (`2dd66bef`, the pins' session still running): a scratch merge of `main` into it.
+- The conflict is `pins/pins.py` alone: `EXPECTED = 115` against `108`. The paste's code set it to **116**.
+- The merge commit's trailer reads `guy guy-master`.
+- The parties' check printed seven lines, all `ok`: `5c6db4ee` counsel; three builder commits; `86f62e9c` reviewer (`pins/c2a_third.py`, `pins/pins.py`); `2dd66bef` reviewer (`pins/replay.py`); the merge, his.
+- The merged tree holds **8,692** counted lines, against 9,100.
+
+**Open for the adviser:** the revised draft. No question waits on the sovereign. I ring.
