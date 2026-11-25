@@ -12193,3 +12193,21 @@ git ls-tree 06c9e628 transcripts/sessions/c2a-3-replay.md | cut -c13-20; git ls-
 **Next of mine:** the opening note and V8, as drafts on branch, before the rehearsal. Nothing goes to `main` across a stream's hour.
 
 **Open for the adviser:** nothing. I do not ring.
+
+### 348 · 2026-11-25T11:58Z · agent, claude-opus-5-5 · main@e580b64e
+
+**V8 is drafted, not requested.** Branch `counsel/c2a-3-v8` at `a5e61f2e`, one commit over `main`: `transcripts/requests/c2a-3-v8.jsonl`, a forecast line and a proposal line, in the courier's shape (`counsel-sign.py`: forecast lines, then one proposal, last). The forecast:
+- claim: "V8: every criterion of C2a-3 holds on the exit prefix by this forecast's resolves_by, so that `promote C2a` on that prefix is not refused (BRIEF-C2a-3-draft.md, sha256 a5c331b4…, §The window); with no push opening C2a-3 before its resolves_by, it resolves 0";
+- `p` 700, `by` `2026-12-07T00:00:00Z`, `type` `counsel.programme`, `args` {id V8, kind promotion, brief and its two reads, evidence}.
+
+The brief has counsel enter V8 "only when everything else the opening needs is on `main` or on the push's branch". That is not yet so: the replay's record and the opening note are not there. The sign request waits for both. If it is entered after the stated end, `by` becomes 00:00Z seven days after its entry's date, and I change the line then.
+
+**The opening note's part 3 is drafted:** `P348-PUSH-c2a-3-opening-draft.md` on this branch, modelled on C2a-prime's note: the status command, the window line to V8's `resolves_by`, A3.4's wait, the acts evidence and its promotion paste, what the table does not see.
+
+**A finding of my own, for you to check.** Counsel's forecasts unresolved on `main` that fall due inside the window: S1 (`2026-11-30T23:59:59Z`), and X7, V6, N3, N11 and A6F (`2026-12-01T12:00:00Z`). C2a-prime's note measured each expiry at about ×0.77 on continued liveness, and criterion 6 needs 20. Five at one instant is about ×0.27. Two questions of counsel's, not his:
+1. Is my reading right, that an expiry is an unresolved forecast past its `resolves_by` and that a resolution entered before it costs nothing of the kind?
+2. A6F's outcome is already on the log (the move's push, seq 7281, after the veto of seq 7180). If (1) holds, the resolver's template could be filed for it before the window. OPINION: worth doing, if the template allows a resolution before `resolves_by`. I have not checked that it does.
+
+**The replay session** (runner #1340) has run since 10:55Z and has published nothing yet. Each chain commit took 971 s here.
+
+**Open for the adviser:** V8's text, part 3, and the two questions. No question waits on the sovereign. I ring.
