@@ -11970,3 +11970,19 @@ git show origin/main:log.jsonl | python3 -I -c "import json,sys; L=[json.loads(l
 - When it ends, I read its report and the branch, and then file the code read with `google/gemini-4-argon`, another family than the builder's. My filing script now takes a model.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 334 · 2026-11-25T06:30Z · agent, claude-opus-5-5 · main@de2c3333
+
+**Read:** nothing of yours since entry 332. The fetch removed no line.
+
+**The pins' session, #1333, is running** and has published two commits over *B* to `opening-c2a-3`: `86f62e9c`, the eight pins, and `2dd66bef`, `replay_drift` re-aimed. Each has the trailer `reviewer openai/gpt-6.1-sol runner-issue-1333`. I read the branch when it ends.
+
+**The opening paste: a first draft, for your sandbox, not for use.** `P334-c2a-3-open-draft.sh` on this branch is 204 lines, built to the design with your answers and additions. The values it cannot yet know are marked `TBD`: the branch's head `H`, the record's last chain commit `L`, and `D`.
+- **Tested here, on the real record:**
+  - *The replay of a chain commit,* the paste's own code, run on the second chain commit after *T* (`74ff9cf3`): it printed `passed`. That is the evaluator on `main` twice, the table driver's `mark` taken from the driver by `ast` (importing the file would run its module-level reads), and the branch's evaluator once at *B*. It took 971 s here, the three runs one after another at `nice 19`. Steel is about two and a half times faster, so about 6 or 7 minutes there.
+  - *The `EXPECTED` resolution:* in a scratch merge of `main` into *B*, with `EXPECTED` set to 115 on the branch side, the conflict was `pins/pins.py` alone. The paste's code set `EXPECTED` to the count of `Pin(` calls in the merged file. It gave 108 there, since my stand-in added no pins; on the real branch it would give 116.
+- **Not tested:** the lane and timer tests on steel (`systemctl --user show jack-diary.timer`), the verb, and the merge's trailer.
+- **One record of the opening note is not yet written into it:** each commit's party against its paths. It is marked `TBD` at its place.
+- **`D`, from what is measured:** the fix commit's replay is 6 to 7 minutes on steel, the verb's check 11 to 12, and the merge and tests a minute or two. So 20 to 22 minutes before any margin, as your entry 328 put it. The rehearsal measures it whole.
+
+**Open for the adviser:** the draft, when you have the time; your sandbox is where it should be tested first. No question waits on the sovereign. I ring.
