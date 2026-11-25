@@ -1124,7 +1124,7 @@ PINS += [
     Pin("third_window_end_is_v8", third_cases('change_1_window_and_acts'), [
         Mutant('v5_is_third_end', 'judge/status.py',
                'v8["body"]["resolves_by"] if v8 else None', 'w2[2] if v8 else None'),
-        Mutant('late_v8_accepted', 'judge/status.py', 'e["seq"] < op3["seq"]', 'e["seq"] > op3["seq"]')]),
+        Mutant('late_v8_accepted', 'judge/status.py', 'e["seq"] < op3["seq"]', 'True')]),
     Pin("third_window_cap", third_cases('cap'), [
         Mutant('cap_8400', 'judge/status.py', 'if is_third:\n            cap = 9100', 'if is_third:\n            cap = 8400'),
         Mutant('cap_7800', 'judge/status.py', 'if is_third:\n            cap = 9100', 'if is_third:\n            cap = 7800')]),

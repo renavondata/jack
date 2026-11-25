@@ -67,11 +67,15 @@ class Cases(ThirdWindowTest):
                                   ('C2a-3', '2026-12-01T00:00:00Z', 'C2a-3'),
                                   ('C2a-prime', '2026-12-01T00:00:00Z', None)]:
             veto = e(self.op + 1, ts, 'decision', 'guy', kind='veto', subject=subject)
+            entries = self.es + [veto]
+            if ts < self.es[-1]['ts']:
+                veto['seq'] = self.op - 1
+                entries = self.record + [veto, dict(self.es[-2], seq=self.op), dict(self.es[-1], seq=self.op + 1)]
             self.assertEqual([n for n in ('C2a', 'C2a-prime', 'C2a-3')
-                              if st.names_window(self.es, veto, 'veto', n)], [name] if name else [])
+                              if st.names_window(entries, veto, 'veto', n)], [name] if name else [])
             with patch.object(st, 'tree_facts', return_value=dict(counted=0, kernel=0, scope=True)), \
                     patch.object(st, 'assess_value', return_value=[]):
-                s = st.assess(self.es + [veto], 'C2a', '2026-12-01T00:00:00Z', None, None)
+                s = st.assess(entries, 'C2a', '2026-12-01T00:00:00Z', None, None)
             self.assertEqual(s['checks'][0][0], name != 'C2a-3')
 
     def test_acts(self):
