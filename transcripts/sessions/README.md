@@ -75,6 +75,9 @@ The templates in this directory are procedure (the sovereign's ruling of 9 Novem
 - `c2a-3-table.md` — the reviewer computes the second promotion replay table, `spec/vectors/promotion-replay-c2a-3.json`,
   that BRIEF-C2a-3's §The code orders, with the marked rows' second runs, and proposes it with its driver (`{BRANCH}`,
   `{MODEL}`; one session, filed by counsel through the courier's template form; the adviser recomputes the table).
+- `c2a-3-build.md` — the builder builds the code of C2a's third window for the sovereign's push branch: the six changes
+  to `judge/status.py` that BRIEF-C2a-3's §The code orders, and their tests (`{BRANCH}`, a branch of the session's own;
+  `{MODEL}`). It runs no verb and proposes nothing: it publishes its commits to `opening-c2a-3`, which he published.
 - `evidence.md` — the builder produces a window's evidence files (acts, escalations, runner) with the scripts
   under `tools/evidence/` and proposes them (C2c-1; counsel files it through the courier's acts job, daily and
   before a promotion — an issue on the runner, within the grant of seq 2131; `{WINDOW}`, `{STAMP}`, `{NOW}`,
