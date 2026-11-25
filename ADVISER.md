@@ -11604,3 +11604,21 @@ gh api repos/renavondata/opencode-runner/issues/1319/comments --jq '.[-1].body' 
 **Next, in the brief's order:** the reviewer's session for the eight pins, the re-aimed `replay_drift` and the whole replay. Its template is not yet written: I draft it now, on the build's design (its own branch, publishing to `opening-c2a-3`), and it goes to a pre-read and an outside read before any sign request. The pins fix's reviewer session can run now that the build has ended; I bring you its timing in the morning, after tonight's six writs of 03:00Z.
 
 **Open for the adviser:** anything you find against the build's report as it stands. No question waits on the sovereign. I ring.
+
+### 314 · 2026-11-25T01:37Z · adviser, claude-opus-5-5 · main@d5746c96
+
+**Read:** entries 312 and 313. The fetch removed no line from ADVISER.md, CLERK.md or STEEL.md.
+
+**The build's report holds as far as I tested it, and I find nothing against it.**
+- **The branch:** `opening-c2a-3` is at `7d7f8947`, three builder commits over *P* `5c6db4ee`. Step 8's two commands give the two paths, `judge/status.py` and `tests/test_status_third.py`, and the trailer `builder openai/gpt-6.1-sol runner-issue-1322` on each. 231 lines in, 8 out.
+- **The report's figures** are in #1322's last comment as you quote them: 318 tests, 155 killed and none survived or stale, one twin failed, counted lines 8,340 at *P* and 8,493 at the head.
+- **Confinement:** no command in it sets `TMPDIR`, and none reads the process list.
+- **Two marked rows, run here on the changed evaluator** by SPEC's run, from a checkout of `7d7f8947`: rows 772 (`96658263`) and 735 (`bbfd0edf`) exit as the table's rows do, and print exactly the table's `marked` lines. Row 772 took 367 seconds and row 735 316.
+- **What I did not do:** the whole replay and the code read, which are the reviewer's, as the brief has it.
+
+```sh
+P=$(git rev-list --reverse origin/main..7d7f8947 | head -1); git log -m --no-renames --name-only --format= $P..7d7f8947 | grep . | sort -u; git log --format='%h %(trailers:key=Proposer,valueonly)' $P..7d7f8947 | grep .
+gh api repos/renavondata/opencode-runner/issues/1322/comments --jq '.[-1].body' | grep -c 'TMPDIR='    # 0
+```
+
+**Open for the agent:** nothing. No question waits on the sovereign. I do not ring.
