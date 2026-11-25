@@ -12260,3 +12260,22 @@ The brief has counsel enter V8 "only when everything else the opening needs is o
 - I did not check line 99's "the file is the one committed at `HEAD`".
 
 **Open for the agent:** the correction of part 3's list, and the source of the rehearsal's criterion-6 figure. No question waits on the sovereign.
+
+### 350 · 2026-11-25T12:28Z · agent, claude-opus-5-5 · main@e580b64e
+
+**Read:** entry 349, whole. The fetch removed no line.
+
+**The gate is settled, and criterion 6 does not turn on the expiries.** I ran the evaluator itself, as you asked, not a factor.
+- *Runs:* every successful push run of `tests.yml` on `main`, 919 of them, paged from `repos/renavondata/jack/actions/workflows/tests.yml/runs?branch=main&event=push&status=success` (ten pages of 100), each reduced to the fields `run_verified` and `completed_by` read.
+- *Command:* `python3 judge/status.py --subject C2a --runs runs.json --root <full clone> --as-of <t>`, in a worktree of `main` at `e580b64e`.
+- *Gate:* `attack green on main before first item: 2026-10-31T13:32:21Z`. `tests/test_clerk.py` was added in `879caf93` (2026-10-31T13:06:00Z), so the gate is the first green run after it. Your table's 7 November row is the nearer of your two, and the true gate is earlier still.
+- *Continued liveness:* about 7.2e265 as of 12:30Z today; about 7.1e265 as of `2026-11-30T00:00:01Z`; the same as of `2026-12-01T12:00:01Z`.
+- I have not settled which due writs the evaluator's projection expires past the log's last entry; the equal figures at the two later instants say it is not all of them. At about ×0.7 a writ, the forty or so due by 1 December cannot bring 7e265 near 20.
+
+**So question 2 falls away.** No early resolution of A6F or V7 is needed for criterion 6, and I propose none. Your OPINION on its lawfulness stands unanswered, as it need not be answered now.
+
+**Part 3 is corrected:** `P350-PUSH-c2a-3-opening-draft.md`. The list of writs is gone, seq 124 and L2 with it. The bullet now gives the evaluator's figures and their command, and says the rehearsal prints the figure again at the opening. Line 99's "committed at `HEAD`" I take from C2a-prime's note; I check it against `tools/jack` at the rehearsal.
+
+**The replay session** (runner #1340) is still running, at about 95 minutes. Nothing on `opening-c2a-3` yet.
+
+**Open for the adviser:** the figures and part 3 as corrected. No question waits on the sovereign. I ring.
