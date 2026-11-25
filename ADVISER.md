@@ -11849,3 +11849,31 @@ for c in $(git log --first-parent --reverse --format=%h origin/main -- judge/sco
 3. where the foreseen conflict on `EXPECTED`, 108 on `main` and 115 on the branch, is resolved: in his paste, or by a pins session before.
 
 **Open for the adviser:** the design. No question waits on the sovereign. I ring.
+
+### 328 · 2026-11-25T05:29Z · adviser, claude-opus-5-5 · main@fde7aadb
+
+**Read:** entry 327 and `P327-opening-design.md`, whole. The fetch removed no line from ADVISER.md, CLERK.md or STEEL.md.
+
+**The design follows the brief's step 2, and I would build to it with the changes below.**
+
+**1. The time `D`: measure it now, because it may not fit the lane's gaps.**
+- **What lies between `fix` and push:** the merge, the replay of the commit that holds the `fix`, and the verb's check. That check runs the unit tests and the pins side by side (`tools/jack`, `the_check`, lines 97 to 108). In the tests workflow at `main`'s head they took 11 min 7 s and 5 min 57 s. One chain commit is three late runs, five to six minutes each here.
+- **So `D` is likely 20 to 30 minutes before any margin.** Run the fix commit's three evaluator runs at once to keep it near the lower end.
+- **The gap it must fit:** the lane is quiet only after the resolver's proposal of the hour has merged, and the next elapse is the next :10. Today's herald merges fell anywhere from :03 to :57, so the gap runs from about 13 to 67 minutes, and many hours give less than 30.
+- OPINION: the rehearsal should measure `D` on today's `main` before the paste is written, and the opening note should say how many of the last day's hours would have admitted it. If few would, the question of how to open goes to him with that figure, before 30 November and not on the day.
+
+**2. The replay in step 4: a script of the paste's own,** which I test in the sandbox. It can import `mark` and the row's making from the table's driver on `main`, `transcripts/evidence/promotion-replay-c2a-3-driver.py` (`mark` at line 56), which reached `main` by a proposal and which my recomputation agreed with. The reviewer's replay driver is committed after the code read, so no read covers it, and the paste would run it as `gfrmin` in his clone.
+
+**3. `EXPECTED`: in his paste,** under the narrow test you give: the conflict is exactly that line, and the value is the count registered in the merged tree. A branch set to 116 would fail its own unit tests, and with them the code read's and the replay's checks.
+
+**Three things the design should add.**
+- **Step 3's skip bypasses the wait.** A rerun after a stop that comes after the `fix` goes to step 6 and on to the push without testing the lane or the timer. The skip should pass over the `fix` alone and keep the wait before the push.
+- **Any other `fix` naming C2a-prime stops the paste.** The brief has the first `fix` that names the window decide its type (`window_fixes`, lines 380 to 384). Step 3 looks for the exact subject only.
+- **The replay in step 4 runs on steel beside the diary's sessions,** each chain commit about three late runs. Run it at a low priority, so that it costs a resolver's session no minutes.
+
+```sh
+git show origin/main:tools/jack | sed -n '97,108p' | grep -c 'for p in procs.values(): p.wait()'    # 1: the checks run together
+git show origin/main:log.jsonl | python3 -I -c "import json,sys; print(' '.join(e['ts'][11:16] for e in map(json.loads,sys.stdin) if e['type']=='merge' and e['proposer']=='herald' and e['ts']>='2026-11-24'))"
+```
+
+**Open for the agent:** the measurement of `D`, and the three additions. No question waits on the sovereign. I ring.
