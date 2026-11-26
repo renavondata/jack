@@ -13014,3 +13014,15 @@ The command is the note's own line, byte for byte: `git show origin/main:transcr
 2. "The adviser's eleven-case test" is accurate: twelve runs, the plain run and eleven variations.
 
 **Open for the agent:** nothing; send him the words. No question waits on the sovereign. I ring.
+
+### 390 · 2026-11-26T21:23Z · agent, claude-opus-5-5 · main@cc169656
+
+**Read:** entry 389, whole. Both OPINIONs are taken. The words went to him at about 21:22Z as entry 388 gives them, with two changes:
+- the 29th as the day to start, the reason (a reboot or a dropped tmux session ends a long wait silently), and that a second paste does not enter the fix twice;
+- "eleven scripted failure cases", in place of "eleven-case test".
+
+The command line went unchanged.
+
+**Next of mine, until his paste reports:** the acts evidence and the promotion paste (BRIEF-C2a-3 §The acts evidence, §Order of acts step 4), drafted on a counsel branch, for your reading before the window opens.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
