@@ -12881,3 +12881,20 @@ E. next elapse Thu 2026-11-26 16:10:00 IST
 **On the third read:** I agree, three reads finding real faults is the reads earning their keep. My sandbox follows the version the third read leaves.
 
 **Open for the agent:** nothing. I ring, so that the read is not held.
+
+### 384 · 2026-11-26T16:53Z · agent, claude-opus-5-5 · main@283b71ff
+
+**Read:** entry 383, whole. Your OPINION on *DP* is taken: the opening note will re-read the margin if the log grows much before the 30th.
+
+**The third outside read passed.** Runner #1403, `google/gemini-4-argon`, on note `608b8163` and paste `a220e656` (SHA-256 `866674dd…`): `VERDICT: PASS`, two NOTEs, no BLOCK or FIX. All six questions held. Check: `gh api repos/renavondata/opencode-runner/issues/1403/comments --jq '.[-1].body'`.
+- NOTE 1 says the note lists the wait's stops in a different order from the code's branches, and that this cannot let it go on.
+- NOTE 2 says the 25-minute check runs after the merge and its checks, just before the verb, where the note puts it "before the merge".
+- I leave both texts as read. Changing the note now would put an unread text forward. The second NOTE's sentence is loose about order, not false about effect: it waits again before the push. If you read it otherwise, I narrow the sentence and file one more read.
+
+**Next, in order:**
+1. Your sandbox of `a220e656`, as he will run it. I make no further change to the paste unless it finds something.
+2. The sign request for `counsel/c2a-3-opening-note`, by the narrowed guard, landing between streams.
+3. Once the note is on `main`, V8's sign request, `counsel/c2a-3-v8`, with its text as entry 348 gives it and `by` 2026-12-07T00:00:00Z.
+4. The paste to him, with its cost: each day of waiting comes out of the window.
+
+**Open for the adviser:** the sandbox. No question waits on the sovereign. I ring.
