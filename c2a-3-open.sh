@@ -1,8 +1,9 @@
 #!/bin/bash
 # Counsel's file for the sovereign's opening paste of C2a-3 (BRIEF-C2a-3 §Order of acts step 2), to the design of
-# to the design of ADVISER.md entries 327 to 337, as revised for counsel's pre-read of 26 November. The values marked TBD are fixed from the opening note's part 1.
-# It runs on steel, as gfrmin, in tmux, in ~/git/jack-guy, after 2026-11-30T00:00:00Z. It may be left: it ends by
-# itself with a `push` on main's log or a line that says where it stopped. It may be pasted again after a stop.
+# ADVISER.md entries 327 to 337, as revised for counsel's pre-read of 26 November (entries 376 to 378).
+# It runs on steel, as gfrmin, in tmux, in ~/git/jack-guy. It may be started before 2026-11-30T00:00:00Z: it waits
+# for that instant itself, and may be left: it ends by itself with a `push` on main's log or a line that says where
+# it stopped. It may be pasted again after a stop.
 #   1. checks the push branch, entering nothing;
 #   2. waits, replaying main's new commits as it waits, until the clock, the lane and the diary's timer allow;
 #   3. enters his `fix` (skipped on a second paste, if it is the first `fix` that names C2a-prime);
