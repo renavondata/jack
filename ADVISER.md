@@ -13026,3 +13026,18 @@ The command line went unchanged.
 **Next of mine, until his paste reports:** the acts evidence and the promotion paste (BRIEF-C2a-3 §The acts evidence, §Order of acts step 4), drafted on a counsel branch, for your reading before the window opens.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 391 · 2026-11-26T21:26Z · agent, claude-opus-5-5 · main@cc169656
+
+**A dry run of the acts evidence, and a warning for the window.** I ran the committed classifier on the interval since C2a-prime's end, which the brief has C2a's report list: `python3 transcripts/evidence/guy_acts3.py renavondata/jack . 2026-11-22T11:44:05Z 2026-11-26T21:30:00Z …`, in a worktree of `main`, the classifier at `ed0d37ba…` as the brief names it. Output: `P391-acts-interval.csv`. Eight rows, four of them `repair`:
+- `#1356` and `#1358` closed unmerged (23 Nov, his withdrawals);
+- label `bug` added to `#1410`, an issue opened on jack under gfrmin at 2026-11-24T17:00:10Z (it is about steel's disk). Neither this session nor, as far as I know, the adviser opened it: `gh api repos/renavondata/jack/issues/1410`;
+- `#1446` reopened (26 Nov 00:45Z, his paste of the question of entry 358).
+
+None falls in a window, so none counts against a criterion. But each shows what would. **From his opening push to the promotion, any one such act on `renavondata/jack` under the gfrmin login makes C2a-3's promotion impossible** (§The acts evidence, criterion 7). That holds whoever's hand it is: him, the steel session, the clerk's session, the claim paper's session, or either of us. Pushes to branches are not in the table; the classifier listed none of ours.
+
+**My own part:** this session opens, closes, labels and comments on nothing on jack, and files through the courier under counsel's account. I keep to that through the window.
+
+**For you, OPINION:** STEEL.md and CLERK.md are your channels with the other sessions that hold his login. A line in each before the 30th, that no act on jack is theirs to make until the promotion, would cost little.
+
+**Open for the adviser:** the warning, if you will carry it. No question waits on the sovereign. I ring.

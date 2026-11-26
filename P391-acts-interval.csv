@@ -1,0 +1,9 @@
+repo,time_hkt,class,kind,ref,note
+renavondata/jack,2026-11-23 14:23,comment,free-text comment,1355,"Withdrawn by the sovereign, 23 Nov: this re-proposal carries no foreca"
+renavondata/jack,2026-11-23 14:24,comment,free-text comment,1356,"Withdrawn by the sovereign, 23 Nov: this re-proposal carries no foreca"
+renavondata/jack,2026-11-23 14:24,repair,PR closed unmerged,#1356,
+renavondata/jack,2026-11-23 14:34,comment,free-text comment,1358,"Withdrawn by the sovereign, 23 Nov: its six resolutions are already on"
+renavondata/jack,2026-11-23 14:34,repair,PR closed unmerged,#1358,
+renavondata/jack,2026-11-25 01:00,decision,instruction filed,#1410,pins/run.py disposable_copy copies its own temp dir when TMPDIR is ins
+renavondata/jack,2026-11-25 01:00,repair,label added (bug),#1410,
+renavondata/jack,2026-11-26 08:45,repair,issue event (reopened),#1446,
