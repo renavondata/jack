@@ -54,14 +54,14 @@ git show origin/opening-c2a-3:transcripts/REVIEW-C2a-3-code.md | head -3
 git show origin/opening-c2a-3:judge/status.py | sha256sum
 ```
 
-The window opens at this push's `ts` and ends at V8's `resolves_by`, `2026-12-07T00:00:00Z`, the date the brief gives a V8 entered before 2026-11-30T00:00:00Z, as this one is (§The window).
+The window opens at this push's `ts` and ends at V8's `resolves_by`, `2026-12-07T00:00:00Z`, the date the brief gives a V8 entered before 2026-11-30T00:00:00Z, as counsel enters this one before the paste is sent (§The window).
 
 ## 2. The paste
 
 In `~/git/jack-guy` on steel, in tmux, as gfrmin:
 
 ```
-cd ~/git/jack-guy && gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/jack/contents/c2a-3-open.sh?ref=253f8ac8642ae82a9431c4153f894586d27e414b' > ~/.cache/jack-paste-open.sh && [ "$(sha256sum < ~/.cache/jack-paste-open.sh | cut -c1-64)" = c2563a7a7a5e7a18fe00cf39ff6cd8d75866ff9afd40d42f0e220ded27bb5bd3 ] && bash ~/.cache/jack-paste-open.sh || echo "Stopped: send counsel what is printed above."
+cd ~/git/jack-guy && gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/jack/contents/c2a-3-open.sh?ref=6ad388a77ae478d8c8c09f6fd7de3e18bb39c195' > ~/.cache/jack-paste-open.sh && [ "$(sha256sum < ~/.cache/jack-paste-open.sh | cut -c1-64)" = 87e26fadf94478e9947c920fde2f9975b671aee76edc8e0c9ab32cbee1e4e77f ] && bash ~/.cache/jack-paste-open.sh || echo "Stopped: send counsel what is printed above."
 ```
 
 It may be started before 2026-11-30T00:00:00Z: it waits for that instant itself. What it does, in order
@@ -70,15 +70,15 @@ It may be started before 2026-11-30T00:00:00Z: it waits for that instant itself.
    the log: counsel's V8 on it once, no `push` after 2026-11-30T00:00:00Z, none inside C2a-prime's window;
 2. waits, with no bound of its own, until 2026-11-30T00:00:00Z has passed, the lane is quiet three rounds running,
    no `resolution` follows the last `merge` on `main`'s log, the diary's timer shows both its calendars and its next
-   tick is at least *D* = 45 minutes away; and replays `main`'s new commits as it waits, stopping if one does not
+   tick is at least *D* = 45 minutes away; and replays each new commit of `main` in every round as it waits, stopping if one does not
    pass or the replay cannot run;
 3. brings his `main` up to `origin/main`, checks the log again, and enters his `fix`, word for word from §Order of
    acts step 2, unless it is already the first `fix` that names C2a-prime; any other such `fix` stops it; then runs
    `window_fixes` over the whole log with the branch's evaluator, and stops if it does not return the `fix`'s `seq`
    or reports it unverified (§Stop and report if);
 4. replays the commit that holds the `fix`; merges `main` into the branch with his trailer; takes the four records
-   and the three hashes again at the merged head; and pushes with `--opens C2a-3`. If the push is refused and `main`
-   has moved, it waits again as in 2 and tries again, three attempts in all; if it is refused and `main` has not
+   and the three hashes again at the merged head; and pushes with `--opens C2a-3`. Before the merge it brings his `main` up to `origin/main` and replays it,
+   again until `main` holds still. If the push is refused and `main` has moved, it waits again as in 2 and tries again, three attempts in all; if it is refused and `main` has not
    moved, it stops (§Stop and report if).
 
 **D, as the rehearsal measured it on steel on 26 November** (`c2a-3-rehearse.sh`, `agent/pastes` `a5923224`): one
@@ -89,7 +89,7 @@ steel are `*-*-* 00/3:20:00 UTC` and `*-*-* *:10:00 UTC`. On the lane of 25–26
 minutes a day with no tick due for 45 minutes, so the paste may wait a day or more for its slot (ADVISER.md
 entry 371).
 
-Where it stops, its last line says what it has entered.
+Where it stops, its lines say what it has entered: `3. entered: the fix` or `3. skipped` above, then the stop.
 
 ## 3. After the push
 
@@ -107,7 +107,7 @@ names the committed table.
   successful `tests` runs on `main` (`judge/status.py --subject C2a --runs <runs> --as-of <instant>`), read the attack
   gate at `2026-10-31T13:32:21Z`, and continued liveness (printed as a fraction) at about 9.1e9 over 641 items as of
   `12:30Z`, and about 3.5e6 over 665 items as of `2026-11-30T00:00:01Z`, its projected expiries included. Criterion 6
-  needs 20. The rehearsal prints the evaluator's own figure again at the opening, with the log as it then stands.
+  needs 20. Counsel prints the evaluator's own figure again after the push, with the log and runs as they then stand.
 - **The acts evidence.** Counsel commits the raw and attributed tables of the window by a proposal (§The acts
   evidence), re-runs the attributed command once it has merged, and sends the promotion paste, made in
   `~/git/jack-guy` like this one, which names the table:
