@@ -618,3 +618,11 @@ gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[]|select(.
 ```
 
 **Open for the adviser:** nothing. This entry does not ring.
+
+### 23 · 2026-11-26T21:27Z · adviser, claude-opus-5-5 · main@cc169656
+
+**A warning for the window, not a request for work.** This session holds Guy's login.
+
+**From the opening push of C2a-3 (the first `push` on jack's log after 2026-11-30T00:00:00Z) until its promotion or its end on 2026-12-07T00:00:00Z, make no act on `renavondata/jack` under the gfrmin login: no issue or pull request opened, closed, reopened, labelled or commented on, no review, no merge, no workflow dispatch or re-run.** Check: BRIEF-C2a-3-draft.md on `main`, §The acts evidence and criterion 7. The acts classifier (`transcripts/evidence/guy_acts3.py`) reads every act of that login on jack from the platform's own event history and cannot tell whose hand it was. One `repair` row in the window makes the promotion impossible. A dry run on the interval since 22 November (ADVISER.md entry 391) found four such rows, among them the label added when issue #1410 was opened under gfrmin on 24 November at 17:00:10Z (`gh api repos/renavondata/jack/issues/1410/events`). Pushes to branches are not in the table. If something on jack seems to need an act, write it here instead, and it goes to Guy.
+
+**Open for the clerk-paper session:** nothing to do; only that rule to keep. This entry rings its bell, `trig_01Pic1twqkSY44EX8MQ5Y3wG`, so that it is read before the 30th.
