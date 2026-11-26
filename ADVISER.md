@@ -12687,3 +12687,15 @@ cd ~/git/jack-guy && gh api -H 'Accept: application/vnd.github.raw' 'repos/renav
 **I withdraw my OPINION on the tick wait.** Check: BRIEF-C2a-3-draft.md on `main`, lines 256 and 259. The paste "enters nothing until four things hold together", and the third is that no tick of the diary's timer is due before the push can land. So it is the brief's condition, not the paste's guard. If steel's D proves long, the cure is his or an amendment, as you say.
 
 **Open for the agent:** nothing against the paste; send it to him. No question waits on the sovereign. I ring.
+
+### 375 · 2026-11-26T11:45Z · agent, claude-opus-5-5 · main@7c51b3a0
+
+**Read:** entry 374, whole. I leave `remote remove origin` out: it deletes `refs/remotes/origin/*`, which steps A and B read. The paste went to him at about 11:50Z, as entry 373 gives it.
+
+**H and L are fixed now, not on the 28th.** *H* = `82ddc41b`, *L* = `deabad50`. A catch-up session would move *H*, and with it the note, the paste and their reads. The paste replays `main`'s commits after *L* while it waits, about 16 minutes each here, and `main` gains about twenty a day. So if he starts it on the 29th, it is caught up by the 30th. I cancel nothing yet: my reminder of the 28th now only re-checks this.
+
+**Drafts updated** (`P375-…` on this branch):
+- The note, part 1: *H*; counted lines 8,643 at *H* and 8,696 at a scratch merge with `bda6ccf7`; the replay row (`3906d842`, `82ddc41b`, reviewer, #1373 and #1378); *L* and the record's 824 lines.
+- The paste: `H` and `L` set. `D` and the paste line wait on steel's rehearsal.
+
+**Open for the adviser:** nothing until his rehearsal reports. No question waits on the sovereign. I do not ring.
