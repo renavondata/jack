@@ -12699,3 +12699,39 @@ cd ~/git/jack-guy && gh api -H 'Accept: application/vnd.github.raw' 'repos/renav
 - The paste: `H` and `L` set. `D` and the paste line wait on steel's rehearsal.
 
 **Open for the adviser:** nothing until his rehearsal reports. No question waits on the sovereign. I do not ring.
+
+### 376 · 2026-11-26T13:35Z · agent, claude-opus-5-5 · main@956db11c
+
+**Steel's rehearsal, as he sent it in chat** (his paste of `a5923224`):
+```
+A. replay of 1bea839a passed
+A. 858 s
+B. EXPECTED set to 116
+B. 2 s
+C. tests exit 0 in 901 s; pins exit 0; both in 1110 s; KILLED 175, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0
+D. 74 s
+E. { OnCalendar=*-*-* 00/3:20:00 UTC ; next_elapse=Thu 2026-11-26 17:20:00 IST } { OnCalendar=*-*-* *:10:00 UTC ; next_elapse=Thu 2026-11-26 16:10:00 IST }
+E. next elapse Thu 2026-11-26 16:10:00 IST
+```
+- Fix to push on steel: the fix verb (its reading of the log, then selfcheck 74 s), `window_fixes` on the whole log (164 s here, newly in the paste, below), the replay 858 s, the merge 2 s, the records, then the push verb (its reading, `the_check` 1,110 s, selfcheck 74 s). That is about 2,350 s, 39 minutes. I set *D* = 45.
+- Steel prints times in IST. The draft's `date -d "$next"` would have misread them; see finding 7 below.
+- At *D* = 45 my count of entry 371 gives about 11 admitting minutes a day on 25–26 November's lane. So the paste may wait a day or more. It is lawful: the brief has it wait with no bound. OPINION: it goes to him as a fact, not a question: start the paste on the 29th, so that it has replayed the chain by the 30th and takes the first slot. A narrower tick rule would admit more minutes, but that is an amendment, and I propose none unless he asks.
+
+**Counsel's pre-read of the note and the paste** (a fresh agent of mine): `VERDICT: FAIL`, five BLOCKs, five FIXes and six NOTEs. All the note's facts checked true, including every commit row, the hashes, the counted lines (8,643 and 8,696), the record (824 lines to *L*) and the fix text byte for byte. The paste is revised (`P376-c2a-3-open-draft.sh`), each by narrowing:
+1. *A crashed replay read as caught up* (python's exit 1 on an exception). Fixed: the replay script exits 10 when caught up, 3 on a mismatch, and `replay_next` maps every other exit to 4, which stops the paste. A record commit that is not on `main`'s chain also exits 4.
+2. *No `window_fixes` between the fix and the push*, which §Stop and report if requires. Added `fix_found`: the branch's `window_fixes` over the whole log must return the fix's `seq` with nothing unverified, or the paste stops. On today's log it returns `[5563]` with nothing unverified, in 164 s here.
+3. *No check for V8.* Added `log_pre`: V8 on the log once, no `push` after 2026-11-30T00:00:00Z, none between seqs 5564 and 7180. It runs before the wait, after it, and before each push. Today it prints "V8 is on the log 0 times, not once", as it should.
+4. *A retry after any refusal.* Now it retries only if `origin/main` moved during the refused push. Otherwise it stops, as §Stop and report if says.
+5. *Local main never pulled before the fix.* It now pulls `--ff-only` after the wait, before the fix.
+6. *Re-paste failed* on stale worktrees: `git worktree prune` after `rm -rf "$X"`.
+7. *The timer's time in a zone abbreviation:* now `NextElapseUSecRealtime --value --timestamp=unix`, digits only, else the round fails.
+8. *TRIES:* the note now says three attempts in all.
+9. *Precondition 1 and a re-paste after success:* covered by `log_pre` (no push after the stated end).
+10. *The three hashes at the merged head:* `pins/replay.py` and the review's `Evaluator:` line are re-checked there too.
+- NOTEs: the header cites entries 327 to 337; a second copy of itself is now detected (`jack-paste-open.sh`, its own pids excluded); part 3's line reference is 281 to 304; the note states that the 7 December end assumes V8 before the 30th. The builder's paths stay as written: `judge/status.py` is not in the builder's scope, and only this branch's build may touch it. `push_read_gate` is run by the push verb itself.
+
+**The note** (`P376-PUSH-c2a-3-opening-draft.md`): part 2 rewritten to the revised paste, with *D* and its measurement. The paste line is still TBD; it is made once the script is on `agent/pastes` and read.
+
+**Next:** your sandbox of the revised paste, if you will; then the outside cold read of the note and the paste together; then the note to `main` by the sign procedure, then V8, then the paste to him.
+
+**Open for the adviser:** the revisions, and whether my OPINION on the wait goes to him as a fact. No question waits on the sovereign. I ring.
