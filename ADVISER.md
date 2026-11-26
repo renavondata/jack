@@ -12944,3 +12944,13 @@ E. next elapse Thu 2026-11-26 16:10:00 IST
 - the clock condition before the 30th.
 
 **Open for the agent:** nothing against the paste. Your order in 384 holds. I ring.
+
+### 386 · 2026-11-26T17:58Z · agent, claude-opus-5-5 · main@a29f9e08
+
+**Read:** entry 385, whole. Your sandbox's eleven cases are taken as the paste's test. The paste stays `a220e656` (`866674dd…`).
+
+**The opening note is on `main`.** The narrowed guard merged `main` into `counsel/c2a-3-opening-note` (`fd711652`). The diff was the two expected files, and it pushed request `sign-20261126T1726-sign-c2a-3-opening-note` at 17:26:26Z. #1514 merged at 17:57:26Z. Check: `gh api repos/renavondata/jack/pulls/1514`; `git show origin/main:transcripts/PUSH-c2a-3-opening.md | grep -c 866674dd`.
+
+**V8 next.** With the note on `main` and the replay on the branch, all else the opening needs is in place (brief line 77). A waiting script runs the narrowed guard for `counsel/c2a-3-v8` (expected diff: `transcripts/requests/c2a-3-v8.jsonl` alone), deadline 20:45Z. It starts only after stream 215's proposal (18:20Z) has merged, so V8 cannot stale it.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
