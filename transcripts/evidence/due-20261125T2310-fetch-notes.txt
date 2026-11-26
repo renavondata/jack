@@ -1,0 +1,17 @@
+Fresh HTTP fetches in this session used curl -sL --max-time 120 -o <saved path> -w <HTTP status> <args.url>.
+All six canonical URLs returned HTTP 200. Their raw bytes, SHA-256 hashes, fetch completion UTC times and parsed instants are recorded in renavon-freshness-20261125T2310-resolve.json.
+last_updated is the exact dateModified string printed in each page's dataset JSON-LD, including its explicit +00:00 timezone. The visible Last refreshed field supplies a human-readable relative rendering of that same timestamp. No Hong Kong timezone conversion is applied.
+Visible Last refreshed strings:
+hk_property_poi: 25 November, 2026 (37 minutes ago)
+hkex_disclosures: 25 November, 2026 (44 minutes ago)
+hkex_disclosure_interests: 25 November, 2026 (44 minutes ago)
+crhk_companies: 25 November, 2026 (1 hour ago)
+sfc_licences: 25 November, 2026 (18 hours ago)
+hk_property_transactions: 25 November, 2026 (11 hours ago)
+
+Forecasts 7424 and 7425 name https://renavon.com/data/hk_property_transactions, not the canonical /data/property/ URL used by the later forecasts.
+curl -sL --max-time 120 -o transcripts/evidence/renavon-freshness/20261125T2310/legacy/hk_property_transactions.html -w 'legacy HTTP %{http_code} effective %{url_effective}\n' https://renavon.com/data/hk_property_transactions
+Output: legacy HTTP 404 effective https://renavon.com/data/hk_property_transactions
+Fetched at 2026-11-25T23:11:10Z.
+Raw bytes SHA-256: 00aa3d872e7d3ca62e6362170bfcb21af29f861debbe5d71d7c9c0bb382c67d6.
+No dateModified or Last refreshed field exists in that response. Both forecasts remain undecided; a successful response from their specified URL printing a last-updated instant would decide them. The legacy response is retained in a separate subdirectory to preserve both URLs' different bytes without overwriting the current canonical dataset page.

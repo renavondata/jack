@@ -1,0 +1,10 @@
+Main inspected: origin/main, 5ca77f5e (latest entry seq 7931, 2026-11-25T22:19:00Z).
+Command:
+git show origin/main:log.jsonl | python3 -c 'import sys,json; es=[json.loads(l) for l in sys.stdin]; ps=[e for e in es if e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject")=="C2a-prime"]; bs=[e for e in es if e["type"]=="decision" and e["body"].get("kind")=="promote" and e["body"].get("subject")=="C2b"]; print("decision promote C2a-prime:",len(ps)); print("decision promote C2b:",len(bs)); print("latest main entry:",es[-1]["seq"],es[-1]["ts"]); print("N2 remains undecided: no C2a-prime promotion, so its specified C2b opening and relative 72-hour deadline have not begun.")'
+Output:
+decision promote C2a-prime: 0
+decision promote C2b: 0
+latest main entry: 7931 2026-11-25T22:19:00Z
+N2 remains undecided: no C2a-prime promotion, so its specified C2b opening and relative 72-hour deadline have not begun.
+
+The forecast's resolves_by has passed, but that does not settle the claim's relative condition. To decide it requires the C2b opening push after promotion of C2a-prime, and either a C2b promotion within 72 hours or expiry of that relative interval without one.
