@@ -2,7 +2,9 @@
 # Counsel's rehearsal for C2a-3's opening paste: it times, on steel, the steps that lie between his `fix` and the
 # push, so that the opening note can state D (BRIEF-C2a-3 §Order of acts step 2: "The opening note states the time
 # from fix to push as the rehearsal measures it"). It enters nothing, signs nothing, pushes nothing and changes no
-# branch: it works in a scratch directory and removes it. It takes about half an hour and may be left.
+# branch: it works in a fresh clone of its own under ~/.cache, so that ~/git/jack-guy is not touched, and removes it.
+# It first waits until no session runs on the runner, so that the figure is steel's unloaded one. It takes about
+# fifty minutes after that and may be left.
 #   A. one replay of main's newest first-parent commit, as the opening paste replays (old evaluator twice, new once);
 #   B. main merged into opening-c2a-3 in a scratch worktree, EXPECTED set as the opening paste sets it;
 #   C. the push verb's own check on that tree (tools/jack the_check: tests, pins and kernel count, in parallel);
@@ -11,12 +13,17 @@
 set -u
 H=82ddc41bc6a12171729ddab1176bc0bdb7da10f4
 X=~/.cache/jack-c2a-3-rehearse
-die() { echo "Stopped: $*"; echo "Send counsel everything printed above."; rm -rf "$X"; git -C ~/git/jack-guy worktree prune; exit 1; }
+die() { echo "Stopped: $*"; echo "Send counsel everything printed above."; rm -rf "$X"; exit 1; }
+# As CI runs the tests (.github/workflows/tests.yml): no key, no global or system git config, a neutral identity.
+N=(env -u JACK_KEY GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 GIT_AUTHOR_NAME=rehearsal GIT_AUTHOR_EMAIL=rehearsal@invalid GIT_COMMITTER_NAME=rehearsal GIT_COMMITTER_EMAIL=rehearsal@invalid)
 t() { date +%s; }
-cd ~/git/jack-guy || die "there is no ~/git/jack-guy"
-git fetch -q origin main opening-c2a-3 || die "cannot fetch"
-[ "$(git rev-parse origin/opening-c2a-3)" = "$H" ] || echo "note: opening-c2a-3 is not at ${H:0:8}; timing what it holds"
+[ -d ~/git/jack-guy/.git ] || die "there is no ~/git/jack-guy"
+until [ "$(gh api 'repos/renavondata/opencode-runner/actions/runs?status=in_progress&per_page=50' --jq '[.workflow_runs[]|select(.name!="herald")]|length')" = 0 ]; do
+  echo "waiting for the runner to be idle ($(date -u +%H:%MZ)). You may leave this."; sleep 60; done
 rm -rf "$X"; mkdir -p "$X/tmp" || die "cannot make $X"
+git clone -q --reference ~/git/jack-guy "$(git -C ~/git/jack-guy remote get-url origin)" "$X/c" || die "cannot clone"
+cd "$X/c" && git fetch -q origin opening-c2a-3 || die "cannot fetch"
+[ "$(git rev-parse origin/opening-c2a-3)" = "$H" ] || echo "note: opening-c2a-3 is not at ${H:0:8}; timing what it holds"
 git worktree add -q --detach "$X/old" origin/main && git worktree add -q --detach "$X/new" origin/opening-c2a-3 \
   && git worktree add -q --detach "$X/w" origin/main && git worktree add -q --detach "$X/m" origin/opening-c2a-3 || die "cannot make checkouts"
 git show origin/main:transcripts/evidence/promotion-replay-c2a-3-driver.py > "$X/driver.py" || die "cannot read the driver"
@@ -53,7 +60,7 @@ echo "A. $(( $(t) - s )) s"
 
 s=$(t)
 cd "$X/m" || die "no scratch worktree"
-if ! git -c user.name=rehearsal -c user.email=rehearsal@invalid merge -q --no-ff origin/main -m rehearsal > /dev/null 2>&1; then
+if ! "${N[@]}" git -c commit.gpgsign=false -c core.hooksPath=/dev/null merge -q --no-ff origin/main -m rehearsal > /dev/null 2>&1; then
   [ "$(git diff --name-only --diff-filter=U)" = pins/pins.py ] || die "B: the merge conflicts beyond pins/pins.py"
   python3 - <<'PY' || die "B: the conflict is not the EXPECTED line alone"
 import ast, re
@@ -64,22 +71,22 @@ body = m.group(1) + 'EXPECTED = 0\n' + m.group(2)
 n = sum(1 for x in ast.walk(ast.parse(body)) if isinstance(x, ast.Call) and getattr(x.func, 'id', '') == 'Pin')
 open(p, 'w').write(body.replace('EXPECTED = 0\n', 'EXPECTED = %d\n' % n, 1)); print('B. EXPECTED set to', n)
 PY
-  git add pins/pins.py && git -c user.name=rehearsal -c user.email=rehearsal@invalid commit -q --no-edit || die "B: cannot commit the scratch merge"
+  git add pins/pins.py && "${N[@]}" git -c commit.gpgsign=false -c core.hooksPath=/dev/null commit -q --no-edit || die "B: cannot commit the scratch merge"
 fi
 echo "B. $(( $(t) - s )) s"
 
 s=$(t)
-TMPDIR="$X/tmp" python3 tools/count_kernel.py > "$X/count.txt" 2>&1 || die "C: the kernel count fails: $(tail -3 "$X/count.txt")"
-TMPDIR="$X/tmp" python3 -m unittest discover -s tests -t . > "$X/tests.txt" 2>&1 & a=$!
-TMPDIR="$X/tmp" python3 pins/run.py > "$X/pins.txt" 2>&1 & b=$!
+"${N[@]}" TMPDIR="$X/tmp" python3 tools/count_kernel.py > "$X/count.txt" 2>&1 || die "C: the kernel count fails: $(tail -3 "$X/count.txt")"
+"${N[@]}" TMPDIR="$X/tmp" python3 -m unittest discover -s tests -t . > "$X/tests.txt" 2>&1 & a=$!
+"${N[@]}" TMPDIR="$X/tmp" python3 pins/run.py > "$X/pins.txt" 2>&1 & b=$!
 wait $a; ra=$?; ta=$(( $(t) - s )); wait $b; rb=$?
 echo "C. tests exit $ra in $ta s; pins exit $rb; both in $(( $(t) - s )) s; $(tail -1 "$X/pins.txt")"
 
 s=$(t)
-python3 judge/selfcheck.py --repo "$X/m" | tail -1
+"${N[@]}" python3 judge/selfcheck.py --repo "$X/m" | tail -1
 echo "D. $(( $(t) - s )) s"
 
 echo "E. $(systemctl --user show jack-diary.timer -p TimersCalendar --value | tr '\n' ' ')"
 echo "E. next elapse $(systemctl --user show jack-diary.timer -p NextElapseUSecRealtime --value)"
-cd ~/git/jack-guy && rm -rf "$X" && git worktree prune
+cd ~ && rm -rf "$X"
 echo "Done: nothing was entered. Send counsel the lines from A to E."
