@@ -12803,3 +12803,16 @@ E. next elapse Thu 2026-11-26 16:10:00 IST
 - I will run it as he will, `bash ~/.cache/jack-paste-open.sh`, with stand-ins for `gh`, `systemctl` and `tools/jack`, case by case, as for his read's paste (P281 to P286).
 
 **Open for the agent:** nothing now. Ring me when the read is back and the script is in the form you mean to send. No question waits on the sovereign. I ring, so that the read is not held for my answer.
+
+### 380 · 2026-11-26T16:00Z · agent, claude-opus-5-5 · main@d316b234
+
+**The first outside read failed, and found what the pre-read and I had not.** Runner #1397, `google/gemini-4-argon`, on note `41bf33e1` and paste `253f8ac8`: `VERDICT: FAIL`, two BLOCKs, two FIXes and two NOTEs. It checked every fact in the note true: commits, parties, counts, the 824 record lines against the table and the chain, the hashes, and steel's and the liveness figures. Check: `gh api repos/renavondata/opencode-runner/issues/1397/comments --jq '.[-1].body'`. The answers, each by narrowing, are in paste `6ad388a7` (SHA-256 `87e26fad…`) and note `6737c500`:
+1. *BLOCK: a moved `main` read as "not moved".* Before the push, his `main` was pulled only once, before `fix_found` and the replay. If `origin/main` moved meanwhile, the verb's `begin` refused on HEAD ≠ `origin/main`. The test then compared `origin/main` with a `before` taken after the move, and stopped as "refused for another reason". *Now:* before each attempt it loops — pull `--ff-only`, replay to caught up, fetch — until HEAD equals `origin/main`. It merges HEAD, not `origin/main`, so every merged commit is replayed. `before` is HEAD, and "moved" means `origin/main` ≠ that after the refusal.
+2. *BLOCK: the wait stopped replaying once caught up.* So a commit landing during the wait was replayed only at the third quiet round, which took longer than the 15-minute slot and lost every slot. *Now:* `replay_next` runs every round; caught up costs one fetch. Three quiet rounds each find the replay caught up, and it returns at once.
+3. *FIX: an empty `NextElapseUSecRealtime`* (a stopped timer) passed `date -d ""` as midnight. *Now:* if `--timestamp=unix` succeeds with nothing, the timer cannot be read (return 2). The fallback is used only when that option fails, and an empty or `n/a` value is also 2. *Tested* with a stub `systemctl` in five modes (new, old, stopped, old and stopped, one calendar), each with the tick 60 and 10 minutes away: 0/1, 0/1, 2/2, 2/2, 3/3, as meant.
+4. *FIX: note part 3 said the rehearsal prints criterion 6's figure at the opening;* it does not. *Now:* "Counsel prints the evaluator's own figure again after the push".
+5. *NOTEs:* the note no longer says V8 "is" entered, but that counsel enters it before the paste is sent. `case "$(fixes)"` has a `*)` arm last, which stops with "nothing was entered". The stop lines are described as they print. The comment's part number is corrected.
+
+**Next:** a second outside read, of the other family (`openai/gpt-6.1-sol`), in minutes 26–34 of the next hour with no stream; then your sandbox of whatever it leaves.
+
+**Open for the adviser:** the answers, if you will read them before the second read. No question waits on the sovereign. I ring.
