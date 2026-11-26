@@ -16,6 +16,7 @@ SP=c4a5b44b8465f4be9cd4a5bbeb294cfd5c56a7397319e7f1c167853d7fd628a7  # SPEC.md a
 T=96658263399ec7eeb815fc07210ce09b8e5ca3a4                           # the table's T
 L=deabad5082b88e1332a9ed56d5ca8fcae06cadb5   # the last chain commit the reviewer's record holds
 END=1795996800             # 2026-11-30T00:00:00Z
+DP=25                      # minutes the next tick must still lie ahead when the push verb starts (about 21 measured)
 D=45                       # minutes the diary's next tick must lie ahead: about 39 measured on steel (opening note, part 2)
 TRIES=3                    # attempts at the push, each after main moved, before it stops
 FIX="C2a-prime: criterion 3 read unmet from 2026-11-17T13:32:51Z to its end — its test walked every ancestor of main, and a branch cut before the opening was merged after it (jack #1071); for C2a-3 the test reads main's own commits"
@@ -51,12 +52,15 @@ git show "$H:transcripts/REVIEW-C2a-3-code.md" | grep -qx "Evaluator: judge/stat
 echo "1. the branch: $NB at $H, as the opening note records it"
 
 # The fixes that name C2a-prime on main's log, by the sovereign. Ours, first and alone: skip the `fix`. Any other: stop.
-fixes() { git show origin/main:log.jsonl | F="$FIX" python3 -c '
+# main's log, read into a file and checked: no reading of the log takes an empty or failed read for an empty log.
+mainlog() { git show origin/main:log.jsonl > "$X/main.jsonl" 2> /dev/null && [ -s "$X/main.jsonl" ] && \
+  python3 -c 'import json, sys; [json.loads(l) for l in open(sys.argv[1])]' "$X/main.jsonl" 2> /dev/null; }
+fixes() { mainlog || { echo unread; return; }; F="$FIX" python3 -c '
 import json, os, sys
 f = os.environ["F"]
-xs = [e for e in map(json.loads, sys.stdin) if e["type"] == "decision" and e["proposer"] == "guy"
+xs = [e for e in map(json.loads, open(sys.argv[1])) if e["type"] == "decision" and e["proposer"] == "guy"
       and e["body"].get("kind") == "fix" and e["body"].get("subject", "").startswith("C2a-prime")]
-print("none" if not xs else "ours" if len(xs) == 1 and xs[0]["body"]["subject"] == f else "other")'; }
+print("none" if not xs else "ours" if len(xs) == 1 and xs[0]["body"]["subject"] == f else "other")' "$X/main.jsonl"; }
 
 # The replay of main's first-parent chain after L, as the replay's template defines a chain commit: the evaluator on
 # main twice and the table driver's `mark`, against the branch's evaluator once. Run at low priority.
@@ -129,17 +133,19 @@ quiet_round() {
   done
   [ "$t" = 0 ] || return 1
   git fetch -q origin main || return 1
-  git show origin/main:log.jsonl | python3 -c '
+  mainlog || return 1
+  python3 -c '
 import json, sys
-es = [json.loads(l) for l in sys.stdin]
+es = [json.loads(l) for l in open(sys.argv[1])]
 last = max((i for i, e in enumerate(es) if e["type"] == "merge"), default=-1)
-sys.exit(1 if any(e["type"] == "resolution" for e in es[last + 1:]) else 0)'
+sys.exit(1 if any(e["type"] == "resolution" for e in es[last + 1:]) else 0)' "$X/main.jsonl"
 }
 # The diary's timer: both calendars present, and its next tick at least D minutes away.
-timer_round() {  # 0: the next tick is far enough; 1: it is too near; 2: the timer cannot be read; 3: a calendar is missing
+timer_round() {  # $1: minutes; 0: the next tick is at least that far; 1: nearer; 2: the timer cannot be read; 3: a calendar is missing
   local cal next
   cal=$(systemctl --user show jack-diary.timer -p TimersCalendar --value) || return 2
-  [ "$(printf '%s\n' "$cal" | grep -o 'OnCalendar=' | wc -l)" -ge 2 ] || return 3   # one line or one per calendar
+  printf '%s\n' "$cal" | grep -qF 'OnCalendar=*-*-* 00/3:20:00 UTC' || return 3   # the streams' calendar
+  printf '%s\n' "$cal" | grep -qF 'OnCalendar=*-*-* *:10:00 UTC' || return 3       # the resolver's calendar
   if next=$(systemctl --user show jack-diary.timer -p NextElapseUSecRealtime --value --timestamp=unix 2> /dev/null); then
     next=${next#@}
     [ -n "$next" ] || return 2                       # an empty next elapse: the timer is stopped
@@ -151,7 +157,7 @@ timer_round() {  # 0: the next tick is far enough; 1: it is too near; 2: the tim
     case "$next" in ''|n/a) return 2;; esac
     next=$(TZ=UTC date -d "$next" +%s 2> /dev/null) || return 2;;
   esac
-  [ "$next" -ge $(( $(date +%s) + D * 60 )) ]
+  [ "$next" -ge $(( $(date +%s) + ${1:-$D} * 60 )) ]
 }
 
 # 2. The wait, replaying as it waits. It has no bound of its own: the brief's step 2 has it wait, and not stop, while
@@ -164,14 +170,15 @@ wait_clear() {  # $1: the step's number, for its lines; $2: what has been entere
     [ "$rc" = 4 ] && die "the replay could not run; $2"
     caught=0; [ "$rc" = 1 ] && caught=1
     [ "$rc" = 2 ] && echo "$1. could not fetch main for the replay; trying again"
+    r=$(log_pre); [ "$r" = ok ] || die "$r; $2"
     why=""
     if [ "$caught" != 1 ]; then why="replaying main"
     elif [ "$(date +%s)" -le "$END" ]; then why="before 2026-11-30T00:00Z"
     elif ! quiet_round; then why="the lane is busy"
     else timer_round; case $? in
       0) ;; 1) why="a tick of the timer is due within $D minutes";;
-      2) why="the diary's timer cannot be read: send counsel this line";;
-      *) why="the diary's timer does not show both its calendars (the streams may be paused): send counsel this line";;
+      2) die "the diary's timer cannot be read, or is stopped; $2";;
+      *) die "the diary's timer does not show both its calendars: the streams may be paused, which is his to lift (BRIEF-C2a-3, Stop and report if); $2";;
     esac
     fi
     if [ -z "$why" ]; then q=$((q+1)); else q=0; fi
@@ -183,19 +190,22 @@ wait_clear() {  # $1: the step's number, for its lines; $2: what has been entere
 # The log's own preconditions (BRIEF-C2a-3 §Stop and report if): counsel's V8 once, with a seq the opening's will
 # be above; no push after the stated end yet; no push inside C2a-prime's window (after seq 5564, before its veto of
 # seq 7180). Prints "ok" or what fails.
-log_pre() { git show origin/main:log.jsonl | python3 -c '
-import json, sys
-es = [json.loads(l) for l in sys.stdin]
+log_pre() { mainlog || { echo "main's log could not be read"; return; }; python3 -c '
+import json, sys, time
+es = [json.loads(l) for l in open(sys.argv[1])]
 v8 = [e for e in es if e["type"] == "forecast" and e["proposer"] == "counsel" and (e["body"].get("args") or {}).get("id") == "V8"]
 late = [e["seq"] for e in es if e["type"] == "push" and e["ts"] > "2026-11-30T00:00:00Z"]
 inside = [e["seq"] for e in es if e["type"] == "push" and 5564 < e["seq"] < 7180]
-print("ok" if len(v8) == 1 and not late and not inside else
+now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+gone = len(v8) == 1 and now >= v8[0]["body"]["resolves_by"]
+print("ok" if len(v8) == 1 and not gone and not late and not inside else
       "V8 is on the log %d times, not once" % len(v8) if len(v8) != 1 else
+      "V8\x27s resolves_by (%s) has passed with no opening push: the brief ends this window, and the next is pre-stated afresh" % v8[0]["body"]["resolves_by"] if gone else
       "a push after the stated end is already on the log (seq %s)" % late if late else
-      "a push lies inside C2a-prime\x27s window (seq %s)" % inside)'; }
+      "a push lies inside C2a-prime\x27s window (seq %s)" % inside)' "$X/main.jsonl"; }
 # The windows' fixes over the whole log, by the branch's evaluator, as the brief's §Stop and report if asks between the
 # fix and the push: prints "ok" if it returns the seq of his fix, unverified nothing; otherwise what it returned.
-fix_found() { git show origin/main:log.jsonl > "$X/log.jsonl" && (cd "$X/new" && python3 - "$X/log.jsonl" "$FIX" <<'PY'
+fix_found() { mainlog && cp "$X/main.jsonl" "$X/log.jsonl" && (cd "$X/new" && python3 - "$X/log.jsonl" "$FIX" <<'PY'
 import json, sys
 sys.path.insert(0, '.')
 import judge.status as st
@@ -228,9 +238,12 @@ r=$(fix_found) || die "window_fixes could not run; the fix stands and nothing wa
 echo "3. window_fixes over the whole log returns his fix"
 
 # 4. Replay what is left, merge, test, push; again if main moves, up to TRIES times.
-tries=0
+tries=0; again=0
 while :; do
-  [ "$tries" -gt 0 ] && wait_clear 4 "the fix stands and nothing was pushed"   # a retry waits for the lane and the timer, as the first push did
+  if [ "$tries" -gt 0 ] || [ "$again" = 1 ]; then   # a retry, or a slot spent on the replay, waits as the first push did
+    wait_clear 4 "the fix stands and nothing was pushed"
+  fi
+  again=0
   # His main brought up to origin/main, and every commit on it replayed; again if main moved meanwhile, so that the
   # merge takes only replayed commits and the verb finds HEAD equal to origin/main.
   while :; do
@@ -289,10 +302,20 @@ for c in g('rev-list', '--reverse', 'origin/main..HEAD').split():
         sys.exit(1)
 PARTIES
   [ "$(log_pre)" = ok ] || die "$(log_pre); the fix stands and nothing was pushed"
+  # The replay after the fix may have taken the slot: the push verb itself needs about 21 minutes on steel (its
+  # reading of the log, the_check, selfcheck), so the next tick must still be DP minutes away, or it waits again.
+  timer_round "$DP"; case $? in
+    0) ;;
+    1) echo "4. the timer's slot was spent on the replay; waiting again"; again=1; continue;;
+    *) die "the diary's timer cannot be read, or does not show both its calendars; the fix stands and nothing was pushed";;
+  esac
   before=$(git rev-parse HEAD)      # his main, which the merge took and the verb compares with origin/main
-  if tools/jack push "$PB" --opens C2a-3 --review "$WT/transcripts/REVIEW-C2a-3-code.md"; then break; fi
+  tools/jack push "$PB" --opens C2a-3 --review "$WT/transcripts/REVIEW-C2a-3-code.md" 2>&1 | tee "$X/push.out"
+  [ "${PIPESTATUS[0]}" = 0 ] && break
   git fetch -q origin main || die "cannot fetch main after a refused push; the fix stands and nothing was pushed"
-  [ "$(git rev-parse origin/main)" != "$before" ] || die "the push was refused and main has not moved: a refusal for another reason (BRIEF-C2a-3, Stop and report if); the fix stands and nothing was pushed"
+  # A retry only for a refusal that a moved main causes: the verb's own words for it, and main moved.
+  grep -qE 'main is not up to date|does not contain origin/main|not a fast-forward' "$X/push.out" && [ "$(git rev-parse origin/main)" != "$before" ] \
+    || die "the push was refused for another reason than a moved main (BRIEF-C2a-3, Stop and report if); the fix stands and nothing was pushed"
   tries=$((tries+1)); [ "$tries" -ge "$TRIES" ] && die "the push was refused $TRIES times as main moved; the fix stands and nothing was pushed"
   echo "4. the push was refused; main has moved; again ($tries of $TRIES)"
 done
