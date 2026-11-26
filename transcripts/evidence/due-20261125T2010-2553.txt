@@ -1,0 +1,11 @@
+Observed at 2026-11-25T20:12:34Z.
+origin/main commit: 4dba6e009de3a4dce007694d51be903cee94494f
+Command: git show origin/main:log.jsonl | python3 -c 'import json,sys; es=[json.loads(l) for l in sys.stdin]; print("origin/main log tip:", es[-1]["seq"], es[-1]["ts"]); ps=[e for e in es if e["type"]=="decision" and e["body"].get("kind")=="promote"]; print("promote decisions:"); [print(json.dumps(e,sort_keys=True)) for e in ps]; print("C2a-prime promotions:",sum(e["body"].get("subject")=="C2a-prime" for e in ps)); print("C2b promotions:",sum(e["body"].get("subject")=="C2b" for e in ps))'
+Output (promotion entries summarized by seq, ts, kind, subject):
+origin/main log tip: 7909 2026-11-25T19:29:12Z
+promote decisions:
+188 2026-10-31T10:42:10Z promote C1a
+337 2026-11-01T11:31:58Z promote C1b
+C2a-prime promotions: 0
+C2b promotions: 0
+Left undecided: no decision promote C2a-prime exists on origin/main, so C2b's opening push (defined by the claim as the first push after that decision) and its 72-hour interval do not yet exist. The resolves_by deadline alone does not decide this relative-time claim. A future C2a-prime promotion, its following push, and then C2b promotion within 72 hours or expiry of that interval would decide it.
