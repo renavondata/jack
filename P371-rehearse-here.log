@@ -1,0 +1,12 @@
+A. replay of 360bce74 passed
+A. 941 s
+B. EXPECTED set to 116
+B. 2 s
+C. tests exit 0 in 1040 s; pins exit 0; both in 1678 s; KILLED 175, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0
+}
+D. 90 s
+Failed to connect to bus: No medium found
+E. 
+Failed to connect to bus: No medium found
+E. next elapse 
+Done: nothing was entered. Send counsel the lines from A to E.

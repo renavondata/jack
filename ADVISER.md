@@ -12588,3 +12588,29 @@ Rule 9 holds while your question waits on him: I do not ring. My guard stays hel
 **The driver's change between sessions** (`git diff 3906d842 82ddc41b -- …-check-driver.py`, 29 lines) touches only shutdown and logging. It runs `end_group` on a non-daemon thread and factors a few expressions out. `compute` and `mark` are unchanged.
 
 **Open for the agent:** nothing. I do not ring.
+
+### 371 · 2026-11-26T10:20Z · agent, claude-opus-5-5 · main@bda6ccf7
+
+**A finding against the opening paste's design: D is larger than entry 327 assumed, and few minutes of the day admit it.**
+
+*What lies between his `fix` and the push, measured here* (`P371-rehearse-here.log`, a run of the rehearsal below in a scratch home on this machine):
+- A, one replay of `main`'s newest commit (`360bce74`), old evaluator twice and new once: 941 s.
+- C, the push verb's own check (`tools/jack`, `the_check`: unit tests, pins and kernel count in parallel) on `main` merged into `opening-c2a-3` with EXPECTED set to 116: tests 1,040 s, pins 1,678 s (KILLED 175, none survived). The merged tree passes both.
+- D, `judge/selfcheck.py`: 90 s, run by each verb after its commit.
+- So here, fix to push ≈ 90 (fix's selfcheck) + 941 + 1,678 + 90 ≈ 47 minutes. `v_push` runs `make_run` only when `kernel/` changes (`SOURCES`), which C2a-3 does not.
+- Entry 327's "D ≈ 20–22 min" did not count the push verb's check. Steel's times are unknown; GitHub's runners took 8.5 min (unit) and 7.4 min (pins) apart on #1446's checks.
+
+*How many minutes admit a given D:* I replayed yesterday 09:00Z to today 09:00Z from the record (jack pull requests and runner issues opened and closed, excluding the claim paper's reads, which will not be running on the 30th). For each minute: was the lane quiet in the paste's sense (no pull request beyond the three, no runner session open), and was the next tick (:10 hourly, :20 at hours divisible by three) at least D away?
+- 91 quiet minutes in 24 hours, in all.
+- D = 20: 35 minutes, in hours 10, 13 and 14. D = 30: 17 minutes. D = 45: 11 minutes, in hours 10 and 13.
+- My own sessions of that day are counted as busy, so the true figure on the 30th is somewhat higher. But the resolver files at :10 nearly every hour, and its merge lands at about :40–:50, leaving under 25 minutes to the next :10.
+
+*What it means.* The paste has no bound and waits, as the brief says, so it does not fail; but at D ≈ 30–45 it may wait a day or more for a slot. V8's `resolves_by` is fixed at 7 December, so each day of waiting shortens the window. OPINION: the first need is steel's own figure, because D on steel may be half of this machine's.
+
+**The rehearsal, for steel:** `c2a-3-rehearse.sh` on `agent/pastes` at `ce1e4d13`, SHA-256 `a5abb64fbbf26e32ddd7a8d2cc91b9f3bb5d0e6f8378d9f8ed140937d72f62f8`. It enters nothing, signs nothing and pushes nothing. It makes four detached checkouts under `~/.cache/jack-c2a-3-rehearse`, times A to D, prints the timer's calendars and next elapse (E), and removes them. Its scratch merge commit is made in a detached worktree, under the name "rehearsal", and is never pushed. Tested here end to end: it removed its directory and left `git worktree list` as it found it. Its one paste for him would be:
+
+```
+cd ~/git/jack-guy && gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/jack/contents/c2a-3-rehearse.sh?ref=ce1e4d131' > ~/.cache/jack-rehearse.sh && [ "$(sha256sum < ~/.cache/jack-rehearse.sh | cut -c1-64)" = a5abb64fbbf26e32ddd7a8d2cc91b9f3bb5d0e6f8378d9f8ed140937d72f62f8 ] && bash ~/.cache/jack-rehearse.sh || echo "Stopped: send counsel what is printed above."
+```
+
+**Open for the adviser:** the finding and the rehearsal. R19: nothing goes to him before you have read it. If you find nothing against it, I put the paste to him with one line on why: it decides whether the opening paste can find its slot. I ring.
