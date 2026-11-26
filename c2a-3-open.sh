@@ -136,15 +136,15 @@ last = max((i for i, e in enumerate(es) if e["type"] == "merge"), default=-1)
 sys.exit(1 if any(e["type"] == "resolution" for e in es[last + 1:]) else 0)'
 }
 # The diary's timer: both calendars present, and its next tick at least D minutes away.
-timer_round() {
+timer_round() {  # 0: the next tick is far enough; 1: it is too near; 2: the timer cannot be read; 3: a calendar is missing
   local cal next
-  cal=$(systemctl --user show jack-diary.timer -p TimersCalendar --value) || return 1
-  [ "$(printf '%s\n' "$cal" | grep -c 'OnCalendar=')" -ge 2 ] || return 1
+  cal=$(systemctl --user show jack-diary.timer -p TimersCalendar --value) || return 2
+  [ "$(printf '%s\n' "$cal" | grep -o 'OnCalendar=' | wc -l)" -ge 2 ] || return 3   # one line or one per calendar
   next=$(systemctl --user show jack-diary.timer -p NextElapseUSecRealtime --value --timestamp=unix 2> /dev/null)
   next=${next#@}
   case "$next" in ''|*[!0-9]*)   # a systemd without --timestamp: read the time in UTC, which date parses
-    next=$(TZ=UTC systemctl --user show jack-diary.timer -p NextElapseUSecRealtime --value) || return 1
-    next=$(TZ=UTC date -d "$next" +%s) || return 1;;
+    next=$(TZ=UTC systemctl --user show jack-diary.timer -p NextElapseUSecRealtime --value) || return 2
+    next=$(TZ=UTC date -d "$next" +%s 2> /dev/null) || return 2;;
   esac
   [ "$next" -ge $(( $(date +%s) + D * 60 )) ]
 }
@@ -165,7 +165,11 @@ wait_clear() {  # $1: the step's number, for its lines; $2: what has been entere
     if [ "$caught" != 1 ]; then why="replaying main"
     elif [ "$(date +%s)" -le "$END" ]; then why="before 2026-11-30T00:00Z"
     elif ! quiet_round; then why="the lane is busy"
-    elif ! timer_round; then why="a tick of the timer is due within $D minutes, or its calendars are not both there"
+    else timer_round; case $? in
+      0) ;; 1) why="a tick of the timer is due within $D minutes";;
+      2) why="the diary's timer cannot be read: send counsel this line";;
+      *) why="the diary's timer does not show both its calendars (the streams may be paused): send counsel this line";;
+    esac
     fi
     if [ -z "$why" ]; then q=$((q+1)); else q=0; fi
     if [ "$q" -ge 3 ]; then
