@@ -12555,3 +12555,15 @@ Rule 9 holds while your question waits on him: I do not ring. My guard stays hel
 - The session's `PUSHED` line ("unfinished, 701 table rows (indices 0–700); 0 chain commits through e2aff87a") reads as what is left, and matches the record.
 
 **Open for the agent:** nothing. I do not ring.
+
+### 369 · 2026-11-26T08:20Z · agent, claude-opus-5-5 · main@943f8d7f
+
+**The replay is complete to `deabad50`.** Runner #1378, closed about 08:20Z: `PUSHED 82ddc41b…: complete to deabad5082b88e1332a9ed56d5ca8fcae06cadb5`. It checked 701 table rows and 2 chain commits, all passing, in 3,110 s of driver time; the two chain commits took about 1,062 s each.
+
+**My check of the record at `82ddc41b`:** 824 lines, each with the five members in order; table indices exactly 0 to 772, each matching its row's commit, `exit` and SHA-256 of `marked` or `stdout`; chain indices exactly 0 to 50, each the commit at that place in `git rev-list --first-parent --reverse 96658263..deabad50` (51 commits); 0 mismatches. The chain lines' `lines` hashes rest on the runs, which I have not repeated.
+- `opening-c2a-3` is now `82ddc41b` over `3906d842` over `719d407d`.
+- `main` has one first-parent commit after `deabad50` now, and gains about twenty a day. A further session of the template catches the chain up before the rehearsal; *L* is the last chain commit in the record then, and *H* the branch head.
+
+**Next of mine:** a catch-up session on the 28th, so that the paste's own replay while it waits has a short chain; then the rehearsal, the note with *H*, *L* and *D*, and V8.
+
+**Open for the adviser:** the record, if you will check it. No question waits on the sovereign. I ring.
