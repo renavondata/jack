@@ -40,18 +40,23 @@ def cancelled():
         raise Cancelled()
 
 
+def end_group():
+    os.killpg(os.getpgrp(), signal.SIGTERM)
+    time.sleep(10)
+    os.killpg(os.getpgrp(), signal.SIGKILL)
+
+
 def stop_group(reason, detail=None):
     with LOCK:
         if STOP.is_set():
             return
         STOP.set()
-        outcome = {'reason': reason, 'done': len(DONE), 'wall_seconds': time.monotonic() - BEGUN,
-                   'minute': (time.time() - START) / 60, 'detail': detail}
+        outcome = dict(reason=reason, done=len(DONE), wall_seconds=time.monotonic() - BEGUN,
+                       minute=(time.time() - START) / 60, detail=detail)
         (BASE / 'outcome.json').write_text(json.dumps(outcome) + '\n')
         log(f'STOP {json.dumps(outcome)}')
-    os.killpg(os.getpgrp(), signal.SIGTERM)
-    time.sleep(10)
-    os.killpg(os.getpgrp(), signal.SIGKILL)
+        # Non-daemon: escalation must survive the worker pool finishing.
+        threading.Thread(target=end_group, daemon=False).start()
 
 
 def on_term(signum, frame):
@@ -95,6 +100,7 @@ def evaluate(name, argv):
     cancelled()
     result = subprocess.run(['python3', '-I', str(BASE / name / 'judge' / 'status.py'), *argv],
                             stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, env=ENV)
+    # A terminated run is never compared, marked, or recorded.
     cancelled()
     return result.returncode, lines_from(result.stdout)
 
@@ -160,7 +166,9 @@ def compute(k, task):
         os.replace(temporary, target)
         DONE.append(task)
         seconds = time.monotonic() - begun
-        log(f'ROW kind={kind} index={index} commit={commit} worker={k} seconds={seconds:.3f} done={len(DONE)}/{len(PLAN["tasks"])} minute={(time.time() - START) / 60:.3f}')
+        total = len(PLAN['tasks'])
+        minute = (time.time() - START) / 60
+        log(f'ROW kind={kind} index={index} commit={commit} worker={k} seconds={seconds:.3f} done={len(DONE)}/{total} minute={minute:.3f}')
 
 
 def worker(k, jobs):
@@ -181,7 +189,8 @@ def worker(k, jobs):
 
 def main():
     signal.signal(signal.SIGTERM, on_term)
-    log(f'START pid={os.getpid()} tasks={len(PLAN["tasks"])} workers=10 minute={(time.time() - START) / 60:.3f}')
+    total = len(PLAN['tasks'])
+    log(f'START pid={os.getpid()} tasks={total} workers=10 minute={(time.time() - START) / 60:.3f}')
     threading.Thread(target=watchdog, daemon=True).start()
     jobs = queue.Queue()
     for task in PLAN['tasks']:
@@ -192,10 +201,10 @@ def main():
             future.result()
     if STOP.is_set():
         return
-    assert len(DONE) == len(PLAN['tasks'])
+    assert len(DONE) == total
     FINISHED.set()
-    outcome = {'reason': 'complete', 'done': len(DONE), 'wall_seconds': time.monotonic() - BEGUN,
-               'minute': (time.time() - START) / 60}
+    outcome = dict(reason='complete', done=len(DONE), wall_seconds=time.monotonic() - BEGUN,
+                   minute=(time.time() - START) / 60)
     (BASE / 'outcome.json').write_text(json.dumps(outcome) + '\n')
     log(f'COMPLETE {json.dumps(outcome)}')
 
