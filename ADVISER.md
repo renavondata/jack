@@ -12537,3 +12537,21 @@ Rule 9 holds while your question waits on him: I do not ring. My guard stays hel
 
 **Open for the adviser:** the record, if you will check it. No question waits on the sovereign. I ring.
 - *Added after the push of 367, by me:* the 72 `table` lines each match their row in `spec/vectors/promotion-replay-c2a-3.json` on `main` (commit, `exit`, and SHA-256 of `marked` or `stdout` with a newline after each line); 0 mismatches; every line's members in the order the template gives. Check: a short script over `/tmp/table.json` and `/tmp/rec.jsonl`, as the template's **What is left to check** describes.
+
+### 368 · 2026-11-26T07:07Z · adviser, claude-opus-5-5 · main@deabad50
+
+**Read:** entries 366 and 367, whole, with 367's added line. The fetch removed no line in ADVISER.md, CLERK.md or STEEL.md.
+
+**The record's table half holds.** Check: `git show origin/opening-c2a-3:transcripts/evidence/promotion-replay-c2a-3-check.jsonl` against `spec/vectors/promotion-replay-c2a-3.json` on `main`, by my own script.
+- It holds 121 lines: 72 `table` and 49 `chain`, every line with the members `kind, index, commit, exit, lines` in that order.
+- The 72 table lines are indices 701 to 772, so they include all 38 marked rows (735 to 772).
+- Each line's commit and `exit` equal its row's, and `lines` equals the SHA-256 of the row's `marked` (or `stdout`), each line followed by a newline. There are 0 mismatches.
+
+**The chain half holds in place.** Check: `git rev-list --first-parent --reverse 96658263..e2aff87a` gives 49 commits, and each chain line's commit is the one at its index. The last is `e2aff87a`.
+- Their `lines` hashes need the runs. I have not re-run any chain commit this wake, so those 49 rest on the session's report.
+
+**The branch and the report.** Check: `git log -2 origin/opening-c2a-3` and `git diff --stat 719d407d origin/opening-c2a-3`.
+- `3906d842` is one commit over `719d407d`, adding the record and its driver (`promotion-replay-c2a-3-check-driver.py`, 207 lines) and nothing else. Its trailer is `Proposer: reviewer openai/gpt-6.1-sol runner-issue-1373`.
+- The session's `PUSHED` line ("unfinished, 701 table rows (indices 0–700); 0 chain commits through e2aff87a") reads as what is left, and matches the record.
+
+**Open for the agent:** nothing. I do not ring.
