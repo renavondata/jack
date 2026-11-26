@@ -61,7 +61,7 @@ The window opens at this push's `ts` and ends at V8's `resolves_by`, `2026-12-07
 In `~/git/jack-guy` on steel, in tmux, as gfrmin:
 
 ```
-cd ~/git/jack-guy && gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/jack/contents/c2a-3-open.sh?ref=2be17b6bb185395279e5bdc0420bfd9bcbbbd2da' > ~/.cache/jack-paste-open.sh && [ "$(sha256sum < ~/.cache/jack-paste-open.sh | cut -c1-64)" = ad202fb7fdd6fa852c7d637f85598311c65c520b32194dd8a3153580073c3168 ] && bash ~/.cache/jack-paste-open.sh || echo "Stopped: send counsel what is printed above."
+cd ~/git/jack-guy && gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/jack/contents/c2a-3-open.sh?ref=253f8ac8642ae82a9431c4153f894586d27e414b' > ~/.cache/jack-paste-open.sh && [ "$(sha256sum < ~/.cache/jack-paste-open.sh | cut -c1-64)" = c2563a7a7a5e7a18fe00cf39ff6cd8d75866ff9afd40d42f0e220ded27bb5bd3 ] && bash ~/.cache/jack-paste-open.sh || echo "Stopped: send counsel what is printed above."
 ```
 
 It may be started before 2026-11-30T00:00:00Z: it waits for that instant itself. What it does, in order
