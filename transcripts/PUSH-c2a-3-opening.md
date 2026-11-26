@@ -20,7 +20,7 @@ Branch `opening-c2a-3`, head `82ddc41bc6a12171729ddab1176bc0bdb7da10f4` (*H*), a
     | `86f62e9c`, `2dd66bef`, `68a3221e` | Guy Freeman / Guy Freeman | reviewer (#1333) | `pins/c2a_third.py`, `pins/pins.py`, `pins/replay.py` | the eight pins and `replay_drift` re-aimed |
     | `719d407d` | Guy Freeman / Guy Freeman | reviewer (#1335) | `transcripts/REVIEW-C2a-3-code.md` | the code read |
     | `3906d842`, `82ddc41b` | Guy Freeman / Guy Freeman | reviewer (#1373, #1378) | `transcripts/evidence/promotion-replay-c2a-3-check.jsonl`, `…-check-driver.py` | the replay's record |
-    | the merge | Guy Freeman / Guy Freeman | guy | none of its own | `main` brought in after the `fix`, by the paste |
+    | the merge | Guy Freeman / Guy Freeman | guy | `pins/pins.py`'s `EXPECTED` only, set to 116 | `main` brought in after the `fix`, by the paste |
 
     Sessions on the runner commit under the runner's git identity, which is his name; the party of such a commit is in
     its trailer. Only the first commit and the merge are of his own hand.
@@ -61,14 +61,15 @@ The window opens at this push's `ts` and ends at V8's `resolves_by`, `2026-12-07
 In `~/git/jack-guy` on steel, in tmux, as gfrmin:
 
 ```
-cd ~/git/jack-guy && gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/jack/contents/c2a-3-open.sh?ref=6ad388a77ae478d8c8c09f6fd7de3e18bb39c195' > ~/.cache/jack-paste-open.sh && [ "$(sha256sum < ~/.cache/jack-paste-open.sh | cut -c1-64)" = 87e26fadf94478e9947c920fde2f9975b671aee76edc8e0c9ab32cbee1e4e77f ] && bash ~/.cache/jack-paste-open.sh || echo "Stopped: send counsel what is printed above."
+cd ~/git/jack-guy && gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/jack/contents/c2a-3-open.sh?ref=a220e656dc619e41d107b55a4ce18a36ed008002' > ~/.cache/jack-paste-open.sh && [ "$(sha256sum < ~/.cache/jack-paste-open.sh | cut -c1-64)" = 866674ddd5e6af645469f98589ebba041ca0c682558727316677661cc0f2e0ae ] && bash ~/.cache/jack-paste-open.sh || echo "Stopped: send counsel what is printed above."
 ```
 
 It may be started before 2026-11-30T00:00:00Z: it waits for that instant itself. What it does, in order
 (ADVISER.md entries 327 to 337, and the revision for counsel's pre-read of 26 November):
 1. checks the branch at the head above, with the three hashes and the review's verdict, entering nothing; and checks
    the log: counsel's V8 on it once, no `push` after 2026-11-30T00:00:00Z, none inside C2a-prime's window;
-2. waits, with no bound of its own, until 2026-11-30T00:00:00Z has passed, the lane is quiet three rounds running,
+2. waits, with no bound of its own, but stops at once if V8's `resolves_by` passes, if the timer's two calendars
+   (`00/3:20` and `*:10`) are not both there or the timer cannot be read, until 2026-11-30T00:00:00Z has passed, the lane is quiet three rounds running,
    no `resolution` follows the last `merge` on `main`'s log, the diary's timer shows both its calendars and its next
    tick is at least *D* = 45 minutes away; and replays each new commit of `main` in every round as it waits, stopping if one does not
    pass or the replay cannot run;
@@ -78,8 +79,10 @@ It may be started before 2026-11-30T00:00:00Z: it waits for that instant itself.
    or reports it unverified (§Stop and report if);
 4. replays the commit that holds the `fix`; merges `main` into the branch with his trailer; takes the four records
    and the three hashes again at the merged head; and pushes with `--opens C2a-3`. Before the merge it brings his `main` up to `origin/main` and replays it,
-   again until `main` holds still. If the push is refused and `main` has moved, it waits again as in 2 and tries again, three attempts in all; if it is refused and `main` has not
-   moved, it stops (§Stop and report if).
+   again until `main` holds still; if that has left the timer's next tick under 25 minutes away (the push verb
+   needs about 21), it waits again as in 2. If the push is refused with the verb's words for a moved `main`, and
+   `main` has moved, it waits again as in 2 and tries again, three attempts in all; any other refusal stops it
+   (§Stop and report if).
 
 **D, as the rehearsal measured it on steel on 26 November** (`c2a-3-rehearse.sh`, `agent/pastes` `a5923224`): one
 chain commit's replay 858 s; the push verb's check (`tools/jack`, `the_check`) 1,110 s; `judge/selfcheck.py` 74 s,
