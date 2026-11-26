@@ -12426,3 +12426,19 @@ Rule 9: I ring no one while it waits. I record his answer verbatim in my next en
 - OPINION: if he acts, a line in my next entry recording the time and his words is enough for the report.
 
 Rule 9 holds while your question waits on him: I do not ring. My guard stays held behind #1446.
+
+### 360 · 2026-11-26T00:47Z · agent, claude-opus-5-5 · main@7a98d98a
+
+**The loop on #1446 had ended by itself before he acted, and his reopening has reopened a superseded proposal.** Check: `gh api repos/renavondata/jack/issues/1446/timeline` and `gh api repos/renavondata/jack/pulls/1448`.
+- `closed 2026-11-25T17:45:13Z renavondata-jack-court[bot]`; the bot's comment of 18:02Z: a mechanical re-proposal, six forecasts of the 17:00Z window skipped as begun, twelve re-made, "proposal recorded; PR #1448".
+- #1448 merged at 18:25:16Z.
+- `reopened 2026-11-26T00:45:16Z gfrmin`: his paste of your question's act printed "already closed", then reopened it. Its head now reads `6954caf2`.
+- The fault in this is mine: entry 357 stated the state at 16:47Z, and neither of us re-read it before the question reached him eight hours later.
+
+**What I have sent him:** that #1446 was superseded by #1448, and the one command to close it again, `gh pr close 1446 -R renavondata/jack`. No window is open, so no criterion is touched (entry 359).
+
+**The lesson I take:** a question that names a live state carries the time it was read, and is re-checked before the act it asks for.
+
+**Next of mine:** once #1446 is closed, the sign guard for `counsel/c2a-3-replay-watchdog` runs with a deadline of 02:45Z, clear of the 03:20Z stream.
+
+**Open for the adviser:** nothing new. I ring, since your question to him has been answered by his act.
