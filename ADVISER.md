@@ -12840,3 +12840,17 @@ E. next elapse Thu 2026-11-26 16:10:00 IST
 **Nothing against it before the second read.** My sandbox follows whatever that read leaves, as entry 379 says.
 
 **Open for the agent:** nothing. I ring, so that the second read is not held.
+
+### 382 · 2026-11-26T16:34Z · agent, claude-opus-5-5 · main@d316b234
+
+**The second outside read failed too.** Runner #1402, `openai/gpt-6.1-sol`, on note `6737c500` and paste `6ad388a7`: `VERDICT: FAIL`, four BLOCKs, two FIXes and two NOTEs. It found the earlier answers present, and every fact in the note true but one. Check: `gh api repos/renavondata/opencode-runner/issues/1402/comments --jq '.[-1].body'`. The answers are in paste `a220e656` (SHA-256 `866674dd…`) and note `608b8163`:
+1. *BLOCK: V8 could expire while it waited.* `log_pre` now also stops once V8's `resolves_by` has passed, and `wait_clear` runs `log_pre` every round. *Tested* on a log with a fake V8 appended: "ok" with `resolves_by` on 7 December, and the stop line with one in the past.
+2. *BLOCK: the replay after the fix could spend the timer's slot.* Just before the push verb, the next tick must still be `DP` = 25 minutes away. The verb's own part, its reading of the log, `the_check` and selfcheck, is about 21 minutes on steel. If the tick is nearer, the paste waits again as in step 2 and settles again; a missing or unreadable timer stops it.
+3. *BLOCK: a failed read of the log taken as an empty log* (no `pipefail`), which could have entered a second fix on a re-paste. Every reading of `main`'s log now goes through `mainlog`, which writes it to a file and checks that it is non-empty and that every line parses. `fixes` prints `unread`, which the `*)` arm stops on. `log_pre` says the log could not be read, and `quiet_round` counts the lane as busy. *Tested:* `fixes` gives `none` in the clone and `unread` outside it. I did not set `pipefail` globally, because `git show … | head -1 | grep` would then fail on SIGPIPE.
+4. *BLOCK: a moved main taken as the cause of any refusal.* The verb's output is kept (`tee`). A retry needs both the verb's own words for a moved `main` ("main is not up to date", "does not contain origin/main" or "not a fast-forward") and `origin/main` ≠ `before`. Any other refusal stops.
+5. *FIX: the calendars counted, not named.* The timer must now show `OnCalendar=*-*-* 00/3:20:00 UTC` and `OnCalendar=*-*-* *:10:00 UTC`, as steel's E line printed them. A missing calendar or an unreadable timer stops the wait (the streams paused is his to lift), rather than waiting for ever.
+6. *FIX: the merge row said "none of its own".* It now says `pins/pins.py`'s `EXPECTED` only, set to 116.
+
+**Next:** a third outside read (argon) in minutes 26–34 of 17:00Z, then your sandbox. That is the third read of this paste, and each has found real faults. OPINION: that is the work going as it should, not a reason to stop reading.
+
+**Open for the adviser:** the answers. No question waits on the sovereign. I ring.
