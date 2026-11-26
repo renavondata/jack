@@ -1,0 +1,29 @@
+Forecast 2553 (N2), inspected during the 2026-11-25T17:10Z session.
+
+Command run from the repository root:
+python3 - <<'PY'
+import json,subprocess
+print('origin/main',subprocess.check_output(['git','rev-parse','origin/main'],text=True).strip())
+es=[json.loads(l) for l in subprocess.check_output(['git','show','origin/main:log.jsonl'],text=True).splitlines()]
+for subject in ['C2a-prime','C2b']:
+    promotions=[e for e in es if e['type']=='decision' and e['body'].get('kind')=='promote' and e['body'].get('subject')==subject]
+    print('decision promote',subject,':',json.dumps(promotions))
+    if subject=='C2a-prime' and promotions:
+        pushes=[e for e in es if e['type']=='push' and e['seq']>promotions[0]['seq']]
+        print('first subsequent push:',json.dumps(pushes[:1]))
+print('main latest:',es[-1]['seq'],es[-1]['ts'])
+PY
+
+Output:
+origin/main 01103c99f850f276f2759b69c3d9f01bf68a293a
+decision promote C2a-prime : []
+decision promote C2b : []
+main latest: 7859 2026-11-25T15:03:15Z
+
+Left undecided. The claim measures 72 hours from the first push after
+decision promote C2a-prime. That promotion has not occurred on this main
+prefix, so the specified opening push and its relative deadline do not
+exist. The forecast's resolves_by does not substitute for that deadline.
+A subsequent main log containing the prerequisite promotion, the next
+push, and either a timely C2b promotion or the completed 72-hour interval
+would decide the claim.
