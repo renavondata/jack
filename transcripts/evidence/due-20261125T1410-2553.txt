@@ -1,0 +1,8 @@
+Forecast 2553 (N2), left undecided.
+Command: git show origin/main:log.jsonl, parsed as JSON lines; select decision entries with kind=promote and subject=C2a-prime or C2b, then seek first push after C2a-prime promotion.
+origin/main: 9f665053d5d671be46da91e452a5cfe8cfb740f0
+observed_at: 2026-11-25T14:12:02Z
+C2a-prime promotions: []
+C2b promotions: []
+last entry: 7825 2026-11-25T13:37:10Z
+No decision promote C2a-prime exists, so the claim-defined opening push of C2b and its relative 72-hour deadline are not yet defined. The forecast's resolves_by is not its claim's deadline. A qualifying promotion and opening push, followed by promotion C2b within 72 hours or expiration of those 72 hours, would decide it.

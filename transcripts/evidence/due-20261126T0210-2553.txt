@@ -1,0 +1,6 @@
+$ git rev-parse origin/main
+335628d9c21e2b9e2e1c17ccc31da3fbc013196d
+$ git show origin/main:log.jsonl | python3 [select decision kind=promote subject in C2a-prime,C2b]
+[]
+Latest main entry: {"seq": 7987, "ts": "2026-11-26T01:37:10Z", "type": "merge"}
+No decision promote C2a-prime exists in this main log; therefore the claim-defined first subsequent push, and C2b opening plus 72-hour cutoff, are not defined. The forecast resolves_by has passed but does not supply the missing event-relative cutoff. Left undecided.
