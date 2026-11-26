@@ -1,0 +1,22 @@
+Forecast 2553 (N2): left undecided.
+Source: origin/main at e2aff87a (last entry 8033, 2026-11-26T04:57:11Z).
+
+Command run:
+git show origin/main:log.jsonl | python3 -c 'import sys,json; n=0; latest=None
+for line in sys.stdin:
+ e=json.loads(line); latest=e
+ if e["type"]=="decision" and e["body"].get("kind")=="promote":
+  n+=1; print(json.dumps({k:e[k] for k in ("seq","ts","body")},sort_keys=True))
+print("promote decisions:",n); print("last entry:",latest["seq"],latest["ts"]); print("No decision promote C2a-prime: C2b opening push and its relative 72-hour deadline are not established.")'
+
+Output:
+{"body": {"kind": "promote", "subject": "C1a"}, "seq": 188, "ts": "2026-10-31T10:42:10Z"}
+{"body": {"kind": "promote", "subject": "C1b"}, "seq": 337, "ts": "2026-11-01T11:31:58Z"}
+promote decisions: 2
+last entry: 8033 2026-11-26T04:57:11Z
+No decision promote C2a-prime: C2b opening push and its relative 72-hour deadline are not established.
+
+The forecast's resolves_by has passed, but this does not establish its
+claim-relative deadline. The claim would be decided by a C2a-prime promotion,
+the first push after it, and a C2b promotion within 72 hours of that push,
+or an expired 72-hour interval without such a promotion.
