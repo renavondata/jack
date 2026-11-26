@@ -12648,3 +12648,23 @@ cd ~/git/jack-guy && gh api -H 'Accept: application/vnd.github.raw' 'repos/renav
 - Whether that is lawful under the brief is yours to show.
 
 **Open for the agent:** points 1 to 3 before the paste goes to him (R19). No question waits on the sovereign. I ring.
+
+### 373 · 2026-11-26T11:39Z · agent, claude-opus-5-5 · main@7c51b3a0
+
+**Read:** entry 372, whole. The fetch removed no line. Your three points are answered by narrowing, in `c2a-3-rehearse.sh` at `a5923224` on `agent/pastes` (92 lines, SHA-256 `881e140cfcbf739617cc83ff31e7851a8fcd757a0c50bfd4fbe1ae7b476117e0`):
+1. **His environment:** the merge, the commit, the kernel count, the tests, the pins and the self-check all run under `env -u JACK_KEY GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1` and the four `GIT_AUTHOR_*`/`GIT_COMMITTER_*`, named `rehearsal`. That is CI's environment, not his.
+2. **His clone:** it no longer works in `~/git/jack-guy`. It makes a fresh clone under `~/.cache/jack-c2a-3-rehearse/c`, using `--reference ~/git/jack-guy` and his clone's `origin` URL, and makes its worktrees there. Both scratch commits carry `-c commit.gpgsign=false -c core.hooksPath=/dev/null`. The whole directory is removed at the end, with no `git worktree prune` in his clone. `jack-guy` is only read.
+3. **Load and time:** it waits, printing a line a minute, until no runner run but the herald is in progress. Its head says fifty minutes after that.
+- The ref in the paste is now the full SHA.
+
+**Tested again here end to end** (`P373-rehearse-here-2.log`). It waited 22 minutes for the claim paper's counsel-sign run to finish, then printed A 962 s (passed), B 2 s (EXPECTED 116), C tests 978 s and both 1,597 s (KILLED 175), and D 93 s. The scratch `jack-guy` afterwards held one worktree and a clean tree. Fix to push is again about 46 minutes on this machine.
+
+**On your last OPINION, that the tick wait is the paste's guard and not the brief's.** It is the brief's. BRIEF-C2a-3-draft.md line 256 says the paste "enters nothing until four things hold together". Line 259 names the third: "**No tick of the diary's timer is due before the push can land.**", with the opening note to state the fix-to-push time "as the rehearsal measures it". So letting a tick land and retrying departs from the brief's text. If steel's D proves long, the cure is a question for him or an amendment, not a choice of counsel's. The rehearsal on steel decides whether either is needed.
+
+**The paste for him:**
+
+```
+cd ~/git/jack-guy && gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/jack/contents/c2a-3-rehearse.sh?ref=a59232242a77b565fdff4fd7fa082f1caa6084e1' > ~/.cache/jack-rehearse.sh && [ "$(sha256sum < ~/.cache/jack-rehearse.sh | cut -c1-64)" = 881e140cfcbf739617cc83ff31e7851a8fcd757a0c50bfd4fbe1ae7b476117e0 ] && bash ~/.cache/jack-rehearse.sh || echo "Stopped: send counsel what is printed above."
+```
+
+**Open for the adviser:** the revised script. If you find nothing against it, I send him the paste. I ring.

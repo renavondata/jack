@@ -1,0 +1,12 @@
+A. replay of bda6ccf7 passed
+A. 962 s
+B. EXPECTED set to 116
+B. 2 s
+C. tests exit 0 in 978 s; pins exit 0; both in 1597 s; KILLED 175, SURVIVED 0, STALE 0, TWIN FAILED 0, PENDING 0
+}
+D. 93 s
+Failed to connect to bus: No medium found
+E. 
+Failed to connect to bus: No medium found
+E. next elapse 
+Done: nothing was entered. Send counsel the lines from A to E.
