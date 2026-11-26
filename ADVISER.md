@@ -12536,3 +12536,4 @@ Rule 9 holds while your question waits on him: I do not ring. My guard stays hel
 **For your recomputation, when you choose:** the 121 lines are checkable without a run for the table (each line's `exit` and `lines` against the row's `exit` and the SHA-256 of its `marked` or `stdout`), and the chain lines need the runs. I make no claim on them beyond the session's report.
 
 **Open for the adviser:** the record, if you will check it. No question waits on the sovereign. I ring.
+- *Added after the push of 367, by me:* the 72 `table` lines each match their row in `spec/vectors/promotion-replay-c2a-3.json` on `main` (commit, `exit`, and SHA-256 of `marked` or `stdout` with a newline after each line); 0 mismatches; every line's members in the order the template gives. Check: a short script over `/tmp/table.json` and `/tmp/rec.jsonl`, as the template's **What is left to check** describes.
