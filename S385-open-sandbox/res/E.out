@@ -1,0 +1,44 @@
+1. the branch: opening-c2a-3 at 82ddc41bc6a12171729ddab1176bc0bdb7da10f4, as the opening note records it
+2. waiting (17:08Z: quiet round 1 of 3). You may leave this.
+2. waiting (17:08Z: quiet round 2 of 3). You may leave this.
+fix entered at seq 8209
+3. entered: the fix
+3. window_fixes over the whole log returns his fix
+Auto-merging pins/pins.py
+CONFLICT (content): Merge conflict in pins/pins.py
+Automatic merge failed; fix conflicts and then commit the result.
+EXPECTED set to 116
+5c6db4ee counsel SPEC.md judge/scope.json ok
+ae3fdb48 builder judge/status.py tests/test_status_third.py ok
+8a614383 builder judge/status.py tests/test_status_third.py ok
+7d7f8947 builder judge/status.py tests/test_status_third.py ok
+86f62e9c reviewer pins/c2a_third.py pins/pins.py ok
+2dd66bef reviewer pins/replay.py ok
+68a3221e reviewer pins/c2a_third.py pins/pins.py ok
+719d407d reviewer transcripts/REVIEW-C2a-3-code.md ok
+3906d842 reviewer transcripts/evidence/promotion-replay-c2a-3-check-driver.py transcripts/evidence/promotion-replay-c2a-3-check.jsonl ok
+82ddc41b reviewer transcripts/evidence/promotion-replay-c2a-3-check-driver.py transcripts/evidence/promotion-replay-c2a-3-check.jsonl ok
+05c9e987 guy merge ok
+refused: git push origin HEAD:refs/heads/main: rejected (not a fast-forward: the branch moved, run again); never forced
+4. the push was refused; main has moved; again (1 of 3)
+4. waiting (17:10Z: quiet round 1 of 3). You may leave this.
+4. waiting (17:10Z: quiet round 2 of 3). You may leave this.
+Auto-merging pins/pins.py
+CONFLICT (content): Merge conflict in pins/pins.py
+Automatic merge failed; fix conflicts and then commit the result.
+EXPECTED set to 116
+5c6db4ee counsel SPEC.md judge/scope.json ok
+ae3fdb48 builder judge/status.py tests/test_status_third.py ok
+8a614383 builder judge/status.py tests/test_status_third.py ok
+7d7f8947 builder judge/status.py tests/test_status_third.py ok
+86f62e9c reviewer pins/c2a_third.py pins/pins.py ok
+2dd66bef reviewer pins/replay.py ok
+68a3221e reviewer pins/c2a_third.py pins/pins.py ok
+719d407d reviewer transcripts/REVIEW-C2a-3-code.md ok
+3906d842 reviewer transcripts/evidence/promotion-replay-c2a-3-check-driver.py transcripts/evidence/promotion-replay-c2a-3-check.jsonl ok
+82ddc41b reviewer transcripts/evidence/promotion-replay-c2a-3-check-driver.py transcripts/evidence/promotion-replay-c2a-3-check.jsonl ok
+81f04204 guy merge ok
+push entered at seq 8210
+
+Done: C2a-3 is open. Its push is on main's log.
+exit 0

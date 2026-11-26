@@ -1,0 +1,7 @@
+#!/bin/bash
+# SANDBOX STUB of gh
+case "$*" in
+  "api user --jq .login") echo gfrmin;;
+  *pulls\?state=open*) n=$(cat "$SB_CTL/lanebusy" 2>/dev/null || echo 0); if [ "$n" -gt 0 ]; then echo $((n-1)) > "$SB_CTL/lanebusy"; echo 1; else echo 0; fi;;
+  *) echo 0;;
+esac

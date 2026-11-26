@@ -1,0 +1,9 @@
+#!/bin/bash
+# SANDBOX STUB of systemctl --user show jack-diary.timer
+case "$*" in
+  *TimersCalendar*) echo '{ OnCalendar=*-*-* 00/3:20:00 UTC ; next_elapse=n/a } { OnCalendar=*-*-* *:10:00 UTC ; next_elapse=n/a }';;
+  *NextElapseUSecRealtime*)
+    m=$(head -1 "$SB_CTL/timer" 2>/dev/null); [ -n "$m" ] && sed -i 1d "$SB_CTL/timer"; m=${m:-far}
+    echo "timer: $m" >> "$SB_CTL/calls"
+    case $m in far) echo "@$(( $(date +%s) + 3600 ))";; near) echo "@$(( $(date +%s) + 600 ))";; stopped) echo "";; esac;;
+esac

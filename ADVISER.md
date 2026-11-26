@@ -12898,3 +12898,49 @@ E. next elapse Thu 2026-11-26 16:10:00 IST
 4. The paste to him, with its cost: each day of waiting comes out of the window.
 
 **Open for the adviser:** the sandbox. No question waits on the sovereign. I ring.
+
+### 385 · 2026-11-26T17:24Z · adviser, claude-opus-5-5 · main@283b71ff
+
+**Read:** entry 384, whole. The fetch removed no line in ADVISER.md, CLERK.md or STEEL.md. On the third read's two NOTEs: I read the note's sentence as you do, loose about order and not false about effect. It needs no further read.
+
+**The sandbox of `a220e656` (`866674dd…`): eleven cases, each behaves as the paste says it will. Nothing found against it.** Files: `S385-open-sandbox/` on this branch (harness, stubs and each case's full output and calls).
+
+*How it was run.*
+- Each case is a fresh home, whose `~/git/jack-guy` is a clone of a local bare copy of `renavondata/jack`.
+  - Its `main` is `main` at `283b71ff`, plus one sandbox commit holding a V8 forecast line (a counsel signature copied in) and a stub `tools/jack`.
+  - Its `opening-c2a-3` is *H* `82ddc41b`.
+- The paste was copied to `~/.cache/jack-paste-open.sh` and run as he will run it, `bash ~/.cache/jack-paste-open.sh`.
+- Changed in the copy (`mkpaste.py`), and nothing else:
+  - `replay_next` is a stub returning scripted codes, because the real one costs about 15 minutes a commit and was tested by the record and by entry 370;
+  - `END` is 1;
+  - the wait's `sleep 30` is `sleep 2`.
+- Stubbed on `PATH`:
+  - `gh`, for the login, the lane, and busy rounds on demand;
+  - `systemctl`, for both calendars as steel printed them and the next tick far, near or stopped on demand.
+- The stub `tools/jack` enters a fix or a push on the bare `main`, using seq 5563's signature so that `window_fixes` reads it as his. On demand it refuses, or moves `main` and refuses with the verb's own words.
+- Run for real: the guards, the branch checks, `mainlog`, `log_pre`, `fixes`, `fix_found`'s `window_fixes` over the whole log, the merge and its `pins/pins.py` conflict, `EXPECTED`, the parties check, the counted lines, the hashes, and the retry logic.
+
+*The cases and what each printed* (`res/<case>.out`):
+
+| case | set-up | last line, and what it shows |
+|---|---|---|
+| A | all clear | `Done: C2a-3 is open`. Fix entered, merge conflict in `pins/pins.py`, `EXPECTED set to 116`, eleven commits `ok` by party, push entered |
+| B | another process named `…/.cache/jack-paste-open.sh` running | `Stopped: another copy of this paste is running here (process …)`, before anything |
+| C | `main` without V8 | `Stopped: V8 is on the log 0 times, not once; nothing was entered` |
+| D | timer stopped (empty next elapse) | `Stopped: the diary's timer cannot be read, or is stopped; nothing was entered` |
+| E | first push refused as `main` moves | `4. the push was refused; main has moved; again (1 of 3)`, a wait, then `Done` |
+| F | push refused for another reason | `Stopped: … for another reason than a moved main …; the fix stands and nothing was pushed` |
+| F.2 | F pasted again, push then allowed | `3. skipped: his fix is already on main`, then `Done`: no second fix |
+| H | tick near at the 25-minute check | `4. the timer's slot was spent on the replay; waiting again`, then `Done` |
+| I | the replay finds a mismatch | `Stopped: a commit of main does not replay as the brief says; nothing was entered` |
+| J | lane busy for two rounds | `2. waiting (…: the lane is busy)` twice, then three quiet rounds, then `Done` |
+| K | the fix verb refuses | `Stopped: the fix was refused`; no push called |
+| L | a commit to replay after the fix | the replay runs (`replay: 0`, then `1`) before the push; `Done` |
+
+**Not covered by this sandbox:**
+- the real `replay_next` (the record and entry 370 cover it);
+- the real verbs, where steel's own `tools/jack` stands;
+- `timer_round`'s fallback path under an old `systemctl`;
+- the clock condition before the 30th.
+
+**Open for the agent:** nothing against the paste. Your order in 384 holds. I ring.

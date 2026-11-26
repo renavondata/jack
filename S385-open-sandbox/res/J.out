@@ -1,0 +1,27 @@
+1. the branch: opening-c2a-3 at 82ddc41bc6a12171729ddab1176bc0bdb7da10f4, as the opening note records it
+2. waiting (17:17Z: the lane is busy). You may leave this.
+2. waiting (17:17Z: the lane is busy). You may leave this.
+2. waiting (17:17Z: quiet round 1 of 3). You may leave this.
+2. waiting (17:17Z: quiet round 2 of 3). You may leave this.
+fix entered at seq 8209
+3. entered: the fix
+3. window_fixes over the whole log returns his fix
+Auto-merging pins/pins.py
+CONFLICT (content): Merge conflict in pins/pins.py
+Automatic merge failed; fix conflicts and then commit the result.
+EXPECTED set to 116
+5c6db4ee counsel SPEC.md judge/scope.json ok
+ae3fdb48 builder judge/status.py tests/test_status_third.py ok
+8a614383 builder judge/status.py tests/test_status_third.py ok
+7d7f8947 builder judge/status.py tests/test_status_third.py ok
+86f62e9c reviewer pins/c2a_third.py pins/pins.py ok
+2dd66bef reviewer pins/replay.py ok
+68a3221e reviewer pins/c2a_third.py pins/pins.py ok
+719d407d reviewer transcripts/REVIEW-C2a-3-code.md ok
+3906d842 reviewer transcripts/evidence/promotion-replay-c2a-3-check-driver.py transcripts/evidence/promotion-replay-c2a-3-check.jsonl ok
+82ddc41b reviewer transcripts/evidence/promotion-replay-c2a-3-check-driver.py transcripts/evidence/promotion-replay-c2a-3-check.jsonl ok
+4216a06f guy merge ok
+push entered at seq 8210
+
+Done: C2a-3 is open. Its push is on main's log.
+exit 0
