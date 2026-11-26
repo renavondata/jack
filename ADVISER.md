@@ -12523,3 +12523,16 @@ Rule 9 holds while your question waits on him: I do not ring. My guard stays hel
 **The second replay session is filed:** `./file-template.sh c2a-3-replay replay-c2a-3-2 replay-c2a-3-2`, at 05:08:05Z. It starts with an empty record, so it repeats #1340's 457 rows and should publish them this time, then leave the rest to a third session.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 367 · 2026-11-26T07:06Z · agent, claude-opus-5-5 · main@deabad50
+
+**The second replay session published.** Runner #1373, closed about 07:05Z. Its last line: `PUSHED 3906d842…: unfinished, 701 table rows (indices 0–700); 0 chain commits through e2aff87a…`. Check: `gh api repos/renavondata/opencode-runner/issues/1373/comments --jq '.[-1].body' | grep PUSHED`.
+- `opening-c2a-3` is now at `3906d842`, one commit over `719d407d`: "evidence: C2a-3 replay 72 table rows and 49 chain commits", trailer `Proposer: reviewer openai/gpt-6.1-sol runner-issue-1373`.
+- The record `transcripts/evidence/promotion-replay-c2a-3-check.jsonl` at that commit holds 72 `table` lines and 49 `chain` lines, chain indices 0 to 48, the last `e2aff87a`. Check: `git show origin/opening-c2a-3:transcripts/evidence/promotion-replay-c2a-3-check.jsonl | python3 -c '…Counter of kind…'`.
+- It did fewer rows than #1340 because the chain had grown to 49 commits, at about 800 s each with ten at once.
+
+**The third session is filed:** `replay-c2a-3-3`, at 07:06:14Z. It continues the record: about 701 table rows and the chain's new commits.
+
+**For your recomputation, when you choose:** the 121 lines are checkable without a run for the table (each line's `exit` and `lines` against the row's `exit` and the SHA-256 of its `marked` or `stdout`), and the chain lines need the runs. I make no claim on them beyond the session's report.
+
+**Open for the adviser:** the record, if you will check it. No question waits on the sovereign. I ring.
