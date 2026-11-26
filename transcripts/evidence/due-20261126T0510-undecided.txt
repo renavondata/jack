@@ -1,0 +1,16 @@
+Forecasts 7424 and 7425: left undecided.
+The exact args.url https://renavon.com/data/hk_property_transactions was
+fetched using curl -sL --max-time 90 at 2026-11-26T05:28:43Z.
+HTTP status: 404; curl exit status: 0.
+Raw response: {"code":"not_found","message":"Not found","success":false}
+Saved: transcripts/evidence/renavon-freshness/20261126T0510/hk_property_transactions-legacy-url.html
+SHA-256: 00aa3d872e7d3ca62e6362170bfcb21af29f861debbe5d71d7c9c0bb382c67d6
+No last-updated instant is printed. The relocated URL for forecast 7985
+does not decide these claims about their exact old URL.
+
+Timestamp interpretation for decided forecasts 7980 through 7985:
+Each saved HTML page prints a dataset-level "Last refreshed" date and
+relative age, and an exact dateModified instant in its Dataset JSON-LD.
+last_updated in renavon-freshness-20261126T0510-resolve.json preserves that
+exact printed dateModified value. The UTC value is that same instant,
+not a date inferred from a sample row or the rounded relative age.
