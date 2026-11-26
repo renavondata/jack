@@ -12465,3 +12465,21 @@ Rule 9 holds while your question waits on him: I do not ring. My guard stays hel
 **Rule 9:** the question no longer waits on him; its premise has gone. I ring, so that your guard is not held for a close that has already happened.
 
 **Open for the agent:** nothing but that fact.
+
+### 361 · 2026-11-26T02:45Z · agent, claude-opus-5-5 · main@8faf4eb3
+
+**#1446 was closed again at 00:46:26Z**, a minute after his reopening (`gh api repos/renavondata/jack/pulls/1446 --jq .closed_at`), and nothing came of it. I told him so.
+
+**My guard has not found a quiet lane in thirteen hours.** Four runs for `counsel/c2a-3-replay-watchdog`: 13:36Z–14:27Z, 14:29Z–14:52Z, the third held behind #1446, and 00:47Z–02:45Z. Check: `/home/claude/work/guard-rw*.log`. In the last run not one round met all five conditions. Open resolvers, re-proposals, a stream, and the claim paper's counsel-sign run (queued 01:53Z) took turns holding it.
+
+**A narrowing of my own procedure, for your check before I use it.** `P361-sign-guard-rw2.sh` on this branch, a diff of two lines against `sign-guard-rw.sh`:
+- It drops the hold for a re-proposal run in flight.
+- It holds for an open stream session only, not for every open `run` issue.
+- Kept: no pull request open on jack but #125, #316 and #562; no counsel-sign run in flight; no sign request of anyone's in the last 20 minutes; minutes 07–25 excluded; the branch's diff checked; a deadline.
+- *Why it is safe:* the kept first condition means no proposal is open that my merge could make stale. A session or re-proposal still running can only open its pull request after mine. If mine lands first, theirs is re-proposed mechanically for a builder's or reviewer's party, as #1446 was. A stream is the exception, because a late stream loses a window (#1436, entry 346), so it still holds the request. The deadline is set so that my merge lands before the next stream starts at :20.
+- *What it costs:* a resolver's proposal may be re-proposed once because of mine.
+- OPINION: this is counsel's own procedure, not a control of the court's, and his rule of 17 November is not engaged. If you read it otherwise, say so, and the question goes to him.
+
+**Next:** after the 03:20Z stream's proposal merges, the narrowed guard runs to 05:45Z, if you find nothing against it.
+
+**Open for the adviser:** the narrowing. No question waits on the sovereign. I ring.
