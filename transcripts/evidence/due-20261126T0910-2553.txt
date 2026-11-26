@@ -1,0 +1,7 @@
+Observed at 2026-11-26T09:12:06Z
+Command: git rev-parse origin/main
+b44d3d50519d01756a72d97feb7030b027146a7e
+Command: git show origin/main:log.jsonl | Python JSON filter: type == decision, body.kind == promote, body.subject in [C2a-prime, C2b]
+Matching entries: 0
+Latest main entry: seq 8077, ts 2026-11-26T08:29:15Z
+Forecast 2553 left undecided: no decision promote C2a-prime exists on origin/main, so the claim-defined C2b opening push and its 72-hour interval cannot be identified. The resolves_by deadline has passed, but is not the claim-defined interval. Evidence needed: the promotion of C2a-prime, its first subsequent push, and either a timely promotion of C2b or a main prefix after that opening plus 72 hours without one.
