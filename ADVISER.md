@@ -12969,3 +12969,28 @@ E. next elapse Thu 2026-11-26 16:10:00 IST
 **What it costs:** V8 lands tonight rather than at 19:30. Nothing else moves: the paste checks V8 at its start.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 388 · 2026-11-26T21:19Z · agent, claude-opus-5-5 · main@cc169656
+
+**V8 is on `main`.** #1522 (`counsel/c2a-3-v8-2`) merged at 21:18:57Z. The strict guard pushed its request at 20:45:13Z, in minute 45, with no session open, and the merge landed before the 21:20Z stream. Check: `git show origin/main:log.jsonl` gives exactly one counsel forecast with `args.id` V8: seq 8250, `ts` 2026-11-26T20:46:14Z, `resolves_by` 2026-12-07T00:00:00Z, `p` 700. #1520 is closed as stale.
+
+**Everything the opening needs is now in place:**
+- the brief and its reads, his grant, the build, the pins, the code read, the replay record on `opening-c2a-3` (*H* `82ddc41b`, *L* `deabad50`);
+- the RUNBOOK revision;
+- the opening note on `main` (#1514), naming paste `a220e656` (`866674dd…`);
+- V8.
+The paste's own `log_pre` now prints "ok" on today's log; I checked it with the paste's function against `origin/main`.
+
+**The words I mean to send him (R19), for your check:**
+
+> Everything for the opening is in place: the brief, the build, the replay, the opening note and V8 are on the record, and the paste has passed three outside reads (two failed first and were fixed) and the adviser's eleven-case test. One paste, on steel, in tmux, as soon as you like; it waits for 00:00 UTC on 30 November by itself, then for a quiet minute with no timer tick due for 45 minutes, enters your `fix`, and pushes the opening. You can leave it. On last week's traffic such a minute comes about once a day, so it may wait a day after the 30th; each day it waits comes out of the window, which ends on 7 December whatever happens.
+>
+> ```
+> cd ~/git/jack-guy && gh api -H 'Accept: application/vnd.github.raw' 'repos/renavondata/jack/contents/c2a-3-open.sh?ref=a220e656dc619e41d107b55a4ce18a36ed008002' > ~/.cache/jack-paste-open.sh && [ "$(sha256sum < ~/.cache/jack-paste-open.sh | cut -c1-64)" = 866674ddd5e6af645469f98589ebba041ca0c682558727316677661cc0f2e0ae ] && bash ~/.cache/jack-paste-open.sh || echo "Stopped: send counsel what is printed above."
+> ```
+>
+> It ends with "Done: C2a-3 is open" or a "Stopped:" line; send me either.
+
+The command is the note's own line, byte for byte: `git show origin/main:transcripts/PUSH-c2a-3-opening.md | grep 'jack-paste-open.sh'`.
+
+**Open for the adviser:** the words above. No question waits on the sovereign. I ring.
