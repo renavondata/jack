@@ -16,7 +16,7 @@ SP=c4a5b44b8465f4be9cd4a5bbeb294cfd5c56a7397319e7f1c167853d7fd628a7  # SPEC.md a
 T=96658263399ec7eeb815fc07210ce09b8e5ca3a4                           # the table's T
 L=deabad5082b88e1332a9ed56d5ca8fcae06cadb5   # the last chain commit the reviewer's record holds
 END=1795996800             # 2026-11-30T00:00:00Z
-D=45                       # minutes the diary's next tick must lie ahead: about 39 measured on steel (opening note, part 1)
+D=45                       # minutes the diary's next tick must lie ahead: about 39 measured on steel (opening note, part 2)
 TRIES=3                    # attempts at the push, each after main moved, before it stops
 FIX="C2a-prime: criterion 3 read unmet from 2026-11-17T13:32:51Z to its end — its test walked every ancestor of main, and a branch cut before the opening was merged after it (jack #1071); for C2a-3 the test reads main's own commits"
 NB=opening-c2a-3; PB=opening-c2a-3-push
@@ -140,10 +140,15 @@ timer_round() {  # 0: the next tick is far enough; 1: it is too near; 2: the tim
   local cal next
   cal=$(systemctl --user show jack-diary.timer -p TimersCalendar --value) || return 2
   [ "$(printf '%s\n' "$cal" | grep -o 'OnCalendar=' | wc -l)" -ge 2 ] || return 3   # one line or one per calendar
-  next=$(systemctl --user show jack-diary.timer -p NextElapseUSecRealtime --value --timestamp=unix 2> /dev/null)
-  next=${next#@}
-  case "$next" in ''|*[!0-9]*)   # a systemd without --timestamp: read the time in UTC, which date parses
+  if next=$(systemctl --user show jack-diary.timer -p NextElapseUSecRealtime --value --timestamp=unix 2> /dev/null); then
+    next=${next#@}
+    [ -n "$next" ] || return 2                       # an empty next elapse: the timer is stopped
+  else
+    next=""                                          # a systemd without --timestamp
+  fi
+  case "$next" in ''|*[!0-9]*)                       # read the time in UTC, which date parses
     next=$(TZ=UTC systemctl --user show jack-diary.timer -p NextElapseUSecRealtime --value) || return 2
+    case "$next" in ''|n/a) return 2;; esac
     next=$(TZ=UTC date -d "$next" +%s 2> /dev/null) || return 2;;
   esac
   [ "$next" -ge $(( $(date +%s) + D * 60 )) ]
@@ -152,15 +157,13 @@ timer_round() {  # 0: the next tick is far enough; 1: it is too near; 2: the tim
 # 2. The wait, replaying as it waits. It has no bound of its own: the brief's step 2 has it wait, and not stop, while
 # what it waits for can still come, and from 30 November the date, the lane and a gap in the timer always can.
 wait_clear() {  # $1: the step's number, for its lines; $2: what has been entered, for a stop
-  local q=0 caught=0 rc
+  local q=0 caught rc
   while :; do
-    if [ "$caught" = 0 ]; then
-      replay_next; rc=$?
-      [ "$rc" = 3 ] && die "a commit of main does not replay as the brief says; $2"
-      [ "$rc" = 4 ] && die "the replay could not run; $2"
-      [ "$rc" = 1 ] && caught=1
-      [ "$rc" = 2 ] && echo "$1. could not fetch main for the replay; trying again"
-    fi
+    replay_next; rc=$?              # every round: a commit that lands while it waits is replayed as it waits
+    [ "$rc" = 3 ] && die "a commit of main does not replay as the brief says; $2"
+    [ "$rc" = 4 ] && die "the replay could not run; $2"
+    caught=0; [ "$rc" = 1 ] && caught=1
+    [ "$rc" = 2 ] && echo "$1. could not fetch main for the replay; trying again"
     why=""
     if [ "$caught" != 1 ]; then why="replaying main"
     elif [ "$(date +%s)" -le "$END" ]; then why="before 2026-11-30T00:00Z"
@@ -172,13 +175,7 @@ wait_clear() {  # $1: the step's number, for its lines; $2: what has been entere
     esac
     fi
     if [ -z "$why" ]; then q=$((q+1)); else q=0; fi
-    if [ "$q" -ge 3 ]; then
-      replay_next; rc=$?             # main may have moved during the rounds: catch up before going on
-      [ "$rc" = 3 ] && die "a commit of main does not replay as the brief says; $2"
-      [ "$rc" = 4 ] && die "the replay could not run; $2"
-      [ "$rc" = 1 ] && return 0
-      q=0; caught=0
-    fi
+    [ "$q" -ge 3 ] && return 0        # each of the three rounds found the replay caught up
     echo "$1. waiting ($(date -u +%H:%MZ): ${why:-quiet round $q of 3}). You may leave this."
     sleep 30
   done
@@ -224,6 +221,7 @@ case "$(fixes)" in
         git pull -q --ff-only || die "main does not fast-forward after the fix"
         [ "$(fixes)" = ours ] || die "the fix is not on main as entered"
         echo "3. entered: the fix";;
+  *) die "the log's fixes could not be read; nothing was entered";;
 esac
 r=$(fix_found) || die "window_fixes could not run; the fix stands and nothing was pushed"
 [ "$r" = ok ] || die "$r: the question goes to him (BRIEF-C2a-3, Stop and report if); the fix stands and nothing was pushed"
@@ -232,15 +230,18 @@ echo "3. window_fixes over the whole log returns his fix"
 # 4. Replay what is left, merge, test, push; again if main moves, up to TRIES times.
 tries=0
 while :; do
-  if [ "$tries" -gt 0 ]; then
-    wait_clear 4 "the fix stands and nothing was pushed"      # a retry waits for the lane and the timer, as the first push did
-  else
+  [ "$tries" -gt 0 ] && wait_clear 4 "the fix stands and nothing was pushed"   # a retry waits for the lane and the timer, as the first push did
+  # His main brought up to origin/main, and every commit on it replayed; again if main moved meanwhile, so that the
+  # merge takes only replayed commits and the verb finds HEAD equal to origin/main.
+  while :; do
+    git pull -q --ff-only || die "main does not fast-forward; the fix stands and nothing was pushed"
     while :; do replay_next; rc=$?; [ "$rc" = 1 ] && break; [ "$rc" = 3 ] && die "a commit of main does not replay after the fix; the fix stands and nothing was pushed"; [ "$rc" = 4 ] && die "the replay could not run after the fix; the fix stands and nothing was pushed"; [ "$rc" = 2 ] && sleep 30; done
-  fi
-  git fetch -q origin main || die "cannot fetch main"
+    git fetch -q origin main || die "cannot fetch main; the fix stands and nothing was pushed"
+    [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ] && break
+  done
   rm -rf "$WT"; git worktree prune; git branch -q -D "$PB" 2>/dev/null
-  git worktree add -q -B "$PB" "$WT" "$H" || die "cannot make the push's worktree"
-  if ! git -C "$WT" merge -q --no-ff origin/main -m "Merge main into $NB for C2a-3's opening" -m "Proposer: guy guy-master"; then
+  git worktree add -q -B "$PB" "$WT" "$H" || die "cannot make the push's worktree; the fix stands and nothing was pushed"
+  if ! git -C "$WT" merge -q --no-ff "$(git rev-parse HEAD)" -m "Merge main into $NB for C2a-3's opening" -m "Proposer: guy guy-master"; then
     [ "$(git -C "$WT" diff --name-only --diff-filter=U)" = pins/pins.py ] || die "the merge conflicts beyond pins/pins.py; the fix stands and nothing was pushed"
     python3 - "$WT" <<'PY' || die "the conflict in pins/pins.py is not the EXPECTED line alone; the fix stands and nothing was pushed"
 import ast, re, sys
@@ -288,12 +289,11 @@ for c in g('rev-list', '--reverse', 'origin/main..HEAD').split():
         sys.exit(1)
 PARTIES
   [ "$(log_pre)" = ok ] || die "$(log_pre); the fix stands and nothing was pushed"
-  before=$(git rev-parse origin/main)
+  before=$(git rev-parse HEAD)      # his main, which the merge took and the verb compares with origin/main
   if tools/jack push "$PB" --opens C2a-3 --review "$WT/transcripts/REVIEW-C2a-3-code.md"; then break; fi
   git fetch -q origin main || die "cannot fetch main after a refused push; the fix stands and nothing was pushed"
   [ "$(git rev-parse origin/main)" != "$before" ] || die "the push was refused and main has not moved: a refusal for another reason (BRIEF-C2a-3, Stop and report if); the fix stands and nothing was pushed"
   tries=$((tries+1)); [ "$tries" -ge "$TRIES" ] && die "the push was refused $TRIES times as main moved; the fix stands and nothing was pushed"
-  git pull -q --ff-only || die "main does not fast-forward after a refused push"
   echo "4. the push was refused; main has moved; again ($tries of $TRIES)"
 done
 git pull -q --ff-only
