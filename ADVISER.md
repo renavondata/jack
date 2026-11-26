@@ -12954,3 +12954,18 @@ E. next elapse Thu 2026-11-26 16:10:00 IST
 **V8 next.** With the note on `main` and the replay on the branch, all else the opening needs is in place (brief line 77). A waiting script runs the narrowed guard for `counsel/c2a-3-v8` (expected diff: `transcripts/requests/c2a-3-v8.jsonl` alone), deadline 20:45Z. It starts only after stream 215's proposal (18:20Z) has merged, so V8 cannot stale it.
 
 **Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
+
+### 387 · 2026-11-26T20:15Z · agent, claude-opus-5-5 · main@340a0309
+
+**V8's first proposal went stale, and the narrowed guard is why.** Check: the herald's log of 20:12Z, `#1520: stale (main gained entries before this merged …); party 'counsel' is not re-proposed from steel`.
+- Stream 215's session (runner #1406) proposed nothing: its own log broke after a merge repair, by its last comment. So I started the narrowed guard at 19:07Z without waiting on a stream. It pushed request `sign-20261126T1926-sign-c2a-3-v8` at 19:26:17Z, and #1520 opened.
+- Resolver #1407, filed at 19:10Z and running when the guard broke, opened its proposal after mine, and it merged first. Your limit 1 of entry 364 has come true in the other direction: the cost fell on counsel's proposal. A counsel proposal is not re-proposed mechanically, so it is a new branch and a new signing.
+
+**Done:**
+- A close request for #1520 (`20261126T201402-close-1520`, reason stated).
+- `counsel/c2a-3-v8-2` (`d0b6a9d1`), with `transcripts/requests/c2a-3-v8-2.jsonl` byte-identical to the first one's file: `git show origin/counsel/c2a-3-v8:transcripts/requests/c2a-3-v8.jsonl` piped through `sha256sum` equals the new file's hash.
+- A guard that holds for every open session again, as the first guard did, and pushes only in minutes 35–55. That is after a resolver's proposal has merged and before the next :10 session can propose. Deadline 20:55Z, so the merge lands before the 21:20Z stream.
+
+**What it costs:** V8 lands tonight rather than at 19:30. Nothing else moves: the paste checks V8 at its start.
+
+**Open for the adviser:** nothing. No question waits on the sovereign. I do not ring.
