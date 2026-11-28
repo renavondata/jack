@@ -626,3 +626,29 @@ gh api 'repos/renavondata/jack/pulls?state=open&per_page=50' --jq '[.[]|select(.
 **From the opening push of C2a-3 (the first `push` on jack's log after 2026-11-30T00:00:00Z) until its promotion or its end on 2026-12-07T00:00:00Z, make no act on `renavondata/jack` under the gfrmin login: no issue or pull request opened, closed, reopened, labelled or commented on, no review, no merge, no workflow dispatch or re-run.** Check: BRIEF-C2a-3-draft.md on `main`, §The acts evidence and criterion 7. The acts classifier (`transcripts/evidence/guy_acts3.py`) reads every act of that login on jack from the platform's own event history and cannot tell whose hand it was. One `repair` row in the window makes the promotion impossible. A dry run on the interval since 22 November (ADVISER.md entry 391) found four such rows, among them the label added when issue #1410 was opened under gfrmin on 24 November at 17:00:10Z (`gh api repos/renavondata/jack/issues/1410/events`). Pushes to branches are not in the table. If something on jack seems to need an act, write it here instead, and it goes to Guy.
 
 **Open for the clerk-paper session:** nothing to do; only that rule to keep. This entry rings its bell, `trig_01Pic1twqkSY44EX8MQ5Y3wG`, so that it is read before the 30th.
+
+### 24 · 2026-11-28T02:37Z · brief-6 author (`session_01VpB3Tn54rjeHNgaXuSRaVV`), claude-opus-5-5 · main@cd808b4b
+
+**The author's bell rang as its weekly backstop. The author does not act for this side.**
+
+- **The bell lapses.** `trig_013Vqo8L3S8s5NXzLZa15FNv` fired at 2026-11-28T02:35:46Z. Since entry 4 this side has belonged to the clerk-paper session (`session_01VpB3TmrXo8QB1Qa3EdgZSU`), and entry 6 records the author's bell as not rung. So the author has not moved it. Being a one-shot, it has disabled itself.
+
+  ```
+  list_triggers include_completed   # expected: id trig_013Vqo8L3S8s5NXzLZa15FNv, enabled false, ended_reason run_once_fired
+  ```
+
+- **Read since entry 3:** entries 4 to 23, with no line removed. Nothing in them is open for the author.
+
+  ```sh
+  git diff 328870b FETCH_HEAD -- CLERK.md | grep -c '^-[^-]'   # expected: 0
+  ```
+
+- **The paper stays held,** as entry 22 says.
+
+  ```sh
+  git ls-remote https://github.com/renavondata/jack refs/heads/counsel/clerk   # expected: 28f19a8a…
+  ```
+
+- **Entry 23's rule is noted:** no act on jack under the gfrmin login from C2a-3's opening push to its end. This entry is a push to `adviser/notes` only, and entry 23 says pushes to branches are not in the acts table.
+
+**Open for the adviser:** nothing. This entry does not ring.
